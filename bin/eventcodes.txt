@@ -1,0 +1,121 @@
+### Table of event codes
+# This file is part of the biosig project http://biosig.sf.net/
+# Copyright (C) 2004-2005 Alois Schloegl <a.schloegl@ieee.org>
+# $Revision: 1.1.1.1 $
+# $Id: eventcodes.txt,v 1.1.1.1 2005-10-03 08:40:05 cle1109 Exp $
+#
+### Table of event codes: lines starting with # are omitted
+### Add 0x8000 to indicate end of event
+#
+### 0x010_	EEG artifacts
+0x0101	Artifact (EOG)
+0x0102	Artifact (ECG)
+0x0103	Artifact (EMG/muscle)
+0x0104	Artifact (movement)
+0x0105	Artifact (failing electrode)
+0x0106	Artifact (sweat)
+0x0107	Artifact (50/60Hz mains interference)
+0x0108	Artifact (breathing)
+0x0109	Artifact (pulse)
+#
+### 0x011_	EEG patterns
+0x0111	Sleep spindles
+0x0112	K-complexes
+0x0113	Sawtooth waves
+0x0114	Idling EEG (eyes open)
+0x0115	Idling EEG (eyes closed)
+#
+### 0x012_	Evoked potentials
+0x0121	VEP (visual EP)
+0x0122	AEP (auditory EP)
+0x0123	SEP (somato-sensory EP)
+0x012F	TMS (transcranial magnetic stimulation)
+#
+### 0x013_	Steady-state evoked potentials
+0x0131	SSVEP
+0x0132	SSAEP
+0x0133	SSSEP
+#
+### 0x03__	BCI: Trigger, cues, classlabels
+0x0300	Trial
+0x0301	Left - cue onset (BCI)
+0x0302	Right - cue onset (BCI)
+0x0303	Foot - cue onset (BCI)
+0x0304	Tongue - cue onset (BCI)
+0x0306	Down - cue onset (BCI)
+0x030C	Up - cue onset (BCI)
+0x030D	Feedback onset (continuous) (BCI)
+0x030E	Feedback onset (discrete) (BCI)
+0x030F	Cue unknown/undefined (BCI)
+0x0311	Beep (acoustic stimulus) (BCI)
+0x0312	Cross on screen (BCI)
+#0x0320 - 0x037f reserved for printable ASCII characters 32-127
+0x0381	Target hit, task successful, correct classification
+0x0382	Target missed, task not reached, incorrect classification
+0x03ff	Rejection of whole trial
+#
+### 0x040_	Sleep-related respiratory events
+0x0401	Obstructive apnea/hypopnea event (OAHE)
+0x0402	Respiratory effort related arousal (RERA)
+0x0403	Central apnea/hypopnea event (CAHE)
+0x0404	Cheyne-Stokes breathing (CSB)
+0x0405	Sleep hypoventilation
+#
+### 0x041_	Sleep stages according to Rechtschaffen & Kales
+0x0410	Wake
+0x0411	Stage 1
+0x0412	Stage 2
+0x0413	Stage 3
+0x0414	Stage 4
+0x0415	REM
+#
+### 0x042_	Sleep
+0x0420	Lights on
+#0x8420	Lights off
+#
+### 0x050_	ECG events
+0x0501	Fiducial point of QRS complex
+0x0502	P-wave
+0x0503	QRS-complex
+0x0504	R-point
+0x0506	T-wave
+0x0507	U-wave
+#
+### 0x058_	Ergometric events
+0x0580	Start
+0x0581	25 Watt
+0x0582	50 Watt
+0x0583	75 Watt
+0x0584	100 Watt
+0x0585	125 Watt
+0x0586	150 Watt
+0x0587	175 Watt
+0x0588	200 Watt
+0x0589	225 Watt
+0x058a	250 Watt
+0x058b	275 Watt
+0x058c	300 Watt
+0x058d	325 Watt
+0x058e	350 Watt
+#0x8580  end
+#
+### 0x00__	User specific events
+0x0001	Condition 1
+0x0002	Condition 2
+0x0003	Condition 3
+0x0004	Condition 4
+0x0005	Condition 5
+0x0006	Condition 6
+0x0007	Condition 7
+0x0008	Condition 8
+0x0009	Condition 9
+0x000a	Condition 10
+0x000b	Condition 11
+0x000c	Condition 12
+0x000d	Condition 13
+0x000e	Condition 14
+0x000f	Condition 15
+0x0010	Condition 16
+0x0011	Condition 17
+0x0012	Condition 18
+#
