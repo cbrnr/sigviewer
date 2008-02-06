@@ -17,12 +17,12 @@ public:
         SIZE = 150
     };
 
-    BKRHeader();
-    ~BKRHeader();
+//    BKRHeader();
+//    ~BKRHeader();
 
     void resetBKRHeader();
 
-private:
+protected:
     uint16 bkr_version_;
     uint16 bkr_number_channels_;
     uint16 bkr_sample_frequency_;
@@ -38,14 +38,14 @@ private:
     uint32 bkr_action_period_start_;        // in samples
     uint32 bkr_action_period_end_;          // in samples
     bool bkr_triggered_;
-    uint32 trigger_samples_before_;
-    uint32 trigger_samples_after_;
-    bool horizontally_averaged_;
-    uint32 horizontally_averaged_trials_;
-    bool vertically_averaged_;
-    uint32 vertically_averaged_trials_;
-    bool compression_;
-    uint32 compressed_samples_;
+    uint32 bkr_trigger_samples_before_;
+    uint32 bkr_trigger_samples_after_;
+    bool bkr_horizontally_averaged_;
+    uint32 bkr_horizontally_averaged_trials_;
+    bool bkr_vertically_averaged_;
+    uint32 bkr_vertically_averaged_trials_;
+    bool bkr_compression_;
+    uint32 bkr_compressed_samples_;
     bool bkr_common_average_reference_;
     bool bkr_local_average_reference_;
     bool bkr_laplace_;

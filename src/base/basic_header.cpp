@@ -176,9 +176,11 @@ uint32 BasicHeader::getNumberChannels() const
     return number_channels_;
 }
 
+
 // get channel
 const SignalChannel& BasicHeader::getChannel(uint32 channel_nr) const
 {
+    // TODO: check what hapens if no channel is found!!!!
     return channel_nr >= number_channels_ ? *(*channel_vector_.end())
                                           : *channel_vector_[channel_nr];
 }

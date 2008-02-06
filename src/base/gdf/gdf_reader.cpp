@@ -13,8 +13,10 @@
 
 // read character array from string
 // dest must be an array e.g. char text[10];
+#ifndef readStreamString
 #define readStreamString(dest, src_stream) \
 readStreamChars(dest, src_stream, sizeof(dest))
+#endif
 
 // read array data from stream
 // dest must be an array e.g. int a[10]

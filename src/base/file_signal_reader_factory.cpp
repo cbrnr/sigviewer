@@ -4,6 +4,7 @@
 
 // all suported readers
 #include "gdf/gdf_reader.h"
+#include "bkr/bkr_reader.h"
 
 namespace BioSig_
 {
@@ -21,6 +22,9 @@ FileSignalReaderFactory* FileSignalReaderFactory::getInstance()
         // register all readers
         instance_->addPrototype(".evt", new GDFReader);
         instance_->addPrototype(".gdf", new GDFReader);
+        
+        // TODO: uncomment as soon as BKRReader is finished
+        //instance_->addPrototype(".bkr", new BKRReader);
     }
     return instance_.get();
 }

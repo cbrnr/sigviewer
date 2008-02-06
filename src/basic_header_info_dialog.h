@@ -3,7 +3,7 @@
 #ifndef BASIC_HEADER_INFO_DIALOG_H
 #define BASIC_HEADER_INFO_DIALOG_H
 
-#include <qdialog.h>
+#include <QDialog>
 
 class QTreeWidget;
 class QPushButton;
