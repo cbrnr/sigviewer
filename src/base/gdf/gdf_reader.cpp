@@ -312,57 +312,6 @@ inline void GDFReader::loadEventTableHeader()
     qDebug( "GDFReader::loadEventTableHeader() end" );
 }
 
-// convert data
-template<typename DestType>
-inline void convertData(int8* src, DestType* dest, SignalChannel& sig,
-                        uint32 samples, bool do_scale = true)
-{
-    DestType scale = do_scale ? sig.getScale() : 1;
-    DestType offset = do_scale ? sig.getOffset() : 1;
-    uint8* buffer = (uint8*)src + sig.getDataOffset();
-    if (sig.getDataType() > SignalChannel::UBITN)
-    {
-        // TODO : signal record-size no multiple of 8 bits
-        uint32 bits = sig.getDataType() - SignalChannel::UBITN;
-        copyInterpolatedUNBitArray(dest, buffer, bits, scale, offset, samples);
-    }
-    else if (sig.getDataType() > SignalChannel::BITN)
-    {
-        // TODO : signal record-size no multiple of 8 bits
-        uint32 bits = sig.getDataType() - SignalChannel::UBITN;
-        copyInterpolatedSNBitArray(dest, buffer, bits, scale, offset, samples);
-    }
-    else switch(sig.getDataType())
-    {
-        case SignalChannel::INT8:
-            copyInterpolatedArray(dest, (int8*)buffer, scale, offset, samples);
-            break;
-        case SignalChannel::UINT8:
-            copyInterpolatedArray(dest, (uint8*)buffer, scale, offset, samples);
-            break;
-        case SignalChannel::INT16:
-            copyInterpolatedArray(dest, (int16*)buffer, scale, offset, samples);
-            break;  
-        case SignalChannel::UINT16:
-            copyInterpolatedArray(dest, (uint16*)buffer, scale, offset,samples);
-            break;  
-        case SignalChannel::INT32:
-            copyInterpolatedArray(dest, (int32*)buffer, scale, offset, samples);
-            break;  
-        case SignalChannel::UINT32:
-            copyInterpolatedArray(dest, (uint32*)buffer, scale, offset,samples);
-            break;  
-        case SignalChannel::INT64:
-            copyInterpolatedArray(dest, (int64*)buffer, scale, offset, samples);
-            break;  
-        case SignalChannel::FLOAT32:
-            copyInterpolatedArray(dest, (float32*)buffer, scale,offset,samples);
-            break;  
-        case SignalChannel::FLOAT64:
-            copyInterpolatedArray(dest, (float64*)buffer, scale,offset,samples);
-            break;
-    }
-}
 
 // load signals
 void GDFReader::loadSignals(SignalDataBlockPtrIterator begin,

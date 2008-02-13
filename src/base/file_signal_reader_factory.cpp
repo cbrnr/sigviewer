@@ -24,7 +24,7 @@ FileSignalReaderFactory* FileSignalReaderFactory::getInstance()
         instance_->addPrototype(".gdf", new GDFReader);
         
         // TODO: uncomment as soon as BKRReader is finished
-        //instance_->addPrototype(".bkr", new BKRReader);
+        instance_->addPrototype(".bkr", new BKRReader);
     }
     return instance_.get();
 }

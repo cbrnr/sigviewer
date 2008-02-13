@@ -1,5 +1,7 @@
 #include "bkr_reader.h"	
 #include "../stream_utils.h"
+#include "../signal_data_block.h"
+#include "../math_utils.h"
 
 #include <QTextStream>
 
@@ -96,13 +98,92 @@ void BKRReader::close()
 void BKRReader::loadSignals(SignalDataBlockPtrIterator begin,
                             SignalDataBlockPtrIterator end, uint32 start_record)
 {
+    if (!file_.isOpen())
+    {
+        if (log_stream_)
+            *log_stream_ << "BKRReader::loadChannels Error: not open\n";
+        return;
+    }
 
+    file_.seek(records_position_ + start_record * (record_size_ * number_channels_));
+    bool something_done = true;
+    for (uint32 rec_nr = start_record; something_done; rec_nr++)
+    {
+        bool rec_out_of_range = (rec_nr >= number_records_);
+        if (!rec_out_of_range)
+        {
+            readStreamValues(buffer_, file_, record_size_ * bkr_number_channels_);
+        }
+        something_done = false;
+        for (SignalDataBlockPtrIterator data_block = begin;
+             data_block != end;
+             ++data_block)
+        {
+            if ((*data_block)->sub_sampling > 1 ||
+                (*data_block)->channel_number >= number_channels_)
+            {
+                if (log_stream_)
+                {
+                    *log_stream_ << "BKRReader::loadChannels Error: "
+                                 << "invalid SignalDataBlock\n";
+                }
+                continue;
+            }
+            SignalChannel* sig = channel_vector_[(*data_block)->channel_number];
+            
+            qDebug ("reading signal for channel " + (*data_block)->channel_number);
+            
+            uint32 samples = sig->getSamplesPerRecord();
+            uint32 actual_sample = (rec_nr - start_record) * samples;
+            if (actual_sample + samples > (*data_block)->number_samples)
+            {
+                // sample file doesnt enter here
+                if (actual_sample >= (*data_block)->number_samples)
+                {
+                    (*data_block)->setBufferOffset(start_record * samples);
+                    continue;   // signal data block full
+                }
+                samples = (*data_block)->number_samples - actual_sample;
+            }
+            float32* data_block_buffer = (*data_block)->getBuffer();
+            float32* data_block_upper_buffer = (*data_block)->getUpperBuffer();
+            float32* data_block_lower_buffer = (*data_block)->getLowerBuffer();
+            bool* data_block_buffer_valid = (*data_block)->getBufferValid();
+            something_done = true;
+            if (rec_out_of_range)
+            {
+                // sample file doesnt enter here
+                for (uint32 samp = actual_sample;
+                     samp < actual_sample + samples;
+                     samp++)
+                {
+                    data_block_buffer_valid[samp] = false;
+                }
+            }
+            else
+            {
+                convertData(buffer_ + ((*data_block)->channel_number * 2), &data_block_buffer[actual_sample],
+                            *sig, samples, true);
+                //memcpy (&data_block_buffer[actual_sample], buffer_, 2);
+                for (uint32 samp = actual_sample;
+                     samp < actual_sample + samples;
+                     samp++)
+                {
+                    data_block_upper_buffer[samp] = data_block_buffer[samp];
+                    data_block_lower_buffer[samp] = data_block_buffer[samp];
+                    data_block_buffer_valid[samp] = true;
+                        //= data_block_buffer[samp] > sig->getPhysicalMinimum() &&
+                        //  data_block_buffer[samp] < sig->getPhysicalMaximum();
+                }
+            }
+        }
+    }    
 }
 
 //-----------------------------------------------------------------------------
 void BKRReader::loadEvents(SignalEventVector& event_vector)
 {
-
+    // TODO: are there events in BKR files ????
 }
 
 //-----------------------------------------------------------------------------
@@ -178,11 +259,68 @@ bool BKRReader::loadFixedHeader(const QString& file_name)
     version_ = bkr_version_;
     number_channels_ = bkr_number_channels_;
     number_records_ = bkr_samples_per_trial_ * bkr_number_trials_;
+    record_size_ = 2; // 2 bytes = 1 sample
+    records_position_ = 1024;
+    record_duration_ = 1;
+    record_duration_ /= bkr_sample_frequency_;
     
     if (bkr_triggered_)
         qDebug ("bkr_triggered_ is true");
     
     // TODO: set more headers info!!!
+    
+    
+    // channels...
+    if (number_channels_ > 0)
+    {
+        //event_sample_rate_ = 1;
+        //sig = bkr_sig_vector_.begin();
+        for (uint32 channel_nr = 0;
+             channel_nr < number_channels_;
+             ++channel_nr)
+        {
+            SignalChannel* channel = new SignalChannel(channel_nr, "ups",
+                                                       1, // samples per record
+                                                       "µV",//sig->physical_dimension,
+                                                       0, //sig->physical_minimum,
+                                                       bkr_calibration_voltage_, //sig->physical_maximum,
+                                                       0, //sig->digital_minimum,
+                                                       bkr_calibration_value_, //sig->digital_maximum,
+                                                       3, //sig->channel_type,
+                                                       0, //record_size_ / 16,
+                                                       "filer", -1, -1, false);
+
+            channel_vector_ << channel;
+            //event_sample_rate_ = lcm(event_sample_rate_,
+//                                     sig->samples_per_record);
+            //record_size_ += channel->typeBitSize() *
+            //                sig->samples_per_record;
+            // TODO : signal record-size no multiple of 8 bits
+//            if (record_size_ % 8 != 0)
+//            {
+//                if (log_stream_)
+//                {
+//                    *log_stream_ << "GDFReader::open '" << file_name
+//                                 << "' Error: signal record size no multiple of "
+//                                 << "8 bits is not supported\n";
+//                }
+//                return false;
+//            }
+        }
+//        event_sample_rate_ *= gdf_duration_data_record_[1];
+        
+//        if (event_sample_rate_ % gdf_duration_data_record_[0] != 0)
+//        {
+//            if (log_stream_)
+//            {
+//                *log_stream_ << "GDFReader::open Warning: event-samplerate is"
+//                             << " non integer value\n";
+//            }
+//        }
+//        event_sample_rate_ /= gdf_duration_data_record_[0];
+//        record_size_ = (record_size_ + 7) / 8;
+        buffer_ = new int8[record_size_ * number_channels_];
+    }
     
     return true;
 }
