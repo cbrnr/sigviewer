@@ -10,8 +10,7 @@ namespace BioSig_
 {
 
 // BKR reader
-class BKRReader : public FileSignalReader,
-                  private BKRHeader
+class BKRReader : public FileSignalReader
 {
 public:
 	BKRReader();
@@ -35,11 +34,10 @@ private:
     const BKRReader& operator=(const BKRReader& src);
 
     bool loadFixedHeader(const QString& file_name);
-    bool loadSignalHeaders(const QString& file_name);
-//    void loadEventTableHeader();
 
     QFile file_;
     int8* buffer_;
+    BKRHeader header_;
 };
 
 } // namespace BioSig_
