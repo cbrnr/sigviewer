@@ -26,8 +26,8 @@ ChannelSelectionDialog::ChannelSelectionDialog(BasicHeader& header,
     channel_list_widget_
         ->setSelectionMode(QAbstractItemView::MultiSelection);
     top_layout->addWidget(channel_list_widget_);
-    QHBoxLayout* button_layout = new QHBoxLayout(top_layout);
-    QHBoxLayout* select_buttons_layout = new QHBoxLayout(top_layout);
+    QHBoxLayout* button_layout = new QHBoxLayout(this);
+    QHBoxLayout* select_buttons_layout = new QHBoxLayout(this);
     top_layout->addLayout(select_buttons_layout);
     top_layout->addLayout(button_layout);
     select_buttons_layout->setMargin(0);
