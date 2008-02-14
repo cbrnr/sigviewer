@@ -482,7 +482,7 @@ void GDFReader::loadEvents(SignalEventVector& event_vector)
 }
 
 // load raw records
-void GDFReader::loadRawRecords(float64** record_data, uint32 start_record,
+bool GDFReader::loadRawRecords(float64** record_data, uint32 start_record,
                                uint32 records)
 {
     if (!file_.isOpen())
@@ -491,7 +491,7 @@ void GDFReader::loadRawRecords(float64** record_data, uint32 start_record,
         {
             *log_stream_ << "GDFReader::loadRawRecord Error: not open\n";
         }
-        return;
+        return false;
     }
     if (start_record + records > number_records_)
     {
@@ -499,7 +499,7 @@ void GDFReader::loadRawRecords(float64** record_data, uint32 start_record,
         {
             *log_stream_ << "GDFReader::loadRawRecord Error: invalid record\n";
         }
-        return;
+        return false;
     }
 
     file_.seek(records_position_ + start_record * record_size_);
@@ -515,6 +515,7 @@ void GDFReader::loadRawRecords(float64** record_data, uint32 start_record,
                         *(*it), (*it)->getSamplesPerRecord(), false);
         }
     }
+    return true;
 }
 
 } // namespace BioSig_

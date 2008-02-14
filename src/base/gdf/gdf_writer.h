@@ -32,7 +32,7 @@ private:
 
     void saveFixedHeader(bool save_signals);
     void saveSignalHeaders();
-    void saveSignals();
+    bool saveSignals();
     void saveEvents(SignalEventVector& event_vector);
 
     QFile file_;

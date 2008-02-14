@@ -26,8 +26,19 @@ ChannelSelectionDialog::ChannelSelectionDialog(BasicHeader& header,
     channel_list_widget_
         ->setSelectionMode(QAbstractItemView::MultiSelection);
     top_layout->addWidget(channel_list_widget_);
-    QHBoxLayout* button_layout = new QHBoxLayout;
+    QHBoxLayout* button_layout = new QHBoxLayout(top_layout);
+    QHBoxLayout* select_buttons_layout = new QHBoxLayout(top_layout);
+    top_layout->addLayout(select_buttons_layout);
     top_layout->addLayout(button_layout);
+    select_buttons_layout->setMargin(0);
+    select_buttons_layout->addStretch(1);
+
+    unselect_all_button_ = new QPushButton(tr("Unselect All"), this);
+    select_buttons_layout->addWidget(unselect_all_button_);
+    select_all_button_ = new QPushButton(tr("Select All"), this);
+    select_buttons_layout->addWidget(select_all_button_);
+    select_buttons_layout->addStretch(1);
+    
     button_layout->setMargin(0);
     button_layout->addStretch(1);
     ok_button_ = new QPushButton(tr("OK"), this);
@@ -39,6 +50,8 @@ ChannelSelectionDialog::ChannelSelectionDialog(BasicHeader& header,
     top_layout->activate();
     connect(ok_button_, SIGNAL(clicked()), this, SLOT(accept()));
     connect(cancel_button_, SIGNAL(clicked()), this, SLOT(reject()));
+    connect(unselect_all_button_, SIGNAL(clicked()), this, SLOT(unselectAll()));
+    connect(select_all_button_, SIGNAL(clicked()), this, SLOT(selectAll()));
 }
 
 // load settings
@@ -87,6 +100,18 @@ void ChannelSelectionDialog::setSelected(uint32 channel_nr, bool selected)
     channel_list_widget_->setItemSelected(
                                         channel_list_widget_->item(channel_nr),
                                         selected);   
+}
+
+void ChannelSelectionDialog::unselectAll ()
+{
+    for (int32 channel_number = 0; channel_number < channel_list_widget_->count(); ++channel_number)
+        channel_list_widget_->item(channel_number)->setSelected(false);    
+}
+
+void ChannelSelectionDialog::selectAll ()
+{
+    for (int32 channel_number = 0; channel_number < channel_list_widget_->count(); ++channel_number)
+        channel_list_widget_->item(channel_number)->setSelected(true);   
 }
 
 } //namespace BioSig_

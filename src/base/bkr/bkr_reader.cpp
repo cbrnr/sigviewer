@@ -4,22 +4,21 @@
 #include "../math_utils.h"
 
 #include <QTextStream>
-
-// read character array from string
-// dest must be an array e.g. char text[10];
-//#ifndef readStreamString
-//#define readStreamString(dest, src_stream) \
-//readStreamChars(dest, src_stream, sizeof(dest))
-//#endif
+#include <QTranslator>
 
 namespace BioSig_
 {
+
+
+std::set<uint16> const BKRReader::supported_versions_;
+
 
 //-----------------------------------------------------------------------------
 BKRReader::BKRReader() :
     buffer_(0)
 {
-
+    // add here supported version-numbers
+    const_cast<std::set<uint16>& >(BKRReader::supported_versions_).insert (207);
 }
 
 //-----------------------------------------------------------------------------
@@ -91,7 +90,8 @@ bool BKRReader::isOpen()
 //-----------------------------------------------------------------------------
 void BKRReader::close()
 {
-
+    if (file_.isOpen())
+        file_.close();
 }
 
 //-----------------------------------------------------------------------------
@@ -163,7 +163,7 @@ void BKRReader::loadSignals(SignalDataBlockPtrIterator begin,
             else
             {
                 convertData(buffer_ + ((*data_block)->channel_number * 2), &data_block_buffer[actual_sample],
-                            *sig, samples, true);
+                            *sig, samples);
                 for (uint32 samp = actual_sample;
                      samp < actual_sample + samples;
                      samp++)
@@ -180,16 +180,11 @@ void BKRReader::loadSignals(SignalDataBlockPtrIterator begin,
 }
 
 //-----------------------------------------------------------------------------
-void BKRReader::loadEvents(SignalEventVector& event_vector)
-{
-    // TODO: are there events in BKR files ????
-}
-
-//-----------------------------------------------------------------------------
-void BKRReader::loadRawRecords(float64** record_data, uint32 start_record,
+bool BKRReader::loadRawRecords(float64** record_data, uint32 start_record,
                                uint32 records)
 {
-
+    // TODO: implement this??? 
+    return false;
 }
 
 //-----------------------------------------------------------------------------
@@ -198,6 +193,9 @@ bool BKRReader::loadFixedHeader(const QString& file_name)
     file_size_ = file_.size();
     
     readStreamValue (header_.version_, file_);
+    if (supported_versions_.count(header_.version_) == 0)
+        return false;
+    
     readStreamValue (header_.number_channels_, file_);
     readStreamValue (header_.sample_frequency_, file_);
     readStreamValue (header_.number_trials_, file_);
@@ -263,6 +261,7 @@ bool BKRReader::loadFixedHeader(const QString& file_name)
     record_duration_ = 1;
     record_duration_ /= header_.sample_frequency_;
     
+    
     if (header_.triggered_)
         qDebug ("header_.triggered_ is true");
     
@@ -278,7 +277,7 @@ bool BKRReader::loadFixedHeader(const QString& file_name)
              channel_nr < number_channels_;
              ++channel_nr)
         {
-            SignalChannel* channel = new SignalChannel(channel_nr, "ups",
+            SignalChannel* channel = new SignalChannel(channel_nr, QT_TR_NOOP("Channel"),
                                                        1, // samples per record
                                                        "µV",//sig->physical_dimension,
                                                        0, //sig->physical_minimum,

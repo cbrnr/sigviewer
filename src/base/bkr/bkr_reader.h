@@ -5,6 +5,8 @@
 #include "bkr_header.h"
 
 #include <QFile>
+#include <set>
+
 
 namespace BioSig_
 {
@@ -24,8 +26,15 @@ public:
     virtual void loadSignals(SignalDataBlockPtrIterator begin, 
                              SignalDataBlockPtrIterator end,
                              uint32 start_record);
-    virtual void loadEvents(SignalEventVector& event_vector);
-    virtual void loadRawRecords(float64** record_data, uint32 start_record,
+    //-------------------------------------------------------------------------
+    /// there are no events in BKR-files so this method does nothing
+    virtual void loadEvents(SignalEventVector& event_vector) {}
+    
+    //-------------------------------------------------------------------------
+    /// 
+    /// @return false if an error occured
+    ///         true if everything is fine
+    virtual bool loadRawRecords(float64** record_data, uint32 start_record,
                                 uint32 records);
 
 private:
@@ -38,6 +47,7 @@ private:
     QFile file_;
     int8* buffer_;
     BKRHeader header_;
+    static std::set<uint16> const supported_versions_;
 };
 
 } // namespace BioSig_

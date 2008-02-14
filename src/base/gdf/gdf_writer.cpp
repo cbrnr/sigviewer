@@ -84,7 +84,12 @@ bool GDFWriter::save(FileSignalReader& file_signal_reader,
     if (save_signals)
     {
         saveSignalHeaders();
-        saveSignals();
+        if (!saveSignals())
+        {
+           *log_stream_ << "GDFWriter::save '" << save_file_name
+                         << "' Error: can't save signals\n";
+           return false;
+        }
     }
     saveEvents(event_vector);
     file_.close();
@@ -277,7 +282,7 @@ inline void convertData(SrcType* src, int8* dest, const SignalChannel& sig)
 }
 
 // save signals
-void GDFWriter::saveSignals()
+bool GDFWriter::saveSignals()
 {
     // allocate buffers
     int32 record_size = 0;
@@ -296,7 +301,8 @@ void GDFWriter::saveSignals()
     uint32 number_records = file_signal_reader_->getNumberRecords();
     for (uint32 record_nr = 0; record_nr < number_records; record_nr++)
     {
-        file_signal_reader_->loadRawRecords(float_buffer, record_nr, 1);
+        if (!file_signal_reader_->loadRawRecords(float_buffer, record_nr, 1))
+            return false;
         for (uint32 channel_nr = 0; channel_nr < number_channels; channel_nr++)
         {
             const SignalChannel& channel
@@ -313,6 +319,7 @@ void GDFWriter::saveSignals()
         delete[] float_buffer[channel_nr];
     }
     delete[] float_buffer;
+    return true;
 }
 
 // save events

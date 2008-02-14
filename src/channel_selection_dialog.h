@@ -36,10 +36,17 @@ private:
 
     void buildChannelList();
 
+    
     BasicHeader& basic_header_;
     QListWidget* channel_list_widget_;
+    QPushButton* unselect_all_button_;
+    QPushButton* select_all_button_;
     QPushButton* ok_button_;
     QPushButton* cancel_button_;
+
+ private slots:
+    void unselectAll ();
+    void selectAll ();
 };
 
 } // namespace BioSig_

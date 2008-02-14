@@ -37,7 +37,12 @@ public:
                              SignalDataBlockPtrIterator end,
                              uint32 start_record) = 0;
     virtual void loadEvents(SignalEventVector& event_vector) = 0;
-    virtual void loadRawRecords(float64** record_data, uint32 start_record,
+    
+    //-------------------------------------------------------------------------
+    ///
+    /// @return  false if error occured
+    ///          true if everything is ok
+    virtual bool loadRawRecords(float64** record_data, uint32 start_record,
                                 uint32 records) = 0;
 
 protected: 
