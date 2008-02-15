@@ -8,12 +8,13 @@
 #include <QVector>
 #include <QString>
 #include <QDateTime>
+#include <QObject>
 
 namespace BioSig_
 {
 
 // Basic header definition (common for all file formats)
-class BasicHeader
+class BasicHeader : public QObject
 {
 public:
     enum Sex

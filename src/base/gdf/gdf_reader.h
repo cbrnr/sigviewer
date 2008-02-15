@@ -4,16 +4,20 @@
 #define GDF_READER_H
 
 #include "../file_signal_reader.h"
-#include "gdf_header.h"
+#include "../basic_header.h"
+#include "gdf_reader_impl.h"
+
 
 #include <QFile>
+#include <QPointer>
+#include <memory>
+
 
 namespace BioSig_
 {
 
 // GDF reader
-class GDFReader : public FileSignalReader,
-                  private GDFHeader
+class GDFReader : public FileSignalReader
 {
 public:
     GDFReader();
@@ -36,12 +40,15 @@ private:
     GDFReader(const GDFReader& src);
     const GDFReader& operator=(const GDFReader& src);
 
+
     bool loadFixedHeader(const QString& file_name);
     bool loadSignalHeaders(const QString& file_name);
     void loadEventTableHeader();
 
-    QFile file_;
+    QPointer<QFile> file_;
+    QPointer<BasicHeader> basic_header_;
     int8* buffer_;
+    std::auto_ptr<GDFReaderImpl> reader_impl_;
 };
 
 } // namespace BioSig_

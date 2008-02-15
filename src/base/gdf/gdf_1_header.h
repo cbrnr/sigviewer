@@ -1,7 +1,7 @@
-// gdf_header.h
+// gdf_1_header.h
 
-#ifndef GDF_HEADER_H
-#define GDF_HEADER_H
+#ifndef GDF_1_HEADER_H
+#define GDF_1_HEADER_H
 
 #include "gdf_event.h"
 
@@ -13,7 +13,7 @@ namespace BioSig_
 class GDFSignalHeader;
 
 // GDFHeader
-class GDFHeader
+class GDF1Header
 {
 public:
     enum EventTableType
@@ -27,12 +27,11 @@ public:
         SIZE = 256
     };
 
-    GDFHeader();
-    ~GDFHeader();
+    GDF1Header();
+    ~GDF1Header();
 
-    void resetGDFHeader();
+    void resetGDF1Header();
 
-protected:
     typedef QVector<GDFSignalHeader> GDFSignalHeaderVector;
 
     char gdf_version_id_[8];

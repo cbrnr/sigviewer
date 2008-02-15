@@ -4,7 +4,7 @@
 #define GDF_WRITER_H
 
 #include "../file_signal_writer.h"
-#include "gdf_header.h"
+#include "gdf_1_header.h"
 
 #include <QFile>
 
@@ -13,7 +13,7 @@ namespace BioSig_
 
 // GDF writer
 class GDFWriter : public FileSignalWriter,
-                  private GDFHeader
+                  private GDF1Header
 {
 public:
     GDFWriter();

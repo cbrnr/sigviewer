@@ -1,13 +1,13 @@
 // gdf_header.cpp
 
-#include "gdf_header.h"
+#include "gdf_1_header.h"
 #include "gdf_signal_header.h"
 
 namespace BioSig_
 {
 
 // constructor
-GDFHeader::GDFHeader()
+GDF1Header::GDF1Header()
 : gdf_header_size_(SIZE),
   gdf_equipment_provider_id_(0),
   gdf_labratory_id_(0),
@@ -30,13 +30,13 @@ GDFHeader::GDFHeader()
 }
 
 // destructor
-GDFHeader::~GDFHeader()
+GDF1Header::~GDF1Header()
 {
     // nothing
 }
 
 // reset
-void GDFHeader::resetGDFHeader()
+void GDF1Header::resetGDF1Header()
 {
     memset(gdf_version_id_, ' ', sizeof(gdf_version_id_));
     memset(gdf_patient_id_, ' ', sizeof(gdf_patient_id_));

@@ -119,7 +119,7 @@ void GDFWriter::saveFixedHeader(bool save_signals)
     if (save_signals)
     {
         gdf_header_size_ += file_signal_reader_->getNumberChannels() *
-                            GDFHeader::SIZE;
+                            GDF1Header::SIZE;
     }
     gdf_equipment_provider_id_ = 0x0553696756696577LL;
     gdf_labratory_id_ = file_signal_reader_->getHospitalId();
