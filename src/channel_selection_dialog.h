@@ -6,6 +6,7 @@
 #include "base/user_types.h"
 
 #include <qdialog.h>
+#include <QPointer>
 
 class QListWidget;
 class QPushButton;
@@ -20,7 +21,7 @@ class ChannelSelectionDialog : public QDialog
 {
     Q_OBJECT
 public:
-    ChannelSelectionDialog(BasicHeader& header, QWidget* parent = 0);
+    ChannelSelectionDialog(QPointer<BasicHeader> header, QWidget* parent = 0);
 
     void loadSettings();
     void saveSettings();
@@ -37,7 +38,7 @@ private:
     void buildChannelList();
 
     
-    BasicHeader& basic_header_;
+    QPointer<BasicHeader> basic_header_;
     QListWidget* channel_list_widget_;
     QPushButton* unselect_all_button_;
     QPushButton* select_all_button_;

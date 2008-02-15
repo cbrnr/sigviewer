@@ -30,6 +30,8 @@ public:
     /// there are no events in BKR-files so this method does nothing
     virtual void loadEvents(SignalEventVector& event_vector) {}
     
+    virtual QPointer<BasicHeader> getBasicHeader ();
+    
     //-------------------------------------------------------------------------
     /// 
     /// @return false if an error occured
@@ -46,6 +48,7 @@ private:
 
     QFile file_;
     int8* buffer_;
+    QPointer<BasicHeader> basic_header_;
     BKRHeader header_;
     static std::set<uint16> const supported_versions_;
 };

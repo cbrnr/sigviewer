@@ -207,7 +207,7 @@ void EventTableDialog::TableModel::sort(int column, Qt::SortOrder order)
 
 // constructor
 EventTableDialog::EventTableDialog(SignalBrowserModel& browser_model,
-                                   BasicHeader& basic_header, QWidget* parent)
+                                   QPointer<BasicHeader> basic_header, QWidget* parent)
  : QDialog(parent),
    signal_browser_model_(browser_model),
    basic_header_(basic_header)
@@ -289,8 +289,8 @@ void EventTableDialog::buildEventTable()
         = signal_browser_model_.getMainWindowModel().getEventTableFileReader();
     SignalBrowserModel::SignalEventVector event_vector;
     signal_browser_model_.getEvents(event_vector);
-    int32 number_channels = (int32)basic_header_.getNumberChannels();
-    float64 sample_rate = basic_header_.getEventSamplerate();
+    int32 number_channels = (int32)basic_header_->getNumberChannels();
+    float64 sample_rate = basic_header_->getEventSamplerate();
     event_table_model_->insertRows(0, event_vector.size());
 
     int32 row_height = event_table_view_->verticalHeader()->sizeHint().height(); 
@@ -320,7 +320,7 @@ void EventTableDialog::buildEventTable()
             tmp = QString("(%1)").arg(it->getChannel() + 1) + " ";
             if (it->getChannel() < number_channels)
             {
-                tmp += basic_header_.getChannel(it->getChannel()).getLabel();
+                tmp += basic_header_->getChannel(it->getChannel()).getLabel();
             }
             else
             {

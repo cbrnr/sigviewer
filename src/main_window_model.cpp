@@ -170,7 +170,7 @@ void MainWindowModel::setState(MainWindowModel::State state)
             if (main_window_)
             {
                 QString caption = "SigViewer - [%1]";
-                caption = caption.arg(file_signal_reader_->getFullFileName());
+                caption = caption.arg(file_signal_reader_->getBasicHeader()->getFullFileName());
                 main_window_->setCaption(caption);
                 main_window_->setFileSaveEnabled(false);
                 main_window_->setFileSaveAsEnabled(true);
@@ -198,7 +198,7 @@ void MainWindowModel::setState(MainWindowModel::State state)
             if (main_window_)
             {
                 QString caption = "SigViewer - [%1*]";
-                caption = caption.arg(file_signal_reader_->getFullFileName());
+                caption = caption.arg(file_signal_reader_->getBasicHeader()->getFullFileName());
                 main_window_->setCaption(caption);
                 main_window_->setFileSaveEnabled(true);
                 main_window_->setFileSaveAsEnabled(true);
@@ -288,7 +288,7 @@ void MainWindowModel::fileSaveAction()
 
     // get writer for file
     FileSignalWriter* file_signal_writer = 0;
-    QString file_name = file_signal_reader_->getFullFileName();
+    QString file_name = file_signal_reader_->getBasicHeader()->getFullFileName();
     if (file_name.findRev('.') != -1)
     {
         file_signal_writer = FileSignalWriterFactory::getInstance()->
@@ -300,7 +300,7 @@ void MainWindowModel::fileSaveAction()
                      << "not suported file format: '"
                      << file_name.mid(file_name.findRev('.')) << "'\n";
         main_window_->showErrorWriteDialog(
-                                file_signal_reader_->getFullFileName());
+                                file_signal_reader_->getBasicHeader()->getFullFileName());
         return;
     }
 
@@ -320,7 +320,7 @@ void MainWindowModel::fileSaveAction()
         *log_stream_ << "MainWindowModel::fileSaveAction Error: writing file :'"
                      << file_name << "'\n";
         main_window_->showErrorWriteDialog(
-                                file_signal_reader_->getFullFileName());
+                                file_signal_reader_->getBasicHeader()->getFullFileName());
     }
     delete file_signal_writer;
 }
@@ -359,7 +359,7 @@ void MainWindowModel::fileSaveAsAction()
                      << "not suported file format: '"
                      << file_name.mid(file_name.findRev('.')) << "'\n";
         main_window_->showErrorWriteDialog(
-                                file_signal_reader_->getFullFileName());
+                                file_signal_reader_->getBasicHeader()->getFullFileName());
         return;
     }
 
@@ -381,7 +381,7 @@ void MainWindowModel::fileSaveAsAction()
         *log_stream_ << "MainWindowModel::fileSaveAsAction "
                      << "Error: writing file:'" << file_name << "'\n";
         main_window_->showErrorWriteDialog(
-                                file_signal_reader_->getFullFileName());
+                                file_signal_reader_->getBasicHeader()->getFullFileName());
     }
     delete file_signal_writer;
 }
@@ -424,7 +424,7 @@ void MainWindowModel::fileExportEventsAction()
     event_type_dialog.getShownTypes(event_types);
 
     // export dialog
-    QString file_name = file_signal_reader_->getFileName();
+    QString file_name = file_signal_reader_->getBasicHeader()->getFileName();
     QSettings settings("SigViewer");
     file_name = settings.value("MainWindowModel/file_open_path", ".").toString() + "/" +
                 file_name.left(file_name.lastIndexOf('.'));
@@ -449,7 +449,7 @@ void MainWindowModel::fileExportEventsAction()
                      << "not suported file format: '"
                      << file_name.mid(file_name.findRev('.')) << "'\n";
         main_window_->showErrorWriteDialog(
-                                file_signal_reader_->getFullFileName());
+                                file_signal_reader_->getBasicHeader()->getFullFileName());
         return;
     }
 
@@ -474,7 +474,7 @@ void MainWindowModel::fileExportEventsAction()
         *log_stream_ << "MainWindowModel::fileExportEventsAction "
                      << "Error: writing file:'" << file_name << "'\n";
         main_window_->showErrorWriteDialog(
-                                file_signal_reader_->getFullFileName());
+                                file_signal_reader_->getBasicHeader()->getFullFileName());
     }
     delete file_signal_writer;
 }
@@ -517,8 +517,8 @@ void MainWindowModel::fileImportEventsAction()
         }
     }
     if (!load_ok ||
-        signal_reader->getEventSamplerate() !=
-        file_signal_reader_->getEventSamplerate())
+        signal_reader->getBasicHeader()->getEventSamplerate() !=
+        file_signal_reader_->getBasicHeader()->getEventSamplerate())
     {
         *log_stream_ << "MainWindowModel::fileImportEventsAction Error: "
                      << "file format: '" << file_name
@@ -558,10 +558,10 @@ void MainWindowModel::fileImportEventsAction()
 
     // import events
     bool inconsistent = false;
-    float64 last_event_pos = file_signal_reader_->getNumberRecords() *
-                             file_signal_reader_->getRecordDuration() *
-                             file_signal_reader_->getEventSamplerate();
-    int32 number_channels = file_signal_reader_->getNumberChannels();
+    float64 last_event_pos = file_signal_reader_->getBasicHeader()->getNumberRecords() *
+                             file_signal_reader_->getBasicHeader()->getRecordDuration() *
+                             file_signal_reader_->getBasicHeader()->getEventSamplerate();
+    int32 number_channels = file_signal_reader_->getBasicHeader()->getNumberChannels();
     for (it = event_vector.begin(); it != event_vector.end(); it++)
     {
         if (event_types.contains((*it).getType()))
@@ -683,9 +683,9 @@ void MainWindowModel::openFile(const QString& file_name)
     main_window_->setSecsPerPage(10.0);
 
     // set status bar
-    main_window_->setStatusBarSignalLength(file_signal_reader_->getNumberRecords() *
-                                           file_signal_reader_->getRecordDuration());
-    main_window_->setStatusBarNrChannels(file_signal_reader_->getNumberChannels());
+    main_window_->setStatusBarSignalLength(file_signal_reader_->getBasicHeader()->getNumberRecords() *
+                                           file_signal_reader_->getBasicHeader()->getRecordDuration());
+    main_window_->setStatusBarNrChannels(file_signal_reader_->getBasicHeader()->getNumberChannels());
 
     // show signal_browser
     signal_browser_->show();
@@ -701,7 +701,7 @@ void MainWindowModel::fileCloseAction()
     }
     if (state_ == STATE_FILE_CHANGED &&
         !main_window_
-        ->showFileCloseDialog(file_signal_reader_->getFullFileName()))
+        ->showFileCloseDialog(file_signal_reader_->getBasicHeader()->getFullFileName()))
     {
         return; // user cancel
     }
@@ -733,7 +733,7 @@ void MainWindowModel::fileInfoAction()
     }
 
     // show basic header info dialog
-    BasicHeaderInfoDialog basic_header_info_dialog(*file_signal_reader_.get(),
+    BasicHeaderInfoDialog basic_header_info_dialog(file_signal_reader_->getBasicHeader(),
                                                    main_window_);
     basic_header_info_dialog.loadSettings();
     basic_header_info_dialog.exec();
@@ -823,7 +823,7 @@ void MainWindowModel::editEventTableAction()
     }
 
     EventTableDialog event_table_dialog(*signal_browser_model_.get(),
-                                        *file_signal_reader_.get(),
+                                        file_signal_reader_->getBasicHeader(),
                                         main_window_);
     event_table_dialog.loadSettings();
     event_table_dialog.exec();
@@ -927,11 +927,11 @@ void MainWindowModel::viewGoToAction()
         return;
     }
 
-    GoToDialog go_to_dialog(*file_signal_reader_.get(), main_window_);
+    GoToDialog go_to_dialog(file_signal_reader_->getBasicHeader(), main_window_);
 
     // current selected channels
     for (uint32 channel_nr = 0;
-         channel_nr < file_signal_reader_->getNumberChannels();
+         channel_nr < file_signal_reader_->getBasicHeader()->getNumberChannels();
          channel_nr++)
     {
         if (signal_browser_model_->isChannelShown(channel_nr))
@@ -962,13 +962,13 @@ void MainWindowModel::optionsChannelsAction()
         return;
     }
 
-    ChannelSelectionDialog channel_dialog(*file_signal_reader_.get(),
+    ChannelSelectionDialog channel_dialog(file_signal_reader_->getBasicHeader(),
                                           main_window_);
 
     // current selected channels
     bool empty_selection = signal_browser_model_->getNumberShownChannels() == 0;
     for (uint32 channel_nr = 0;
-         channel_nr < file_signal_reader_->getNumberChannels();
+         channel_nr < file_signal_reader_->getBasicHeader()->getNumberChannels();
          channel_nr++)
     {
         bool show_channel = empty_selection ||
@@ -987,7 +987,7 @@ void MainWindowModel::optionsChannelsAction()
 
     // set new selected channels
     for (uint32 channel_nr = 0;
-         channel_nr < file_signal_reader_->getNumberChannels();
+         channel_nr < file_signal_reader_->getBasicHeader()->getNumberChannels();
          channel_nr++)
     {
         if (channel_dialog.isSelected(channel_nr))
@@ -1116,8 +1116,8 @@ void MainWindowModel::secsPerPageChanged(const QString& secs_per_page)
     {
         // whole
         pixel_per_sec = signal_browser_->getCanvasView()->visibleWidth() /
-                        (file_signal_reader_->getNumberRecords() *
-                         file_signal_reader_->getRecordDuration());
+                        (file_signal_reader_->getBasicHeader()->getNumberRecords() *
+                         file_signal_reader_->getBasicHeader()->getRecordDuration());
     }
     signal_browser_model_->setPixelPerSec(pixel_per_sec);
 }

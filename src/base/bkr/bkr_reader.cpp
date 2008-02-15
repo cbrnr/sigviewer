@@ -15,7 +15,8 @@ std::set<uint16> const BKRReader::supported_versions_;
 
 //-----------------------------------------------------------------------------
 BKRReader::BKRReader() :
-    buffer_(0)
+    buffer_(0),
+    basic_header_ (new BasicHeader ())
 {
     // add here supported version-numbers
     const_cast<std::set<uint16>& >(BKRReader::supported_versions_).insert (207);
@@ -45,7 +46,7 @@ bool BKRReader::open(const QString& file_name)
         if (log_stream_)
         {
             *log_stream_ << "BKRReader::open '" << file_name << "' Error: '"
-                        << full_file_name_ << "' not closed\n";
+                        << basic_header_->getFullFileName() << "' not closed\n";
         }
         return false;
     }
@@ -105,14 +106,14 @@ void BKRReader::loadSignals(SignalDataBlockPtrIterator begin,
         return;
     }
 
-    file_.seek(records_position_ + start_record * (record_size_ * number_channels_));
+    file_.seek(basic_header_->getRecordsPosition() + start_record * (basic_header_->getRecordSize() * basic_header_->getNumberChannels()));
     bool something_done = true;
     for (uint32 rec_nr = start_record; something_done; rec_nr++)
     {
-        bool rec_out_of_range = (rec_nr >= number_records_);
+        bool rec_out_of_range = (rec_nr >= basic_header_->getNumberRecords());
         if (!rec_out_of_range)
         {
-            readStreamValues(buffer_, file_, record_size_ * header_.number_channels_);
+            readStreamValues(buffer_, file_, basic_header_->getRecordSize() * header_.number_channels_);
         }
         something_done = false;
         for (SignalDataBlockPtrIterator data_block = begin;
@@ -120,7 +121,7 @@ void BKRReader::loadSignals(SignalDataBlockPtrIterator begin,
              ++data_block)
         {
             if ((*data_block)->sub_sampling > 1 ||
-                (*data_block)->channel_number >= number_channels_)
+                (*data_block)->channel_number >= basic_header_->getNumberChannels())
             {
                 if (log_stream_)
                 {
@@ -129,7 +130,7 @@ void BKRReader::loadSignals(SignalDataBlockPtrIterator begin,
                 }
                 continue;
             }
-            SignalChannel* sig = channel_vector_[(*data_block)->channel_number];
+            SignalChannel* sig = basic_header_->getChannelPointer((*data_block)->channel_number);
             
             qDebug ("reading signal for channel " + (*data_block)->channel_number);
             
@@ -180,6 +181,12 @@ void BKRReader::loadSignals(SignalDataBlockPtrIterator begin,
 }
 
 //-----------------------------------------------------------------------------
+QPointer<BasicHeader> BKRReader::getBasicHeader ()
+{
+    return QPointer<BasicHeader>(basic_header_);
+}
+
+//-----------------------------------------------------------------------------
 bool BKRReader::loadRawRecords(float64** record_data, uint32 start_record,
                                uint32 records)
 {
@@ -190,7 +197,7 @@ bool BKRReader::loadRawRecords(float64** record_data, uint32 start_record,
 //-----------------------------------------------------------------------------
 bool BKRReader::loadFixedHeader(const QString& file_name)
 {
-    file_size_ = file_.size();
+    basic_header_->setFileSize(file_.size());
     
     readStreamValue (header_.version_, file_);
     if (supported_versions_.count(header_.version_) == 0)
@@ -251,15 +258,14 @@ bool BKRReader::loadFixedHeader(const QString& file_name)
     readStreamValue (header_.frequency_wavelet_, file_);
     readStreamValue (header_.start_sample_wavelet_, file_);
     
-    full_file_name_ = file_name; 
-    type_ = "BKR";
-    version_ = header_.version_;
-    number_channels_ = header_.number_channels_;
-    number_records_ = header_.samples_per_trial_ * header_.number_trials_;
-    record_size_ = 2; // 2 bytes = 1 sample
-    records_position_ = 1024;
-    record_duration_ = 1;
-    record_duration_ /= header_.sample_frequency_;
+    basic_header_->setFullFileName(file_name); 
+    basic_header_->setType ("BKR");
+    basic_header_->setVersion (QString (header_.version_));
+    basic_header_->setNumberChannels (header_.number_channels_);
+    basic_header_->setNumberRecords (header_.samples_per_trial_ * header_.number_trials_);
+    basic_header_->setRecordSize (2); // 2 bytes = 1 sample
+    basic_header_->setRecordsPosition (1024);
+    basic_header_->setRecordDuration (1.0f / header_.sample_frequency_);
     
     
     if (header_.triggered_)
@@ -269,12 +275,12 @@ bool BKRReader::loadFixedHeader(const QString& file_name)
     
     
     // channels...
-    if (number_channels_ > 0)
+    if (basic_header_->getNumberChannels() > 0)
     {
         //event_sample_rate_ = 1;
         //sig = header_.sig_vector_.begin();
         for (uint32 channel_nr = 0;
-             channel_nr < number_channels_;
+             channel_nr < basic_header_->getNumberChannels();
              ++channel_nr)
         {
             SignalChannel* channel = new SignalChannel(channel_nr, QT_TR_NOOP("Channel"),
@@ -285,10 +291,10 @@ bool BKRReader::loadFixedHeader(const QString& file_name)
                                                        0, //sig->digital_minimum,
                                                        header_.calibration_value_, //sig->digital_maximum,
                                                        3, //sig->channel_type,
-                                                       record_size_ / 16,
+                                                       basic_header_->getRecordSize() / 16,
                                                        "filer", -1, -1, false);
 
-            channel_vector_ << channel;
+            basic_header_->addChannel(channel);
             //event_sample_rate_ = lcm(event_sample_rate_,
 //                                     sig->samples_per_record);
             //record_size_ += channel->typeBitSize() *
@@ -317,7 +323,7 @@ bool BKRReader::loadFixedHeader(const QString& file_name)
 //        }
 //        event_sample_rate_ /= gdf_duration_data_record_[0];
 //        record_size_ = (record_size_ + 7) / 8;
-        buffer_ = new int8[record_size_ * number_channels_];
+        buffer_ = new int8[basic_header_->getRecordSize() * basic_header_->getNumberChannels()];
     }
     
     return true;

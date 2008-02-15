@@ -4,6 +4,7 @@
 #include "gdf_reader_impl.h"
 #include "gdf_1_header.h"
 #include "../basic_header.h"
+#include "../user_types.h"
 
 #include <QFile>
 #include <QPointer>
@@ -23,10 +24,15 @@ public:
     virtual bool loadSignalHeaders ();
     
     virtual bool loadEventTableHeader ();
+    
+    virtual void loadSignals (FileSignalReader::SignalDataBlockPtrIterator begin,
+                              FileSignalReader::SignalDataBlockPtrIterator end,
+                             uint32 start_record);
 private:
     QPointer<QFile> file_;
     QPointer<BasicHeader> basic_header_;
     GDF1Header gdf_header_;
+    int8 *buffer_;
 };
 
 

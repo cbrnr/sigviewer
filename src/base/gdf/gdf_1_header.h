@@ -4,13 +4,14 @@
 #define GDF_1_HEADER_H
 
 #include "gdf_event.h"
+#include "gdf_signal_header.h"
 
 #include <QVector>
 
 namespace BioSig_
 {
 
-class GDFSignalHeader;
+
 
 // GDFHeader
 class GDF1Header

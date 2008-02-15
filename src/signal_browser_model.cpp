@@ -37,7 +37,7 @@ namespace BioSig_
 // constructor
 SignalBrowserModel::SignalBrowserModel(FileSignalReader& reader,
                                        MainWindowModel& main_window_model)
-: basic_header_(reader),
+: basic_header_(reader.getBasicHeader()),
   signal_buffer_(reader),
   log_stream_(0),
   main_window_model_(main_window_model),
@@ -163,7 +163,7 @@ void SignalBrowserModel::addChannel(uint32 channel_nr)
     {
         return;
     }
-    if (channel_nr >= basic_header_.getNumberChannels())
+    if (channel_nr >= basic_header_->getNumberChannels())
     {
         return; // illegal channel number
     }
@@ -172,7 +172,7 @@ void SignalBrowserModel::addChannel(uint32 channel_nr)
          return; // already added
     }
 
-    const SignalChannel& signal_channel = basic_header_.getChannel(channel_nr);
+    const SignalChannel& signal_channel = basic_header_->getChannel(channel_nr);
 
     // generate signal canvas item
     SignalCanvasItem* signal_item
@@ -870,7 +870,7 @@ void SignalBrowserModel::changeSelectedEventChannel()
     QStringList channel_list;
     channel_list.append(tr("All Channels"));
     for (uint32 channel_nr = 0;
-         channel_nr < basic_header_.getNumberChannels();
+         channel_nr < basic_header_->getNumberChannels();
          channel_nr++)
     {
         if (isChannelShown(channel_nr))
@@ -881,7 +881,7 @@ void SignalBrowserModel::changeSelectedEventChannel()
             }
             channel_list.append(
                 QString("(%1) ").arg(channel_nr + 1) +
-                basic_header_.getChannel(channel_nr).getLabel());
+                basic_header_->getChannel(channel_nr).getLabel());
         }
     }
 
@@ -921,7 +921,7 @@ void SignalBrowserModel::copySelectedEventToChannels()
     SignalEvent* event = signal_buffer_.getEvent(id);
     CopyEventDialog copy_event_dialog(basic_header_, signal_browser_);
     for (uint32 channel_nr = 0;
-         channel_nr < basic_header_.getNumberChannels();
+         channel_nr < basic_header_->getNumberChannels();
          channel_nr++)
     {
         if ((int32)channel_nr != event->getChannel() &&
@@ -942,7 +942,7 @@ void SignalBrowserModel::copySelectedEventToChannels()
 
     // generate copies
     for (uint32 channel_nr = 0;
-         channel_nr < basic_header_.getNumberChannels();
+         channel_nr < basic_header_->getNumberChannels();
          channel_nr++)
     {
         if (copy_event_dialog.isSelected(channel_nr))

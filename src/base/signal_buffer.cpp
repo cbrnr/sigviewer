@@ -19,14 +19,14 @@ SignalBuffer::SignalBuffer(FileSignalReader& reader)
    state_(STATE_READY),
    next_event_id_(0)
 {
-    float64 rec_duration = signal_reader_.getRecordDuration();
+    float64 rec_duration = signal_reader_.getBasicHeader()->getRecordDuration();
     records_per_block_ = max((uint32)(1.0 / rec_duration + 0.5), 1);
     if (records_per_block_ % 2 != 0)
     {
         records_per_block_++;
     }
     block_duration_ = records_per_block_ * rec_duration;
-    uint32 number_records = signal_reader_.getNumberRecords();
+    uint32 number_records = signal_reader_.getBasicHeader()->getNumberRecords();
     number_blocks_ = (number_records + records_per_block_ - 1) /
                      records_per_block_;
 }
@@ -97,9 +97,9 @@ void SignalBuffer::addChannel(uint32 channel_nr)
         return; // channel already buffered
     }
 
-    uint32 samples_per_record = signal_reader_.getChannel(channel_nr)
+    uint32 samples_per_record = signal_reader_.getBasicHeader()->getChannel(channel_nr)
                                     .getSamplesPerRecord();
-    uint32 samples = signal_reader_.getNumberRecords() * samples_per_record;
+    uint32 samples = signal_reader_.getBasicHeader()->getNumberRecords() * samples_per_record;
     uint32 block_size = records_per_block_ * samples_per_record;
 
     SubBuffers* sub_buffers = new SubBuffers();
@@ -354,7 +354,7 @@ void SignalBuffer::removeEvent(uint32 event_id)
 // get event samplerate
 uint32 SignalBuffer::getEventSamplerate() const
 {
-    return signal_reader_.getEventSamplerate();
+    return signal_reader_.getBasicHeader()->getEventSamplerate();
 }
 
 // get signal data block

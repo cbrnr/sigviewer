@@ -6,6 +6,7 @@
 #include "base/user_types.h"
 
 #include <QDialog>
+#include <QPointer>
 
 class QPushButton;
 class QSpinBox;
@@ -26,7 +27,7 @@ public:
         NO_CHANNEL = -1
     };
 
-    GoToDialog(BasicHeader& header, QWidget* parent = 0);
+    GoToDialog(QPointer<BasicHeader> header, QWidget* parent = 0);
 
     void loadSettings();
     void saveSettings();
@@ -41,7 +42,7 @@ private:
     GoToDialog(const GoToDialog&);
     const GoToDialog& operator=(const GoToDialog&);
 
-    BasicHeader& basic_header_;
+    QPointer<BasicHeader> basic_header_;
     QPushButton* ok_button_;
     QPushButton* cancel_button_;
     QSpinBox* sec_spinbox_;

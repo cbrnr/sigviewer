@@ -32,6 +32,9 @@ public:
                              SignalDataBlockPtrIterator end,
                              uint32 start_record);
     virtual void loadEvents(SignalEventVector& event_vector);
+    
+    virtual QPointer<BasicHeader> getBasicHeader ();
+    
     virtual bool loadRawRecords(float64** record_data, uint32 start_record,
                                 uint32 records);
 

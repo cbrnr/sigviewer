@@ -7,6 +7,7 @@
 #include "signal_event.h"
 
 #include <QVector>
+#include <QPointer>
 
 class QTextStream;
 class QString;
@@ -17,7 +18,7 @@ namespace BioSig_
 class SignalDataBlock;
 
 // abstract signal reader
-class FileSignalReader : public BasicHeader
+class FileSignalReader
 {
 public:
     typedef QVector<SignalEvent> SignalEventVector;
@@ -37,6 +38,8 @@ public:
                              SignalDataBlockPtrIterator end,
                              uint32 start_record) = 0;
     virtual void loadEvents(SignalEventVector& event_vector) = 0;
+    
+    virtual QPointer<BasicHeader> getBasicHeader () = 0;
     
     //-------------------------------------------------------------------------
     ///

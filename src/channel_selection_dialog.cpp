@@ -13,7 +13,7 @@ namespace BioSig_
 {
 
 // constructor
-ChannelSelectionDialog::ChannelSelectionDialog(BasicHeader& header,
+ChannelSelectionDialog::ChannelSelectionDialog(QPointer<BasicHeader> header,
                                                QWidget* parent)
  : QDialog(parent),
    basic_header_(header)
@@ -78,10 +78,10 @@ void ChannelSelectionDialog::saveSettings()
 void ChannelSelectionDialog::buildChannelList()
 {
     for (uint32 channel_nr = 0;
-         channel_nr < basic_header_.getNumberChannels();
+         channel_nr < basic_header_->getNumberChannels();
          channel_nr++)
     {
-        const SignalChannel& channel = basic_header_.getChannel(channel_nr);
+        const SignalChannel& channel = basic_header_->getChannel(channel_nr);
         channel_list_widget_->addItem(QString("(%1) %2").arg(channel_nr + 1)
                                             .arg(channel.getLabel()));
     }

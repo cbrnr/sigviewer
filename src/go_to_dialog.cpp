@@ -16,7 +16,7 @@ namespace BioSig_
 {
 
 // constructor
-GoToDialog::GoToDialog(BasicHeader& header, QWidget* parent)
+GoToDialog::GoToDialog(QPointer<BasicHeader> header, QWidget* parent)
  : QDialog(parent),
    basic_header_(header)
 {
@@ -25,8 +25,8 @@ GoToDialog::GoToDialog(BasicHeader& header, QWidget* parent)
     top_layout->setMargin(10);
     top_layout->setSpacing(10);
     QGridLayout* input_layout = new QGridLayout(top_layout);
-    int32 duration = (int32)(basic_header_.getNumberRecords() * 
-                             basic_header_.getRecordDuration());
+    int32 duration = (int32)(basic_header_->getNumberRecords() * 
+                             basic_header_->getRecordDuration());
     sec_spinbox_ = new QSpinBox(this);
 	sec_spinbox_->setMinimum(0);    
     sec_spinbox_->setMaximum(duration);
@@ -90,7 +90,7 @@ int32 GoToDialog::getChannelIndex()
 //set channel shown
 void GoToDialog::setChannelShown(uint32 channel_nr)
 {
-    const SignalChannel& channel = basic_header_.getChannel(channel_nr);
+    const SignalChannel& channel = basic_header_->getChannel(channel_nr);
     channel_combobox_->addItem(QString("(%1) %2").arg(channel_nr + 1)
                                         .arg(channel.getLabel()));
 }

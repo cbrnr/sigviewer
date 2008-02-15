@@ -50,11 +50,22 @@ const QString& BasicHeader::getType() const
     return type_;
 }
 
+void BasicHeader::setType (QString const &type)
+{
+    type_ = type;
+}
+
 // get version
 const QString& BasicHeader::getVersion() const
 {
     return version_;
 }
+
+void BasicHeader::setVersion (QString const &version)
+{
+    version_ = version;
+}
+
 
 // get recording time
 const QDateTime& BasicHeader::getRecordingTime() const
@@ -80,16 +91,41 @@ int64 BasicHeader::getNumberRecords() const
     return number_records_;
 }
 
+void BasicHeader::setNumberRecords (int64 number_records)
+{
+    number_records_ = number_records;
+}
+
 // get record duration
 float64 BasicHeader::getRecordDuration() const
 {
     return record_duration_;
 }
 
+void BasicHeader::setRecordDuration (float64 record_duration)
+{
+    record_duration_ = record_duration;
+}
+
+uint32 BasicHeader::getRecordSize() const
+{
+    return record_size_;
+}
+
+void BasicHeader::setRecordSize (uint32 record_size)
+{
+    record_size_ = record_size;
+}
+
 // get full file-name
 const QString& BasicHeader::getFullFileName() const
 {
     return full_file_name_;
+}
+
+void BasicHeader::setFullFileName (QString const &full_file_name)
+{
+    full_file_name_ = full_file_name;
 }
 
 // get file-name
@@ -120,6 +156,11 @@ const QString BasicHeader::getFileExtension() const
 uint32 BasicHeader::getFileSize() const
 {
     return file_size_;
+}
+
+void BasicHeader::setFileSize(uint32 file_size)
+{
+    file_size_ = file_size;
 }
 
 // get patient name
@@ -176,6 +217,20 @@ uint32 BasicHeader::getNumberChannels() const
     return number_channels_;
 }
 
+void BasicHeader::setNumberChannels (uint32 number_channels)
+{
+    number_channels_ = number_channels;
+}
+
+uint32 BasicHeader::getRecordsPosition() const
+{
+    return records_position_;
+}
+
+void BasicHeader::setRecordsPosition (uint32 records_position)
+{
+    records_position_ = records_position;
+}
 
 // get channel
 const SignalChannel& BasicHeader::getChannel(uint32 channel_nr) const
@@ -185,16 +240,38 @@ const SignalChannel& BasicHeader::getChannel(uint32 channel_nr) const
                                           : *channel_vector_[channel_nr];
 }
 
+SignalChannel *BasicHeader::getChannelPointer(uint32 channel_nr) const
+{
+    // TODO: check what hapens if no channel is found!!!!
+    return channel_nr >= number_channels_ ? (*channel_vector_.end())
+                                          : channel_vector_[channel_nr];
+}
+
+void BasicHeader::addChannel (SignalChannel *channel)
+{
+    channel_vector_ << channel;
+}
+
 // get number of events
 uint32 BasicHeader::getNumberEvents() const
 {
     return number_events_;
 }
 
+void BasicHeader::setNumberEvents (uint32 number_events)
+{
+    number_events_ = number_events;
+}
+
 // get event samplerate
 uint32 BasicHeader::getEventSamplerate() const
 {
     return event_sample_rate_;
+}
+
+void BasicHeader::setEventSamplerate (uint32 event_sample_rate)
+{
+    event_sample_rate_ = event_sample_rate;
 }
 
 // reset basic header

@@ -13,7 +13,7 @@ namespace BioSig_
 {
 
 // constructor
-CopyEventDialog::CopyEventDialog(BasicHeader& header,
+CopyEventDialog::CopyEventDialog(QPointer<BasicHeader> header,
                                  QWidget* parent)
  : QDialog(parent),
    basic_header_(header)
@@ -73,7 +73,7 @@ bool CopyEventDialog::isSelected(uint32 channel_nr)
 // add selectable channel
 void CopyEventDialog::addSelectableChannel(uint32 channel_nr)
 {
-    const SignalChannel& channel = basic_header_.getChannel(channel_nr);
+    const SignalChannel& channel = basic_header_->getChannel(channel_nr);
     channel_list_widget_->addItem(QString("(%1) %2").arg(channel_nr + 1)
                                             .arg(channel.getLabel()));
 }

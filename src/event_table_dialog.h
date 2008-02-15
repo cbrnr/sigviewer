@@ -7,6 +7,7 @@
 
 #include <qdialog.h>
 #include <QAbstractTableModel>
+#include <QPointer>
 
 class QPushButton;
 class QTableView;
@@ -23,7 +24,7 @@ class EventTableDialog : public QDialog
     Q_OBJECT
 public:
     EventTableDialog(SignalBrowserModel& browser_model,
-                     BasicHeader& basic_header, QWidget* parent = 0);
+                     QPointer<BasicHeader> basic_header, QWidget* parent = 0);
 
     void loadSettings();
     void saveSettings();
@@ -86,7 +87,7 @@ private:
     void buildEventTable();
 
     SignalBrowserModel& signal_browser_model_;
-    BasicHeader& basic_header_;
+    QPointer<BasicHeader> basic_header_;
     QTableView *event_table_view_;
     TableModel *event_table_model_;
     QPushButton* close_button_;

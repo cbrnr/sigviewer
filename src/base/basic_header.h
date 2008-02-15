@@ -34,19 +34,27 @@ public:
 
     // basic
     const QString& getType() const;
+    void setType (QString const &type);
     const QString& getVersion() const;
+    void setVersion (QString const &version);
     const QDateTime& getRecordingTime() const;
     const QString& getReference() const;
     bool isTriggered() const;
     int64 getNumberRecords() const;
+    void setNumberRecords (int64 number_records);
     float64 getRecordDuration() const;
+    void setRecordDuration (float64 record_duration);
+    uint32 getRecordSize() const;
+    void setRecordSize (uint32 record_size);
 
     // file
     const QString& getFullFileName() const;
+    void setFullFileName (QString const &full_file_name);
     const QString getFileName() const;
     const QString getFilePath() const;
     const QString getFileExtension() const;
     uint32 getFileSize() const;
+    void setFileSize (uint32 file_size);
 
     // patient
     const QString& getPatientName() const;
@@ -60,16 +68,24 @@ public:
 
     // channels
     uint32 getNumberChannels() const;
+    void setNumberChannels (uint32 number_channels);
     const SignalChannel& getChannel(uint32 channel_nr) const;
-
+    SignalChannel *getChannelPointer(uint32 channel_nr) const;
+    void addChannel (SignalChannel *channel);
+    uint32 getRecordsPosition() const;
+    void setRecordsPosition (uint32 records_position);
+    
     // events
     uint32 getNumberEvents() const;
+    void setNumberEvents (uint32 number_events);
     uint32 getEventSamplerate() const;
+    void setEventSamplerate (uint32 event_sample_rate);
 
+    void resetBasicHeader();
 protected:
     typedef QVector<SignalChannel*> SignalChannelPtrVector;
 
-    void resetBasicHeader();
+
 
     // basic
     QString type_;

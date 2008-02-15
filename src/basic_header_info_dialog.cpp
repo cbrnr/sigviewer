@@ -15,7 +15,7 @@ namespace BioSig_
 {
 
 // constructor
-BasicHeaderInfoDialog::BasicHeaderInfoDialog(BasicHeader& header,
+BasicHeaderInfoDialog::BasicHeaderInfoDialog(QPointer<BasicHeader> header,
                                              QWidget* parent)
  : QDialog(parent),
    basic_header_(header)
@@ -87,24 +87,24 @@ void BasicHeaderInfoDialog::buildTree()
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Type"));
-    tmp_item->setText(1, basic_header_.getType());
+    tmp_item->setText(1, basic_header_->getType());
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Version"));
-    tmp_item->setText(1, basic_header_.getVersion());
+    tmp_item->setText(1, basic_header_->getVersion());
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Recording Time"));
-    tmp_item->setText(1, basic_header_.getRecordingTime().toString("dd.MM.yyyy hh:mm:ss"));
+    tmp_item->setText(1, basic_header_->getRecordingTime().toString("dd.MM.yyyy hh:mm:ss"));
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Triggered"));
-    tmp_item->setText(1, basic_header_.isTriggered() ? tr("yes") : tr("no"));          
+    tmp_item->setText(1, basic_header_->isTriggered() ? tr("yes") : tr("no"));          
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Recording"));
-    tmp_item->setText(1, QString::number(basic_header_.getRecordDuration() * 
-                                      basic_header_.getNumberRecords()));     
+    tmp_item->setText(1, QString::number(basic_header_->getRecordDuration() * 
+                                      basic_header_->getNumberRecords()));     
     tmp_item->setText(2, tr("seconds"));
 
     // file
@@ -115,19 +115,19 @@ void BasicHeaderInfoDialog::buildTree()
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Name"));
-    tmp_item->setText(1, basic_header_.getFileName());
+    tmp_item->setText(1, basic_header_->getFileName());
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Path"));
-    tmp_item->setText(1, basic_header_.getFilePath());
+    tmp_item->setText(1, basic_header_->getFilePath());
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Extension"));
-    tmp_item->setText(1, basic_header_.getFileExtension());
+    tmp_item->setText(1, basic_header_->getFileExtension());
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Size"));
-    tmp_item->setText(1, QString::number(basic_header_.getFileSize() / 1024));
+    tmp_item->setText(1, QString::number(basic_header_->getFileSize() / 1024));
     tmp_item->setText(0, tr("kByte"));
 
     // patient
@@ -138,39 +138,39 @@ void BasicHeaderInfoDialog::buildTree()
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Name"));
-    tmp_item->setText(1, basic_header_.getPatientName());
+    tmp_item->setText(1, basic_header_->getPatientName());
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Age"));
-    tmp_item->setText(1, basic_header_.getPatientHandedness());
+    tmp_item->setText(1, basic_header_->getPatientHandedness());
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Sex"));
-    tmp_item->setText(1, basic_header_.getPatientAge() == -1 ? "" : 
-                                QString::number(basic_header_.getPatientAge()));
+    tmp_item->setText(1, basic_header_->getPatientAge() == -1 ? "" : 
+                                QString::number(basic_header_->getPatientAge()));
     tmp_item->setText(2, tr("years"));
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Handedness"));
-    tmp_item->setText(1, basic_header_.getPatientHandedness());
+    tmp_item->setText(1, basic_header_->getPatientHandedness());
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Medication"));
-    tmp_item->setText(1, basic_header_.getPatientMedication());
+    tmp_item->setText(1, basic_header_->getPatientMedication());
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Classification"));
-    tmp_item->setText(1, basic_header_.getPatientClassification());
+    tmp_item->setText(1, basic_header_->getPatientClassification());
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Doctor ID"));
-    tmp_item->setText(1, basic_header_.getDoctorId() == 0 ? "" :
-                                QString::number(basic_header_.getDoctorId()));
+    tmp_item->setText(1, basic_header_->getDoctorId() == 0 ? "" :
+                                QString::number(basic_header_->getDoctorId()));
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Hospital ID"));
-    tmp_item->setText(2, basic_header_.getHospitalId() == 0 ? "" :
-                                QString::number(basic_header_.getHospitalId()));
+    tmp_item->setText(2, basic_header_->getHospitalId() == 0 ? "" :
+                                QString::number(basic_header_->getHospitalId()));
 
     // events
     root_item = new QTreeWidgetItem(info_tree_widget_);
@@ -180,11 +180,11 @@ void BasicHeaderInfoDialog::buildTree()
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Number"));
-    tmp_item->setText(1, QString::number(basic_header_.getNumberEvents()));
+    tmp_item->setText(1, QString::number(basic_header_->getNumberEvents()));
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Sample Rate"));
-    tmp_item->setText(1, QString::number(basic_header_.getEventSamplerate()));
+    tmp_item->setText(1, QString::number(basic_header_->getEventSamplerate()));
     tmp_item->setText(2, tr("Hz"));
 
     // channels
@@ -194,11 +194,11 @@ void BasicHeaderInfoDialog::buildTree()
     info_tree_widget_->setItemExpanded(root_item, true);
     
     for (uint32 channel_nr = 0;
-         channel_nr < basic_header_.getNumberChannels();
+         channel_nr < basic_header_->getNumberChannels();
          channel_nr++)
     {
         QTreeWidgetItem* channel_item;
-        const SignalChannel& channel = basic_header_.getChannel(channel_nr);
+        const SignalChannel& channel = basic_header_->getChannel(channel_nr);
         channel_item = new QTreeWidgetItem(root_item);
         channel_item->setText(0, QString("(%1) %2").arg(channel_nr + 1)
                                             .arg(channel.getLabel()));
@@ -212,7 +212,7 @@ void BasicHeaderInfoDialog::buildTree()
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
         tmp_item->setText(0, tr("Sample Rate"));
         tmp_item->setText(1, QString::number(channel.getSamplesPerRecord() /
-                                          basic_header_.getRecordDuration())); 
+                                          basic_header_->getRecordDuration())); 
         tmp_item->setText(2, tr("Hz"));
         tmp_item = new QTreeWidgetItem(channel_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);

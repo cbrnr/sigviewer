@@ -4,6 +4,7 @@
 #define BASIC_HEADER_INFO_DIALOG_H
 
 #include <QDialog>
+#include <QPointer>
 
 class QTreeWidget;
 class QPushButton;
@@ -18,7 +19,7 @@ class BasicHeaderInfoDialog : public QDialog
 {
     Q_OBJECT
 public:
-    BasicHeaderInfoDialog(BasicHeader& header, QWidget* parent = 0);
+    BasicHeaderInfoDialog(QPointer<BasicHeader> header, QWidget* parent = 0);
 
     void loadSettings();
     void saveSettings();
@@ -31,7 +32,7 @@ private:
 
     void buildTree();
 
-    BasicHeader& basic_header_;
+    QPointer<BasicHeader> basic_header_;
     QTreeWidget* info_tree_widget_;
     QPushButton* close_button_;
 };

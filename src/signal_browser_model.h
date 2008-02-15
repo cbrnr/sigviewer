@@ -10,6 +10,7 @@
 #include <QColor>
 #include <QMap>
 #include <QList>
+#include <QPointer>
 
 class QRect;
 class QTextStream;
@@ -140,7 +141,7 @@ private:
     bool checkSignalBrowserPtr(const QString function);
 
     SignalBrowser* signal_browser_;
-    BasicHeader& basic_header_;
+    QPointer<BasicHeader> basic_header_;
     GUISignalBuffer signal_buffer_;
     QTextStream* log_stream_; // no auto_ptr
     MainWindowModel& main_window_model_;

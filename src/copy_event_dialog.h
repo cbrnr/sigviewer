@@ -6,6 +6,7 @@
 #include "base/user_types.h"
 
 #include <QDialog>
+#include <QPointer>
 
 class QListWidget;
 class QPushButton;
@@ -20,7 +21,7 @@ class CopyEventDialog : public QDialog
 {
     Q_OBJECT
 public:
-    CopyEventDialog(BasicHeader& header, QWidget* parent = 0);
+    CopyEventDialog(QPointer<BasicHeader> header, QWidget* parent = 0);
 
     void loadSettings();
     void saveSettings();
@@ -34,7 +35,7 @@ private:
     CopyEventDialog(const CopyEventDialog&);
     const CopyEventDialog& operator=(const CopyEventDialog&);
 
-    BasicHeader& basic_header_;
+    QPointer<BasicHeader> basic_header_;
     QListWidget* channel_list_widget_;
     QPushButton* ok_button_;
     QPushButton* cancel_button_;

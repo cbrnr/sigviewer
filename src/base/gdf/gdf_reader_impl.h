@@ -2,6 +2,7 @@
 #define GDF_READER_IMPL_H_
 
 #include "../basic_header.h"
+#include "../file_signal_reader.h"
 
 #include <QPointer>
 
@@ -30,9 +31,9 @@ public:
     
     virtual bool loadEventTableHeader () = 0;
     
-//    virtual void loadSignals(SignalDataBlockPtrIterator begin, 
-//                         SignalDataBlockPtrIterator end,
-//                         uint32 start_record) = 0;
+    virtual void loadSignals(FileSignalReader::SignalDataBlockPtrIterator begin, 
+                             FileSignalReader::SignalDataBlockPtrIterator end,
+                         uint32 start_record) = 0;
 //    virtual void loadEvents(SignalEventVector& event_vector) = 0;
 //    
 //    virtual bool loadRawRecords(float64** record_data, uint32 start_record,

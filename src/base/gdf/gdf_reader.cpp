@@ -54,6 +54,11 @@ bool GDFReader::isOpen()
     return file_->isOpen();
 }
 
+QPointer<BasicHeader> GDFReader::getBasicHeader ()
+{
+    return basic_header_;
+}
+
 // close
 void GDFReader::close()
 {
@@ -61,10 +66,10 @@ void GDFReader::close()
     {
         if (log_stream_)
         {
-            *log_stream_ << "GDFReader::close '" << full_file_name_ << "'\n";
+            *log_stream_ << "GDFReader::close '" << basic_header_->getFullFileName() << "'\n";
         }
         file_->close();
-        resetBasicHeader();
+        basic_header_->resetBasicHeader();
     }
 }
 
@@ -77,7 +82,7 @@ bool GDFReader::open(const QString& file_name)
         if (log_stream_)
         {
             *log_stream_ << "GDFReader::open '" << file_name << "' Error: '"
-                        << full_file_name_ << "' not closed\n";
+                        << basic_header_->getFullFileName() << "' not closed\n";
         }
         return false;
     }
@@ -100,20 +105,22 @@ bool GDFReader::open(const QString& file_name)
     char version_id [8];
     readStreamChars(version_id, *file_, sizeof(version_id));
     if (strncmp(version_id, "GDF 1.", 6) == 0)
+    {
         reader_impl_.reset(new GDF1ReaderImpl (file_, basic_header_));
-//    else if (strncmp(version_id, "GDF 2.", 6) != 0)
-//        reader_impl_.reset(new GDF2ReaderImpl ());
+        basic_header_->setVersion(QString (version_id));
+    }
     else
     {
         file_->close ();
-        resetBasicHeader();
+        basic_header_->resetBasicHeader();
         return false;
     }
+    
     if (!reader_impl_->loadFixedHeader() ||
         !reader_impl_->loadSignalHeaders())
     {
         file_->close ();
-        resetBasicHeader ();
+        basic_header_->resetBasicHeader ();
         return false;
     }
 
@@ -342,6 +349,7 @@ void GDFReader::loadSignals(SignalDataBlockPtrIterator begin,
                             SignalDataBlockPtrIterator end,
                             uint32 start_record)
 {
+    reader_impl_->loadSignals(begin, end, start_record);
 //    if (!file_.isOpen())
 //    {
 //        if (log_stream_)

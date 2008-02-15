@@ -49,7 +49,7 @@ bool GDFWriter::save(FileSignalReader& file_signal_reader,
 {
     file_signal_reader_ = &file_signal_reader;
     QString save_file_name = file_name;
-    if (file_name == file_signal_reader_->getFullFileName())
+    if (file_name == file_signal_reader_->getBasicHeader()->getFullFileName())
     {
         if (!save_signals)
         {
@@ -112,25 +112,25 @@ void GDFWriter::saveFixedHeader(bool save_signals)
 {
     // get header from signal reader
     strcpy(gdf_version_id_, "GDF 1.25");
-    strncpy(gdf_patient_id_, file_signal_reader_->getPatientName().toAscii().data(),
+    strncpy(gdf_patient_id_, file_signal_reader_->getBasicHeader()->getPatientName().toAscii().data(),
             sizeof(gdf_patient_id_));
-    QString tmp = file_signal_reader_->getRecordingTime().toString("yyyyMMddhhmmss") + "00";
+    QString tmp = file_signal_reader_->getBasicHeader()->getRecordingTime().toString("yyyyMMddhhmmss") + "00";
     memcpy(gdf_start_recording_, tmp.toAscii().data(), 16);
     if (save_signals)
     {
-        gdf_header_size_ += file_signal_reader_->getNumberChannels() *
+        gdf_header_size_ += file_signal_reader_->getBasicHeader()->getNumberChannels() *
                             GDF1Header::SIZE;
     }
     gdf_equipment_provider_id_ = 0x0553696756696577LL;
-    gdf_labratory_id_ = file_signal_reader_->getHospitalId();
-    gdf_technican_id_ = file_signal_reader_->getDoctorId();
+    gdf_labratory_id_ = file_signal_reader_->getBasicHeader()->getHospitalId();
+    gdf_technican_id_ = file_signal_reader_->getBasicHeader()->getDoctorId();
     if (save_signals)
     {
-        gdf_number_data_records_ = file_signal_reader_->getNumberRecords();
-        float2rational(file_signal_reader_->getRecordDuration(),
+        gdf_number_data_records_ = file_signal_reader_->getBasicHeader()->getNumberRecords();
+        float2rational(file_signal_reader_->getBasicHeader()->getRecordDuration(),
                        gdf_duration_data_record_[0],
                        gdf_duration_data_record_[1]);
-        gdf_number_signals_ = file_signal_reader_->getNumberChannels();
+        gdf_number_signals_ = file_signal_reader_->getBasicHeader()->getNumberChannels();
     }
 
     // write header
@@ -152,11 +152,11 @@ void GDFWriter::saveFixedHeader(bool save_signals)
 void GDFWriter::saveSignalHeaders()
 {
     // get signal headers from file signal reader
-    uint32 number_channels = file_signal_reader_->getNumberChannels();
+    uint32 number_channels = file_signal_reader_->getBasicHeader()->getNumberChannels();
     for (uint32 channel_nr = 0; channel_nr < number_channels; channel_nr++)
     {
         const SignalChannel& channel
-            = file_signal_reader_->getChannel(channel_nr);
+            = file_signal_reader_->getBasicHeader()->getChannel(channel_nr);
         GDFSignalHeader gdf_signal_header;
         strncpy(gdf_signal_header.label, channel.getLabel().toAscii().data(),
                 sizeof(gdf_signal_header.label));
@@ -286,19 +286,19 @@ bool GDFWriter::saveSignals()
 {
     // allocate buffers
     int32 record_size = 0;
-    uint32 number_channels = file_signal_reader_->getNumberChannels();
+    uint32 number_channels = file_signal_reader_->getBasicHeader()->getNumberChannels();
     float64** float_buffer = new float64*[number_channels];
     for (uint32 channel_nr = 0; channel_nr < number_channels; channel_nr++)
     {
         const SignalChannel& channel
-            = file_signal_reader_->getChannel(channel_nr);
+            = file_signal_reader_->getBasicHeader()->getChannel(channel_nr);
         float_buffer[channel_nr] = new float64[channel.getSamplesPerRecord()];
         record_size += channel.typeBitSize() / 8;
     }
     int8* record_buffer = new int8[record_size];
 
     // save all records
-    uint32 number_records = file_signal_reader_->getNumberRecords();
+    uint32 number_records = file_signal_reader_->getBasicHeader()->getNumberRecords();
     for (uint32 record_nr = 0; record_nr < number_records; record_nr++)
     {
         if (!file_signal_reader_->loadRawRecords(float_buffer, record_nr, 1))
@@ -306,7 +306,7 @@ bool GDFWriter::saveSignals()
         for (uint32 channel_nr = 0; channel_nr < number_channels; channel_nr++)
         {
             const SignalChannel& channel
-                = file_signal_reader_->getChannel(channel_nr);
+                = file_signal_reader_->getBasicHeader()->getChannel(channel_nr);
             convertData(float_buffer[channel_nr], record_buffer, channel);
         }
         writeStreamValues(file_, record_buffer, record_size);
@@ -327,7 +327,7 @@ void GDFWriter::saveEvents(SignalEventVector& event_vector)
 {
     // get event tabel header from file signal reader
     gdf_event_table_type_ = EXTENDED_EVENT_TABLE;
-    uint32 tmp = file_signal_reader_->getEventSamplerate();
+    uint32 tmp = file_signal_reader_->getBasicHeader()->getEventSamplerate();
     gdf_event_table_sample_rate_[0] = (uint8)tmp;
     gdf_event_table_sample_rate_[1] = (uint8)(tmp >> 8);
     gdf_event_table_sample_rate_[2] = (uint8)(tmp >> 16);
