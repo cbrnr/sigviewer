@@ -27,8 +27,8 @@ BasicHeader::BasicHeader()
   number_channels_(0),
   records_position_(0),
   number_events_(0),
-  event_sample_rate_(0),
-  event_table_position_(0)
+  event_sample_rate_(0)
+  //event_table_position_(0)
 {
     // nothing
 }
@@ -299,7 +299,7 @@ void BasicHeader::resetBasicHeader()
     records_position_ = 0;
     number_events_ = 0;
     event_sample_rate_ = 0;
-    event_table_position_ = 0;
+    //event_table_position_ = 0;
     for (SignalChannelPtrVector::iterator it = channel_vector_.begin();
          it != channel_vector_.end();
          it++)

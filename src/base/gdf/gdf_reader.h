@@ -43,11 +43,6 @@ private:
     GDFReader(const GDFReader& src);
     const GDFReader& operator=(const GDFReader& src);
 
-
-    bool loadFixedHeader(const QString& file_name);
-    bool loadSignalHeaders(const QString& file_name);
-    void loadEventTableHeader();
-
     QPointer<QFile> file_;
     QPointer<BasicHeader> basic_header_;
     int8* buffer_;

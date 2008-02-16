@@ -34,10 +34,10 @@ public:
     virtual void loadSignals(FileSignalReader::SignalDataBlockPtrIterator begin, 
                              FileSignalReader::SignalDataBlockPtrIterator end,
                          uint32 start_record) = 0;
-//    virtual void loadEvents(SignalEventVector& event_vector) = 0;
-//    
-//    virtual bool loadRawRecords(float64** record_data, uint32 start_record,
-//                            uint32 records);
+    virtual void loadEvents(FileSignalReader::SignalEventVector& event_vector) = 0;
+    
+    virtual bool loadRawRecords(float64** record_data, uint32 start_record,
+                            uint32 records) = 0;
 
 private:
     // not allowed

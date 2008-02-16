@@ -28,11 +28,18 @@ public:
     virtual void loadSignals (FileSignalReader::SignalDataBlockPtrIterator begin,
                               FileSignalReader::SignalDataBlockPtrIterator end,
                              uint32 start_record);
+    
+    virtual void loadEvents(FileSignalReader::SignalEventVector& event_vector);
+    
+    virtual bool loadRawRecords(float64** record_data, uint32 start_record,
+                            uint32 records);
+    
 private:
     QPointer<QFile> file_;
     QPointer<BasicHeader> basic_header_;
     GDF1Header gdf_header_;
     int8 *buffer_;
+    uint32 event_table_position_;
 };
 
 

@@ -119,7 +119,9 @@ protected:
     // events
     uint32 number_events_;
     uint32 event_sample_rate_;
-    uint32 event_table_position_;
+    
+    // moved to reader-implementationsn
+    // uint32 event_table_position_; 
 };
 
 } // namespace BioSig_

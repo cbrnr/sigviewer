@@ -166,7 +166,53 @@ bool GDF1ReaderImpl::loadSignalHeaders ()
 
 bool GDF1ReaderImpl::loadEventTableHeader ()
 {
-    return false;
+    qDebug( "GDFReader::loadEventTableHeader() begin" );
+    event_table_position_ = (uint32)gdf_header_.gdf_header_size_ + basic_header_->getRecordSize ()
+                            * (uint32)gdf_header_.gdf_number_data_records_;
+    qDebug( "GDFReader::loadEventTableHeader() 1" );
+    file_->seek(event_table_position_);
+    qDebug( "GDFReader::loadEventTableHeader() 2" );
+    event_table_position_ += readStreamValue(gdf_header_.gdf_event_table_type_,
+                                             *file_);
+    event_table_position_ += readStreamValues(gdf_header_.gdf_event_table_sample_rate_,
+                                             *file_, sizeof (gdf_header_.gdf_event_table_sample_rate_));
+    qDebug( "GDFReader::loadEventTableHeader() 3" );
+    event_table_position_ +=
+        readStreamValue(gdf_header_.gdf_number_events_, *file_);
+    qDebug( "GDFReader::loadEventTableHeader() %d", gdf_header_.gdf_number_events_ );
+    uint32 event_sample_rate = basic_header_->getEventSamplerate();
+    if (event_sample_rate == 0)
+    {
+        event_sample_rate = ((uint32)gdf_header_.gdf_event_table_sample_rate_[2] << 16) +
+                             ((uint32)gdf_header_.gdf_event_table_sample_rate_[1] << 8) +
+                             gdf_header_.gdf_event_table_sample_rate_[0];
+    }
+    else
+    {
+        gdf_header_.gdf_event_table_sample_rate_[0] = (uint8)event_sample_rate;
+        gdf_header_.gdf_event_table_sample_rate_[1] = (uint8)(event_sample_rate << 8);
+        gdf_header_.gdf_event_table_sample_rate_[2] = (uint8)(event_sample_rate << 16);
+    }
+    qDebug( "GDFReader::loadEventTableHeader() 5" );
+    basic_header_->setEventSamplerate(event_sample_rate);
+    // calculate number of events
+    uint32 number_events = 0;
+    GDFEvent gdf_event;
+    file_->seek(event_table_position_ + gdf_header_.gdf_number_events_ *
+               sizeof(gdf_event.position));
+    qDebug( "GDFReader::loadEventTableHeader() 6" );
+    for (uint32 event_nr = 0; event_nr < gdf_header_.gdf_number_events_; event_nr++)
+    {
+        readStreamValue(gdf_event.type, *file_);
+        qDebug( "GDFReader::loadEventTableHeader() 7" );
+        if ((gdf_event.type & SignalEvent::EVENT_END) == 0)
+        {
+            number_events++;
+        }
+    }
+    basic_header_->setNumberEvents(number_events);
+    qDebug( "GDFReader::loadEventTableHeader() end" );
+    return true;
 }
 
 void GDF1ReaderImpl::loadSignals (FileSignalReader::SignalDataBlockPtrIterator begin,
@@ -249,6 +295,125 @@ void GDF1ReaderImpl::loadSignals (FileSignalReader::SignalDataBlockPtrIterator b
             }
         }
     }
+}
+    
+void GDF1ReaderImpl::loadEvents(FileSignalReader::SignalEventVector& event_vector)
+{
+    if (!file_->isOpen())
+    {
+//        if (log_stream_)
+//        {
+//            *log_stream_ << "GDFReader::loadEvents Error: not open\n";
+//        }
+        return;
+    }
+
+    // load all gdf-events
+    file_->seek(event_table_position_);
+    QVector<GDFEvent> gdf_events(gdf_header_.gdf_number_events_);
+    QVector<GDFEvent>::iterator iter;
+    for (iter = gdf_events.begin(); iter != gdf_events.end(); iter++)
+    {
+        readStreamValue(iter->position, *file_);
+    }
+    for (iter = gdf_events.begin(); iter != gdf_events.end(); iter++)
+    {
+        readStreamValue(iter->type, *file_);
+    }
+    if (gdf_header_.gdf_event_table_type_ == GDF1Header::EXTENDED_EVENT_TABLE)
+    {
+        for (iter = gdf_events.begin(); iter != gdf_events.end(); iter++)
+        {
+            readStreamValue(iter->channel, *file_);
+        }
+        for (iter = gdf_events.begin(); iter != gdf_events.end(); iter++)
+        {
+            readStreamValue(iter->duration, *file_);
+        }
+    }
+
+    // sort events by position, type and channel
+    qSort(gdf_events); // TODO
+//    std::sort(gdf_events.begin(), gdf_events.end(), std::less<GDFEvent>());
+
+    // store to signal events
+    for (iter = gdf_events.begin(); iter != gdf_events.end(); iter++)
+    {
+        if (iter->type & SignalEvent::EVENT_END)
+        {
+            uint32 start_type = iter->type - SignalEvent::EVENT_END;
+            bool start_found = false;
+            FileSignalReader::SignalEventVector::iterator rev_iter = event_vector.end();
+            while (rev_iter != event_vector.begin())
+            {
+                rev_iter--;
+                if (rev_iter->getType() == start_type &&
+                    rev_iter->getDuration() == SignalEvent::UNDEFINED_DURATION)
+                {
+                    rev_iter->setDuration(iter->position -
+                                          rev_iter->getPosition());
+                    start_found = true;
+                    break;
+                }
+            }
+            if (!start_found)
+            {
+//                if (log_stream_)
+//                {
+//                    *log_stream_ << "GDFReader::loadEvents Warning: unexpected "
+//                                 << " end-event\n";
+//                }
+            }
+        }
+        else
+        {
+            if (gdf_header_.gdf_event_table_type_ == GDF1Header::EXTENDED_EVENT_TABLE)
+            {
+                event_vector << SignalEvent(iter->position, iter->type,
+                                            (int32)iter->channel - 1,
+                                            iter->duration);
+            }
+            else
+            {
+                event_vector << SignalEvent(iter->position, iter->type);
+            }
+        }
+    }
+}
+
+bool GDF1ReaderImpl::loadRawRecords(float64** record_data, uint32 start_record,
+                        uint32 records)
+{
+    if (!file_->isOpen())
+    {
+//        if (log_stream_)
+//        {
+//            *log_stream_ << "GDFReader::loadRawRecord Error: not open\n";
+//        }
+        return false;
+    }
+    if (start_record + records > basic_header_->getNumberRecords())
+    {
+//        if (log_stream_)
+//        {
+//            *log_stream_ << "GDFReader::loadRawRecord Error: invalid record\n";
+//        }
+        return false;
+    }
+
+    file_->seek(basic_header_->getRecordsPosition() + start_record * basic_header_->getRecordSize ());
+    for (uint32 record = 0; record < records; record++)
+    {
+        readStreamValues(buffer_, *file_, basic_header_->getRecordSize ());
+        float64** data = record_data;
+        for (uint32 channel_index = 0; channel_index < basic_header_->getNumberChannels (); ++channel_index, ++data)
+        {
+            SignalChannel* sig = basic_header_->getChannelPointer(channel_index);
+            convertData(buffer_, *data + sig->getSamplesPerRecord() * record,
+                        *sig, sig->getSamplesPerRecord(), false);
+        }
+    }
+    return true;
 }
 
 
