@@ -1015,7 +1015,7 @@ void SignalBrowserModel::removeSelectedEvent()
 // get channel nr
 int32 SignalBrowserModel::getChannelNr(uint32 shown_nr)
 {
-    if (shown_nr >= channel2signal_item_.size())
+    if (static_cast<int32>(shown_nr) >= channel2signal_item_.size())
     {
         return -1;
     }
