@@ -37,7 +37,7 @@ public:
     SignalChannel(uint32 number, const QString& label,
                   uint32 samples_per_record, const QString& physical_dim,
                   float64 physical_minimum, float64 physical_maximum,
-                  int64 digital_minimum, int64 digital_maximum,
+                  float64 digital_minimum, float64 digital_maximum,
                   uint32 data_type, uint32 data_offset,
                   const QString filter_label, float64 lowpass,
                   float64 highpass, bool notch);
@@ -70,9 +70,9 @@ private:
     uint32 samples_per_record_;
     QString physical_dim_;
     float64 physical_maximum_;
-    int64 digital_maximum_;
+    float64 digital_maximum_;
     float64 physical_minimum_;
-    int64 digital_minimum_;
+    float64 digital_minimum_;
     uint32 data_type_;
     uint32 data_offset_;
     float64 scale_;

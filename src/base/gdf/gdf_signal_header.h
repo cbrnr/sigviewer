@@ -29,6 +29,33 @@ struct GDFSignalHeader
     char reserved[32];
 };
 
+// GDFSignalHeader
+struct GDF2SignalHeader
+{
+    enum
+    {
+        SIZE = 256
+    };
+
+    char label[16];
+    char transducer_type[80];
+    char physical_dimension[6]; // obsolete
+    uint16 physical_dimension_code;
+    float64 physical_minimum;
+    float64 physical_maximum;
+    float64 digital_minimum;
+    float64 digital_maximum;
+    char pre_filtering[68]; // obsolete
+    float32 low_pass;
+    float32 high_pass;
+    float32 notch;
+    uint32 samples_per_record;
+    uint32 channel_type;
+    float32 electrode_position[3];
+    uint8 electrode_impedance;
+    char reserved[19];
+};
+
 } // namespace BioSig_
 
 #endif

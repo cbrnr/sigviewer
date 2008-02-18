@@ -29,7 +29,7 @@ bool GDF2ReaderImpl::loadFixedHeader ()
     basic_header_->setType("GDF");
     
     readStreamChars (gdf_header_.patient_identification_, *file_, sizeof(gdf_header_.patient_identification_));
-    readStreamValue (gdf_header_.reserved_1_, *file_);
+    readStreamValues (gdf_header_.reserved_1_, *file_, sizeof(gdf_header_.reserved_1_));
     readStreamValue (gdf_header_.smoking_alcohol_drug_medication, *file_);
     readStreamValue (gdf_header_.weight_in_kg_, *file_);
     readStreamValue (gdf_header_.height_in_cm_, *file_);
@@ -64,7 +64,7 @@ bool GDF2ReaderImpl::loadFixedHeader ()
 //    // mistake in specification: 0x2020.. for undefined integer values
 //    doctor_id_ =  doctor_id_ == 0x2020202020202020LL ? 0 : doctor_id_;
 //    hospital_id_ =  hospital_id_ == 0x2020202020202020LL ? 0 : hospital_id_;
-    basic_header_->setRecordsPosition(static_cast<uint32>(gdf_header_.header_length_));
+    basic_header_->setRecordsPosition(static_cast<uint32>(gdf_header_.header_length_) * 256);
     basic_header_->setNumberChannels(gdf_header_.number_of_signals_);
     
     return true;
@@ -82,8 +82,10 @@ bool GDF2ReaderImpl::loadSignalHeaders ()
     for (sig = gdf_header_.sig_vector_.begin(); sig !=gdf_header_. sig_vector_.end(); sig++)
         readStreamChars(sig->physical_dimension, *file_, sizeof(sig->physical_dimension));
     for (sig = gdf_header_.sig_vector_.begin(); sig != gdf_header_.sig_vector_.end(); sig++)
-        readStreamValue(sig->physical_minimum, *file_);
+        readStreamValue(sig->physical_dimension_code, *file_);
     for (sig = gdf_header_.sig_vector_.begin(); sig != gdf_header_.sig_vector_.end(); sig++)
+        readStreamValue(sig->physical_minimum, *file_);
+    for (sig = gdf_header_.sig_vector_.begin(); sig != gdf_header_.sig_vector_.end(); sig++) 
         readStreamValue(sig->physical_maximum, *file_);
     for (sig = gdf_header_.sig_vector_.begin(); sig != gdf_header_.sig_vector_.end(); sig++)
         readStreamValue(sig->digital_minimum, *file_);
@@ -92,9 +94,19 @@ bool GDF2ReaderImpl::loadSignalHeaders ()
     for (sig = gdf_header_.sig_vector_.begin(); sig != gdf_header_.sig_vector_.end(); sig++)
         readStreamChars(sig->pre_filtering, *file_, sizeof(sig->pre_filtering));
     for (sig = gdf_header_.sig_vector_.begin(); sig != gdf_header_.sig_vector_.end(); sig++)
+        readStreamValue(sig->low_pass, *file_);
+    for (sig = gdf_header_.sig_vector_.begin(); sig != gdf_header_.sig_vector_.end(); sig++)
+        readStreamValue(sig->high_pass, *file_);
+    for (sig = gdf_header_.sig_vector_.begin(); sig != gdf_header_.sig_vector_.end(); sig++)
+        readStreamValue(sig->notch, *file_);
+    for (sig = gdf_header_.sig_vector_.begin(); sig != gdf_header_.sig_vector_.end(); sig++)
         readStreamValue(sig->samples_per_record, *file_);
     for (sig = gdf_header_.sig_vector_.begin(); sig != gdf_header_.sig_vector_.end(); sig++)
         readStreamValue(sig->channel_type, *file_);
+    for (sig = gdf_header_.sig_vector_.begin(); sig != gdf_header_.sig_vector_.end(); sig++)
+        readStreamValues(sig->electrode_position, *file_, sizeof(sig->electrode_position));
+    for (sig = gdf_header_.sig_vector_.begin(); sig != gdf_header_.sig_vector_.end(); sig++)
+        readStreamValue(sig->electrode_impedance, *file_);
     for (sig = gdf_header_.sig_vector_.begin(); sig != gdf_header_.sig_vector_.end(); sig++)
         readStreamValues(sig->reserved, *file_, sizeof(sig->reserved));
     
@@ -116,24 +128,18 @@ bool GDF2ReaderImpl::loadSignalHeaders ()
                                                        sig->digital_maximum,
                                                        sig->channel_type,
                                                        record_size / 8,
-                                                       sig->pre_filtering, -1, -1, false);
+                                                       sig->pre_filtering, 
+                                                       sig->low_pass, 
+                                                       sig->high_pass, 
+                                                       sig->notch);
 
             basic_header_->addChannel(channel);
             event_sample_rate = lcm(event_sample_rate,
                                      sig->samples_per_record);
+
             record_size += channel->typeBitSize() *
-                            sig->samples_per_record;
+            sig->samples_per_record;
             // TODO : signal record-size no multiple of 8 bits
-            if (record_size % 8 != 0)
-            {
-//                if (log_stream_)
-//                {
-//                    *log_stream_ << "GDFReader::open '" << file_name
-//                                 << "' Error: signal record size no multiple of "
-//                                 << "8 bits is not supported\n";
-//                }
-                return false;
-            }
         }
         event_sample_rate *= gdf_header_.duration_data_record_rational_[1];
         
@@ -172,7 +178,6 @@ void GDF2ReaderImpl::loadSignals (FileSignalReader::SignalDataBlockPtrIterator b
 //        }
         return;
     }
-
     file_->seek(basic_header_->getRecordsPosition() + start_record * basic_header_->getRecordSize());
     bool something_done = true;
     for (uint32 rec_nr = start_record; something_done; rec_nr++)
@@ -183,6 +188,7 @@ void GDF2ReaderImpl::loadSignals (FileSignalReader::SignalDataBlockPtrIterator b
             readStreamValues(buffer_, *file_, basic_header_->getRecordSize());
         }
         something_done = false;
+        uint32 position_in_buffer = 0;
         for (FileSignalReader::SignalDataBlockPtrIterator data_block = begin;
              data_block != end;
              data_block++)
@@ -238,6 +244,7 @@ void GDF2ReaderImpl::loadSignals (FileSignalReader::SignalDataBlockPtrIterator b
                           data_block_buffer[samp] < sig->getPhysicalMaximum();
                 }
             }
+            position_in_buffer += samples;
         }
     }
 }

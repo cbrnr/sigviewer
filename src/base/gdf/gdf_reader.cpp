@@ -104,12 +104,12 @@ bool GDFReader::open(const QString& file_name)
     }
     char version_id [8];
     readStreamChars(version_id, *file_, sizeof(version_id));
-//    if (strncmp(version_id, "GDF 2.", 6) == 0 || strncmp(version_id, "GDF 1.9", 7) == 0)
-//    {
-//        reader_impl_.reset(new GDF2ReaderImpl (file_, basic_header_));
-//        basic_header_->setVersion(QString (version_id));
-//    }
-//    else
+    if (strncmp(version_id, "GDF 2.", 6) == 0 || strncmp(version_id, "GDF 1.9", 7) == 0)
+    {
+        reader_impl_.reset(new GDF2ReaderImpl (file_, basic_header_));
+        basic_header_->setVersion(QString (version_id));
+    }
+    else
     if (strncmp(version_id, "GDF 1.", 6) == 0)
     {
         reader_impl_.reset(new GDF1ReaderImpl (file_, basic_header_));

@@ -13,8 +13,8 @@ struct GDF2Header
 {
     static uint32 const SIZE_ = 256;
     char version_id_ [8];
-    char patient_identification_ [80];
-    uint8 reserved_1_;
+    char patient_identification_ [66];
+    uint8 reserved_1_ [10];
     uint8 smoking_alcohol_drug_medication;
     uint8 weight_in_kg_;
     uint8 height_in_cm_;
@@ -35,7 +35,7 @@ struct GDF2Header
     uint16 number_of_signals_;
     uint16 reserved_3_;
     
-    typedef QVector<GDFSignalHeader> GDFSignalHeaderVector;
+    typedef QVector<GDF2SignalHeader> GDFSignalHeaderVector;
     GDFSignalHeaderVector sig_vector_;
     
     
