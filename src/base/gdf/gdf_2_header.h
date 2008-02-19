@@ -11,6 +11,12 @@ namespace BioSig_
 
 struct GDF2Header
 {
+    enum EventTableType
+    {
+        NORMAL_EVENT_TABLE = 1,
+        EXTENDED_EVENT_TABLE = 3
+    };
+    
     static uint32 const SIZE_ = 256;
     char version_id_ [8];
     char patient_identification_ [66];
@@ -37,13 +43,13 @@ struct GDF2Header
     
     typedef QVector<GDF2SignalHeader> GDFSignalHeaderVector;
     GDFSignalHeaderVector sig_vector_;
+
+    uint8 mode_of_event_table_;
+    uint32 number_of_events_;
+    uint8 gdf_event_table_sample_rate_[3];
     
     
-    bool smoking_;
-    bool alcohol_abuse_;
-    bool drug_abuse_;
-    bool medication_;
-    
+   
     
 };
 }
