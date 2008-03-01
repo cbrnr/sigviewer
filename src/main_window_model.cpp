@@ -688,6 +688,7 @@ void MainWindowModel::openFile(const QString& file_name)
     main_window_->setStatusBarNrChannels(file_signal_reader_->getBasicHeader()->getNumberChannels());
 
     // show signal_browser
+    signal_browser_model_->autoScaleAll(); // autoscal on startup
     signal_browser_->show();
 }
 

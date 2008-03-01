@@ -428,7 +428,7 @@ void SignalCanvasItem::autoScale(bool update)
     float64 min = signal_buffer_.getMinValue(signal_channel_.getNumber());
     float64 max = signal_buffer_.getMaxValue(signal_channel_.getNumber());
     setYZoom((maximum_ - minimum_) / (max - min));
-    setYOffset((max + min) / 2.0);
+    setYOffset(0); // zero line in the middle
     if (update)
     {
         canvas()->setChanged(rect());

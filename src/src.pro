@@ -5,8 +5,7 @@ DESTDIR = ..\bin
 MOC_DIR = ..\tmp
 OBJECTS_DIR = ..\tmp
 RCC_DIR = ..\tmp
-CONFIG += debug \
-    warn_on \
+CONFIG +=     warn_on \
     qt \
     static \
     thread 
