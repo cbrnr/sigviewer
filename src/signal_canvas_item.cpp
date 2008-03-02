@@ -152,6 +152,7 @@ void SignalCanvasItem::smartDraw(QPainter& p, const QRect& clip)
         {
             continue; // error
         }
+        
 
         float32* buffer = data_block->getBuffer();
         float32* upper_buffer = data_block->getUpperBuffer();
@@ -195,6 +196,7 @@ void SignalCanvasItem::smartDraw(QPainter& p, const QRect& clip)
                                         item_y + 0.5);
                     p.drawLine(x, y_u, x, y_l);
                 }
+
             }
             else
             {
@@ -211,10 +213,10 @@ void SignalCanvasItem::setYZoom(float64 zoom)
 {
     y_zoom_ = zoom < 1.0 ? 1.0 : 
               zoom > 16.0 ? 16.0 : zoom;
-    float64 min_dif = (maximum_ - minimum_) / (2 * y_zoom_);
-    y_offset_ = y_offset_ > maximum_ - min_dif ? maximum_ - min_dif :
-                y_offset_ < minimum_ + min_dif ? minimum_ + min_dif :
-                y_offset_;
+    //float64 min_dif = (maximum_ - minimum_) / (2 * y_zoom_);
+    //y_offset_ = y_offset_ > maximum_ - min_dif ? maximum_ - min_dif :
+    //            y_offset_ < minimum_ + min_dif ? minimum_ + min_dif :
+    //            y_offset_;
     updateYGridIntervall();
 }
 
@@ -227,10 +229,10 @@ float64 SignalCanvasItem::getYZoom()
 // set y offset
 void SignalCanvasItem::setYOffset(float64 offset)
 {
-    float64 min_dif = (maximum_ - minimum_) / (2 * y_zoom_);
-    y_offset_ = offset > maximum_ - min_dif ? maximum_ - min_dif :
-                offset < minimum_ + min_dif ? minimum_ + min_dif :
-                offset;
+    //float64 min_dif = (maximum_ - minimum_) / (2 * y_zoom_);
+    y_offset_ = offset;//offset > maximum_ - min_dif ? maximum_ - min_dif :
+                //offset < minimum_ + min_dif ? minimum_ + min_dif :
+                //offset;
 }
 
 // get y offset
@@ -427,8 +429,14 @@ void SignalCanvasItem::autoScale(bool update)
 {
     float64 min = signal_buffer_.getMinValue(signal_channel_.getNumber());
     float64 max = signal_buffer_.getMaxValue(signal_channel_.getNumber());
+    
+    if (max > -min) 
+        min = -max;
+    else
+        max = -min;
     setYZoom((maximum_ - minimum_) / (max - min));
     setYOffset(0); // zero line in the middle
+    
     if (update)
     {
         canvas()->setChanged(rect());

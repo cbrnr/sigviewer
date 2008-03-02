@@ -4,7 +4,9 @@
 #include "signal_buffer.h"
 #include "signal_data_block.h"
 
+
 #include <QTextStream>
+#include <QMutexLocker>
 
 namespace BioSig_
 {
@@ -84,6 +86,7 @@ uint32 SignalBuffer::getRecordsPerBlock() const
 // add channel
 void SignalBuffer::addChannel(uint32 channel_nr)
 {
+    QMutexLocker lock (&mutex_);
     if (!checkReadyState("addChannel"))
     {
         return;
@@ -124,6 +127,7 @@ void SignalBuffer::addChannel(uint32 channel_nr)
 // remove channel
 void SignalBuffer::removeChannel(uint32 channel_nr)
 {
+    QMutexLocker lock (&mutex_);
     if (!checkReadyState("removeChannel"))
     {
         return;
@@ -142,6 +146,7 @@ void SignalBuffer::removeChannel(uint32 channel_nr)
 // is channel buffered
 bool SignalBuffer::isChannelBuffered(uint32 channel_nr) const
 {
+    QMutexLocker lock (&mutex_);
     Int2SubBuffersPtrMap::const_iterator iter =
         channel_nr2sub_buffers_map_.find(channel_nr);
     return iter != channel_nr2sub_buffers_map_.end();
@@ -150,6 +155,7 @@ bool SignalBuffer::isChannelBuffered(uint32 channel_nr) const
 // set channel active
 void SignalBuffer::setChannelActive(uint32 channel_nr, bool active)
 {
+    QMutexLocker lock (&mutex_);
     if (!checkReadyState("setChannelActive"))
     {
         return;
@@ -167,6 +173,7 @@ void SignalBuffer::setChannelActive(uint32 channel_nr, bool active)
 // is channel active
 bool SignalBuffer::isChannelActive(uint32 channel_nr) const
 {
+    QMutexLocker lock (&mutex_);
     if (!checkReadyState("isChannelActive"))
     {
         return false;
@@ -184,6 +191,7 @@ bool SignalBuffer::isChannelActive(uint32 channel_nr) const
 // init buffer
 void SignalBuffer::init()
 {
+    QMutexLocker lock (&mutex_);
     if (!checkReadyState("init"))
     {
         return;
@@ -288,6 +296,7 @@ void SignalBuffer::init()
 // get number events
 uint32 SignalBuffer::getNumberEvents() const
 {
+    QMutexLocker lock (&mutex_);
     if (!checkReadyState("getNumberEvents"))
     {
         return 0;
@@ -298,6 +307,7 @@ uint32 SignalBuffer::getNumberEvents() const
 // event number to ID
 int32 SignalBuffer::eventNumber2ID(uint32 event_number) const
 {
+    QMutexLocker lock (&mutex_);
     if (!checkReadyState("eventNumber2ID"))
     {
         return -1;
@@ -315,6 +325,7 @@ int32 SignalBuffer::eventNumber2ID(uint32 event_number) const
 // get event
 SignalEvent* SignalBuffer::getEvent(uint32 event_id)
 {
+    QMutexLocker lock (&mutex_);
     if (!checkReadyState("getEvent"))
     {
         return 0;
@@ -330,6 +341,7 @@ SignalEvent* SignalBuffer::getEvent(uint32 event_id)
 // add event
 int32 SignalBuffer::addEvent(const SignalEvent& event)
 {
+    QMutexLocker lock (&mutex_);
     if (!checkReadyState("addEvent"))
     {
         return -1;
@@ -342,6 +354,7 @@ int32 SignalBuffer::addEvent(const SignalEvent& event)
 // remove event
 void SignalBuffer::removeEvent(uint32 event_id)
 {
+    QMutexLocker lock (&mutex_);
     Int2SignalEventPtrMap::iterator iter = id2signal_events_map_.find(event_id);
     if (iter == id2signal_events_map_.end())
     {
@@ -354,6 +367,7 @@ void SignalBuffer::removeEvent(uint32 event_id)
 // get event samplerate
 uint32 SignalBuffer::getEventSamplerate() const
 {
+    QMutexLocker lock (&mutex_);
     return signal_reader_.getBasicHeader()->getEventSamplerate();
 }
 
@@ -362,6 +376,7 @@ SignalDataBlock* SignalBuffer::getSignalDataBlock(uint32 channel_nr,
                                                   uint32 sub_sampl,
                                                   uint32 block_nr)
 {
+    QMutexLocker lock (&mutex_);
     if (!checkReadyState("getSignalDataBlock"))
     {
         return 0;
@@ -466,10 +481,10 @@ SignalDataBlock* SignalBuffer::getSignalDataBlockImpl(uint32 channel_nr,
         }
 
         // load blocks
+        
         signal_reader_.loadSignals(to_load_data_blocks.begin(),
                                    to_load_data_blocks.end(),
                                    no_sub_block_nr * records_per_block_);
-
         // downsample loaded blocks
         for (channel_iter = channel_nr2sub_buffers_map_.begin();
              channel_iter != channel_nr2sub_buffers_map_.end();
@@ -509,13 +524,16 @@ SignalDataBlock* SignalBuffer::getSignalDataBlockImpl(uint32 channel_nr,
     }
 
     bool valid;
-    return &channel_nr2sub_buffers_map_[channel_nr]
-                ->sub_queue[sub_sampl]->getSignalDataBlock(block_nr, valid);
+    SignalDataBlock* return_value = &(channel_nr2sub_buffers_map_[channel_nr]
+                                                                 ->sub_queue[sub_sampl]->getSignalDataBlock(block_nr, valid));
+    //std::cout << "valid = " << valid << std::endl;
+    return return_value;
 }
 
 // get min value
 float64 SignalBuffer::getMinValue(uint32 channel_nr) const
 {
+    QMutexLocker lock (&mutex_);
     if (!checkReadyState("getMinValue"))
     {
         return 10E20;
@@ -533,6 +551,7 @@ float64 SignalBuffer::getMinValue(uint32 channel_nr) const
 // get max value
 float64 SignalBuffer::getMaxValue(uint32 channel_nr) const
 {
+    QMutexLocker lock (&mutex_);
     if (!checkReadyState("getMaxValue"))
     {
         return -10E20;

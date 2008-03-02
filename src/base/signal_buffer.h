@@ -10,6 +10,7 @@
 
 #include <QMap>
 #include <QVector>
+#include <QMutex>
 
 class QTextStream;
 
@@ -132,6 +133,7 @@ private:
     Int2SignalEventPtrMap id2signal_events_map_;
     State state_;
     uint32 next_event_id_;
+    mutable QMutex mutex_;
 };
 
 } // namespace BioSig_

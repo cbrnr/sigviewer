@@ -176,7 +176,7 @@ void SignalBrowserModel::addChannel(uint32 channel_nr)
 
     // generate signal canvas item
     SignalCanvasItem* signal_item
-        = new SignalCanvasItem(signal_buffer_, signal_channel, *this,
+        = new SignalCanvasItem(signal_buffer_, basic_header_->getChannel(channel_nr), *this,
                                signal_browser_);
     channel2signal_item_[channel_nr] = signal_item;
 

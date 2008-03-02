@@ -9,6 +9,7 @@
 #include <QFile>
 #include <QPointer>
 
+
 namespace BioSig_
 {
 
