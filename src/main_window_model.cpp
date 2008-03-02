@@ -664,7 +664,7 @@ void MainWindowModel::openFile(const QString& file_name)
     recent_file_list_.push_front(file_name);
 
     // select channels
-    optionsChannelsAction();
+    channelSelection ();
 
     // mouse mode
     main_window_->setMouseMode(signal_browser_model_->getMode());
@@ -956,6 +956,35 @@ void MainWindowModel::viewGoToAction()
 
 // options channels action
 void MainWindowModel::optionsChannelsAction()
+{
+    channelSelection ();
+    // mouse mode
+    //main_window_->setMouseMode(signal_browser_model_->getMode());
+
+    // set signals per page to all
+    //int32 nr_shown_channels = signal_browser_model_->getNumberShownChannels();
+    //nr_shown_channels = nr_shown_channels == 0 ? 1 : nr_shown_channels;
+    //int32 signal_height = (int32)(signal_browser_ ->getCanvasView()->visibleHeight() /
+    //                              nr_shown_channels) -
+    //                      signal_browser_model_->getSignalSpacing();
+    //signal_browser_model_->setSignalHeight(signal_height);
+    //main_window_->setSignalsPerPage(-1); // all
+
+    // set secs per page 10
+    //signal_browser_model_->setPixelPerSec(signal_browser_->getCanvasView()->visibleWidth() / 10.0);
+    //main_window_->setSecsPerPage(10.0);
+
+    // set status bar
+    //main_window_->setStatusBarSignalLength(file_signal_reader_->getBasicHeader()->getNumberRecords() *
+    //                                       file_signal_reader_->getBasicHeader()->getRecordDuration());
+    //main_window_->setStatusBarNrChannels(file_signal_reader_->getBasicHeader()->getNumberChannels());
+
+    // show signal_browser
+    //signal_browser_model_->autoScaleAll(); // autoscal on startup
+    signal_browser_->show();
+}
+
+void MainWindowModel::channelSelection ()
 {
     if (!checkMainWindowPtr("optionsChannelsAction") ||
         !checkNotClosedState("optionsChannelsAction"))

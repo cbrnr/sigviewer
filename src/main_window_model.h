@@ -107,7 +107,8 @@ private:
     void openFile(const QString& file_name);
     bool checkMainWindowPtr(const QString function);
     bool checkNotClosedState(const QString function);
-
+    void channelSelection ();
+    
     MainWindow* main_window_;
     State state_;
     SelectionState selection_state_;
