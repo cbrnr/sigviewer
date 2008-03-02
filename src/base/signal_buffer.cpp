@@ -526,7 +526,6 @@ SignalDataBlock* SignalBuffer::getSignalDataBlockImpl(uint32 channel_nr,
     bool valid;
     SignalDataBlock* return_value = &(channel_nr2sub_buffers_map_[channel_nr]
                                                                  ->sub_queue[sub_sampl]->getSignalDataBlock(block_nr, valid));
-    //std::cout << "valid = " << valid << std::endl;
     return return_value;
 }
 
