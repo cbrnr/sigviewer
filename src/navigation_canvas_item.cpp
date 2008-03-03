@@ -68,6 +68,7 @@ void NavigationCanvasItem::mousePressEvent(QMouseEvent* e, Q3CanvasItemList&,
                                           this);
             break;
         case SignalBrowserMouseHandling::NEW_EVENT_ACTION :
+        case SignalBrowserMouseHandling::SELECT_RESIZE_EVENT_ACTION : 
             navigation_ = NEW_EVENT_NAVIGATION;
             first_point_ = e->globalPos();
             canvas_view->addEventListener(SmartCanvasView::MOUSE_RELEASE_EVENT |
