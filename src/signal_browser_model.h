@@ -112,6 +112,7 @@ public:
     float64 getXGridPixelIntervall();
 
     // events
+    
     void getShownEventTypes(IntList& event_type);
     void setShownEventTypes(const IntList& event_type);
     void setEventChanged(uint32 id, bool update = true);
@@ -125,7 +126,8 @@ public:
     void changeSelectedEventType();
     void removeSelectedEvent();
     void getEvents(SignalEventVector& event_vector);
-
+    uint16 getActualEventCreationType () const;
+    
     void updateLayout();
 
 public slots:
@@ -167,6 +169,7 @@ private:
     float64 x_grid_pixel_intervall_;
     int32 prefered_y_grid_pixel_intervall_;
     IntList shown_event_types_;
+    uint16 actual_event_creation_type_;
 };
 
 } // namespace Biosig_

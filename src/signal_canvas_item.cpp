@@ -284,6 +284,11 @@ void SignalCanvasItem::mousePressEvent(QMouseEvent* e,
                 {
                     return; // no events shown
                 }
+                if (signal_browser_model_.getActualEventCreationType() == static_cast<uint16>(-1))
+                {
+                    signal_browser_model_.changeSelectedEventType();
+                    return; 
+                }
 
                 // add new event item
                 SignalEvent new_event(0, 0);
@@ -293,7 +298,7 @@ void SignalCanvasItem::mousePressEvent(QMouseEvent* e,
                 {
                     SignalEvent* selected_event
                         = signal_buffer_.getEvent(selected_event_item->getId());
-                    new_event.setType(selected_event->getType());
+                    new_event.setType(signal_browser_model_.getActualEventCreationType());
                     if (selected_event->getChannel() ==
                         SignalEvent::UNDEFINED_CHANNEL)
                     {
@@ -306,7 +311,7 @@ void SignalCanvasItem::mousePressEvent(QMouseEvent* e,
                 }
                 else
                 {
-                    new_event.setType(*shown_events.begin());
+                    new_event.setType(signal_browser_model_.getActualEventCreationType());
                     new_event.setChannel(signal_channel_.getNumber());
                 }
                 QPoint mouse_pos;
@@ -319,7 +324,7 @@ void SignalCanvasItem::mousePressEvent(QMouseEvent* e,
                     = signal_browser_model_.addEvent(new_event);
 
                 // edit new event item
-                signal_browser_model_.setSelectedEventItem(event_item);
+                signal_browser_model_.setSelectedEventItem(0);
                 event_item->startMouseMoveEnd(canvas_view);
             }
             break;

@@ -235,7 +235,7 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
             main_window_->setEditCopyToChannelsEnabled(false);
             main_window_->setEditDeleteEnabled(false);
             main_window_->setEditChangeChannelEnabled(false);
-            main_window_->setEditChangeTypeEnabled(false);
+            main_window_->setEditChangeTypeEnabled(true);
             break;
         case SELECTION_STATE_ONE_CHANNEL:
             main_window_->setEditToAllChannelsEnabled(true);

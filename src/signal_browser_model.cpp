@@ -52,7 +52,8 @@ SignalBrowserModel::SignalBrowserModel(FileSignalReader& reader,
   signal_height_(75),
   signal_spacing_(1),
   prefered_x_grid_pixel_intervall_(100),
-  prefered_y_grid_pixel_intervall_(25)
+  prefered_y_grid_pixel_intervall_(25), 
+  actual_event_creation_type_ (-1) 
 {
     // nothing
 }
@@ -958,13 +959,9 @@ void SignalBrowserModel::copySelectedEventToChannels()
 // change selected event type
 void SignalBrowserModel::changeSelectedEventType()
 {
-    if (!selected_event_item_)
-    {
-        return;
-    }
-
-    uint32 id = selected_event_item_->getId();
-    SignalEvent* event = signal_buffer_.getEvent(id);
+    SignalEvent* event = 0;
+    if (selected_event_item_)
+        event = signal_buffer_.getEvent(selected_event_item_->getId());
 
     // generate list show all shown types
     QStringList event_type_list;
@@ -973,11 +970,16 @@ void SignalBrowserModel::changeSelectedEventType()
          it != shown_event_types_.end();
          it++)
     {
+        if (event)
+        {
             if (event->getType() == *it)
-            {
                 current_item = event_type_list.size();
-            }
-            QString event_name
+        }
+        else
+            if (actual_event_creation_type_ == *it)
+                current_item = event_type_list.size();
+
+        QString event_name
              = main_window_model_.getEventTableFileReader().getEventName(*it);
             event_type_list.append(event_name + " " + QString("(%1)")
                                                         .arg(*it,4, 16)
@@ -991,11 +993,22 @@ void SignalBrowserModel::changeSelectedEventType()
                                         event_type_list, current_item,
                                         false, &ok, signal_browser_);
     uint16 new_type = res.right(5).left(4).toUShort(0, 16);
-    if (ok && new_type != event->getType())
+    if (event)
     {
-        event->setType(new_type);
-        setEventChanged(id);
+        if (ok && new_type != event->getType())
+        {
+            event->setType(new_type);
+            setEventChanged(selected_event_item_->getId());
+        }
     }
+    else
+        if (ok)
+            actual_event_creation_type_ = new_type;
+}
+
+uint16 SignalBrowserModel::getActualEventCreationType () const
+{
+    return actual_event_creation_type_;
 }
 
 // remove selected event
