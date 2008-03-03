@@ -23,7 +23,6 @@
 #include <QAction>
 #include <QTextStream>
 #include <QSettings>
-
 namespace BioSig_
 {
 

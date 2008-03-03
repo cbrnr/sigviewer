@@ -56,7 +56,8 @@ private:
     {
         NO_NAVIGATION = 0,
         SCROLL_NAVIGATION = 1,
-        ZOOM_NAVIGATION = 2
+        ZOOM_NAVIGATION = 2,
+        NEW_EVENT_NAVIGATION = 3
     };
 
     void drawZoomRect();

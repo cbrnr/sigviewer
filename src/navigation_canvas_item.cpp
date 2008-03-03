@@ -55,16 +55,24 @@ void NavigationCanvasItem::mousePressEvent(QMouseEvent* e, Q3CanvasItemList&,
         return;
     }  
     SignalBrowserModel::Mode mode = signal_browser_model_.getMode();
-    switch (SignalBrowserMouseHandling::getAction(e, mode))
+    SignalBrowserMouseHandling::Action action = SignalBrowserMouseHandling::getAction(e, mode);
+    switch (action)
     {
         case SignalBrowserMouseHandling::HAND_SCROLL_ACTION :
-            navigation_ = SCROLL_NAVIGATION;
             signal_browser_->getCanvasView()->viewport()
-                                        ->setCursor(QCursor(Qt::SizeAllCursor));
+                ->setCursor(QCursor(Qt::SizeAllCursor));
+            navigation_ = SCROLL_NAVIGATION;
+            first_point_ = e->globalPos();
             canvas_view->addEventListener(SmartCanvasView::MOUSE_RELEASE_EVENT |
                                           SmartCanvasView::MOUSE_MOVE_EVENT,
                                           this);
+            break;
+        case SignalBrowserMouseHandling::NEW_EVENT_ACTION :
+            navigation_ = NEW_EVENT_NAVIGATION;
             first_point_ = e->globalPos();
+            canvas_view->addEventListener(SmartCanvasView::MOUSE_RELEASE_EVENT |
+                                          SmartCanvasView::MOUSE_MOVE_EVENT,
+                                          this);
             break;
         case SignalBrowserMouseHandling::ZOOM_WINDOW_ACTION :
             navigation_ = ZOOM_NAVIGATION;
@@ -99,6 +107,13 @@ void NavigationCanvasItem::mouseReleaseEvent(QMouseEvent*, Q3CanvasItemList&,
                                         SmartCanvasView::MOUSE_MOVE_EVENT,
                                         this);
             break;
+        case NEW_EVENT_NAVIGATION:
+            navigation_ = NO_NAVIGATION;
+            canvas_view->removeEventListener(
+                                        SmartCanvasView::MOUSE_RELEASE_EVENT |
+                                        SmartCanvasView::MOUSE_MOVE_EVENT,
+                                        this);
+            break;
         case ZOOM_NAVIGATION:
             navigation_ = NO_NAVIGATION;
             canvas_view->removeEventListener(
@@ -109,13 +124,14 @@ void NavigationCanvasItem::mouseReleaseEvent(QMouseEvent*, Q3CanvasItemList&,
             QRect rect(first_point_, second_point_);
             signal_browser_model_.zoomRect(rect.normalize());
             break;
+
     }
 }
 
 // mouse move event
 void NavigationCanvasItem::mouseMoveEvent(QMouseEvent* e, Q3CanvasItemList&,
                                           SmartCanvasView* canvas_view)
-{
+{  
     switch(navigation_)
     {
         case NO_NAVIGATION:
@@ -127,6 +143,19 @@ void NavigationCanvasItem::mouseMoveEvent(QMouseEvent* e, Q3CanvasItemList&,
                 int32 dy = second_point_.y() - first_point_.y();
                 first_point_ = second_point_;
                 signal_browser_->getCanvasView()->scrollBy(-dx, -dy);
+            }
+            break;
+        case NEW_EVENT_NAVIGATION:
+            {
+                int32 const EDGE_OFFSET = 50;
+                int32 w = signal_browser_->getCanvasView()->visibleWidth ();
+                int32 offset = signal_browser_->getCanvasView()->window()->pos().x() + EDGE_OFFSET;
+                
+                second_point_ = e->globalPos();
+                int32 dx = second_point_.x() - first_point_.x();
+                first_point_ = second_point_;
+                if ((e->globalX() - offset > w && dx > 0) || (e->globalX() - offset < EDGE_OFFSET && dx < 0))
+                    signal_browser_->getCanvasView()->scrollBy(dx, 0);
             }
             break;
         case ZOOM_NAVIGATION:
