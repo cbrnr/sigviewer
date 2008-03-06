@@ -5,10 +5,13 @@ DESTDIR = ..\bin
 MOC_DIR = ..\tmp
 OBJECTS_DIR = ..\tmp
 RCC_DIR = ..\tmp
+INCLUDEPATH += ../extern
+LIBS += -L../extern -lbiosig
 CONFIG +=     warn_on \
     qt \
     static \
-    thread 
+    thread \
+    debug
 
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc
@@ -20,9 +23,11 @@ HEADERS += *h \
 	base\*h \
 	base\gdf\*h \
 	base\bkr\*h \
+  base\cnt\*h \ 
 	smart_canvas\*h 
 SOURCES += *.cpp \
     base\*.cpp \
     base\gdf\*.cpp \
     base\bkr\*.cpp  \
+    base\cnt\*.cpp \
     smart_canvas\*.cpp

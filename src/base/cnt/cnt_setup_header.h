@@ -14,10 +14,10 @@ namespace BioSig_
 class CNTSetupHeader
 {
 public:
-    CNTSetupHeader();
-    ~CNTSetupHeader();
+    CNTSetupHeader() {}
+    ~CNTSetupHeader() {}
 
-    void resetCNTHeader();
+    void resetCNTHeader() {}
 
 private:
     char cnt_revision_[20];
