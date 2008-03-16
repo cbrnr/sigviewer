@@ -849,6 +849,7 @@ void MainWindowModel::mouseModeNewAction()
     {
         return;
     }
+    signal_browser_model_->setSelectedEventItem(0);
     signal_browser_model_->setMode(SignalBrowserModel::MODE_NEW);
 }
 

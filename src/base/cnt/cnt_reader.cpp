@@ -2,6 +2,7 @@
 #include "../stream_utils.h"
 #include "../signal_data_block.h"
 #include "../math_utils.h"
+#include "../gdf/gdf_event.h"
 
 #include <biosig.h>
 
@@ -19,7 +20,6 @@ namespace BioSig_
 
 //-----------------------------------------------------------------------------
 CNTReader::CNTReader() :
-    buffer_(0),
     basic_header_ (new BasicHeader ()),
     biosig_header_ (0)
 {
@@ -29,7 +29,11 @@ CNTReader::CNTReader() :
 //-----------------------------------------------------------------------------
 CNTReader::~CNTReader()
 {
-    delete buffer_;
+    if (biosig_header_)
+    {
+        sclose(biosig_header_);
+        delete biosig_header_;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -40,39 +44,94 @@ FileSignalReader* CNTReader::clone()
 }
 
 //-----------------------------------------------------------------------------
+void CNTReader::close() 
+{
+    if (biosig_header_)
+    {
+        sclose(biosig_header_);
+    }
+    delete biosig_header_;
+    biosig_header_ = 0;
+}
+
+
+//-----------------------------------------------------------------------------
+void CNTReader::loadEvents(SignalEventVector& event_vector)
+{    
+    QMutexLocker lock (&mutex_); 
+    if (!biosig_header_)
+        return;
+
+    QVector<GDFEvent> gdf_events(biosig_header_->EVENT.N);
+    QVector<GDFEvent>::iterator iter;
+    
+    uint32 event_nr = 0;
+    for (iter = gdf_events.begin(); iter != gdf_events.end(); iter++, event_nr++)
+    {
+        iter->type = biosig_header_->EVENT.TYP[event_nr];
+        iter->position = biosig_header_->EVENT.POS[event_nr];
+        if (biosig_header_->EVENT.CHN)
+        {
+            iter->channel = biosig_header_->EVENT.CHN[event_nr];
+            iter->duration = biosig_header_->EVENT.DUR[event_nr];
+        }
+    }
+    
+
+    // sort events by position, type and channel
+    qSort(gdf_events); // TODO
+    //    std::sort(gdf_events.begin(), gdf_events.end(), std::less<GDFEvent>());
+
+    // store to signal events
+    for (iter = gdf_events.begin(); iter != gdf_events.end(); iter++)
+    {
+        if (iter->type & SignalEvent::EVENT_END)
+        {
+            uint32 start_type = iter->type - SignalEvent::EVENT_END;
+            bool start_found = false;
+            FileSignalReader::SignalEventVector::iterator rev_iter = event_vector.end();
+            while (rev_iter != event_vector.begin())
+            {
+                rev_iter--;
+                if (rev_iter->getType() == start_type &&
+                        rev_iter->getDuration() == SignalEvent::UNDEFINED_DURATION)
+                {
+                    rev_iter->setDuration(iter->position -
+                                          rev_iter->getPosition());
+                    start_found = true;
+                    break;
+                }
+            }
+            if (!start_found)
+            {
+//                if (log_stream_)
+//                {
+//                    *log_stream_ << "GDFReader::loadEvents Warning: unexpected "
+//                                 << " end-event\n";
+//                }
+            }
+        }
+        else
+        {
+            if (biosig_header_->EVENT.CHN)
+            {
+                event_vector << SignalEvent(iter->position, iter->type,
+                                            (int32)iter->channel - 1,
+                                            iter->duration);
+            }
+            else
+            {
+                event_vector << SignalEvent(iter->position, iter->type);
+            }
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
 bool CNTReader::open(const QString& file_name)
 {
 
-    QMutexLocker lock (&mutex_);
-//    qDebug( "BKRReader::open(const QString& file_name) 1" );
-//    if (file_.isOpen())
-//    {
-//        if (log_stream_)
-//        {
-//            *log_stream_ << "CNTReader::open '" << file_name << "' Error: '"
-//                        << basic_header_->getFullFileName() << "' not closed\n";
-//        }
-//        return false;
-//    }
-//    
-//    file_.setFileName(file_name);
-//    
-//    if (!file_.open(QIODevice::ReadOnly))
-//    {
-//        if (log_stream_)
-//        {
-//            *log_stream_ << "CNTReader::open '" << file_name
-//                        << "' Error: reading file\n";
-//        }
-//        return false;
-//    }
-//    
-
-    
-    // read headers
-//    if (log_stream_)
-//        *log_stream_ << "CNTReader::open '" << file_name << "'\n";
-    
+    QMutexLocker lock (&mutex_); 
     if (!loadFixedHeader(file_name) /*||
         !loadSignalHeaders(file_name)*/)
     {
@@ -93,7 +152,7 @@ void CNTReader::loadSignals(SignalDataBlockPtrIterator begin,
     QMutexLocker lock (&mutex_);
     if (!biosig_header_)
     {
-//        if (log_stream_)
+//        if (log_stream_) 
 //        {
 //            *log_stream_ << "GDFReader::loadChannels Error: not open\n";
 //        }
@@ -151,7 +210,7 @@ void CNTReader::loadSignals(SignalDataBlockPtrIterator begin,
                      samp < actual_sample + samples;
                      samp++)
                 {
-                    data_block_buffer_valid[samp] = false;  
+                    data_block_buffer_valid[samp] = false; 
                 }
             }
             else
@@ -216,8 +275,8 @@ bool CNTReader::loadFixedHeader(const QString& file_name)
     tzset();
      biosig_header_ = sopen(c_file_name, "r", NULL);
     if (serror() || biosig_header_ == NULL) 
-        return false;
-    biosig_header_->FLAG.UCAL = 0; 
+        return false; 
+    biosig_header_->FLAG.UCAL = 0;  
     
     
     basic_header_->setFullFileName (file_name);
@@ -227,8 +286,13 @@ bool CNTReader::loadFixedHeader(const QString& file_name)
     basic_header_->setNumberRecords (biosig_header_->NRec);
     basic_header_->setRecordSize (biosig_header_->CHANNEL[0].SPR); // TODO: different channels different sample rate!!
     basic_header_->setRecordsPosition (biosig_header_->HeadLen); 
-    //basic_header_->setRecordDuration (static_cast<double>(biosig_header_->Dur[0]) / biosig_header_->Dur[1]);
+    basic_header_->setRecordDuration (static_cast<double>(biosig_header_->Dur[0]) / biosig_header_->Dur[1]);
     basic_header_->setRecordDuration (1.0f / biosig_header_->SampleRate);
+    basic_header_->setNumberEvents(biosig_header_->EVENT.N);
+    if (biosig_header_->EVENT.SampleRate)
+        basic_header_->setEventSamplerate(biosig_header_->EVENT.SampleRate);
+    else
+        basic_header_->setEventSamplerate(biosig_header_->SampleRate);
     
     for (uint32 channel_index = 0; channel_index < biosig_header_->NS; ++channel_index)
     {

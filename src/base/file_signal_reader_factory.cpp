@@ -22,7 +22,7 @@ FileSignalReaderFactory* FileSignalReaderFactory::getInstance()
 
         // register all readers
         instance_->addPrototype(".evt", new GDFReader);
-        instance_->addPrototype(".gdf", new GDFReader);
+        instance_->addPrototype(".gdf", new CNTReader);
         
         // TODO: uncomment as soon as BKRReader is finished
         instance_->addPrototype(".bkr", new CNTReader);

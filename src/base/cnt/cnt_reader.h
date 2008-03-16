@@ -21,14 +21,14 @@ public:
 
     virtual bool open(const QString& file_name);
     virtual bool isOpen() {return biosig_header_ ? true : false;}
-    virtual void close() {delete biosig_header_; biosig_header_ = 0;}
+    virtual void close();
 
     virtual void loadSignals(SignalDataBlockPtrIterator begin, 
                              SignalDataBlockPtrIterator end,
                              uint32 start_record);
+    
     //-------------------------------------------------------------------------
-    /// there are no events in BKR-files so this method does nothing
-    virtual void loadEvents(SignalEventVector& event_vector) {}
+    virtual void loadEvents(SignalEventVector& event_vector);
     
     virtual QPointer<BasicHeader> getBasicHeader ();
     
@@ -46,9 +46,7 @@ private:
 
     bool loadFixedHeader(const QString& file_name);
 
-    int8* buffer_;
     QPointer<BasicHeader> basic_header_;
-    CNTSetupHeader header_;
     mutable QMutex mutex_;
     mutable QMutex biosig_access_lock_;
     HDRTYPE* biosig_header_;
