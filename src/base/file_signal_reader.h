@@ -32,7 +32,7 @@ public:
 
     void setLogStream(QTextStream* log_stream);
 
-    virtual bool open(const QString& file_name) = 0;
+    virtual QString open(const QString& file_name) = 0;
     virtual bool isOpen() = 0;
     virtual void close() = 0;
 

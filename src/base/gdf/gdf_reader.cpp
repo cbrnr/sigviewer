@@ -74,7 +74,7 @@ void GDFReader::close()
 }
 
 // open
-bool GDFReader::open(const QString& file_name)
+QString GDFReader::open(const QString& file_name)
 {
     qDebug( "GDFReader::open(const QString& file_name) 1" );
     if (file_->isOpen())
@@ -84,7 +84,7 @@ bool GDFReader::open(const QString& file_name)
             *log_stream_ << "GDFReader::open '" << file_name << "' Error: '"
                         << basic_header_->getFullFileName() << "' not closed\n";
         }
-        return false;
+        return "file not closed";
     }
     file_->setFileName(file_name);
     if (!file_->open(QIODevice::ReadOnly))
@@ -94,7 +94,7 @@ bool GDFReader::open(const QString& file_name)
             *log_stream_ << "GDFReader::open '" << file_name
                         << "' Error: reading file\n";
         }
-        return false;
+        return "can't read file";
     }
 
     // read headers
@@ -118,7 +118,7 @@ bool GDFReader::open(const QString& file_name)
     {
         file_->close ();
         basic_header_->resetBasicHeader();
-        return false;
+        return "can't read file format";
     }
     
     if (!reader_impl_->loadFixedHeader() ||
@@ -126,7 +126,7 @@ bool GDFReader::open(const QString& file_name)
     {
         file_->close ();
         basic_header_->resetBasicHeader ();
-        return false;
+        return "can't read header";
     }
 
     reader_impl_->loadEventTableHeader ();
@@ -139,7 +139,7 @@ bool GDFReader::open(const QString& file_name)
 //        return false;
 //    }
 //    loadEventTableHeader();
-    return true;
+    return "";
 }
 
 

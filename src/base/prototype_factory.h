@@ -27,6 +27,7 @@ public:
     };
 
     int8 addPrototype(const QString& name, ElementType* element);
+    void setDefaultPrototype (ElementType* element);
     ElementType* getElement(const QString& name);
     QStringList getElementNames();
 
@@ -44,11 +45,13 @@ private:
 
     String2ElementPtrMap element_map_;
     StringSet name_set_;
+    ElementType* default_prototype_;
 };
 
 // constructor
 template<typename ElementType>
 PrototypeFactory<ElementType>::PrototypeFactory()
+: default_prototype_ (0)
 {
     // nothing
 }
@@ -83,12 +86,29 @@ int8 PrototypeFactory<ElementType>::addPrototype(const QString& name,
     }
 }
 
+// add default prototype
+template<typename ElementType>
+void PrototypeFactory<ElementType>::setDefaultPrototype (ElementType* element)
+{
+    if (default_prototype_)
+        delete default_prototype_;
+    default_prototype_ = element;
+}
+
 // get element
 template<typename ElementType>
 ElementType* PrototypeFactory<ElementType>::getElement(const QString& name)
 {
     typename String2ElementPtrMap::iterator iter = element_map_.find(name);
-    return iter == element_map_.end() ? 0 : iter.value()->clone();
+    if (iter == element_map_.end())
+    {
+        if (default_prototype_)
+            return default_prototype_->clone();
+        else
+            return 0;
+    }
+    else
+        return iter.value()->clone();
 }
 
 // get element names

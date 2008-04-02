@@ -24,7 +24,7 @@ public:
     virtual ~GDFReader();
     virtual FileSignalReader* clone();
 
-    virtual bool open(const QString& file_name);
+    virtual QString open(const QString& file_name);
     virtual bool isOpen();
     virtual void close();
 

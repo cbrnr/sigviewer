@@ -128,21 +128,11 @@ void BioSigReader::loadEvents(SignalEventVector& event_vector)
 }
 
 //-----------------------------------------------------------------------------
-bool BioSigReader::open(const QString& file_name)
+QString BioSigReader::open(const QString& file_name)
 {
 
     QMutexLocker lock (&mutex_); 
-    if (!loadFixedHeader(file_name) /*||
-        !loadSignalHeaders(file_name)*/)
-    {
-        //file_.close();
-//        resetBasicHeader();
-//        resetGDFHeader();
-        return false;
-    }
-//    loadEventTableHeader();
-    
-    return true;
+    return loadFixedHeader (file_name);
 }
 
 //-----------------------------------------------------------------------------
@@ -272,7 +262,7 @@ bool BioSigReader::loadRawRecords(float64** record_data, uint32 start_record,
 } 
 
 //-----------------------------------------------------------------------------
-bool BioSigReader::loadFixedHeader(const QString& file_name)
+QString BioSigReader::loadFixedHeader(const QString& file_name)
 {
     QMutexLocker locker (&biosig_access_lock_);
     char *c_file_name = new char[file_name.length()];
@@ -280,8 +270,17 @@ bool BioSigReader::loadFixedHeader(const QString& file_name)
     
     tzset();
      biosig_header_ = sopen(c_file_name, "r", NULL);
-    if (serror() || biosig_header_ == NULL) 
-        return false; 
+    if (biosig_header_ == NULL || serror()) 
+    {
+        if (biosig_header_)
+        {
+            sclose (biosig_header_);
+            delete biosig_header_;
+            biosig_header_ = 0;            
+        }
+        return "file not supported";
+    }
+
     biosig_header_->FLAG.UCAL = 0;  
     
     
@@ -329,7 +328,7 @@ bool BioSigReader::loadFixedHeader(const QString& file_name)
         basic_header_->addChannel(channel);   
     }
     
-    return true;
+    return "";
 }
 
 }

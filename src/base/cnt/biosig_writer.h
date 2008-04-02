@@ -6,6 +6,7 @@
 #include <biosig.h>
 
 #include <QString>
+#include <set>
 
 namespace BioSig_ 
 {
@@ -25,6 +26,7 @@ public:
     
 private:
     FileFormat target_type_;
+    std::set<FileFormat> file_formats_without_event_saving_;
 };
 
 }

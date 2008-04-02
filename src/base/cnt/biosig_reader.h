@@ -1,7 +1,6 @@
 #ifndef CNT_READER_H_
 #define CNT_READER_H_
 #include "../file_signal_reader.h"
-#include "cnt_setup_header.h"
 
 #include <biosig.h>
 
@@ -19,7 +18,7 @@ public:
     virtual ~BioSigReader();
     virtual FileSignalReader* clone();
 
-    virtual bool open(const QString& file_name);
+    virtual QString open(const QString& file_name);
     virtual bool isOpen() {return biosig_header_ ? true : false;}
     virtual void close();
 
@@ -46,7 +45,7 @@ private:
     BioSigReader(const BioSigReader& src);
     const BioSigReader& operator=(const BioSigReader& src);
 
-    bool loadFixedHeader(const QString& file_name);
+    QString loadFixedHeader(const QString& file_name);
 
     QPointer<BasicHeader> basic_header_;
     mutable QMutex mutex_;
