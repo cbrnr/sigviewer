@@ -503,7 +503,7 @@ void MainWindowModel::fileImportEventsAction()
 
     // open signal reader
     FileSignalReader* signal_reader = 0;
-    bool load_ok = false;
+    QString load;
     if (file_name.findRev('.') != -1)
     {
         signal_reader = FileSignalReaderFactory::getInstance()
@@ -511,21 +511,21 @@ void MainWindowModel::fileImportEventsAction()
         if (signal_reader)
         {
             signal_reader->setLogStream(log_stream_.get());
-            load_ok = signal_reader->open(file_name);
-            if (!load_ok)
+            load = signal_reader->open(file_name);
+            if (load.size())
             {
                 delete signal_reader;
             }
         }
     }
-    if (!load_ok ||
+    if (load.size() ||
         signal_reader->getBasicHeader()->getEventSamplerate() !=
         file_signal_reader_->getBasicHeader()->getEventSamplerate())
     {
         *log_stream_ << "MainWindowModel::fileImportEventsAction Error: "
                      << "file format: '" << file_name
                      << "'\n";
-        main_window_->showErrorReadDialog(file_name);
+        main_window_->showErrorReadDialog(file_name + "\"" + load + "\"");
         return;
     }
 
@@ -616,7 +616,7 @@ void MainWindowModel::openFile(const QString& file_name)
 
     // open siganl reader
     FileSignalReader* signal_reader = 0;
-    bool load_ok = false;
+    QString load;
     if (file_name.findRev('.') != -1)
     {
         signal_reader = FileSignalReaderFactory::getInstance()->
@@ -624,19 +624,19 @@ void MainWindowModel::openFile(const QString& file_name)
         if (signal_reader)
         {
             signal_reader->setLogStream(log_stream_.get());
-            load_ok = signal_reader->open(file_name);
-            if (!load_ok)
+            load = signal_reader->open(file_name);
+            if (load.size ())
             {
                 delete signal_reader;
             }
         }
     }
-    if (!load_ok)
+    if (load.size ())
     {
         *log_stream_ << "MainWindowModel::openFile Error: "
                      << "file format: '" << file_name
                      << "'\n";
-        main_window_->showErrorReadDialog(file_name);
+        main_window_->showErrorReadDialog(file_name + " \"" + load + "\"");
         return;
     }
 

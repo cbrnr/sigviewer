@@ -22,12 +22,10 @@ TRANSLATIONS += translations\sigviewer_de.ts \
 HEADERS += *h \
 	base\*h \
 	base\gdf\*h \
-	base\bkr\*h \
   base\cnt\*h \ 
 	smart_canvas\*h 
 SOURCES += *.cpp \
     base\*.cpp \
     base\gdf\*.cpp \
-    base\bkr\*.cpp  \
     base\cnt\*.cpp \
     smart_canvas\*.cpp
