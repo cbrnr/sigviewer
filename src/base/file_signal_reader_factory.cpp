@@ -4,7 +4,7 @@
 
 // all suported readers
 #include "gdf/gdf_reader.h"
-#include "cnt/biosig_reader.h"
+#include "biosig/biosig_reader.h"
 
 namespace BioSig_
 {

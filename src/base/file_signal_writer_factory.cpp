@@ -4,7 +4,7 @@
 
 // all suported writers
 #include "gdf/gdf_writer.h"
-#include "cnt/biosig_writer.h"
+#include "biosig/biosig_writer.h"
 
 #include <biosig.h>
 
