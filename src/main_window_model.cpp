@@ -309,8 +309,9 @@ void MainWindowModel::fileSaveAction()
 
     // save
     file_signal_writer->setLogStream(log_stream_.get());
-    if (file_signal_writer->save(*file_signal_reader_.get(), event_vector,
-                                  file_name, true))
+    QString save_error = file_signal_writer->save(*file_signal_reader_.get(), event_vector,
+                                                  file_name, true);
+    if (save_error.size() == 0)
     {
         setState(STATE_FILE_OPENED);
     }
@@ -319,7 +320,7 @@ void MainWindowModel::fileSaveAction()
         *log_stream_ << "MainWindowModel::fileSaveAction Error: writing file :'"
                      << file_name << "'\n";
         main_window_->showErrorWriteDialog(
-                                file_signal_reader_->getBasicHeader()->getFullFileName());
+                                file_signal_reader_->getBasicHeader()->getFullFileName() + ": \"" + save_error + "\"");
     }
     delete file_signal_writer;
 }
@@ -368,8 +369,9 @@ void MainWindowModel::fileSaveAsAction()
 
     // save
     file_signal_writer->setLogStream(log_stream_.get());
-    if (file_signal_writer->save(*file_signal_reader_.get(), event_vector,
-                                  file_name, true))
+    QString save_error = file_signal_writer->save(*file_signal_reader_.get(), event_vector,
+                                                  file_name, true);
+    if (save_error.size () == 0)
     {
         file_signal_reader_->close();
         file_signal_reader_->open(file_name);
@@ -380,7 +382,7 @@ void MainWindowModel::fileSaveAsAction()
         *log_stream_ << "MainWindowModel::fileSaveAsAction "
                      << "Error: writing file:'" << file_name << "'\n";
         main_window_->showErrorWriteDialog(
-                                file_signal_reader_->getBasicHeader()->getFullFileName());
+                                file_signal_reader_->getBasicHeader()->getFullFileName() + ": \"" + save_error + "\"");
     }
     delete file_signal_writer;
 }
@@ -463,8 +465,9 @@ void MainWindowModel::fileExportEventsAction()
 
     // export
     file_signal_writer->setLogStream(log_stream_.get());
-    if (file_signal_writer->save(*file_signal_reader_.get(), event_vector,
-                                  file_name, false))
+    QString save_error = file_signal_writer->save(*file_signal_reader_.get(), event_vector,
+                                                  file_name, false);
+    if (save_error.size () == 0)
     {
         setState(STATE_FILE_OPENED);
     }
@@ -473,7 +476,7 @@ void MainWindowModel::fileExportEventsAction()
         *log_stream_ << "MainWindowModel::fileExportEventsAction "
                      << "Error: writing file:'" << file_name << "'\n";
         main_window_->showErrorWriteDialog(
-                                file_signal_reader_->getBasicHeader()->getFullFileName());
+                                file_signal_reader_->getBasicHeader()->getFullFileName() + ": \""+ save_error + "\"");
     }
     delete file_signal_writer;
 }

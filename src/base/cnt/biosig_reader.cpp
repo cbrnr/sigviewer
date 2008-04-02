@@ -1,4 +1,4 @@
-#include "cnt_reader.h" 
+#include "biosig_reader.h" 
 #include "../stream_utils.h"
 #include "../signal_data_block.h"
 #include "../math_utils.h"
@@ -19,7 +19,7 @@ namespace BioSig_
 
 
 //-----------------------------------------------------------------------------
-CNTReader::CNTReader() :
+BioSigReader::BioSigReader() :
     basic_header_ (new BasicHeader ()),
     biosig_header_ (0)
 {
@@ -27,7 +27,7 @@ CNTReader::CNTReader() :
 }
 
 //-----------------------------------------------------------------------------
-CNTReader::~CNTReader()
+BioSigReader::~BioSigReader()
 {
     if (biosig_header_)
     {
@@ -37,14 +37,14 @@ CNTReader::~CNTReader()
 }
 
 //-----------------------------------------------------------------------------
-FileSignalReader* CNTReader::clone()
+FileSignalReader* BioSigReader::clone()
 {
-    CNTReader *new_instance = new CNTReader ();
+    BioSigReader *new_instance = new BioSigReader ();
     return new_instance;
 }
 
 //-----------------------------------------------------------------------------
-void CNTReader::close() 
+void BioSigReader::close() 
 {
     if (biosig_header_)
     {
@@ -56,7 +56,7 @@ void CNTReader::close()
 
 
 //-----------------------------------------------------------------------------
-void CNTReader::loadEvents(SignalEventVector& event_vector)
+void BioSigReader::loadEvents(SignalEventVector& event_vector)
 {    
     QMutexLocker lock (&mutex_); 
     if (!biosig_header_)
@@ -128,7 +128,7 @@ void CNTReader::loadEvents(SignalEventVector& event_vector)
 }
 
 //-----------------------------------------------------------------------------
-bool CNTReader::open(const QString& file_name)
+bool BioSigReader::open(const QString& file_name)
 {
 
     QMutexLocker lock (&mutex_); 
@@ -146,7 +146,7 @@ bool CNTReader::open(const QString& file_name)
 }
 
 //-----------------------------------------------------------------------------
-void CNTReader::loadSignals(SignalDataBlockPtrIterator begin,
+void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
                             SignalDataBlockPtrIterator end, uint32 start_record)
 {
     QMutexLocker lock (&mutex_);
@@ -251,14 +251,20 @@ void CNTReader::loadSignals(SignalDataBlockPtrIterator begin,
 }
 
 //-----------------------------------------------------------------------------
-QPointer<BasicHeader> CNTReader::getBasicHeader ()
+QPointer<BasicHeader> BioSigReader::getBasicHeader ()
 {
     QMutexLocker lock (&mutex_);
     return QPointer<BasicHeader>(basic_header_);
 }
 
 //-----------------------------------------------------------------------------
-bool CNTReader::loadRawRecords(float64** record_data, uint32 start_record,
+HDRTYPE* BioSigReader::getRawHeader ()
+{
+    return biosig_header_;
+}
+
+//-----------------------------------------------------------------------------
+bool BioSigReader::loadRawRecords(float64** record_data, uint32 start_record,
                                uint32 records)
 {
 
@@ -266,7 +272,7 @@ bool CNTReader::loadRawRecords(float64** record_data, uint32 start_record,
 } 
 
 //-----------------------------------------------------------------------------
-bool CNTReader::loadFixedHeader(const QString& file_name)
+bool BioSigReader::loadFixedHeader(const QString& file_name)
 {
     QMutexLocker locker (&biosig_access_lock_);
     char *c_file_name = new char[file_name.length()];
@@ -280,7 +286,21 @@ bool CNTReader::loadFixedHeader(const QString& file_name)
     
     
     basic_header_->setFullFileName (file_name);
-    basic_header_->setType ("TYPE");
+    switch (biosig_header_->TYPE)
+    {
+    case GDF:
+        basic_header_->setType ("GDF");
+        break;
+    case BKR:
+        basic_header_->setType ("BKR");
+        break;
+    case CNT:
+        basic_header_->setType ("CNT");
+        break;
+    default:
+        basic_header_->setType ("...");
+        break;
+    }
     basic_header_->setNumberChannels(biosig_header_->NS);
     basic_header_->setVersion (QString::number(biosig_header_->VERSION));
     basic_header_->setNumberRecords (biosig_header_->NRec);
@@ -307,7 +327,6 @@ bool CNTReader::loadFixedHeader(const QString& file_name)
                                                    1 / 8, // TODO: really don't know what that means!
                                                    "filter", -1, -1, false);
         basic_header_->addChannel(channel);   
-        //buffer_ = new int8[basic_header_->getRecordSize() * basic_header_->getNumberChannels()];
     }
     
     return true;

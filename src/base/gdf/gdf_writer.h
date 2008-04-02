@@ -20,7 +20,7 @@ public:
     virtual ~GDFWriter();
     virtual FileSignalWriter* clone();
 
-    virtual bool save(FileSignalReader& file_signal_reader,
+    virtual QString save(FileSignalReader& file_signal_reader,
                       SignalEventVector& event_vector,
                       const QString& file_name,
                       bool save_signals = true);

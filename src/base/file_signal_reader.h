@@ -6,6 +6,8 @@
 #include "basic_header.h"
 #include "signal_event.h"
 
+#include <biosig.h>
+
 #include <QVector>
 #include <QPointer>
 
@@ -40,6 +42,8 @@ public:
     virtual void loadEvents(SignalEventVector& event_vector) = 0;
     
     virtual QPointer<BasicHeader> getBasicHeader () = 0;
+    
+    virtual HDRTYPE* getRawHeader () {return 0;}
     
     //-------------------------------------------------------------------------
     ///

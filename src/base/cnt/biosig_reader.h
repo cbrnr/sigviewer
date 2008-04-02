@@ -12,11 +12,11 @@ namespace BioSig_
 {
 
 // CNT reader
-class CNTReader : public FileSignalReader
+class BioSigReader : public FileSignalReader
 {
 public:
-    CNTReader();
-    virtual ~CNTReader();
+    BioSigReader();
+    virtual ~BioSigReader();
     virtual FileSignalReader* clone();
 
     virtual bool open(const QString& file_name);
@@ -32,6 +32,8 @@ public:
     
     virtual QPointer<BasicHeader> getBasicHeader ();
     
+    virtual HDRTYPE* getRawHeader (); 
+    
     //-------------------------------------------------------------------------
     /// 
     /// @return false if an error occured
@@ -41,8 +43,8 @@ public:
 
 private:
     // not allowed
-    CNTReader(const CNTReader& src);
-    const CNTReader& operator=(const CNTReader& src);
+    BioSigReader(const BioSigReader& src);
+    const BioSigReader& operator=(const BioSigReader& src);
 
     bool loadFixedHeader(const QString& file_name);
 

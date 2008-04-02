@@ -43,7 +43,7 @@ FileSignalWriter* GDFWriter::clone()
 }
 
 // save
-bool GDFWriter::save(FileSignalReader& file_signal_reader,
+QString GDFWriter::save(FileSignalReader& file_signal_reader,
                      SignalEventVector& event_vector,
                      const QString& file_name, bool save_signals)
 {
@@ -58,7 +58,7 @@ bool GDFWriter::save(FileSignalReader& file_signal_reader,
                 *log_stream_ << "GDFWriter::save '" << save_file_name
                              << "' Error: cannot remove signal data from open file\n";
             }
-            return false;
+            return "cannot remove signal data from open file";
         }
         save_file_name += ".tmp";
     }
@@ -72,7 +72,7 @@ bool GDFWriter::save(FileSignalReader& file_signal_reader,
             *log_stream_ << "GDFWriter::save '" << save_file_name
                          << "' Error: writing file\n";
         }
-        return false;
+        return "writing file";
     }
 
     // save data
@@ -88,7 +88,7 @@ bool GDFWriter::save(FileSignalReader& file_signal_reader,
         {
            *log_stream_ << "GDFWriter::save '" << save_file_name
                          << "' Error: can't save signals\n";
-           return false;
+           return "can't save signals";
         }
     }
     saveEvents(event_vector);
@@ -104,7 +104,7 @@ bool GDFWriter::save(FileSignalReader& file_signal_reader,
         file_signal_reader_->open(file_name);
     }
 
-    return true;
+    return "";
 }
 
 // save fixed header

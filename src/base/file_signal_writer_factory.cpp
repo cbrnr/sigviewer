@@ -4,6 +4,9 @@
 
 // all suported writers
 #include "gdf/gdf_writer.h"
+#include "cnt/biosig_writer.h"
+
+#include <biosig.h>
 
 namespace BioSig_
 {
@@ -20,7 +23,8 @@ FileSignalWriterFactory* FileSignalWriterFactory::getInstance()
 
         // register all writers
         instance_->addPrototype(".evt", new GDFWriter);
-        instance_->addPrototype(".gdf", new GDFWriter);
+        instance_->addPrototype(".gdf", new BioSigWriter (GDF));
+        instance_->addPrototype(".bkr", new BioSigWriter (BKR));
     }
     return instance_.get();
 }
