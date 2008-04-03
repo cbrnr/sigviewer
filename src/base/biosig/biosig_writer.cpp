@@ -1,6 +1,7 @@
 #include "biosig_writer.h"
 
 #include <QFile>
+#include <QMutexLocker>
 
 #include <iostream>
 
@@ -27,6 +28,8 @@ QString BioSigWriter::save(FileSignalReader& file_signal_reader,
                   const QString& file_name,
                   bool save_signals)
 {
+    QMutexLocker lock (&mutex_); 
+    return "not implemented yet"; 
     if (file_formats_without_event_saving_.count(target_type_))
         return "events can't be saved in that file format, please export events";
     
@@ -36,36 +39,48 @@ QString BioSigWriter::save(FileSignalReader& file_signal_reader,
         return "no biosig header found";
     
     QString save_file_name = file_name + ".tmp";
-     
+    QString original_file_name =  file_signal_reader.getBasicHeader()->getFullFileName();
+    
     if (target_type_ != header->TYPE)
         return "conversion of file formats not supported at the moment";
     
     
     
-    QFile original_file (file_signal_reader.getBasicHeader()->getFullFileName());
+    QFile original_file (original_file_name);
     original_file.copy (save_file_name);
     
-    HDRTYPE* new_header = sopen (save_file_name.toLocal8Bit ().data(), "wb", 0);
+    HDRTYPE* new_header = sopen (save_file_name.toLocal8Bit ().data(), "w", NULL);
     
-    biosig_data_type* data = header->data.block;
-    sread(NULL, 0, header->NRec, header);
+    //biosig_data_type* data = header->data.block;
+    //sread(NULL, 0, new_header->NRec, new_header);
    
-    std::cout << save_file_name.toLocal8Bit ().data() << std::endl;
+    //std::cout << save_file_name.toLocal8Bit ().data() << std::endl;
     
-    header = sopen(save_file_name.toLocal8Bit ().data(), "wb", header);
-    swrite (data, header->NRec, header);
-    sclose (header);
+    //header = sopen(save_file_name.toLocal8Bit ().data(), "wb", header);
+    //swrite (0, 0, new_header);
+    new_header->EVENT.N = 0;
+    sclose (new_header);
     
-    QFile file (file_name);
-    if (save_file_name != file_name)
-    {
-        file_signal_reader.close();
-        file.setFileName(file_name);
-        file.remove();
-        file.setFileName(save_file_name);
-        file.rename(file_name);
-        file_signal_reader.open(file_name);
-    }
+    QFile saved_file (save_file_name);
+    saved_file.rename (file_name);
+    //original_file.close();
+    saved_file.close();
+    //file_signal_reader.close ();
+    //file_signal_reader.open(file_name);
+    //QFile file (file_name);
+    //if (original_file_name == file_name)
+    //{
+        
+    //}
+    //if (save_file_name != file_name)
+    //{
+    //    file_signal_reader.close();
+        //file.setFileName(file_name);
+    //    original_file.remove();
+    //    original_file.setFileName(save_file_name);
+    //    original_file.rename(file_name);
+    //    file_signal_reader.open(file_name);
+    //}
     
     return "";
 }
