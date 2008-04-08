@@ -382,7 +382,7 @@ void MainWindowModel::fileSaveAsAction()
         *log_stream_ << "MainWindowModel::fileSaveAsAction "
                      << "Error: writing file:'" << file_name << "'\n";
         main_window_->showErrorWriteDialog(
-                                file_signal_reader_->getBasicHeader()->getFullFileName() + ": \"" + save_error + "\"");
+                                file_signal_reader_->getBasicHeader()->getFullFileName() + ": \"" + tr(save_error) + "\"");
     }
     delete file_signal_writer;
 }
@@ -476,7 +476,7 @@ void MainWindowModel::fileExportEventsAction()
         *log_stream_ << "MainWindowModel::fileExportEventsAction "
                      << "Error: writing file:'" << file_name << "'\n";
         main_window_->showErrorWriteDialog(
-                                file_signal_reader_->getBasicHeader()->getFullFileName() + ": \""+ save_error + "\"");
+                                file_signal_reader_->getBasicHeader()->getFullFileName() + ": \""+ tr(save_error) + "\"");
     }
     delete file_signal_writer;
 }

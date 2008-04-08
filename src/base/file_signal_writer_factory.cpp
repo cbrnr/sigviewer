@@ -24,7 +24,6 @@ FileSignalWriterFactory* FileSignalWriterFactory::getInstance()
         // register all writers
         instance_->addPrototype(".evt", new GDFWriter);
         instance_->addPrototype(".gdf", new BioSigWriter (GDF));
-        instance_->addPrototype(".bkr", new BioSigWriter (BKR));
     }
     return instance_.get();
 }
