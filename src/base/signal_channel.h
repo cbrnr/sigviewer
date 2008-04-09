@@ -55,9 +55,9 @@ public:
     bool getNotch() const;
     const QString& getPhysicalDim() const;
     float64 getPhysicalMaximum() const;
-    int64 getDigitalMaximum() const;
+    float64 getDigitalMaximum() const;
     float64 getPhysicalMinimum() const;
-    int64 getDigitalMinimum() const;
+    float64 getDigitalMinimum() const;
     uint32 getDataType() const;
     uint32 getDataOffset() const;
 

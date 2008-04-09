@@ -102,7 +102,7 @@ float64 SignalChannel::getPhysicalMaximum() const
 }
 
 // get digital maximum
-int64 SignalChannel::getDigitalMaximum() const
+float64 SignalChannel::getDigitalMaximum() const
 {
     return digital_maximum_;
 }
@@ -114,7 +114,7 @@ float64 SignalChannel::getPhysicalMinimum() const
 }
 
 // get digital minumum
-int64 SignalChannel::getDigitalMinimum() const
+float64 SignalChannel::getDigitalMinimum() const
 {
     return digital_minimum_;
 }
