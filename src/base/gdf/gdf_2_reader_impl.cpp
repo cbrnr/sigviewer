@@ -127,7 +127,7 @@ bool GDF2ReaderImpl::loadSignalHeaders ()
                                                        sig->physical_maximum,
                                                        sig->digital_minimum,
                                                        sig->digital_maximum,
-                                                       sig->channel_type,
+                                                       static_cast<SignalChannel::Type>(sig->channel_type),
                                                        record_size / 8,
                                                        sig->pre_filtering, 
                                                        sig->low_pass, 

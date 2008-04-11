@@ -23,7 +23,7 @@ FileSignalReaderFactory* FileSignalReaderFactory::getInstance()
         instance_->addPrototype(".evt", new GDFReader);
         instance_->addPrototype(".gdf", new BioSigReader);
         instance_->addPrototype(".bkr", new BioSigReader);
-        //instance_->addPrototype(".cnt", new BioSigReader);
+        instance_->addPrototype(".cnt", new BioSigReader);
         instance_->setDefaultPrototype(new BioSigReader);
     }
     return instance_.get();

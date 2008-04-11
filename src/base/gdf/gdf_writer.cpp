@@ -284,42 +284,43 @@ inline void convertData(SrcType* src, int8* dest, const SignalChannel& sig)
 // save signals
 bool GDFWriter::saveSignals()
 {
-    // allocate buffers
-    int32 record_size = 0;
-    uint32 number_channels = file_signal_reader_->getBasicHeader()->getNumberChannels();
-    float64** float_buffer = new float64*[number_channels];
-    for (uint32 channel_nr = 0; channel_nr < number_channels; channel_nr++)
-    {
-        const SignalChannel& channel
-            = file_signal_reader_->getBasicHeader()->getChannel(channel_nr);
-        float_buffer[channel_nr] = new float64[channel.getSamplesPerRecord()];
-        record_size += channel.typeBitSize() / 8;
-    }
-    int8* record_buffer = new int8[record_size];
-
-    // save all records
-    uint32 number_records = file_signal_reader_->getBasicHeader()->getNumberRecords();
-    for (uint32 record_nr = 0; record_nr < number_records; record_nr++)
-    {
-        if (!file_signal_reader_->loadRawRecords(float_buffer, record_nr, 1))
-            return false;
-        for (uint32 channel_nr = 0; channel_nr < number_channels; channel_nr++)
-        {
-            const SignalChannel& channel
-                = file_signal_reader_->getBasicHeader()->getChannel(channel_nr);
-            convertData(float_buffer[channel_nr], record_buffer, channel);
-        }
-        writeStreamValues(file_, record_buffer, record_size);
-    }
-
-    // delete buffers
-    delete[] record_buffer;
-    for (uint32 channel_nr = 0; channel_nr < number_channels; channel_nr++)
-    {
-        delete[] float_buffer[channel_nr];
-    }
-    delete[] float_buffer;
-    return true;
+    return false;
+//    // allocate buffers
+//    int32 record_size = 0;
+//    uint32 number_channels = file_signal_reader_->getBasicHeader()->getNumberChannels();
+//    float64** float_buffer = new float64*[number_channels];
+//    for (uint32 channel_nr = 0; channel_nr < number_channels; channel_nr++)
+//    {
+//        const SignalChannel& channel
+//            = file_signal_reader_->getBasicHeader()->getChannel(channel_nr);
+//        float_buffer[channel_nr] = new float64[channel.getSamplesPerRecord()];
+//        record_size += channel.typeBitSize() / 8;
+//    }
+//    int8* record_buffer = new int8[record_size];
+//
+//    // save all records
+//    uint32 number_records = file_signal_reader_->getBasicHeader()->getNumberRecords();
+//    for (uint32 record_nr = 0; record_nr < number_records; record_nr++)
+//    {
+//        if (!file_signal_reader_->loadRawRecords(float_buffer, record_nr, 1))
+//            return false;
+//        for (uint32 channel_nr = 0; channel_nr < number_channels; channel_nr++)
+//        {
+//            const SignalChannel& channel
+//                = file_signal_reader_->getBasicHeader()->getChannel(channel_nr);
+//            convertData(float_buffer[channel_nr], record_buffer, channel);
+//        }
+//        writeStreamValues(file_, record_buffer, record_size);
+//    }
+//
+//    // delete buffers
+//    delete[] record_buffer;
+//    for (uint32 channel_nr = 0; channel_nr < number_channels; channel_nr++)
+//    {
+//        delete[] float_buffer[channel_nr];
+//    }
+//    delete[] float_buffer;
+//    return true;
 }
 
 // save events

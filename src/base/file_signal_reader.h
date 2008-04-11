@@ -44,13 +44,6 @@ public:
     virtual QPointer<BasicHeader> getBasicHeader () = 0;
     
     virtual HDRTYPE* getRawHeader () {return 0;}
-    
-    //-------------------------------------------------------------------------
-    ///
-    /// @return  false if error occured
-    ///          true if everything is ok
-    virtual bool loadRawRecords(float64** record_data, uint32 start_record,
-                                uint32 records) = 0;
 
 protected: 
     FileSignalReader();

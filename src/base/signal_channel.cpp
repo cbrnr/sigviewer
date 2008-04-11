@@ -12,7 +12,7 @@ SignalChannel::SignalChannel(uint32 number, const QString& label,
                              float64 physical_minimum,
                              float64 physical_maximum,
                              float64 digital_minimum, float64 digital_maximum,
-                             uint32 data_type, uint32 data_offset,
+                             Type data_type, uint32 data_offset,
                              const QString filter_label, float64 lowpass,
                              float64 highpass, bool notch)
 : number_(number),
@@ -158,6 +158,8 @@ uint32 SignalChannel::typeBitSize() const
         case INT64:
         case FLOAT64:
             return 64;
+        default:
+            return 0;
     }
     return 0;
 }
@@ -195,6 +197,8 @@ QString SignalChannel::typeString() const
             return "int64";
         case FLOAT64:
             return "float64";
+        default:
+            return "?";
     }
     return "?";
 }

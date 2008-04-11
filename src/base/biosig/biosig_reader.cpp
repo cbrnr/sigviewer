@@ -10,6 +10,7 @@
 #include <QTranslator>
 #include <QMutexLocker>
 
+#include <cmath>
 #include <iostream>
 
 namespace BioSig_
@@ -76,11 +77,9 @@ void BioSigReader::loadEvents(SignalEventVector& event_vector)
             iter->duration = biosig_header_->EVENT.DUR[event_nr];
         }
     }
-    
 
     // sort events by position, type and channel
-    qSort(gdf_events); // TODO
-    //    std::sort(gdf_events.begin(), gdf_events.end(), std::less<GDFEvent>());
+    qSort(gdf_events);
 
     // store to signal events
     for (iter = gdf_events.begin(); iter != gdf_events.end(); iter++)
@@ -142,10 +141,10 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
     QMutexLocker lock (&mutex_);
     if (!biosig_header_)
     {
-//        if (log_stream_) 
-//        {
-//            *log_stream_ << "GDFReader::loadChannels Error: not open\n";
-//        }
+        if (log_stream_) 
+        {
+            *log_stream_ << "GDFReader::loadChannels Error: not open\n";
+        }
         return;
     }
     
@@ -175,11 +174,8 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
 //            }
             SignalChannel* sig = basic_header_->getChannelPointer((*data_block)->channel_number);
             uint32 samples = sig->getSamplesPerRecord();
-            //std::cout << " samples = " << samples << ";" ;
             uint32 actual_sample = (rec_nr - start_record) * samples; 
-            //std::cout << " actual_sample = " << actual_sample << ";" ;
-            //std::cout << " (*data_block)->number_samples = " << (*data_block)->number_samples << ";" ;
-            
+
             if (actual_sample + samples > (*data_block)->number_samples)
             {
                 if (actual_sample >= (*data_block)->number_samples)
@@ -212,16 +208,10 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
                     delete read_data;
                     read_data = new double[samples * biosig_header_->NS];
                     memset(read_data, 0, sizeof(read_data));
-                    size_t read_length = sread(read_data, rec_nr, samples, biosig_header_);
-                    size_t read_samples = biosig_header_->data.size[0];
-                    size_t read_channels = biosig_header_->data.size[1];
-                    //std::cout << "read_samples = " << read_samples << "; read_channels = "<< read_channels << "; read_length = " << read_length << std::endl;
-                    
+                    sread(read_data, rec_nr, ceil(samples/biosig_header_->SPR), biosig_header_);
                 }
                 old_rec_nr = rec_nr;
-//               convertData(blub, &data_block_buffer[actual_sample],
-//                            *sig, samples);
-                //std::cout << blub[0] << ", ";
+
                 for (uint32 samp = actual_sample;
                      samp < actual_sample + samples;
                      samp++)
@@ -252,14 +242,6 @@ HDRTYPE* BioSigReader::getRawHeader ()
 {
     return biosig_header_;
 }
-
-//-----------------------------------------------------------------------------
-bool BioSigReader::loadRawRecords(float64** record_data, uint32 start_record,
-                               uint32 records)
-{
-
-    return false;
-} 
 
 //-----------------------------------------------------------------------------
 QString BioSigReader::loadFixedHeader(const QString& file_name)
@@ -309,9 +291,9 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     basic_header_->setRecordDuration (1.0f / biosig_header_->SampleRate);
     basic_header_->setNumberEvents(biosig_header_->EVENT.N);
     if (biosig_header_->EVENT.SampleRate)
-        basic_header_->setEventSamplerate(biosig_header_->EVENT.SampleRate);
+        basic_header_->setEventSamplerate(static_cast<uint32>(biosig_header_->EVENT.SampleRate));
     else
-        basic_header_->setEventSamplerate(biosig_header_->SampleRate);
+        basic_header_->setEventSamplerate(static_cast<uint32>(biosig_header_->SampleRate));
     
     for (uint32 channel_index = 0; channel_index < biosig_header_->NS; ++channel_index)
     {
@@ -322,9 +304,12 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
                                                    biosig_header_->CHANNEL[channel_index].PhysMax,
                                                    biosig_header_->CHANNEL[channel_index].DigMin,
                                                    biosig_header_->CHANNEL[channel_index].DigMax,
-                                                   17,
+                                                   SignalChannel::FLOAT64,
                                                    1 / 8, // TODO: really don't know what that means!
-                                                   "filter", -1, -1, false);
+                                                   "filter", 
+                                                   biosig_header_->CHANNEL[channel_index].LowPass, 
+                                                   biosig_header_->CHANNEL[channel_index].HighPass, 
+                                                   biosig_header_->CHANNEL[channel_index].Notch > 0.0);
         basic_header_->addChannel(channel);   
     }
     

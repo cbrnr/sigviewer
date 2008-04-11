@@ -121,14 +121,13 @@ void BioSigWriter::updateEventTable (HDRTYPE* header, SignalEventVector& event_v
                 header->EVENT.DUR[event_nr] = iter->getDuration ();
             if (chn_was_set)
             {
-                //std::cout << "iter->getChannel = " << iter->getChannel () << std::endl;
                 if (iter->getChannel() >= -1)
                 {
                     header->EVENT.CHN[event_nr] = iter->getChannel () + 1;
                     std::cout << "CHANNEL SET TO " << header->EVENT.CHN[event_nr] << std::cout;
                 }
                 else
-                    header->EVENT.CHN[event_nr] = 0;//iter->getChannel () + 1;
+                    header->EVENT.CHN[event_nr] = 0;
             }
         }
 

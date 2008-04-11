@@ -33,13 +33,6 @@ public:
     
     virtual HDRTYPE* getRawHeader (); 
     
-    //-------------------------------------------------------------------------
-    /// 
-    /// @return false if an error occured
-    ///         true if everything is fine
-    virtual bool loadRawRecords(float64** record_data, uint32 start_record,
-                                uint32 records);
-
 private:
     // not allowed
     BioSigReader(const BioSigReader& src);

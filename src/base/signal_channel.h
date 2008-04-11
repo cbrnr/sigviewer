@@ -38,7 +38,7 @@ public:
                   uint32 samples_per_record, const QString& physical_dim,
                   float64 physical_minimum, float64 physical_maximum,
                   float64 digital_minimum, float64 digital_maximum,
-                  uint32 data_type, uint32 data_offset,
+                  Type data_type, uint32 data_offset,
                   const QString filter_label, float64 lowpass,
                   float64 highpass, bool notch);
 
@@ -73,7 +73,7 @@ private:
     float64 digital_maximum_;
     float64 physical_minimum_;
     float64 digital_minimum_;
-    uint32 data_type_;
+    Type data_type_;
     uint32 data_offset_;
     float64 scale_;
     float64 offset_;

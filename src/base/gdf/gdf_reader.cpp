@@ -130,15 +130,7 @@ QString GDFReader::open(const QString& file_name)
     }
 
     reader_impl_->loadEventTableHeader ();
-//    if (!loadFixedHeader(file_name) ||
-//        !loadSignalHeaders(file_name))
-//    {
-//        file_.close();
-//        resetBasicHeader();
-//        resetGDFHeader();
-//        return false;
-//    }
-//    loadEventTableHeader();
+
     return "";
 }
 
