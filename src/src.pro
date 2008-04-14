@@ -11,7 +11,7 @@ CONFIG +=     warn_on \
     qt \
     static \
     thread \
-    debug
+    release
 
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc
