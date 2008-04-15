@@ -16,7 +16,7 @@ namespace BioSig_
 {
 
 
-double const BioSigReader::SAMPLE_RATE_TOLERANCE_ = 1E-3;
+double const BioSigReader::SAMPLE_RATE_TOLERANCE_ = 1E-4;
 
 //-----------------------------------------------------------------------------
 BioSigReader::BioSigReader() :
@@ -285,7 +285,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     basic_header_->setRecordSize (biosig_header_->CHANNEL[0].SPR); // TODO: different channels different sample rate!!
     basic_header_->setRecordsPosition (biosig_header_->HeadLen); 
     basic_header_->setRecordDuration (static_cast<double>(biosig_header_->Dur[0]) / biosig_header_->Dur[1]);
-    double sample_rate_error = biosig_header_->SampleRate - basic_header_->getRecordDuration ();
+    double sample_rate_error = (1.0f / biosig_header_->SampleRate) - (static_cast<double>(biosig_header_->Dur[0]) / static_cast<double>(biosig_header_->Dur[1]));
     if (sample_rate_error > SAMPLE_RATE_TOLERANCE_ || sample_rate_error < -SAMPLE_RATE_TOLERANCE_)
     {
       if (biosig_header_)
