@@ -149,6 +149,7 @@ void MainWindowModel::setState(MainWindowModel::State state)
                 main_window_->setFileCloseEnabled(false);
                 main_window_->setFileInfoEnabled(false);
                 main_window_->setEditEventTableEnabled(false);
+                main_window_->setEditChangeTypeEnabled(false);
                 main_window_->setMouseModeNewEnabled(false);
                 main_window_->setMouseModePointerEnabled(false);
                 main_window_->setMouseModeHandEnabled(false);
@@ -162,7 +163,7 @@ void MainWindowModel::setState(MainWindowModel::State state)
                 main_window_->setViewGoToEnabled(false);
                 main_window_->setSecsPerPageEnabled(false);
                 main_window_->setSignalsPerPageEnabled(false);
-                setSelectionState(SELECTION_STATE_NONE);
+                setSelectionState(SELECTION_STATE_OFF);
             }
             break;
         case STATE_FILE_OPENED:
@@ -178,6 +179,7 @@ void MainWindowModel::setState(MainWindowModel::State state)
                 main_window_->setFileCloseEnabled(true);
                 main_window_->setFileInfoEnabled(true);
                 main_window_->setEditEventTableEnabled(true);
+                main_window_->setEditChangeTypeEnabled(true);
                 main_window_->setMouseModeNewEnabled(true);
                 main_window_->setMouseModePointerEnabled(true);
                 main_window_->setMouseModeHandEnabled(true);
@@ -206,6 +208,7 @@ void MainWindowModel::setState(MainWindowModel::State state)
                 main_window_->setFileCloseEnabled(true);
                 main_window_->setFileInfoEnabled(true);
                 main_window_->setEditEventTableEnabled(true);
+                main_window_->setEditChangeTypeEnabled(true);
                 main_window_->setMouseModeNewEnabled(true);
                 main_window_->setMouseModePointerEnabled(true);
                 main_window_->setMouseModeHandEnabled(true);
@@ -230,6 +233,13 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
     selection_state_ = selection_state;
     switch(selection_state_)
     {
+        case SELECTION_STATE_OFF:
+            main_window_->setEditToAllChannelsEnabled(false);
+            main_window_->setEditCopyToChannelsEnabled(false);
+            main_window_->setEditDeleteEnabled(false);
+            main_window_->setEditChangeChannelEnabled(false);
+            main_window_->setEditChangeTypeEnabled(false);
+            break;
         case SELECTION_STATE_NONE:
             main_window_->setEditToAllChannelsEnabled(false);
             main_window_->setEditCopyToChannelsEnabled(false);

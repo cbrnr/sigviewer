@@ -3,8 +3,6 @@
 #include <QFile>
 #include <QMutexLocker>
 
-#include <iostream>
-
 namespace BioSig_
 {
 
@@ -122,10 +120,7 @@ void BioSigWriter::updateEventTable (HDRTYPE* header, SignalEventVector& event_v
             if (chn_was_set)
             {
                 if (iter->getChannel() >= -1)
-                {
                     header->EVENT.CHN[event_nr] = iter->getChannel () + 1;
-                    std::cout << "CHANNEL SET TO " << header->EVENT.CHN[event_nr] << std::cout;
-                }
                 else
                     header->EVENT.CHN[event_nr] = 0;
             }

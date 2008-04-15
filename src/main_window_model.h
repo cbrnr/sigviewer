@@ -38,6 +38,7 @@ public:
 
     enum SelectionState
     {
+        SELECTION_STATE_OFF,
         SELECTION_STATE_NONE,
         SELECTION_STATE_ONE_CHANNEL,
         SELECTION_STATE_ALL_CHANNELS
