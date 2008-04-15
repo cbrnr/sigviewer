@@ -44,6 +44,7 @@ private:
     mutable QMutex mutex_;
     mutable QMutex biosig_access_lock_;
     HDRTYPE* biosig_header_;
+    static double const SAMPLE_RATE_TOLERANCE_;
 };
 
 } // namespace BioSig_

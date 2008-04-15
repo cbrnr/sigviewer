@@ -11,13 +11,12 @@
 #include <QMutexLocker>
 
 #include <cmath>
-#include <iostream>
 
 namespace BioSig_
 {
 
 
-
+double const BioSigReader::SAMPLE_RATE_TOLERANCE_ = 1E-3;
 
 //-----------------------------------------------------------------------------
 BioSigReader::BioSigReader() :
@@ -162,16 +161,16 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
              data_block != end;
              data_block++)
         {
-//            if ((*data_block)->sub_sampling > 1 ||
-//                (*data_block)->channel_number >= basic_header_->getNumberChannels())
-//            {
+            if ((*data_block)->sub_sampling > 1 ||
+                (*data_block)->channel_number >= basic_header_->getNumberChannels())
+            {
 ////                if (log_stream_)
 ////                {
 ////                    *log_stream_ << "GDFReader::loadChannels Error: "
 ////                                 << "invalid SignalDataBlock\n";
 ////                }
-//                continue;
-//            }
+                continue;
+            }
             SignalChannel* sig = basic_header_->getChannelPointer((*data_block)->channel_number);
             uint32 samples = sig->getSamplesPerRecord();
             uint32 actual_sample = (rec_nr - start_record) * samples; 
@@ -219,15 +218,13 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
                     data_block_buffer[samp] = read_data[(*data_block)->channel_number];
                     data_block_upper_buffer[samp] = data_block_buffer[samp];
                     data_block_lower_buffer[samp] = data_block_buffer[samp];
-                    data_block_buffer_valid[samp] = true;
-                        //= data_block_buffer[samp] > sig->getPhysicalMinimum() &&
-                        //  data_block_buffer[samp] < sig->getPhysicalMaximum();
+                    data_block_buffer_valid[samp] = data_block_buffer[samp] > sig->getPhysicalMinimum() &&
+                          data_block_buffer[samp] < sig->getPhysicalMaximum();
                 }
             }
 
         }
     }
-
 }
 
 //-----------------------------------------------------------------------------
@@ -258,7 +255,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         {
             sclose (biosig_header_);
             delete biosig_header_;
-            biosig_header_ = 0;            
+            biosig_header_ = 0;
         }
         return "file not supported";
     }
@@ -288,6 +285,17 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     basic_header_->setRecordSize (biosig_header_->CHANNEL[0].SPR); // TODO: different channels different sample rate!!
     basic_header_->setRecordsPosition (biosig_header_->HeadLen); 
     basic_header_->setRecordDuration (static_cast<double>(biosig_header_->Dur[0]) / biosig_header_->Dur[1]);
+    double sample_rate_error = biosig_header_->SampleRate - basic_header_->getRecordDuration ();
+    if (sample_rate_error > SAMPLE_RATE_TOLERANCE_ || sample_rate_error < -SAMPLE_RATE_TOLERANCE_)
+    {
+      if (biosig_header_)
+      {
+        sclose (biosig_header_);
+        delete biosig_header_;
+        biosig_header_ = 0;
+      }
+      return "Data corrupted: SampleRate and Record Duration don't match!";
+    }
     basic_header_->setRecordDuration (1.0f / biosig_header_->SampleRate);
     basic_header_->setNumberEvents(biosig_header_->EVENT.N);
     if (biosig_header_->EVENT.SampleRate)
@@ -312,7 +320,6 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
                                                    biosig_header_->CHANNEL[channel_index].Notch > 0.0);
         basic_header_->addChannel(channel);   
     }
-    
     return "";
 }
 
