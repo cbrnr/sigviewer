@@ -2,6 +2,8 @@
 
 #include "signal_channel.h"
 
+#include <QMutexLocker>
+
 namespace BioSig_
 {
 

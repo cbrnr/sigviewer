@@ -12,6 +12,8 @@
 
 #include <cmath>
 
+using namespace std;
+
 namespace BioSig_
 {
 
@@ -215,11 +217,12 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
                      samp < actual_sample + samples;
                      samp++)
                 {
-                    data_block_buffer[samp] = read_data[(*data_block)->channel_number];
+                    data_block_buffer[samp] = read_data[(*data_block)->channel_number + (samp - actual_sample)];
                     data_block_upper_buffer[samp] = data_block_buffer[samp];
                     data_block_lower_buffer[samp] = data_block_buffer[samp];
-                    data_block_buffer_valid[samp] = data_block_buffer[samp] > sig->getPhysicalMinimum() &&
-                          data_block_buffer[samp] < sig->getPhysicalMaximum();
+                    data_block_buffer_valid[samp] = true; 
+                          //data_block_buffer[samp] > sig->getPhysicalMinimum() &&
+                          //data_block_buffer[samp] < sig->getPhysicalMaximum();
                 }
             }
 
@@ -285,7 +288,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     basic_header_->setRecordSize (biosig_header_->CHANNEL[0].SPR); // TODO: different channels different sample rate!!
     basic_header_->setRecordsPosition (biosig_header_->HeadLen); 
     basic_header_->setRecordDuration (static_cast<double>(biosig_header_->Dur[0]) / biosig_header_->Dur[1]);
-    double sample_rate_error = (1.0f / biosig_header_->SampleRate) - (static_cast<double>(biosig_header_->Dur[0]) / static_cast<double>(biosig_header_->Dur[1]));
+    double sample_rate_error = (static_cast<double>(biosig_header_->SPR) / biosig_header_->SampleRate) - (static_cast<double>(biosig_header_->Dur[0]) / static_cast<double>(biosig_header_->Dur[1]));
     if (sample_rate_error > SAMPLE_RATE_TOLERANCE_ || sample_rate_error < -SAMPLE_RATE_TOLERANCE_)
     {
       if (biosig_header_)
@@ -296,7 +299,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
       }
       return "Data corrupted: SampleRate and Record Duration don't match!";
     }
-    basic_header_->setRecordDuration (1.0f / biosig_header_->SampleRate);
+    basic_header_->setRecordDuration (static_cast<double>(biosig_header_->SPR) / biosig_header_->SampleRate);
     basic_header_->setNumberEvents(biosig_header_->EVENT.N);
     if (biosig_header_->EVENT.SampleRate)
         basic_header_->setEventSamplerate(static_cast<uint32>(biosig_header_->EVENT.SampleRate));
@@ -314,7 +317,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
                                                    biosig_header_->CHANNEL[channel_index].DigMax,
                                                    SignalChannel::FLOAT64,
                                                    1 / 8, // TODO: really don't know what that means!
-                                                   "filter", 
+                                                   "filter", // maybe useless
                                                    biosig_header_->CHANNEL[channel_index].LowPass, 
                                                    biosig_header_->CHANNEL[channel_index].HighPass, 
                                                    biosig_header_->CHANNEL[channel_index].Notch > 0.0);

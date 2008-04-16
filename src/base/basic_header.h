@@ -9,6 +9,7 @@
 #include <QString>
 #include <QDateTime>
 #include <QObject>
+#include <QMutex>
 
 namespace BioSig_
 {
@@ -122,6 +123,8 @@ protected:
     
     // moved to reader-implementationsn
     // uint32 event_table_position_; 
+    
+    mutable QMutex mutex_;
 };
 
 } // namespace BioSig_

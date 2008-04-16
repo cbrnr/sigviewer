@@ -2,6 +2,8 @@
 
 #include "basic_header.h"
 
+#include <QMutexLocker>
+
 namespace BioSig_
 {
 

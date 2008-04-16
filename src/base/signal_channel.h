@@ -6,6 +6,7 @@
 #include "user_types.h"
 
 #include <QString>
+#include <QMutex>
 
 namespace BioSig_
 {
@@ -65,6 +66,8 @@ private:
     // not allowed
     SignalChannel();
 
+    mutable QMutex mutex_;
+    
     uint32 number_;
     QString label_;
     uint32 samples_per_record_;
