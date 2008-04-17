@@ -217,7 +217,7 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
                      samp < actual_sample + samples;
                      samp++)
                 {
-                    data_block_buffer[samp] = read_data[(*data_block)->channel_number + (samp - actual_sample)];
+                    data_block_buffer[samp] = read_data[((*data_block)->channel_number * samples) + (samp - actual_sample)];
                     data_block_upper_buffer[samp] = data_block_buffer[samp];
                     data_block_lower_buffer[samp] = data_block_buffer[samp];
                     data_block_buffer_valid[samp] = true; 
