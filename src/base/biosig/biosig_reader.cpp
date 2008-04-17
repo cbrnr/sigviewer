@@ -206,7 +206,7 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
                 static double *read_data = 0;
                 if (rec_nr != old_rec_nr)
                 {
-                    delete read_data;
+                    delete[] read_data;
                     read_data = new double[samples * biosig_header_->NS];
                     memset(read_data, 0, sizeof(read_data));
                     sread(read_data, rec_nr, ceil(samples/biosig_header_->SPR), biosig_header_);
@@ -247,9 +247,10 @@ HDRTYPE* BioSigReader::getRawHeader ()
 QString BioSigReader::loadFixedHeader(const QString& file_name)
 {
     QMutexLocker locker (&biosig_access_lock_);
-    char *c_file_name = new char[file_name.length()];
+    char *c_file_name = new char[file_name.length() + 1];
     strcpy (c_file_name, file_name.toLocal8Bit ().data());
-    
+    c_file_name[file_name.length()] = '\0';
+        
     tzset();
      biosig_header_ = sopen(c_file_name, "r", NULL);
     if (biosig_header_ == NULL || serror()) 
@@ -277,6 +278,9 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         break;
     case CNT:
         basic_header_->setType ("CNT");
+        break;
+    case EDF:
+        basic_header_->setType ("EDF");
         break;
     default:
         basic_header_->setType ("...");
