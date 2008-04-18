@@ -289,7 +289,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     basic_header_->setNumberChannels(biosig_header_->NS);
     basic_header_->setVersion (QString::number(biosig_header_->VERSION));
     basic_header_->setNumberRecords (biosig_header_->NRec);
-    basic_header_->setRecordSize (biosig_header_->CHANNEL[0].SPR); // TODO: different channels different sample rate!!
+    basic_header_->setRecordSize (biosig_header_->SPR);
     basic_header_->setRecordsPosition (biosig_header_->HeadLen); 
     basic_header_->setRecordDuration (static_cast<double>(biosig_header_->Dur[0]) / biosig_header_->Dur[1]);
     double sample_rate_error = (static_cast<double>(biosig_header_->SPR) / biosig_header_->SampleRate) - (static_cast<double>(biosig_header_->Dur[0]) / static_cast<double>(biosig_header_->Dur[1]));
@@ -313,7 +313,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     for (uint32 channel_index = 0; channel_index < biosig_header_->NS; ++channel_index)
     {
         SignalChannel* channel = new SignalChannel(channel_index, QT_TR_NOOP(biosig_header_->CHANNEL[channel_index].Label), 
-                                                   biosig_header_->CHANNEL[channel_index].SPR,
+                                                   biosig_header_->SPR,
                                                    biosig_header_->CHANNEL[channel_index].PhysDim, 
                                                    biosig_header_->CHANNEL[channel_index].PhysMin,
                                                    biosig_header_->CHANNEL[channel_index].PhysMax,
