@@ -265,7 +265,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     }
 
     biosig_header_->FLAG.UCAL = 0;  
-    
+    biosig_header_->FLAG.OVERFLOWDETECTION = 0;
     
     basic_header_->setFullFileName (file_name);
     switch (biosig_header_->TYPE)

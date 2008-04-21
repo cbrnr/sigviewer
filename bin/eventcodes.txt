@@ -1,8 +1,8 @@
 ### Table of event codes
 # This file is part of the biosig project http://biosig.sf.net/
 # Copyright (C) 2004-2005 Alois Schloegl <a.schloegl@ieee.org>
-# $Revision: 1.1.1.1 $
-# $Id: eventcodes.txt,v 1.1.1.1 2005-10-03 08:40:05 cle1109 Exp $
+# $Revision: 1.2 $
+# $Id: eventcodes.txt,v 1.2 2008-04-21 08:11:29 cle1109 Exp $
 #
 ### Table of event codes: lines starting with # are omitted
 ### Add 0x8000 to indicate end of event
@@ -73,6 +73,12 @@
 0x0420	Lights on
 #0x8420	Lights off
 #
+### 0x043_ Eye artifacts
+0x0430  Eye activity
+0x0437  Eye rotation (clockwise)
+0x0438  Eye rotation (counterclockwise)
+0x0439  Eye blinks
+#
 ### 0x050_	ECG events
 0x0501	Fiducial point of QRS complex
 0x0502	P-wave
@@ -119,3 +125,5 @@
 0x0011	Condition 17
 0x0012	Condition 18
 #
+### 0x7___
+0x7FFE  Start of a new run
