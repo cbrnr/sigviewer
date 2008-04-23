@@ -2,11 +2,11 @@
 #include "../stream_utils.h"
 #include "../signal_data_block.h"
 #include "../math_utils.h"
-#include "../gdf/gdf_event.h"
+#include "../gdf_event.h"
 
 #include <biosig.h>
 
-#include <QTextStream>
+#include <QTextStream> 
 #include <QTranslator>
 #include <QMutexLocker>
 
