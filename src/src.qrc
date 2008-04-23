@@ -1,5 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
+
 <qresource>
+
     <file>images/auto_scale_22x22.png</file>
     <file>images/channels_22x22.png</file>
     <file>images/exit_22x22.png</file>
@@ -11,6 +13,7 @@
     <file>images/pointer_22x22.png</file>
     <file>images/shift_signal_22x22.png</file>
     <file>images/sigviewer16.png</file>
+
     <file>images/sigviewer128.png</file>
     <file>images/zoom_22x22.png</file>
     <file>images/zoom_in_22x22.png</file>
@@ -28,4 +31,6 @@
     <file>images/info_16x16.png</file>
     <file>images/patient_16x16.png</file>
 </qresource>
+
 </RCC>
+

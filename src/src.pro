@@ -9,9 +9,9 @@ INCLUDEPATH += ../extern
 LIBS += -L../extern -lbiosig
 CONFIG +=     warn_on \
     qt \
-    static \
+	static \
     thread \
-    release
+    release \
 
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc
