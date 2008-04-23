@@ -18,7 +18,7 @@ namespace BioSig_
 {
 
 
-double const BioSigReader::SAMPLE_RATE_TOLERANCE_ = 1E-4;
+// double const BioSigReader::SAMPLE_RATE_TOLERANCE_ = 1E-4;	// OBSOLETE (AS)
 
 //-----------------------------------------------------------------------------
 BioSigReader::BioSigReader() :
@@ -291,6 +291,9 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     basic_header_->setNumberRecords (biosig_header_->NRec);
     basic_header_->setRecordSize (biosig_header_->SPR);
     basic_header_->setRecordsPosition (biosig_header_->HeadLen); 
+
+/*  this section is obsolete (AS) 
+
     basic_header_->setRecordDuration (static_cast<double>(biosig_header_->Dur[0]) / biosig_header_->Dur[1]);
     double sample_rate_error = (static_cast<double>(biosig_header_->SPR) / biosig_header_->SampleRate) - (static_cast<double>(biosig_header_->Dur[0]) / static_cast<double>(biosig_header_->Dur[1]));
     if (sample_rate_error > SAMPLE_RATE_TOLERANCE_ || sample_rate_error < -SAMPLE_RATE_TOLERANCE_)
@@ -303,13 +306,15 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
       }
       return "Data corrupted: SampleRate and Record Duration don't match!";
     }
+ */
+
     basic_header_->setRecordDuration (static_cast<double>(biosig_header_->SPR) / biosig_header_->SampleRate);
     basic_header_->setNumberEvents(biosig_header_->EVENT.N);
     if (biosig_header_->EVENT.SampleRate)
         basic_header_->setEventSamplerate(static_cast<uint32>(biosig_header_->EVENT.SampleRate));
     else
         basic_header_->setEventSamplerate(static_cast<uint32>(biosig_header_->SampleRate));
-    
+
     for (uint32 channel_index = 0; channel_index < biosig_header_->NS; ++channel_index)
     {
         SignalChannel* channel = new SignalChannel(channel_index, QT_TR_NOOP(biosig_header_->CHANNEL[channel_index].Label), 
