@@ -79,8 +79,8 @@ public:
     // events
     uint32 getNumberEvents() const;
     void setNumberEvents (uint32 number_events);
-    uint32 getEventSamplerate() const;
-    void setEventSamplerate (uint32 event_sample_rate);
+    double getEventSamplerate() const;
+    void setEventSamplerate (double event_sample_rate);
 
     void resetBasicHeader();
 protected:
@@ -119,7 +119,7 @@ protected:
 
     // events
     uint32 number_events_;
-    uint32 event_sample_rate_;
+    double event_sample_rate_;
     
     // moved to reader-implementationsn
     // uint32 event_table_position_; 

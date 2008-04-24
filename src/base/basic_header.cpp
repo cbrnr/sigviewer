@@ -266,12 +266,12 @@ void BasicHeader::setNumberEvents (uint32 number_events)
 }
 
 // get event samplerate
-uint32 BasicHeader::getEventSamplerate() const
+double BasicHeader::getEventSamplerate() const
 {
     return event_sample_rate_;
 }
 
-void BasicHeader::setEventSamplerate (uint32 event_sample_rate)
+void BasicHeader::setEventSamplerate (double event_sample_rate)
 {
     event_sample_rate_ = event_sample_rate;
 }
@@ -300,7 +300,7 @@ void BasicHeader::resetBasicHeader()
     number_channels_ = 0;
     records_position_ = 0;
     number_events_ = 0;
-    event_sample_rate_ = 0;
+    event_sample_rate_ = 0.0;
     //event_table_position_ = 0;
     for (SignalChannelPtrVector::iterator it = channel_vector_.begin();
          it != channel_vector_.end();
