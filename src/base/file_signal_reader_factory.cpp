@@ -20,7 +20,7 @@ FileSignalReaderFactory* FileSignalReaderFactory::getInstance()
         instance_.reset(new FileSignalReaderFactory);
 
         // register all readers
-        instance_->addPrototype(".evt", new EVTReader);
+        instance_->addPrototype(".evt", new BioSigReader);
         instance_->addPrototype(".gdf", new BioSigReader);
         instance_->addPrototype(".edf", new BioSigReader);
         instance_->addPrototype(".bkr", new BioSigReader);
