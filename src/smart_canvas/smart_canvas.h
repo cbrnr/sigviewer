@@ -16,7 +16,7 @@ class SmartCanvas : public Q3Canvas
 public:
     enum
     {
-        MAX_CHUNK_MATRIX_SIZE = 250000 //1000000
+        MAX_CHUNK_MATRIX_SIZE = 25000 //1000000
     };
 
     enum

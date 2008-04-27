@@ -112,7 +112,7 @@ public:
 
     {
 
-        WHOLE_SUBSAMPLING = SUBSAMPLING_16
+        WHOLE_SUBSAMPLING = SUBSAMPLING_64
 
     };
 
