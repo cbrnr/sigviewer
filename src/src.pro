@@ -12,6 +12,7 @@ CONFIG +=     warn_on \
 	static \
     thread \
     release \
+    x86 ppc
 
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc
