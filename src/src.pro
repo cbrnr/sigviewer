@@ -15,6 +15,7 @@ CONFIG +=     warn_on \
 
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc
+ICON = sigviewer.icns
 TRANSLATIONS += translations\sigviewer_de.ts \
     translations\sigviewer_en.ts \
     translations\sigviewer_es.ts \
