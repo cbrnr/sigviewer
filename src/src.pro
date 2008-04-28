@@ -11,8 +11,7 @@ CONFIG +=     warn_on \
     qt \
 	static \
     thread \
-    release \
-    x86 ppc
+    release
 
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc
