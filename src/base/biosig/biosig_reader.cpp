@@ -252,6 +252,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     c_file_name[file_name.length()] = '\0';
         
     tzset();
+
      biosig_header_ = sopen(c_file_name, "r", NULL);
     if (biosig_header_ == NULL || serror()) 
     {
@@ -266,6 +267,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
 
     biosig_header_->FLAG.UCAL = 0;  
     biosig_header_->FLAG.OVERFLOWDETECTION = 0;
+    biosig_header_->FLAG.ROW_BASED_CHANNELS = 0; 
     
     basic_header_->setFullFileName (file_name);
     switch (biosig_header_->TYPE)
