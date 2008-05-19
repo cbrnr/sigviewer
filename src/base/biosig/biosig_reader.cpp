@@ -265,9 +265,15 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         return "file not supported";
     }
 
+    // set flags 	
     biosig_header_->FLAG.UCAL = 0;  
     biosig_header_->FLAG.OVERFLOWDETECTION = 0;
     biosig_header_->FLAG.ROW_BASED_CHANNELS = 0; 
+    // EVENT.DUR and EVENT.CHN are optional in SOPEN, but SigViewer needs them. 	
+    if (biosig_header_->EVENT.DUR != NULL) 
+	biosig_header_->EVENT.DUR = (typeof(biosig_header_->EVENT.DUR))calloc(biosig_header_->EVENT.N,sizeof(typeof(*(biosig_header_->EVENT.DUR)))); 
+    if (biosig_header_->EVENT.CHN != NULL) 
+	biosig_header_->EVENT.CHN = (typeof(biosig_header_->EVENT.CHN))calloc(biosig_header_->EVENT.N,sizeof(typeof(*(biosig_header_->EVENT.CHN))));
     
     basic_header_->setFullFileName (file_name);
     switch (biosig_header_->TYPE)
