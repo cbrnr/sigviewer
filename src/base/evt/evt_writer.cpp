@@ -1,3 +1,29 @@
+/*
+
+    $Id: evt_writer.cpp,v 1.4 2008-05-20 15:32:11 schloegl Exp $
+    Copyright (C) Thomas Brunner  2006,2007 
+    		  Christoph Eibel 2007,2008, 
+		  Clemens Brunner 2006,2007,2008  
+    		  Alois Schloegl  2008
+    This file is part of the "SigViewer" repository 
+    at http://biosig.sf.net/ 
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 3
+    of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+    
+*/
+
+
 // evt_writer.cpp
 
 #include "evt_writer.h"
@@ -60,42 +86,17 @@ FileSignalWriter* EVTWriter::clone()
                             header->Patient.Medication 	= old_header->Patient.Medication;
                             header->Patient.Impairment.Visual = old_header->Patient.Impairment.Visual;
                             
-                            bool dur_was_set = false;
-                            bool chn_was_set = false;
-                            if (old_header->EVENT.DUR && header->EVENT.DUR)
-                              dur_was_set = true;
-                            else if (old_header->EVENT.DUR && !(header->EVENT.DUR))
-                            {
-                              dur_was_set = true;
-                              header->EVENT.DUR = new uint32_t [event_vector.size ()];
-                            }
-                            else if (!(old_header->EVENT.DUR) && header->EVENT.DUR)
-                              delete[] header->EVENT.DUR;
-                            
-                            if (old_header->EVENT.CHN && header->EVENT.CHN)
-                              chn_was_set = true;
-                            else if (old_header->EVENT.CHN && !(header->EVENT.CHN))
-                            {
-                              chn_was_set = true;
-                              header->EVENT.CHN = new uint16_t [event_vector.size ()];
-                            }
-                            else if (!(old_header->EVENT.CHN) && header->EVENT.CHN)
-                              delete[] header->EVENT.CHN;
-           
+				/* (C) 2008 AS: managing Event table simplified */                            
                             uint32 event_nr = 0;
                             for (SignalEventVector::iterator iter = event_vector.begin(); iter != event_vector.end(); ++iter, event_nr++)
                             {
                               header->EVENT.POS[event_nr] = iter->getPosition ();
                               header->EVENT.TYP[event_nr] = iter->getType ();
-                              if (dur_was_set)
-                                header->EVENT.DUR[event_nr] = iter->getDuration ();
-                              if (chn_was_set)
-                              {
-                                if (iter->getChannel() >= -1)
+                              header->EVENT.DUR[event_nr] = iter->getDuration ();
+                              if (iter->getChannel() >= -1)
                                   header->EVENT.CHN[event_nr] = iter->getChannel () + 1;
-                                else
+                              else
                                   header->EVENT.CHN[event_nr] = 0;
-                              }
                             } 
 
                             HDRTYPE *new_header = sopen (file_name.toLocal8Bit ().data(), "w", header);

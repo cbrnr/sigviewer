@@ -1,3 +1,28 @@
+/*
+
+    $Id: biosig_reader.cpp,v 1.15 2008-05-20 15:32:09 schloegl Exp $
+    Copyright (C) Thomas Brunner  2006,2007 
+    		  Christoph Eibel 2007,2008, 
+		  Clemens Brunner 2006,2007,2008  
+    		  Alois Schloegl  2008
+    This file is part of the "SigViewer" repository 
+    at http://biosig.sf.net/ 
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 3
+    of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+    
+*/
+
 #include "biosig_reader.h" 
 #include "../stream_utils.h"
 #include "../signal_data_block.h"
@@ -269,11 +294,12 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     biosig_header_->FLAG.UCAL = 0;  
     biosig_header_->FLAG.OVERFLOWDETECTION = 0;
     biosig_header_->FLAG.ROW_BASED_CHANNELS = 0; 
-    // EVENT.DUR and EVENT.CHN are optional in SOPEN, but SigViewer needs them. 	
-    if (biosig_header_->EVENT.DUR != NULL) 
+    // (C) 2008 AS: EVENT.DUR and EVENT.CHN are optional in SOPEN, but SigViewer needs them. 	
+    if (biosig_header_->EVENT.DUR == NULL) 
 	biosig_header_->EVENT.DUR = (typeof(biosig_header_->EVENT.DUR))calloc(biosig_header_->EVENT.N,sizeof(typeof(*(biosig_header_->EVENT.DUR)))); 
-    if (biosig_header_->EVENT.CHN != NULL) 
+    if (biosig_header_->EVENT.CHN == NULL) 
 	biosig_header_->EVENT.CHN = (typeof(biosig_header_->EVENT.CHN))calloc(biosig_header_->EVENT.N,sizeof(typeof(*(biosig_header_->EVENT.CHN))));
+    
     
     basic_header_->setFullFileName (file_name);
     switch (biosig_header_->TYPE)
