@@ -37,12 +37,28 @@ FileSignalWriter* EVTWriter::clone()
                                 return "cannot remove signal data from open file";
 
                             HDRTYPE *header = constructHDR(0, event_vector.size ());
-                            header->TYPE = GDF;
-                            header->VERSION = 1.25f;
-                            header->Dur[0] = 1;
-                            header->Dur[1] = 1;
+                            header->TYPE    	= GDF;
+			    header->VERSION 	= 2.0;
+				/* SPR and SampleRate define DUR*/    
+			    header->SPR     	= 1; 
+			    header->SampleRate 	= 1; 
+
                             header->EVENT.SampleRate = file_signal_reader.getBasicHeader()->getEventSamplerate();
                             HDRTYPE *old_header = file_signal_reader.getRawHeader();
+                     
+				/* (C) 2008 AS: keep patient information */                            
+                            header->T0 			= old_header->T0; 
+                            strcpy(header->Patient.Id, old_header->Patient.Id);
+                            header->Patient.Sex 	= old_header->Patient.Sex;
+                            header->Patient.Weight 	= old_header->Patient.Weight;
+                            header->Patient.Height 	= old_header->Patient.Height;
+                            header->Patient.Birthday 	= old_header->Patient.Birthday;
+                            header->Patient.Handedness 	= old_header->Patient.Handedness;
+                            header->Patient.Smoking 	= old_header->Patient.Smoking;
+                            header->Patient.AlcoholAbuse= old_header->Patient.AlcoholAbuse;
+                            header->Patient.DrugAbuse 	= old_header->Patient.DrugAbuse;
+                            header->Patient.Medication 	= old_header->Patient.Medication;
+                            header->Patient.Impairment.Visual = old_header->Patient.Impairment.Visual;
                             
                             bool dur_was_set = false;
                             bool chn_was_set = false;
@@ -65,9 +81,7 @@ FileSignalWriter* EVTWriter::clone()
                             }
                             else if (!(old_header->EVENT.CHN) && header->EVENT.CHN)
                               delete[] header->EVENT.CHN;
-
-        
-            
+           
                             uint32 event_nr = 0;
                             for (SignalEventVector::iterator iter = event_vector.begin(); iter != event_vector.end(); ++iter, event_nr++)
                             {
@@ -83,7 +97,7 @@ FileSignalWriter* EVTWriter::clone()
                                   header->EVENT.CHN[event_nr] = 0;
                               }
                             } 
-                            
+
                             HDRTYPE *new_header = sopen (file_name.toLocal8Bit ().data(), "w", header);
                             sclose (new_header);
 //                            new_header = sopen (file_name.toLocal8Bit ().data(), "r", 0);
