@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.15 2008-05-20 15:32:09 schloegl Exp $
+    $Id: biosig_reader.cpp,v 1.16 2008-05-21 18:33:16 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
@@ -278,7 +278,8 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         
     tzset();
 
-     biosig_header_ = sopen(c_file_name, "r", NULL);
+    VERBOSE_LEVEL=9;
+    biosig_header_ = sopen(c_file_name, "r", NULL);
     if (biosig_header_ == NULL || serror()) 
     {
         if (biosig_header_)
@@ -301,25 +302,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
 	biosig_header_->EVENT.CHN = (typeof(biosig_header_->EVENT.CHN))calloc(biosig_header_->EVENT.N,sizeof(typeof(*(biosig_header_->EVENT.CHN))));
     
     
-    basic_header_->setFullFileName (file_name);
-    switch (biosig_header_->TYPE)
-    {
-    case GDF:
-        basic_header_->setType ("GDF");
-        break;
-    case BKR:
-        basic_header_->setType ("BKR");
-        break;
-    case CNT:
-        basic_header_->setType ("CNT");
-        break;
-    case EDF:
-        basic_header_->setType ("EDF");
-        break;
-    default:
-        basic_header_->setType ("...");
-        break;
-    }
+    basic_header_->setType(GetFileTypeString(biosig_header_->TYPE));
     basic_header_->setNumberChannels(biosig_header_->NS);
     basic_header_->setVersion (QString::number(biosig_header_->VERSION));
     basic_header_->setNumberRecords (biosig_header_->NRec);
