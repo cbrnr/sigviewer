@@ -26,7 +26,7 @@ public:
                       bool save_signals = true);
     
 private:
-    void updateEventTable (HDRTYPE* header, SignalEventVector& event_vector, uint32 event_sample_rate);
+    void updateEventTable (HDRTYPE* header, SignalEventVector& event_vector, double event_sample_rate);
     
     FileFormat target_type_;
     std::set<FileFormat> file_formats_support_event_saving_;

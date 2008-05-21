@@ -1,6 +1,6 @@
 /*
 
-    $Id: evt_writer.cpp,v 1.4 2008-05-20 15:32:11 schloegl Exp $
+    $Id: evt_writer.cpp,v 1.5 2008-05-21 14:51:46 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
@@ -65,12 +65,11 @@ FileSignalWriter* EVTWriter::clone()
                             HDRTYPE *header = constructHDR(0, event_vector.size ());
                             header->TYPE    	= GDF;
 			    header->VERSION 	= 2.0;
-				/* SPR and SampleRate define DUR*/    
-			    header->SPR     	= 1; 
-			    header->SampleRate 	= 1; 
 
                             header->EVENT.SampleRate = file_signal_reader.getBasicHeader()->getEventSamplerate();
                             HDRTYPE *old_header = file_signal_reader.getRawHeader();
+			    header->SPR     	= old_header->SPR; 
+			    header->SampleRate 	= old_header->SampleRate; 
                      
 				/* (C) 2008 AS: keep patient information */                            
                             header->T0 			= old_header->T0; 
@@ -98,6 +97,8 @@ FileSignalWriter* EVTWriter::clone()
                               else
                                   header->EVENT.CHN[event_nr] = 0;
                             } 
+                            header->EVENT.N = event_nr; 
+                            header->EVENT.SampleRate = header->SampleRate;
 
                             HDRTYPE *new_header = sopen (file_name.toLocal8Bit ().data(), "w", header);
                             sclose (new_header);

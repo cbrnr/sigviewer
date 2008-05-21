@@ -1,3 +1,29 @@
+/*
+
+    $Id: biosig_writer.cpp,v 1.6 2008-05-21 14:51:46 schloegl Exp $
+    Copyright (C) Thomas Brunner  2006,2007 
+    		  Christoph Eibel 2007,2008, 
+		  Clemens Brunner 2006,2007,2008  
+    		  Alois Schloegl  2008
+    This file is part of the "SigViewer" repository 
+    at http://biosig.sf.net/ 
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 3
+    of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+    
+*/
+
+
 #include "biosig_writer.h"
 
 #include <QFile>
@@ -34,7 +60,7 @@ QString BioSigWriter::save(FileSignalReader& file_signal_reader,
         return "events can't be saved in that file format, please export events";
     
     HDRTYPE* header = file_signal_reader.getRawHeader();
-    uint32 event_sample_rate = file_signal_reader.getBasicHeader()->getEventSamplerate();
+    double event_sample_rate = file_signal_reader.getBasicHeader()->getEventSamplerate();
     
     if (header == 0)
         return "no biosig header found";
@@ -79,24 +105,17 @@ QString BioSigWriter::save(FileSignalReader& file_signal_reader,
     return "";
 }
 
-void BioSigWriter::updateEventTable (HDRTYPE* header, SignalEventVector& event_vector, uint32 event_sample_rate)
+void BioSigWriter::updateEventTable (HDRTYPE* header, SignalEventVector& event_vector, double event_sample_rate)
 {
-    if (header->EVENT.N != static_cast<uint32_t>(event_vector.size ()))
-    {
-        header->EVENT.N = event_vector.size ();
+
         header->EVENT.SampleRate = event_sample_rate;
-        bool dur_was_set = false;
-        bool chn_was_set = false;
+
+        /* realloc is faster than delete and new  
+        
         if (header->EVENT.DUR)
-        {
             delete[] header->EVENT.DUR;
-            dur_was_set = true;
-        }
         if (header->EVENT.CHN)
-        {
             delete[] header->EVENT.CHN;
-            chn_was_set = true;
-        }
         if (header->EVENT.TYP)
             delete[] header->EVENT.TYP;
         if (header->EVENT.POS)
@@ -105,28 +124,27 @@ void BioSigWriter::updateEventTable (HDRTYPE* header, SignalEventVector& event_v
         
         header->EVENT.POS = new uint32_t [event_vector.size ()];
         header->EVENT.TYP = new uint16_t [event_vector.size ()];
-        if (dur_was_set)
-            header->EVENT.DUR = new uint32_t [event_vector.size ()];
-        if (chn_was_set)
-            header->EVENT.CHN = new uint16_t [event_vector.size ()];
-            
-        uint32 event_nr = 0;
-        for (SignalEventVector::iterator iter = event_vector.begin(); iter != event_vector.end(); ++iter, event_nr++)
-        {
-            header->EVENT.POS[event_nr] = iter->getPosition ();
-            header->EVENT.TYP[event_nr] = iter->getType ();
-            if (dur_was_set)
-                header->EVENT.DUR[event_nr] = iter->getDuration ();
-            if (chn_was_set)
-            {
-                if (iter->getChannel() >= -1)
-                    header->EVENT.CHN[event_nr] = iter->getChannel () + 1;
-                else
-                    header->EVENT.CHN[event_nr] = 0;
-            }
-        }
+        header->EVENT.DUR = new uint32_t [event_vector.size ()];
+        header->EVENT.CHN = new uint16_t [event_vector.size ()];
+        */
+        
+	header->EVENT.TYP = (typeof(header->EVENT.TYP)) realloc(header->EVENT.TYP,event_vector.size () * sizeof(typeof(*header->EVENT.TYP)));
+	header->EVENT.POS = (typeof(header->EVENT.POS)) realloc(header->EVENT.POS,event_vector.size () * sizeof(typeof(*header->EVENT.POS)));
+	header->EVENT.CHN = (typeof(header->EVENT.CHN)) realloc(header->EVENT.CHN,event_vector.size () * sizeof(typeof(*header->EVENT.CHN)));
+	header->EVENT.DUR = (typeof(header->EVENT.DUR)) realloc(header->EVENT.DUR,event_vector.size () * sizeof(typeof(*header->EVENT.DUR)));
 
-    } 
+            
+        header->EVENT.N = 0;
+        for (SignalEventVector::iterator iter = event_vector.begin(); iter != event_vector.end(); ++iter, ++header->EVENT.N)
+        {
+            header->EVENT.POS[header->EVENT.N] = iter->getPosition ();
+            header->EVENT.TYP[header->EVENT.N] = iter->getType ();
+            header->EVENT.DUR[header->EVENT.N] = iter->getDuration ();
+            if (iter->getChannel() >= -1)
+                    header->EVENT.CHN[header->EVENT.N] = iter->getChannel () + 1;
+            else
+                    header->EVENT.CHN[header->EVENT.N] = 0;
+        }
 
 }
 
