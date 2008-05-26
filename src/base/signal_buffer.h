@@ -172,7 +172,7 @@ public:
 
     void removeEvent(uint32 event_id);
 
-    uint32 getEventSamplerate() const;
+    double getEventSamplerate() const;
 
 
 
