@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.16 2008-05-21 18:33:16 schloegl Exp $
+    $Id: biosig_reader.cpp,v 1.17 2008-05-26 13:38:44 cle1109 Exp $
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
@@ -301,6 +301,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     if (biosig_header_->EVENT.CHN == NULL) 
 	biosig_header_->EVENT.CHN = (typeof(biosig_header_->EVENT.CHN))calloc(biosig_header_->EVENT.N,sizeof(typeof(*(biosig_header_->EVENT.CHN))));
     
+    basic_header_->setFullFileName(c_file_name);
     
     basic_header_->setType(GetFileTypeString(biosig_header_->TYPE));
     basic_header_->setNumberChannels(biosig_header_->NS);

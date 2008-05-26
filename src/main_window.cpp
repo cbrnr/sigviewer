@@ -680,9 +680,9 @@ QString MainWindow::showImportDialog(const QString& path,
 void MainWindow::showHelpAboutDialog()
 {
     QMessageBox about_message_box(tr("About SigViewer"),
-                                  tr("<b><nobr>SigViewer Version 0.2.1</nobr></b><br>\
+                                  tr("<b><nobr>SigViewer Version 0.2.2</nobr></b><br>\
                                       <br>\
-									  <nobr>Thomas Brunner, Christoph Eibel, Clemens Brunner</nobr><br>\
+									  <nobr>Thomas Brunner, Christoph Eibel, Clemens Brunner, Alois Schl&ouml;gl</nobr><br>\
 									  <br>\
 									  <nobr>Graz University of Technology</nobr>"),
                                   QMessageBox::NoIcon,
