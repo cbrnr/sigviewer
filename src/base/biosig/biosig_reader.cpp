@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.18 2008-06-12 11:18:29 schloegl Exp $
+    $Id: biosig_reader.cpp,v 1.19 2008-06-12 22:37:10 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
@@ -299,10 +299,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     }
 
     // (C) 2008 AS: EVENT.DUR and EVENT.CHN are optional in SOPEN, but SigViewer needs them. 	
-    if (biosig_header_->EVENT.DUR == NULL) 
-	biosig_header_->EVENT.DUR = (typeof(biosig_header_->EVENT.DUR))calloc(biosig_header_->EVENT.N,sizeof(typeof(*(biosig_header_->EVENT.DUR)))); 
-    if (biosig_header_->EVENT.CHN == NULL) 
-	biosig_header_->EVENT.CHN = (typeof(biosig_header_->EVENT.CHN))calloc(biosig_header_->EVENT.N,sizeof(typeof(*(biosig_header_->EVENT.CHN))));
+    convert2to4_eventtable(biosig_header_);
     
     basic_header_->setFullFileName(c_file_name);
     
