@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.17 2008-05-26 13:38:44 cle1109 Exp $
+    $Id: biosig_reader.cpp,v 1.18 2008-06-12 11:18:29 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
@@ -278,8 +278,15 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         
     tzset();
 
-    VERBOSE_LEVEL=9;
-    biosig_header_ = sopen(c_file_name, "r", NULL);
+    // VERBOSE_LEVEL=9;
+
+    // set flags 	
+    biosig_header_ = constructHDR(0,0); 
+    biosig_header_->FLAG.UCAL = 0;  
+    biosig_header_->FLAG.OVERFLOWDETECTION = 0;
+    biosig_header_->FLAG.ROW_BASED_CHANNELS = 0; 
+
+    biosig_header_ = sopen(c_file_name, "r", biosig_header_ );
     if (biosig_header_ == NULL || serror()) 
     {
         if (biosig_header_)
@@ -291,10 +298,6 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         return "file not supported";
     }
 
-    // set flags 	
-    biosig_header_->FLAG.UCAL = 0;  
-    biosig_header_->FLAG.OVERFLOWDETECTION = 0;
-    biosig_header_->FLAG.ROW_BASED_CHANNELS = 0; 
     // (C) 2008 AS: EVENT.DUR and EVENT.CHN are optional in SOPEN, but SigViewer needs them. 	
     if (biosig_header_->EVENT.DUR == NULL) 
 	biosig_header_->EVENT.DUR = (typeof(biosig_header_->EVENT.DUR))calloc(biosig_header_->EVENT.N,sizeof(typeof(*(biosig_header_->EVENT.DUR)))); 
@@ -321,7 +324,8 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     {
         SignalChannel* channel = new SignalChannel(channel_index, QT_TR_NOOP(biosig_header_->CHANNEL[channel_index].Label), 
                                                    biosig_header_->SPR,
-                                                   biosig_header_->CHANNEL[channel_index].PhysDim, 
+                                                   biosig_header_->CHANNEL[channel_index].PhysDim, // depreciated, replace with PhysDim(physical_dimcode,...) 
+                                                   biosig_header_->CHANNEL[channel_index].PhysDimCode, 
                                                    biosig_header_->CHANNEL[channel_index].PhysMin,
                                                    biosig_header_->CHANNEL[channel_index].PhysMax,
                                                    biosig_header_->CHANNEL[channel_index].DigMin,
