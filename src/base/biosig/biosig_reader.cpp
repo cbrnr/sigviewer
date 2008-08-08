@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.19 2008-06-12 22:37:10 schloegl Exp $
+    $Id: biosig_reader.cpp,v 1.20 2008-08-08 09:53:39 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
@@ -304,7 +304,12 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     basic_header_->setFullFileName(c_file_name);
     
     basic_header_->setType(GetFileTypeString(biosig_header_->TYPE));
-    basic_header_->setNumberChannels(biosig_header_->NS);
+    
+    uint16_t NS=0;  // count number of selected channels - status channels are already converted to event table 
+    for (uint16_t k=0; k<biosig_header_->NS; k++) {
+    	if (biosig_header_->CHANNEL[k].OnOff) NS++;
+    }	
+    basic_header_->setNumberChannels(NS);
     basic_header_->setVersion (QString::number(biosig_header_->VERSION));
     basic_header_->setNumberRecords (biosig_header_->NRec);
     basic_header_->setRecordSize (biosig_header_->SPR);
@@ -318,6 +323,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         basic_header_->setEventSamplerate(biosig_header_->SampleRate);
 
     for (uint32 channel_index = 0; channel_index < biosig_header_->NS; ++channel_index)
+    if (biosig_header_->CHANNEL[channel_index].OnOff)	// show only selected channels - status channels are not shown.  
     {
         SignalChannel* channel = new SignalChannel(channel_index, QT_TR_NOOP(biosig_header_->CHANNEL[channel_index].Label), 
                                                    biosig_header_->SPR,
