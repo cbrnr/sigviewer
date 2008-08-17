@@ -7,6 +7,7 @@
 #include "base/basic_header.h"
 
 
+#include <math.h>
 
 #include <QTreeWidget>
 
@@ -488,11 +489,10 @@ void BasicHeaderInfoDialog::buildTree()
 
         filter_item->setText(0, tr("Filter"));
 
-        tmp_item = new QTreeWidgetItem(filter_item);
-
-        tmp_item->setText(0, tr("Label"));
-
-        tmp_item->setText(1, channel.getFilterLabel());
+	// AS: this contains no useful information - suggested to remove  
+        // tmp_item = new QTreeWidgetItem(filter_item);
+        // tmp_item->setText(0, tr("Label"));
+        // tmp_item->setText(1, channel.getFilterLabel());
 
         tmp_item = new QTreeWidgetItem(filter_item);
 
@@ -500,9 +500,9 @@ void BasicHeaderInfoDialog::buildTree()
 
         tmp_item->setText(0, tr("Highpass"));
 
-        tmp_item->setText(1, channel.getHighpass() < 0 ? "" :
-
-                                    QString::number(channel.getHighpass()));
+        tmp_item->setText(1, isnan(channel.getHighpass()) ? tr("unknown") :
+        			(channel.getHighpass() < 0 ? "" :
+                                QString::number(channel.getHighpass())));
 
         tmp_item->setText(2, tr("Hz"));
 
@@ -512,9 +512,9 @@ void BasicHeaderInfoDialog::buildTree()
 
         tmp_item->setText(0, tr("Lowpass"));
 
-        tmp_item->setText(1, channel.getLowpass() < 0 ? "" :
-
-                                    QString::number(channel.getLowpass()));
+        tmp_item->setText(1, isnan(channel.getLowpass()) ? tr("unknown") : 
+        			    (channel.getLowpass() < 0 ? "" :
+                                    QString::number(channel.getLowpass())));
 
         tmp_item->setText(2, tr("Hz"));
 
@@ -524,7 +524,7 @@ void BasicHeaderInfoDialog::buildTree()
 
         tmp_item->setText(0, tr("Notch"));
 
-        tmp_item->setText(1, channel.getNotch() ? tr("yes") : tr("no"));
+	tmp_item->setText(1, isnan(channel.getNotch()) ? tr("unknown") : (channel.getNotch() ? tr("yes") : tr("no")));
 
     }
 

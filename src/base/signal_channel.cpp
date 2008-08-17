@@ -1,6 +1,6 @@
 /*
 
-    $Id: signal_channel.cpp,v 1.6 2008-06-12 19:19:32 schloegl Exp $
+    $Id: signal_channel.cpp,v 1.7 2008-08-17 21:38:37 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
@@ -40,9 +40,10 @@ SignalChannel::SignalChannel(uint32 number, const QString& label,
                              float64 physical_minimum,
                              float64 physical_maximum,
                              float64 digital_minimum, float64 digital_maximum,
+		             uint16 gdftyp, 
                              Type data_type, uint32 data_offset,
-                             const QString filter_label, float64 lowpass,
-                             float64 highpass, bool notch)
+//                             const QString filter_label, 
+			     float32 lowpass, float32 highpass, float32 notch)
 : number_(number),
   label_(label),
   samples_per_record_(samples_per_record),
@@ -51,9 +52,10 @@ SignalChannel::SignalChannel(uint32 number, const QString& label,
   digital_maximum_(digital_maximum),
   physical_minimum_(physical_minimum),
   digital_minimum_(digital_minimum),
+  gdftyp_(gdftyp),
   data_type_(data_type),
   data_offset_(data_offset),
-  filter_label_(filter_label),
+//  filter_label_(filter_label),
   lowpass_(lowpass),
   highpass_(highpass),
   notch_(notch)
@@ -93,26 +95,28 @@ float64 SignalChannel::getOffset() const
     return offset_;
 }
 
+/* 
 // get filter label
 const QString& SignalChannel::getFilterLabel() const
 {
     return filter_label_;
 }
+*/
 
 // get lowpass
-float64 SignalChannel::getLowpass() const
+float32 SignalChannel::getLowpass() const
 {
     return lowpass_;
 }
 
 // get highpass
-float64 SignalChannel::getHighpass() const
+float32 SignalChannel::getHighpass() const
 {
     return highpass_;
 }
 
 // get notch
-bool SignalChannel::getNotch() const
+float32 SignalChannel::getNotch() const
 {
     return notch_;
 }
@@ -148,7 +152,13 @@ float64 SignalChannel::getDigitalMinimum() const
 }
 
 // get data type
-uint32 SignalChannel::getDataType() const
+uint16 SignalChannel::getgdftyp() const
+{
+    return gdftyp_;
+}
+
+// get data type
+uint16 SignalChannel::getDataType() const
 {
     return data_type_;
 }
@@ -195,15 +205,15 @@ uint32 SignalChannel::typeBitSize() const
 // type string
 QString SignalChannel::typeString() const
 {
-    if (data_type_ > UBITN)
+    if (gdftyp_ > UBITN)
     {
-        return QString("ubit%1").arg(data_type_ - UBITN);
+        return QString("ubit%1").arg(gdftyp_ - UBITN);
     }
-    if (data_type_ > BITN)
+    if (gdftyp_ > BITN)
     {
-        return QString("bit%1").arg(data_type_ - BITN);
+        return QString("bit%1").arg(gdftyp_ - BITN);
     }
-    switch (data_type_)
+    switch (gdftyp_)
     {
         case CHAR:
             return "char";

@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.20 2008-08-08 09:53:39 schloegl Exp $
+    $Id: biosig_reader.cpp,v 1.21 2008-08-17 21:38:37 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
@@ -333,12 +333,13 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
                                                    biosig_header_->CHANNEL[channel_index].PhysMax,
                                                    biosig_header_->CHANNEL[channel_index].DigMin,
                                                    biosig_header_->CHANNEL[channel_index].DigMax,
-                                                   SignalChannel::FLOAT64,
+                                                   biosig_header_->CHANNEL[channel_index].GDFTYP,
+                                                   SignalChannel::FLOAT64, // here - the real EEG data type should be 	
                                                    1 / 8, // TODO: really don't know what that means!
-                                                   "filter", // maybe useless
+//                                                   "filter", // no useful information
                                                    biosig_header_->CHANNEL[channel_index].LowPass, 
                                                    biosig_header_->CHANNEL[channel_index].HighPass, 
-                                                   biosig_header_->CHANNEL[channel_index].Notch > 0.0);
+                                                   biosig_header_->CHANNEL[channel_index].Notch);
         basic_header_->addChannel(channel);   
     }
     return "";
