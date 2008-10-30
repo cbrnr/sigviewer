@@ -1,6 +1,6 @@
 /*
 
-    $Id: signal_channel.h,v 1.7 2008-08-17 21:38:37 schloegl Exp $
+    $Id: signal_channel.h,v 1.8 2008-10-30 15:45:26 cle1109 Exp $
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
@@ -65,10 +65,9 @@ public:
                   uint32 physdimcode, 
                   float64 physical_minimum, float64 physical_maximum,
                   float64 digital_minimum, float64 digital_maximum,
-                  uint16 gdftyp, 
                   Type data_type, uint32 data_offset,
-//                  const QString filter_label, 
-                  float32  lowpass, float32 highpass, float32  notch);
+                  const QString filter_label, float64 lowpass,
+                  float64 highpass, bool notch);
 
     uint32 typeBitSize() const;
     QString typeString() const;
@@ -78,16 +77,15 @@ public:
     float64 getScale() const;
     float64 getOffset() const;
     const QString& getFilterLabel() const;
-    float32  getLowpass() const;
-    float32  getHighpass() const;
-    float32  getNotch() const;
+    float64 getLowpass() const;
+    float64 getHighpass() const;
+    bool getNotch() const;
     const QString& getPhysicalDim() const;
     float64 getPhysicalMaximum() const;
     float64 getDigitalMaximum() const;
     float64 getPhysicalMinimum() const;
     float64 getDigitalMinimum() const;
-    uint16 getgdftyp() const;
-    uint16 getDataType() const;
+    uint32 getDataType() const;
     uint32 getDataOffset() const;
 
 private:
@@ -104,15 +102,14 @@ private:
     float64 digital_maximum_;
     float64 physical_minimum_;
     float64 digital_minimum_;
-    uint16 gdftyp_;
     Type data_type_;
     uint32 data_offset_;
     float64 scale_;
     float64 offset_;
-//    QString filter_label_;
-    float32 lowpass_;
-    float32 highpass_;
-    float32 notch_;
+    QString filter_label_;
+    float64 lowpass_;
+    float64 highpass_;
+    bool notch_;
 };
 
 } // namespace BioSig_

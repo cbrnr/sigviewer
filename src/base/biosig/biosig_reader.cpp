@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.22 2008-10-30 13:42:38 cle1109 Exp $
+    $Id: biosig_reader.cpp,v 1.23 2008-10-30 15:45:26 cle1109 Exp $
     Copyright (C) Thomas Brunner  2006,2007
     		  Christoph Eibel 2007,2008,
 		  Clemens Brunner 2006,2007,2008
