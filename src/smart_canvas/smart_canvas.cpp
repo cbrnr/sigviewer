@@ -7,7 +7,7 @@ namespace BioSig_
 
 // constructor
 SmartCanvas::SmartCanvas(QObject* parent, bool clear_background)
-: Q3Canvas(parent),
+: Q3Canvas(parent), //QGraphicsScene::QGraphicsScene(parent)
   clear_background_(clear_background)
 {
     // nothing
@@ -27,13 +27,13 @@ void SmartCanvas::resize(int32 width, int32 height)
     // prevent huge memory allocations
     if (chunk_size > chunkSize())
     {
-        retune(chunk_size);
-        Q3Canvas::resize(width, height);
+        retune(chunk_size); //TODO: port retune
+        Q3Canvas::resize(width, height); //QGraphicsScene::setSceneRect(0, 0, width, height)
     }
     else
     {
-        Q3Canvas::resize(width, height);
-        retune(chunk_size);
+        Q3Canvas::resize(width, height); //QGraphicsScene::setSceneRect(0, 0, width, height)
+        retune(chunk_size); //TODO: port retune
     }
 }
 
@@ -48,7 +48,7 @@ void SmartCanvas::drawBackground(QPainter& painter, const QRect& clip)
 {
     if (clear_background_)
     {
-        Q3Canvas::drawBackground(painter, clip);
+        Q3Canvas::drawBackground(painter, clip); //QGraphicsScene::drawBackground(painter, clip);
     }
     last_draw_background_clip_ = clip;
 }

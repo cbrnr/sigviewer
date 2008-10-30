@@ -86,6 +86,10 @@ void MainWindow::initIconSets()
     view_auto_scale_icon_.addFile(":/images/auto_scale_22x22.png");
     options_channels_icon_.addFile(":/images/channels_22x22.png");
     options_show_events_icon_.addFile(":/images/events_22x22.png");
+    //TODO: (Oliver) add icon
+    //OLIVER - CHANGE - BEGINS
+    //options_show_settings_icon_.addFile(":/images/settings_22x22.png");
+    //OLIVER - CHANGE - ENDS
     help_about_icon_.addFile(":/images/help_22x22.png");
 }
 
@@ -106,7 +110,7 @@ void MainWindow::initActions()
     connect(file_save_action_, SIGNAL(triggered()),
             &model_, SLOT(fileSaveAction()));
 
-    file_save_as_action_ = new QAction(file_save_as_icon_, tr("Save As..."), 
+    file_save_as_action_ = new QAction(file_save_as_icon_, tr("Save As..."),
                                        this);
     file_save_as_action_->setObjectName("file_save_as_action_");
     file_save_as_action_->setStatusTip(tr("Save the signal file under a new name"));
@@ -196,7 +200,7 @@ void MainWindow::initActions()
     QActionGroup* mouse_mode_action_group = new QActionGroup(this);
     mouse_mode_action_group->setExclusive(true);
 
-    mouse_mode_new_action_ = new QAction(mouse_mode_new_icon_, 
+    mouse_mode_new_action_ = new QAction(mouse_mode_new_icon_,
                                          tr("&New Events"), mouse_mode_action_group);
     mouse_mode_new_action_->setObjectName("mouse_mode_new_action_");
     mouse_mode_new_action_->setCheckable(true);
@@ -205,7 +209,7 @@ void MainWindow::initActions()
     connect(mouse_mode_new_action_, SIGNAL(triggered()),
             &model_, SLOT(mouseModeNewAction()));
 
-    mouse_mode_pointer_action_ = new QAction(mouse_mode_pointer_icon_, 
+    mouse_mode_pointer_action_ = new QAction(mouse_mode_pointer_icon_,
                                              tr("&Edit Events"),
                                              mouse_mode_action_group);
     mouse_mode_pointer_action_->setObjectName("mouse_mode_pointer_action_");
@@ -215,7 +219,7 @@ void MainWindow::initActions()
     connect(mouse_mode_pointer_action_, SIGNAL(triggered()),
             &model_, SLOT(mouseModePointerAction()));
 
-    mouse_mode_hand_action_ = new QAction(mouse_mode_hand_icon_, 
+    mouse_mode_hand_action_ = new QAction(mouse_mode_hand_icon_,
                                              tr("&Scroll"),
                                              mouse_mode_action_group);
     mouse_mode_hand_action_->setObjectName("mouse_mode_hand_action_");
@@ -225,7 +229,7 @@ void MainWindow::initActions()
     connect(mouse_mode_hand_action_, SIGNAL(triggered()),
             &model_, SLOT(mouseModeHandAction()));
 
-    mouse_mode_shift_signal_action_ = new QAction(mouse_mode_shift_signal_icon_, 
+    mouse_mode_shift_signal_action_ = new QAction(mouse_mode_shift_signal_icon_,
                                                   tr("&Shift Signal"),
                                                   mouse_mode_action_group);
     mouse_mode_shift_signal_action_
@@ -259,7 +263,7 @@ void MainWindow::initActions()
     connect(view_zoom_out_action_, SIGNAL(triggered()),
             &model_, SLOT(viewZoomOutAction()));
 
-    view_auto_scale_action_= new QAction(view_auto_scale_icon_,  
+    view_auto_scale_action_= new QAction(view_auto_scale_icon_,
                                          tr("&Auto Scale"), this);
     view_auto_scale_action_->setObjectName("view_auto_scale_action_");
     view_auto_scale_action_->setStatusTip(tr("Autoscale all channels"));
@@ -276,7 +280,7 @@ void MainWindow::initActions()
                                     tr("Channe&ls..."), this);
     options_channels_action_->setObjectName("options_channels_action_");
     options_channels_action_->setShortcut(tr("Ctrl+L"));
-    options_channels_action_->setStatusTip(tr("Select the channles that should be shown"));
+    options_channels_action_->setStatusTip(tr("Select the channels that should be shown"));
     connect(options_channels_action_, SIGNAL(triggered()),
             &model_, SLOT(optionsChannelsAction()));
 
@@ -287,6 +291,14 @@ void MainWindow::initActions()
     options_show_events_action_->setStatusTip(tr("Select the events that should be shown"));
     connect(options_show_events_action_, SIGNAL(triggered()),
             &model_, SLOT(optionsShowEventsAction()));
+
+    options_show_settings_action_= new QAction(options_show_settings_icon_,
+                                    tr("&Preferences..."), this);
+    options_show_settings_action_->setObjectName("options_show_settings_action_");
+    options_show_settings_action_->setShortcut(tr("Ctrl+P"));
+    options_show_settings_action_->setStatusTip(tr("Show the preferences dialog"));
+    connect(options_show_settings_action_, SIGNAL(triggered()),
+            &model_, SLOT(optionsShowSettingsAction()));
 
     help_log_action_= new QAction(tr("&Log..."), this);
     help_log_action_->setObjectName("help_log_action_");
@@ -333,6 +345,7 @@ void MainWindow::initToolBars()
     option_toolbar_->setIconSize(QSize(22, 22));
     option_toolbar_->addAction(options_channels_action_);
     option_toolbar_->addAction(options_show_events_action_);
+    //option_toolbar_->addAction(options_show_settings_action_);
 
     secs_per_page_combobox_ = new QComboBox;
     secs_per_page_combobox_->setEditable(true);
@@ -347,6 +360,7 @@ void MainWindow::initToolBars()
     secs_per_page_combobox_->insertItem("500");
     secs_per_page_combobox_->insertItem("1000");
     secs_per_page_combobox_->insertItem(tr("whole"));
+
     signals_per_page_combobox_ = new QComboBox;
     signals_per_page_combobox_->setEditable(true);
     signals_per_page_combobox_->setInsertionPolicy(QComboBox::NoInsertion);
@@ -411,9 +425,9 @@ void MainWindow::initMenus()
     connect(file_recent_files_menu_, SIGNAL(triggered(QAction*)),
             &model_, SLOT(recentFileActivated(QAction*)));
     file_menu_->addSeparator();
-    file_menu_->addAction(file_close_action_);    
+    file_menu_->addAction(file_close_action_);
     file_menu_->addSeparator();
-    file_menu_->addAction(file_exit_action_);    
+    file_menu_->addAction(file_exit_action_);
 
     edit_menu_ = menuBar()->addMenu(tr("&Edit"));
     edit_menu_->addAction(edit_to_all_channels_action_);
@@ -435,16 +449,17 @@ void MainWindow::initMenus()
     view_menu_->addAction(view_zoom_in_action_);
     view_menu_->addAction(view_zoom_out_action_);
     view_menu_->addAction(view_auto_scale_action_);
-    view_menu_->addSeparator();    
+    view_menu_->addSeparator();
     view_menu_->addAction(view_go_to_action_);
 
     options_menu_ = menuBar()->addMenu(tr("&Options"));
     options_menu_->addAction(options_channels_action_);
     options_menu_->addAction(options_show_events_action_);
+    options_menu_->addAction(options_show_settings_action_);
 
     help_menu_ = menuBar()->addMenu(tr("&Help"));
     help_menu_->addAction(help_log_action_);
-    help_menu_->addSeparator();    
+    help_menu_->addSeparator();
     help_menu_->addAction(help_about_action_);
 }
 
@@ -680,9 +695,9 @@ QString MainWindow::showImportDialog(const QString& path,
 void MainWindow::showHelpAboutDialog()
 {
     QMessageBox about_message_box(tr("About SigViewer"),
-                                  tr("<b><nobr>SigViewer Version 0.2.2</nobr></b><br>\
+                                  tr("<b><nobr>SigViewer Version 0.2.5</nobr></b><br>\
                                       <br>\
-									  <nobr>Thomas Brunner, Christoph Eibel, Clemens Brunner, Alois Schl&ouml;gl</nobr><br>\
+									  Thomas Brunner, Christoph Eibel, Clemens Brunner, Alois Schl&ouml;gl, Oliver Terbu<br>\
 									  <br>\
 									  <nobr>Graz University of Technology</nobr>"),
                                   QMessageBox::NoIcon,
@@ -721,7 +736,7 @@ QString MainWindow::showExportDialog(const QString& path,
     }
     extension_selection += "*.*";
     QString selected_extension;
-    QString file_name = QFileDialog::getSaveFileName(this,  
+    QString file_name = QFileDialog::getSaveFileName(this,
                                             tr("Chose signal file to export"),
                                             path, extension_selection,
                                             &selected_extension);
@@ -730,7 +745,7 @@ QString MainWindow::showExportDialog(const QString& path,
         selected_extension = selected_extension.mid(1);
         if(!file_name.endsWith(selected_extension))
         {
-            file_name += selected_extension;   
+            file_name += selected_extension;
         }
     }
     return file_name;
@@ -752,8 +767,8 @@ QString MainWindow::showSaveAsDialog(const QString& path,
         }
     }
     extension_selection += "*.*";
-    QString selected_extension;    
-    QString file_name = QFileDialog::getSaveFileName(this, 
+    QString selected_extension;
+    QString file_name = QFileDialog::getSaveFileName(this,
                                         tr("Chose signal file to save as"),
                                         path, extension_selection,
                                         &selected_extension);
@@ -762,7 +777,7 @@ QString MainWindow::showSaveAsDialog(const QString& path,
         selected_extension = selected_extension.mid(1);
         if(!file_name.endsWith(selected_extension))
         {
-            file_name += selected_extension;   
+            file_name += selected_extension;
         }
     }
     return file_name;
@@ -839,7 +854,12 @@ void MainWindow::setSignalsPerPage(float64 signals_per_page)
 void MainWindow::setSecsPerPage(float64 secs_per_page)
 {
     QString tmp = QString::number(secs_per_page);
-    int32 index = secs_per_page_combobox_->findText(tmp);
+    setSecsPerPage(tmp);
+}
+
+void MainWindow::setSecsPerPage(const QString& secs_per_page)
+{
+    int32 index = secs_per_page_combobox_->findText(secs_per_page);
     if (index != -1)
     {
         secs_per_page_combobox_->setCurrentIndex(index);
@@ -848,9 +868,10 @@ void MainWindow::setSecsPerPage(float64 secs_per_page)
     {
         // TODO : works not correctly
         signals_per_page_combobox_->clearFocus();
-        secs_per_page_combobox_->setEditText(tmp);
+        secs_per_page_combobox_->setEditText(secs_per_page);
     }
 }
+
 
 // add Action
 bool MainWindow::addActionTo(QMenu* menu, const QString& action_name)

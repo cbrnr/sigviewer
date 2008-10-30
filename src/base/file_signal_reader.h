@@ -33,6 +33,8 @@ public:
     void setLogStream(QTextStream* log_stream);
 
     virtual QString open(const QString& file_name) = 0;
+    virtual QString open(const QString& file_name, const bool overflow_detection) = 0;
+
     virtual bool isOpen() = 0;
     virtual void close() = 0;
 
@@ -40,12 +42,12 @@ public:
                              SignalDataBlockPtrIterator end,
                              uint32 start_record) = 0;
     virtual void loadEvents(SignalEventVector& event_vector) = 0;
-    
+
     virtual QPointer<BasicHeader> getBasicHeader () = 0;
-    
+
     virtual HDRTYPE* getRawHeader () {return 0;}
 
-protected: 
+protected:
     FileSignalReader();
 
     QTextStream* log_stream_;

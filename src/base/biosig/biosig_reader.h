@@ -19,20 +19,22 @@ public:
     virtual FileSignalReader* clone();
 
     virtual QString open(const QString& file_name);
+    virtual QString open(const QString& file_name, const bool overflow_detection);
+
     virtual bool isOpen() {return biosig_header_ ? true : false;}
     virtual void close();
 
-    virtual void loadSignals(SignalDataBlockPtrIterator begin, 
+    virtual void loadSignals(SignalDataBlockPtrIterator begin,
                              SignalDataBlockPtrIterator end,
                              uint32 start_record);
-    
+
     //-------------------------------------------------------------------------
     virtual void loadEvents(SignalEventVector& event_vector);
-    
+
     virtual QPointer<BasicHeader> getBasicHeader ();
-    
-    virtual HDRTYPE* getRawHeader (); 
-    
+
+    virtual HDRTYPE* getRawHeader ();
+
 private:
     // not allowed
     BioSigReader(const BioSigReader& src);

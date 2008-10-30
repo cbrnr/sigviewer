@@ -1,12 +1,13 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.21 2008-08-17 21:38:37 schloegl Exp $
-    Copyright (C) Thomas Brunner  2006,2007 
-    		  Christoph Eibel 2007,2008, 
-		  Clemens Brunner 2006,2007,2008  
+    $Id: biosig_reader.cpp,v 1.22 2008-10-30 13:42:38 cle1109 Exp $
+    Copyright (C) Thomas Brunner  2006,2007
+    		  Christoph Eibel 2007,2008,
+		  Clemens Brunner 2006,2007,2008
     		  Alois Schloegl  2008
-    This file is part of the "SigViewer" repository 
-    at http://biosig.sf.net/ 
+    		  Oliver Terbu 2008
+    This file is part of the "SigViewer" repository
+    at http://biosig.sf.net/
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -19,11 +20,11 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>. 
-    
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 */
 
-#include "biosig_reader.h" 
+#include "biosig_reader.h"
 #include "../stream_utils.h"
 #include "../signal_data_block.h"
 #include "../math_utils.h"
@@ -31,7 +32,7 @@
 
 #include <biosig.h>
 
-#include <QTextStream> 
+#include <QTextStream>
 #include <QTranslator>
 #include <QMutexLocker>
 
@@ -71,7 +72,7 @@ FileSignalReader* BioSigReader::clone()
 }
 
 //-----------------------------------------------------------------------------
-void BioSigReader::close() 
+void BioSigReader::close()
 {
     if (biosig_header_)
     {
@@ -84,14 +85,14 @@ void BioSigReader::close()
 
 //-----------------------------------------------------------------------------
 void BioSigReader::loadEvents(SignalEventVector& event_vector)
-{    
-    QMutexLocker lock (&mutex_); 
+{
+    QMutexLocker lock (&mutex_);
     if (!biosig_header_)
         return;
 
     QVector<GDFEvent> gdf_events(biosig_header_->EVENT.N);
     QVector<GDFEvent>::iterator iter;
-    
+
     uint32 event_nr = 0;
     for (iter = gdf_events.begin(); iter != gdf_events.end(); iter++, event_nr++)
     {
@@ -156,8 +157,108 @@ void BioSigReader::loadEvents(SignalEventVector& event_vector)
 QString BioSigReader::open(const QString& file_name)
 {
 
-    QMutexLocker lock (&mutex_); 
+    QMutexLocker lock (&mutex_);
     return loadFixedHeader (file_name);
+}
+
+//-----------------------------------------------------------------------------
+QString BioSigReader::open(const QString& file_name, const bool overflow_detection)
+{
+
+    QMutexLocker lock (&mutex_);
+
+    if (biosig_header_)
+    {
+        sclose(biosig_header_);
+        delete biosig_header_;
+        biosig_header_ = 0;
+    }
+
+    biosig_header_ = constructHDR(0,0);
+    biosig_header_->FLAG.UCAL = 0;
+    biosig_header_->FLAG.OVERFLOWDETECTION = !overflow_detection;
+    biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
+
+    return loadFixedHeader (file_name);
+}
+
+//-----------------------------------------------------------------------------
+QString BioSigReader::loadFixedHeader(const QString& file_name)
+{
+    QMutexLocker locker (&biosig_access_lock_);
+    char *c_file_name = new char[file_name.length() + 1];
+    strcpy (c_file_name, file_name.toLocal8Bit ().data());
+    c_file_name[file_name.length()] = '\0';
+
+    tzset();
+
+    // VERBOSE_LEVEL=9;
+
+    // set flags
+    if(!biosig_header_)
+    {
+		biosig_header_ = constructHDR(0,0);
+		biosig_header_->FLAG.UCAL = 0;
+		biosig_header_->FLAG.OVERFLOWDETECTION = 0;
+		biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
+    }
+
+    biosig_header_ = sopen(c_file_name, "r", biosig_header_ );
+    if (biosig_header_ == NULL || serror())
+    {
+        if (biosig_header_)
+        {
+            sclose (biosig_header_);
+            delete biosig_header_;
+            biosig_header_ = 0;
+        }
+        return "file not supported";
+    }
+
+    // (C) 2008 AS: EVENT.DUR and EVENT.CHN are optional in SOPEN, but SigViewer needs them.
+    convert2to4_eventtable(biosig_header_);
+
+    basic_header_->setFullFileName(c_file_name);
+
+    basic_header_->setType(GetFileTypeString(biosig_header_->TYPE));
+
+    uint16_t NS=0;  // count number of selected channels - status channels are already converted to event table
+    for (uint16_t k=0; k<biosig_header_->NS; k++) {
+    	if (biosig_header_->CHANNEL[k].OnOff) NS++;
+    }
+    basic_header_->setNumberChannels(NS);
+    basic_header_->setVersion (QString::number(biosig_header_->VERSION));
+    basic_header_->setNumberRecords (biosig_header_->NRec);
+    basic_header_->setRecordSize (biosig_header_->SPR);
+    basic_header_->setRecordsPosition (biosig_header_->HeadLen);
+
+    basic_header_->setRecordDuration (biosig_header_->SPR / biosig_header_->SampleRate);
+    basic_header_->setNumberEvents(biosig_header_->EVENT.N);
+    if (biosig_header_->EVENT.SampleRate)
+        basic_header_->setEventSamplerate(biosig_header_->EVENT.SampleRate);
+    else
+        basic_header_->setEventSamplerate(biosig_header_->SampleRate);
+
+    for (uint32 channel_index = 0; channel_index < biosig_header_->NS; ++channel_index)
+    if (biosig_header_->CHANNEL[channel_index].OnOff)	// show only selected channels - status channels are not shown.
+    {
+        SignalChannel* channel = new SignalChannel(channel_index, QT_TR_NOOP(biosig_header_->CHANNEL[channel_index].Label),
+                                                   biosig_header_->SPR,
+                                                   biosig_header_->CHANNEL[channel_index].PhysDim,// depreciated, replace with PhysDim(physical_dimcode,...)
+                                                   biosig_header_->CHANNEL[channel_index].PhysDimCode,
+                                                   biosig_header_->CHANNEL[channel_index].PhysMin,
+                                                   biosig_header_->CHANNEL[channel_index].PhysMax,
+                                                   biosig_header_->CHANNEL[channel_index].DigMin,
+                                                   biosig_header_->CHANNEL[channel_index].DigMax,
+                                                   SignalChannel::FLOAT64,
+                                                   1 / 8, // TODO: really don't know what that means!
+                                                   "filter", // maybe useless
+                                                   biosig_header_->CHANNEL[channel_index].LowPass,
+                                                   biosig_header_->CHANNEL[channel_index].HighPass,
+                                                   biosig_header_->CHANNEL[channel_index].Notch > 0.0);
+        basic_header_->addChannel(channel);
+    }
+    return "";
 }
 
 //-----------------------------------------------------------------------------
@@ -167,13 +268,13 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
     QMutexLocker lock (&mutex_);
     if (!biosig_header_)
     {
-        if (log_stream_) 
+        if (log_stream_)
         {
             *log_stream_ << "GDFReader::loadChannels Error: not open\n";
         }
         return;
     }
-    
+
 //
     bool something_done = true;
     for (uint32 rec_nr = start_record; something_done; rec_nr++)
@@ -200,7 +301,7 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
             }
             SignalChannel* sig = basic_header_->getChannelPointer((*data_block)->channel_number);
             uint32 samples = sig->getSamplesPerRecord();
-            uint32 actual_sample = (rec_nr - start_record) * samples; 
+            uint32 actual_sample = (rec_nr - start_record) * samples;
 
             if (actual_sample + samples > (*data_block)->number_samples)
             {
@@ -222,7 +323,7 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
                      samp < actual_sample + samples;
                      samp++)
                 {
-                    data_block_buffer_valid[samp] = false; 
+                    data_block_buffer_valid[samp] = false;
                 }
             }
             else
@@ -245,7 +346,7 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
                     data_block_buffer[samp] = read_data[((*data_block)->channel_number * samples) + (samp - actual_sample)];
                     data_block_upper_buffer[samp] = data_block_buffer[samp];
                     data_block_lower_buffer[samp] = data_block_buffer[samp];
-                    data_block_buffer_valid[samp] = true; 
+                    data_block_buffer_valid[samp] = true;
                           //data_block_buffer[samp] > sig->getPhysicalMinimum() &&
                           //data_block_buffer[samp] < sig->getPhysicalMaximum();
                 }
@@ -266,83 +367,6 @@ QPointer<BasicHeader> BioSigReader::getBasicHeader ()
 HDRTYPE* BioSigReader::getRawHeader ()
 {
     return biosig_header_;
-}
-
-//-----------------------------------------------------------------------------
-QString BioSigReader::loadFixedHeader(const QString& file_name)
-{
-    QMutexLocker locker (&biosig_access_lock_);
-    char *c_file_name = new char[file_name.length() + 1];
-    strcpy (c_file_name, file_name.toLocal8Bit ().data());
-    c_file_name[file_name.length()] = '\0';
-        
-    tzset();
-
-    // VERBOSE_LEVEL=9;
-
-    // set flags 	
-    biosig_header_ = constructHDR(0,0); 
-    biosig_header_->FLAG.UCAL = 0;  
-    biosig_header_->FLAG.OVERFLOWDETECTION = 0;
-    biosig_header_->FLAG.ROW_BASED_CHANNELS = 0; 
-
-    biosig_header_ = sopen(c_file_name, "r", biosig_header_ );
-    if (biosig_header_ == NULL || serror()) 
-    {
-        if (biosig_header_)
-        {
-            sclose (biosig_header_);
-            delete biosig_header_;
-            biosig_header_ = 0;
-        }
-        return "file not supported";
-    }
-
-    // (C) 2008 AS: EVENT.DUR and EVENT.CHN are optional in SOPEN, but SigViewer needs them. 	
-    convert2to4_eventtable(biosig_header_);
-    
-    basic_header_->setFullFileName(c_file_name);
-    
-    basic_header_->setType(GetFileTypeString(biosig_header_->TYPE));
-    
-    uint16_t NS=0;  // count number of selected channels - status channels are already converted to event table 
-    for (uint16_t k=0; k<biosig_header_->NS; k++) {
-    	if (biosig_header_->CHANNEL[k].OnOff) NS++;
-    }	
-    basic_header_->setNumberChannels(NS);
-    basic_header_->setVersion (QString::number(biosig_header_->VERSION));
-    basic_header_->setNumberRecords (biosig_header_->NRec);
-    basic_header_->setRecordSize (biosig_header_->SPR);
-    basic_header_->setRecordsPosition (biosig_header_->HeadLen); 
-
-    basic_header_->setRecordDuration (biosig_header_->SPR / biosig_header_->SampleRate);
-    basic_header_->setNumberEvents(biosig_header_->EVENT.N);
-    if (biosig_header_->EVENT.SampleRate)
-        basic_header_->setEventSamplerate(biosig_header_->EVENT.SampleRate);
-    else
-        basic_header_->setEventSamplerate(biosig_header_->SampleRate);
-
-    for (uint32 channel_index = 0; channel_index < biosig_header_->NS; ++channel_index)
-    if (biosig_header_->CHANNEL[channel_index].OnOff)	// show only selected channels - status channels are not shown.  
-    {
-        SignalChannel* channel = new SignalChannel(channel_index, QT_TR_NOOP(biosig_header_->CHANNEL[channel_index].Label), 
-                                                   biosig_header_->SPR,
-                                                   biosig_header_->CHANNEL[channel_index].PhysDim, // depreciated, replace with PhysDim(physical_dimcode,...) 
-                                                   biosig_header_->CHANNEL[channel_index].PhysDimCode, 
-                                                   biosig_header_->CHANNEL[channel_index].PhysMin,
-                                                   biosig_header_->CHANNEL[channel_index].PhysMax,
-                                                   biosig_header_->CHANNEL[channel_index].DigMin,
-                                                   biosig_header_->CHANNEL[channel_index].DigMax,
-                                                   biosig_header_->CHANNEL[channel_index].GDFTYP,
-                                                   SignalChannel::FLOAT64, // here - the real EEG data type should be 	
-                                                   1 / 8, // TODO: really don't know what that means!
-//                                                   "filter", // no useful information
-                                                   biosig_header_->CHANNEL[channel_index].LowPass, 
-                                                   biosig_header_->CHANNEL[channel_index].HighPass, 
-                                                   biosig_header_->CHANNEL[channel_index].Notch);
-        basic_header_->addChannel(channel);   
-    }
-    return "";
 }
 
 }

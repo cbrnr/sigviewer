@@ -19,7 +19,7 @@ namespace BioSig_
 class SmartCanvasView;
 
 // smart canvas rectangle
-class SmartCanvasRectangle : public Q3CanvasRectangle
+class SmartCanvasRectangle : public Q3CanvasRectangle //QGraphicsRectItem
 {
 public:
     enum
