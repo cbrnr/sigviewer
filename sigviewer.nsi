@@ -6,7 +6,7 @@
 
   ;Name and file
   Name "SigViewer"
-  OutFile "SigViewer-0.2.1-win32.exe"
+  OutFile "sigviewer-0.2.5-win32.exe"
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\SigViewer"

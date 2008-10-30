@@ -1,26 +1,47 @@
-Version 0.1.7
+Version 0.2.5
+(+) added preferences dialog
+(*) removed some Qt3 stuff, but still not everything
 
+Version 0.2.4
+(+) update biosig4c++ to support more file formats
+
+Version 0.2.3
+(+) improve support for BCI2000 1.1 data format
+
+Version 0.2.2
+(B) fixed export and import of EVT files
+(B) fixed missing file name in window title
+(+) added new file formats (BCI2000, MIT/Physiobank)
+(+) improved handling of some file formats (EDF+, GDF1, BrainVision, AINF)
+
+Version 0.2.1
+(B) fixed CNT and VHDR errors
+
+Version 0.2.0
+(+) added support for biosig4c++, loading and saving is now done with this library. Therefore, many new formats are supported (GDF, BKR, CNT, EDF, ...)
+(B) channel selection is now working
+(+) scrolling during creation of events is now possible
+(*) the standard zoom setting is now auto
+(*) zero level on the y-axis is now in the middle of the channel window
+(+) should now compile and work on big endian machines (e.g. PPC) 
+
+Version 0.1.7
 (B) fix export of evt files with a sampling rate higher than 256Hz
 
 Version 0.1.6
-
 (B) fix serious bug where SigViewer crashed when opening a file (probably due to a Windows update)
 
 Version 0.1.5
-
 (B) remove bug where SigViewer crashed when exiting
 
 Version 0.1.4
-
 (B)	remove bug in SignalBuffer
 
 Version 0.1.3
-
 (+) y axis
 (*) remove SettingsManager and use QSettings instead
 
 Version 0.1.2
-
 (+) status bar with lenght, number of channels and number of trials
 (+) export events to '.evt'-files
 (B) removed signal shift bug
@@ -28,7 +49,6 @@ Version 0.1.2
 (+) after open show all channels
 
 Version 0.1.1
-
 (*) use QString and Qt-container instead of STL-stuff
 (B) no line wrap in LogDialog
 
