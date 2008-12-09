@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.23 2008-10-30 15:45:26 cle1109 Exp $
+    $Id: biosig_reader.cpp,v 1.24 2008-12-09 17:39:48 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007
     		  Christoph Eibel 2007,2008,
 		  Clemens Brunner 2006,2007,2008
@@ -275,7 +275,8 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
         return;
     }
 
-//
+//	fprintf(stdout,"BioSigReader::loadSignals (%u %u %u)\n",begin,end,start_record);
+
     bool something_done = true;
     for (uint32 rec_nr = start_record; something_done; rec_nr++)
     {
@@ -316,7 +317,6 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
             float32* data_block_upper_buffer = (*data_block)->getUpperBuffer();
             float32* data_block_lower_buffer = (*data_block)->getLowerBuffer();
             bool* data_block_buffer_valid = (*data_block)->getBufferValid();
-            something_done = true;
             if (rec_out_of_range)
             {
                 for (uint32 samp = actual_sample;
@@ -328,16 +328,18 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
             }
             else
             {
-                static uint32 old_rec_nr = -1;
+//                static uint32 old_rec_nr = -1;
                 static double *read_data = 0;
-                if (rec_nr != old_rec_nr)
+
+//		fprintf(stdout,"SigViewer: rec_nr=%i old_rec_nr=%i\n",rec_nr,old_rec_nr);
+//                if (rec_nr != old_rec_nr)
                 {
                     delete[] read_data;
                     read_data = new double[samples * biosig_header_->NS];
                     memset(read_data, 0, sizeof(read_data));
                     sread(read_data, rec_nr, ceil(samples/biosig_header_->SPR), biosig_header_);
                 }
-                old_rec_nr = rec_nr;
+//                old_rec_nr = rec_nr;
 
                 for (uint32 samp = actual_sample;
                      samp < actual_sample + samples;
@@ -351,6 +353,7 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
                           //data_block_buffer[samp] < sig->getPhysicalMaximum();
                 }
             }
+            something_done = true;
 
         }
     }
