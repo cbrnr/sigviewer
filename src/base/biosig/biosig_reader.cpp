@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.24 2008-12-09 17:39:48 schloegl Exp $
+    $Id: biosig_reader.cpp,v 1.25 2008-12-12 16:24:30 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007
     		  Christoph Eibel 2007,2008,
 		  Clemens Brunner 2006,2007,2008
@@ -270,7 +270,7 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
     {
         if (log_stream_)
         {
-            *log_stream_ << "GDFReader::loadChannels Error: not open\n";
+            *log_stream_ << "BioSigReader::loadChannels Error: not open\n";
         }
         return;
     }
@@ -286,6 +286,17 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
             // TODO??? readStreamValues(buffer_, *file_, basic_header_->getRecordSize());
         }
         something_done = false;
+
+        uint32 samples = biosig_header_->SPR;
+        static double *read_data = 0;
+
+	// read each block only once - no need to do this inside the channel loop 
+        // ### TODO: use HDR.CHANNEL[k].OnOff to load only requested channels 
+        delete[] read_data;
+        read_data = new double[samples * biosig_header_->NS];
+        memset(read_data, 0, sizeof(read_data));
+        sread(read_data, rec_nr, 1, biosig_header_);
+
         for (FileSignalReader::SignalDataBlockPtrIterator data_block = begin;
              data_block != end;
              data_block++)
@@ -300,8 +311,7 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
 ////                }
                 continue;
             }
-            SignalChannel* sig = basic_header_->getChannelPointer((*data_block)->channel_number);
-            uint32 samples = sig->getSamplesPerRecord();
+//            SignalChannel* sig = basic_header_->getChannelPointer((*data_block)->channel_number);
             uint32 actual_sample = (rec_nr - start_record) * samples;
 
             if (actual_sample + samples > (*data_block)->number_samples)
@@ -328,19 +338,6 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
             }
             else
             {
-//                static uint32 old_rec_nr = -1;
-                static double *read_data = 0;
-
-//		fprintf(stdout,"SigViewer: rec_nr=%i old_rec_nr=%i\n",rec_nr,old_rec_nr);
-//                if (rec_nr != old_rec_nr)
-                {
-                    delete[] read_data;
-                    read_data = new double[samples * biosig_header_->NS];
-                    memset(read_data, 0, sizeof(read_data));
-                    sread(read_data, rec_nr, ceil(samples/biosig_header_->SPR), biosig_header_);
-                }
-//                old_rec_nr = rec_nr;
-
                 for (uint32 samp = actual_sample;
                      samp < actual_sample + samples;
                      samp++)
