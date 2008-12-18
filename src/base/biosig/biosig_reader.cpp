@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.25 2008-12-12 16:24:30 schloegl Exp $
+    $Id: biosig_reader.cpp,v 1.26 2008-12-18 13:43:39 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007
     		  Christoph Eibel 2007,2008,
 		  Clemens Brunner 2006,2007,2008
@@ -217,6 +217,12 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
 
     // (C) 2008 AS: EVENT.DUR and EVENT.CHN are optional in SOPEN, but SigViewer needs them.
     convert2to4_eventtable(biosig_header_);
+
+    // caching - this is optional. 	
+    // fileIO only done once, most useful for zipped files, 
+    // turn it off if ratio between size of available RAM and filesize is smaller than 2
+    if (biosig_header_->FILE.COMPRESSION) 
+    	cachingWholeFile(biosig_header_);	
 
     basic_header_->setFullFileName(c_file_name);
 
