@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.26 2008-12-18 13:43:39 schloegl Exp $
+    $Id: biosig_reader.cpp,v 1.27 2009-01-09 09:59:09 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007
     		  Christoph Eibel 2007,2008,
 		  Clemens Brunner 2006,2007,2008
@@ -25,7 +25,6 @@
 */
 
 #include "biosig_reader.h"
-#include "../stream_utils.h"
 #include "../signal_data_block.h"
 #include "../math_utils.h"
 #include "../gdf_event.h"
@@ -192,7 +191,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
 
     tzset();
 
-    // VERBOSE_LEVEL=9;
+    //VERBOSE_LEVEL=9;
 
     // set flags
     if(!biosig_header_)
@@ -223,6 +222,8 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     // turn it off if ratio between size of available RAM and filesize is smaller than 2
     if (biosig_header_->FILE.COMPRESSION) 
     	cachingWholeFile(biosig_header_);	
+
+    //hdr2ascii(biosig_header_,stdout,4);
 
     basic_header_->setFullFileName(c_file_name);
 
@@ -287,10 +288,6 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
     for (uint32 rec_nr = start_record; something_done; rec_nr++)
     {
         bool rec_out_of_range = (rec_nr >= basic_header_->getNumberRecords());
-        if (!rec_out_of_range)
-        {
-            // TODO??? readStreamValues(buffer_, *file_, basic_header_->getRecordSize());
-        }
         something_done = false;
 
         uint32 samples = biosig_header_->SPR;

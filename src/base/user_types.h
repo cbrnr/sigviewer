@@ -27,18 +27,4 @@ typedef long long int64;
 typedef unsigned long long uint64;
 #endif
 
-#ifdef _BIG_ENDIAN
-// change byte order
-extern inline void swapBytes(int8 &);
-extern inline void swapBytes(uint8 &);
-extern inline void swapBytes(int16 &value);
-extern inline void swapBytes(uint16 &value);
-extern inline void swapBytes(int32 &value);
-extern inline void swapBytes(uint32 &value);
-extern inline void swapBytes(int64 &value);
-extern inline void swapBytes(uint64 &value);
-extern inline void swapBytes(float32 &value);
-extern inline void swapBytes(float64 &value);
-#endif
-
 #endif
