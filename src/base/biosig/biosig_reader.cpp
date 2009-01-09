@@ -1,11 +1,11 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.27 2009-01-09 09:59:09 schloegl Exp $
-    Copyright (C) Thomas Brunner  2006,2007
+    $Id: biosig_reader.cpp,v 1.28 2009-01-09 11:29:57 schloegl Exp $
+    Copyright (C) Thomas Brunner  2005,2006,2007
     		  Christoph Eibel 2007,2008,
 		  Clemens Brunner 2006,2007,2008
-    		  Alois Schloegl  2008
-    		  Oliver Terbu 2008
+    		  Alois Schloegl  2008,2009
+    		  Oliver Terbu    2008
     This file is part of the "SigViewer" repository
     at http://biosig.sf.net/
 
@@ -38,6 +38,8 @@
 #include <cmath>
 
 using namespace std;
+
+extern char FLAG_NOCACHE; 
 
 namespace BioSig_
 {
@@ -220,7 +222,8 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     // caching - this is optional. 	
     // fileIO only done once, most useful for zipped files, 
     // turn it off if ratio between size of available RAM and filesize is smaller than 2
-    if (biosig_header_->FILE.COMPRESSION) 
+    //if (biosig_header_->FILE.COMPRESSION) 
+    if (!FLAG_NOCACHE) 
     	cachingWholeFile(biosig_header_);	
 
     //hdr2ascii(biosig_header_,stdout,4);
