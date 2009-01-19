@@ -669,9 +669,11 @@ void MainWindowModel::fileImportEventsAction()
         {
             signal_browser_model_->addEvent(*it, false);
             if (!inconsistent && number_channels > 0 &&
-                ((*it).getChannel() >= number_channels ||
-                 (*it).getPosition() + (*it).getDuration() > last_event_pos))
+                ((*it).getChannel() >= number_channels))
+                // ||
+                // (*it).getPosition() + (*it).getDuration() > last_event_pos))
             {
+		fprintf(stdout,"inc=%i,ns=%i,getchan=%i,getPos+Dur=%i,lastPos=%f\n",inconsistent, number_channels,(*it).getChannel(),   (*it).getPosition() + (*it).getDuration(), last_event_pos);
                 inconsistent = true;
             }
         }

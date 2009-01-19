@@ -2,7 +2,7 @@
 #define CNT_READER_H_
 #include "../file_signal_reader.h"
 
-#include <biosig.h>
+// #include <biosig.h>
 
 #include <QFile>
 #include <QMutex>

@@ -1,6 +1,6 @@
 /*
 
-    $Id: signal_channel.h,v 1.8 2008-10-30 15:45:26 cle1109 Exp $
+    $Id: signal_channel.h,v 1.9 2009-01-19 07:43:54 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
@@ -61,8 +61,9 @@ public:
     };
 
     SignalChannel(uint32 number, const QString& label,
-                  uint32 samples_per_record, const QString& physical_dim,
-                  uint32 physdimcode, 
+                  uint32 samples_per_record, 
+                  const QString& physical_dim, 	// depreciated, replace with PhysDim(physical_dimcode,...)
+                  uint32 physical_dimcode,
                   float64 physical_minimum, float64 physical_maximum,
                   float64 digital_minimum, float64 digital_maximum,
                   Type data_type, uint32 data_offset,
@@ -98,6 +99,7 @@ private:
     QString label_;
     uint32 samples_per_record_;
     QString physical_dim_;
+    uint16  physical_dimcode_;
     float64 physical_maximum_;
     float64 digital_maximum_;
     float64 physical_minimum_;

@@ -1,6 +1,6 @@
 /*
 
-    $Id: signal_buffer.cpp,v 1.6 2008-05-26 09:47:57 schloegl Exp $
+    $Id: signal_buffer.cpp,v 1.7 2009-01-19 07:43:54 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
@@ -807,6 +807,9 @@ SignalDataBlock* SignalBuffer::getSignalDataBlockImpl(uint32 channel_nr,
                                                       uint32 block_nr)
 
 {
+
+//### TODO: simplify this function 
+// fprintf(stdout,"getSignalDataBlockImpl(%i, %i, %i)\n",channel_nr, sub_sampl, block_nr);
 
     if (channel_nr2sub_buffers_map_.find(channel_nr) ==
 
