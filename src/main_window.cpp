@@ -1,3 +1,30 @@
+/*
+
+    $Id: main_window.cpp,v 1.7 2009-01-20 16:02:24 schloegl Exp $
+    Copyright (C) Thomas Brunner  2005
+    		  Christoph Eibel 2008,
+		  Clemens Brunner 2005,2008
+    		  Alois Schloegl  2009
+    		  Oliver Terbu    2008
+    This file is part of the "SigViewer" repository
+    at http://biosig.sf.net/
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 3
+    of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
+
 // // main_window.cpp
 
 #include "main_window.h"
@@ -353,10 +380,14 @@ void MainWindow::initToolBars()
     secs_per_page_combobox_->setValidator(new QDoubleValidator(1.0, 10000.0, 1,
                                                                this));
     secs_per_page_combobox_->insertItem("1");
+    secs_per_page_combobox_->insertItem("3");
     secs_per_page_combobox_->insertItem("5");
-    secs_per_page_combobox_->insertItem("10");
+    secs_per_page_combobox_->insertItem("10");	// important for BCI
+    secs_per_page_combobox_->insertItem("20");	// important for sleep staging
+    secs_per_page_combobox_->insertItem("30");	// important for sleep staging
     secs_per_page_combobox_->insertItem("50");
     secs_per_page_combobox_->insertItem("100");
+    secs_per_page_combobox_->insertItem("300");
     secs_per_page_combobox_->insertItem("500");
     secs_per_page_combobox_->insertItem("1000");
     secs_per_page_combobox_->insertItem(tr("whole"));
@@ -370,6 +401,7 @@ void MainWindow::initToolBars()
     signals_per_page_combobox_->insertItem("2");
     signals_per_page_combobox_->insertItem("3");
     signals_per_page_combobox_->insertItem("5");
+    signals_per_page_combobox_->insertItem("7");
     signals_per_page_combobox_->insertItem("10");
     signals_per_page_combobox_->insertItem("15");
     signals_per_page_combobox_->insertItem("20");
