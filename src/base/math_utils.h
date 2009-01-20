@@ -1,13 +1,45 @@
+/*
+
+    $Id: math_utils.h,v 1.3 2009-01-20 10:00:35 schloegl Exp $
+    Copyright (C) Thomas Brunner  2005,2006
+		  Clemens Brunner 2005
+    		  Alois Schloegl  2009
+    This file is part of the "SigViewer" repository
+    at http://biosig.sf.net/
+
+    SigViewer is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 3
+    of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
+
+
 // math_utils.h
 
 #ifndef MATH_UTILS_H
 #define MATH_UTILS_H
 
 #include "user_types.h"
-#include "signal_channel.h"
 
 namespace BioSig_
 {
+
+// round to 1, 2 or 5
+float64 round125(float64 value);
+
+
+#ifdef OBSOLETE 
+	/* this part is obsolete */
 
 // greatest common divisor
 uint32 gcd(uint32 a, uint32 b);
@@ -17,61 +49,6 @@ uint32 lcm(uint32 a, uint32 b);
 
 // float to rational
 void float2rational(float64 value, uint32& nominator, uint32& denominator);
-
-// round to 1, 2 or 5
-float64 round125(float64 value);
-
-// convert data
-template<typename DestType>
-inline void convertData(int8* src, DestType* dest, SignalChannel& sig,
-                        uint32 samples, bool do_scale = true)
-{
-    DestType scale = do_scale ? sig.getScale() : 1;
-    DestType offset = do_scale ? sig.getOffset() : 1;
-    uint8* buffer = (uint8*)src + sig.getDataOffset();
-    if (sig.getDataType() > SignalChannel::UBITN)
-    {
-        // TODO : signal record-size no multiple of 8 bits
-        uint32 bits = sig.getDataType() - SignalChannel::UBITN;
-        copyInterpolatedUNBitArray(dest, buffer, bits, scale, offset, samples);
-    }
-    else if (sig.getDataType() > SignalChannel::BITN)
-    {
-        // TODO : signal record-size no multiple of 8 bits
-        uint32 bits = sig.getDataType() - SignalChannel::UBITN;
-        copyInterpolatedSNBitArray(dest, buffer, bits, scale, offset, samples);
-    }
-    else switch(sig.getDataType())
-    {
-        case SignalChannel::INT8:
-            copyInterpolatedArray(dest, (int8*)buffer, scale, offset, samples);
-            break;
-        case SignalChannel::UINT8:
-            copyInterpolatedArray(dest, (uint8*)buffer, scale, offset, samples);
-            break;
-        case SignalChannel::INT16:
-            copyInterpolatedArray(dest, (int16*)buffer, scale, offset, samples);
-            break;  
-        case SignalChannel::UINT16:
-            copyInterpolatedArray(dest, (uint16*)buffer, scale, offset,samples);
-            break;  
-        case SignalChannel::INT32:
-            copyInterpolatedArray(dest, (int32*)buffer, scale, offset, samples);
-            break;  
-        case SignalChannel::UINT32:
-            copyInterpolatedArray(dest, (uint32*)buffer, scale, offset,samples);
-            break;  
-        case SignalChannel::INT64:
-            copyInterpolatedArray(dest, (int64*)buffer, scale, offset, samples);
-            break;  
-        case SignalChannel::FLOAT32:
-            copyInterpolatedArray(dest, (float32*)buffer, scale,offset,samples);
-            break;  
-        case SignalChannel::FLOAT64:
-            copyInterpolatedArray(dest, (float64*)buffer, scale,offset,samples);
-            break;
-    }
-}
 
 // compare floats
 template<typename FloatType>
@@ -162,6 +139,8 @@ inline void copyInterpolatedSNBitArray(DestType* dest, uint8* src, uint32 bits,
         *(dest++) = value * scale + offset;
     }
 }
+#endif // OBSOLETE
+
 
 } // namespace BioSig_
 
