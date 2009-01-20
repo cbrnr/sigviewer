@@ -1,3 +1,29 @@
+/*
+
+    $Id: file_signal_reader_factory.cpp,v 1.15 2009-01-20 19:42:49 schloegl Exp $
+    Copyright (C) Thomas Brunner  2005
+    		  Christoph Eibel 2008
+		  Clemens Brunner 2005,2008
+    		  Alois Schloegl  2009
+    This file is part of the "SigViewer" repository
+    at http://biosig.sf.net/
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 3
+    of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
+
 // file_signal_reader_factory.h
 
 #include "file_signal_reader_factory.h"
@@ -23,8 +49,24 @@ FileSignalReaderFactory* FileSignalReaderFactory::getInstance()
         instance_->addPrototype(".evt", new BioSigReader);
         instance_->addPrototype(".gdf", new BioSigReader);
         instance_->addPrototype(".edf", new BioSigReader);
+       	instance_->addPrototype(".bdf", new BioSigReader);
         instance_->addPrototype(".bkr", new BioSigReader);
+        instance_->addPrototype(".bva", new BioSigReader);
         instance_->addPrototype(".cnt", new BioSigReader);
+        instance_->addPrototype(".dat", new BioSigReader);
+        instance_->addPrototype(".eeg", new BioSigReader);
+        instance_->addPrototype(".mwf", new BioSigReader);
+        instance_->addPrototype(".acq", new BioSigReader);
+        instance_->addPrototype(".ainf", new BioSigReader);
+        instance_->addPrototype(".cfw", new BioSigReader);
+        instance_->addPrototype(".scp", new BioSigReader);
+        instance_->addPrototype(".hea", new BioSigReader);
+        instance_->addPrototype(".hl7", new BioSigReader);
+        instance_->addPrototype(".xml", new BioSigReader);
+        instance_->addPrototype(".vhdr", new BioSigReader);
+        instance_->addPrototype(".alp", new BioSigReader);
+        instance_->addPrototype(".rec", new BioSigReader);
+        instance_->addPrototype(".bin", new BioSigReader);
         instance_->setDefaultPrototype(new BioSigReader);
     }
     return instance_.get();
