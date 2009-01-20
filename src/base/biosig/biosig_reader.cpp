@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.28 2009-01-09 11:29:57 schloegl Exp $
+    $Id: biosig_reader.cpp,v 1.29 2009-01-20 12:13:42 schloegl Exp $
     Copyright (C) Thomas Brunner  2005,2006,2007
     		  Christoph Eibel 2007,2008,
 		  Clemens Brunner 2006,2007,2008
@@ -26,10 +26,9 @@
 
 #include "biosig_reader.h"
 #include "../signal_data_block.h"
-#include "../math_utils.h"
 #include "../gdf_event.h"
 
-#include <biosig.h>
+#include "../../../extern/biosig.h"
 
 #include <QTextStream>
 #include <QTranslator>
@@ -177,7 +176,12 @@ QString BioSigReader::open(const QString& file_name, const bool overflow_detecti
 
     biosig_header_ = constructHDR(0,0);
     biosig_header_->FLAG.UCAL = 0;
-    biosig_header_->FLAG.OVERFLOWDETECTION = !overflow_detection;
+    /* TODO: 
+    - changing Overflow flag when file is already opened has no effect. 
+    	Solution: the overflow_detection flag must always propagate to  
+	    biosig_header_->FLAG.OVERFLOWDETECTION = overflow_detection;
+    */
+    biosig_header_->FLAG.OVERFLOWDETECTION = overflow_detection;
     biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
 
     return loadFixedHeader (file_name);
@@ -193,7 +197,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
 
     tzset();
 
-    //VERBOSE_LEVEL=9;
+//  VERBOSE_LEVEL=8;
 
     // set flags
     if(!biosig_header_)
@@ -317,7 +321,7 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
 ////                }
                 continue;
             }
-//            SignalChannel* sig = basic_header_->getChannelPointer((*data_block)->channel_number);
+
             uint32 actual_sample = (rec_nr - start_record) * samples;
 
             if (actual_sample + samples > (*data_block)->number_samples)
@@ -333,8 +337,12 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
             float32* data_block_upper_buffer = (*data_block)->getUpperBuffer();
             float32* data_block_lower_buffer = (*data_block)->getLowerBuffer();
             bool* data_block_buffer_valid = (*data_block)->getBufferValid();
+
             if (rec_out_of_range)
             {
+            	/*
+            		AS 2009-01-20: Is this really needed or can we remove this part ?? 
+            	*/
                 for (uint32 samp = actual_sample;
                      samp < actual_sample + samples;
                      samp++)
@@ -351,14 +359,13 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
                     data_block_buffer[samp] = read_data[((*data_block)->channel_number * samples) + (samp - actual_sample)];
                     data_block_upper_buffer[samp] = data_block_buffer[samp];
                     data_block_lower_buffer[samp] = data_block_buffer[samp];
-                    data_block_buffer_valid[samp] = true;
-                          //data_block_buffer[samp] > sig->getPhysicalMinimum() &&
-                          //data_block_buffer[samp] < sig->getPhysicalMaximum();
+                    data_block_buffer_valid[samp] = data_block_buffer[samp]==data_block_buffer[samp];	// test for NaN
                 }
             }
             something_done = true;
 
         }
+//    fprintf(stdout,"%f sample[0] %f %f %f %i\n",read_data[0],*((*begin)->getBuffer()),*((*begin)->getUpperBuffer()),*((*begin)->getLowerBuffer()),*((*begin)->getBufferValid()));
     }
 }
 
