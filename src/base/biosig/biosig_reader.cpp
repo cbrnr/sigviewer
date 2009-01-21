@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.29 2009-01-20 12:13:42 schloegl Exp $
+    $Id: biosig_reader.cpp,v 1.30 2009-01-21 16:07:01 schloegl Exp $
     Copyright (C) Thomas Brunner  2005,2006,2007
     		  Christoph Eibel 2007,2008,
 		  Clemens Brunner 2006,2007,2008
@@ -162,6 +162,12 @@ QString BioSigReader::open(const QString& file_name)
 }
 
 //-----------------------------------------------------------------------------
+QString BioSigReader::setFlagOverflow(const bool overflow_detection)
+{
+    biosig_header_->FLAG.OVERFLOWDETECTION = overflow_detection;
+}
+
+//-----------------------------------------------------------------------------
 QString BioSigReader::open(const QString& file_name, const bool overflow_detection)
 {
 
@@ -294,14 +300,15 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
     bool something_done = true;
     for (uint32 rec_nr = start_record; something_done; rec_nr++)
     {
+#if 1 //OBSOLETE 
         bool rec_out_of_range = (rec_nr >= basic_header_->getNumberRecords());
+#endif
         something_done = false;
 
         uint32 samples = biosig_header_->SPR;
         static double *read_data = 0;
 
 	// read each block only once - no need to do this inside the channel loop 
-        // ### TODO: use HDR.CHANNEL[k].OnOff to load only requested channels 
         delete[] read_data;
         read_data = new double[samples * biosig_header_->NS];
         memset(read_data, 0, sizeof(read_data));
@@ -338,10 +345,12 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
             float32* data_block_lower_buffer = (*data_block)->getLowerBuffer();
             bool* data_block_buffer_valid = (*data_block)->getBufferValid();
 
+#if 1 //OBSOLETE 
             if (rec_out_of_range)
             {
             	/*
             		AS 2009-01-20: Is this really needed or can we remove this part ?? 
+            		This is needed because an empty block is added at the end which should not be displayed. 
             	*/
                 for (uint32 samp = actual_sample;
                      samp < actual_sample + samples;
@@ -351,6 +360,7 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
                 }
             }
             else
+#endif 
             {
                 for (uint32 samp = actual_sample;
                      samp < actual_sample + samples;

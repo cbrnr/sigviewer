@@ -18,6 +18,8 @@ public:
     virtual ~BioSigReader();
     virtual FileSignalReader* clone();
 
+//-----------------------------------------------------------------------------
+    virtual QString setFlagOverflow(const bool overflow_detection);
     virtual QString open(const QString& file_name);
     virtual QString open(const QString& file_name, const bool overflow_detection);
 
