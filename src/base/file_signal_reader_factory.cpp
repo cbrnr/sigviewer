@@ -1,6 +1,6 @@
 /*
 
-    $Id: file_signal_reader_factory.cpp,v 1.15 2009-01-20 19:42:49 schloegl Exp $
+    $Id: file_signal_reader_factory.cpp,v 1.16 2009-02-18 14:18:10 schloegl Exp $
     Copyright (C) Thomas Brunner  2005
     		  Christoph Eibel 2008
 		  Clemens Brunner 2005,2008
@@ -67,6 +67,7 @@ FileSignalReaderFactory* FileSignalReaderFactory::getInstance()
         instance_->addPrototype(".alp", new BioSigReader);
         instance_->addPrototype(".rec", new BioSigReader);
         instance_->addPrototype(".bin", new BioSigReader);
+        instance_->addPrototype(".bscs.*", new BioSigReader);
         instance_->setDefaultPrototype(new BioSigReader);
     }
     return instance_.get();
