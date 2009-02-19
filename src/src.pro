@@ -6,13 +6,14 @@ MOC_DIR = ..\tmp
 OBJECTS_DIR = ..\tmp
 RCC_DIR = ..\tmp
 INCLUDEPATH += ../extern
-LIBS += -L../extern \
-    -lbiosig
+LIBS += \
+    -L../extern -lbiosig \
+    -lws2_32
 CONFIG += warn_on \
     qt \
     static \
     thread \
-    debug
+    debug 
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc
 ICON = sigviewer.icns
