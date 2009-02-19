@@ -6,10 +6,10 @@ MOC_DIR = ..\tmp
 OBJECTS_DIR = ..\tmp
 RCC_DIR = ..\tmp
 INCLUDEPATH += ../extern
-LIBS += \
-    -L../extern -lbiosig \
-    -lws2_32
+LIBS += -L../extern -lbiosig 
+win32:LIBS += -lws2_32
 CONFIG += warn_on \
+    link_prl \
     qt \
     static \
     thread \
