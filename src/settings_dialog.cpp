@@ -22,17 +22,17 @@ namespace BioSig_
 {
 
 const char* SettingsDialog::DEFAULT_AUTO_ZOOM_BEHAVIOUR_GROUP_BOX_TITLE_ =
-	        "Default auto zoom behavior:";
+            "Default auto zoom behavior:";
 const char* SettingsDialog::SCALE_MAX_TO_MAX_BUTTON_TEXT_ =
-	        "Scale from -|MAX| to +|MAX|";
+            "Scale from -|MAX| to +|MAX|";
 const char* SettingsDialog::SCALE_MIN_TO_MAX_BUTTON_TEXT_ =
-			"Scale from MIN to MAX";
+            "Scale from MIN to MAX";
 const char* SettingsDialog::OVERFLOW_DETECTION_BUTTON_TEXT_ =
-			"Enable overflow detection";
+            "Enable overflow detection";
 const char* SettingsDialog::SHOW_CHANNEL_SCALES_BUTTON_TEXT_ =
-			"Show channel scales";
+            "Show channel scales";
 const char* SettingsDialog::SHOW_CHANNEL_LABELS_BUTTON_TEXT_ =
-			"Show channel labels";
+            "Show channel labels";
 const char* SettingsDialog::SHOW_GRID_BUTTON_TEXT_ = "Show grid";
 const char* SettingsDialog::OK_BUTTON_TEXT_ = "OK";
 const char* SettingsDialog::CANCEL_BUTTON_TEXT_ = "Cancel";
@@ -43,24 +43,24 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 
 : QDialog(parent)
 {
-	setWindowTitle(tr("Preferences"));
+    setWindowTitle(tr("Preferences"));
 
-	QGroupBox* box = new QGroupBox(tr(DEFAULT_AUTO_ZOOM_BEHAVIOUR_GROUP_BOX_TITLE_), this);
+    QGroupBox* box = new QGroupBox(tr(DEFAULT_AUTO_ZOOM_BEHAVIOUR_GROUP_BOX_TITLE_), this);
 
-	QVBoxLayout* boxLayout = new QVBoxLayout();
+    QVBoxLayout* boxLayout = new QVBoxLayout();
 
-	scale_max_to_max_radio_button_ = new QRadioButton(tr(SCALE_MAX_TO_MAX_BUTTON_TEXT_));
-	scale_min_to_max_radio_button_ = new QRadioButton(tr(SCALE_MIN_TO_MAX_BUTTON_TEXT_));
+    scale_max_to_max_radio_button_ = new QRadioButton(tr(SCALE_MAX_TO_MAX_BUTTON_TEXT_));
+    scale_min_to_max_radio_button_ = new QRadioButton(tr(SCALE_MIN_TO_MAX_BUTTON_TEXT_));
 
-	boxLayout->addWidget(scale_max_to_max_radio_button_);
-	boxLayout->addWidget(scale_min_to_max_radio_button_);
-	boxLayout->addStretch(1);
-	box->setLayout(boxLayout);
+    boxLayout->addWidget(scale_max_to_max_radio_button_);
+    boxLayout->addWidget(scale_min_to_max_radio_button_);
+    boxLayout->addStretch(1);
+    box->setLayout(boxLayout);
 
-	overflow_detection_button_ = new QCheckBox(tr(OVERFLOW_DETECTION_BUTTON_TEXT_));
-	show_channel_scales_button_ = new QCheckBox(tr(SHOW_CHANNEL_SCALES_BUTTON_TEXT_));
-	show_channel_labels_button_ = new QCheckBox(tr(SHOW_CHANNEL_LABELS_BUTTON_TEXT_));
-	show_grid_button_ = new QCheckBox(tr(SHOW_GRID_BUTTON_TEXT_));
+    overflow_detection_button_ = new QCheckBox(tr(OVERFLOW_DETECTION_BUTTON_TEXT_));
+    show_channel_scales_button_ = new QCheckBox(tr(SHOW_CHANNEL_SCALES_BUTTON_TEXT_));
+    show_channel_labels_button_ = new QCheckBox(tr(SHOW_CHANNEL_LABELS_BUTTON_TEXT_));
+    show_grid_button_ = new QCheckBox(tr(SHOW_GRID_BUTTON_TEXT_));
 
     QVBoxLayout* top_layout = new QVBoxLayout(this);
 
@@ -99,7 +99,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 
 //void SettingsDialog::setShowChannels(int channelState)
 //{
-//	show_channel_labels_ = ((channelState == Qt::Checked) ? (true) : (false));
+//    show_channel_labels_ = ((channelState == Qt::Checked) ? (true) : (false));
 //}
 
 // ------------------------------------------------------------------------------------------
@@ -113,10 +113,10 @@ void SettingsDialog::loadSettings()
 
     overflow_detection_button_->setChecked(settings.value("overflow_detection", false).toBool());
     scale_max_to_max_radio_button_->setChecked(settings.value("scale_max_to_max_radio_button_", true).toBool());
-	scale_min_to_max_radio_button_->setChecked(settings.value("scale_min_to_max_radio_button_", false).toBool());
-	show_channel_scales_button_->setChecked(settings.value("show_channel_scales_button_", false).toBool());
-	show_channel_labels_button_->setChecked(settings.value("show_channel_labels_button_", false).toBool());
-	show_grid_button_->setChecked(settings.value("show_grid_button_", false).toBool());
+    scale_min_to_max_radio_button_->setChecked(settings.value("scale_min_to_max_radio_button_", false).toBool());
+    show_channel_scales_button_->setChecked(settings.value("show_channel_scales_button_", false).toBool());
+    show_channel_labels_button_->setChecked(settings.value("show_channel_labels_button_", false).toBool());
+    show_grid_button_->setChecked(settings.value("show_grid_button_", false).toBool());
 
     resize(settings.value("size", QSize(250, 400)).toSize());
     move(settings.value("pos", QPoint(200, 200)).toPoint());
@@ -148,31 +148,31 @@ void SettingsDialog::saveSettings()
 // ------------------------------------------------------------------------------------------
 bool SettingsDialog::isShowChannelScales()
 {
-	return show_channel_scales_button_->isChecked();
+    return show_channel_scales_button_->isChecked();
 }
 
 // ------------------------------------------------------------------------------------------
 bool SettingsDialog::isShowChannelLables()
 {
-	return show_channel_labels_button_->isChecked();
+    return show_channel_labels_button_->isChecked();
 }
 
 // ------------------------------------------------------------------------------------------
 bool SettingsDialog::isShowGrid()
 {
-	return show_grid_button_->isChecked();
+    return show_grid_button_->isChecked();
 }
 
 // ------------------------------------------------------------------------------------------
 bool SettingsDialog::isOverflowDetection()
 {
-	return overflow_detection_button_->isChecked();
+    return overflow_detection_button_->isChecked();
 }
 
 // ------------------------------------------------------------------------------------------
 ScaleMode SettingsDialog::getScaleModeType()
 {
-	return (scale_max_to_max_radio_button_->isChecked() ? MAX_TO_MAX : MIN_TO_MAX);
+    return (scale_max_to_max_radio_button_->isChecked() ? MAX_TO_MAX : MIN_TO_MAX);
 }
 
 } //namespace BioSig_

@@ -124,7 +124,7 @@ void SmartCanvasView::removeEventListener(int32 smart_events,
     if (smart_events & KEY_RELEASE_EVENT)
     {
         key_release_items_.remove(item);
-    }     
+    }
     if (smart_events & CONTEXT_MENU_EVENT)
     {
         context_menu_items_.remove(item);
@@ -306,10 +306,11 @@ bool SmartCanvasView::event(QEvent *e)
             {
                 ((SmartCanvasRectangle*)*it)->toolTipText(p, tmp_list, &text);
             }
-        }        
+        }
         QToolTip::showText(help_event->globalPos(), text);
-    }   
+    }
     return true;
 }
 
 } // namespace BioSig_
+

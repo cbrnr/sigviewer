@@ -1,6 +1,6 @@
 /*
 
-    $Id: signal_channel.cpp,v 1.8 2008-10-30 15:45:26 cle1109 Exp $
+    $Id: signal_channel.cpp,v 1.9 2009-02-22 12:36:46 cle1109 Exp $
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
@@ -36,7 +36,7 @@ namespace BioSig_
 SignalChannel::SignalChannel(uint32 number, const QString& label,
                              uint32 samples_per_record,
                              const QString& physical_dim,
-		             uint32 physdimcode, 
+                             uint32 physdimcode, 
                              float64 physical_minimum,
                              float64 physical_maximum,
                              float64 digital_minimum, float64 digital_maximum,

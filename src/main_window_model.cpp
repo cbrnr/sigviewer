@@ -1173,6 +1173,9 @@ void MainWindowModel::channelSelection ()
         return; // user cancel
     }
 
+    if (channel_dialog.isCachingEnabled())
+        file_signal_reader_->enableCaching();
+
     // set new selected channels
     for (uint32 channel_nr = 0;
          channel_nr < file_signal_reader_->getBasicHeader()->getNumberChannels();

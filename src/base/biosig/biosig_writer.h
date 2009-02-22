@@ -15,9 +15,9 @@ namespace BioSig_
 class BioSigWriter : public FileSignalWriter
 {
 public:
-	BioSigWriter(FileFormat target_type);
-	virtual ~BioSigWriter();
-	
+    BioSigWriter(FileFormat target_type);
+    virtual ~BioSigWriter();
+
     virtual FileSignalWriter* clone();
 
     virtual QString save(FileSignalReader& file_signal_reader,

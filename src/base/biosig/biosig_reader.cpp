@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.30 2009-01-21 16:07:01 schloegl Exp $
+    $Id: biosig_reader.cpp,v 1.31 2009-02-22 12:36:46 cle1109 Exp $
     Copyright (C) Thomas Brunner  2005,2006,2007
     		  Christoph Eibel 2007,2008,
 		  Clemens Brunner 2006,2007,2008
@@ -37,8 +37,6 @@
 #include <cmath>
 
 using namespace std;
-
-extern char FLAG_NOCACHE; 
 
 namespace BioSig_
 {
@@ -161,6 +159,17 @@ QString BioSigReader::open(const QString& file_name)
     return loadFixedHeader (file_name);
 }
 
+void BioSigReader::enableCaching()
+{
+    QMutexLocker lock (&mutex_);
+    // caching - this is optional.
+    // fileIO only done once, most useful for zipped files,
+    // turn it off if ratio between size of available RAM and filesize is smaller than 2
+    //if (biosig_header_->FILE.COMPRESSION)
+    if (biosig_header_)
+        cachingWholeFile(biosig_header_);
+}
+
 //-----------------------------------------------------------------------------
 QString BioSigReader::setFlagOverflow(const bool overflow_detection)
 {
@@ -184,8 +193,8 @@ QString BioSigReader::open(const QString& file_name, const bool overflow_detecti
     biosig_header_->FLAG.UCAL = 0;
     /* TODO: 
     - changing Overflow flag when file is already opened has no effect. 
-    	Solution: the overflow_detection flag must always propagate to  
-	    biosig_header_->FLAG.OVERFLOWDETECTION = overflow_detection;
+        Solution: the overflow_detection flag must always propagate to  
+        biosig_header_->FLAG.OVERFLOWDETECTION = overflow_detection;
     */
     biosig_header_->FLAG.OVERFLOWDETECTION = overflow_detection;
     biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
@@ -208,10 +217,10 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     // set flags
     if(!biosig_header_)
     {
-		biosig_header_ = constructHDR(0,0);
-		biosig_header_->FLAG.UCAL = 0;
-		biosig_header_->FLAG.OVERFLOWDETECTION = 0;
-		biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
+        biosig_header_ = constructHDR(0,0);
+        biosig_header_->FLAG.UCAL = 0;
+        biosig_header_->FLAG.OVERFLOWDETECTION = 0;
+        biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
     }
 
     biosig_header_ = sopen(c_file_name, "r", biosig_header_ );
@@ -229,13 +238,6 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     // (C) 2008 AS: EVENT.DUR and EVENT.CHN are optional in SOPEN, but SigViewer needs them.
     convert2to4_eventtable(biosig_header_);
 
-    // caching - this is optional. 	
-    // fileIO only done once, most useful for zipped files, 
-    // turn it off if ratio between size of available RAM and filesize is smaller than 2
-    //if (biosig_header_->FILE.COMPRESSION) 
-    if (!FLAG_NOCACHE) 
-    	cachingWholeFile(biosig_header_);	
-
     //hdr2ascii(biosig_header_,stdout,4);
 
     basic_header_->setFullFileName(c_file_name);
@@ -243,8 +245,9 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     basic_header_->setType(GetFileTypeString(biosig_header_->TYPE));
 
     uint16_t NS=0;  // count number of selected channels - status channels are already converted to event table
-    for (uint16_t k=0; k<biosig_header_->NS; k++) {
-    	if (biosig_header_->CHANNEL[k].OnOff) NS++;
+    for (uint16_t k=0; k<biosig_header_->NS; k++)
+    {
+        if (biosig_header_->CHANNEL[k].OnOff) NS++;
     }
     basic_header_->setNumberChannels(NS);
     basic_header_->setVersion (QString::number(biosig_header_->VERSION));
@@ -295,7 +298,7 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
         return;
     }
 
-//	fprintf(stdout,"BioSigReader::loadSignals (%u %u %u)\n",begin,end,start_record);
+//  fprintf(stdout,"BioSigReader::loadSignals (%u %u %u)\n",begin,end,start_record);
 
     bool something_done = true;
     for (uint32 rec_nr = start_record; something_done; rec_nr++)
@@ -308,7 +311,7 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
         uint32 samples = biosig_header_->SPR;
         static double *read_data = 0;
 
-	// read each block only once - no need to do this inside the channel loop 
+    // read each block only once - no need to do this inside the channel loop 
         delete[] read_data;
         read_data = new double[samples * biosig_header_->NS];
         memset(read_data, 0, sizeof(read_data));

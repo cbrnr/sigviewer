@@ -1,10 +1,10 @@
 /*
 
-    $Id: evt_writer.cpp,v 1.5 2008-05-21 14:51:46 schloegl Exp $
+    $Id: evt_writer.cpp,v 1.6 2009-02-22 12:36:46 cle1109 Exp $
     Copyright (C) Thomas Brunner  2006,2007 
-    		  Christoph Eibel 2007,2008, 
-		  Clemens Brunner 2006,2007,2008  
-    		  Alois Schloegl  2008
+              Christoph Eibel 2007,2008, 
+          Clemens Brunner 2006,2007,2008  
+              Alois Schloegl  2008
     This file is part of the "SigViewer" repository 
     at http://biosig.sf.net/ 
 
@@ -63,29 +63,29 @@ FileSignalWriter* EVTWriter::clone()
                                 return "cannot remove signal data from open file";
 
                             HDRTYPE *header = constructHDR(0, event_vector.size ());
-                            header->TYPE    	= GDF;
-			    header->VERSION 	= 2.0;
+                            header->TYPE = GDF;
+                            header->VERSION = 2.0;
 
                             header->EVENT.SampleRate = file_signal_reader.getBasicHeader()->getEventSamplerate();
                             HDRTYPE *old_header = file_signal_reader.getRawHeader();
-			    header->SPR     	= old_header->SPR; 
-			    header->SampleRate 	= old_header->SampleRate; 
+                            header->SPR = old_header->SPR; 
+                            header->SampleRate = old_header->SampleRate; 
                      
-				/* (C) 2008 AS: keep patient information */                            
-                            header->T0 			= old_header->T0; 
+                            /* (C) 2008 AS: keep patient information */                            
+                            header->T0             = old_header->T0; 
                             strcpy(header->Patient.Id, old_header->Patient.Id);
-                            header->Patient.Sex 	= old_header->Patient.Sex;
-                            header->Patient.Weight 	= old_header->Patient.Weight;
-                            header->Patient.Height 	= old_header->Patient.Height;
-                            header->Patient.Birthday 	= old_header->Patient.Birthday;
-                            header->Patient.Handedness 	= old_header->Patient.Handedness;
-                            header->Patient.Smoking 	= old_header->Patient.Smoking;
+                            header->Patient.Sex     = old_header->Patient.Sex;
+                            header->Patient.Weight     = old_header->Patient.Weight;
+                            header->Patient.Height     = old_header->Patient.Height;
+                            header->Patient.Birthday     = old_header->Patient.Birthday;
+                            header->Patient.Handedness     = old_header->Patient.Handedness;
+                            header->Patient.Smoking     = old_header->Patient.Smoking;
                             header->Patient.AlcoholAbuse= old_header->Patient.AlcoholAbuse;
-                            header->Patient.DrugAbuse 	= old_header->Patient.DrugAbuse;
-                            header->Patient.Medication 	= old_header->Patient.Medication;
+                            header->Patient.DrugAbuse     = old_header->Patient.DrugAbuse;
+                            header->Patient.Medication     = old_header->Patient.Medication;
                             header->Patient.Impairment.Visual = old_header->Patient.Impairment.Visual;
                             
-				/* (C) 2008 AS: managing Event table simplified */                            
+                            /* (C) 2008 AS: managing Event table simplified */                            
                             uint32 event_nr = 0;
                             for (SignalEventVector::iterator iter = event_vector.begin(); iter != event_vector.end(); ++iter, event_nr++)
                             {

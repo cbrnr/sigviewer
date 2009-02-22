@@ -23,6 +23,8 @@ public:
     virtual QString open(const QString& file_name);
     virtual QString open(const QString& file_name, const bool overflow_detection);
 
+    virtual void enableCaching();
+
     virtual bool isOpen() {return biosig_header_ ? true : false;}
     virtual void close();
 

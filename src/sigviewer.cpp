@@ -1,6 +1,6 @@
 /*
 
-    $Id: sigviewer.cpp,v 1.3 2009-01-09 11:29:57 schloegl Exp $
+    $Id: sigviewer.cpp,v 1.4 2009-02-22 12:36:46 cle1109 Exp $
     Copyright (C) Thomas Brunner  2005,2006
 		  Clemens Brunner 2005,2008
     		  Alois Schloegl  2009
@@ -40,7 +40,6 @@
 #include <QTextStream>
 
 // 2009-01-09 added by AS
-char FLAG_NOCACHE = 0; 		// used in base/biosig/biosig_reader.cpp to turn off caching of data. 
 int SIGVIEWER_VERBOSE_LEVEL = 0; // might be useful for debugging 
 
 using BioSig_::MainWindow;
@@ -118,13 +117,9 @@ int main(int32 argc, char* argv[])
 		fprintf(stdout,"  Supported OPTIONS are:\n");
 		fprintf(stdout,"   -v, --version\n\tprints version information\n");
 		fprintf(stdout,"   -h, --help   \n\tprints this information\n");
-		fprintf(stdout,"   -n, --nocache\n\tdoes not load file into cache\n");
 		fprintf(stdout,"\n\n");
 		return(0);
 	}	
-    	else if (!strcmp(argv[k],"-n") || !strcmp(argv[k],"--nocache") ) {
-		FLAG_NOCACHE = 1; 
-    	}
     	else if (!strncmp(argv[k],"-VERBOSE",2))  	{
 	    	SIGVIEWER_VERBOSE_LEVEL = argv[k][strlen(argv[k])-1]-48;
 	}

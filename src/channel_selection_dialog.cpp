@@ -1,234 +1,130 @@
 // channel_selection_dialog.cpp
 
-
-
 #include "channel_selection_dialog.h"
-
 #include "base/basic_header.h"
 
-
-
 #include <QListWidget>
-
 #include <QPushButton>
-
 #include <QVBoxLayout>
-
 #include <QHBoxLayout>
-
+#include <QCheckBox>
 #include <QSettings>
 
-
-
 namespace BioSig_
-
 {
-
-
 
 // constructor
-
 ChannelSelectionDialog::ChannelSelectionDialog(QPointer<BasicHeader> header,
-
                                                QWidget* parent)
-
  : QDialog(parent),
-
    basic_header_(header)
-
 {
-
     setWindowTitle(tr("Channel Selection"));
-
     QVBoxLayout* top_layout = new QVBoxLayout(this);
-
     top_layout->setMargin(10);
-
     top_layout->setSpacing(10);
-
     channel_list_widget_ = new QListWidget(this);
-
     channel_list_widget_
-
         ->setSelectionMode(QAbstractItemView::MultiSelection);
-
     top_layout->addWidget(channel_list_widget_);
+    caching_checkbox_ = new QCheckBox(tr("Caching Enabled"), this);
+    top_layout->addWidget(caching_checkbox_);
 
     QHBoxLayout* button_layout = new QHBoxLayout(this);
-
     QHBoxLayout* select_buttons_layout = new QHBoxLayout(this);
-
     top_layout->addLayout(select_buttons_layout);
-
     top_layout->addLayout(button_layout);
-
     select_buttons_layout->setMargin(0);
-
     select_buttons_layout->addStretch(1);
-
-
 
     unselect_all_button_ = new QPushButton(tr("Unselect All"), this);
-
     select_buttons_layout->addWidget(unselect_all_button_);
-
     select_all_button_ = new QPushButton(tr("Select All"), this);
-
     select_buttons_layout->addWidget(select_all_button_);
-
     select_buttons_layout->addStretch(1);
 
-    
-
     button_layout->setMargin(0);
-
     button_layout->addStretch(1);
-
     ok_button_ = new QPushButton(tr("OK"), this);
-
     button_layout->addWidget(ok_button_);
-
     cancel_button_ = new QPushButton(tr("Cancel"), this);
-
     button_layout->addWidget(cancel_button_);
-
     button_layout->addStretch(1);
-
     buildChannelList();
-
     top_layout->activate();
-
     connect(ok_button_, SIGNAL(clicked()), this, SLOT(accept()));
-
     connect(cancel_button_, SIGNAL(clicked()), this, SLOT(reject()));
-
     connect(unselect_all_button_, SIGNAL(clicked()), this, SLOT(unselectAll()));
-
     connect(select_all_button_, SIGNAL(clicked()), this, SLOT(selectAll()));
-
 }
-
-
 
 // load settings
-
 void ChannelSelectionDialog::loadSettings()
-
 {
-
     QSettings settings("SigViewer");
-
     settings.beginGroup("ChannelSelectionDialog");
-
     resize(settings.value("size", QSize(250, 400)).toSize());
-
     move(settings.value("pos", QPoint(200, 200)).toPoint());
-
+    caching_checkbox_->setChecked(settings.value("cachingEnabled", true)
+                                       .toBool());
     settings.endGroup();
-
 }
-
-
 
 // save settings
-
 void ChannelSelectionDialog::saveSettings()
-
 {
-
     QSettings settings("SigViewer");
-
     settings.beginGroup("ChannelSelectionDialog");
-
     settings.setValue("size", size());
-
     settings.setValue("pos", pos());
-
+    settings.setValue("cachingEnabled", caching_checkbox_->isChecked());
     settings.endGroup();
-
 }
-
-
 
 // build channel list
-
 void ChannelSelectionDialog::buildChannelList()
-
 {
-
     for (uint32 channel_nr = 0;
-
          channel_nr < basic_header_->getNumberChannels();
-
          channel_nr++)
-
     {
-
         const SignalChannel& channel = basic_header_->getChannel(channel_nr);
-
         channel_list_widget_->addItem(QString("(%1) %2").arg(channel_nr + 1)
-
                                             .arg(channel.getLabel()));
-
     }
-
 }
-
-
 
 // is selected
-
 bool ChannelSelectionDialog::isSelected(uint32 channel_nr)
-
 {
-
     return channel_list_widget_->isItemSelected(
-
                                     channel_list_widget_->item(channel_nr));
-
 }
-
-
 
 // set selected
-
 void ChannelSelectionDialog::setSelected(uint32 channel_nr, bool selected)
-
 {
-
     channel_list_widget_->setItemSelected(
-
                                         channel_list_widget_->item(channel_nr),
-
                                         selected);   
-
 }
 
-
+// is caching enabled
+bool ChannelSelectionDialog::isCachingEnabled() const
+{
+    return caching_checkbox_->isChecked();
+}
 
 void ChannelSelectionDialog::unselectAll ()
-
 {
-
     for (int32 channel_number = 0; channel_number < channel_list_widget_->count(); ++channel_number)
-
         channel_list_widget_->item(channel_number)->setSelected(false);    
-
 }
-
-
 
 void ChannelSelectionDialog::selectAll ()
-
 {
-
     for (int32 channel_number = 0; channel_number < channel_list_widget_->count(); ++channel_number)
-
         channel_list_widget_->item(channel_number)->setSelected(true);   
-
 }
 
-
-
 } //namespace BioSig_
-
