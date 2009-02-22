@@ -1,0 +1,314 @@
+<!DOCTYPE QtCreatorProject>
+<qtcreator>
+ <data>
+  <variable>RunConfiguration0-CommandLineArguments</variable>
+  <valuelist type="QVariantList" />
+ </data>
+ <data>
+  <variable>RunConfiguration0-ProFile</variable>
+  <value type="QString" >C:/Dokumente und Einstellungen/Thomas/Eigene Dateien/Projekte/BioSig/sigviewer/src/src.pro</value>
+ </data>
+ <data>
+  <variable>RunConfiguration0-RunConfiguration.name</variable>
+  <value type="QString" >src</value>
+ </data>
+ <data>
+  <variable>RunConfiguration0-UserSetName</variable>
+  <value type="bool" >false</value>
+ </data>
+ <data>
+  <variable>RunConfiguration0-type</variable>
+  <value type="QString" >Qt4ProjectManager.Qt4RunConfiguration</value>
+ </data>
+ <data>
+  <variable>activeRunConfiguration</variable>
+  <value type="int" >0</value>
+ </data>
+ <data>
+  <variable>activebuildconfiguration</variable>
+  <value type="QString" >Debug</value>
+ </data>
+ <data>
+  <variable>buildConfiguration-Debug</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
+   <value key="QtVersionId" type="int" >0</value>
+   <value key="addQDumper" type="" ></value>
+   <value key="buildDirectory" type="QString" >C:\Dokumente und Einstellungen\Thomas\Eigene Dateien\Projekte\BioSig\sigviewer\src</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildConfiguration-Release</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
+   <value key="QtVersionId" type="int" >0</value>
+   <value key="addQDumper" type="" ></value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Debug-buildstep0</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Debug-buildstep1</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
+   <valuelist key="abstractProcess.Environment" type="QVariantList" >
+    <value type="QString" >ALLUSERSPROFILE=C:\Dokumente und Einstellungen\All Users</value>
+    <value type="QString" >APPDATA=C:\Dokumente und Einstellungen\Thomas\Anwendungsdaten</value>
+    <value type="QString" >CLASSPATH=.;C:\Programme\Java\jre1.6.0_03\lib\ext\QTJava.zip</value>
+    <value type="QString" >CLIENTNAME=Console</value>
+    <value type="QString" >COMMONPROGRAMFILES=C:\Programme\Gemeinsame Dateien</value>
+    <value type="QString" >COMPUTERNAME=STANDHEFEN</value>
+    <value type="QString" >COMSPEC=C:\WINDOWS\system32\cmd.exe</value>
+    <value type="QString" >FP_NO_HOST_CHECK=NO</value>
+    <value type="QString" >HOMEDRIVE=C:</value>
+    <value type="QString" >HOMEPATH=\Dokumente und Einstellungen\Thomas</value>
+    <value type="QString" >JAVADIR=C:\Programme\Java\jdk1.5.0_02</value>
+    <value type="QString" >LOGONSERVER=\\STANDHEFEN</value>
+    <value type="QString" >NUMBER_OF_PROCESSORS=1</value>
+    <value type="QString" >OS=Windows_NT</value>
+    <value type="QString" >PATH=C:\Programme\Qt\QtCreator\mingw\bin;C:\Programme\Qt\QtCreator\qt\bin;C:\Programme\MiKTeX 2.5\miktex\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;c:\programme\matlab6p5\bin\win32;C:\Programme\doxygen\bin;C:\PROGRA~1\ATT\Graphviz\bin;C:\Programme\mingw\bin;C:\Programme\Pixie\bin;C:\Programme\Microsoft SQL Server\90\Tools\binn\;C:\Programme\QuickTime\QTSystem\;C:\Programme\Python25\Lib\site-packages\PyQt4;C:\Programme\Qt\QtCreator\qt\bin;C:\Programme\gs\gs8.54\bin;C:\Programme\CVSNT\</value>
+    <value type="QString" >PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH</value>
+    <value type="QString" >PIXIEHOME=C:\Programme\Pixie</value>
+    <value type="QString" >PROCESSOR_ARCHITECTURE=x86</value>
+    <value type="QString" >PROCESSOR_IDENTIFIER=x86 Family 6 Model 10 Stepping 0, AuthenticAMD</value>
+    <value type="QString" >PROCESSOR_LEVEL=6</value>
+    <value type="QString" >PROCESSOR_REVISION=0a00</value>
+    <value type="QString" >PROGRAMFILES=C:\Programme</value>
+    <value type="QString" >QMAKESPEC=win32-g++</value>
+    <value type="QString" >QTDIR=C:/Programme/Qt/QtCreator/qt</value>
+    <value type="QString" >QTJAVA=C:\Programme\Java\jre1.6.0_03\lib\ext\QTJava.zip</value>
+    <value type="QString" >SESSIONNAME=Console</value>
+    <value type="QString" >SHADERS=%PIXIEHOME%\shaders</value>
+    <value type="QString" >SYSTEMDRIVE=C:</value>
+    <value type="QString" >SYSTEMROOT=C:\WINDOWS</value>
+    <value type="QString" >TEMP=C:\DOKUME~1\Thomas\LOKALE~1\Temp</value>
+    <value type="QString" >TMP=C:\DOKUME~1\Thomas\LOKALE~1\Temp</value>
+    <value type="QString" >USERDOMAIN=STANDHEFEN</value>
+    <value type="QString" >USERNAME=Thomas</value>
+    <value type="QString" >USERPROFILE=C:\Dokumente und Einstellungen\Thomas</value>
+    <value type="QString" >WINDIR=C:\WINDOWS</value>
+   </valuelist>
+   <valuelist key="abstractProcess.arguments" type="QVariantList" >
+    <value type="QString" >C:/Dokumente und Einstellungen/Thomas/Eigene Dateien/Projekte/BioSig/sigviewer/src/src.pro</value>
+    <value type="QString" >-spec</value>
+    <value type="QString" >win32-g++</value>
+    <value type="QString" >-r</value>
+    <value type="QString" >CONFIG+=debug_and_release</value>
+   </valuelist>
+   <value key="abstractProcess.command" type="QString" >C:/Programme/Qt/QtCreator/qt/bin/qmake.exe</value>
+   <value key="abstractProcess.enabled" type="bool" >true</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >C:/Dokumente und Einstellungen/Thomas/Eigene Dateien/Projekte/BioSig/sigviewer/src</value>
+   <value key="buildConfiguration" type="int" >10</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Debug-buildstep2</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
+   <valuelist key="abstractProcess.Environment" type="QVariantList" >
+    <value type="QString" >ALLUSERSPROFILE=C:\Dokumente und Einstellungen\All Users</value>
+    <value type="QString" >APPDATA=C:\Dokumente und Einstellungen\Thomas\Anwendungsdaten</value>
+    <value type="QString" >CLASSPATH=.;C:\Programme\Java\jre1.6.0_03\lib\ext\QTJava.zip</value>
+    <value type="QString" >CLIENTNAME=Console</value>
+    <value type="QString" >COMMONPROGRAMFILES=C:\Programme\Gemeinsame Dateien</value>
+    <value type="QString" >COMPUTERNAME=STANDHEFEN</value>
+    <value type="QString" >COMSPEC=C:\WINDOWS\system32\cmd.exe</value>
+    <value type="QString" >FP_NO_HOST_CHECK=NO</value>
+    <value type="QString" >HOMEDRIVE=C:</value>
+    <value type="QString" >HOMEPATH=\Dokumente und Einstellungen\Thomas</value>
+    <value type="QString" >JAVADIR=C:\Programme\Java\jdk1.5.0_02</value>
+    <value type="QString" >LOGONSERVER=\\STANDHEFEN</value>
+    <value type="QString" >NUMBER_OF_PROCESSORS=1</value>
+    <value type="QString" >OS=Windows_NT</value>
+    <value type="QString" >PATH=C:\Programme\Qt\QtCreator\mingw\bin;C:\Programme\Qt\QtCreator\qt\bin;C:\Programme\MiKTeX 2.5\miktex\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;c:\programme\matlab6p5\bin\win32;C:\Programme\doxygen\bin;C:\PROGRA~1\ATT\Graphviz\bin;C:\Programme\mingw\bin;C:\Programme\Pixie\bin;C:\Programme\Microsoft SQL Server\90\Tools\binn\;C:\Programme\QuickTime\QTSystem\;C:\Programme\Python25\Lib\site-packages\PyQt4;C:\Programme\Qt\QtCreator\qt\bin;C:\Programme\gs\gs8.54\bin;C:\Programme\CVSNT\</value>
+    <value type="QString" >PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH</value>
+    <value type="QString" >PIXIEHOME=C:\Programme\Pixie</value>
+    <value type="QString" >PROCESSOR_ARCHITECTURE=x86</value>
+    <value type="QString" >PROCESSOR_IDENTIFIER=x86 Family 6 Model 10 Stepping 0, AuthenticAMD</value>
+    <value type="QString" >PROCESSOR_LEVEL=6</value>
+    <value type="QString" >PROCESSOR_REVISION=0a00</value>
+    <value type="QString" >PROGRAMFILES=C:\Programme</value>
+    <value type="QString" >QMAKESPEC=win32-g++</value>
+    <value type="QString" >QTDIR=C:/Programme/Qt/QtCreator/qt</value>
+    <value type="QString" >QTJAVA=C:\Programme\Java\jre1.6.0_03\lib\ext\QTJava.zip</value>
+    <value type="QString" >SESSIONNAME=Console</value>
+    <value type="QString" >SHADERS=%PIXIEHOME%\shaders</value>
+    <value type="QString" >SYSTEMDRIVE=C:</value>
+    <value type="QString" >SYSTEMROOT=C:\WINDOWS</value>
+    <value type="QString" >TEMP=C:\DOKUME~1\Thomas\LOKALE~1\Temp</value>
+    <value type="QString" >TMP=C:\DOKUME~1\Thomas\LOKALE~1\Temp</value>
+    <value type="QString" >USERDOMAIN=STANDHEFEN</value>
+    <value type="QString" >USERNAME=Thomas</value>
+    <value type="QString" >USERPROFILE=C:\Dokumente und Einstellungen\Thomas</value>
+    <value type="QString" >WINDIR=C:\WINDOWS</value>
+   </valuelist>
+   <valuelist key="abstractProcess.arguments" type="QVariantList" >
+    <value type="QString" >debug</value>
+    <value type="QString" >-w</value>
+   </valuelist>
+   <value key="abstractProcess.command" type="QString" >C:/Programme/Qt/QtCreator/mingw/bin/mingw32-make.exe</value>
+   <value key="abstractProcess.enabled" type="bool" >true</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >C:/Dokumente und Einstellungen/Thomas/Eigene Dateien/Projekte/BioSig/sigviewer/src</value>
+   <valuelist key="makeargs" type="QVariantList" >
+    <value type="QString" >debug</value>
+   </valuelist>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Debug-cleanstep0</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Debug-cleanstep1</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Debug</value>
+   <valuelist key="abstractProcess.Environment" type="QVariantList" >
+    <value type="QString" >ALLUSERSPROFILE=C:\Dokumente und Einstellungen\All Users</value>
+    <value type="QString" >APPDATA=C:\Dokumente und Einstellungen\Thomas\Anwendungsdaten</value>
+    <value type="QString" >CLASSPATH=.;C:\Programme\Java\jre1.6.0_03\lib\ext\QTJava.zip</value>
+    <value type="QString" >CLIENTNAME=Console</value>
+    <value type="QString" >COMMONPROGRAMFILES=C:\Programme\Gemeinsame Dateien</value>
+    <value type="QString" >COMPUTERNAME=STANDHEFEN</value>
+    <value type="QString" >COMSPEC=C:\WINDOWS\system32\cmd.exe</value>
+    <value type="QString" >FP_NO_HOST_CHECK=NO</value>
+    <value type="QString" >HOMEDRIVE=C:</value>
+    <value type="QString" >HOMEPATH=\Dokumente und Einstellungen\Thomas</value>
+    <value type="QString" >JAVADIR=C:\Programme\Java\jdk1.5.0_02</value>
+    <value type="QString" >LOGONSERVER=\\STANDHEFEN</value>
+    <value type="QString" >NUMBER_OF_PROCESSORS=1</value>
+    <value type="QString" >OS=Windows_NT</value>
+    <value type="QString" >PATH=C:\Programme\Qt\QtCreator\mingw\bin;C:\Programme\Qt\QtCreator\qt\bin;C:\Programme\MiKTeX 2.5\miktex\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;c:\programme\matlab6p5\bin\win32;C:\Programme\doxygen\bin;C:\PROGRA~1\ATT\Graphviz\bin;C:\Programme\mingw\bin;C:\Programme\Pixie\bin;C:\Programme\Microsoft SQL Server\90\Tools\binn\;C:\Programme\QuickTime\QTSystem\;C:\Programme\Python25\Lib\site-packages\PyQt4;C:\Programme\Qt\QtCreator\qt\bin;C:\Programme\gs\gs8.54\bin;C:\Programme\CVSNT\</value>
+    <value type="QString" >PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH</value>
+    <value type="QString" >PIXIEHOME=C:\Programme\Pixie</value>
+    <value type="QString" >PROCESSOR_ARCHITECTURE=x86</value>
+    <value type="QString" >PROCESSOR_IDENTIFIER=x86 Family 6 Model 10 Stepping 0, AuthenticAMD</value>
+    <value type="QString" >PROCESSOR_LEVEL=6</value>
+    <value type="QString" >PROCESSOR_REVISION=0a00</value>
+    <value type="QString" >PROGRAMFILES=C:\Programme</value>
+    <value type="QString" >QMAKESPEC=win32-g++</value>
+    <value type="QString" >QTDIR=C:/Programme/Qt/QtCreator/qt</value>
+    <value type="QString" >QTJAVA=C:\Programme\Java\jre1.6.0_03\lib\ext\QTJava.zip</value>
+    <value type="QString" >SESSIONNAME=Console</value>
+    <value type="QString" >SHADERS=%PIXIEHOME%\shaders</value>
+    <value type="QString" >SYSTEMDRIVE=C:</value>
+    <value type="QString" >SYSTEMROOT=C:\WINDOWS</value>
+    <value type="QString" >TEMP=C:\DOKUME~1\Thomas\LOKALE~1\Temp</value>
+    <value type="QString" >TMP=C:\DOKUME~1\Thomas\LOKALE~1\Temp</value>
+    <value type="QString" >USERDOMAIN=STANDHEFEN</value>
+    <value type="QString" >USERNAME=Thomas</value>
+    <value type="QString" >USERPROFILE=C:\Dokumente und Einstellungen\Thomas</value>
+    <value type="QString" >WINDIR=C:\WINDOWS</value>
+   </valuelist>
+   <valuelist key="abstractProcess.arguments" type="QVariantList" >
+    <value type="QString" >clean</value>
+    <value type="QString" >-w</value>
+   </valuelist>
+   <value key="abstractProcess.command" type="QString" >C:/Programme/Qt/QtCreator/mingw/bin/mingw32-make.exe</value>
+   <value key="abstractProcess.enabled" type="bool" >true</value>
+   <value key="abstractProcess.workingDirectory" type="QString" >C:/Dokumente und Einstellungen/Thomas/Eigene Dateien/Projekte/BioSig/sigviewer/src</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Release-buildstep0</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Release-buildstep1</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
+   <value key="buildConfiguration" type="int" >8</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Release-buildstep2</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
+   <valuelist key="makeargs" type="QVariantList" >
+    <value type="QString" >release</value>
+   </valuelist>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Release-cleanstep0</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfiguration-Release-cleanstep1</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" >Release</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildconfigurations</variable>
+  <valuelist type="QVariantList" >
+   <value type="QString" >Debug</value>
+   <value type="QString" >Release</value>
+  </valuelist>
+ </data>
+ <data>
+  <variable>buildstep0</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" ></value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildstep1</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" ></value>
+   <value key="mkspec" type="QString" ></value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildstep2</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" ></value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>buildsteps</variable>
+  <valuelist type="QVariantList" >
+   <value type="QString" >trolltech.qt4projectmanager.gdbmaros</value>
+   <value type="QString" >trolltech.qt4projectmanager.qmake</value>
+   <value type="QString" >trolltech.qt4projectmanager.make</value>
+  </valuelist>
+ </data>
+ <data>
+  <variable>cleanstep0</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" ></value>
+   <value key="clean" type="bool" >true</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>cleanstep1</variable>
+  <valuemap type="QVariantMap" >
+   <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString" ></value>
+   <value key="clean" type="bool" >true</value>
+  </valuemap>
+ </data>
+ <data>
+  <variable>cleansteps</variable>
+  <valuelist type="QVariantList" >
+   <value type="QString" >trolltech.qt4projectmanager.gdbmaros</value>
+   <value type="QString" >trolltech.qt4projectmanager.make</value>
+  </valuelist>
+ </data>
+ <data>
+  <variable>defaultFileEncoding</variable>
+  <value type="QByteArray" >System</value>
+ </data>
+ <data>
+  <variable>project</variable>
+  <valuemap type="QVariantMap" />
+ </data>
+</qtcreator>
