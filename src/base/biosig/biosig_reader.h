@@ -46,11 +46,15 @@ private:
 
     QString loadFixedHeader(const QString& file_name);
 
+    void doClose();
+
     QPointer<BasicHeader> basic_header_;
     mutable QMutex mutex_;
     mutable QMutex biosig_access_lock_;
     HDRTYPE* biosig_header_;
     static double const SAMPLE_RATE_TOLERANCE_;
+    double* read_data_;
+    int read_data_size_;
 };
 
 } // namespace BioSig_

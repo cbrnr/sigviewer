@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.31 2009-02-22 12:36:46 cle1109 Exp $
+    $Id: biosig_reader.cpp,v 1.32 2009-02-26 07:27:41 cle1109 Exp $
     Copyright (C) Thomas Brunner  2005,2006,2007
     		  Christoph Eibel 2007,2008,
 		  Clemens Brunner 2006,2007,2008
@@ -47,7 +47,9 @@ namespace BioSig_
 //-----------------------------------------------------------------------------
 BioSigReader::BioSigReader() :
     basic_header_ (new BasicHeader ()),
-    biosig_header_ (0)
+    biosig_header_ (0),
+    read_data_(0),
+    read_data_size_(-1)
 {
     // nothing to do here
 }
@@ -55,11 +57,7 @@ BioSigReader::BioSigReader() :
 //-----------------------------------------------------------------------------
 BioSigReader::~BioSigReader()
 {
-    if (biosig_header_)
-    {
-        sclose(biosig_header_);
-        delete biosig_header_;
-    }
+	doClose();
 }
 
 //-----------------------------------------------------------------------------
@@ -72,14 +70,22 @@ FileSignalReader* BioSigReader::clone()
 //-----------------------------------------------------------------------------
 void BioSigReader::close()
 {
+	doClose();
+}
+
+void BioSigReader::doClose()
+{
     if (biosig_header_)
     {
         sclose(biosig_header_);
+        destructHDR(biosig_header_);
     }
+    delete read_data_;
+    read_data_ = 0;
+    read_data_size_ = -1;
     delete biosig_header_;
     biosig_header_ = 0;
 }
-
 
 //-----------------------------------------------------------------------------
 void BioSigReader::loadEvents(SignalEventVector& event_vector)
@@ -191,9 +197,9 @@ QString BioSigReader::open(const QString& file_name, const bool overflow_detecti
 
     biosig_header_ = constructHDR(0,0);
     biosig_header_->FLAG.UCAL = 0;
-    /* TODO: 
-    - changing Overflow flag when file is already opened has no effect. 
-        Solution: the overflow_detection flag must always propagate to  
+    /* TODO:
+    - changing Overflow flag when file is already opened has no effect.
+        Solution: the overflow_detection flag must always propagate to
         biosig_header_->FLAG.OVERFLOWDETECTION = overflow_detection;
     */
     biosig_header_->FLAG.OVERFLOWDETECTION = overflow_detection;
@@ -298,87 +304,67 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
         return;
     }
 
-//  fprintf(stdout,"BioSigReader::loadSignals (%u %u %u)\n",begin,end,start_record);
-
-    bool something_done = true;
-    for (uint32 rec_nr = start_record; something_done; rec_nr++)
+    // calculate sample count
+    int samples = 0;
+    for (FileSignalReader::SignalDataBlockPtrIterator data_block = begin;
+         data_block != end;
+         data_block++)
     {
-#if 1 //OBSOLETE 
-        bool rec_out_of_range = (rec_nr >= basic_header_->getNumberRecords());
-#endif
-        something_done = false;
-
-        uint32 samples = biosig_header_->SPR;
-        static double *read_data = 0;
-
-    // read each block only once - no need to do this inside the channel loop 
-        delete[] read_data;
-        read_data = new double[samples * biosig_header_->NS];
-        memset(read_data, 0, sizeof(read_data));
-        sread(read_data, rec_nr, 1, biosig_header_);
-
-        for (FileSignalReader::SignalDataBlockPtrIterator data_block = begin;
-             data_block != end;
-             data_block++)
+        if ((*data_block)->sub_sampling > 1 ||
+            (*data_block)->channel_number >= basic_header_->getNumberChannels())
         {
-            if ((*data_block)->sub_sampling > 1 ||
-                (*data_block)->channel_number >= basic_header_->getNumberChannels())
-            {
-////                if (log_stream_)
-////                {
-////                    *log_stream_ << "GDFReader::loadChannels Error: "
-////                                 << "invalid SignalDataBlock\n";
-////                }
-                continue;
-            }
-
-            uint32 actual_sample = (rec_nr - start_record) * samples;
-
-            if (actual_sample + samples > (*data_block)->number_samples)
-            {
-                if (actual_sample >= (*data_block)->number_samples)
-                {
-                    (*data_block)->setBufferOffset(start_record * samples);
-                    continue;   // signal data block full
-                }
-                samples = (*data_block)->number_samples - actual_sample;
-            }
-            float32* data_block_buffer = (*data_block)->getBuffer();
-            float32* data_block_upper_buffer = (*data_block)->getUpperBuffer();
-            float32* data_block_lower_buffer = (*data_block)->getLowerBuffer();
-            bool* data_block_buffer_valid = (*data_block)->getBufferValid();
-
-#if 1 //OBSOLETE 
-            if (rec_out_of_range)
-            {
-            	/*
-            		AS 2009-01-20: Is this really needed or can we remove this part ?? 
-            		This is needed because an empty block is added at the end which should not be displayed. 
-            	*/
-                for (uint32 samp = actual_sample;
-                     samp < actual_sample + samples;
-                     samp++)
-                {
-                    data_block_buffer_valid[samp] = false;
-                }
-            }
-            else
-#endif 
-            {
-                for (uint32 samp = actual_sample;
-                     samp < actual_sample + samples;
-                     samp++)
-                {
-                    data_block_buffer[samp] = read_data[((*data_block)->channel_number * samples) + (samp - actual_sample)];
-                    data_block_upper_buffer[samp] = data_block_buffer[samp];
-                    data_block_lower_buffer[samp] = data_block_buffer[samp];
-                    data_block_buffer_valid[samp] = data_block_buffer[samp]==data_block_buffer[samp];	// test for NaN
-                }
-            }
-            something_done = true;
-
+        	return; // invalid data block
         }
-//    fprintf(stdout,"%f sample[0] %f %f %f %i\n",read_data[0],*((*begin)->getBuffer()),*((*begin)->getUpperBuffer()),*((*begin)->getLowerBuffer()),*((*begin)->getBufferValid()));
+    	samples = std::max<int>(samples, (*data_block)->number_samples);
+    }
+
+    // calculate record count
+    int record_count = samples / biosig_header_->SPR;
+    if (record_count * biosig_header_->SPR < samples)
+    	++record_count;
+    if (start_record + record_count > basic_header_->getNumberRecords())
+    	record_count = basic_header_->getNumberRecords() - start_record;
+    if (record_count < 0)
+    	record_count = 0;
+
+    // allocate buffer
+    int samples_in_read_data = record_count * biosig_header_->SPR;
+    if (read_data_size_ < samples_in_read_data * biosig_header_->NS)
+    {
+    	read_data_size_ = samples_in_read_data * biosig_header_->NS;
+    	delete[] read_data_;
+    	read_data_ = new double[read_data_size_];
+    }
+
+	// read data as block
+    memset(read_data_, 0, samples_in_read_data * biosig_header_->NS);
+    sread(read_data_, start_record, record_count, biosig_header_);
+
+    // fill data blocks
+    for (FileSignalReader::SignalDataBlockPtrIterator data_block = begin;
+         data_block != end;
+         data_block++)
+    {
+        float32* data_block_buffer = (*data_block)->getBuffer();
+        float32* data_block_upper_buffer = (*data_block)->getUpperBuffer();
+        float32* data_block_lower_buffer = (*data_block)->getLowerBuffer();
+        bool* data_block_buffer_valid = (*data_block)->getBufferValid();
+
+        (*data_block)->setBufferOffset(start_record * biosig_header_->SPR);
+        for (int samp = 0; samp < (*data_block)->number_samples; ++samp)
+        {
+        	if (samp < samples_in_read_data)
+        	{
+        		data_block_buffer[samp] = read_data_[(*data_block)->channel_number * samples_in_read_data + samp];
+        		data_block_upper_buffer[samp] = data_block_buffer[samp];
+        		data_block_lower_buffer[samp] = data_block_buffer[samp];
+        		data_block_buffer_valid[samp] = data_block_buffer[samp]==data_block_buffer[samp];	// test for NaN
+        	}
+        	else
+        	{
+        		data_block_buffer_valid[samp] = false;
+        	}
+        }
     }
 }
 
