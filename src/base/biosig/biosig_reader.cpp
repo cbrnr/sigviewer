@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.33 2009-03-02 07:44:45 cle1109 Exp $
+    $Id: biosig_reader.cpp,v 1.34 2009-03-02 13:26:21 cle1109 Exp $
     Copyright (C) Thomas Brunner  2005,2006,2007
     		  Christoph Eibel 2007,2008,
 		  Clemens Brunner 2006,2007,2008
@@ -80,10 +80,10 @@ void BioSigReader::doClose()
         sclose(biosig_header_);
         destructHDR(biosig_header_);
     }
-    delete read_data_;
+    //delete[] read_data_;
     read_data_ = 0;
     read_data_size_ = 0;
-    delete biosig_header_;
+    //delete biosig_header_;
     biosig_header_ = 0;
 }
 
@@ -329,16 +329,18 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
 
     // allocate buffer
     uint32 samples_in_read_data = record_count * biosig_header_->SPR;
-    if (read_data_ == 0 || read_data_size_ < samples_in_read_data * biosig_header_->NS)
-    {
-    	read_data_size_ = samples_in_read_data * biosig_header_->NS;
-    	delete[] read_data_;
-    	read_data_ = new double[read_data_size_];
-    }
+    //if (read_data_ == 0 || read_data_size_ < samples_in_read_data * biosig_header_->NS)
+   // {
+   // 	read_data_size_ = samples_in_read_data * biosig_header_->NS;
+    	// delete[] read_data_;
+    	//read_data_ = new double[read_data_size_];
+  //  }
 
 	// read data as block
-    memset(read_data_, 0, samples_in_read_data * biosig_header_->NS);
-    sread(read_data_, start_record, record_count, biosig_header_);
+    //memset(read_data_, 0, samples_in_read_data * biosig_header_->NS);
+    size_t count = sread(0, start_record, record_count, biosig_header_);
+    read_data_ = biosig_header_->data.block;
+    read_data_size_ = biosig_header_->NS * biosig_header_->SPR * count;
 
     // fill data blocks
     for (FileSignalReader::SignalDataBlockPtrIterator data_block = begin;
