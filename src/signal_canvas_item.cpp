@@ -110,7 +110,7 @@ void SignalCanvasItem::smartDraw(QPainter& p, const QRect& clip)
     uint32 sub_sampling_type = SignalBuffer::NO_SUBSAMPLING;
 
     while (samples_per_sec / 2.0 * prefered_pixel_per_sample_ >= pixel_per_sec
-           && sub_sampling_type < SignalBuffer::MAX_SUBSAMPLING)
+           && sub_sampling_type < signal_buffer_.getMaxSubsampling())
     {
         block_duration *= 2.0;
         samples_per_sec /= 2.0;

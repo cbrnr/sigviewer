@@ -11,6 +11,8 @@
 class QListWidget;
 class QPushButton;
 class QCheckBox;
+class QComboBox;
+class QDoubleSpinBox;
 
 namespace BioSig_
 {
@@ -29,7 +31,10 @@ public:
 
     bool isSelected(uint32 channel_nr);
     void setSelected(uint32 channel_nr, bool selected);
-    bool isCachingEnabled() const;
+    bool isInitRangeSearch() const;
+    uint32 wholeSubsampling() const;
+    float32 rangeMin() const;
+    float32 rangeMax() const;
 
 private:
     // not allowed
@@ -45,11 +50,17 @@ private:
     QPushButton* select_all_button_;
     QPushButton* ok_button_;
     QPushButton* cancel_button_;
-    QCheckBox* caching_checkbox_;
+    QCheckBox* init_range_search_checkbox_;
+    QComboBox* whole_buffer_combobox_;
+    QDoubleSpinBox* min_spinbox_;
+    QDoubleSpinBox* max_spinbox_;
 
  private slots:
-    void unselectAll ();
-    void selectAll ();
+    void unselectAll();
+    void selectAll();
+    void maxChanged(double value);
+    void minChanged(double value);
+    void rangeSearchChanged(bool checked);
 };
 
 } // namespace BioSig_

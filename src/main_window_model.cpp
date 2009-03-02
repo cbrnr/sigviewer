@@ -539,7 +539,7 @@ void MainWindowModel::fileExportEventsAction()
         }
         else
         {
-        	++it;
+            ++it;
         }
     }
 
@@ -673,7 +673,7 @@ void MainWindowModel::fileImportEventsAction()
                 // ||
                 // (*it).getPosition() + (*it).getDuration() > last_event_pos))
             {
-		fprintf(stdout,"inc=%i,ns=%i,getchan=%i,getPos+Dur=%i,lastPos=%f\n",inconsistent, number_channels,(*it).getChannel(),   (*it).getPosition() + (*it).getDuration(), last_event_pos);
+        fprintf(stdout,"inc=%i,ns=%i,getchan=%i,getPos+Dur=%i,lastPos=%f\n",inconsistent, number_channels,(*it).getChannel(),   (*it).getPosition() + (*it).getDuration(), last_event_pos);
                 inconsistent = true;
             }
         }
@@ -1173,8 +1173,14 @@ void MainWindowModel::channelSelection ()
         return; // user cancel
     }
 
-    if (channel_dialog.isCachingEnabled())
-        file_signal_reader_->enableCaching();
+    signal_browser_model_->enableInitDownsampling(channel_dialog.
+                                                     isInitRangeSearch());
+    signal_browser_model_->enableInitMinMaxSearch(channel_dialog.
+                                                     isInitRangeSearch());
+    signal_browser_model_->setWholeDataBuffer(
+            (SignalBuffer::WHOLE_BUFFER)channel_dialog.wholeSubsampling());
+    signal_browser_model_->setDefaultRange(channel_dialog.rangeMin(),
+                                           channel_dialog.rangeMax());
 
     // set new selected channels
     for (uint32 channel_nr = 0;
@@ -1207,7 +1213,7 @@ void MainWindowModel::optionsShowEventsAction()
         return;
     }
 
-	// set curent shown event types
+    // set curent shown event types
     EventTypeDialog::IntList shown_event_types;
 
     signal_browser_model_->getShownEventTypes(shown_event_types);
@@ -1257,13 +1263,13 @@ void MainWindowModel::optionsShowSettingsAction()
     overflow_detection_ = settings_dialog.isOverflowDetection();
 
     if (state_ == STATE_FILE_OPENED) {
-		signal_browser_model_->showChannelLabels(settings_dialog.isShowChannelLables());
-		signal_browser_model_->showXScales(settings_dialog.isShowChannelScales());
-		signal_browser_model_->showYScales(settings_dialog.isShowChannelScales());
-		signal_browser_model_->setXGridVisible(settings_dialog.isShowGrid());
-		signal_browser_model_->setYGridVisible(settings_dialog.isShowGrid());
-		signal_browser_model_->setAutoZoomBehaviour(settings_dialog.getScaleModeType());
-		signal_browser_model_->updateLayout();
+        signal_browser_model_->showChannelLabels(settings_dialog.isShowChannelLables());
+        signal_browser_model_->showXScales(settings_dialog.isShowChannelScales());
+        signal_browser_model_->showYScales(settings_dialog.isShowChannelScales());
+        signal_browser_model_->setXGridVisible(settings_dialog.isShowGrid());
+        signal_browser_model_->setYGridVisible(settings_dialog.isShowGrid());
+        signal_browser_model_->setAutoZoomBehaviour(settings_dialog.getScaleModeType());
+        signal_browser_model_->updateLayout();
     }
 }
 

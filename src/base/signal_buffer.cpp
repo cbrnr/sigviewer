@@ -1,12 +1,12 @@
 /*
 
-    $Id: signal_buffer.cpp,v 1.8 2009-02-22 12:36:46 cle1109 Exp $
-    Copyright (C) Thomas Brunner  2006,2007 
-    		  Christoph Eibel 2007,2008, 
-		  Clemens Brunner 2006,2007,2008  
-    		  Alois Schloegl  2008
-    This file is part of the "SigViewer" repository 
-    at http://biosig.sf.net/ 
+    $Id: signal_buffer.cpp,v 1.9 2009-03-02 07:44:45 cle1109 Exp $
+    Copyright (C) Thomas Brunner  2006,2007
+              Christoph Eibel 2007,2008,
+          Clemens Brunner 2006,2007,2008
+              Alois Schloegl  2008
+    This file is part of the "SigViewer" repository
+    at http://biosig.sf.net/
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -19,8 +19,8 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>. 
-    
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 */
 
 // signal_buffer.cpp
@@ -43,7 +43,15 @@ SignalBuffer::SignalBuffer(FileSignalReader& reader)
  : signal_reader_(reader),
    log_stream_(0),
    state_(STATE_READY),
-   next_event_id_(0)
+   next_event_id_(0),
+   whole_buffer_(WHOLE_BUFFER_256),
+   max_sub_sampling_(0),
+   downsampled_(false),
+   minmax_found_(false),
+   do_init_downsample_(true),
+   do_init_minmax_search_(true),
+   default_min_(-100),
+   default_max_(100)
 {
     float64 rec_duration = signal_reader_.getBasicHeader()->getRecordDuration();
     records_per_block_ = max((uint32)(1.0 / rec_duration + 0.5), 1);
@@ -83,6 +91,27 @@ void SignalBuffer::setLogStream(QTextStream* log_stream)
     log_stream_ = log_stream;
 }
 
+void SignalBuffer::setWholeDataBuffer(WHOLE_BUFFER whole_buffer)
+{
+    whole_buffer_ = whole_buffer;
+}
+
+void SignalBuffer::enableInitDownsampling(bool enabled)
+{
+	do_init_downsample_ = enabled;
+}
+
+void SignalBuffer::enableInitMinMaxSearch(bool enabled)
+{
+    do_init_minmax_search_ = enabled;
+}
+
+void SignalBuffer::setDefaultRange(float32 min, float32 max)
+{
+    default_min_ = min;
+    default_max_ = max;
+}
+
 // init Done
 void SignalBuffer::initDone(uint32, InitStatus)
 {
@@ -105,6 +134,12 @@ uint32 SignalBuffer::getNumberBlocks() const
 uint32 SignalBuffer::getRecordsPerBlock() const
 {
     return records_per_block_;
+}
+
+// get max subsampling
+uint32 SignalBuffer::getMaxSubsampling() const
+{
+    return max_sub_sampling_;
 }
 
 // add channel
@@ -134,18 +169,32 @@ void SignalBuffer::addChannel(uint32 channel_nr)
     sub_buffers->min_max_calculated_ = false;
     sub_buffers->min_value_ = 0.0;
     sub_buffers->max_value_ = 0.0;
+    bool bGotWholeBuffer = false;
     for (uint32 sub = NO_SUBSAMPLING; sub <= MAX_SUBSAMPLING; sub++)
     {
         uint32 blocks;
-        blocks = sub == WHOLE_SUBSAMPLING ? samples / (block_size << sub)
-                                          : min(BUFFER_QUEUE_SIZE / block_size,
-                                             samples / (block_size << sub));
-        blocks = blocks < 2 ? 2 : blocks;
+        if (whole_buffer_ != NO_WHOLE_BUFFER
+            && sub > NO_SUBSAMPLING && sub % whole_buffer_ == 0)
+        {
+            blocks = samples / (block_size << sub);
+            if (blocks == 0)
+                break;
+            bGotWholeBuffer = true;
+        }
+        else
+        {
+            blocks = min(BUFFER_QUEUE_SIZE / block_size,
+                         samples / (block_size << sub));
+            blocks = max(blocks, 2);
+        }
         sub_buffers->sub_queue[sub].reset(
             new SignalDataBlockQueue(channel_nr, samples_per_record,
                                      records_per_block_, blocks, 1 << sub));
+        max_sub_sampling_ = sub;
     }
     channel_nr2sub_buffers_map_[channel_nr] = sub_buffers;
+    if (!bGotWholeBuffer)
+        whole_buffer_ = NO_WHOLE_BUFFER;
 }
 
 // remove channel
@@ -212,6 +261,143 @@ bool SignalBuffer::isChannelActive(uint32 channel_nr) const
     return iter.value()->active;
 }
 
+void SignalBuffer::initLoadEvents()
+{
+    if (next_event_id_ != 0)
+        return;
+
+    SignalEventVector signal_events;
+    signal_reader_.loadEvents(signal_events);
+    uint32 number_events = signal_events.size();
+    uint32 step = max(number_events / 50, 1);
+    FileSignalReader::SignalEventVector::iterator iter;
+    uint32 event_nr = 0;
+    for (iter = signal_events.begin();
+         iter != signal_events.end();
+         iter++, event_nr++)
+    {
+        if (event_nr % step == 0)
+        {
+            initDone((event_nr + 1) * 100 / number_events, INIT_EVENTS);
+        }
+        if (iter->getType() & SignalEvent::EVENT_END)
+        {
+            if (log_stream_)
+            {
+                *log_stream_ << "SignalBuffer::init Error: End-Events not "
+                             << "suported\n";
+            }
+            continue;
+        }
+        id2signal_events_map_[next_event_id_]
+            = new SignalEvent(*iter, next_event_id_);
+        next_event_id_++;
+    }
+}
+
+void SignalBuffer::initDownsample()
+{
+    if (downsampled_ || whole_buffer_ ==  NO_WHOLE_BUFFER)
+        return;
+
+    // first active sub buffers
+    Int2SubBuffersPtrMap::iterator iter = channel_nr2sub_buffers_map_.begin();
+    while (!iter.value()->active)
+    {
+        iter++;
+        if (iter == channel_nr2sub_buffers_map_.end())
+            return;
+    }
+
+    uint32 blocks = 0;
+    for (uint32 sub = whole_buffer_;
+         sub <= max_sub_sampling_;
+         sub += max(whole_buffer_,1))
+    {
+        // load all whole subsampling blocks
+        blocks = iter.value()->sub_queue[sub]->getNumberBlocks();
+        uint32 step = max(blocks / 50, 1);
+        for (uint32 block_nr = 0; block_nr < blocks; block_nr++)
+        {
+            if (block_nr % step == 0)
+            {
+                initDone((block_nr + 1) * 100 / blocks, INIT_DOWNSAMPLE);
+            }
+            getSignalDataBlockImpl(iter.key(), sub, block_nr);
+        }
+    }
+    downsampled_ = true;
+}
+
+void SignalBuffer::initMinMax()
+{
+    if (minmax_found_)
+        return;
+
+    uint32 samples_per_record = signal_reader_.getBasicHeader()->getChannel(0)
+                                    .getSamplesPerRecord();
+    uint32 samples = signal_reader_.getBasicHeader()->getNumberRecords() * samples_per_record;
+    uint32 block_size = records_per_block_ * samples_per_record;
+    uint32 sub = downsampled_ ? (max_sub_sampling_ / whole_buffer_)
+                                 * whole_buffer_
+                              : SUBSAMPLING_2;
+    uint32 blocks = samples / (block_size << sub);
+
+    // calculate min and max value
+    uint32 step = max(blocks / 50, 1);
+    for (uint32 block_nr = 0; block_nr < blocks; block_nr++)
+    {
+        if (block_nr % step == 0)
+        {
+            initDone((block_nr + 1) * 100 / blocks, INIT_MIN_MAX);
+        }
+
+        Int2SubBuffersPtrMap::iterator iter;
+        for (iter = channel_nr2sub_buffers_map_.begin();
+             iter != channel_nr2sub_buffers_map_.end();
+             iter++)
+        {
+            SubBuffers* sub_buffers = iter.value();
+            int32 channel_nr = iter.key();
+            if (/*sub_buffers->min_max_calculated_ ||*/ !sub_buffers->active)
+            {
+                continue;
+            }
+
+            bool valid;
+            SignalDataBlock* data_block;
+            if (downsampled_)
+            {
+                data_block = &channel_nr2sub_buffers_map_[channel_nr]
+                                ->sub_queue[sub]
+                                    ->getSignalDataBlock(block_nr, valid);
+            }
+            else
+            {
+                data_block = getSignalDataBlockImpl(iter.key(), sub, block_nr);
+                valid = true;
+            }
+            if (!valid)
+            {
+                if (log_stream_)
+                {
+                    *log_stream_ << "SignalBuffer::init Error: "
+                                 << "downsampling failed\n";
+                }
+                continue;
+            }
+            float64 min = data_block->getMinValue();
+            float64 max = data_block->getMaxValue();
+            sub_buffers->min_value_ = sub_buffers->min_value_ > min ?
+                                        min : sub_buffers->min_value_;
+            sub_buffers->max_value_ = sub_buffers->max_value_ < max ?
+                                        max : sub_buffers->max_value_;
+            sub_buffers->min_max_calculated_ = (block_nr == blocks - 1);
+        }
+    }
+    minmax_found_ = true;
+}
+
 // init buffer
 void SignalBuffer::init()
 {
@@ -221,98 +407,24 @@ void SignalBuffer::init()
         return;
     }
 
-    // first ative sub buffers
-    Int2SubBuffersPtrMap::iterator iter = channel_nr2sub_buffers_map_.begin();
-    while (iter != channel_nr2sub_buffers_map_.end() && !iter.value()->active)
-    {
-        iter++;
-    }
+    initLoadEvents();
 
-    // loads signals
-    if (iter != channel_nr2sub_buffers_map_.end())
-    {
-        // load all whole subsampling blocks
-        uint32 blocks = iter.value()->sub_queue[WHOLE_SUBSAMPLING]
-                                                            ->getNumberBlocks();
-        uint32 step = max(blocks / 50, 1);
-        for (uint32 block_nr = 0; block_nr < blocks; block_nr++)
-        {
-            if (block_nr % step == 0)
-            {
-                initDone((block_nr + 1) * 100 / blocks, INIT_DOWNSAMPLE);
-            }
-            getSignalDataBlockImpl(iter.key(), WHOLE_SUBSAMPLING, block_nr);
-        }
+    if (do_init_downsample_)
+        initDownsample();
 
-        // calculate min and max value
-        int32 number_channels = channel_nr2sub_buffers_map_.size();
+    if (do_init_minmax_search_)
+        initMinMax();
+    else
+    {
+        Int2SubBuffersPtrMap::iterator iter;
         for (iter = channel_nr2sub_buffers_map_.begin();
              iter != channel_nr2sub_buffers_map_.end();
              iter++)
         {
             SubBuffers* sub_buffers = iter.value();
-            int32 channel_nr = iter.key();
-            initDone((channel_nr + 1) * 100 / number_channels, INIT_MIN_MAX);
-            if (sub_buffers->min_max_calculated_ || !sub_buffers->active)
-            {
-                continue;
-            }
-            for (uint32 block_nr = 0; block_nr < blocks; block_nr++)
-            {
-                bool valid;
-                SignalDataBlock* data_block;
-                data_block = &channel_nr2sub_buffers_map_[channel_nr]
-                                ->sub_queue[WHOLE_SUBSAMPLING]
-                                    ->getSignalDataBlock(block_nr, valid);
-                if (!valid)
-                {
-                    if (log_stream_)
-                    {
-                        *log_stream_ << "SignalBuffer::init Error: "
-                                     << "downsampling failed\n";
-                    }
-                    continue;
-                }
-                float64 min = data_block->getMinValue();
-                float64 max = data_block->getMaxValue();
-                sub_buffers->min_value_ = sub_buffers->min_value_ > min ?
-                                            min : sub_buffers->min_value_;
-                sub_buffers->max_value_ = sub_buffers->max_value_ < max ?
-                                            max : sub_buffers->max_value_;
-            }
+            sub_buffers->min_value_ = default_min_;
+            sub_buffers->max_value_ = default_max_;
             sub_buffers->min_max_calculated_ = true;
-        }
-    }
-
-    // load events
-    if (next_event_id_ == 0)
-    {
-        SignalEventVector signal_events;
-        signal_reader_.loadEvents(signal_events);
-        uint32 number_events = signal_events.size();
-        uint32 step = max(number_events / 50, 1);
-        FileSignalReader::SignalEventVector::iterator iter;
-        uint32 event_nr = 0;
-        for (iter = signal_events.begin();
-             iter != signal_events.end();
-             iter++, event_nr++)
-        {
-            if (event_nr % step == 0)
-            {
-                initDone((event_nr + 1) * 100 / number_events, INIT_EVENTS);
-            }
-            if (iter->getType() & SignalEvent::EVENT_END)
-            {
-                if (log_stream_)
-                {
-                    *log_stream_ << "SignalBuffer::init Error: End-Events not "
-                                 << "suported\n";
-                }
-                continue;
-            }
-            id2signal_events_map_[next_event_id_] 
-                = new SignalEvent(*iter, next_event_id_);
-            next_event_id_++;
         }
     }
 }
@@ -370,7 +482,7 @@ int32 SignalBuffer::addEvent(const SignalEvent& event)
     {
         return -1;
     }
-    id2signal_events_map_[next_event_id_] 
+    id2signal_events_map_[next_event_id_]
         = new SignalEvent(event, next_event_id_);
     return next_event_id_++;
 }
@@ -409,13 +521,12 @@ SignalDataBlock* SignalBuffer::getSignalDataBlock(uint32 channel_nr,
     return getSignalDataBlockImpl(channel_nr, sub_sampl, block_nr);
 }
 
-
 // get signal data block implementation
 SignalDataBlock* SignalBuffer::getSignalDataBlockImpl(uint32 channel_nr,
                                                       uint32 sub_sampl,
                                                       uint32 block_nr)
 {
-//### TODO: simplify this function 
+//### TODO: simplify this function
 // fprintf(stdout,"getSignalDataBlockImpl(%i, %i, %i)\n",channel_nr, sub_sampl, block_nr);
     if (channel_nr2sub_buffers_map_.find(channel_nr) ==
         channel_nr2sub_buffers_map_.end())
@@ -549,8 +660,9 @@ SignalDataBlock* SignalBuffer::getSignalDataBlockImpl(uint32 channel_nr,
     }
 
     bool valid;
-    SignalDataBlock* return_value = &(channel_nr2sub_buffers_map_[channel_nr]
-                                                                 ->sub_queue[sub_sampl]->getSignalDataBlock(block_nr, valid));
+    SignalDataBlock* return_value
+            = &(channel_nr2sub_buffers_map_[channel_nr]
+                  ->sub_queue[sub_sampl]->getSignalDataBlock(block_nr, valid));
     return return_value;
 }
 

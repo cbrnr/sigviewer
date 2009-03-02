@@ -75,6 +75,11 @@ public:
     void setMode(Mode mode);
     Mode getMode();
 
+    void setWholeDataBuffer(SignalBuffer::WHOLE_BUFFER whole_buffer);
+    void enableInitDownsampling(bool enabled);
+    void enableInitMinMaxSearch(bool enabled);
+    void setDefaultRange(float32 min, float32 max);
+
     //settings
     void showXScales(bool enabled);
     void showYScales(bool enabled);

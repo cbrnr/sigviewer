@@ -1190,42 +1190,63 @@ void SignalBrowserModel::getEvents(SignalEventVector& event_vector)
 //-------------------------------------------------------------------------
 void SignalBrowserModel::showXScales(bool enabled)
 {
-	show_x_scales_ = enabled;
+    show_x_scales_ = enabled;
 }
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::showYScales(bool enabled)
 {
-	show_y_scales_ = enabled;
+    show_y_scales_ = enabled;
 }
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::showChannelLabels(bool enabled)
 {
-	show_channel_labels_ = enabled;
+    show_channel_labels_ = enabled;
 }
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::setXGridVisible(bool visible)
 {
-	show_x_grid_ = visible;
+    show_x_grid_ = visible;
 }
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::setYGridVisible(bool visible)
 {
-	show_y_grid_ = visible;
+    show_y_grid_ = visible;
 }
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::setAutoZoomBehaviour(ScaleMode auto_zoom_type)
 {
-	auto_zoom_type_ = auto_zoom_type;
+    auto_zoom_type_ = auto_zoom_type;
 }
 
 bool SignalBrowserModel::isShowAllEventTypes() const
 {
-	return all_event_types_selected_;
+    return all_event_types_selected_;
+}
+
+void SignalBrowserModel::setWholeDataBuffer(SignalBuffer::WHOLE_BUFFER
+                                                whole_buffer)
+{
+    signal_buffer_.setWholeDataBuffer(whole_buffer);
+}
+
+void SignalBrowserModel::enableInitDownsampling(bool enabled)
+{
+    signal_buffer_.enableInitDownsampling(enabled);
+}
+
+void SignalBrowserModel::enableInitMinMaxSearch(bool enabled)
+{
+    signal_buffer_.enableInitMinMaxSearch(enabled);
+}
+
+void SignalBrowserModel::setDefaultRange(float32 min, float32 max)
+{
+    signal_buffer_.setDefaultRange(min, max);
 }
 
 } // namespace Biosig_

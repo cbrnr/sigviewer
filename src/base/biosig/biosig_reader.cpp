@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.32 2009-02-26 07:27:41 cle1109 Exp $
+    $Id: biosig_reader.cpp,v 1.33 2009-03-02 07:44:45 cle1109 Exp $
     Copyright (C) Thomas Brunner  2005,2006,2007
     		  Christoph Eibel 2007,2008,
 		  Clemens Brunner 2006,2007,2008
@@ -49,7 +49,7 @@ BioSigReader::BioSigReader() :
     basic_header_ (new BasicHeader ()),
     biosig_header_ (0),
     read_data_(0),
-    read_data_size_(-1)
+    read_data_size_(0)
 {
     // nothing to do here
 }
@@ -82,7 +82,7 @@ void BioSigReader::doClose()
     }
     delete read_data_;
     read_data_ = 0;
-    read_data_size_ = -1;
+    read_data_size_ = 0;
     delete biosig_header_;
     biosig_header_ = 0;
 }
@@ -177,7 +177,7 @@ void BioSigReader::enableCaching()
 }
 
 //-----------------------------------------------------------------------------
-QString BioSigReader::setFlagOverflow(const bool overflow_detection)
+void BioSigReader::setFlagOverflow(const bool overflow_detection)
 {
     biosig_header_->FLAG.OVERFLOWDETECTION = overflow_detection;
 }
@@ -305,7 +305,7 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
     }
 
     // calculate sample count
-    int samples = 0;
+    uint32 samples = 0;
     for (FileSignalReader::SignalDataBlockPtrIterator data_block = begin;
          data_block != end;
          data_block++)
@@ -315,11 +315,11 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
         {
         	return; // invalid data block
         }
-    	samples = std::max<int>(samples, (*data_block)->number_samples);
+    	samples = std::max<uint32>(samples, (*data_block)->number_samples);
     }
 
     // calculate record count
-    int record_count = samples / biosig_header_->SPR;
+    int32 record_count = samples / biosig_header_->SPR;
     if (record_count * biosig_header_->SPR < samples)
     	++record_count;
     if (start_record + record_count > basic_header_->getNumberRecords())
@@ -328,8 +328,8 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
     	record_count = 0;
 
     // allocate buffer
-    int samples_in_read_data = record_count * biosig_header_->SPR;
-    if (read_data_size_ < samples_in_read_data * biosig_header_->NS)
+    uint32 samples_in_read_data = record_count * biosig_header_->SPR;
+    if (read_data_ == 0 || read_data_size_ < samples_in_read_data * biosig_header_->NS)
     {
     	read_data_size_ = samples_in_read_data * biosig_header_->NS;
     	delete[] read_data_;
@@ -351,7 +351,7 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
         bool* data_block_buffer_valid = (*data_block)->getBufferValid();
 
         (*data_block)->setBufferOffset(start_record * biosig_header_->SPR);
-        for (int samp = 0; samp < (*data_block)->number_samples; ++samp)
+        for (uint32 samp = 0; samp < (*data_block)->number_samples; ++samp)
         {
         	if (samp < samples_in_read_data)
         	{

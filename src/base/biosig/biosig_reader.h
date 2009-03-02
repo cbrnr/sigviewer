@@ -19,7 +19,7 @@ public:
     virtual FileSignalReader* clone();
 
 //-----------------------------------------------------------------------------
-    virtual QString setFlagOverflow(const bool overflow_detection);
+    virtual void setFlagOverflow(const bool overflow_detection);
     virtual QString open(const QString& file_name);
     virtual QString open(const QString& file_name, const bool overflow_detection);
 
@@ -54,7 +54,7 @@ private:
     HDRTYPE* biosig_header_;
     static double const SAMPLE_RATE_TOLERANCE_;
     double* read_data_;
-    int read_data_size_;
+    uint32 read_data_size_;
 };
 
 } // namespace BioSig_
