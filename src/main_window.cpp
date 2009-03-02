@@ -1,11 +1,10 @@
-/*
+/*  main_window.cpp
 
-    $Id: main_window.cpp,v 1.7 2009-01-20 16:02:24 schloegl Exp $
-    Copyright (C) Thomas Brunner  2005
-    		  Christoph Eibel 2008,
-		  Clemens Brunner 2005,2008
-    		  Alois Schloegl  2009
-    		  Oliver Terbu    2008
+    Copyright (C) Thomas Brunner
+                  Clemens Brunner
+    		      Christoph Eibel   
+    		      Alois Schloegl
+    		      Oliver Terbu
     This file is part of the "SigViewer" repository
     at http://biosig.sf.net/
 
@@ -25,7 +24,7 @@
 */
 
 
-// // main_window.cpp
+// main_window.cpp
 
 #include "main_window.h"
 #include "main_window_model.h"
@@ -727,7 +726,7 @@ QString MainWindow::showImportDialog(const QString& path,
 void MainWindow::showHelpAboutDialog()
 {
     QMessageBox about_message_box(tr("About SigViewer"),
-                                  tr("<b><nobr>SigViewer Version 0.2.5</nobr></b><br>\
+                                  tr("<b><nobr>SigViewer Version 0.2.6</nobr></b><br>\
                                       <br>\
 									  Thomas Brunner, Christoph Eibel, Clemens Brunner, Alois Schl&ouml;gl, Oliver Terbu<br>\
 									  <br>\
