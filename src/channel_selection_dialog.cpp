@@ -8,7 +8,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QCheckBox>
-#include <QSettings>
+#include <QSettings>  
 #include <QComboBox>
 #include <QLabel>
 #include <QDoubleSpinBox>
