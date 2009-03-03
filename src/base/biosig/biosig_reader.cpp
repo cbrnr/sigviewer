@@ -1,6 +1,6 @@
 /*
 
-    $Id: biosig_reader.cpp,v 1.35 2009-03-02 21:01:41 brunnert Exp $
+    $Id: biosig_reader.cpp,v 1.36 2009-03-03 11:57:07 cle1109 Exp $
     Copyright (C) Thomas Brunner  2005,2006,2007
     		  Christoph Eibel 2007,2008,
 		  Clemens Brunner 2006,2007,2008
@@ -84,6 +84,7 @@ void BioSigReader::doClose()
     delete[] read_data_;
     read_data_ = 0;
     read_data_size_ = 0;
+    biosig_header_ = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -190,7 +191,7 @@ QString BioSigReader::open(const QString& file_name, const bool overflow_detecti
     if (biosig_header_)
     {
         sclose(biosig_header_);
-        delete biosig_header_;
+        destructHDR(biosig_header_);
         biosig_header_ = 0;
     }
 
@@ -234,7 +235,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         if (biosig_header_)
         {
             sclose (biosig_header_);
-            delete biosig_header_;
+            destructHDR(biosig_header_);
             biosig_header_ = 0;
         }
         return "file not supported";
