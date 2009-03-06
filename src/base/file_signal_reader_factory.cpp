@@ -1,6 +1,6 @@
 /*
 
-    $Id: file_signal_reader_factory.cpp,v 1.16 2009-02-18 14:18:10 schloegl Exp $
+    $Id: file_signal_reader_factory.cpp,v 1.17 2009-03-06 19:51:56 brunnert Exp $
     Copyright (C) Thomas Brunner  2005
     		  Christoph Eibel 2008
 		  Clemens Brunner 2005,2008
@@ -29,8 +29,7 @@
 #include "file_signal_reader_factory.h"
 
 // all suported readers
-#include "evt/evt_reader.h"
-#include "biosig/biosig_reader.h"
+#include "biosig_reader.h"
 
 namespace BioSig_
 {

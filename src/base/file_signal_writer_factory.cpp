@@ -3,8 +3,8 @@
 #include "file_signal_writer_factory.h"
 
 // all suported writers
-#include "evt/evt_writer.h"
-#include "biosig/biosig_writer.h"
+#include "evt_writer.h"
+#include "biosig_writer.h"
 
 #include <biosig.h>
 
