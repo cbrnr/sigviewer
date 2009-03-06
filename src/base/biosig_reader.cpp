@@ -338,7 +338,7 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
 
 	// read data as block
     memset(read_data_, 0, samples_in_read_data * biosig_header_->NS*sizeof(double));
-    size_t count = sread(read_data_, start_record, record_count, biosig_header_);
+    sread(read_data_, start_record, record_count, biosig_header_);
 
     // fill data blocks
     for (FileSignalReader::SignalDataBlockPtrIterator data_block = begin;
