@@ -1,5 +1,6 @@
 Version 0.2.6
-(*) Qt Creator support
+(+) Qt Creator support
+(+) added signal buffer options: (whole subsampling selection, disable initial min-max search)
 (B) fixed many bugs related to loading files, especially slow loading under Windows network shares is resolved
 (*) cleaned up code in biosig_reader.cpp
 

@@ -1,6 +1,6 @@
 /*
 
-    $Id: signal_buffer.cpp,v 1.9 2009-03-02 07:44:45 cle1109 Exp $
+    $Id: signal_buffer.cpp,v 1.10 2009-03-06 22:29:18 brunnert Exp $
     Copyright (C) Thomas Brunner  2006,2007
               Christoph Eibel 2007,2008,
           Clemens Brunner 2006,2007,2008
@@ -177,16 +177,16 @@ void SignalBuffer::addChannel(uint32 channel_nr)
             && sub > NO_SUBSAMPLING && sub % whole_buffer_ == 0)
         {
             blocks = samples / (block_size << sub);
-            if (blocks == 0)
-                break;
-            bGotWholeBuffer = true;
+            if (blocks > 0)
+                bGotWholeBuffer = true;
         }
         else
         {
             blocks = min(BUFFER_QUEUE_SIZE / block_size,
                          samples / (block_size << sub));
-            blocks = max(blocks, 2);
         }
+        if (blocks == 0)
+            break;
         sub_buffers->sub_queue[sub].reset(
             new SignalDataBlockQueue(channel_nr, samples_per_record,
                                      records_per_block_, blocks, 1 << sub));
