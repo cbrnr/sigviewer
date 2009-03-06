@@ -1,21 +1,30 @@
 TEMPLATE = app
 QT += qt3support
-TARGET = sigviewer
 DESTDIR = ../bin
-MOC_DIR = ../tmp
-OBJECTS_DIR = ../tmp
-RCC_DIR = ../tmp
-INCLUDEPATH += ../extern
-LIBS += -L../extern \
-    -lbiosig
-win32:LIBS += -lws2_32
+TARGET = sigviewer
 CONFIG += warn_on \
     link_prl \
     qt \
     thread \
     x86 \
-    ppc \
-    release
+    ppc
+
+debug {
+    OBJECTS_DIR = ../tmp/debug
+    MOC_DIR = ../tmp/debug
+    RCC_DIR = ../tmp/debug
+    UI_DIR = ../tmp/debug
+} else:release {
+    OBJECTS_DIR = ../tmp/release
+    MOC_DIR = ../tmp/release
+    RCC_DIR = ../tmp/release
+    UI_DIR = ../tmp/release
+}
+
+INCLUDEPATH += ../extern
+LIBS += -L../extern \
+    -lbiosig
+win32:LIBS += -lws2_32
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc
 ICON = sigviewer.icns
