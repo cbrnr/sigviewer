@@ -74,6 +74,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(QPointer<BasicHeader> header,
     button_layout->addStretch(1);
     ok_button_ = new QPushButton(tr("OK"), this);
     button_layout->addWidget(ok_button_);
+    ok_button_->setFocus();
     cancel_button_ = new QPushButton(tr("Cancel"), this);
     button_layout->addWidget(cancel_button_);
     button_layout->addStretch(1);
