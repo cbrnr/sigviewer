@@ -1,6 +1,6 @@
 /*
 
-    $Id: signal_channel.cpp,v 1.10 2009-03-10 09:38:23 schloegl Exp $
+    $Id: signal_channel.cpp,v 1.11 2009-03-10 09:46:31 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
@@ -62,7 +62,7 @@ SignalChannel::SignalChannel(uint32 number, const QString& label,
              (digital_maximum - digital_minimum);
     offset_ = physical_minimum - digital_minimum * scale_;
 
-fprintf(stdout,"#%i: %f %f %f %f %e %e \n",number,physical_maximum, physical_minimum,digital_maximum, digital_minimum, scale_, offset_);
+// fprintf(stdout,"#%i: %f %f %f %f %e %e \n",number,physical_maximum, physical_minimum,digital_maximum, digital_minimum, scale_, offset_);
 
 }
 
