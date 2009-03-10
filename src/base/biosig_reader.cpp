@@ -279,7 +279,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
                                                    biosig_header_->CHANNEL[channel_index].PhysMax,
                                                    biosig_header_->CHANNEL[channel_index].DigMin,
                                                    biosig_header_->CHANNEL[channel_index].DigMax,
-                                                   SignalChannel::FLOAT64,
+                                                   biosig_header_->CHANNEL[channel_index].GDFTYP,
                                                    1 / 8, // TODO: really don't know what that means!
                                                    "filter", // maybe useless
                                                    biosig_header_->CHANNEL[channel_index].LowPass,

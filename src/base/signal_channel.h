@@ -1,6 +1,6 @@
 /*
 
-    $Id: signal_channel.h,v 1.9 2009-01-19 07:43:54 schloegl Exp $
+    $Id: signal_channel.h,v 1.10 2009-03-10 09:38:23 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
@@ -52,8 +52,10 @@ public:
         INT32   = 5,
         UINT32  = 6,
         INT64   = 7,
+        UINT64   = 8,
         FLOAT32 = 16,
         FLOAT64 = 17,
+        FLOAT128 = 18,
 
         // add N to code
         BITN    = 255,
@@ -66,7 +68,7 @@ public:
                   uint32 physical_dimcode,
                   float64 physical_minimum, float64 physical_maximum,
                   float64 digital_minimum, float64 digital_maximum,
-                  Type data_type, uint32 data_offset,
+                  uint16_t data_type, uint32 data_offset,
                   const QString filter_label, float64 lowpass,
                   float64 highpass, bool notch);
 
@@ -86,7 +88,7 @@ public:
     float64 getDigitalMaximum() const;
     float64 getPhysicalMinimum() const;
     float64 getDigitalMinimum() const;
-    uint32 getDataType() const;
+    uint16_t getDataType() const;
     uint32 getDataOffset() const;
 
 private:
@@ -104,7 +106,7 @@ private:
     float64 digital_maximum_;
     float64 physical_minimum_;
     float64 digital_minimum_;
-    Type data_type_;
+    uint16_t data_type_;
     uint32 data_offset_;
     float64 scale_;
     float64 offset_;

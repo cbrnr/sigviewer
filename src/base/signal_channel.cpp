@@ -1,6 +1,6 @@
 /*
 
-    $Id: signal_channel.cpp,v 1.9 2009-02-22 12:36:46 cle1109 Exp $
+    $Id: signal_channel.cpp,v 1.10 2009-03-10 09:38:23 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
@@ -40,7 +40,7 @@ SignalChannel::SignalChannel(uint32 number, const QString& label,
                              float64 physical_minimum,
                              float64 physical_maximum,
                              float64 digital_minimum, float64 digital_maximum,
-                             Type data_type, uint32 data_offset,
+                             uint16  data_type, uint32 data_offset,
                              const QString filter_label, float64 lowpass,
                              float64 highpass, bool notch)
 : number_(number),
@@ -58,9 +58,12 @@ SignalChannel::SignalChannel(uint32 number, const QString& label,
   highpass_(highpass),
   notch_(notch)
 {
-    scale_ = (physical_maximum - physical_minimum_) /
+    scale_ = (physical_maximum - physical_minimum) /
              (digital_maximum - digital_minimum);
     offset_ = physical_minimum - digital_minimum * scale_;
+
+fprintf(stdout,"#%i: %f %f %f %f %e %e \n",number,physical_maximum, physical_minimum,digital_maximum, digital_minimum, scale_, offset_);
+
 }
 
 // get number
@@ -148,7 +151,7 @@ float64 SignalChannel::getDigitalMinimum() const
 }
 
 // get data type
-uint32 SignalChannel::getDataType() const
+uint16 SignalChannel::getDataType() const
 {
     return data_type_;
 }
@@ -159,38 +162,6 @@ uint32 SignalChannel::getDataOffset() const
     return data_offset_;
 }
 
-// size of data_type in bits
-uint32 SignalChannel::typeBitSize() const
-{
-    if (data_type_ > UBITN)
-    {
-        return (data_type_ - UBITN);
-    }
-    if (data_type_ > BITN)
-    {
-        return (data_type_ - BITN);
-    }
-    switch (data_type_)
-    {
-        case CHAR:
-        case INT8:
-        case UINT8:
-            return 8;
-        case INT16:
-        case UINT16:
-            return 16;
-        case INT32:
-        case UINT32:
-        case FLOAT32:
-            return 32;
-        case INT64:
-        case FLOAT64:
-            return 64;
-        default:
-            return 0;
-    }
-    return 0;
-}
 
 // type string
 QString SignalChannel::typeString() const
