@@ -1,6 +1,6 @@
 /*
 
-    $Id: sigviewer.cpp,v 1.4 2009-02-22 12:36:46 cle1109 Exp $
+    $Id: sigviewer.cpp,v 1.5 2009-03-27 07:57:30 cle1109 Exp $
     Copyright (C) Thomas Brunner  2005,2006
 		  Clemens Brunner 2005,2008
     		  Alois Schloegl  2009
@@ -145,6 +145,7 @@ int main(int32 argc, char* argv[])
     main_window_model.getEventTableFileReader()
         .load((application.applicationDirPath() + "/eventcodes.txt").ascii());
     main_window_model.loadSettings();
+    main_window.setUnifiedTitleAndToolBarOnMac(true);
     main_window.show();
     int result = application.exec();
     main_window_model.saveSettings();
