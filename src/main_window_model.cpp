@@ -20,6 +20,10 @@
 #include "event_color_manager.h"
 #include "settings_dialog.h"
 
+// QT4
+#include "signal_browser/signal_browser_model_4.h"
+#include "signal_browser/signal_browser_view.h"
+
 #include <QString>
 #include <QApplication>
 #include <QFile>
@@ -43,6 +47,10 @@ MainWindowModel::MainWindowModel()
     file_signal_reader_.reset(0);
     signal_browser_model_.reset(0);
     signal_browser_.reset(0);
+
+    signal_browser_model_qt4_.reset(0);
+    signal_browser_view_qt4_ = 0;
+
     event_table_file_reader_.reset(new EventTableFileReader);
     event_table_file_reader_->setLogStream(log_stream_.get());
     event_color_manager_
@@ -757,6 +765,7 @@ void MainWindowModel::openFile(const QString& file_name)
     settings.setValue("MainWindowModel/file_open_path", path);
 
     // initialize signal browser
+#ifndef QT4_PORTED
     signal_browser_model_.reset(new SignalBrowserModel(*signal_reader, *this));
     signal_browser_model_->setLogStream(log_stream_.get());
     signal_browser_.reset(new SignalBrowser(*signal_browser_model_.get(),
@@ -765,6 +774,16 @@ void MainWindowModel::openFile(const QString& file_name)
     signal_browser_model_->setSignalBrowser(signal_browser_.get());
     signal_browser_model_->loadSettings();
     main_window_->setCentralWidget(signal_browser_.get());
+#else
+    signal_browser_model_qt4_.reset(new PortingToQT4_::SignalBrowserModel(*signal_reader, *this));
+    signal_browser_model_qt4_->setLogStream(log_stream_.get());
+    signal_browser_view_qt4_ = new PortingToQT4_::SignalBrowserView(signal_browser_model_qt4_.get(), main_window_);
+
+    signal_browser_model_qt4_->setSignalBrowserView(signal_browser_view_qt4_);
+    signal_browser_model_qt4_->loadSettings();
+    main_window_->setCentralWidget(signal_browser_view_qt4_);
+
+#endif // QT4_PORTED
     setState(STATE_FILE_OPENED);
 
     // update recent files
@@ -780,9 +799,14 @@ void MainWindowModel::openFile(const QString& file_name)
     channelSelection ();
 
     // mouse mode
+#ifndef QT4_PORTED
     main_window_->setMouseMode(signal_browser_model_->getMode());
+#else
+    main_window_->setMouseMode(signal_browser_model_qt4_->getMode());
+#endif // QT4_PORTED
 
     // set signals per page to all
+#ifndef QT4_PORTED
     int32 nr_shown_channels = signal_browser_model_->getNumberShownChannels();
     nr_shown_channels = nr_shown_channels == 0 ? 1 : nr_shown_channels;
     int32 signal_height = (int32)(signal_browser_ ->getCanvasView()->visibleHeight() /
@@ -790,6 +814,17 @@ void MainWindowModel::openFile(const QString& file_name)
                           signal_browser_model_->getSignalSpacing();
 
     signal_browser_model_->setSignalHeight(signal_height);
+#else
+    int32 nr_shown_channels = signal_browser_model_qt4_->getNumberShownChannels();
+    nr_shown_channels = nr_shown_channels == 0 ? 1 : nr_shown_channels;
+
+    // TODO: calculate signal_height! (ADD SPACING)
+    int32 signal_height = (int32)(signal_browser_view_qt4_->height() /
+                                  nr_shown_channels);// -
+                          // signal_browser_model_qt4_->getSignalSpacing();
+
+    signal_browser_model_qt4_->setSignalHeight(signal_height);
+#endif // QT4_PORTED
     main_window_->setSignalsPerPage(-1); // all
 
     // set status bar
@@ -799,10 +834,15 @@ void MainWindowModel::openFile(const QString& file_name)
     main_window_->setStatusBarNrChannels(file_signal_reader_->getBasicHeader()->getNumberChannels());
 
     // show signal_browser
+#ifndef QT4_PORTED
     signal_browser_model_->autoScaleAll(); // autoscale on startup
 
     signal_browser_->show();
+#else
+    signal_browser_model_qt4_->autoScaleAll(); // autoscale on startup
 
+    signal_browser_view_qt4_->show();
+#endif // QT4_PORTED
     secsPerPageChanged(secs_per_page_);
     main_window_->setSecsPerPage(secs_per_page_);
 }
@@ -1000,8 +1040,11 @@ void MainWindowModel::mouseModeHandAction()
     {
         return;
     }
-
+#ifndef QT4_PORTED
     signal_browser_model_->setMode(SignalBrowserModel::MODE_HAND);
+#else
+    signal_browser_model_qt4_->setMode(PortingToQT4_::SignalBrowserModel::MODE_HAND);
+#endif
 }
 
 // mouse mode shift signal action
@@ -1013,7 +1056,11 @@ void MainWindowModel::mouseModeShiftSignalAction()
         return;
     }
 
+#ifndef QT4_PORTED
     signal_browser_model_->setMode(SignalBrowserModel::MODE_SHIFT_SIGNAL);
+#else
+    signal_browser_model_qt4_->setMode(PortingToQT4_::SignalBrowserModel::MODE_SHIFT_SIGNAL);
+#endif
 }
 
 // mouse mode zoom action
@@ -1154,13 +1201,21 @@ void MainWindowModel::channelSelection ()
                                           main_window_);
 
     // current selected channels
+#ifndef QT4_PORTED
     bool empty_selection = signal_browser_model_->getNumberShownChannels() == 0;
+#else
+    bool empty_selection = signal_browser_model_qt4_->getNumberShownChannels() == 0;
+#endif // QT4_PORTED
     for (uint32 channel_nr = 0;
          channel_nr < file_signal_reader_->getBasicHeader()->getNumberChannels();
          channel_nr++)
     {
         bool show_channel = empty_selection ||
+#ifndef QT4_PORTED
                             signal_browser_model_->isChannelShown(channel_nr);
+#else
+                            signal_browser_model_qt4_->isChannelShown(channel_nr);
+#endif
         channel_dialog.setSelected(channel_nr, show_channel);
     }
 
@@ -1173,6 +1228,8 @@ void MainWindowModel::channelSelection ()
         return; // user cancel
     }
 
+
+#ifndef QT4_PORTED
     signal_browser_model_->enableInitDownsampling(channel_dialog.
                                                      isInitRangeSearch());
     signal_browser_model_->enableInitMinMaxSearch(channel_dialog.
@@ -1202,6 +1259,26 @@ void MainWindowModel::channelSelection ()
 
     // update layout
     signal_browser_model_->updateLayout();
+#else
+    // TODO: implement!
+    for (uint32 channel_nr = 0;
+         channel_nr < file_signal_reader_->getBasicHeader()->getNumberChannels();
+         channel_nr++)
+    {
+        if (channel_dialog.isSelected(channel_nr))
+        {
+            signal_browser_model_qt4_->addChannel(channel_nr);
+        }
+        else
+        {
+            signal_browser_model_qt4_->removeChannel(channel_nr);
+        }
+    }
+    signal_browser_model_qt4_->initBuffer();
+    //signal_browser_model_qt4_->updateLayout();
+
+
+#endif // QT4_PORTED
 }
 
 // options show events action
@@ -1339,19 +1416,34 @@ void MainWindowModel::secsPerPageChanged(const QString& secs_per_page)
 
     if (ok)
     {
+#ifndef QT4_PORTED
         f_secs_per_page = (int32)(f_secs_per_page * 10) / 10.0;
         pixel_per_sec = signal_browser_->getCanvasView()->visibleWidth() /
                         f_secs_per_page;
+#else
+        f_secs_per_page = (int32)(f_secs_per_page * 10) / 10.0;
+        pixel_per_sec = signal_browser_view_qt4_->getVisibleWidth() /
+                        f_secs_per_page;
+#endif // QT4_PORTED
     }
     else
     {
         // whole
+#ifndef QT4_PORTED
         pixel_per_sec = signal_browser_->getCanvasView()->visibleWidth() /
                         (file_signal_reader_->getBasicHeader()->getNumberRecords() *
                          file_signal_reader_->getBasicHeader()->getRecordDuration());
+#else
+        pixel_per_sec = signal_browser_view_qt4_->getVisibleWidth() /
+                        (file_signal_reader_->getBasicHeader()->getNumberRecords() *
+                         file_signal_reader_->getBasicHeader()->getRecordDuration());
+#endif // QT4_PORTED
     }
-
+#ifndef QT4_PORTED
     signal_browser_model_->setPixelPerSec(pixel_per_sec);
+#else
+    signal_browser_model_qt4_->setPixelPerSec (pixel_per_sec);
+#endif // QT4_PORTED
     secs_per_page_ = secs_per_page;
 }
 
@@ -1369,14 +1461,25 @@ void MainWindowModel::signalsPerPageChanged(const QString& signals_per_page)
     if (!ok)
     {
         // all channels
+#ifndef QT4_PORTED
         tmp = signal_browser_model_->getNumberShownChannels();
+#else
+        tmp = signal_browser_model_qt4_->getNumberShownChannels();
+#endif
         tmp = tmp == 0 ? 1 : tmp;
     }
 
     int32 signal_height;
-    signal_height = (int32)(signal_browser_ ->getCanvasView()->visibleHeight() / tmp) -
+#ifndef QT4_PORTED
+    signal_height = (int32)(signal_browser_->getCanvasView()->visibleHeight() / tmp) -
                     signal_browser_model_->getSignalSpacing();
     signal_browser_model_->setSignalHeight(signal_height);
+#else
+    // TODO: move this calculation into signal_browser_model!
+    signal_height = (int32)(signal_browser_view_qt4_->getVisibleHeight() / tmp) -
+                    signal_browser_model_qt4_->getSignalSpacing();
+    signal_browser_model_qt4_->setSignalHeight(signal_height);
+#endif
 }
 
 // pixel per sec changed

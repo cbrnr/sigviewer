@@ -844,6 +844,7 @@ void MainWindow::setRecentFiles(const QStringList& recent_file_list)
 }
 
 // set mouse mode
+#ifndef QT4_PORTED
 void MainWindow::setMouseMode(SignalBrowserModel::Mode mode)
 {
     switch (mode)
@@ -865,6 +866,30 @@ void MainWindow::setMouseMode(SignalBrowserModel::Mode mode)
             break;
     }
 }
+#else
+void MainWindow::setMouseMode(PortingToQT4_::SignalBrowserModel::Mode mode)
+{
+    switch (mode)
+    {
+        case PortingToQT4_::SignalBrowserModel::MODE_NEW:
+            mouse_mode_new_action_->setOn(true);
+            break;
+        case PortingToQT4_::SignalBrowserModel::MODE_POINTER:
+            mouse_mode_pointer_action_->setOn(true);
+            break;
+        case PortingToQT4_::SignalBrowserModel::MODE_HAND:
+            mouse_mode_hand_action_->setOn(true);
+            break;
+        case PortingToQT4_::SignalBrowserModel::MODE_SHIFT_SIGNAL:
+            mouse_mode_shift_signal_action_->setOn(true);
+            break;
+        case PortingToQT4_::SignalBrowserModel::MODE_ZOOM:
+            mouse_mode_zoom_action_->setOn(true);
+            break;
+    }
+}
+#endif // QT4_PORTED
+
 
 // set signals per page
 void MainWindow::setSignalsPerPage(float64 signals_per_page)

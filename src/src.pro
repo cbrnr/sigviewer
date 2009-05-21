@@ -21,6 +21,10 @@ debug {
     UI_DIR = ../tmp/release
 }
 
+# TODO: remove this define after porting!
+# DEFINES += QT4_PORTED
+
+
 INCLUDEPATH += ../extern
 LIBS += -L../extern \
     -lbiosig
@@ -35,6 +39,7 @@ TRANSLATIONS += translations\sigviewer_de.ts \
     
 include(base/base.pri)
 include(smart_canvas/smart_canvas.pri)	
+include(signal_browser/signal_browser.pri)
     
 HEADERS += basic_header_info_dialog.h \
     channel_selection_dialog.h \

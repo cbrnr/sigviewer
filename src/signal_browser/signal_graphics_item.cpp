@@ -1,0 +1,395 @@
+#include "signal_graphics_item.h"
+#include "signal_browser_view.h"
+#include "signal_browser_model_4.h"
+#include "../base/signal_data_block.h"
+#include "../base/signal_buffer.h"
+#include "../base/signal_channel.h"
+#include "../base/math_utils.h"
+#include "../signal_browser_mouse_handling.h"
+
+#include <QStyleOptionGraphicsItem>
+#include <QGraphicsSceneMouseEvent>
+#include <QPoint>
+#include <QTime>
+#include <QObject>
+
+#include <iostream>
+
+
+namespace BioSig_
+{
+
+namespace PortingToQT4_
+{
+
+// prefered pixel per sample
+float64 SignalGraphicsItem::prefered_pixel_per_sample_ = 1.0;
+
+
+//-----------------------------------------------------------------------------
+SignalGraphicsItem::SignalGraphicsItem(SignalBuffer& buffer, const SignalChannel& channel,
+                     SignalBrowserModel& model, SignalBrowserView* browser)
+: signal_buffer_(buffer),
+  signal_channel_(channel),
+  signal_browser_model_(model),
+  signal_browser_(browser),
+  minimum_(channel.getPhysicalMinimum()),
+  maximum_(channel.getPhysicalMaximum()),
+  y_zoom_(1),
+  y_grid_pixel_intervall_(0),
+  draw_y_grid_ (true),
+  y_offset_((channel.getPhysicalMinimum() +
+             channel.getPhysicalMaximum()) / 2.0),
+  height_ (100), // FIXME: arbitrary number!!
+  shifting_ (false),
+  hand_tool_on_ (false)
+{
+    // nothing to do
+}
+
+//-----------------------------------------------------------------------------
+SignalGraphicsItem::~SignalGraphicsItem ()
+{
+
+}
+
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::setHeight (int32 height)
+{
+    height_ = height;
+    this->update();
+}
+
+
+//-----------------------------------------------------------------------------
+QRectF SignalGraphicsItem::boundingRect () const
+{
+    // TODO: implement!
+        int32 width = (int32)(signal_buffer_.getBlockDuration() *
+                          signal_buffer_.getNumberBlocks() * signal_browser_model_.getPixelPerSec());
+
+    // std::cout << "SignalGraphicsItem::boundingRect width = " << width << std::endl;
+    // std::cout << "SignalGraphicsItem::boundingRect top_margin_ = " << top_margin_ << std::endl;
+
+    return QRectF (0, 0, width, height_);
+}
+
+//-----------------------------------------------------------------------------
+// get maximum
+float64 SignalGraphicsItem::getMaximum()
+{
+    return maximum_;
+}
+
+//-----------------------------------------------------------------------------
+// get minimum
+float64 SignalGraphicsItem::getMinimum()
+{
+    return minimum_;
+}
+
+//-----------------------------------------------------------------------------
+float64 SignalGraphicsItem::getYZoom()
+{
+    return y_zoom_;
+}
+
+//-----------------------------------------------------------------------------
+float64 SignalGraphicsItem::getYOffset()
+{
+    return y_offset_;
+}
+
+//-----------------------------------------------------------------------------
+float64 SignalGraphicsItem::getYGridPixelIntervall()
+{
+    return y_grid_pixel_intervall_;
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+    QRectF clip (option->exposedRect);
+    //clip.setWidth(clip.width()*2);
+    signal_buffer_.setChannelActive(signal_channel_.getNumber(), true);
+
+    int32 draw_start_x = clip.x() - 1;
+    int32 draw_end_x = draw_start_x + clip.width() + 1;
+    int32 item_height = this->boundingRect().height();
+//    float64 item_y = y();
+
+    float64 block_duration = signal_buffer_.getBlockDuration();
+    float64 pixel_per_sec = signal_browser_model_.getPixelPerSec();
+
+    // subsampling
+    float64 samples_per_sec =  signal_channel_.getSamplesPerRecord() *
+                               signal_buffer_.getRecordsPerBlock() /
+                               block_duration;
+
+    uint32 sub_sampling_type = SignalBuffer::NO_SUBSAMPLING;
+
+   while (samples_per_sec / 2.0 * prefered_pixel_per_sample_ >= pixel_per_sec
+           && sub_sampling_type < signal_buffer_.getMaxSubsampling())
+    {
+        block_duration *= 2.0;
+        samples_per_sec /= 2.0;
+        sub_sampling_type++;
+    }
+
+    // block range
+    float64 tmp = draw_start_x / block_duration / pixel_per_sec;
+    uint32 first_block = (uint32)tmp;
+    tmp = draw_end_x / block_duration / pixel_per_sec;
+    uint32 last_block = (uint32)tmp;
+
+    float64 x_float = first_block * block_duration * pixel_per_sec;
+    float64 x_float_inc = pixel_per_sec / samples_per_sec;
+
+    // y range
+    float64 value_range = (maximum_ - minimum_) / y_zoom_;
+    float64 upper_value = y_offset_ + value_range / 2.0;
+
+
+    //painter->setClipRect(draw_start_x, (int32)item_y, clip.width() + 1,
+    //              item_height); //, QPainter::CoordPainter);
+
+    // draw y grid - begin
+    if (draw_y_grid_)
+    {
+                float64 y_grid_intervall = y_grid_pixel_intervall_ / item_height * value_range;
+                painter->setPen(Qt::lightGray);
+
+                for (float64 y_float = (upper_value - (int32)(upper_value / y_grid_intervall) * y_grid_intervall) *
+                                                           item_height / value_range /*+ item_y*/;
+                         y_float < /*item_y */+ item_height;
+                         y_float += y_grid_pixel_intervall_)
+                {
+                        int32 y = (int32)(y_float +0.5);
+                        painter->drawLine(draw_start_x, y, draw_end_x, y);
+                }
+    }
+    // draw y grid - end
+
+    bool last_valid = false;
+    int32 last_x = 0;
+    int32 last_y = 0;
+
+    painter->setPen(Qt::darkBlue);
+
+    for (uint32 block_nr = first_block; block_nr <= last_block; block_nr++)
+    {
+        SignalDataBlock* data_block;
+        data_block = signal_buffer_.getSignalDataBlock(
+                                                    signal_channel_.getNumber(),
+                                                    sub_sampling_type,
+                                                    block_nr);
+
+        if (!data_block)
+        {
+            continue; // error
+        }
+
+        float32* buffer = data_block->getBuffer();
+        float32* upper_buffer = data_block->getUpperBuffer();
+        float32* lower_buffer = data_block->getLowerBuffer();
+        bool* buffer_valid = data_block->getBufferValid();
+
+        for (uint32 index = 0;
+             index < data_block->number_samples;
+             index++, buffer_valid++, buffer++, upper_buffer ++, lower_buffer++,
+             x_float+= x_float_inc)
+        {
+            if (x_float < draw_start_x - x_float_inc ||
+                x_float > draw_end_x + x_float_inc)
+            {
+                continue; // out of drawing range
+            }
+
+            if (*buffer_valid)
+            {
+                int32 x = (int32)(x_float + 0.5);
+                int32 y = (int32)((upper_value - *buffer) / value_range *
+                                  (item_height - 1) + /*item_y*/ + 0.5);
+
+                if (last_valid)
+                {
+                    painter->drawLine(last_x, last_y, x, y);
+                }
+                else
+                {
+                    painter->drawPoint(x, y);
+                }
+
+                last_valid = true;
+                last_y = y;
+                last_x = x;
+
+                if (sub_sampling_type > SignalBuffer::NO_SUBSAMPLING)
+                {
+                    // draw blocks
+                    int32 y_u = (int32)((upper_value - *upper_buffer) /
+                                        value_range * (item_height - 1) +
+                                        /*item_y*/ + 0.5);
+
+                    int32 y_l = (int32)((upper_value - *lower_buffer) /
+                                        value_range * (item_height - 1) +
+                                        /*item_y*/ + 0.5);
+
+                    painter->drawLine(x, y_u, x, y_l);
+                }
+            }
+            else
+            {
+                last_valid = false;
+            }
+        }
+    }
+
+    // drawing the y axis
+    // TODO: if drawing y-axis, dont draw the signal at this place!
+    //drawYAxis(painter, option);
+
+
+    painter->setClipping(false); // !!!
+}
+
+//-----------------------------------------------------------------------------
+// get range from buffer
+void SignalGraphicsItem::getRangeFromBuffer(float64 factor)
+{
+    minimum_ = round125(signal_buffer_.getMinValue(signal_channel_.getNumber()) * factor);
+    maximum_ = round125(signal_buffer_.getMaxValue(signal_channel_.getNumber()) * factor);
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::updateYGridIntervall()
+{
+    float64 value_range = (maximum_ - minimum_) / y_zoom_;
+    float64 item_height = this->boundingRect().height();
+    float64 y_grid_intervall
+        = round125(value_range / item_height *
+                   signal_browser_model_.getPreferedYGirdPixelIntervall());
+    y_grid_pixel_intervall_ = item_height * y_grid_intervall / value_range;
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::enableYGrid(bool enabled)
+{
+    draw_y_grid_ = enabled;
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
+{
+    // FIXME: evtl. hier keine auto-variablen machen, sondern members
+    //        --> performance.. ;)
+    QPoint p = event->screenPos();
+    int32 dx = p.x() - move_start_point_.x();
+    int32 dy = p.y() - move_start_point_.y();
+    move_start_point_ = p;
+    if (shifting_)
+    {
+        move_start_point_ = p;
+        float64 range = (maximum_ - minimum_) / y_zoom_;
+        y_offset_ = y_offset_ + dy * range / height_;
+        update();
+        signal_browser_->updateWidgets();
+    }
+    else if (hand_tool_on_)
+    {
+        signal_browser_->scrollContente(dx, dy);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
+{
+    SignalBrowserModel::Mode mode = signal_browser_model_.getMode();
+
+    switch (SignalBrowserMouseHandling::getAction(event, mode))
+    {
+        case SignalBrowserMouseHandling::HAND_SCROLL_ACTION:
+            hand_tool_on_ = true;
+            signal_browser_->initScroll();
+            move_start_point_ = event->screenPos();
+            break;
+        case SignalBrowserMouseHandling::SHIFT_CHANNEL_ACTION:
+            shifting_ = true;
+            //signal_browser_->getCanvasView()->viewport()
+            //                        ->setCursor(QCursor(Qt::SizeVerCursor));
+            //canvas_view->addEventListener(SmartCanvasView::MOUSE_RELEASE_EVENT |
+            //                              SmartCanvasView::MOUSE_MOVE_EVENT,
+            //                              this);
+            move_start_point_ = event->screenPos();
+            break;
+    }
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
+{
+    shifting_ = false;
+    hand_tool_on_ = false;
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::drawYAxis (QPainter * painter, const QStyleOptionGraphicsItem * option)
+{
+    QRectF clip (option->exposedRect);
+    int32 y_start = clip.y();
+    int32 y_end = y_start + clip.height();
+    int32 x_start = clip.x();
+    int32 w = 100;
+    int32 x_end = clip.x() + w;
+
+    painter->setPen(Qt::black);
+    painter->drawLine(x_end - 1, y_start, x_end -1, y_end);
+/*
+    p.setPen(Qt::black);
+    float64 float_y_start = floor(y_start / intervall) * intervall;
+    float64 float_y_end = ceil(y_end / intervall) * intervall;
+    QMap<int32, SignalCanvasItem*>::iterator iter = channel_nr2signal_canvas_item_.begin();
+
+    for (float32 float_item_y = 0;
+         float_item_y < float_y_end && iter != channel_nr2signal_canvas_item_.end();
+         float_item_y += intervall, iter++)
+    {
+        if (float_item_y > float_y_start - intervall)
+        {
+            float64 value_range = (iter.data()->getMaximum() - iter.data()->getMinimum()) /
+                                  iter.data()->getYZoom();
+
+            float64 upper_value = iter.data()->getYOffset() + value_range / 2.0;
+
+            p.setClipRect(0, (int32)float_item_y, w, intervall);
+//            p.setPen(Qt::black);
+            p.drawLine(0, (int32)float_item_y + signal_height,
+                       w - 1, (int32)float_item_y + signal_height);
+
+            // draw y markers and values
+            float64 y_grid_pixel_intervall = iter.data()->getYGridPixelIntervall();
+            float64 y_grid_intervall = y_grid_pixel_intervall / signal_height * value_range;
+
+            float64 value = (int32)((upper_value + y_grid_intervall) / y_grid_intervall) * y_grid_intervall;
+            float64 y_float = (upper_value - value) * signal_height / value_range + float_item_y;
+
+            for (;
+                 value > upper_value - value_range - y_grid_intervall;
+                 value -= y_grid_intervall, y_float += y_grid_pixel_intervall)
+            {
+                int32 y = (int32)(y_float + 0.5);
+                p.drawLine(w - 5, y, w - 1, y);
+                p.drawText(0, (int32)(y - 20) , w - 10, 40,
+                       Qt::AlignRight | Qt::AlignVCenter, QString("%1")
+                                                                .arg(qRound(value * 100) / 100.0));
+            }
+        }
+    }*/
+}
+
+
+}
+
+
+}

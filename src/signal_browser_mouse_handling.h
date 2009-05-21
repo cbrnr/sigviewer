@@ -3,10 +3,15 @@
 #ifndef SIGNAL_BROWSER_MOUSE_HANDLING_H
 #define SIGNAL_BROWSER_MOUSE_HANDLING_H
 
-#include "signal_browser_model.h"
 
-class QMouseEvent;
-class QWheelEvent;
+
+    #include "signal_browser_model.h"
+    class QMouseEvent;
+    class QWheelEvent;
+
+    #include "signal_browser/signal_browser_model_4.h"
+    class QGraphicsSceneMouseEvent;
+
 
 namespace BioSig_
 {
@@ -30,8 +35,12 @@ public:
         COPY_EVENT_TO_CHANNEL_ACTION
     };
 
+
     static Action getAction(QMouseEvent* e, SignalBrowserModel::Mode mode);
     static Action getAction(QWheelEvent* e, SignalBrowserModel::Mode mode);
+
+    static Action getAction(QGraphicsSceneMouseEvent* e, PortingToQT4_::SignalBrowserModel::Mode mode);
+
 };
 
 } // namespace BioSig_

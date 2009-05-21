@@ -24,6 +24,12 @@ class SignalBrowser;
 class EventTableFileReader;
 class EventColorManager;
 
+namespace PortingToQT4_
+{
+    class SignalBrowserView;
+    class SignalBrowserModel;
+}
+
 // main window model
 class MainWindowModel : public QObject
 {
@@ -117,6 +123,10 @@ private:
     std::auto_ptr<FileSignalReader> file_signal_reader_;
     std::auto_ptr<SignalBrowserModel> signal_browser_model_;
     std::auto_ptr<SignalBrowser> signal_browser_;
+
+    std::auto_ptr<PortingToQT4_::SignalBrowserModel> signal_browser_model_qt4_;
+    PortingToQT4_::SignalBrowserView* signal_browser_view_qt4_;
+
     std::auto_ptr<EventTableFileReader> event_table_file_reader_;
     std::auto_ptr<EventColorManager> event_color_manager_;
     QStringList recent_file_list_;
