@@ -1028,8 +1028,11 @@ void MainWindowModel::mouseModePointerAction()
     {
         return;
     }
-
+#ifndef QT4_PORTED
     signal_browser_model_->setMode(SignalBrowserModel::MODE_POINTER);
+#else
+    signal_browser_model_qt4_->setMode(PortingToQT4_::SignalBrowserModel::MODE_POINTER);
+#endif
 }
 
 // mouse mode hand action
