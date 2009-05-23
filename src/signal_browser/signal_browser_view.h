@@ -38,7 +38,9 @@ public:
     void resizeScene (int32 width, int32 height);
     int32 getVisibleWidth () const;
     int32 getVisibleHeight () const;
+    int32 getVisibleX () const;
     int32 getVisibleY () const;
+
     void scrollContente (int32 dx, int32 dy);
     void updateWidgets ();
     //-------------------------------------------------------------------------
@@ -50,7 +52,9 @@ protected:
 
 private slots:
     void verticalSrollbarMoved(int value);
+    void horizontalSrollbarMoved(int value);
     void horizontalScrollBarRangeChaned (int min, int max);
+    void verticalScrollBarRangeChaned (int min, int max);
 
 private:
     void createLayout ();
@@ -62,7 +66,9 @@ private:
     int32 center_y_for_scrolling_;
 
     YAxisWidget* y_axis_widget_;
+    XAxisWidget* x_axis_widget_;
     QScrollBar* horizontal_scrollbar_;
+    QScrollBar* vertical_scrollbar_;
 
     QGridLayout* layout_;
 

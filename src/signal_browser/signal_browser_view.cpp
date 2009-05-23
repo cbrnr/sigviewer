@@ -4,6 +4,7 @@
 #include "signal_browser_model.h"
 #include "signal_graphics_item.h"
 #include "y_axis_graphics_item.h"
+#include "x_axis_graphics_item.h"
 
 #include <QGridLayout>
 #include <QScrollBar>
@@ -29,11 +30,18 @@ SignalBrowserView::SignalBrowserView(SignalBrowserModel* signal_browser_model, Q
     graphics_view_ = new QGraphicsView(graphics_scene_, this);
     graphics_view_->scroll(0,0);
     graphics_view_->horizontalScrollBar()->hide();
+    graphics_view_->verticalScrollBar()->hide();
 
     y_axis_widget_ = new YAxisWidget (this, *signal_browser_model, this);
-    y_axis_widget_->resize(100, height());
-    y_axis_widget_->setMinimumSize(100, 0);
+    y_axis_widget_->resize(70, height());
+    y_axis_widget_->setMinimumSize(70, 0);
+
+    x_axis_widget_ = new XAxisWidget (this, *signal_browser_model, this);
+    x_axis_widget_->resize(100, 40);
+    x_axis_widget_->setMinimumSize(100, 40);
+
     horizontal_scrollbar_ = new QScrollBar (Qt::Horizontal, this);
+    vertical_scrollbar_ = new QScrollBar (Qt::Vertical, this);
 
     connect(horizontal_scrollbar_, SIGNAL(valueChanged(int)),
             graphics_view_->horizontalScrollBar(), SLOT(setValue(int)));
@@ -41,8 +49,19 @@ SignalBrowserView::SignalBrowserView(SignalBrowserModel* signal_browser_model, Q
             horizontal_scrollbar_, SLOT(setValue(int)));
     connect(graphics_view_->horizontalScrollBar(), SIGNAL(rangeChanged(int,int)),
             this, SLOT(horizontalScrollBarRangeChaned(int,int)));
+    connect(horizontal_scrollbar_, SIGNAL(valueChanged(int)),
+            this, SLOT(horizontalSrollbarMoved(int)));
 
-    graphics_view_->resize(this->width()-100, this->height());
+    connect(vertical_scrollbar_, SIGNAL(valueChanged(int)),
+            graphics_view_->verticalScrollBar(), SLOT(setValue(int)));
+    connect(graphics_view_->verticalScrollBar(), SIGNAL(valueChanged(int)),
+            vertical_scrollbar_, SLOT(setValue(int)));
+    connect(graphics_view_->verticalScrollBar(), SIGNAL(rangeChanged(int,int)),
+            this, SLOT(verticalScrollBarRangeChaned(int,int)));
+    connect(vertical_scrollbar_, SIGNAL(valueChanged(int)),
+            this, SLOT(verticalSrollbarMoved(int)));
+
+    graphics_view_->resize(this->width()-100, this->height()-50);
     setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     createLayout();
 
@@ -100,9 +119,14 @@ int32 SignalBrowserView::getVisibleHeight () const
 }
 
 //-----------------------------------------------------------------------------
+int32 SignalBrowserView::getVisibleX () const
+{
+    return graphics_view_->mapToScene(0,0).x();
+}
+
+//-----------------------------------------------------------------------------
 int32 SignalBrowserView::getVisibleY () const
 {
-    std::cout << "getVisibleY = " << graphics_view_->mapToScene(0,0).y() << std::endl;
     return graphics_view_->mapToScene(0,0).y();
 }
 
@@ -113,13 +137,14 @@ void SignalBrowserView::scrollContente (int32 dx, int32 dy)
     center_x_for_scrolling_ -= dx;
     // FIXME: dieser call löst vermutlich (?) wieder ein mousemoveevent aus... :(
     graphics_view_->centerOn(center_x_for_scrolling_, center_y_for_scrolling_);
-    y_axis_widget_->update();
+    //updateWidgets();
 }
 
 //-----------------------------------------------------------------------------
 void SignalBrowserView::updateWidgets ()
 {
     y_axis_widget_->update();
+    x_axis_widget_->update();
 }
 
 
@@ -140,9 +165,24 @@ void SignalBrowserView::verticalSrollbarMoved(int value)
 }
 
 //-----------------------------------------------------------------------------
+void SignalBrowserView::horizontalSrollbarMoved(int value)
+{
+    x_axis_widget_->repaint();
+}
+
+//-----------------------------------------------------------------------------
 void SignalBrowserView::horizontalScrollBarRangeChaned (int min, int max)
 {
+    x_axis_widget_->repaint();
     horizontal_scrollbar_->setRange(min, max);
+}
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::verticalScrollBarRangeChaned (int min, int max)
+{
+    y_axis_widget_->repaint();
+    vertical_scrollbar_->setRange(min, max);
+    vertical_scrollbar_->setPageStep(vertical_scrollbar_->height()-max);
 }
 
 
@@ -150,7 +190,7 @@ void SignalBrowserView::horizontalScrollBarRangeChaned (int min, int max)
 //-----------------------------------------------------------------------------
 void SignalBrowserView::resizeEvent (QResizeEvent * event)
 {
-    graphics_view_->resize(this->width()-110, this->height()-10);
+    graphics_view_->resize(this->width()-110, this->height()-70);
 }
 
 //-----------------------------------------------------------------------------
@@ -163,8 +203,9 @@ void SignalBrowserView::createLayout()
 
     layout_->addWidget(y_axis_widget_, 1, 1);
     layout_->addWidget(graphics_view_, 1, 2);
-    layout_->addWidget(horizontal_scrollbar_, 2, 2);
-
+    layout_->addWidget(x_axis_widget_, 2, 2);
+    layout_->addWidget(horizontal_scrollbar_, 3, 2);
+    layout_->addWidget(vertical_scrollbar_, 1,3);
 //    layout_->addWidget(label_widget_, 1, 3);
 //    layout_->addWidget(x_axis_widget_, 2, 2);
 //    layout_->addWidget(h_scrollbar_, 3, 1, 1, 3);

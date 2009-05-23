@@ -9,17 +9,23 @@ namespace BioSig_
 namespace PortingToQT4_
 {
 
+class SignalBrowserModel;
+class SignalBrowserView;
+
 
 class XAxisWidget : public QWidget
 {
 public:
-    XAxisWidget();
+    XAxisWidget(QWidget* parent,
+                SignalBrowserModel& model, SignalBrowserView* browser);
     virtual ~XAxisWidget();
     virtual QSize sizeHint () const;
 
 private:
     virtual void paintEvent(QPaintEvent* event = 0);
 
+    SignalBrowserModel& signal_browser_model_;
+    SignalBrowserView* signal_browser_;
 };
 
 }

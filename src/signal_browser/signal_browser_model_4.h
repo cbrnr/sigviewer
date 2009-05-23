@@ -120,10 +120,10 @@ public:
 /*    int32 getPreferedXGirdPixelIntervall();
 */
     int32 getPreferedYGirdPixelIntervall();
-/*    float64 getXGridPixelIntervall();
+    float64 getXGridPixelIntervall();
 
     // events
-    void getShownEventTypes(IntList& event_type);
+/*    void getShownEventTypes(IntList& event_type);
     void setShownEventTypes(const IntList& event_type, const bool all);
     void setEventChanged(uint32 id, bool update = true);
     void removeEvent(uint32 id, bool update = true);

@@ -806,7 +806,7 @@ int32 SignalBrowserModel::getPreferedYGirdPixelIntervall()
 {
     return prefered_y_grid_pixel_intervall_;
 }
-/*
+
 // get x grid pixel intervall
 float64 SignalBrowserModel::getXGridPixelIntervall()
 {
@@ -814,7 +814,6 @@ float64 SignalBrowserModel::getXGridPixelIntervall()
 }
 
 
-*/
 // check ready state
 inline bool SignalBrowserModel::checkReadyState(const QString& function)
 {
