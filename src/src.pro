@@ -22,7 +22,7 @@ debug {
 }
 
 # TODO: remove this define after porting!
-# DEFINES += QT4_PORTED
+DEFINES += QT4_PORTED
 
 
 INCLUDEPATH += ../extern

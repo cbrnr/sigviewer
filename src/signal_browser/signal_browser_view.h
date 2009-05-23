@@ -9,6 +9,7 @@
 #include <QGraphicsView>
 
 class QGridLayout;
+class QScrollBar;
 
 namespace BioSig_
 {
@@ -17,6 +18,7 @@ namespace PortingToQT4_
 {
 
 class YAxisWidget;
+class XAxisWidget;
 class SignalBrowserModel;
 class SignalGraphicsItem;
 
@@ -48,6 +50,7 @@ protected:
 
 private slots:
     void verticalSrollbarMoved(int value);
+    void horizontalScrollBarRangeChaned (int min, int max);
 
 private:
     void createLayout ();
@@ -59,8 +62,10 @@ private:
     int32 center_y_for_scrolling_;
 
     YAxisWidget* y_axis_widget_;
+    QScrollBar* horizontal_scrollbar_;
 
     QGridLayout* layout_;
+
 
 };
 
