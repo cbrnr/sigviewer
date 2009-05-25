@@ -190,9 +190,9 @@ private:
     Int2IntMap channel2y_pos_;
 /*
     EventCanvasItem* selected_event_item_;
-
+*/
     // parameters
-    bool release_buffer_;*/
+    bool release_buffer_;
     float64 pixel_per_sec_;
     int32 signal_height_;
     int32 signal_spacing_;
@@ -208,10 +208,9 @@ private:
     bool show_channel_labels_;
     bool show_y_scales_;
     bool show_x_scales_;
-    ScaleMode auto_zoom_type_;
+    ScaleMode auto_zo<om_type_;
     bool all_event_types_selected_;
  */
-    bool items_added_to_view_;
 };
 
 } // namespace PortingToQT4_

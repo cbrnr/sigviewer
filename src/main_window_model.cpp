@@ -1188,8 +1188,11 @@ void MainWindowModel::optionsChannelsAction()
     // show signal_browser
 
     //signal_browser_model_->autoScaleAll(); // autoscal on startup
-
+#ifndef QT4_PORTED
     signal_browser_->show();
+#else
+    signal_browser_view_qt4_->show();
+#endif
 }
 
 void MainWindowModel::channelSelection ()
@@ -1278,9 +1281,7 @@ void MainWindowModel::channelSelection ()
         }
     }
     signal_browser_model_qt4_->initBuffer();
-    //signal_browser_model_qt4_->updateLayout();
-
-
+    signal_browser_model_qt4_->updateLayout();
 #endif // QT4_PORTED
 }
 

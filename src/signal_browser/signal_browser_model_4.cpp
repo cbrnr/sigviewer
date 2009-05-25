@@ -3,6 +3,7 @@
 #include "signal_browser_model_4.h"
 #include "signal_browser_view.h"
 #include "signal_graphics_item.h"
+#include "y_axis_graphics_item.h"
 
 #include "../base/file_signal_reader.h"
 #include "../base/math_utils.h"
@@ -61,20 +62,19 @@ SignalBrowserModel::SignalBrowserModel(FileSignalReader& reader,
   mode_(MODE_POINTER),
   signal_buffer_ (reader),
   basic_header_(reader.getBasicHeader()),
+  release_buffer_(false),
   pixel_per_sec_(100),
   signal_height_(75),
   signal_spacing_(0),
   prefered_x_grid_pixel_intervall_(100),
   prefered_y_grid_pixel_intervall_(25),
   x_grid_pixel_intervall_(0),
-  show_y_grid_(true),
-  items_added_to_view_ (false)
+  show_y_grid_(true)
 /*,
   x_grid_item_(0),
   channel_separator_item_(0),
   navigation_item_(0),
   selected_event_item_(0),
-  release_buffer_(false),
   pixel_per_sec_(100),
   signal_height_(75),
   signal_spacing_(1),
@@ -314,6 +314,7 @@ void SignalBrowserModel::addChannel(uint32 channel_nr)
 
     if(channel2signal_item_.find(channel_nr) != channel2signal_item_.end())
     {
+        std::cout << "already added channel " << channel_nr << std::endl;
          return; // already added
     }
 
@@ -329,10 +330,10 @@ void SignalBrowserModel::addChannel(uint32 channel_nr)
     // add label to label widget
 /*    signal_browser_->getLabelWidget()->addChannel(channel_nr,
                                                   signal_channel.getLabel());
-
-    // add label to y axis widget
-    signal_browser_->getYAxisWidget()->addChannel(channel_nr, signal_item);
 */
+    // add label to y axis widget
+    signal_browser_view_->getYAxisWidget().addChannel(channel_nr, signal_item);
+    //signal_browser_view_->addSignalGraphicsItem(signal_item);//
 
     // add channel to buffer
     signal_buffer_.addChannel(channel_nr);
@@ -346,8 +347,8 @@ void SignalBrowserModel::removeChannel(uint32 channel_nr)
     {
         return;
     }
-/*
-    Int2SignalCanvasItemPtrMap::iterator sig_iter;
+
+    Int2SignalGraphicsItemPtrMap::iterator sig_iter;
 
     sig_iter = channel2signal_item_.find(channel_nr);
     if(sig_iter == channel2signal_item_.end())
@@ -357,13 +358,14 @@ void SignalBrowserModel::removeChannel(uint32 channel_nr)
 
     // remove signal canvas item
     channel2signal_item_.erase(sig_iter);
-    delete sig_iter.value();
+    delete sig_iter->second;
 
+/*  TODO QT4: Implement!!!
     // remove label from label widget
     signal_browser_->getLabelWidget()->removeChannel(channel_nr);
+*/
 
-    // TODO !!!
-    signal_browser_->getYAxisWidget()->removeChannel(channel_nr);
+    signal_browser_view_->getYAxisWidget().removeChannel(channel_nr);
 
     // remove channel from buffer
     if (release_buffer_)
@@ -373,15 +375,13 @@ void SignalBrowserModel::removeChannel(uint32 channel_nr)
     else
     {
         signal_buffer_.setChannelActive(channel_nr, false);
-    }*/
+    }
 }
 
 // is signal shown
 bool SignalBrowserModel::isChannelShown(uint32 channel_nr)
 {
-    // TODO: implement!
-    //return channel2signal_item_.find(channel_nr) != channel2signal_item_.end();
-    return true;
+    return channel2signal_item_.find(channel_nr) != channel2signal_item_.end();
 }
 
 
@@ -633,12 +633,10 @@ void SignalBrowserModel::updateLayout()
         signal_iter->second->updateYGridIntervall();
 
         signal_iter->second->enableYGrid(show_y_grid_);
-        if (!items_added_to_view_)
-            signal_browser_view_->addSignalGraphicsItem(signal_iter->first, signal_iter->second);
+        signal_browser_view_->addSignalGraphicsItem(signal_iter->first, signal_iter->second);
 
         signal_iter->second->show();
     }
-    items_added_to_view_ = true;
     // TODO: implement events!!
     /*
 

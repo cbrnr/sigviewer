@@ -32,7 +32,7 @@ public:
     virtual ~SignalBrowserView ();
 
     void addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item);
-
+    void removeSignalGraphicsItem (int32 channel_nr);
 
 
     void resizeScene (int32 width, int32 height);
@@ -40,6 +40,7 @@ public:
     int32 getVisibleHeight () const;
     int32 getVisibleX () const;
     int32 getVisibleY () const;
+    YAxisWidget& getYAxisWidget () const;
 
     void scrollContente (int32 dx, int32 dy);
     void updateWidgets ();

@@ -284,6 +284,10 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 {
     // FIXME: evtl. hier keine auto-variablen machen, sondern members
     //        --> performance.. ;)
+    static int recursive_calls = 0;
+    std::cout << "recursive_calls: " << recursive_calls << std::endl;
+    recursive_calls++;
+
     QPoint p = event->screenPos();
     int32 dx = p.x() - move_start_point_.x();
     int32 dy = p.y() - move_start_point_.y();
@@ -300,6 +304,7 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
     {
         signal_browser_->scrollContente(dx, dy);
     }
+    recursive_calls = 0;
 }
 
 //-----------------------------------------------------------------------------

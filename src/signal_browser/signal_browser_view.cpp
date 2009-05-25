@@ -107,6 +107,15 @@ void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsI
 }
 
 //-----------------------------------------------------------------------------
+void SignalBrowserView::removeSignalGraphicsItem (int32 channel_nr)
+{
+//    graphics_scene_->removeItem(graphics_item);
+//    graphics_scene_->addItem(graphics_item);
+//    y_axis_widget_->addChannel(channel_nr, graphics_item);
+//    graphics_view_->update();
+}
+
+//-----------------------------------------------------------------------------
 int32 SignalBrowserView::getVisibleWidth () const
 {
     return graphics_view_->viewport()->width();
@@ -129,6 +138,13 @@ int32 SignalBrowserView::getVisibleY () const
 {
     return graphics_view_->mapToScene(0,0).y();
 }
+
+//-----------------------------------------------------------------------------
+YAxisWidget& SignalBrowserView::getYAxisWidget () const
+{
+    return *y_axis_widget_;
+}
+
 
 //-----------------------------------------------------------------------------
 void SignalBrowserView::scrollContente (int32 dx, int32 dy)
