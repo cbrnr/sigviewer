@@ -125,18 +125,18 @@ public:
     // events
 /*    void getShownEventTypes(IntList& event_type);
     void setShownEventTypes(const IntList& event_type, const bool all);
-    void setEventChanged(uint32 id, bool update = true);
+    void setEventChanged(uint32 id, bool update = true);*/
     void removeEvent(uint32 id, bool update = true);
-    EventCanvasItem* addEvent(const SignalEvent& event, bool update = true);
+/*    EventCanvasItem* addEvent(const SignalEvent& event, bool update = true);
     void setSelectedEventItem(EventCanvasItem* item);
     EventCanvasItem* getSelectedEventItem();
     void setSelectedEventToAllChannels();
     void changeSelectedEventChannel();
     void copySelectedEventToChannels();
     void changeSelectedEventType();
-    void removeSelectedEvent();
+    void removeSelectedEvent();*/
     void getEvents(SignalEventVector& event_vector);
-    uint16 getActualEventCreationType () const;
+/*    uint16 getActualEventCreationType () const;
 */
     void updateLayout();
 /*

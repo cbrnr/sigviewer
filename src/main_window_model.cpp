@@ -986,9 +986,15 @@ void MainWindowModel::editEventTableAction()
         return;
     }
 
+#ifndef QT4_PORTED
     EventTableDialog event_table_dialog(*signal_browser_model_.get(),
                                         file_signal_reader_->getBasicHeader(),
                                         main_window_);
+#else
+    EventTableDialog event_table_dialog(*signal_browser_model_qt4_.get(),
+                                        file_signal_reader_->getBasicHeader(),
+                                        main_window_);
+#endif
 
     event_table_dialog.loadSettings();
     event_table_dialog.exec();

@@ -957,11 +957,12 @@ void SignalBrowserModel::setEventChanged(uint32 id, bool update)
 
     main_window_model_.setChanged();
 }
-
+*/
 // remove event
 void SignalBrowserModel::removeEvent(uint32 id, bool update)
 {
-    Int2EventCanvasItemPtrMap::iterator it = id2event_item_.find(id);
+    /// QT4 TODO: IMPLEMENT!!!
+/*    Int2EventCanvasItemPtrMap::iterator it = id2event_item_.find(id);
 
     if (it == id2event_item_.end())
     {
@@ -979,9 +980,9 @@ void SignalBrowserModel::removeEvent(uint32 id, bool update)
         signal_browser_->getCanvas()->update();
     }
 
-    main_window_model_.setChanged();
+    main_window_model_.setChanged();*/
 }
-
+/*
 // add event
 EventCanvasItem* SignalBrowserModel::addEvent(const SignalEvent& event,
                                               bool update)
@@ -1260,7 +1261,7 @@ int32 SignalBrowserModel::getChannelNr(uint32 shown_nr)
 
     return it.key();
 }
-
+*/
 // get events
 void SignalBrowserModel::getEvents(SignalEventVector& event_vector)
 {
@@ -1272,7 +1273,7 @@ void SignalBrowserModel::getEvents(SignalEventVector& event_vector)
         event_vector.push_back(*signal_buffer_.getEvent(event_id));
     }
 }
-
+/*
 //-------------------------------------------------------------------------
 void SignalBrowserModel::showXScales(bool enabled)
 {
