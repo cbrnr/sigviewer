@@ -153,6 +153,8 @@ void SignalBrowserView::scrollContente (int32 dx, int32 dy)
     center_x_for_scrolling_ -= dx;
     // FIXME: dieser call löst vermutlich (?) wieder ein mousemoveevent aus... :(
     graphics_view_->centerOn(center_x_for_scrolling_, center_y_for_scrolling_);
+    //graphics_view_->horizontalScrollBar()->setValue(graphics_view_->horizontalScrollBar()->value() - dx);
+    //graphics_view_->verticalScrollBar()->setValue(graphics_view_->verticalScrollBar()->value() - dy);
     //updateWidgets();
 }
 

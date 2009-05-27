@@ -77,7 +77,7 @@ void YAxisWidget::paintEvent(QPaintEvent* event)
 
             float64 value_range = (iter.data()->getMaximum() - iter.data()->getMinimum()) /
                                   iter.data()->getYZoom();
-            std::cout << "float_item_y = " << float_item_y << std::endl;
+            // std::cout << "float_item_y = " << float_item_y << std::endl;
             float64 upper_value = iter.data()->getYOffset() + value_range / 2.0;
             p.drawLine(0, (int32)float_item_y + signal_height,
                        w - 1, (int32)float_item_y + signal_height);
