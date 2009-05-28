@@ -1,3 +1,4 @@
+#ifndef QT4_PORTED
 // x_axis_widget.cpp
 
 #include "x_axis_widget.h"
@@ -95,3 +96,4 @@ void XAxisWidget::paintEvent(QPaintEvent*)
 
 } // namespace BioSig_
 
+#endif

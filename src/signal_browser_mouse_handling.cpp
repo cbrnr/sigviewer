@@ -9,7 +9,7 @@
 namespace BioSig_
 {
 
-
+#ifndef QT4_PORTED
 // get action
 SignalBrowserMouseHandling::Action SignalBrowserMouseHandling::getAction(
                                                 QMouseEvent* e,
@@ -91,6 +91,7 @@ SignalBrowserMouseHandling::Action SignalBrowserMouseHandling::getAction(
     return NO_ACTION;
 }
 
+#endif
 
 SignalBrowserMouseHandling::Action SignalBrowserMouseHandling::getAction(QGraphicsSceneMouseEvent* e, PortingToQT4_::SignalBrowserModel::Mode mode)
 {
@@ -143,6 +144,7 @@ SignalBrowserMouseHandling::Action SignalBrowserMouseHandling::getAction(QGraphi
 
     return NO_ACTION;
 }
+
 
 
 

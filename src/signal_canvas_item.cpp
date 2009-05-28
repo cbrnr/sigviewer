@@ -1,3 +1,4 @@
+#ifndef QT4_PORTED
 // signal_canvas_item.cpp
 
 #include "signal_canvas_item.h"
@@ -524,3 +525,4 @@ float64 SignalCanvasItem::getYGridPixelIntervall()
 
 } // namespace BioSig_
 
+#endif

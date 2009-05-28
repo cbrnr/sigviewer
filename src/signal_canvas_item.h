@@ -1,3 +1,4 @@
+#ifndef QT4_PORTED
 // signal_canvas_item.h
 
 #ifndef SIGNAL_CANVAS_ITEM_H
@@ -101,6 +102,8 @@ private:
 } // namespace BioSig_
 
 
+
+#endif
 
 #endif
 

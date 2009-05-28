@@ -1,3 +1,4 @@
+#ifndef QT4_PORTED
 // event_canvas_item.cpp
 
 #include "event_canvas_item.h"
@@ -436,3 +437,5 @@ void EventCanvasItem::startMouseMoveEnd(SmartCanvasView* canvas_view)
 }
 
 } // namespace BioSig_
+
+#endif

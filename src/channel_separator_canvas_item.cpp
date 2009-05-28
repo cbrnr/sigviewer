@@ -1,3 +1,4 @@
+#ifndef QT4_PORTED
 // channel_separator_canvas_item.cpp
 
 #include "channel_separator_canvas_item.h"
@@ -56,3 +57,4 @@ void ChannelSeparatorCanvasItem::smartDraw(QPainter& p, const QRect& clip)
 
 } // namespace BioSig_
 
+#endif

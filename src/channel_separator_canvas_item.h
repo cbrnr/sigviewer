@@ -1,3 +1,4 @@
+#ifndef QT4_PORTED
 // channel_separator_canvas_item.h
 
 #ifndef CHANNEL_SEPARATOR_CANVAS_ITEM_H
@@ -35,5 +36,7 @@ private:
 };
 
 } // namespace BioSig_
+
+#endif
 
 #endif

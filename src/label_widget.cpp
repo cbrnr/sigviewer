@@ -1,9 +1,14 @@
 // label_widget.cpp
 
 #include "label_widget.h"
+#ifndef QT4_PORTED
 #include "signal_browser_model.h"
 #include "signal_browser.h"
 #include "smart_canvas/smart_canvas_view.h"
+#else
+#include "signal_browser/signal_browser_model_4.h"
+#include "signal_browser/signal_browser_view.h"
+#endif
 
 #include <math.h>
 
@@ -22,10 +27,15 @@ namespace BioSig_
 QColor LabelWidget::axis_color_("#e0e0e0");
 
 // constructor
+#ifndef QT4_PORTED
 LabelWidget::LabelWidget(SignalBrowserModel& model, SignalBrowser* browser)
+#else
+LabelWidget::LabelWidget(PortingToQT4_::SignalBrowserModel& model, PortingToQT4_::SignalBrowserView* browser)
+#endif
 : QWidget(browser),
   signal_browser_model_(model),
   signal_browser_(browser)
+
 {
     QPalette palette;
     palette.setColor(backgroundRole(), axis_color_);
@@ -59,7 +69,11 @@ void LabelWidget::paintEvent(QPaintEvent*)
     int32 signal_height = signal_browser_model_.getSignalHeight();
     int32 signal_spacing = signal_browser_model_.getSignalSpacing();
     float64 intervall = signal_height + signal_spacing;
+#ifndef QT4_PORTED
     int32 y_start = signal_browser_->getCanvasView()->contentsY();
+#else
+    int32 y_start = signal_browser_->getVisibleY();
+#endif
     int32 y_end = y_start + height();
     int32 w = width();
 

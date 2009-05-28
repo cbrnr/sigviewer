@@ -1,3 +1,4 @@
+#ifndef QT4_PORTED
 // y_axis_widget.h
 
 #ifndef Y_AXIS_WIDGET_H
@@ -47,3 +48,4 @@ private:
 
 #endif
 
+#endif

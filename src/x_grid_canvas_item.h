@@ -1,3 +1,4 @@
+#ifndef QT4_PORTED
 // x_grid_canvas_item.h
 
 #ifndef X_GRID_CANVAS_ITEM_H
@@ -41,3 +42,4 @@ private:
 
 #endif
 
+#endif

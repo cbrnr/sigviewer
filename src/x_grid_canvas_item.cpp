@@ -1,3 +1,4 @@
+#ifndef QT4_PORTED
 // x_grid_canvas_item.cpp
 
 #include "x_grid_canvas_item.h"
@@ -51,3 +52,4 @@ void XGridCanvasItem::smartDraw(QPainter& p, const QRect& clip)
 
 } // namespace BioSig_
 
+#endif

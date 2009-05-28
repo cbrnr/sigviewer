@@ -1,3 +1,5 @@
+#ifndef QT4_PORTED
+
 // x_axis_widget.h
 
 #ifndef X_AXIS_WIDGET_H
@@ -38,6 +40,8 @@ private:
 };
 
 } // namespace BioSig_
+
+#endif
 
 #endif
 

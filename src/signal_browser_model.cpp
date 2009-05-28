@@ -1,3 +1,4 @@
+#ifndef QT4_PORTED
 // signal_browser_model.cpp
 
 #include "signal_browser_model.h"
@@ -1251,3 +1252,4 @@ void SignalBrowserModel::setDefaultRange(float32 min, float32 max)
 
 } // namespace Biosig_
 
+#endif

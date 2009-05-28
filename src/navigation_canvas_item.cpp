@@ -1,3 +1,4 @@
+#ifndef QT4_PORTED
 // navigation_canvas_item.cpp
 
 #include "navigation_canvas_item.h"
@@ -271,3 +272,5 @@ void NavigationCanvasItem::contextMenuEvent(QContextMenuEvent*,
 }
 
 } // namespace BioSig_
+
+#endif

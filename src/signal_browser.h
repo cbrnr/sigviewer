@@ -1,3 +1,4 @@
+#ifndef QT4_PORTED
 // signal_browser.h
 #ifndef SIGNAL_BROWSER_H
 #define SIGNAL_BROWSER_H
@@ -88,3 +89,4 @@ private:
 
 #endif
 
+#endif

@@ -318,14 +318,15 @@ void EventTableDialog::buildEventTable()
 
     EventTableFileReader& event_table_reader
         = signal_browser_model_.getMainWindowModel().getEventTableFileReader();
-    SignalBrowserModel::SignalEventVector event_vector;
+
+    FileSignalReader::SignalEventVector event_vector;
     signal_browser_model_.getEvents(event_vector);
     int32 number_channels = (int32)basic_header_->getNumberChannels();
     float64 sample_rate = basic_header_->getEventSamplerate();
     event_table_model_->insertRows(0, event_vector.size());
     int32 row_height = event_table_view_->verticalHeader()->sizeHint().height();
 
-    SignalBrowserModel::SignalEventVector::iterator it;
+    FileSignalReader::SignalEventVector::iterator it;
     int32 event_nr = 0;
 
     for (it = event_vector.begin(); it != event_vector.end(); it++, event_nr++)

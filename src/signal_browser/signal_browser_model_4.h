@@ -31,6 +31,7 @@ namespace PortingToQT4_
 
 class SignalBrowserView;
 class SignalGraphicsItem;
+class EventGraphicsItem;
 
 // signal browser model
 class SignalBrowserModel : public QObject
@@ -40,6 +41,7 @@ class SignalBrowserModel : public QObject
 public:
 
     typedef FileSignalReader::SignalEventVector SignalEventVector;
+    typedef QList<uint16> IntList;
 
 
     enum Mode
@@ -69,7 +71,7 @@ public:
     void enableInitMinMaxSearch(bool enabled);
     void setDefaultRange(float32 min, float32 max);
 
-    /*
+
     //settings
     void showXScales(bool enabled);
     void showYScales(bool enabled);
@@ -80,7 +82,7 @@ public:
     bool isShowAllEventTypes() const;
 
     void setAutoZoomBehaviour(ScaleMode auto_zoom_type);
-*/
+
     // buffer
     void initBuffer();
 /*
@@ -95,14 +97,15 @@ public:
     uint32 getNumberShownChannels();
 /*
     int32 getChannelNr(uint32 shown_nr);
-
+*/
     // actions
     void zoomInAll();
     void zoomOutAll();
-*/
+
     void autoScaleAll();
-/*
+
     void goTo(int32 sec, int32 channel_index);
+/*
     void zoomRect(const QRect& rect);
 */
     // set parameters
@@ -123,18 +126,21 @@ public:
     float64 getXGridPixelIntervall();
 
     // events
-/*    void getShownEventTypes(IntList& event_type);
+    void getShownEventTypes(IntList& event_type);
     void setShownEventTypes(const IntList& event_type, const bool all);
-    void setEventChanged(uint32 id, bool update = true);*/
+/*    void setEventChanged(uint32 id, bool update = true);*/
     void removeEvent(uint32 id, bool update = true);
-/*    EventCanvasItem* addEvent(const SignalEvent& event, bool update = true);
-    void setSelectedEventItem(EventCanvasItem* item);
-    EventCanvasItem* getSelectedEventItem();
-    void setSelectedEventToAllChannels();
+
+    /// TODO QT4: also some addEvent-method is needed which returns the
+    ///           newly created EventGraphicsItem!!!
+    void addEvent(const SignalEvent& event, bool update = true);
+    void setSelectedEventItem(EventGraphicsItem* item);
+/*    EventCanvasItem* getSelectedEventItem();
+*/    void setSelectedEventToAllChannels();
     void changeSelectedEventChannel();
     void copySelectedEventToChannels();
     void changeSelectedEventType();
-    void removeSelectedEvent();*/
+    void removeSelectedEvent();
     void getEvents(SignalEventVector& event_vector);
 /*    uint16 getActualEventCreationType () const;
 */
@@ -198,8 +204,8 @@ private:
     int32 signal_spacing_;
     int32 prefered_x_grid_pixel_intervall_;
     int32 prefered_y_grid_pixel_intervall_;
-    float64 x_grid_pixel_intervall_;/*
-    IntList shown_event_types_;
+    float64 x_grid_pixel_intervall_;
+/*    IntList shown_event_types_;
     uint16 actual_event_creation_type_;
 */
     bool show_y_grid_;

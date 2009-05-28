@@ -444,10 +444,10 @@ void SignalBrowserModel::initBuffer()
     }*/
 }
 
-/*
-// zoom in all
+
+// TODO QT4: IMPLEMENT!!!! zoom in all
 void SignalBrowserModel::zoomInAll()
-{
+{/*
     if (!checkSignalBrowserPtr("zoomInAll") ||
         !checkReadyState("zoomInAll"))
     {
@@ -464,12 +464,12 @@ void SignalBrowserModel::zoomInAll()
 
     signal_browser_->getCanvas()->setAllChanged();
     signal_browser_->getCanvas()->update();
-    signal_browser_->getYAxisWidget()->repaint();
+    signal_browser_->getYAxisWidget()->repaint();*/
 }
 
-// zoom out all
+// TODO QT4: IMPLEMENT !!!! zoom out all
 void SignalBrowserModel::zoomOutAll()
-{
+{/*
     if (!checkSignalBrowserPtr("zoomOutAll") ||
         !checkReadyState("zoomOutAll"))
     {
@@ -487,13 +487,13 @@ void SignalBrowserModel::zoomOutAll()
 
     signal_browser_->getCanvas()->setAllChanged();
     signal_browser_->getCanvas()->update();
-    signal_browser_->getYAxisWidget()->repaint();
+    signal_browser_->getYAxisWidget()->repaint();*/
 }
-*/
-// auto scale all
+
+// TODO QT4 IMPLEMENT!!! auto scale all
 void SignalBrowserModel::autoScaleAll()
 {
-    // TODO: implement!!
+    // TODO QT4: implement!!
 //    if (!checkSignalBrowserPtr("autoScaleAll") ||
 //        !checkReadyState("autoScaleAll"))
 //    {
@@ -837,18 +837,18 @@ bool SignalBrowserModel::checkSignalBrowserPtr(const QString function)
 
     return true;
 }
-/*
-// go to
+
+// TODO QT4: IMPLEMENT!!! go to
 void SignalBrowserModel::goTo(int32 sec, int32 channel_index)
-{
+{/*
     int32 x = (int32)(sec * pixel_per_sec_);
     int32 y = channel_index < 0 ? signal_browser_->getCanvasView()->contentsY()
                                 : channel_index *
                                   (signal_height_ + signal_spacing_);
 
-    signal_browser_->getCanvasView()->setContentsPos(x, y);
+    signal_browser_->getCanvasView()->setContentsPos(x, y);*/
 }
-
+/*
 // zoom rect
 void SignalBrowserModel::zoomRect(const QRect& rect)
 {
@@ -880,20 +880,20 @@ void SignalBrowserModel::zoomRect(const QRect& rect)
     main_window_model_.pixelPerSecChanged(pixel_per_sec_);
     main_window_model_.signalHeightChanged(signal_height_);
 }
-
-// get shown event types
+*/
+// TODO QT4: IMPLEMENT!!! get shown event types
 void SignalBrowserModel::getShownEventTypes(IntList& event_type)
-{
-    event_type = shown_event_types_;
+{/*
+    event_type = shown_event_types_;*/
 }
 
-// get shown event types
+// TODO QT4: IMPLEMENT!!! get shown event types
 void SignalBrowserModel::setShownEventTypes(const IntList& event_type, const bool all)
-{
+{/*
     shown_event_types_ = event_type;
-    all_event_types_selected_ = all;
+    all_event_types_selected_ = all;*/
 }
-
+/*
 // set event changed
 void SignalBrowserModel::setEventChanged(uint32 id, bool update)
 {
@@ -958,7 +958,7 @@ void SignalBrowserModel::setEventChanged(uint32 id, bool update)
     main_window_model_.setChanged();
 }
 */
-// remove event
+// TODO! : remove event
 void SignalBrowserModel::removeEvent(uint32 id, bool update)
 {
     /// QT4 TODO: IMPLEMENT!!!
@@ -982,12 +982,13 @@ void SignalBrowserModel::removeEvent(uint32 id, bool update)
 
     main_window_model_.setChanged();*/
 }
-/*
-// add event
-EventCanvasItem* SignalBrowserModel::addEvent(const SignalEvent& event,
+
+// TODO! add event
+void SignalBrowserModel::addEvent(const SignalEvent& event,
                                               bool update)
 {
-    int32 event_id = signal_buffer_.addEvent(event);
+    /// TODO QT4: implement
+    /*int32 event_id = signal_buffer_.addEvent(event);
     EventCanvasItem* event_item = new EventCanvasItem(event_id,
                                                       signal_buffer_,
                                                       *this, signal_browser_);
@@ -995,12 +996,12 @@ EventCanvasItem* SignalBrowserModel::addEvent(const SignalEvent& event,
     id2event_item_[event_id] = event_item;
     setEventChanged(event_id, update);
 
-    return event_item;
+    return event_item;*/
 }
 
-// set selected event item
-void SignalBrowserModel::setSelectedEventItem(EventCanvasItem* item)
-{
+// TODO QT4: IMPLEMENT!!! set selected event item
+void SignalBrowserModel::setSelectedEventItem(EventGraphicsItem* item)
+{/*
     if (selected_event_item_)
     {
         selected_event_item_->setSelected(false);
@@ -1029,18 +1030,19 @@ void SignalBrowserModel::setSelectedEventItem(EventCanvasItem* item)
             main_window_model_.setSelectionState(
                                 MainWindowModel::SELECTION_STATE_ONE_CHANNEL);
         }
-    }
+    }*/
 }
-
+/*
 // get selected event item
 EventCanvasItem* SignalBrowserModel::getSelectedEventItem()
 {
     return selected_event_item_;
 }
-
-// set selected channel to all channels
+*/
+// QT4 TODO:!!!! set selected channel to all channels
 void SignalBrowserModel::setSelectedEventToAllChannels()
 {
+    /* QT4 TODO: IMPLEMENT!!
     if (!selected_event_item_)
     {
         return;
@@ -1052,12 +1054,13 @@ void SignalBrowserModel::setSelectedEventToAllChannels()
     event->setChannel(SignalEvent::UNDEFINED_CHANNEL);
     main_window_model_
         .setSelectionState(MainWindowModel::SELECTION_STATE_ALL_CHANNELS);
-    setEventChanged(id);
+    setEventChanged(id);*/
 }
 
-// change selected event channel
+// TODO QT4: IMPLEMENT!!! change selected event channel
 void SignalBrowserModel::changeSelectedEventChannel()
 {
+    /*
     if (!selected_event_item_)
     {
         return;
@@ -1114,12 +1117,13 @@ void SignalBrowserModel::changeSelectedEventChannel()
             main_window_model_
                .setSelectionState(MainWindowModel::SELECTION_STATE_ONE_CHANNEL);
         }
-    }
+    }*/
 }
 
-// copy selected event to channels
+// TODO QT4: IMPLEMENT!!! copy selected event to channels
 void SignalBrowserModel::copySelectedEventToChannels()
 {
+    /*
     if (!selected_event_item_)
     {
         return;
@@ -1163,12 +1167,13 @@ void SignalBrowserModel::copySelectedEventToChannels()
         }
     }
 
-    signal_browser_->getCanvas()->update();
+    signal_browser_->getCanvas()->update();*/
 }
 
-// change selected event type
+// TODO QT4: IMPLEMENT!!! change selected event type
 void SignalBrowserModel::changeSelectedEventType()
 {
+    /*
     SignalEvent* event = 0;
 
     if (selected_event_item_)
@@ -1220,17 +1225,17 @@ void SignalBrowserModel::changeSelectedEventType()
 
     else
         if (ok)
-            actual_event_creation_type_ = new_type;
+            actual_event_creation_type_ = new_type;*/
 }
-
+/*
 uint16 SignalBrowserModel::getActualEventCreationType () const
 {
     return actual_event_creation_type_;
 }
-
-// remove selected event
+*/
+// TODO QT4: IMPLEMENT!!! remove selected event
 void SignalBrowserModel::removeSelectedEvent()
-{
+{/*
     if (!selected_event_item_)
     {
         return;
@@ -1240,9 +1245,9 @@ void SignalBrowserModel::removeSelectedEvent()
 
     selected_event_item_ = 0;
     main_window_model_.setSelectionState(MainWindowModel::SELECTION_STATE_NONE);
-    removeEvent(id);
+    removeEvent(id);*/
 }
-
+/*
 // get channel nr
 int32 SignalBrowserModel::getChannelNr(uint32 shown_nr)
 {
@@ -1273,49 +1278,58 @@ void SignalBrowserModel::getEvents(SignalEventVector& event_vector)
         event_vector.push_back(*signal_buffer_.getEvent(event_id));
     }
 }
-/*
+
 //-------------------------------------------------------------------------
 void SignalBrowserModel::showXScales(bool enabled)
 {
-    show_x_scales_ = enabled;
+    // TODO QT4: IMPLEMENT!!!
+    /*show_x_scales_ = enabled;*/
 }
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::showYScales(bool enabled)
 {
-    show_y_scales_ = enabled;
+    // TODO QT4: IMPLEMENT!!!
+    /*show_y_scales_ = enabled;*/
 }
+
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::showChannelLabels(bool enabled)
 {
-    show_channel_labels_ = enabled;
+    // TODO QT4: IMPLEMENT!!!
+ /*   show_channel_labels_ = enabled;*/
 }
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::setXGridVisible(bool visible)
 {
-    show_x_grid_ = visible;
+    // TODO QT4: IMPLEMENT!!!
+    /*show_x_grid_ = visible;*/
 }
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::setYGridVisible(bool visible)
 {
-    show_y_grid_ = visible;
+    // TODO QT4: IMPLEMENT!!!
+    /*show_y_grid_ = visible;*/
 }
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::setAutoZoomBehaviour(ScaleMode auto_zoom_type)
 {
-    auto_zoom_type_ = auto_zoom_type;
+    // TODO QT4: IMPLEMENT!!!
+    /*uto_zoom_type_ = auto_zoom_type;*/
 }
 
+
+// TODO QT4: IMPLEMENT!!!!
 bool SignalBrowserModel::isShowAllEventTypes() const
 {
-    return all_event_types_selected_;
+ /*   return all_event_types_selected_;*/
+    return false; /// TODO QT4 : RETURN all_event_types_selected_
 }
 
-*/
 
 } // namespace PortingToQT4_
 

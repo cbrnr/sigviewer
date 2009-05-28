@@ -1,3 +1,4 @@
+#ifndef QT4_PORTED
 // navigation_canvas_item.h
 
 #ifndef NAVIGATION_CANVAS_ITEM_H
@@ -75,5 +76,7 @@ private:
 };
 
 } // namespace BioSig_
+
+#endif
 
 #endif

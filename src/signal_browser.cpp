@@ -1,3 +1,4 @@
+#ifndef QT4_PORTED
 // signal_browser.cpp
 
 #include "signal_browser.h"
@@ -143,3 +144,4 @@ void SignalBrowser::verticalSrollbarMoved(int)
 
 } // namespace BioSig_
 
+#endif

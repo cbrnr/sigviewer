@@ -19,12 +19,7 @@ class QCheckBox;
 namespace BioSig_
 {
 
-//TODO: enum auslagern, weil sonst muss überall settings_dialog.h inkludiert werden... eventuell in base/user_types.h ?
-enum ScaleMode
-{
-	MAX_TO_MAX,
-	MIN_TO_MAX
-};
+
 
 // channel selection dialog
 class SettingsDialog : public QDialog

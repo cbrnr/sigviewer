@@ -1,3 +1,4 @@
+#ifndef QT4_PORTED
 // y_axis_widget.cpp
 
 #include "y_axis_widget.h"
@@ -155,3 +156,4 @@ void YAxisWidget::removeChannel(int32 channel_nr)
 
 } // namespace BioSig_
 
+#endif
