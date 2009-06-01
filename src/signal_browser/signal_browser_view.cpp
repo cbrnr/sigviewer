@@ -5,12 +5,14 @@
 #include "signal_graphics_item.h"
 #include "y_axis_graphics_item.h"
 #include "x_axis_graphics_item.h"
+#include "../label_widget.h"
 
 #include <QGridLayout>
 #include <QScrollBar>
 #include <QPointF>
 
 #include <iostream>
+
 
 namespace BioSig_
 {
@@ -39,6 +41,10 @@ SignalBrowserView::SignalBrowserView(SignalBrowserModel* signal_browser_model, Q
     x_axis_widget_ = new XAxisWidget (this, *signal_browser_model, this);
     x_axis_widget_->resize(100, 40);
     x_axis_widget_->setMinimumSize(100, 40);
+
+    label_widget_ = new LabelWidget (*signal_browser_model, this);
+    label_widget_->setMinimumWidth(40);
+    label_widget_->setMinimumHeight(20);
 
     horizontal_scrollbar_ = new QScrollBar (Qt::Horizontal, this);
     vertical_scrollbar_ = new QScrollBar (Qt::Vertical, this);
@@ -101,6 +107,7 @@ void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsI
     graphics_scene_->removeItem(graphics_item);
     graphics_scene_->addItem(graphics_item);
     y_axis_widget_->addChannel(channel_nr, graphics_item);
+    label_widget_->addChannel(channel_nr, QString::number(channel_nr));
  //   graphics_scene_->addLine(200, 0, 200, 200);
 
     graphics_view_->update();
@@ -145,6 +152,20 @@ YAxisWidget& SignalBrowserView::getYAxisWidget () const
     return *y_axis_widget_;
 }
 
+//-----------------------------------------------------------------------------
+LabelWidget& SignalBrowserView::getLabelWidget () const
+{
+    return *label_widget_;
+}
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::goTo (int32 x, int32 y)
+{
+    center_x_for_scrolling_ = x;
+    center_y_for_scrolling_ = y;
+    std::cout << "x = " << x << "; y = " << y << std::endl;
+    graphics_view_->centerOn(center_x_for_scrolling_, center_y_for_scrolling_);
+}
 
 //-----------------------------------------------------------------------------
 void SignalBrowserView::scrollContente (int32 dx, int32 dy)
@@ -163,6 +184,7 @@ void SignalBrowserView::updateWidgets ()
 {
     y_axis_widget_->update();
     x_axis_widget_->update();
+    label_widget_->update();
 }
 
 
@@ -180,6 +202,7 @@ void SignalBrowserView::initScroll ()
 void SignalBrowserView::verticalSrollbarMoved(int value)
 {
     y_axis_widget_->repaint();
+    label_widget_->repaint();
 }
 
 //-----------------------------------------------------------------------------
@@ -199,6 +222,7 @@ void SignalBrowserView::horizontalScrollBarRangeChaned (int min, int max)
 void SignalBrowserView::verticalScrollBarRangeChaned (int min, int max)
 {
     y_axis_widget_->repaint();
+    label_widget_->repaint();
     vertical_scrollbar_->setRange(min, max);
     vertical_scrollbar_->setPageStep(vertical_scrollbar_->height()-max);
 }
@@ -208,7 +232,7 @@ void SignalBrowserView::verticalScrollBarRangeChaned (int min, int max)
 //-----------------------------------------------------------------------------
 void SignalBrowserView::resizeEvent (QResizeEvent * event)
 {
-    graphics_view_->resize(this->width()-110, this->height()-70);
+    graphics_view_->resize(this->width()-150, this->height()-70);
 }
 
 //-----------------------------------------------------------------------------
@@ -223,7 +247,8 @@ void SignalBrowserView::createLayout()
     layout_->addWidget(graphics_view_, 1, 2);
     layout_->addWidget(x_axis_widget_, 2, 2);
     layout_->addWidget(horizontal_scrollbar_, 3, 2);
-    layout_->addWidget(vertical_scrollbar_, 1,3);
+    layout_->addWidget(label_widget_, 1, 3);
+    layout_->addWidget(vertical_scrollbar_, 1,4);
 //    layout_->addWidget(label_widget_, 1, 3);
 //    layout_->addWidget(x_axis_widget_, 2, 2);
 //    layout_->addWidget(h_scrollbar_, 3, 1, 1, 3);

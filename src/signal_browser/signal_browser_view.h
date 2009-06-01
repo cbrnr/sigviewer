@@ -14,6 +14,8 @@ class QScrollBar;
 namespace BioSig_
 {
 
+class LabelWidget;
+
 namespace PortingToQT4_
 {
 
@@ -41,7 +43,9 @@ public:
     int32 getVisibleX () const;
     int32 getVisibleY () const;
     YAxisWidget& getYAxisWidget () const;
+    LabelWidget& getLabelWidget () const;
 
+    void goTo (int32 x, int32 y);
     void scrollContente (int32 dx, int32 dy);
     void updateWidgets ();
     //-------------------------------------------------------------------------
@@ -70,6 +74,7 @@ private:
     XAxisWidget* x_axis_widget_;
     QScrollBar* horizontal_scrollbar_;
     QScrollBar* vertical_scrollbar_;
+    LabelWidget* label_widget_;
 
     QGridLayout* layout_;
 

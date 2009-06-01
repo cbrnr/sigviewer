@@ -68,7 +68,6 @@ void YAxisWidget::paintEvent(QPaintEvent* event)
     float64 float_y_end = ceil(y_end / intervall) * intervall;
     QMap<int32, SignalGraphicsItem*>::iterator iter = channel_nr2signal_graphics_item_.begin();
 
-    std::cout << "repaint.." << std::endl;
     for (float32 float_item_y = -y_start;
          float_item_y < float_y_end && iter != channel_nr2signal_graphics_item_.end();
          float_item_y += intervall, iter++)

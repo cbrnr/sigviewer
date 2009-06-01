@@ -5,6 +5,7 @@
 #include "signal_graphics_item.h"
 #include "y_axis_graphics_item.h"
 
+#include "../label_widget.h"
 #include "../base/file_signal_reader.h"
 #include "../base/math_utils.h"
 
@@ -360,11 +361,7 @@ void SignalBrowserModel::removeChannel(uint32 channel_nr)
     channel2signal_item_.erase(sig_iter);
     delete sig_iter->second;
 
-/*  TODO QT4: Implement!!!
-    // remove label from label widget
-    signal_browser_->getLabelWidget()->removeChannel(channel_nr);
-*/
-
+    signal_browser_view_->getLabelWidget().removeChannel(channel_nr);
     signal_browser_view_->getYAxisWidget().removeChannel(channel_nr);
 
     // remove channel from buffer
@@ -838,15 +835,16 @@ bool SignalBrowserModel::checkSignalBrowserPtr(const QString function)
     return true;
 }
 
-// TODO QT4: IMPLEMENT!!! go to
+//-----------------------------------------------------------------------------
+// goTo
 void SignalBrowserModel::goTo(int32 sec, int32 channel_index)
-{/*
+{
     int32 x = (int32)(sec * pixel_per_sec_);
-    int32 y = channel_index < 0 ? signal_browser_->getCanvasView()->contentsY()
+    int32 y = channel_index < 0 ? signal_browser_view_->getVisibleY()
                                 : channel_index *
                                   (signal_height_ + signal_spacing_);
 
-    signal_browser_->getCanvasView()->setContentsPos(x, y);*/
+    signal_browser_view_->goTo(x, y);
 }
 /*
 // zoom rect
