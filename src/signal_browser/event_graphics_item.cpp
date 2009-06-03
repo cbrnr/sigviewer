@@ -9,6 +9,7 @@
 
 #include <QRectF>
 #include <QStyleOptionGraphicsItem>
+#include <QGraphicsSceneMouseEvent>
 
 #include <iostream>
 
@@ -65,8 +66,14 @@ void EventGraphicsItem::paint ( QPainter * painter, const QStyleOptionGraphicsIt
     //{
     //    p.drawRect(rect());
     //}
-    std::cout << "EventGraphicsItem::paint" << std::endl;
     painter->fillRect(clip, color_);
+}
+
+//-----------------------------------------------------------------------------
+void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
+{
+    std::cout << "click on event" << std::endl;
+    event->ignore();
 }
 
 

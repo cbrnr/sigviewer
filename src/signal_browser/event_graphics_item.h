@@ -34,6 +34,8 @@ public:
 
 protected:
     virtual void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
+    virtual void mousePressEvent ( QGraphicsSceneMouseEvent * event );
+
 
     SignalBrowserModel& signal_browser_model_;
     SignalBuffer& signal_buffer_;

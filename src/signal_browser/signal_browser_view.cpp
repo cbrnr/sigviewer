@@ -133,7 +133,6 @@ void SignalBrowserView::addEventGraphicsItem (EventGraphicsItem* event_graphics_
     // TODO: really remove before add????
     graphics_scene_->removeItem(event_graphics_item);
     graphics_scene_->addItem(event_graphics_item);
-    std::cout << "SignalBrowserView::addEventGraphicsItem" << std::endl;
 
     graphics_view_->update();
 }
