@@ -2,8 +2,10 @@
 #define EVENT_GRAPHICS_ITEM_H
 
 
-#include <QGraphicsItem>
 #include "../base/user_types.h"
+
+#include <QGraphicsItem>
+#include <QColor>
 
 namespace BioSig_
 {
@@ -25,10 +27,21 @@ public:
 
     virtual ~EventGraphicsItem ();
 
+    void setSize (int32 width, int32 height);
+    void updateColor ();
+
     virtual QRectF boundingRect () const;
 
 protected:
     virtual void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
+
+    SignalBrowserModel& signal_browser_model_;
+    SignalBuffer& signal_buffer_;
+    QColor color_;
+    uint32 id_;
+
+    int32 height_;
+    int32 width_;
 
 
 };

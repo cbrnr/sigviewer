@@ -3,9 +3,11 @@
 #include "signal_browser_view.h"
 #include "signal_browser_model.h"
 #include "signal_graphics_item.h"
+#include "event_graphics_item.h"
 #include "y_axis_graphics_item.h"
 #include "x_axis_graphics_item.h"
 #include "../label_widget.h"
+
 
 #include <QGridLayout>
 #include <QScrollBar>
@@ -42,9 +44,11 @@ SignalBrowserView::SignalBrowserView(SignalBrowserModel* signal_browser_model, Q
     x_axis_widget_->resize(100, 40);
     x_axis_widget_->setMinimumSize(100, 40);
 
+#ifdef QT4_PORTED
     label_widget_ = new LabelWidget (*signal_browser_model, this);
     label_widget_->setMinimumWidth(40);
     label_widget_->setMinimumHeight(20);
+#endif
 
     horizontal_scrollbar_ = new QScrollBar (Qt::Horizontal, this);
     vertical_scrollbar_ = new QScrollBar (Qt::Vertical, this);
@@ -104,6 +108,7 @@ void SignalBrowserView::resizeScene (int32 width, int32 height)
 //-----------------------------------------------------------------------------
 void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item)
 {
+    // TODO: really remove before add????
     graphics_scene_->removeItem(graphics_item);
     graphics_scene_->addItem(graphics_item);
     y_axis_widget_->addChannel(channel_nr, graphics_item);
@@ -121,6 +126,18 @@ void SignalBrowserView::removeSignalGraphicsItem (int32 channel_nr)
 //    y_axis_widget_->addChannel(channel_nr, graphics_item);
 //    graphics_view_->update();
 }
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::addEventGraphicsItem (EventGraphicsItem* event_graphics_item)
+{
+    // TODO: really remove before add????
+    graphics_scene_->removeItem(event_graphics_item);
+    graphics_scene_->addItem(event_graphics_item);
+    std::cout << "SignalBrowserView::addEventGraphicsItem" << std::endl;
+
+    graphics_view_->update();
+}
+
 
 //-----------------------------------------------------------------------------
 int32 SignalBrowserView::getVisibleWidth () const

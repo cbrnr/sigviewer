@@ -16,6 +16,7 @@ class QTextStream;
 
 #include <QPointer>
 #include <QObject>
+#include <QMap>
 
 #include <map>
 
@@ -172,9 +173,8 @@ private:
 
 
     typedef std::map<int32, SignalGraphicsItem*> Int2SignalGraphicsItemPtrMap;
-/*
-    typedef QMap<int32, EventCanvasItem*> Int2EventCanvasItemPtrMap;
- */
+    typedef QMap<int32, EventGraphicsItem*> Int2EventGraphicsItemPtrMap;
+
     typedef std::map<int32, int32> Int2IntMap;
 
     bool checkReadyState(const QString& function);
@@ -191,12 +191,12 @@ private:
     XGridCanvasItem* x_grid_item_;
     ChannelSeparatorCanvasItem* channel_separator_item_;
     NavigationCanvasItem* navigation_item_;
-    Int2EventCanvasItemPtrMap id2event_item_;
 */
+    Int2EventGraphicsItemPtrMap id2event_item_;
+
     Int2IntMap channel2y_pos_;
-/*
-    EventCanvasItem* selected_event_item_;
-*/
+    EventGraphicsItem* selected_event_item_;
+
     // parameters
     bool release_buffer_;
     float64 pixel_per_sec_;
@@ -205,8 +205,8 @@ private:
     int32 prefered_x_grid_pixel_intervall_;
     int32 prefered_y_grid_pixel_intervall_;
     float64 x_grid_pixel_intervall_;
-/*    IntList shown_event_types_;
-    uint16 actual_event_creation_type_;
+    IntList shown_event_types_;
+/*    uint16 actual_event_creation_type_;
 */
     bool show_y_grid_;
 /*
@@ -214,9 +214,9 @@ private:
     bool show_channel_labels_;
     bool show_y_scales_;
     bool show_x_scales_;
-    ScaleMode auto_zo<om_type_;
+    ScaleMode auto_zo<om_type_;*/
     bool all_event_types_selected_;
- */
+
 };
 
 } // namespace PortingToQT4_

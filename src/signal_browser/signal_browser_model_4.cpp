@@ -4,7 +4,9 @@
 #include "signal_browser_view.h"
 #include "signal_graphics_item.h"
 #include "y_axis_graphics_item.h"
+#include "event_graphics_item.h"
 
+#include "../main_window_model.h"
 #include "../label_widget.h"
 #include "../base/file_signal_reader.h"
 #include "../base/math_utils.h"
@@ -44,6 +46,7 @@
 #include <QDialog>
 
 #include <cmath>
+#include <algorithm>
 #include <iostream>
 
 namespace BioSig_
@@ -388,7 +391,7 @@ uint32 SignalBrowserModel::getNumberShownChannels()
     return channel2signal_item_.size();
 }
 
-
+//-----------------------------------------------------------------------------
 // init buffer
 void SignalBrowserModel::initBuffer()
 {
@@ -424,7 +427,7 @@ void SignalBrowserModel::initBuffer()
         iter->second->getRangeFromBuffer(2.0);
     }
 
-    /*
+
     // gernerate event items
     uint32 number_events = signal_buffer_.getNumberEvents();
 
@@ -432,13 +435,14 @@ void SignalBrowserModel::initBuffer()
     {
         for (uint32 event_nr = 0; event_nr < number_events; event_nr++)
         {
+            // std::cout << "SignalBrowserModel::initBuffer created EventGraphicsItem" << std::endl;
             int32 event_id = signal_buffer_.eventNumber2ID(event_nr);
-            id2event_item_[event_id] = new EventCanvasItem(event_id,
+            id2event_item_[event_id] = new EventGraphicsItem(event_id,
                                                            signal_buffer_,
                                                            *this,
-                                                           signal_browser_);
+                                                           signal_browser_view_);
         }
-    }*/
+    }
 }
 
 
@@ -634,15 +638,14 @@ void SignalBrowserModel::updateLayout()
 
         signal_iter->second->show();
     }
-    // TODO: implement events!!
-    /*
 
     // event items
-    Int2EventCanvasItemPtrMap::iterator event_iter;
+    Int2EventGraphicsItemPtrMap::iterator event_iter;
     for (event_iter = id2event_item_.begin();
          event_iter != id2event_item_.end();
          event_iter++)
     {
+        // std::cout << "blub" << std::endl;
         SignalEvent* event = signal_buffer_.getEvent(event_iter.key());
         if (!event)
         {
@@ -654,7 +657,8 @@ void SignalBrowserModel::updateLayout()
         Int2IntMap::iterator y_pos_iter;
         y_pos_iter = channel2y_pos_.find(event->getChannel());
 
-        if (!shown_event_types_.contains(event->getType()) ||
+
+        if (/*!shown_event_types_.contains(event->getType()) ||*/
             y_pos_iter == channel2y_pos_.end())
         {
             event_iter.value()->hide();
@@ -673,27 +677,26 @@ void SignalBrowserModel::updateLayout()
                                     (float64)event->getDuration() /
                                     signal_buffer_.getEventSamplerate() + 0.5);
 
-        event_width = max(event_width, 1);
-        event_iter.value()->setY(y_pos_iter.value());
+        event_width = std::max(event_width, 1);
 
         if (event->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
-        {
             event_iter.value()->setSize(event_width, height);
-        }
         else
-        {
             event_iter.value()->setSize(event_width, signal_height_);
-        }
 
-        event_iter.value()->setZ(EVENT_Z + event->getType() / 100000.0);
+        event_iter.value()->setZValue(EVENT_Z + event->getType() / 100000.0);
         int32 event_x = (int32)(pixel_per_sec_ * (float64)event->getPosition() /
                                 signal_buffer_.getEventSamplerate() + 0.5);
 
-        event_iter.value()->setX(event_x);
+        event_iter.value()->setPos(event_x, y_pos_iter->second);
+//        event_iter.value()->setX(event_x);
         event_iter.value()->updateColor();
+
+        signal_browser_view_->addEventGraphicsItem(event_iter.value());
+
         event_iter.value()->show();
     }
-    */
+
     // update x grid intervall
     float64 x_grid_intervall = round125(prefered_x_grid_pixel_intervall_ /
                                         pixel_per_sec_);
@@ -885,11 +888,11 @@ void SignalBrowserModel::getShownEventTypes(IntList& event_type)
     event_type = shown_event_types_;*/
 }
 
-// TODO QT4: IMPLEMENT!!! get shown event types
+//-----------------------------------------------------------------------------
 void SignalBrowserModel::setShownEventTypes(const IntList& event_type, const bool all)
-{/*
+{
     shown_event_types_ = event_type;
-    all_event_types_selected_ = all;*/
+    all_event_types_selected_ = all;
 }
 /*
 // set event changed

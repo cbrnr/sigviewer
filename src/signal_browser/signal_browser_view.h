@@ -23,6 +23,7 @@ class YAxisWidget;
 class XAxisWidget;
 class SignalBrowserModel;
 class SignalGraphicsItem;
+class EventGraphicsItem;
 
 // signal browser view
 class SignalBrowserView : public QFrame
@@ -35,7 +36,7 @@ public:
 
     void addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item);
     void removeSignalGraphicsItem (int32 channel_nr);
-
+    void addEventGraphicsItem (EventGraphicsItem* event_graphics_item);
 
     void resizeScene (int32 width, int32 height);
     int32 getVisibleWidth () const;

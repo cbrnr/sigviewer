@@ -285,7 +285,7 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
     // FIXME: evtl. hier keine auto-variablen machen, sondern members
     //        --> performance.. ;)
     static int recursive_calls = 0;
-    std::cout << "recursive_calls: " << recursive_calls << std::endl;
+    //std::cout << "recursive_calls: " << recursive_calls << std::endl;
     recursive_calls++;
 
     QPoint p = event->screenPos();
