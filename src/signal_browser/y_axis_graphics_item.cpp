@@ -28,7 +28,7 @@ YAxisWidget::YAxisWidget(QWidget* parent, SignalBrowserModel& model, SignalBrows
 //-----------------------------------------------------------------------------
 QSize YAxisWidget::sizeHint () const
 {
-    return QSize (100, 0);
+    return QSize (70, 0);
 }
 
 //-----------------------------------------------------------------------------

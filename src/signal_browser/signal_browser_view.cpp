@@ -27,25 +27,27 @@ namespace PortingToQT4_
 SignalBrowserView::SignalBrowserView(SignalBrowserModel* signal_browser_model, QWidget* parent)
 : QFrame(parent)
 {
-    resize(parent->contentsRect().width(), parent->contentsRect().height()-300);
+    resize(parent->contentsRect().width(), parent->contentsRect().height());
     graphics_scene_ = new QGraphicsScene (0,0,parent->contentsRect().width(), parent->contentsRect().height(), this);
     graphics_view_ = new QGraphicsView(graphics_scene_, this);
     graphics_view_->scroll(0,0);
     graphics_view_->horizontalScrollBar()->hide();
     graphics_view_->verticalScrollBar()->hide();
+    graphics_view_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    graphics_view_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     y_axis_widget_ = new YAxisWidget (this, *signal_browser_model, this);
     y_axis_widget_->resize(70, height());
     y_axis_widget_->setMinimumSize(70, 0);
 
     x_axis_widget_ = new XAxisWidget (this, *signal_browser_model, this);
-    x_axis_widget_->resize(100, 40);
-    x_axis_widget_->setMinimumSize(100, 40);
+    x_axis_widget_->resize(width()-300, 30);
+    x_axis_widget_->setMinimumSize(0, 30);
 
 #ifdef QT4_PORTED
     label_widget_ = new LabelWidget (*signal_browser_model, this);
-    label_widget_->setMinimumWidth(40);
-    label_widget_->setMinimumHeight(20);
+    label_widget_->resize(70, height());
+    label_widget_->setMinimumWidth(70);
 #endif
 
     horizontal_scrollbar_ = new QScrollBar (Qt::Horizontal, this);
@@ -70,9 +72,11 @@ SignalBrowserView::SignalBrowserView(SignalBrowserModel* signal_browser_model, Q
             this, SLOT(verticalSrollbarMoved(int)));
 
 
-    graphics_view_->resize(this->width()-100, this->height()-50);
+    graphics_view_->resize(width() - label_widget_->width() - y_axis_widget_->width() + (vertical_scrollbar_->width()*2), height() - x_axis_widget_->height() + horizontal_scrollbar_->height());
     graphics_view_->setDragMode(QGraphicsView::ScrollHandDrag);
-    graphics_view_->setOptimizationFlag(QGraphicsView::DontClipPainter, true);
+    // graphics_view_->setVerticalScrollBarPolicy(setViewportMargins(0, 0, 0, 0);
+    //graphics_view_->setOptimizationFlag(QGraphicsView::DontClipPainter, true);
+    graphics_view_->setMinimumSize(0, 0);
     setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     createLayout();
 }
@@ -192,7 +196,7 @@ void SignalBrowserView::horizontalScrollBarRangeChaned (int min, int max)
 {
     x_axis_widget_->repaint();
     horizontal_scrollbar_->setRange(min, max);
-    vertical_scrollbar_->setPageStep(graphics_view_->horizontalScrollBar()->pageStep());
+    horizontal_scrollbar_->setPageStep(graphics_view_->horizontalScrollBar()->pageStep());
 }
 
 //-----------------------------------------------------------------------------
@@ -204,28 +208,22 @@ void SignalBrowserView::verticalScrollBarRangeChaned (int min, int max)
     vertical_scrollbar_->setPageStep(graphics_view_->verticalScrollBar()->pageStep());
 }
 
-
-
-//-----------------------------------------------------------------------------
-void SignalBrowserView::resizeEvent (QResizeEvent * event)
-{
-    graphics_view_->resize(this->width()-150, this->height()-70);
-}
-
 //-----------------------------------------------------------------------------
 void SignalBrowserView::createLayout()
 {
     layout_ = new QGridLayout(this);
 
-    layout_->setMargin(1);
+    layout_->setMargin(0);
     layout_->setSpacing(0);
+    layout_->setVerticalSpacing(0);
+    layout_->setHorizontalSpacing(0);
 
     layout_->addWidget(y_axis_widget_, 1, 1);
     layout_->addWidget(graphics_view_, 1, 2);
     layout_->addWidget(x_axis_widget_, 2, 2);
     layout_->addWidget(horizontal_scrollbar_, 3, 2);
     layout_->addWidget(label_widget_, 1, 3);
-    layout_->addWidget(vertical_scrollbar_, 1,4);
+    layout_->addWidget(vertical_scrollbar_, 1, 4);
 //    layout_->addWidget(label_widget_, 1, 3);
 //    layout_->addWidget(x_axis_widget_, 2, 2);
 //    layout_->addWidget(h_scrollbar_, 3, 1, 1, 3);

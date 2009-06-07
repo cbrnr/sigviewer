@@ -93,7 +93,7 @@ void LabelWidget::paintEvent(QPaintEvent*)
         if (float_y > float_y_start)
         {
             int32 y = (int32)(float_y + 0.5);
-            p.drawText(5, (int32)(y - intervall /2) , w - 10, (int32)intervall,
+            p.drawText(0, (int32)(y - intervall /2) , w - 10, (int32)intervall,
                        Qt::AlignHCenter | Qt::AlignVCenter, iter.data());
         }
     }
@@ -150,6 +150,12 @@ void LabelWidget::removeChannel(int32 channel_nr)
 
     setMinimumWidth(10 + max_width);
 }
+
+////-----------------------------------------------------------------------------
+//QSize LabelWidget::sizeHint () const
+//{
+//    return QSize (100,0);
+//}
 
 } // namespace BioSig_
 

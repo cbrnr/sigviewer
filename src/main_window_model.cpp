@@ -817,10 +817,9 @@ void MainWindowModel::openFile(const QString& file_name)
     int32 nr_shown_channels = signal_browser_model_->getNumberShownChannels();
     nr_shown_channels = nr_shown_channels == 0 ? 1 : nr_shown_channels;
 
-    // TODO QT4: calculate signal_height! (ADD SPACING)
-    int32 signal_height = (int32)(signal_browser_->height() /
-                                  nr_shown_channels);// -
-                          // signal_browser_model_->getSignalSpacing();
+    int32 signal_height = (int32)(signal_browser_->getVisibleHeight() /
+                                  nr_shown_channels) -
+                          (signal_browser_model_->getSignalSpacing() * 2);
 
     signal_browser_model_->setSignalHeight(signal_height);
 #endif // QT4_PORTED

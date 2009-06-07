@@ -50,7 +50,7 @@ public:
     void updateWidgets ();
 
 protected:
-    virtual void resizeEvent (QResizeEvent * event);
+//    virtual void resizeEvent (QResizeEvent * event);
 
 private slots:
     void verticalSrollbarMoved(int value);

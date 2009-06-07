@@ -36,6 +36,8 @@ public:
     void addChannel(int32 channel_nr, const QString& label);
     void removeChannel(int32 channel_nr);
 
+//    virtual QSize sizeHint () const;
+
     static void loadSettings();
     static void saveSettings();
 
