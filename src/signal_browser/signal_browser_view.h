@@ -47,11 +47,7 @@ public:
     LabelWidget& getLabelWidget () const;
 
     void goTo (int32 x, int32 y);
-    void scrollContente (int32 dx, int32 dy);
     void updateWidgets ();
-    //-------------------------------------------------------------------------
-    /// work-around function... :(
-    void initScroll ();
 
 protected:
     virtual void resizeEvent (QResizeEvent * event);
@@ -67,9 +63,6 @@ private:
 
     QGraphicsScene* graphics_scene_;
     QGraphicsView* graphics_view_;
-
-    int32 center_x_for_scrolling_;
-    int32 center_y_for_scrolling_;
 
     YAxisWidget* y_axis_widget_;
     XAxisWidget* x_axis_widget_;

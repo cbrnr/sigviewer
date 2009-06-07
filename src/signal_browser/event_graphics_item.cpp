@@ -72,7 +72,7 @@ void EventGraphicsItem::paint ( QPainter * painter, const QStyleOptionGraphicsIt
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
 {
-    std::cout << "click on event" << std::endl;
+    //std::cout << "click on event" << std::endl;
     event->ignore();
 }
 

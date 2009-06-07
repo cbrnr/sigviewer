@@ -111,11 +111,15 @@ float64 SignalGraphicsItem::getYGridPixelIntervall()
 void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     QRectF clip (option->exposedRect);
-    //clip.setWidth(clip.width()*2);
+
+    // clip.setWidth(clip.width()*2);
     signal_buffer_.setChannelActive(signal_channel_.getNumber(), true);
 
-    int32 draw_start_x = clip.x() - 1;
-    int32 draw_end_x = draw_start_x + clip.width() + 1;
+    int32 draw_start_x = clip.x(); //- 1;
+    int32 draw_end_x = draw_start_x + clip.width(); //+ 1;
+    int32 draw_start_y = clip.y();
+    int32 draw_end_y = draw_start_y + clip.height();
+
     int32 item_height = this->boundingRect().height();
 //    float64 item_y = y();
 
@@ -138,36 +142,40 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     }
 
     // block range
-    float64 tmp = draw_start_x / block_duration / pixel_per_sec;
+    float64 tmp = draw_start_x / (block_duration * pixel_per_sec);
     uint32 first_block = (uint32)tmp;
-    tmp = draw_end_x / block_duration / pixel_per_sec;
+    tmp = draw_end_x / (block_duration * pixel_per_sec);
     uint32 last_block = (uint32)tmp;
 
     float64 x_float = first_block * block_duration * pixel_per_sec;
     float64 x_float_inc = pixel_per_sec / samples_per_sec;
+
+    // std::cout << "x_float = " << x_float <<  "; x_float_inc = " << x_float_inc << std::endl;
+
 
     // y range
     float64 value_range = (maximum_ - minimum_) / y_zoom_;
     float64 upper_value = y_offset_ + value_range / 2.0;
 
 
-    //painter->setClipRect(draw_start_x, (int32)item_y, clip.width() + 1,
-    //              item_height); //, QPainter::CoordPainter);
+    //painter->setClipping(true);
+    //painter->setClipRect(draw_start_x, draw_start_y, clip.width(),
+    //              clip.height()); //, QPainter::CoordPainter);
 
     // draw y grid - begin
     if (draw_y_grid_)
     {
-                float64 y_grid_intervall = y_grid_pixel_intervall_ / item_height * value_range;
-                painter->setPen(Qt::lightGray);
+        float64 y_grid_intervall = y_grid_pixel_intervall_ / item_height * value_range;
+        painter->setPen(Qt::lightGray);
 
-                for (float64 y_float = (upper_value - (int32)(upper_value / y_grid_intervall) * y_grid_intervall) *
-                                                           item_height / value_range /*+ item_y*/;
-                         y_float < /*item_y */+ item_height;
-                         y_float += y_grid_pixel_intervall_)
-                {
-                        int32 y = (int32)(y_float +0.5);
-                        painter->drawLine(draw_start_x, y, draw_end_x, y);
-                }
+        for (float64 y_float = (upper_value - (int32)(upper_value / y_grid_intervall) * y_grid_intervall) *
+                                item_height / value_range;
+                                y_float < + item_height;
+                                y_float += y_grid_pixel_intervall_)
+        {
+            int32 y = (int32)(y_float +0.5);
+            painter->drawLine(draw_start_x, y, draw_end_x, y);
+        }
     }
     // draw y grid - end
 
@@ -196,8 +204,8 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
         bool* buffer_valid = data_block->getBufferValid();
 
         for (uint32 index = 0;
-             index < data_block->number_samples;
-             index++, buffer_valid++, buffer++, upper_buffer ++, lower_buffer++,
+             (index < data_block->number_samples) && (x_float < draw_end_x + x_float_inc);
+             index++, buffer_valid++, buffer++, upper_buffer++, lower_buffer++,
              x_float+= x_float_inc)
         {
             if (x_float < draw_start_x - x_float_inc ||
@@ -210,16 +218,12 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
             {
                 int32 x = (int32)(x_float + 0.5);
                 int32 y = (int32)((upper_value - *buffer) / value_range *
-                                  (item_height - 1) + /*item_y*/ + 0.5);
+                                  (item_height - 1) + 0.5);
 
                 if (last_valid)
-                {
                     painter->drawLine(last_x, last_y, x, y);
-                }
                 else
-                {
                     painter->drawPoint(x, y);
-                }
 
                 last_valid = true;
                 last_y = y;
@@ -229,12 +233,11 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
                 {
                     // draw blocks
                     int32 y_u = (int32)((upper_value - *upper_buffer) /
-                                        value_range * (item_height - 1) +
-                                        /*item_y*/ + 0.5);
+                                        value_range * (item_height - 1) + 0.5);
 
                     int32 y_l = (int32)((upper_value - *lower_buffer) /
                                         value_range * (item_height - 1) +
-                                        /*item_y*/ + 0.5);
+                                        0.5);
 
                     painter->drawLine(x, y_u, x, y_l);
                 }
@@ -251,7 +254,12 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     //drawYAxis(painter, option);
 
 
-    painter->setClipping(false); // !!!
+    //painter->setClipping(false); // !!!
+    //if (time.elapsed() > 1)
+    //{
+    //    std::cout << "channel " << signal_channel_.getNumber() << "; clip.width() = " << clip.width() << "; clip.height() = " << clip.height() << std::endl;
+    //    std::cout << "time passed: " << time.elapsed() << std::endl;
+    //}
 }
 
 //-----------------------------------------------------------------------------
@@ -284,9 +292,7 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 {
     // FIXME: evtl. hier keine auto-variablen machen, sondern members
     //        --> performance.. ;)
-    static int recursive_calls = 0;
-    //std::cout << "recursive_calls: " << recursive_calls << std::endl;
-    recursive_calls++;
+
 
     QPoint p = event->screenPos();
     int32 dx = p.x() - move_start_point_.x();
@@ -301,10 +307,7 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
         signal_browser_->updateWidgets();
     }
     else if (hand_tool_on_)
-    {
-        signal_browser_->scrollContente(dx, dy);
-    }
-    recursive_calls = 0;
+        event->ignore();
 }
 
 //-----------------------------------------------------------------------------
@@ -316,8 +319,7 @@ void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
     {
         case SignalBrowserMouseHandling::HAND_SCROLL_ACTION:
             hand_tool_on_ = true;
-            signal_browser_->initScroll();
-            move_start_point_ = event->screenPos();
+            event->ignore();
             break;
         case SignalBrowserMouseHandling::SHIFT_CHANNEL_ACTION:
             shifting_ = true;
@@ -334,6 +336,9 @@ void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 {
+    if (hand_tool_on_)
+        event->ignore();
+
     shifting_ = false;
     hand_tool_on_ = false;
 }

@@ -32,6 +32,7 @@
 #include <QTextStream>
 #include <QMutexLocker>
 
+
 namespace BioSig_
 {
 

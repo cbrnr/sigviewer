@@ -25,9 +25,7 @@ namespace PortingToQT4_
 //-----------------------------------------------------------------------------
 // constructor
 SignalBrowserView::SignalBrowserView(SignalBrowserModel* signal_browser_model, QWidget* parent)
-: QFrame(parent),
-  center_x_for_scrolling_ (0),
-  center_y_for_scrolling_ (0)
+: QFrame(parent)
 {
     resize(parent->contentsRect().width(), parent->contentsRect().height()-300);
     graphics_scene_ = new QGraphicsScene (0,0,parent->contentsRect().width(), parent->contentsRect().height(), this);
@@ -71,24 +69,12 @@ SignalBrowserView::SignalBrowserView(SignalBrowserModel* signal_browser_model, Q
     connect(vertical_scrollbar_, SIGNAL(valueChanged(int)),
             this, SLOT(verticalSrollbarMoved(int)));
 
+
     graphics_view_->resize(this->width()-100, this->height()-50);
+    graphics_view_->setDragMode(QGraphicsView::ScrollHandDrag);
+    graphics_view_->setOptimizationFlag(QGraphicsView::DontClipPainter, true);
     setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     createLayout();
-
-
-//    connect(canvas_, SIGNAL(resized()), this, SLOT(updateScrollBarRange()));
-//    connect(canvas_view_->horizontalScrollBar(), SIGNAL(valueChanged(int)),
-//            h_scrollbar_, SLOT(setValue(int)));
-//    connect(h_scrollbar_, SIGNAL(valueChanged(int)),
-//            canvas_view_->horizontalScrollBar(), SLOT(setValue(int)));
-//    connect(canvas_view_->verticalScrollBar(), SIGNAL(valueChanged(int)),
-//            v_scrollbar_, SLOT(setValue(int)));
-//    connect(v_scrollbar_, SIGNAL(valueChanged(int)),
-//            canvas_view_->verticalScrollBar(), SLOT(setValue(int)));
-//    connect(h_scrollbar_, SIGNAL(valueChanged(int)),
-//            this, SLOT(horizontalSrollbarMoved(int)));
-//    connect(v_scrollbar_, SIGNAL(valueChanged(int)),
-//            this, SLOT(verticalSrollbarMoved(int)));
 }
 
 //-----------------------------------------------------------------------------
@@ -113,7 +99,7 @@ void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsI
     graphics_scene_->addItem(graphics_item);
     y_axis_widget_->addChannel(channel_nr, graphics_item);
     label_widget_->addChannel(channel_nr, QString::number(channel_nr));
- //   graphics_scene_->addLine(200, 0, 200, 200);
+    // graphics_scene_->addLine(200, 0, 200, 200);
 
     graphics_view_->update();
 }
@@ -177,22 +163,7 @@ LabelWidget& SignalBrowserView::getLabelWidget () const
 //-----------------------------------------------------------------------------
 void SignalBrowserView::goTo (int32 x, int32 y)
 {
-    center_x_for_scrolling_ = x;
-    center_y_for_scrolling_ = y;
-    std::cout << "x = " << x << "; y = " << y << std::endl;
-    graphics_view_->centerOn(center_x_for_scrolling_, center_y_for_scrolling_);
-}
-
-//-----------------------------------------------------------------------------
-void SignalBrowserView::scrollContente (int32 dx, int32 dy)
-{
-    center_y_for_scrolling_ -= dy;
-    center_x_for_scrolling_ -= dx;
-    // FIXME: dieser call löst vermutlich (?) wieder ein mousemoveevent aus... :(
-    graphics_view_->centerOn(center_x_for_scrolling_, center_y_for_scrolling_);
-    //graphics_view_->horizontalScrollBar()->setValue(graphics_view_->horizontalScrollBar()->value() - dx);
-    //graphics_view_->verticalScrollBar()->setValue(graphics_view_->verticalScrollBar()->value() - dy);
-    //updateWidgets();
+    graphics_view_->centerOn(x, y);
 }
 
 //-----------------------------------------------------------------------------
@@ -201,17 +172,6 @@ void SignalBrowserView::updateWidgets ()
     y_axis_widget_->update();
     x_axis_widget_->update();
     label_widget_->update();
-}
-
-
-//-----------------------------------------------------------------------------
-void SignalBrowserView::initScroll ()
-{
-    int32 center_x = graphics_view_->viewport()->width() / 2;
-    int32 center_y = graphics_view_->viewport()->height() / 2;
-    QPointF scene_center = graphics_view_->mapToScene(center_x, center_y);
-    center_y_for_scrolling_ = scene_center.y();
-    center_x_for_scrolling_ = scene_center.x();
 }
 
 //-----------------------------------------------------------------------------
@@ -232,6 +192,7 @@ void SignalBrowserView::horizontalScrollBarRangeChaned (int min, int max)
 {
     x_axis_widget_->repaint();
     horizontal_scrollbar_->setRange(min, max);
+    vertical_scrollbar_->setPageStep(graphics_view_->horizontalScrollBar()->pageStep());
 }
 
 //-----------------------------------------------------------------------------
@@ -240,7 +201,7 @@ void SignalBrowserView::verticalScrollBarRangeChaned (int min, int max)
     y_axis_widget_->repaint();
     label_widget_->repaint();
     vertical_scrollbar_->setRange(min, max);
-    vertical_scrollbar_->setPageStep(vertical_scrollbar_->height()-max);
+    vertical_scrollbar_->setPageStep(graphics_view_->verticalScrollBar()->pageStep());
 }
 
 
