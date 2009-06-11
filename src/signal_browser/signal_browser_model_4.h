@@ -213,8 +213,8 @@ private:
     bool show_x_grid_;
     bool show_channel_labels_;
     bool show_y_scales_;
-    bool show_x_scales_;
-    ScaleMode auto_zo<om_type_;*/
+    bool show_x_scales_;*/
+    ScaleMode auto_zoom_type_;
     bool all_event_types_selected_;
 
 };

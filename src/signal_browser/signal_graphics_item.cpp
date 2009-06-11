@@ -111,16 +111,43 @@ float64 SignalGraphicsItem::getYGridPixelIntervall()
 
 //-----------------------------------------------------------------------------
 // zoom in
-void SignalGraphicsItem::zoomIn(bool update)
+void SignalGraphicsItem::zoomIn()
 {
     y_zoom_ *= 2.0;
 }
 
 //-----------------------------------------------------------------------------
 // zoom out
-void SignalGraphicsItem::zoomOut(bool update)
+void SignalGraphicsItem::zoomOut()
 {
     y_zoom_ /= 2.0;
+}
+
+//-----------------------------------------------------------------------------
+// auto scale
+void SignalGraphicsItem::autoScale(ScaleMode auto_zoom_type)
+{
+    float64 min = signal_buffer_.getMinValue(signal_channel_.getNumber());
+    float64 max = signal_buffer_.getMaxValue(signal_channel_.getNumber());
+
+    if (auto_zoom_type == MAX_TO_MAX)
+    {
+        if (max > -min)
+            min = -max;
+        else
+            max = -min;
+
+        y_zoom_ = ((maximum_ - minimum_) / (max - min));
+        y_offset_ = 0; // zero line in the middle
+    }
+    else
+    {
+        float64 abs_max = ((max < 0) ? (-max) : (max));
+        float64 abs_min = ((min < 0) ? (-min) : (min));
+
+        y_zoom_ = ((maximum_ - minimum_) / (abs_max + abs_min));
+        y_offset_ = ((max + min) / 2.0);
+    }
 }
 
 

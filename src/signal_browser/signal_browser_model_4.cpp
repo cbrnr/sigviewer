@@ -443,13 +443,14 @@ void SignalBrowserModel::zoomInAll()
          iter != channel2signal_item_.end();
          iter++)
     {
-        iter->second->zoomIn(false);
+        iter->second->zoomIn();
     }
 
     signal_browser_view_->updateWidgets();
 }
 
-// TODO QT4: IMPLEMENT !!!! zoom out all
+//-----------------------------------------------------------------------------
+// zoom out all
 void SignalBrowserModel::zoomOutAll()
 {
     if (!checkSignalBrowserPtr("zoomOutAll") ||
@@ -464,34 +465,32 @@ void SignalBrowserModel::zoomOutAll()
          iter != channel2signal_item_.end();
          iter++)
     {
-        iter->second->zoomOut(false);
+        iter->second->zoomOut();
     }
 
     signal_browser_view_->updateWidgets();
 }
 
-// TODO QT4 IMPLEMENT!!! auto scale all
+//-----------------------------------------------------------------------------
+// auto scale all
 void SignalBrowserModel::autoScaleAll()
 {
-    // TODO QT4: implement!!
-//    if (!checkSignalBrowserPtr("autoScaleAll") ||
-//        !checkReadyState("autoScaleAll"))
-//    {
-//        return;
-//    }
-//
-//    Int2SignalCanvasItemPtrMap::iterator iter;
-//
-//    for (iter = channel2signal_item_.begin();
-//         iter != channel2signal_item_.end();
-//         iter++)
-//    {
-//        iter.value()->autoScale(false, auto_zoom_type_);
-//    }
-//
-//    signal_browser_->getCanvas()->setAllChanged();
-//    signal_browser_->getCanvas()->update();
-//    signal_browser_->getYAxisWidget()->repaint();
+    if (!checkSignalBrowserPtr("autoScaleAll") ||
+        !checkReadyState("autoScaleAll"))
+    {
+        return;
+    }
+
+    Int2SignalGraphicsItemPtrMap::iterator iter;
+
+    for (iter = channel2signal_item_.begin();
+         iter != channel2signal_item_.end();
+         iter++)
+    {
+        iter->second->autoScale(auto_zoom_type_);
+    }
+
+    signal_browser_view_->updateWidgets();
 }
 
 // set pixel per sec
@@ -1298,8 +1297,7 @@ void SignalBrowserModel::setYGridVisible(bool visible)
 //-------------------------------------------------------------------------
 void SignalBrowserModel::setAutoZoomBehaviour(ScaleMode auto_zoom_type)
 {
-    // TODO QT4: IMPLEMENT!!!
-    /*uto_zoom_type_ = auto_zoom_type;*/
+    auto_zoom_type_ = auto_zoom_type;
 }
 
 

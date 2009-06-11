@@ -42,8 +42,9 @@ public:
     float64 getYGridPixelIntervall();
 
 public slots:
-    void zoomIn(bool update = true);
-    void zoomOut(bool update = true);
+    void zoomIn();
+    void zoomOut();
+    void autoScale(ScaleMode auto_zoom_type = MAX_TO_MAX);
 
 
 protected:
