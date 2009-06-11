@@ -41,6 +41,11 @@ public:
     float64 getYOffset();
     float64 getYGridPixelIntervall();
 
+public slots:
+    void zoomIn(bool update = true);
+    void zoomOut(bool update = true);
+
+
 protected:
     virtual void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
     virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );
@@ -65,11 +70,13 @@ private:
     float64 y_offset_; // middle
     int32 height_;
 
+
     bool shifting_;
     bool hand_tool_on_;
     QPoint move_start_point_;
 
     static float64 prefered_pixel_per_sample_;
+
 
 };
 

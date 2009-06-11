@@ -10,6 +10,7 @@
 
 class QGridLayout;
 class QScrollBar;
+class QCursor;
 
 namespace BioSig_
 {
@@ -47,6 +48,7 @@ public:
     LabelWidget& getLabelWidget () const;
 
     void goTo (int32 x, int32 y);
+    void setViewCursor (QCursor const &cursor);
     void updateWidgets ();
 
 protected:

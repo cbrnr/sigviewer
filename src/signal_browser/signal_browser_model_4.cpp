@@ -112,24 +112,6 @@ MainWindowModel& SignalBrowserModel::getMainWindowModel()
 void SignalBrowserModel::setSignalBrowserView(SignalBrowserView* signal_browser_view)
 {
     signal_browser_view_ = signal_browser_view;
-
-    /*
-    if (!x_grid_item_)
-    {
-        x_grid_item_ = new XGridCanvasItem(*this, signal_browser_view_);
-    }
-
-    if (!channel_separator_item_)
-    {
-        channel_separator_item_
-            = new ChannelSeparatorCanvasItem(*this, signal_browser_view_);
-    }
-
-    if (!navigation_item_)
-    {
-        navigation_item_ = new NavigationCanvasItem(*this, signal_browser_view_);
-    }
-    */
 }
 
 //-----------------------------------------------------------------------------
@@ -446,49 +428,46 @@ void SignalBrowserModel::initBuffer()
 }
 
 
-// TODO QT4: IMPLEMENT!!!! zoom in all
+//-----------------------------------------------------------------------------
+// zoom in all
 void SignalBrowserModel::zoomInAll()
-{/*
+{
     if (!checkSignalBrowserPtr("zoomInAll") ||
         !checkReadyState("zoomInAll"))
     {
         return;
     }
 
-    Int2SignalCanvasItemPtrMap::iterator iter;
+    Int2SignalGraphicsItemPtrMap::iterator iter;
     for (iter = channel2signal_item_.begin();
          iter != channel2signal_item_.end();
          iter++)
     {
-        iter.value()->zoomIn(false);
+        iter->second->zoomIn(false);
     }
 
-    signal_browser_->getCanvas()->setAllChanged();
-    signal_browser_->getCanvas()->update();
-    signal_browser_->getYAxisWidget()->repaint();*/
+    signal_browser_view_->updateWidgets();
 }
 
 // TODO QT4: IMPLEMENT !!!! zoom out all
 void SignalBrowserModel::zoomOutAll()
-{/*
+{
     if (!checkSignalBrowserPtr("zoomOutAll") ||
         !checkReadyState("zoomOutAll"))
     {
         return;
     }
 
-    Int2SignalCanvasItemPtrMap::iterator iter;
+    Int2SignalGraphicsItemPtrMap::iterator iter;
 
     for (iter = channel2signal_item_.begin();
          iter != channel2signal_item_.end();
          iter++)
     {
-        iter.value()->zoomOut(false);
+        iter->second->zoomOut(false);
     }
 
-    signal_browser_->getCanvas()->setAllChanged();
-    signal_browser_->getCanvas()->update();
-    signal_browser_->getYAxisWidget()->repaint();*/
+    signal_browser_view_->updateWidgets();
 }
 
 // TODO QT4 IMPLEMENT!!! auto scale all

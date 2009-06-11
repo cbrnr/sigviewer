@@ -74,6 +74,7 @@ SignalBrowserView::SignalBrowserView(SignalBrowserModel* signal_browser_model, Q
 
     graphics_view_->resize(width() - label_widget_->width() - y_axis_widget_->width() + (vertical_scrollbar_->width()*2), height() - x_axis_widget_->height() + horizontal_scrollbar_->height());
     graphics_view_->setDragMode(QGraphicsView::ScrollHandDrag);
+
     // graphics_view_->setVerticalScrollBarPolicy(setViewportMargins(0, 0, 0, 0);
     //graphics_view_->setOptimizationFlag(QGraphicsView::DontClipPainter, true);
     graphics_view_->setMinimumSize(0, 0);
@@ -171,8 +172,16 @@ void SignalBrowserView::goTo (int32 x, int32 y)
 }
 
 //-----------------------------------------------------------------------------
+void SignalBrowserView::setViewCursor (QCursor const &cursor)
+{
+    graphics_view_->setCursor(cursor);
+}
+
+
+//-----------------------------------------------------------------------------
 void SignalBrowserView::updateWidgets ()
 {
+    graphics_view_->viewport()->update();
     y_axis_widget_->update();
     x_axis_widget_->update();
     label_widget_->update();

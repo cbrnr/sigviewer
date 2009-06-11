@@ -1,6 +1,7 @@
 #include "signal_graphics_item.h"
 #include "signal_browser_view.h"
 #include "signal_browser_model_4.h"
+#include "y_axis_graphics_item.h"
 #include "../base/signal_data_block.h"
 #include "../base/signal_buffer.h"
 #include "../base/signal_channel.h"
@@ -57,9 +58,10 @@ SignalGraphicsItem::~SignalGraphicsItem ()
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::setHeight (int32 height)
 {
-    height_ = height;
-    this->update();
+   this->prepareGeometryChange();
+   height_ = height;
 }
+
 
 
 //-----------------------------------------------------------------------------
@@ -108,10 +110,26 @@ float64 SignalGraphicsItem::getYGridPixelIntervall()
 }
 
 //-----------------------------------------------------------------------------
+// zoom in
+void SignalGraphicsItem::zoomIn(bool update)
+{
+    y_zoom_ *= 2.0;
+}
+
+//-----------------------------------------------------------------------------
+// zoom out
+void SignalGraphicsItem::zoomOut(bool update)
+{
+    y_zoom_ /= 2.0;
+}
+
+
+//-----------------------------------------------------------------------------
 void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     QRectF clip (option->exposedRect);
-
+    painter->setClipping(true);
+    painter->setClipRect(clip);
     // clip.setWidth(clip.width()*2);
     signal_buffer_.setChannelActive(signal_channel_.getNumber(), true);
 
@@ -120,7 +138,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     int32 draw_start_y = clip.y();
     int32 draw_end_y = draw_start_y + clip.height();
 
-    int32 item_height = this->boundingRect().height();
+    int32 item_height = height_;
 //    float64 item_y = y();
 
     float64 block_duration = signal_buffer_.getBlockDuration();
@@ -323,6 +341,8 @@ void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
             break;
         case SignalBrowserMouseHandling::SHIFT_CHANNEL_ACTION:
             shifting_ = true;
+
+            setCursor(QCursor(Qt::SizeVerCursor));
             //signal_browser_->getCanvasView()->viewport()
             //                        ->setCursor(QCursor(Qt::SizeVerCursor));
             //canvas_view->addEventListener(SmartCanvasView::MOUSE_RELEASE_EVENT |
@@ -341,6 +361,7 @@ void SignalGraphicsItem::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 
     shifting_ = false;
     hand_tool_on_ = false;
+    setCursor(QCursor());
 }
 
 //-----------------------------------------------------------------------------
