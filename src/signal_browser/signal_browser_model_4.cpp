@@ -66,6 +66,7 @@ SignalBrowserModel::SignalBrowserModel(FileSignalReader& reader,
   mode_(MODE_POINTER),
   signal_buffer_ (reader),
   basic_header_(reader.getBasicHeader()),
+  selected_event_item_ (0),
   release_buffer_(false),
   pixel_per_sec_(100),
   signal_height_(75),
@@ -978,13 +979,14 @@ void SignalBrowserModel::addEvent(const SignalEvent& event,
     return event_item;*/
 }
 
-// TODO QT4: IMPLEMENT!!! set selected event item
+//-----------------------------------------------------------------------------
+// set selected event item
 void SignalBrowserModel::setSelectedEventItem(EventGraphicsItem* item)
-{/*
-    if (selected_event_item_)
-    {
-        selected_event_item_->setSelected(false);
-    }
+{
+//    if (selected_event_item_)
+//    {
+//        selected_event_item_->setSelected(false);
+//    }
 
     selected_event_item_ = item;
 
@@ -995,8 +997,8 @@ void SignalBrowserModel::setSelectedEventItem(EventGraphicsItem* item)
     }
     else
     {
-        selected_event_item_->setSelected(true);
-        signal_browser_->getCanvas()->update();
+//        selected_event_item_->setSelected(true);
+        signal_browser_view_->updateWidgets();
 
         if (signal_buffer_.getEvent(item->getId())->getChannel() ==
             SignalEvent::UNDEFINED_CHANNEL)
@@ -1009,15 +1011,16 @@ void SignalBrowserModel::setSelectedEventItem(EventGraphicsItem* item)
             main_window_model_.setSelectionState(
                                 MainWindowModel::SELECTION_STATE_ONE_CHANNEL);
         }
-    }*/
+    }
 }
-/*
+
+//-----------------------------------------------------------------------------
 // get selected event item
-EventCanvasItem* SignalBrowserModel::getSelectedEventItem()
+EventGraphicsItem* SignalBrowserModel::getSelectedEventItem()
 {
     return selected_event_item_;
 }
-*/
+
 // QT4 TODO:!!!! set selected channel to all channels
 void SignalBrowserModel::setSelectedEventToAllChannels()
 {

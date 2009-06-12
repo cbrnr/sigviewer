@@ -102,6 +102,8 @@ void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsI
     // TODO: really remove before add????
     graphics_scene_->removeItem(graphics_item);
     graphics_scene_->addItem(graphics_item);
+//    int separator_y = graphics_item->pos().y() + graphics_item->boundingRect().height() + 1;
+//    graphics_scene_->addLine(0, separator_y, graphics_item->boundingRect().width(),separator_y);
     y_axis_widget_->addChannel(channel_nr, graphics_item);
     label_widget_->addChannel(channel_nr, QString::number(channel_nr));
     // graphics_scene_->addLine(200, 0, 200, 200);

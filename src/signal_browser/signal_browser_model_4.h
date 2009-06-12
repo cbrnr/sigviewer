@@ -136,8 +136,8 @@ public:
     ///           newly created EventGraphicsItem!!!
     void addEvent(const SignalEvent& event, bool update = true);
     void setSelectedEventItem(EventGraphicsItem* item);
-/*    EventCanvasItem* getSelectedEventItem();
-*/    void setSelectedEventToAllChannels();
+    EventGraphicsItem* getSelectedEventItem();
+    void setSelectedEventToAllChannels();
     void changeSelectedEventChannel();
     void copySelectedEventToChannels();
     void changeSelectedEventType();
