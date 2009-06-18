@@ -7,6 +7,8 @@
 #include <QGraphicsItem>
 #include <QColor>
 
+class QMutex;
+
 namespace BioSig_
 {
 
@@ -73,6 +75,7 @@ protected:
     int32 width_;
     bool is_selected_;
     static int move_mouse_range_;
+    static QMutex event_handling_mutex_;
 
 };
 

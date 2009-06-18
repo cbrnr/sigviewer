@@ -998,7 +998,7 @@ void SignalBrowserModel::setSelectedEventItem(EventGraphicsItem* item)
     else
     {
 //        selected_event_item_->setSelected(true);
-        signal_browser_view_->updateWidgets();
+        //signal_browser_view_->updateWidgets();
 
         if (signal_buffer_.getEvent(item->getId())->getChannel() ==
             SignalEvent::UNDEFINED_CHANNEL)

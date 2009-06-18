@@ -49,7 +49,7 @@ public:
 
     void goTo (int32 x, int32 y);
     void setViewCursor (QCursor const &cursor);
-    void updateWidgets ();
+    void updateWidgets (bool update_view = true);
 
 protected:
 //    virtual void resizeEvent (QResizeEvent * event);

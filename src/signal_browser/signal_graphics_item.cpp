@@ -347,9 +347,10 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
     {
         move_start_point_ = p;
         float64 range = (maximum_ - minimum_) / y_zoom_;
+        //this->setPos(0, this->y() + dy);
         y_offset_ = y_offset_ + dy * range / height_;
         update();
-        signal_browser_->updateWidgets();
+        signal_browser_->updateWidgets(false);
     }
     else if (hand_tool_on_)
         event->ignore();

@@ -11,6 +11,7 @@
 #include <QRectF>
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
+#include <QMutex>
 
 #include <algorithm>
 #include <iostream>
@@ -23,6 +24,7 @@ namespace PortingToQT4_
 
 // move mouse range
 int EventGraphicsItem::move_mouse_range_ = 5;
+QMutex EventGraphicsItem::event_handling_mutex_;
 
 //-----------------------------------------------------------------------------
 EventGraphicsItem::EventGraphicsItem(uint32 id, SignalBuffer& buffer, SignalBrowserModel& model,
@@ -86,12 +88,11 @@ void EventGraphicsItem::paint ( QPainter * painter, const QStyleOptionGraphicsIt
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
 {
-    std::cout << "click on event " << id_ << std::endl;
-
-
+    event_handling_mutex_.lock();
 
     if (state_ != STATE_NONE)
     {
+        event_handling_mutex_.unlock();
         return; // already in a edit state
     }
 
@@ -151,7 +152,10 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
                 EventGraphicsItem* old_selected_item
                     = signal_browser_model_.getSelectedEventItem();
                 if (old_selected_item)
+                {
                     old_selected_item->is_selected_ = false;
+                    old_selected_item->update();
+                }
                 is_selected_ = true;
                 /*if (old_selected_item)
                 {
@@ -163,9 +167,11 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
                                         SmartCanvasView::MOUSE_PRESS_EVENT,
                                         this);*/
                 signal_browser_model_.setSelectedEventItem(this);
+                update();
             }
             break;
     }
+    event_handling_mutex_.unlock();
 }
 
 //-----------------------------------------------------------------------------
@@ -185,7 +191,8 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
     SignalEvent* event = signal_buffer_.getEvent(id_);
     EventGraphicsItem* old_selected_item
         = signal_browser_model_.getSelectedEventItem();
-    QPoint mouse_pos (e->pos().x(), e->pos().y());  //canvas_view->inverseWorldMatrix().map(e->pos());
+    QPoint mouse_pos (e->scenePos().x(), e->scenePos().y());  //canvas_view->inverseWorldMatrix().map(e->pos());
+
 
     SignalBrowserModel::Mode mode = signal_browser_model_.getMode();
     switch (SignalBrowserMouseHandling::getAction(e, mode))
@@ -229,6 +236,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
                 {
                     return ACTION_SELECT;
                 }
+
             }
             break;
         case SignalBrowserMouseHandling::SHIFT_EVENT_TO_CHANNEL_ACTION:

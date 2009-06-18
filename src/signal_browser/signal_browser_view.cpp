@@ -35,6 +35,7 @@ SignalBrowserView::SignalBrowserView(SignalBrowserModel* signal_browser_model, Q
     graphics_view_->verticalScrollBar()->hide();
     graphics_view_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphics_view_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//    graphics_view_->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
 
     y_axis_widget_ = new YAxisWidget (this, *signal_browser_model, this);
     y_axis_widget_->resize(70, height());
@@ -181,9 +182,10 @@ void SignalBrowserView::setViewCursor (QCursor const &cursor)
 
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::updateWidgets ()
+void SignalBrowserView::updateWidgets (bool update_view)
 {
-    graphics_view_->viewport()->update();
+    if (update_view)
+        graphics_view_->viewport()->update();
     y_axis_widget_->update();
     x_axis_widget_->update();
     label_widget_->update();
