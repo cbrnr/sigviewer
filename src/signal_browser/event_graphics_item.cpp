@@ -101,23 +101,22 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
         case ACTION_NONE:
             event->ignore();
             break;
-        /*case ACTION_MOVE_BEGIN:
+        case ACTION_MOVE_BEGIN:
             state_ = STATE_MOVE_BEGIN;
+            /*
             canvas_view->addEventListener(SmartCanvasView::MOUSE_RELEASE_EVENT |
                                           SmartCanvasView::MOUSE_MOVE_EVENT,
-                                          this);
-            signal_browser_->getCanvasView()->viewport()
-                                ->setCursor(QCursor(Qt::SizeHorCursor));
+                                          this);*/
+            setCursor(QCursor(Qt::SizeHorCursor));
             break;
         case ACTION_MOVE_END:
             state_ = STATE_MOVE_END;
-            canvas_view->addEventListener(SmartCanvasView::MOUSE_RELEASE_EVENT |
+            /*canvas_view->addEventListener(SmartCanvasView::MOUSE_RELEASE_EVENT |
                                           SmartCanvasView::MOUSE_MOVE_EVENT,
-                                          this);
-            signal_browser_->getCanvasView()->viewport()
-                                ->setCursor(QCursor(Qt::SizeHorCursor));
+                                          this);*/
+            setCursor(QCursor(Qt::SizeHorCursor));
             break;
-        case ACTION_SHIFT_TO_CHANNEL:
+        /*case ACTION_SHIFT_TO_CHANNEL:
             state_ = STATE_SHIFT_TO_CHANNEL;
             last_shift_shown_nr_
                 = (int32)((rect().y() + rect().height() / 2) /
@@ -157,15 +156,6 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
                     old_selected_item->update();
                 }
                 is_selected_ = true;
-                /*if (old_selected_item)
-                {
-                    canvas_view->removeEventListener(
-                                        SmartCanvasView::MOUSE_PRESS_EVENT,
-                                        old_selected_item);
-                }
-                canvas_view->addEventListener(
-                                        SmartCanvasView::MOUSE_PRESS_EVENT,
-                                        this);*/
                 signal_browser_model_.setSelectedEventItem(this);
                 update();
             }
@@ -175,13 +165,54 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
 }
 
 //-----------------------------------------------------------------------------
-void EventGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
+void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
 {
+    SignalEvent* event = signal_buffer_.getEvent(id_);
+    QPoint mouse_pos (mouse_event->scenePos().x(), mouse_event->scenePos().y()); // event->canvas_view->inverseWorldMatrix().map(e->pos());
+    switch(state_)
+    {
+        case STATE_NONE:
+            break;
+        case STATE_MOVE_BEGIN:
+            {
+                int32 end_pos = event->getPosition() + event->getDuration();
+                int32 pos = (int32)(mouse_pos.x() /
+                                    signal_browser_model_.getPixelPerSec() *
+                                    signal_buffer_.getEventSamplerate());
+                event->setPosition(pos < end_pos ? pos : end_pos);
+                event->setDuration(end_pos - event->getPosition());
+                signal_browser_model_.setEventChanged(id_);
+            }
+            break;
+        case STATE_MOVE_END:
+            {
+                int32 dur = (int32)(mouse_pos.x() /
+                                    signal_browser_model_.getPixelPerSec() *
+                                    signal_buffer_.getEventSamplerate()) -
+                            event->getPosition();
+                event->setDuration(dur > 0 ? dur : 0);
+                signal_browser_model_.setEventChanged(id_);
+            }
+            break;
+        /*case STATE_SHIFT_TO_CHANNEL:
+            int32 shown_nr;
+            shown_nr = (int32)(mouse_pos.y() /
+                               (signal_browser_model_.getSignalHeight() +
+                                signal_browser_model_.getSignalSpacing()));
+            if (shown_nr != last_shift_shown_nr_)
+            {
+                event->setChannel(signal_browser_model_.getChannelNr(shown_nr));
+                signal_browser_model_.setEventChanged(id_);
+                last_shift_shown_nr_ = shown_nr;
+            }
+            break;*/
+    }
 }
 
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
 {
+    setCursor(QCursor(Qt::ArrowCursor));
 }
 
 //-----------------------------------------------------------------------------
@@ -202,10 +233,11 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
                 // select event
                 if (!old_selected_item)
                 {
+                    std::cout << "select" << std::endl;
                     return ACTION_SELECT;
                 }
 
-                QRectF old_rect = old_selected_item->boundingRect();
+                QRectF old_rect = old_selected_item->sceneBoundingRect();
                 int32 tmp = std::min(static_cast<int>(old_rect.width() / 2), move_mouse_range_);
 
                 // move event end
@@ -230,9 +262,9 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
                 // select smallest clicked event
                 if (old_selected_item != this &&
                     (!old_rect.contains(mouse_pos) ||
-                     old_selected_item->boundingRect().width() > boundingRect().width() ||
-                     (old_selected_item->boundingRect().width() == boundingRect().width() &&
-                      old_selected_item->boundingRect().height() > boundingRect().height())))
+                     old_selected_item->sceneBoundingRect().width() > sceneBoundingRect().width() ||
+                     (old_selected_item->sceneBoundingRect().width() == sceneBoundingRect().width() &&
+                      old_selected_item->sceneBoundingRect().height() > sceneBoundingRect().height())))
                 {
                     return ACTION_SELECT;
                 }

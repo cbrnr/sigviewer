@@ -58,7 +58,7 @@ protected:
     //-----------------------------------------------------------------------------
     virtual void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
     virtual void mousePressEvent ( QGraphicsSceneMouseEvent * event );
-    virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );
+    virtual void mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event);
     virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event);
 
     //-----------------------------------------------------------------------------

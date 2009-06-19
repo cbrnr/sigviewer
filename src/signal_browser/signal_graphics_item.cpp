@@ -352,7 +352,7 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
         update();
         signal_browser_->updateWidgets(false);
     }
-    else if (hand_tool_on_)
+    else
         event->ignore();
 }
 
@@ -378,6 +378,8 @@ void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
             //                              this);
             move_start_point_ = event->screenPos();
             break;
+        default:
+            event->ignore();
     }
 }
 

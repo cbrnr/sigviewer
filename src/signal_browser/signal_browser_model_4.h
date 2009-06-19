@@ -129,7 +129,7 @@ public:
     // events
     void getShownEventTypes(IntList& event_type);
     void setShownEventTypes(const IntList& event_type, const bool all);
-/*    void setEventChanged(uint32 id, bool update = true);*/
+    void setEventChanged(uint32 id, bool update = true);
     void removeEvent(uint32 id, bool update = true);
 
     /// TODO QT4: also some addEvent-method is needed which returns the

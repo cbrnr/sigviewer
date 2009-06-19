@@ -39,6 +39,7 @@ public:
     void removeSignalGraphicsItem (int32 channel_nr);
     void addEventGraphicsItem (EventGraphicsItem* event_graphics_item);
 
+    void setScrollMode (bool activated);
     void resizeScene (int32 width, int32 height);
     int32 getVisibleWidth () const;
     int32 getVisibleHeight () const;

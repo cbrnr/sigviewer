@@ -1020,6 +1020,7 @@ void MainWindowModel::mouseModeNewAction()
     signal_browser_model_->setMode(SignalBrowserModel::MODE_NEW);
 #else
     signal_browser_model_->setMode(PortingToQT4_::SignalBrowserModel::MODE_NEW);
+    signal_browser_->setScrollMode(false);
 #endif
 }
 
@@ -1035,6 +1036,7 @@ void MainWindowModel::mouseModePointerAction()
     signal_browser_model_->setMode(SignalBrowserModel::MODE_POINTER);
 #else
     signal_browser_model_->setMode(PortingToQT4_::SignalBrowserModel::MODE_POINTER);
+    signal_browser_->setScrollMode(false);
 #endif
 }
 
@@ -1050,6 +1052,7 @@ void MainWindowModel::mouseModeHandAction()
     signal_browser_model_->setMode(SignalBrowserModel::MODE_HAND);
 #else
     signal_browser_model_->setMode(PortingToQT4_::SignalBrowserModel::MODE_HAND);
+    signal_browser_->setScrollMode(true);
 #endif
 }
 
@@ -1066,6 +1069,7 @@ void MainWindowModel::mouseModeShiftSignalAction()
     signal_browser_model_->setMode(SignalBrowserModel::MODE_SHIFT_SIGNAL);
 #else
     signal_browser_model_->setMode(PortingToQT4_::SignalBrowserModel::MODE_SHIFT_SIGNAL);
+    signal_browser_->setScrollMode(false);
 #endif
 }
 
@@ -1082,6 +1086,7 @@ void MainWindowModel::mouseModeZoomAction()
     signal_browser_model_->setMode(SignalBrowserModel::MODE_ZOOM);
 #else
     signal_browser_model_->setMode(PortingToQT4_::SignalBrowserModel::MODE_ZOOM);
+    signal_browser_->setScrollMode(false);
 #endif
 }
 

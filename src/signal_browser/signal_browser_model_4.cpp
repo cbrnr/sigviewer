@@ -873,7 +873,8 @@ void SignalBrowserModel::setShownEventTypes(const IntList& event_type, const boo
     shown_event_types_ = event_type;
     all_event_types_selected_ = all;
 }
-/*
+
+//-----------------------------------------------------------------------------
 // set event changed
 void SignalBrowserModel::setEventChanged(uint32 id, bool update)
 {
@@ -891,7 +892,7 @@ void SignalBrowserModel::setEventChanged(uint32 id, bool update)
         return;
     }
 
-    EventCanvasItem* event_item = id2event_item_[id];
+    EventGraphicsItem* event_item = id2event_item_[id];
     Int2IntMap::iterator y_pos_iter;
 
     y_pos_iter = channel2y_pos_.find(event->getChannel());
@@ -909,8 +910,8 @@ void SignalBrowserModel::setEventChanged(uint32 id, bool update)
                                     (float64)event->getDuration() /
                                     signal_buffer_.getEventSamplerate() + 0.5);
 
-        event_width = max(event_width, 1);
-        event_item->setY(y_pos_iter.value());
+        event_width = std::max(event_width, 1);
+        //event_item->setY(y_pos_iter.value());
 
         if (event->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
         {
@@ -921,23 +922,23 @@ void SignalBrowserModel::setEventChanged(uint32 id, bool update)
             event_item->setSize(event_width, signal_height_);
         }
 
-        event_item->setZ(EVENT_Z + event->getType() / 100000.0);
+        event_item->setZValue(EVENT_Z + event->getType() / 100000.0);
         int32 event_x = (int32)(pixel_per_sec_ * (float64)event->getPosition() /
                                 signal_buffer_.getEventSamplerate() + 0.5);
 
-        event_item->setX(event_x);
+        event_item->setPos(event_x, event_item->pos().y());
         event_item->updateColor();
         event_item->show();
     }
 
     if (update)
     {
-        signal_browser_->getCanvas()->update();
+        //signal_browser_->getCanvas()->update();
     }
 
     main_window_model_.setChanged();
 }
-*/
+
 // TODO! : remove event
 void SignalBrowserModel::removeEvent(uint32 id, bool update)
 {
