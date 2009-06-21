@@ -11,6 +11,8 @@
 #include <QRectF>
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneContextMenuEvent>
+#include <QMenu>
 #include <QMutex>
 
 #include <algorithm>
@@ -100,9 +102,11 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
     {
         case ACTION_NONE:
             event->ignore();
+            state_ = STATE_NONE;
             break;
         case ACTION_MOVE_BEGIN:
             state_ = STATE_MOVE_BEGIN;
+            std::cout << "move begin" << std::endl;
             /*
             canvas_view->addEventListener(SmartCanvasView::MOUSE_RELEASE_EVENT |
                                           SmartCanvasView::MOUSE_MOVE_EVENT,
@@ -111,6 +115,7 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
             break;
         case ACTION_MOVE_END:
             state_ = STATE_MOVE_END;
+            std::cout << "move end " << id_ << std::endl;
             /*canvas_view->addEventListener(SmartCanvasView::MOUSE_RELEASE_EVENT |
                                           SmartCanvasView::MOUSE_MOVE_EVENT,
                                           this);*/
@@ -148,6 +153,7 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
             break;*/
         case ACTION_SELECT:
             {
+                state_ = STATE_NONE;
                 EventGraphicsItem* old_selected_item
                     = signal_browser_model_.getSelectedEventItem();
                 if (old_selected_item)
@@ -213,7 +219,57 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
 void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
 {
     setCursor(QCursor(Qt::ArrowCursor));
+    state_ = STATE_NONE;
 }
+
+//-----------------------------------------------------------------------------
+void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event)
+{
+    SignalBrowserModel::Mode mode = signal_browser_model_.getMode();
+    if (mode != SignalBrowserModel::MODE_POINTER &&
+        mode != SignalBrowserModel::MODE_NEW)
+    {
+        return;
+    }
+    std::cout << "context menu for event " << id_ << std::endl;
+    QMenu menu;
+    QAction *removeAction = menu.addAction("Remove");
+    QAction *markAction = menu.addAction("Mark");
+    QAction *selectedAction = menu.exec(event->screenPos());
+
+    /*
+    if (menu->count() > 0)
+    {
+        menu->insertSeparator();
+    }
+
+
+    EventCanvasItem* old_selected_item;
+    old_selected_item = signal_browser_model_.getSelectedEventItem();
+    if (old_selected_item == this)
+    {
+        MainWindow* main_window
+            = signal_browser_model_.getMainWindowModel().getMainWindow();
+        main_window->addActionTo(menu, "edit_to_all_channels_action_");
+        main_window->addActionTo(menu, "edit_copy_to_channels_action_");
+        main_window->addActionTo(menu, "edit_delete_action_");
+        main_window->addActionTo(menu, "edit_change_channel_action_");
+        main_window->addActionTo(menu, "edit_change_type_action_");
+    }
+    else
+    {
+        SignalEvent* event = signal_buffer_.getEvent(id_);
+        EventTableFileReader& event_table_reader
+         = signal_browser_model_.getMainWindowModel().getEventTableFileReader();
+        QString event_name = event_table_reader.getEventName(event->getType());
+        if (event_name.isEmpty())
+        {
+            event_name = "Undefined";
+        }
+        menu->insertItem(tr("&Select ") + event_name, this, SLOT(select()));
+    }*/
+}
+
 
 //-----------------------------------------------------------------------------
 // get mouse press action
@@ -246,6 +302,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
                 if (this == old_selected_item &&
                     move_end_rect.contains(mouse_pos))
                 {
+                    std::cout << "action move end" << std::endl;
                     return ACTION_MOVE_END;
                 }
 
@@ -256,6 +313,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
                 if (this == old_selected_item &&
                     move_begin_rect.contains(mouse_pos))
                 {
+                    std::cout << "action move begin" << std::endl;
                     return ACTION_MOVE_BEGIN;
                 }
 

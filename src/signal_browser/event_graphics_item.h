@@ -60,6 +60,7 @@ protected:
     virtual void mousePressEvent ( QGraphicsSceneMouseEvent * event );
     virtual void mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event);
     virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event);
+    virtual void contextMenuEvent (QGraphicsSceneContextMenuEvent * event);
 
     //-----------------------------------------------------------------------------
     Action getMousePressAction(QGraphicsSceneMouseEvent* e);

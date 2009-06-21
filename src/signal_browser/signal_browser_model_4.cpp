@@ -11,35 +11,6 @@
 #include "../base/file_signal_reader.h"
 #include "../base/math_utils.h"
 
-/*#include "main_window_model.h"
-#include "signal_browser.h"
-#include "smart_canvas/smart_canvas.h"
-#include "smart_canvas/smart_canvas_view.h"
-#include "signal_canvas_item.h"
-#include "x_grid_canvas_item.h"
-#include "channel_separator_canvas_item.h"
-#include "navigation_canvas_item.h"
-#include "x_axis_widget.h"
-#include "y_axis_widget.h"
-#include "label_widget.h"
-#include "event_canvas_item.h"
-#include "copy_event_dialog.h"
-#include "base/event_table_file_reader.h"
-
-#include <math.h>
-
-#include <QDialog>
-#include <QEvent>
-#include <QCursor>
-#include <QApplication>
-#include <QInputDialog>
-#include <QResizeEvent>
-
-#include <QSettings>
-
-#define max(a,b) ((a) > (b) ? (a) : (b))
-
-*/
 
 #include <QTextStream>
 #include <QApplication>
@@ -75,20 +46,6 @@ SignalBrowserModel::SignalBrowserModel(FileSignalReader& reader,
   prefered_y_grid_pixel_intervall_(25),
   x_grid_pixel_intervall_(0),
   show_y_grid_(true)
-/*,
-  x_grid_item_(0),
-  channel_separator_item_(0),
-  navigation_item_(0),
-  selected_event_item_(0),
-  pixel_per_sec_(100),
-  signal_height_(75),
-  signal_spacing_(1),
-  actual_event_creation_type_ (-1),
-  show_x_grid_(true),
-  show_channel_labels_(true),
-  show_y_scales_(true),
-  show_x_scales_(true),
-  all_event_types_selected_(false)*/
 {
     // nothing
 }
@@ -933,7 +890,7 @@ void SignalBrowserModel::setEventChanged(uint32 id, bool update)
 
     if (update)
     {
-        //signal_browser_->getCanvas()->update();
+        signal_browser_view_->updateWidgets();
     }
 
     main_window_model_.setChanged();
