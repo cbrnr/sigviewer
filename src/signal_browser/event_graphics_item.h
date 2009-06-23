@@ -32,9 +32,12 @@ public:
     uint32 getId() const;
 
     void setSize (int32 width, int32 height);
+    void startMouseMoveEnd ();
     void updateColor ();
 
     virtual QRectF boundingRect () const;
+    virtual void mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event);
+    virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event);
 
 protected:
     enum Action
@@ -58,8 +61,6 @@ protected:
     //-----------------------------------------------------------------------------
     virtual void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
     virtual void mousePressEvent ( QGraphicsSceneMouseEvent * event );
-    virtual void mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event);
-    virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event);
     virtual void contextMenuEvent (QGraphicsSceneContextMenuEvent * event);
 
     //-----------------------------------------------------------------------------

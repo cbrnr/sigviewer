@@ -821,10 +821,11 @@ void SignalBrowserModel::zoomRect(const QRect& rect)
     main_window_model_.signalHeightChanged(signal_height_);
 }
 */
-// TODO QT4: IMPLEMENT!!! get shown event types
+//-----------------------------------------------------------------------------
+// get shown event types
 void SignalBrowserModel::getShownEventTypes(IntList& event_type)
-{/*
-    event_type = shown_event_types_;*/
+{
+    event_type = shown_event_types_;
 }
 
 //-----------------------------------------------------------------------------
@@ -1154,8 +1155,6 @@ void SignalBrowserModel::changeSelectedEventType()
 
     if (selected_event_item_)
         event = signal_buffer_.getEvent(selected_event_item_->getId());
-    else
-        return;
 
     // generate list show all shown types
     QStringList event_type_list;
@@ -1205,12 +1204,13 @@ void SignalBrowserModel::changeSelectedEventType()
         if (ok)
             actual_event_creation_type_ = new_type;
 }
-/*
+
+//-----------------------------------------------------------------------------
 uint16 SignalBrowserModel::getActualEventCreationType () const
 {
     return actual_event_creation_type_;
 }
-*/
+
 
 //-----------------------------------------------------------------------------
 // remove selected event

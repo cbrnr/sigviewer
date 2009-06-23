@@ -18,6 +18,7 @@ namespace PortingToQT4_
 
 class SignalBrowserModel;
 class SignalBrowserView;
+class EventGraphicsItem;
 
 class SignalGraphicsItem : public QGraphicsItem
 {
@@ -73,6 +74,8 @@ private:
 
 
     bool shifting_;
+    bool new_event_;
+    EventGraphicsItem *created_event_item_;
     bool hand_tool_on_;
     QPoint move_start_point_;
 

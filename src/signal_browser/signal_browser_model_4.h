@@ -143,8 +143,8 @@ public:
     void changeSelectedEventType();
     void removeSelectedEvent();
     void getEvents(SignalEventVector& event_vector);
-/*    uint16 getActualEventCreationType () const;
-*/
+    uint16 getActualEventCreationType () const;
+
     void updateLayout();
 /*
 public slots:

@@ -1,4 +1,5 @@
 #include "signal_graphics_item.h"
+#include "event_graphics_item.h"
 #include "signal_browser_view.h"
 #include "signal_browser_model_4.h"
 #include "y_axis_graphics_item.h"
@@ -43,6 +44,8 @@ SignalGraphicsItem::SignalGraphicsItem(SignalBuffer& buffer, const SignalChannel
              channel.getPhysicalMaximum()) / 2.0),
   height_ (100), // FIXME: arbitrary number!!
   shifting_ (false),
+  new_event_ (false),
+  created_event_item_ (0),
   hand_tool_on_ (false)
 {
     // nothing to do
@@ -335,10 +338,6 @@ void SignalGraphicsItem::enableYGrid(bool enabled)
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 {
-    // FIXME: evtl. hier keine auto-variablen machen, sondern members
-    //        --> performance.. ;)
-
-
     QPoint p = event->screenPos();
     int32 dx = p.x() - move_start_point_.x();
     int32 dy = p.y() - move_start_point_.y();
@@ -352,6 +351,8 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
         update();
         signal_browser_->updateWidgets(false);
     }
+    else if (new_event_)
+        created_event_item_->mouseMoveEvent(event);
     else
         event->ignore();
 }
@@ -378,6 +379,66 @@ void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
             //                              this);
             move_start_point_ = event->screenPos();
             break;
+        case SignalBrowserMouseHandling::NEW_EVENT_ACTION:
+            {
+            // get shown events
+            std::cout << "new event..." << std::endl;
+            SignalBrowserModel::IntList shown_events;
+            signal_browser_model_.getShownEventTypes(shown_events);
+
+            if (shown_events.size() == 0)
+            {
+                std::cout << "no events shown" << std::endl;
+                break; // no events shown
+            }
+
+
+            if (signal_browser_model_.getActualEventCreationType() == static_cast<uint16>(-1))
+            {
+                signal_browser_model_.changeSelectedEventType();
+                std::cout << "blub bla" << std::endl;
+                break;
+            }
+
+            // add new event item
+            SignalEvent new_event(0, 0);
+            EventGraphicsItem* selected_event_item
+                = signal_browser_model_.getSelectedEventItem();
+
+            if (selected_event_item)
+            {
+                SignalEvent* selected_event
+                    = signal_buffer_.getEvent(selected_event_item->getId());
+                new_event.setType(signal_browser_model_.getActualEventCreationType());
+
+                if (selected_event->getChannel() ==
+                    SignalEvent::UNDEFINED_CHANNEL)
+                    new_event.setChannel(SignalEvent::UNDEFINED_CHANNEL);
+                else
+                    new_event.setChannel(signal_channel_.getNumber());
+            }
+            else
+            {
+                new_event.setType(signal_browser_model_.getActualEventCreationType());
+                new_event.setChannel(signal_channel_.getNumber());
+            }
+
+            QPointF mouse_pos (event->scenePos());
+            new_event.setPosition((int32)(mouse_pos.x() /
+                                  signal_browser_model_.getPixelPerSec() *
+                                  signal_buffer_.getEventSamplerate()));
+
+            new_event.setDuration(0);
+            EventGraphicsItem* event_item
+                    = signal_browser_model_.addEvent(new_event);
+
+            // edit new event item
+            signal_browser_model_.setSelectedEventItem(0);
+            new_event_ = true;
+            created_event_item_ = event_item;
+            event_item->startMouseMoveEnd();
+        }
+            break;
         default:
             event->ignore();
     }
@@ -388,9 +449,12 @@ void SignalGraphicsItem::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 {
     if (hand_tool_on_)
         event->ignore();
+    if (new_event_)
+        created_event_item_->mouseReleaseEvent(event);
 
     shifting_ = false;
     hand_tool_on_ = false;
+    new_event_ = false;
     setCursor(QCursor());
 }
 

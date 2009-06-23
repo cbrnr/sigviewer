@@ -61,6 +61,14 @@ void EventGraphicsItem::setSize (int32 width, int32 height)
     height_ = height;
 }
 
+
+//-----------------------------------------------------------------------------
+void EventGraphicsItem::startMouseMoveEnd ()
+{
+    state_ = STATE_MOVE_END;
+    setCursor(QCursor(Qt::SizeHorCursor));
+}
+
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::updateColor()
 {
