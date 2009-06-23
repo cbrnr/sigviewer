@@ -134,7 +134,7 @@ public:
 
     /// TODO QT4: also some addEvent-method is needed which returns the
     ///           newly created EventGraphicsItem!!!
-    void addEvent(const SignalEvent& event, bool update = true);
+    EventGraphicsItem* addEvent(const SignalEvent& event, bool update = true);
     void setSelectedEventItem(EventGraphicsItem* item);
     EventGraphicsItem* getSelectedEventItem();
     void setSelectedEventToAllChannels();
@@ -206,8 +206,8 @@ private:
     int32 prefered_y_grid_pixel_intervall_;
     float64 x_grid_pixel_intervall_;
     IntList shown_event_types_;
-/*    uint16 actual_event_creation_type_;
-*/
+    uint16 actual_event_creation_type_;
+
     bool show_y_grid_;
 /*
     bool show_x_grid_;

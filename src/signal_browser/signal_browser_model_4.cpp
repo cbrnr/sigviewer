@@ -10,11 +10,13 @@
 #include "../label_widget.h"
 #include "../base/file_signal_reader.h"
 #include "../base/math_utils.h"
-
+#include "../base/event_table_file_reader.h"
+#include "../copy_event_dialog.h"
 
 #include <QTextStream>
 #include <QApplication>
 #include <QDialog>
+#include <QInputDialog>
 
 #include <cmath>
 #include <algorithm>
@@ -45,6 +47,7 @@ SignalBrowserModel::SignalBrowserModel(FileSignalReader& reader,
   prefered_x_grid_pixel_intervall_(100),
   prefered_y_grid_pixel_intervall_(25),
   x_grid_pixel_intervall_(0),
+  actual_event_creation_type_ (-1),
   show_y_grid_(true)
 {
     // nothing
@@ -594,7 +597,7 @@ void SignalBrowserModel::updateLayout()
         y_pos_iter = channel2y_pos_.find(event->getChannel());
 
 
-        if (/*!shown_event_types_.contains(event->getType()) ||*/
+        if (!shown_event_types_.contains(event->getType()) ||
             y_pos_iter == channel2y_pos_.end())
         {
             event_iter.value()->hide();
@@ -868,7 +871,7 @@ void SignalBrowserModel::setEventChanged(uint32 id, bool update)
                                     signal_buffer_.getEventSamplerate() + 0.5);
 
         event_width = std::max(event_width, 1);
-        //event_item->setY(y_pos_iter.value());
+        event_item->setPos(event_item->pos().x(), y_pos_iter->second);
 
         if (event->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
         {
@@ -896,18 +899,18 @@ void SignalBrowserModel::setEventChanged(uint32 id, bool update)
     main_window_model_.setChanged();
 }
 
-// TODO! : remove event
+//-----------------------------------------------------------------------------
+// remove event
 void SignalBrowserModel::removeEvent(uint32 id, bool update)
 {
-    /// QT4 TODO: IMPLEMENT!!!
-/*    Int2EventCanvasItemPtrMap::iterator it = id2event_item_.find(id);
+    Int2EventGraphicsItemPtrMap::iterator it = id2event_item_.find(id);
 
     if (it == id2event_item_.end())
     {
         return;
     }
 
-    EventCanvasItem* event_item = it.value();
+    EventGraphicsItem* event_item = it.value();
 
     id2event_item_.erase(it);
     delete event_item;
@@ -915,26 +918,58 @@ void SignalBrowserModel::removeEvent(uint32 id, bool update)
 
     if (update)
     {
-        signal_browser_->getCanvas()->update();
+        signal_browser_view_->updateWidgets();
     }
 
-    main_window_model_.setChanged();*/
+    main_window_model_.setChanged();
 }
 
-// TODO! add event
-void SignalBrowserModel::addEvent(const SignalEvent& event,
+//-----------------------------------------------------------------------------
+// add event
+EventGraphicsItem* SignalBrowserModel::addEvent(const SignalEvent& event,
                                               bool update)
 {
-    /// TODO QT4: implement
-    /*int32 event_id = signal_buffer_.addEvent(event);
-    EventCanvasItem* event_item = new EventCanvasItem(event_id,
+    int32 event_id = signal_buffer_.addEvent(event);
+    EventGraphicsItem* event_item = new EventGraphicsItem(event_id,
                                                       signal_buffer_,
-                                                      *this, signal_browser_);
+                                                      *this, signal_browser_view_);
 
     id2event_item_[event_id] = event_item;
     setEventChanged(event_id, update);
 
-    return event_item;*/
+    Int2IntMap::iterator y_pos_iter = channel2y_pos_.find(event.getChannel());
+    int32 height = (signal_height_  + signal_spacing_) *
+                   channel2signal_item_.size();
+
+
+    if (!shown_event_types_.contains(event.getType()) ||
+        y_pos_iter == channel2y_pos_.end())
+    {
+        event_item->hide();
+        return event_item;
+    }
+
+    int32 event_width = (int32)(pixel_per_sec_ *
+                               (float64)event.getDuration() /
+                               signal_buffer_.getEventSamplerate() + 0.5);
+
+    event_width = std::max(event_width, 1);
+
+    if (event.getChannel() == SignalEvent::UNDEFINED_CHANNEL)
+        event_item->setSize(event_width, height);
+    else
+        event_item->setSize(event_width, signal_height_);
+
+    event_item->setZValue(EVENT_Z + event.getType() / 100000.0);
+    int32 event_x = (int32)(pixel_per_sec_ * (float64)event.getPosition() /
+                            signal_buffer_.getEventSamplerate() + 0.5);
+
+    event_item->setPos(event_x, y_pos_iter->second);
+    event_item->updateColor();
+    signal_browser_view_->addEventGraphicsItem(event_item);
+    event_item->show();
+
+    return event_item;
 }
 
 //-----------------------------------------------------------------------------
@@ -979,10 +1014,10 @@ EventGraphicsItem* SignalBrowserModel::getSelectedEventItem()
     return selected_event_item_;
 }
 
-// QT4 TODO:!!!! set selected channel to all channels
+//-----------------------------------------------------------------------------
+// set selected channel to all channels
 void SignalBrowserModel::setSelectedEventToAllChannels()
 {
-    /* QT4 TODO: IMPLEMENT!!
     if (!selected_event_item_)
     {
         return;
@@ -994,13 +1029,14 @@ void SignalBrowserModel::setSelectedEventToAllChannels()
     event->setChannel(SignalEvent::UNDEFINED_CHANNEL);
     main_window_model_
         .setSelectionState(MainWindowModel::SELECTION_STATE_ALL_CHANNELS);
-    setEventChanged(id);*/
+    setEventChanged(id);
 }
 
-// TODO QT4: IMPLEMENT!!! change selected event channel
+//-----------------------------------------------------------------------------
+// change selected event channel
 void SignalBrowserModel::changeSelectedEventChannel()
 {
-    /*
+
     if (!selected_event_item_)
     {
         return;
@@ -1038,7 +1074,7 @@ void SignalBrowserModel::changeSelectedEventChannel()
     QString res = QInputDialog::getItem(tr("Change Channel"),
                                         tr("Select new Channel:"),
                                         channel_list, current_item,
-                                        false, &ok, signal_browser_);
+                                        false, &ok, signal_browser_view_);
 
     int32 new_channel = res.replace(')', '(').section('(', 1, 1).toInt() - 1;
 
@@ -1057,13 +1093,13 @@ void SignalBrowserModel::changeSelectedEventChannel()
             main_window_model_
                .setSelectionState(MainWindowModel::SELECTION_STATE_ONE_CHANNEL);
         }
-    }*/
+    }
 }
 
-// TODO QT4: IMPLEMENT!!! copy selected event to channels
+//-----------------------------------------------------------------------------
+// copy selected event to channels
 void SignalBrowserModel::copySelectedEventToChannels()
 {
-    /*
     if (!selected_event_item_)
     {
         return;
@@ -1071,7 +1107,7 @@ void SignalBrowserModel::copySelectedEventToChannels()
 
     uint32 id = selected_event_item_->getId();
     SignalEvent* event = signal_buffer_.getEvent(id);
-    CopyEventDialog copy_event_dialog(basic_header_, signal_browser_);
+    CopyEventDialog copy_event_dialog(basic_header_, signal_browser_view_);
 
     for (uint32 channel_nr = 0;
          channel_nr < basic_header_->getNumberChannels();
@@ -1107,17 +1143,19 @@ void SignalBrowserModel::copySelectedEventToChannels()
         }
     }
 
-    signal_browser_->getCanvas()->update();*/
+    signal_browser_view_->updateWidgets();
 }
 
-// TODO QT4: IMPLEMENT!!! change selected event type
+//-----------------------------------------------------------------------------
+// change selected event type
 void SignalBrowserModel::changeSelectedEventType()
 {
-    /*
     SignalEvent* event = 0;
 
     if (selected_event_item_)
         event = signal_buffer_.getEvent(selected_event_item_->getId());
+    else
+        return;
 
     // generate list show all shown types
     QStringList event_type_list;
@@ -1150,7 +1188,7 @@ void SignalBrowserModel::changeSelectedEventType()
     QString res = QInputDialog::getItem(tr("Change Type"),
                                         tr("Select new Type:"),
                                         event_type_list, current_item,
-                                        false, &ok, signal_browser_);
+                                        false, &ok, signal_browser_view_);
 
     uint16 new_type = res.right(5).left(4).toUShort(0, 16);
 
@@ -1165,7 +1203,7 @@ void SignalBrowserModel::changeSelectedEventType()
 
     else
         if (ok)
-            actual_event_creation_type_ = new_type;*/
+            actual_event_creation_type_ = new_type;
 }
 /*
 uint16 SignalBrowserModel::getActualEventCreationType () const
@@ -1173,9 +1211,11 @@ uint16 SignalBrowserModel::getActualEventCreationType () const
     return actual_event_creation_type_;
 }
 */
-// TODO QT4: IMPLEMENT!!! remove selected event
+
+//-----------------------------------------------------------------------------
+// remove selected event
 void SignalBrowserModel::removeSelectedEvent()
-{/*
+{
     if (!selected_event_item_)
     {
         return;
@@ -1185,7 +1225,7 @@ void SignalBrowserModel::removeSelectedEvent()
 
     selected_event_item_ = 0;
     main_window_model_.setSelectionState(MainWindowModel::SELECTION_STATE_NONE);
-    removeEvent(id);*/
+    removeEvent(id);
 }
 /*
 // get channel nr

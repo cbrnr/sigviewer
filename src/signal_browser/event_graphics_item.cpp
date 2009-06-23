@@ -7,6 +7,9 @@
 #include "../main_window_model.h"
 #include "../event_color_manager.h"
 #include "../signal_browser_mouse_handling.h"
+#include "../main_window_model.h"
+#include "../main_window.h"
+#include "../base/event_table_file_reader.h"
 
 #include <QRectF>
 #include <QStyleOptionGraphicsItem>
@@ -232,19 +235,22 @@ void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event
         return;
     }
     std::cout << "context menu for event " << id_ << std::endl;
-    QMenu menu;
-    QAction *removeAction = menu.addAction("Remove");
-    QAction *markAction = menu.addAction("Mark");
-    QAction *selectedAction = menu.exec(event->screenPos());
+    QMenu* menu = new QMenu();
 
-    /*
-    if (menu->count() > 0)
-    {
-        menu->insertSeparator();
-    }
+//    MainWindow* main_window = signal_browser_model_.getMainWindowModel().getMainWindow();
+//    main_window->addActionTo(menu, "
+//    QAction *removeAction = menu.addAction("Remove");
+//    QAction *markAction = menu.addAction("Mark");
+//    QAction *selectedAction = menu.exec(event->screenPos());
 
 
-    EventCanvasItem* old_selected_item;
+//    if (menu.count() > 0)
+//    {
+//        menu.insertSeparator();
+//    }
+
+
+    EventGraphicsItem* old_selected_item;
     old_selected_item = signal_browser_model_.getSelectedEventItem();
     if (old_selected_item == this)
     {
@@ -266,8 +272,9 @@ void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event
         {
             event_name = "Undefined";
         }
-        menu->insertItem(tr("&Select ") + event_name, this, SLOT(select()));
-    }*/
+        menu->addAction(/*tr*/QString("&Select ") + event_name);
+    }
+    menu->exec(event->screenPos());
 }
 
 
