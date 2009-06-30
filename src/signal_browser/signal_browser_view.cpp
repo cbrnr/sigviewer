@@ -8,7 +8,7 @@
 #include "x_axis_widget_4.h"
 #include "../label_widget.h"
 
-
+#include <QGraphicsLineItem>
 #include <QGridLayout>
 #include <QScrollBar>
 #include <QPointF>
@@ -110,9 +110,12 @@ void SignalBrowserView::resizeScene (int32 width, int32 height)
 void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item)
 {
     // TODO: really remove before add????
+
+//    graphics_scene_->removeItem(graphics_item->childItems());
     graphics_scene_->removeItem(graphics_item);
+    //QGraphicsLineItem* signal_separator_item = new QGraphicsLineItem (0, graphics_item->boundingRect().bottom(), graphics_item->boundingRect().right(), graphics_item->boundingRect().bottom(), graphics_item);
     graphics_scene_->addItem(graphics_item);
-//    int separator_y = graphics_item->pos().y() + graphics_item->boundingRect().height() + 1;
+    //    int separator_y = graphics_item->pos().y() + graphics_item->boundingRect().height() + 1;
 //    graphics_scene_->addLine(0, separator_y, graphics_item->boundingRect().width(),separator_y);
     y_axis_widget_->addChannel(channel_nr, graphics_item);
     label_widget_->addChannel(channel_nr, QString::number(channel_nr));

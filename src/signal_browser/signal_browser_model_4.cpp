@@ -894,6 +894,7 @@ void SignalBrowserModel::setEventChanged(uint32 id, bool update)
         event_item->setPos(event_x, event_item->pos().y());
         event_item->updateColor();
         event_item->show();
+        signal_browser_view_->addEventGraphicsItem(event_item);
     }
 
     if (update)
