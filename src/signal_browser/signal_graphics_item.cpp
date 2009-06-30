@@ -15,6 +15,7 @@
 #include <QTime>
 #include <QObject>
 
+#include <cmath>
 #include <iostream>
 
 
@@ -227,6 +228,36 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     }
     // draw y grid - end
 
+    // draw x grid - begin
+    if (draw_x_grid_)
+    {
+        float64 intervall = signal_browser_model_.getXGridPixelIntervall();
+
+        if (intervall > 1)
+        {
+            float64 pixel_per_sec = signal_browser_model_.getPixelPerSec();
+            int32 x_start = clip.x();
+            int32 x_end = x_start + clip.width();
+
+            float64 float_x_start = floor((x_start + intervall / 2) / intervall) *
+                           intervall;
+
+            float64 float_x_end = ceil((x_end - intervall / 2) / intervall) *
+                          intervall + intervall / 2;
+
+            painter->setPen(Qt::lightGray);
+            for (float32 float_x = float_x_start;
+                 float_x < float_x_end;
+                 float_x += intervall)
+            {
+                int32 x = (int32)(float_x + 0.5);
+                painter->drawLine(x, clip.y(), x, clip.y() + clip.height());
+            }
+        }
+    }
+    // draw x grid - end
+
+
     bool last_valid = false;
     int32 last_x = 0;
     int32 last_y = 0;
@@ -333,6 +364,12 @@ void SignalGraphicsItem::updateYGridIntervall()
 void SignalGraphicsItem::enableYGrid(bool enabled)
 {
     draw_y_grid_ = enabled;
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::enableXGrid(bool enabled)
+{
+    draw_x_grid_ = enabled;
 }
 
 //-----------------------------------------------------------------------------

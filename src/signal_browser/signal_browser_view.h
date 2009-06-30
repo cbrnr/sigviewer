@@ -47,6 +47,7 @@ public:
     int32 getVisibleY () const;
     YAxisWidget& getYAxisWidget () const;
     LabelWidget& getLabelWidget () const;
+    XAxisWidget& getXAxisWidget () const;
 
     void goTo (int32 x, int32 y);
     void setViewCursor (QCursor const &cursor);

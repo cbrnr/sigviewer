@@ -35,6 +35,7 @@ public:
     void getRangeFromBuffer(float64 factor);
     void updateYGridIntervall();
     void enableYGrid(bool enabled);
+    void enableXGrid(bool enabled);
 
     float64 getMaximum();
     float64 getMinimum();
@@ -69,6 +70,7 @@ private:
     float64 y_zoom_;
     float64 y_grid_pixel_intervall_;
     bool draw_y_grid_;
+    bool draw_x_grid_;
     float64 y_offset_; // middle
     int32 height_;
 

@@ -172,6 +172,13 @@ YAxisWidget& SignalBrowserView::getYAxisWidget () const
 }
 
 //-----------------------------------------------------------------------------
+XAxisWidget& SignalBrowserView::getXAxisWidget () const
+{
+    return *x_axis_widget_;
+}
+
+
+//-----------------------------------------------------------------------------
 LabelWidget& SignalBrowserView::getLabelWidget () const
 {
     return *label_widget_;

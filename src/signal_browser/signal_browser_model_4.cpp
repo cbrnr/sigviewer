@@ -4,6 +4,7 @@
 #include "signal_browser_view.h"
 #include "signal_graphics_item.h"
 #include "y_axis_graphics_item.h"
+#include "x_axis_graphics_item.h"
 #include "event_graphics_item.h"
 
 #include "../main_window_model.h"
@@ -17,6 +18,7 @@
 #include <QApplication>
 #include <QDialog>
 #include <QInputDialog>
+#include <QSettings>
 
 #include <cmath>
 #include <algorithm>
@@ -91,10 +93,9 @@ QTextStream& SignalBrowserModel::getLogStream()
 }
 
 //-----------------------------------------------------------------------------
-// TODO! load settings
+// load settings
 void SignalBrowserModel::loadSettings()
 {
-/*
     QSettings settings("SigViewer");
 
     settings.beginGroup("SignalBrowserModel");
@@ -131,6 +132,7 @@ void SignalBrowserModel::loadSettings()
 
     settings.endGroup();
 
+    /*
     SignalCanvasItem::loadSettings();
     XAxisWidget::loadSettings();
     YAxisWidget::loadSettings();
@@ -140,10 +142,9 @@ void SignalBrowserModel::loadSettings()
 }
 
 //-----------------------------------------------------------------------------
-// TODO! save settings
+// save settings
 void SignalBrowserModel::saveSettings()
 {
-/*
     QSettings settings("SigViewer");
 
     settings.beginGroup("SignalBrowserModel");
@@ -174,12 +175,11 @@ void SignalBrowserModel::saveSettings()
 
     settings.endGroup();
 
-    SignalCanvasItem::saveSettings();
-    XAxisWidget::saveSettings();
-    YAxisWidget::saveSettings();
-    LabelWidget::saveSettings();
-    EventCanvasItem::saveSettings();
-*/
+//    SignalGraphicsItem::saveSettings();
+//    XAxisWidget::saveSettings();
+//    YAxisWidget::saveSettings();
+//    LabelWidget::saveSettings();
+//    EventGraphicsItem::saveSettings();
 }
 
 //-----------------------------------------------------------------------------
@@ -573,6 +573,7 @@ void SignalBrowserModel::updateLayout()
         signal_iter->second->updateYGridIntervall();
 
         signal_iter->second->enableYGrid(show_y_grid_);
+        signal_iter->second->enableXGrid(show_x_grid_);
         signal_browser_view_->addSignalGraphicsItem(signal_iter->first, signal_iter->second);
 
         signal_iter->second->show();
@@ -642,6 +643,9 @@ void SignalBrowserModel::updateLayout()
 
     x_grid_pixel_intervall_ = pixel_per_sec_ * x_grid_intervall;
 
+    signal_browser_view_->getLabelWidget().setVisible(show_channel_labels_);
+    signal_browser_view_->getYAxisWidget().setVisible(show_y_scales_);
+    signal_browser_view_->getXAxisWidget().setVisible(show_x_scales_);
     /* TODO: IMPLEMENT!!!
   	signal_browser_->getLabelWidget()->setVisible(show_channel_labels_);
   	signal_browser_->getXAxisWidget()->setVisible(show_x_scales_);
@@ -1262,37 +1266,32 @@ void SignalBrowserModel::getEvents(SignalEventVector& event_vector)
 //-------------------------------------------------------------------------
 void SignalBrowserModel::showXScales(bool enabled)
 {
-    // TODO QT4: IMPLEMENT!!!
-    /*show_x_scales_ = enabled;*/
+    show_x_scales_ = enabled;
 }
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::showYScales(bool enabled)
 {
-    // TODO QT4: IMPLEMENT!!!
-    /*show_y_scales_ = enabled;*/
+    show_y_scales_ = enabled;
 }
 
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::showChannelLabels(bool enabled)
 {
-    // TODO QT4: IMPLEMENT!!!
- /*   show_channel_labels_ = enabled;*/
+    show_channel_labels_ = enabled;
 }
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::setXGridVisible(bool visible)
 {
-    // TODO QT4: IMPLEMENT!!!
-    /*show_x_grid_ = visible;*/
+    show_x_grid_ = visible;
 }
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::setYGridVisible(bool visible)
 {
-    // TODO QT4: IMPLEMENT!!!
-    /*show_y_grid_ = visible;*/
+    show_y_grid_ = visible;
 }
 
 //-------------------------------------------------------------------------
