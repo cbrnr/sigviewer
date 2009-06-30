@@ -1,4 +1,4 @@
-#include "x_axis_graphics_item.h"
+#include "x_axis_widget_4.h"
 #include "signal_browser_view.h"
 #include "signal_browser_model_4.h"
 

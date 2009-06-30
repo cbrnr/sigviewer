@@ -3,8 +3,8 @@
 #include "signal_browser_model_4.h"
 #include "signal_browser_view.h"
 #include "signal_graphics_item.h"
-#include "y_axis_graphics_item.h"
-#include "x_axis_graphics_item.h"
+#include "y_axis_widget_4.h"
+#include "x_axis_widget_4.h"
 #include "event_graphics_item.h"
 
 #include "../main_window_model.h"

@@ -4,8 +4,8 @@
 #include "signal_browser_model.h"
 #include "signal_graphics_item.h"
 #include "event_graphics_item.h"
-#include "y_axis_graphics_item.h"
-#include "x_axis_graphics_item.h"
+#include "y_axis_widget_4.h"
+#include "x_axis_widget_4.h"
 #include "../label_widget.h"
 
 

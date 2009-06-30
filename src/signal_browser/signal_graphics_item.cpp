@@ -2,7 +2,7 @@
 #include "event_graphics_item.h"
 #include "signal_browser_view.h"
 #include "signal_browser_model_4.h"
-#include "y_axis_graphics_item.h"
+#include "y_axis_widget_4.h"
 #include "../base/signal_data_block.h"
 #include "../base/signal_buffer.h"
 #include "../base/signal_channel.h"
