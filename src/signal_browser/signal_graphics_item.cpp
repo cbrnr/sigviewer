@@ -439,7 +439,7 @@ void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 
             // add new event item
             SignalEvent new_event(0, 0);
-            EventGraphicsItem* selected_event_item
+            QSharedPointer<EventGraphicsItem> selected_event_item
                 = signal_browser_model_.getSelectedEventItem();
 
             if (selected_event_item)
@@ -466,11 +466,11 @@ void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
                                   signal_buffer_.getEventSamplerate()));
 
             new_event.setDuration(0);
-            EventGraphicsItem* event_item
+            QSharedPointer<EventGraphicsItem> event_item
                     = signal_browser_model_.addEvent(new_event);
 
             // edit new event item
-            signal_browser_model_.setSelectedEventItem(0);
+            signal_browser_model_.unsetSelectedEventItem();
             new_event_ = true;
             created_event_item_ = event_item;
             event_item->startMouseMoveEnd();

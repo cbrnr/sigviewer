@@ -17,6 +17,7 @@ class QTextStream;
 #include <QPointer>
 #include <QObject>
 #include <QMap>
+#include <QSharedPointer>
 
 #include <map>
 
@@ -134,9 +135,11 @@ public:
 
     /// TODO QT4: also some addEvent-method is needed which returns the
     ///           newly created EventGraphicsItem!!!
-    EventGraphicsItem* addEvent(const SignalEvent& event, bool update = true);
-    void setSelectedEventItem(EventGraphicsItem* item);
-    EventGraphicsItem* getSelectedEventItem();
+    QSharedPointer<EventGraphicsItem> addEvent(const SignalEvent& event, bool update = true);
+    void setSelectedEventItem(QSharedPointer<EventGraphicsItem> item);
+    void unsetSelectedEventItem();
+    QSharedPointer<EventGraphicsItem> getSelectedEventItem();
+    QSharedPointer<EventGraphicsItem> getEventItem(int32 id);
     void setSelectedEventToAllChannels();
     void changeSelectedEventChannel();
     void copySelectedEventToChannels();
@@ -173,7 +176,7 @@ private:
 
 
     typedef std::map<int32, SignalGraphicsItem*> Int2SignalGraphicsItemPtrMap;
-    typedef QMap<int32, EventGraphicsItem*> Int2EventGraphicsItemPtrMap;
+    typedef QMap<int32, QSharedPointer<EventGraphicsItem> > Int2EventGraphicsItemPtrMap;
 
     typedef std::map<int32, int32> Int2IntMap;
 
@@ -195,7 +198,7 @@ private:
     Int2EventGraphicsItemPtrMap id2event_item_;
 
     Int2IntMap channel2y_pos_;
-    EventGraphicsItem* selected_event_item_;
+    QSharedPointer<EventGraphicsItem> selected_event_item_;
 
     // parameters
     bool release_buffer_;

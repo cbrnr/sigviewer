@@ -380,10 +380,10 @@ void SignalBrowserModel::initBuffer()
         {
             // std::cout << "SignalBrowserModel::initBuffer created EventGraphicsItem" << std::endl;
             int32 event_id = signal_buffer_.eventNumber2ID(event_nr);
-            id2event_item_[event_id] = new EventGraphicsItem(event_id,
+            id2event_item_[event_id] = QSharedPointer<EventGraphicsItem> (new EventGraphicsItem (event_id,
                                                            signal_buffer_,
                                                            *this,
-                                                           signal_browser_view_);
+                                                           signal_browser_view_));
         }
     }
 }
@@ -605,7 +605,7 @@ void SignalBrowserModel::updateLayout()
             if (event_iter.value() == selected_event_item_)
             {
                 selected_event_item_->setSelected(false);
-                selected_event_item_ = 0;
+                selected_event_item_.clear();
                 main_window_model_.setSelectionState(
                                         MainWindowModel::SELECTION_STATE_NONE);
             }
@@ -857,7 +857,7 @@ void SignalBrowserModel::setEventChanged(uint32 id, bool update)
         return;
     }
 
-    EventGraphicsItem* event_item = id2event_item_[id];
+    QSharedPointer<EventGraphicsItem> event_item = id2event_item_[id];
     Int2IntMap::iterator y_pos_iter;
 
     y_pos_iter = channel2y_pos_.find(event->getChannel());
@@ -916,10 +916,10 @@ void SignalBrowserModel::removeEvent(uint32 id, bool update)
         return;
     }
 
-    EventGraphicsItem* event_item = it.value();
+    QSharedPointer<EventGraphicsItem> event_item = it.value();
 
     id2event_item_.erase(it);
-    delete event_item;
+    // delete event_item;
     signal_buffer_.removeEvent(id);
 
     if (update)
@@ -932,13 +932,13 @@ void SignalBrowserModel::removeEvent(uint32 id, bool update)
 
 //-----------------------------------------------------------------------------
 // add event
-EventGraphicsItem* SignalBrowserModel::addEvent(const SignalEvent& event,
+QSharedPointer<EventGraphicsItem> SignalBrowserModel::addEvent(const SignalEvent& event,
                                               bool update)
 {
     int32 event_id = signal_buffer_.addEvent(event);
-    EventGraphicsItem* event_item = new EventGraphicsItem(event_id,
+    QSharedPointer<EventGraphicsItem> event_item (new EventGraphicsItem(event_id,
                                                       signal_buffer_,
-                                                      *this, signal_browser_view_);
+                                                      *this, signal_browser_view_));
 
     id2event_item_[event_id] = event_item;
     setEventChanged(event_id, update);
@@ -980,7 +980,7 @@ EventGraphicsItem* SignalBrowserModel::addEvent(const SignalEvent& event,
 
 //-----------------------------------------------------------------------------
 // set selected event item
-void SignalBrowserModel::setSelectedEventItem(EventGraphicsItem* item)
+void SignalBrowserModel::setSelectedEventItem(QSharedPointer<EventGraphicsItem> item)
 {
 //    if (selected_event_item_)
 //    {
@@ -988,8 +988,9 @@ void SignalBrowserModel::setSelectedEventItem(EventGraphicsItem* item)
 //    }
 
     selected_event_item_ = item;
+    std::cout << "setting selected " << selected_event_item_.data() << " (should be " << item.data() << ")" << std::endl;
 
-    if (!selected_event_item_)
+    if (selected_event_item_.isNull())
     {
         main_window_model_.setSelectionState(
                                 MainWindowModel::SELECTION_STATE_NONE);
@@ -1014,10 +1015,29 @@ void SignalBrowserModel::setSelectedEventItem(EventGraphicsItem* item)
 }
 
 //-----------------------------------------------------------------------------
+// unset selected event item
+void SignalBrowserModel::unsetSelectedEventItem()
+{
+    selected_event_item_.clear();
+}
+
+
+//-----------------------------------------------------------------------------
 // get selected event item
-EventGraphicsItem* SignalBrowserModel::getSelectedEventItem()
+QSharedPointer<EventGraphicsItem> SignalBrowserModel::getSelectedEventItem()
 {
     return selected_event_item_;
+}
+
+//-----------------------------------------------------------------------------
+// get event item
+QSharedPointer<EventGraphicsItem> SignalBrowserModel::getEventItem(int32 id)
+{
+    Int2EventGraphicsItemPtrMap::iterator it = id2event_item_.find(id);
+    if (it != id2event_item_.end())
+        return *it;
+    else
+        return QSharedPointer<EventGraphicsItem>(0);
 }
 
 //-----------------------------------------------------------------------------
@@ -1228,7 +1248,7 @@ void SignalBrowserModel::removeSelectedEvent()
 
     uint32 id = selected_event_item_->getId();
 
-    selected_event_item_ = 0;
+    selected_event_item_.clear();
     main_window_model_.setSelectionState(MainWindowModel::SELECTION_STATE_NONE);
     removeEvent(id);
 }

@@ -23,6 +23,7 @@
 // QT4
 #include "signal_browser/signal_browser_model_4.h"
 #include "signal_browser/signal_browser_view.h"
+#include "signal_browser/delete_event_undo_command.h"
 
 #include <QString>
 #include <QApplication>
@@ -30,6 +31,7 @@
 #include <QAction>
 #include <QTextStream>
 #include <QSettings>
+#include <iostream>
 
 namespace BioSig_
 {
@@ -943,7 +945,12 @@ void MainWindowModel::editDeleteAction()
         return;
     }
 
+#ifndef QT4_PORTED
     signal_browser_model_->removeSelectedEvent();
+#else
+    QUndoCommand* deleteCommand = new PortingToQT4_::DeleteEventUndoCommand (*signal_browser_model_, signal_browser_model_->getSelectedEventItem());
+    undo_stack_.push(deleteCommand);
+#endif
 }
 
 // edit change channel action
@@ -1015,10 +1022,11 @@ void MainWindowModel::mouseModeNewAction()
         return;
     }
 
-    signal_browser_model_->setSelectedEventItem(0);
 #ifndef QT4_PORTED
+    signal_browser_model_->setSelectedEventItem(0);
     signal_browser_model_->setMode(SignalBrowserModel::MODE_NEW);
 #else
+    signal_browser_model_->unsetSelectedEventItem();
     signal_browser_model_->setMode(PortingToQT4_::SignalBrowserModel::MODE_NEW);
     signal_browser_->setScrollMode(false);
 #endif

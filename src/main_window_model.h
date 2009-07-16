@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QStringList>
 #include <QString>
+#include <QUndoStack>
 
 class QAction;
 class QTextStream;
@@ -140,6 +141,7 @@ private:
     QString log_string_;
     QString secs_per_page_;
     bool overflow_detection_;
+    QUndoStack undo_stack_;
 };
 
 } // namespace BioSig_

@@ -101,6 +101,8 @@ void EventGraphicsItem::paint ( QPainter * painter, const QStyleOptionGraphicsIt
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
 {
+//    std::cout << "clicked on event " << id_ << std::endl;
+//    event->ignore();
     event_handling_mutex_.lock();
 
     if (state_ != STATE_NONE)
@@ -165,15 +167,15 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
         case ACTION_SELECT:
             {
                 state_ = STATE_NONE;
-                EventGraphicsItem* old_selected_item
+                QSharedPointer<EventGraphicsItem> old_selected_item
                     = signal_browser_model_.getSelectedEventItem();
-                if (old_selected_item)
+                if (!(old_selected_item.isNull()))
                 {
                     old_selected_item->is_selected_ = false;
                     old_selected_item->update();
                 }
                 is_selected_ = true;
-                signal_browser_model_.setSelectedEventItem(this);
+                signal_browser_model_.setSelectedEventItem(signal_browser_model_.getEventItem(id_));
                 update();
             }
             break;
@@ -258,7 +260,7 @@ void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event
 //    }
 
 
-    EventGraphicsItem* old_selected_item;
+    QSharedPointer<EventGraphicsItem> old_selected_item;
     old_selected_item = signal_browser_model_.getSelectedEventItem();
     if (old_selected_item == this)
     {
@@ -291,7 +293,7 @@ void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event
 EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneMouseEvent* e)
 {
     SignalEvent* event = signal_buffer_.getEvent(id_);
-    EventGraphicsItem* old_selected_item
+    QSharedPointer<EventGraphicsItem> old_selected_item
         = signal_browser_model_.getSelectedEventItem();
     QPoint mouse_pos (e->scenePos().x(), e->scenePos().y());  //canvas_view->inverseWorldMatrix().map(e->pos());
 
@@ -302,7 +304,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
         case SignalBrowserMouseHandling::SELECT_RESIZE_EVENT_ACTION:
             {
                 // select event
-                if (!old_selected_item)
+                if (old_selected_item.isNull())
                 {
                     std::cout << "select" << std::endl;
                     return ACTION_SELECT;
@@ -314,7 +316,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
                 // move event end
                 QRect move_end_rect(old_rect.right() - tmp, old_rect.top(),
                                     tmp + move_mouse_range_, old_rect.height());
-                if (this == old_selected_item &&
+                if (id_ == old_selected_item->id_ &&
                     move_end_rect.contains(mouse_pos))
                 {
                     std::cout << "action move end" << std::endl;
@@ -325,7 +327,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
                 QRect move_begin_rect(old_rect.left() - move_mouse_range_,
                                       old_rect.top(), tmp + move_mouse_range_,
                                       old_rect.height());
-                if (this == old_selected_item &&
+                if (id_ == old_selected_item->id_ &&
                     move_begin_rect.contains(mouse_pos))
                 {
                     std::cout << "action move begin" << std::endl;
@@ -333,7 +335,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
                 }
 
                 // select smallest clicked event
-                if (old_selected_item != this &&
+                if (old_selected_item->id_ != id_ &&
                     (!old_rect.contains(mouse_pos) ||
                      old_selected_item->sceneBoundingRect().width() > sceneBoundingRect().width() ||
                      (old_selected_item->sceneBoundingRect().width() == sceneBoundingRect().width() &&
@@ -345,7 +347,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
             }
             break;
         case SignalBrowserMouseHandling::SHIFT_EVENT_TO_CHANNEL_ACTION:
-            if (this == old_selected_item &&
+            if (this == old_selected_item.data() &&
                 old_selected_item->boundingRect().contains(mouse_pos) &&
                 event->getChannel() != SignalEvent::UNDEFINED_CHANNEL)
             {
@@ -353,7 +355,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
             }
             break;
         case SignalBrowserMouseHandling::COPY_EVENT_TO_CHANNEL_ACTION:
-            if (this == old_selected_item &&
+            if (this == old_selected_item.data() &&
                 old_selected_item->boundingRect().contains(mouse_pos) &&
                 event->getChannel() != SignalEvent::UNDEFINED_CHANNEL)
             {

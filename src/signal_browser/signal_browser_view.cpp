@@ -134,11 +134,11 @@ void SignalBrowserView::removeSignalGraphicsItem (int32 channel_nr)
 }
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::addEventGraphicsItem (EventGraphicsItem* event_graphics_item)
+void SignalBrowserView::addEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item)
 {
     // TODO: really remove before add????
-    graphics_scene_->removeItem(event_graphics_item);
-    graphics_scene_->addItem(event_graphics_item);
+    graphics_scene_->removeItem(event_graphics_item.data());
+    graphics_scene_->addItem(event_graphics_item.data());
 
     graphics_view_->update();
 }
