@@ -307,6 +307,14 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
 
 }
 
+//-----------------------------------------------------------------------------
+void MainWindowModel::undoAction()
+{
+    undo_stack_.undo();
+}
+
+
+//-----------------------------------------------------------------------------
 // file open action
 void MainWindowModel::fileOpenAction()
 {

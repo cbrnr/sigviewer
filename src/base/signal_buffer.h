@@ -11,6 +11,7 @@
 #include <QMap>
 #include <QVector>
 #include <QMutex>
+#include <QSharedPointer>
 
 class QTextStream;
 
@@ -101,7 +102,7 @@ public:
 
     uint32 getNumberEvents() const;
     int32 eventNumber2ID(uint32 event_number) const;
-    SignalEvent* getEvent(uint32 event_id);
+    QSharedPointer<SignalEvent> getEvent(uint32 event_id);
     int32 addEvent(const SignalEvent& event);
     void removeEvent(uint32 event_id);
     double getEventSamplerate() const;
@@ -130,7 +131,7 @@ private:
     };
 
 private:
-    typedef QMap<uint32, SignalEvent*> Int2SignalEventPtrMap;
+    typedef QMap<uint32, QSharedPointer<SignalEvent> > Int2SignalEventPtrMap;
     typedef QMap<uint32, SubBuffers*> Int2SubBuffersPtrMap;
     typedef QVector<SignalEvent> SignalEventVector;
 

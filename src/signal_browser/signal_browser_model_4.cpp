@@ -586,7 +586,7 @@ void SignalBrowserModel::updateLayout()
          event_iter++)
     {
         // std::cout << "blub" << std::endl;
-        SignalEvent* event = signal_buffer_.getEvent(event_iter.key());
+        QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(event_iter.key());
         if (!event)
         {
             *log_stream_ << "SignalBrowserModel::updateLayout Error: "
@@ -849,7 +849,7 @@ void SignalBrowserModel::setEventChanged(uint32 id, bool update)
         return;
     }
 
-    SignalEvent* event = signal_buffer_.getEvent(id);
+    QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(id);
     if (!event)
     {
         *log_stream_ << "SignalBrowserModel::setEventChanged "
@@ -1050,7 +1050,7 @@ void SignalBrowserModel::setSelectedEventToAllChannels()
     }
 
     uint32 id = selected_event_item_->getId();
-    SignalEvent* event = signal_buffer_.getEvent(id);
+    QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(id);
 
     event->setChannel(SignalEvent::UNDEFINED_CHANNEL);
     main_window_model_
@@ -1069,7 +1069,7 @@ void SignalBrowserModel::changeSelectedEventChannel()
     }
 
     uint32 id = selected_event_item_->getId();
-    SignalEvent* event = signal_buffer_.getEvent(id);
+    QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(id);
 
     // generate channel list
     int32 current_item = 0;
@@ -1132,7 +1132,7 @@ void SignalBrowserModel::copySelectedEventToChannels()
     }
 
     uint32 id = selected_event_item_->getId();
-    SignalEvent* event = signal_buffer_.getEvent(id);
+    QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(id);
     CopyEventDialog copy_event_dialog(basic_header_, signal_browser_view_);
 
     for (uint32 channel_nr = 0;
@@ -1176,7 +1176,7 @@ void SignalBrowserModel::copySelectedEventToChannels()
 // change selected event type
 void SignalBrowserModel::changeSelectedEventType()
 {
-    SignalEvent* event = 0;
+    QSharedPointer<SignalEvent> event (0);
 
     if (selected_event_item_)
         event = signal_buffer_.getEvent(selected_event_item_->getId());

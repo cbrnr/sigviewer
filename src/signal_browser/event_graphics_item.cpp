@@ -3,6 +3,7 @@
 #include "signal_browser_model_4.h"
 #include "signal_browser_view.h"
 #include "../base/signal_buffer.h"
+#include "../base/signal_event.h"
 
 #include "../main_window_model.h"
 #include "../event_color_manager.h"
@@ -186,7 +187,7 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
 {
-    SignalEvent* event = signal_buffer_.getEvent(id_);
+    QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(id_);
     QPoint mouse_pos (mouse_event->scenePos().x(), mouse_event->scenePos().y()); // event->canvas_view->inverseWorldMatrix().map(e->pos());
     switch(state_)
     {
@@ -274,7 +275,7 @@ void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event
     }
     else
     {
-        SignalEvent* event = signal_buffer_.getEvent(id_);
+        QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(id_);
         EventTableFileReader& event_table_reader
          = signal_browser_model_.getMainWindowModel().getEventTableFileReader();
         QString event_name = event_table_reader.getEventName(event->getType());
@@ -292,7 +293,7 @@ void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event
 // get mouse press action
 EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneMouseEvent* e)
 {
-    SignalEvent* event = signal_buffer_.getEvent(id_);
+    QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(id_);
     QSharedPointer<EventGraphicsItem> old_selected_item
         = signal_browser_model_.getSelectedEventItem();
     QPoint mouse_pos (e->scenePos().x(), e->scenePos().y());  //canvas_view->inverseWorldMatrix().map(e->pos());

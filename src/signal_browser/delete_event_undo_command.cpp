@@ -1,5 +1,7 @@
 #include "delete_event_undo_command.h"
 
+#include <iostream>
+
 namespace BioSig_
 {
 
@@ -23,13 +25,17 @@ DeleteEventUndoCommand::~DeleteEventUndoCommand ()
 //-----------------------------------------------------------------------------
 void DeleteEventUndoCommand::undo ()
 {
+    std::cout << "DeleteEventUndoCommand::undo not implemented yet!!!" << std::endl;
+    //signal_browser_model_.addEvent(event_item_);
     event_item_->show();
 }
 
 //-----------------------------------------------------------------------------
 void DeleteEventUndoCommand::redo ()
 {
-    event_item_->hide();
+    std::cout << "DeleteEventUndoCommand::redo not implemented yet!!!" << std::endl;
+    signal_browser_model_.removeEvent(event_item_->getId());
+    // event_item_->hide();
 }
 
 }

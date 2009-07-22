@@ -122,6 +122,11 @@ void MainWindow::initIconSets()
 // init actions
 void MainWindow::initActions()
 {
+    undo_action_ = new QAction(tr("Undo"), this);
+    undo_action_->setShortcut(tr("Ctrl+Z"));
+    connect(undo_action_, SIGNAL(triggered()),
+            &model_, SLOT(undoAction()));
+
     file_open_action_ = new QAction(file_open_icon_, tr("&Open..."), this);
     file_open_action_->setObjectName("file_open_action_");
     file_open_action_->setShortcut(tr("Ctrl+O"));
@@ -461,6 +466,8 @@ void MainWindow::initMenus()
     file_menu_->addAction(file_exit_action_);
 
     edit_menu_ = menuBar()->addMenu(tr("&Edit"));
+    edit_menu_->addAction(undo_action_);
+    edit_menu_->addSeparator();
     edit_menu_->addAction(edit_to_all_channels_action_);
     edit_menu_->addAction(edit_copy_to_channels_action_);
     edit_menu_->addAction(edit_delete_action_);

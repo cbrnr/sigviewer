@@ -444,7 +444,7 @@ void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 
             if (selected_event_item)
             {
-                SignalEvent* selected_event
+                QSharedPointer<SignalEvent> selected_event
                     = signal_buffer_.getEvent(selected_event_item->getId());
                 new_event.setType(signal_browser_model_.getActualEventCreationType());
 

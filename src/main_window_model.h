@@ -74,6 +74,7 @@ public:
 public slots:
 
     // actions
+    void undoAction();
     void fileOpenAction();
     void fileSaveAction();
     void fileSaveAsAction();

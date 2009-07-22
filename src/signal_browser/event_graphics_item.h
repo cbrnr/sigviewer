@@ -5,6 +5,7 @@
 #include "../base/user_types.h"
 
 #include <QGraphicsItem>
+#include <QSharedPointer>
 #include <QColor>
 
 class QMutex;
@@ -13,6 +14,7 @@ namespace BioSig_
 {
 
 class SignalBuffer;
+class SignalEvent;
 
 namespace PortingToQT4_
 {
@@ -76,6 +78,7 @@ protected:
     int32 height_;
     int32 width_;
     bool is_selected_;
+    QSharedPointer<SignalEvent> signal_event_;
     static int move_mouse_range_;
     static QMutex event_handling_mutex_;
 

@@ -76,13 +76,16 @@ SignalBuffer::~SignalBuffer()
     {
         delete buffer_iter.value();
     }
-    Int2SignalEventPtrMap::iterator event_iter;
-    for (event_iter = id2signal_events_map_.begin();
-         event_iter != id2signal_events_map_.end();
-         event_iter++)
-    {
-        delete event_iter.value();
-    }
+
+//    SharedPointer must not be deleted by hand!
+//
+//    Int2SignalEventPtrMap::iterator event_iter;
+//    for (event_iter = id2signal_events_map_.begin();
+//         event_iter != id2signal_events_map_.end();
+//         event_iter++)
+//    {
+//        delete event_iter.value();
+//    }
 
 }
 
@@ -291,7 +294,7 @@ void SignalBuffer::initLoadEvents()
             continue;
         }
         id2signal_events_map_[next_event_id_]
-            = new SignalEvent(*iter, next_event_id_);
+            = QSharedPointer<SignalEvent>(new SignalEvent(*iter, next_event_id_));
         next_event_id_++;
     }
 }
@@ -460,17 +463,17 @@ int32 SignalBuffer::eventNumber2ID(uint32 event_number) const
 }
 
 // get event
-SignalEvent* SignalBuffer::getEvent(uint32 event_id)
+QSharedPointer<SignalEvent> SignalBuffer::getEvent(uint32 event_id)
 {
     QMutexLocker lock (&mutex_);
     if (!checkReadyState("getEvent"))
     {
-        return 0;
+        return QSharedPointer<SignalEvent>(0);
     }
     Int2SignalEventPtrMap::iterator iter = id2signal_events_map_.find(event_id);
     if (iter == id2signal_events_map_.end())
     {
-        return 0; // invalid event_id
+        return QSharedPointer<SignalEvent>(0); // invalid event_id
     }
     return iter.value();
 }
@@ -484,7 +487,7 @@ int32 SignalBuffer::addEvent(const SignalEvent& event)
         return -1;
     }
     id2signal_events_map_[next_event_id_]
-        = new SignalEvent(event, next_event_id_);
+        = QSharedPointer<SignalEvent>(new SignalEvent(event, next_event_id_));
     return next_event_id_++;
 }
 
@@ -497,7 +500,7 @@ void SignalBuffer::removeEvent(uint32 event_id)
     {
         return;
     }
-    delete iter.value();
+    // delete iter.value();
     id2signal_events_map_.erase(iter);
 }
 
