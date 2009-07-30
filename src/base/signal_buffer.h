@@ -103,7 +103,7 @@ public:
     uint32 getNumberEvents() const;
     int32 eventNumber2ID(uint32 event_number) const;
     QSharedPointer<SignalEvent> getEvent(uint32 event_id);
-    int32 addEvent(const SignalEvent& event);
+    int32 addEvent(QSharedPointer<SignalEvent> event);
     void removeEvent(uint32 event_id);
     double getEventSamplerate() const;
 

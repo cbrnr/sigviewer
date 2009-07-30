@@ -10,6 +10,7 @@
 
 #include <QVector>
 #include <QPointer>
+#include <QSharedPointer>
 
 class QTextStream;
 class QString;

@@ -25,17 +25,13 @@ DeleteEventUndoCommand::~DeleteEventUndoCommand ()
 //-----------------------------------------------------------------------------
 void DeleteEventUndoCommand::undo ()
 {
-    std::cout << "DeleteEventUndoCommand::undo not implemented yet!!!" << std::endl;
-    //signal_browser_model_.addEvent(event_item_);
-    event_item_->show();
+    signal_browser_model_.addEvent(event_item_);
 }
 
 //-----------------------------------------------------------------------------
 void DeleteEventUndoCommand::redo ()
 {
-    std::cout << "DeleteEventUndoCommand::redo not implemented yet!!!" << std::endl;
     signal_browser_model_.removeEvent(event_item_->getId());
-    // event_item_->hide();
 }
 
 }

@@ -135,7 +135,8 @@ public:
 
     /// TODO QT4: also some addEvent-method is needed which returns the
     ///           newly created EventGraphicsItem!!!
-    QSharedPointer<EventGraphicsItem> addEvent(const SignalEvent& event, bool update = true);
+    QSharedPointer<EventGraphicsItem> addEvent(QSharedPointer<SignalEvent> event, bool update = true);
+    void addEvent(QSharedPointer<EventGraphicsItem> event, bool update = true);
     void setSelectedEventItem(QSharedPointer<EventGraphicsItem> item);
     void unsetSelectedEventItem();
     QSharedPointer<EventGraphicsItem> getSelectedEventItem();
@@ -180,6 +181,7 @@ private:
 
     typedef std::map<int32, int32> Int2IntMap;
 
+    void resetEventSizeAndPos (QSharedPointer<EventGraphicsItem> event);
     bool checkReadyState(const QString& function);
     bool checkSignalBrowserPtr(const QString function);
 

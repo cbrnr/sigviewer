@@ -5,6 +5,7 @@
 #include "y_axis_widget_4.h"
 #include "../base/signal_data_block.h"
 #include "../base/signal_buffer.h"
+#include "../base/signal_event.h"
 #include "../base/signal_channel.h"
 #include "../base/math_utils.h"
 #include "../signal_browser_mouse_handling.h"
@@ -341,6 +342,8 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     //}
 }
 
+
+
 //-----------------------------------------------------------------------------
 // get range from buffer
 void SignalGraphicsItem::getRangeFromBuffer(float64 factor)
@@ -438,7 +441,7 @@ void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
             }
 
             // add new event item
-            SignalEvent new_event(0, 0);
+            QSharedPointer<SignalEvent> new_event(new SignalEvent(0, 0));
             QSharedPointer<EventGraphicsItem> selected_event_item
                 = signal_browser_model_.getSelectedEventItem();
 
@@ -446,26 +449,26 @@ void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
             {
                 QSharedPointer<SignalEvent> selected_event
                     = signal_buffer_.getEvent(selected_event_item->getId());
-                new_event.setType(signal_browser_model_.getActualEventCreationType());
+                new_event->setType(signal_browser_model_.getActualEventCreationType());
 
                 if (selected_event->getChannel() ==
                     SignalEvent::UNDEFINED_CHANNEL)
-                    new_event.setChannel(SignalEvent::UNDEFINED_CHANNEL);
+                    new_event->setChannel(SignalEvent::UNDEFINED_CHANNEL);
                 else
-                    new_event.setChannel(signal_channel_.getNumber());
+                    new_event->setChannel(signal_channel_.getNumber());
             }
             else
             {
-                new_event.setType(signal_browser_model_.getActualEventCreationType());
-                new_event.setChannel(signal_channel_.getNumber());
+                new_event->setType(signal_browser_model_.getActualEventCreationType());
+                new_event->setChannel(signal_channel_.getNumber());
             }
 
             QPointF mouse_pos (event->scenePos());
-            new_event.setPosition((int32)(mouse_pos.x() /
+            new_event->setPosition((int32)(mouse_pos.x() /
                                   signal_browser_model_.getPixelPerSec() *
                                   signal_buffer_.getEventSamplerate()));
 
-            new_event.setDuration(0);
+            new_event->setDuration(0);
             QSharedPointer<EventGraphicsItem> event_item
                     = signal_browser_model_.addEvent(new_event);
 

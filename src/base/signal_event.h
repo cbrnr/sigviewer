@@ -47,6 +47,7 @@ public:
     int16 getChannel() const;
     uint32 getDuration() const;
 
+    void setId (int32 id);
     void setPosition(uint32 position);
     void setType(uint16 type);
     void setChannel(int16 channel);

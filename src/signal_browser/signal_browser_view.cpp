@@ -143,6 +143,13 @@ void SignalBrowserView::addEventGraphicsItem (QSharedPointer<EventGraphicsItem> 
     graphics_view_->update();
 }
 
+//-----------------------------------------------------------------------------
+void SignalBrowserView::removeEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item)
+{
+    graphics_scene_->removeItem(event_graphics_item.data());
+    graphics_view_->update();
+}
+
 
 //-----------------------------------------------------------------------------
 int32 SignalBrowserView::getVisibleWidth () const

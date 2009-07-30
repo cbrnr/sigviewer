@@ -687,7 +687,7 @@ void MainWindowModel::fileImportEventsAction()
     {
         if (event_types.contains((*it).getType()))
         {
-            signal_browser_model_->addEvent(*it, false);
+            signal_browser_model_->addEvent(QSharedPointer<SignalEvent>(new SignalEvent(*it)), false);
             if (!inconsistent && number_channels > 0 &&
                 ((*it).getChannel() >= number_channels))
                 // ||

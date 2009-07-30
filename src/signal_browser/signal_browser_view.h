@@ -39,6 +39,7 @@ public:
     void addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item);
     void removeSignalGraphicsItem (int32 channel_nr);
     void addEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item);
+    void removeEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item);
 
     void setScrollMode (bool activated);
     void resizeScene (int32 width, int32 height);

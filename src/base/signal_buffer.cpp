@@ -479,15 +479,15 @@ QSharedPointer<SignalEvent> SignalBuffer::getEvent(uint32 event_id)
 }
 
 // add event
-int32 SignalBuffer::addEvent(const SignalEvent& event)
+int32 SignalBuffer::addEvent(QSharedPointer<SignalEvent> event)
 {
     QMutexLocker lock (&mutex_);
     if (!checkReadyState("addEvent"))
     {
         return -1;
     }
-    id2signal_events_map_[next_event_id_]
-        = QSharedPointer<SignalEvent>(new SignalEvent(event, next_event_id_));
+    event->setId(next_event_id_);
+    id2signal_events_map_[next_event_id_] = event;
     return next_event_id_++;
 }
 

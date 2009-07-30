@@ -13,6 +13,7 @@ namespace BioSig_
 
 class SignalBuffer;
 class SignalChannel;
+class SignalEvent;
 
 namespace PortingToQT4_
 {
@@ -31,7 +32,6 @@ public:
 
     void setHeight (int32 height);
     virtual QRectF boundingRect () const;
-
 
     void getRangeFromBuffer(float64 factor);
     void updateYGridIntervall();

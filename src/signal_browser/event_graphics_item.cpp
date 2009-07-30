@@ -33,13 +33,13 @@ int EventGraphicsItem::move_mouse_range_ = 5;
 QMutex EventGraphicsItem::event_handling_mutex_;
 
 //-----------------------------------------------------------------------------
-EventGraphicsItem::EventGraphicsItem(uint32 id, SignalBuffer& buffer, SignalBrowserModel& model,
-                    SignalBrowserView* browser)
+EventGraphicsItem::EventGraphicsItem(SignalBuffer& buffer, SignalBrowserModel& model,
+                    SignalBrowserView* browser, QSharedPointer<SignalEvent> signal_event)
 : signal_browser_model_ (model),
   signal_buffer_ (buffer),
-  id_ (id),
   state_ (STATE_NONE),
-  is_selected_ (false)
+  is_selected_ (false),
+  signal_event_ (signal_event)
 {
 }
 
@@ -51,7 +51,7 @@ EventGraphicsItem::~EventGraphicsItem ()
 //-----------------------------------------------------------------------------
 uint32 EventGraphicsItem                                                                                                                                                                                                                                                                                                                                    ::getId() const
 {
-    return id_;
+    return signal_event_->getId();
 }
 
 
@@ -71,12 +71,18 @@ void EventGraphicsItem::startMouseMoveEnd ()
 }
 
 //-----------------------------------------------------------------------------
+QSharedPointer<SignalEvent> EventGraphicsItem::getSignalEvent ()
+{
+    return signal_event_;
+}
+
+
+//-----------------------------------------------------------------------------
 void EventGraphicsItem::updateColor()
 {
     EventColorManager& event_color_manager
         = signal_browser_model_.getMainWindowModel().getEventColorManager();
-    color_ = event_color_manager.getEventColor(signal_buffer_.getEvent(id_)
-                                                                ->getType());
+    color_ = event_color_manager.getEventColor(signal_event_->getType());
 }
 
 
@@ -129,7 +135,7 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
             break;
         case ACTION_MOVE_END:
             state_ = STATE_MOVE_END;
-            std::cout << "move end " << id_ << std::endl;
+            //std::cout << "move end " << id_ << std::endl;
             /*canvas_view->addEventListener(SmartCanvasView::MOUSE_RELEASE_EVENT |
                                           SmartCanvasView::MOUSE_MOVE_EVENT,
                                           this);*/
@@ -176,7 +182,7 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
                     old_selected_item->update();
                 }
                 is_selected_ = true;
-                signal_browser_model_.setSelectedEventItem(signal_browser_model_.getEventItem(id_));
+                signal_browser_model_.setSelectedEventItem(signal_browser_model_.getEventItem(signal_event_->getId()));
                 update();
             }
             break;
@@ -187,7 +193,6 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
 {
-    QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(id_);
     QPoint mouse_pos (mouse_event->scenePos().x(), mouse_event->scenePos().y()); // event->canvas_view->inverseWorldMatrix().map(e->pos());
     switch(state_)
     {
@@ -195,13 +200,13 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
             break;
         case STATE_MOVE_BEGIN:
             {
-                int32 end_pos = event->getPosition() + event->getDuration();
+                int32 end_pos = signal_event_->getPosition() + signal_event_->getDuration();
                 int32 pos = (int32)(mouse_pos.x() /
                                     signal_browser_model_.getPixelPerSec() *
                                     signal_buffer_.getEventSamplerate());
-                event->setPosition(pos < end_pos ? pos : end_pos);
-                event->setDuration(end_pos - event->getPosition());
-                signal_browser_model_.setEventChanged(id_);
+                signal_event_->setPosition(pos < end_pos ? pos : end_pos);
+                signal_event_->setDuration(end_pos - signal_event_->getPosition());
+                signal_browser_model_.setEventChanged(signal_event_->getId());
             }
             break;
         case STATE_MOVE_END:
@@ -209,9 +214,9 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
                 int32 dur = (int32)(mouse_pos.x() /
                                     signal_browser_model_.getPixelPerSec() *
                                     signal_buffer_.getEventSamplerate()) -
-                            event->getPosition();
-                event->setDuration(dur > 0 ? dur : 0);
-                signal_browser_model_.setEventChanged(id_);
+                            signal_event_->getPosition();
+                signal_event_->setDuration(dur > 0 ? dur : 0);
+                signal_browser_model_.setEventChanged(signal_event_->getId());
             }
             break;
         /*case STATE_SHIFT_TO_CHANNEL:
@@ -245,7 +250,7 @@ void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event
     {
         return;
     }
-    std::cout << "context menu for event " << id_ << std::endl;
+    //std::cout << "context menu for event " << id_ << std::endl;
     QMenu* menu = new QMenu();
 
 //    MainWindow* main_window = signal_browser_model_.getMainWindowModel().getMainWindow();
@@ -275,10 +280,9 @@ void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event
     }
     else
     {
-        QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(id_);
         EventTableFileReader& event_table_reader
          = signal_browser_model_.getMainWindowModel().getEventTableFileReader();
-        QString event_name = event_table_reader.getEventName(event->getType());
+        QString event_name = event_table_reader.getEventName(signal_event_->getType());
         if (event_name.isEmpty())
         {
             event_name = "Undefined";
@@ -293,7 +297,6 @@ void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event
 // get mouse press action
 EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneMouseEvent* e)
 {
-    QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(id_);
     QSharedPointer<EventGraphicsItem> old_selected_item
         = signal_browser_model_.getSelectedEventItem();
     QPoint mouse_pos (e->scenePos().x(), e->scenePos().y());  //canvas_view->inverseWorldMatrix().map(e->pos());
@@ -317,7 +320,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
                 // move event end
                 QRect move_end_rect(old_rect.right() - tmp, old_rect.top(),
                                     tmp + move_mouse_range_, old_rect.height());
-                if (id_ == old_selected_item->id_ &&
+                if (signal_event_->getId() == old_selected_item->signal_event_->getId() &&
                     move_end_rect.contains(mouse_pos))
                 {
                     std::cout << "action move end" << std::endl;
@@ -328,7 +331,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
                 QRect move_begin_rect(old_rect.left() - move_mouse_range_,
                                       old_rect.top(), tmp + move_mouse_range_,
                                       old_rect.height());
-                if (id_ == old_selected_item->id_ &&
+                if (signal_event_->getId() == old_selected_item->signal_event_->getId() &&
                     move_begin_rect.contains(mouse_pos))
                 {
                     std::cout << "action move begin" << std::endl;
@@ -336,7 +339,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
                 }
 
                 // select smallest clicked event
-                if (old_selected_item->id_ != id_ &&
+                if (old_selected_item->signal_event_->getId() != signal_event_->getId() &&
                     (!old_rect.contains(mouse_pos) ||
                      old_selected_item->sceneBoundingRect().width() > sceneBoundingRect().width() ||
                      (old_selected_item->sceneBoundingRect().width() == sceneBoundingRect().width() &&
@@ -350,7 +353,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
         case SignalBrowserMouseHandling::SHIFT_EVENT_TO_CHANNEL_ACTION:
             if (this == old_selected_item.data() &&
                 old_selected_item->boundingRect().contains(mouse_pos) &&
-                event->getChannel() != SignalEvent::UNDEFINED_CHANNEL)
+                signal_event_->getChannel() != SignalEvent::UNDEFINED_CHANNEL)
             {
                 return ACTION_SHIFT_TO_CHANNEL;
             }
@@ -358,7 +361,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
         case SignalBrowserMouseHandling::COPY_EVENT_TO_CHANNEL_ACTION:
             if (this == old_selected_item.data() &&
                 old_selected_item->boundingRect().contains(mouse_pos) &&
-                event->getChannel() != SignalEvent::UNDEFINED_CHANNEL)
+                signal_event_->getChannel() != SignalEvent::UNDEFINED_CHANNEL)
             {
                 return ACTION_COPY_SHIFT_TO_CHANNEL;
             }

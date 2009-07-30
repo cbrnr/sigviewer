@@ -26,8 +26,9 @@ class SignalBrowserView;
 class EventGraphicsItem : public QGraphicsItem
 {
 public:
-    EventGraphicsItem(uint32 id, SignalBuffer& buffer, SignalBrowserModel& model,
-                    SignalBrowserView* browser);
+    EventGraphicsItem(SignalBuffer& buffer, SignalBrowserModel& model,
+                    SignalBrowserView* browser,
+                    QSharedPointer<SignalEvent> signal_event);
 
     virtual ~EventGraphicsItem ();
 
@@ -35,6 +36,7 @@ public:
 
     void setSize (int32 width, int32 height);
     void startMouseMoveEnd ();
+    QSharedPointer<SignalEvent> getSignalEvent ();
     void updateColor ();
 
     virtual QRectF boundingRect () const;
@@ -72,7 +74,6 @@ protected:
     SignalBrowserModel& signal_browser_model_;
     SignalBuffer& signal_buffer_;
     QColor color_;
-    uint32 id_;
     State state_;
 
     int32 height_;

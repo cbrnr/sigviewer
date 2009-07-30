@@ -69,6 +69,12 @@ uint32 SignalEvent::getDuration() const
     return duration_;
 }
 
+//-----------------------------------------------------------------------------
+void SignalEvent::setId (int32 id)
+{
+    id_ = id;
+}
+
 // set position
 void SignalEvent::setPosition(uint32 position)
 {
