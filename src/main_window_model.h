@@ -71,6 +71,13 @@ public:
     void setSelectionState(SelectionState selection_state);
     void setChanged();
 
+    //-------------------------------------------------------------------------
+    /// puts the given UndoCommand on the UndoStack (the stack cares for
+    /// destruction)
+    ///
+    /// @param command the command which should be executed
+    void executeUndoCommand (QUndoCommand* command);
+
 public slots:
 
     // actions

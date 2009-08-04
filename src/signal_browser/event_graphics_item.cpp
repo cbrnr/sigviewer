@@ -200,23 +200,15 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
             break;
         case STATE_MOVE_BEGIN:
             {
-                int32 end_pos = signal_event_->getPosition() + signal_event_->getDuration();
-                int32 pos = (int32)(mouse_pos.x() /
-                                    signal_browser_model_.getPixelPerSec() *
-                                    signal_buffer_.getEventSamplerate());
-                signal_event_->setPosition(pos < end_pos ? pos : end_pos);
-                signal_event_->setDuration(end_pos - signal_event_->getPosition());
-                signal_browser_model_.setEventChanged(signal_event_->getId());
+                setPos(mouse_event->scenePos().x(), pos().y());
+                width_ -= (mouse_event->pos().x() - mouse_event->lastPos().x());
+                update();
             }
             break;
         case STATE_MOVE_END:
             {
-                int32 dur = (int32)(mouse_pos.x() /
-                                    signal_browser_model_.getPixelPerSec() *
-                                    signal_buffer_.getEventSamplerate()) -
-                            signal_event_->getPosition();
-                signal_event_->setDuration(dur > 0 ? dur : 0);
-                signal_browser_model_.setEventChanged(signal_event_->getId());
+                width_ += (mouse_event->pos().x()  - mouse_event->lastPos().x());
+                update();
             }
             break;
         /*case STATE_SHIFT_TO_CHANNEL:
@@ -237,6 +229,24 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
 {
+    QPoint mouse_pos (event->scenePos().x(), event->scenePos().y());
+    switch(state_)
+    {
+        case STATE_MOVE_BEGIN:
+        {
+            uint32 pos = mouse_pos.x() * signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec();
+            int32 dur = width_ * signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec();
+
+            signal_browser_model_.resizeSelectedEvent(pos, dur);
+        }
+        break;
+        case STATE_MOVE_END:
+        {
+            int32 dur = width_ * signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec();
+            signal_browser_model_.resizeSelectedEvent(signal_event_->getPosition(), dur);
+        }
+        break;
+    }
     setCursor(QCursor(Qt::ArrowCursor));
     state_ = STATE_NONE;
 }

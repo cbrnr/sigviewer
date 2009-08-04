@@ -6,6 +6,7 @@
 #include "y_axis_widget_4.h"
 #include "x_axis_widget_4.h"
 #include "event_graphics_item.h"
+#include "resize_event_undo_command.h"
 
 #include "../main_window_model.h"
 #include "../label_widget.h"
@@ -1240,6 +1241,14 @@ void SignalBrowserModel::removeSelectedEvent()
     main_window_model_.setSelectionState(MainWindowModel::SELECTION_STATE_NONE);
     removeEvent(id);
 }
+
+//-----------------------------------------------------------------------------
+void SignalBrowserModel::resizeSelectedEvent (uint32 new_start_position, uint32 new_duration)
+{
+    ResizeEventUndoCommand* command = new ResizeEventUndoCommand (*this, selected_event_item_->getSignalEvent(), new_start_position, new_duration);
+    main_window_model_.executeUndoCommand(command);
+}
+
 /*
 // get channel nr
 int32 SignalBrowserModel::getChannelNr(uint32 shown_nr)

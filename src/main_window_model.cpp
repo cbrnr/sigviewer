@@ -1566,5 +1566,11 @@ void MainWindowModel::setChanged()
     }
 }
 
+void MainWindowModel::executeUndoCommand (QUndoCommand* command)
+{
+    undo_stack_.push(command);
+}
+
+
 } // namespace BioSig_
 
