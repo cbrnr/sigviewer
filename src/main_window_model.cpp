@@ -19,6 +19,7 @@
 #include "event_table_dialog.h"
 #include "event_color_manager.h"
 #include "settings_dialog.h"
+#include "command_stack.h"
 
 // QT4
 #include "signal_browser/signal_browser_model_4.h"
@@ -310,7 +311,7 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
 //-----------------------------------------------------------------------------
 void MainWindowModel::undoAction()
 {
-    undo_stack_.undo();
+    CommandStack::instance().undoLastCommand();
 }
 
 
@@ -957,7 +958,7 @@ void MainWindowModel::editDeleteAction()
     signal_browser_model_->removeSelectedEvent();
 #else
     QUndoCommand* deleteCommand = new PortingToQT4_::DeleteEventUndoCommand (*signal_browser_model_, signal_browser_model_->getSelectedEventItem());
-    undo_stack_.push(deleteCommand);
+    CommandStack::instance().executeCommand(deleteCommand);
 #endif
 }
 
@@ -1565,12 +1566,6 @@ void MainWindowModel::setChanged()
         setState(STATE_FILE_CHANGED);
     }
 }
-
-void MainWindowModel::executeUndoCommand (QUndoCommand* command)
-{
-    undo_stack_.push(command);
-}
-
 
 } // namespace BioSig_
 

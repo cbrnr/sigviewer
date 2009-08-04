@@ -2,9 +2,11 @@
 
 #include "signal_browser_model_4.h"
 #include "signal_browser_view.h"
+#include "resize_event_undo_command.h"
 #include "../base/signal_buffer.h"
 #include "../base/signal_event.h"
 
+#include "../command_stack.h"
 #include "../main_window_model.h"
 #include "../event_color_manager.h"
 #include "../signal_browser_mouse_handling.h"
@@ -200,14 +202,19 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
             break;
         case STATE_MOVE_BEGIN:
             {
-                setPos(mouse_event->scenePos().x(), pos().y());
-                width_ -= (mouse_event->pos().x() - mouse_event->lastPos().x());
+//                setPos(mouse_event->scenePos().x(), pos().y());
+                int32 diff = (mouse_event->pos().x() - mouse_event->lastPos().x());
+                setPos (pos().x() + diff, pos().y());
+                width_ -= diff;
+                scene()->update(mouse_pos.x(), pos().y(), width_ + diff, height_);
                 update();
             }
             break;
         case STATE_MOVE_END:
             {
-                width_ += (mouse_event->pos().x()  - mouse_event->lastPos().x());
+                int32 diff = (mouse_event->pos().x() - mouse_event->lastPos().x());
+                width_ += diff;
+                scene()->update(mouse_pos.x(), pos().y(), width_ - diff, height_);
                 update();
             }
             break;
@@ -235,15 +242,17 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
         case STATE_MOVE_BEGIN:
         {
             uint32 pos = mouse_pos.x() * signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec();
-            int32 dur = width_ * signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec();
+            int32 dur = width_ * (signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec());
 
-            signal_browser_model_.resizeSelectedEvent(pos, dur);
+            ResizeEventUndoCommand* command = new ResizeEventUndoCommand (signal_browser_model_, signal_event_, pos, dur);
+            CommandStack::instance().executeCommand (command);
         }
         break;
         case STATE_MOVE_END:
         {
-            int32 dur = width_ * signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec();
-            signal_browser_model_.resizeSelectedEvent(signal_event_->getPosition(), dur);
+            int32 dur = width_ * (signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec());
+            ResizeEventUndoCommand* command = new ResizeEventUndoCommand (signal_browser_model_, signal_event_, signal_event_->getPosition(), dur);
+            CommandStack::instance().executeCommand (command);
         }
         break;
     }

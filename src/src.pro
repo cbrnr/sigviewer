@@ -8,13 +8,13 @@ CONFIG += warn_on \
     thread \
     x86 \
     ppc
-
-debug {
+debug { 
     OBJECTS_DIR = ../tmp/debug
     MOC_DIR = ../tmp/debug
     RCC_DIR = ../tmp/debug
     UI_DIR = ../tmp/debug
-} else:release {
+}
+else:release { 
     OBJECTS_DIR = ../tmp/release
     MOC_DIR = ../tmp/release
     RCC_DIR = ../tmp/release
@@ -23,8 +23,6 @@ debug {
 
 # TODO: remove this define after porting!
 DEFINES += QT4_PORTED
-
-
 INCLUDEPATH += ../extern
 LIBS += -L../extern \
     -lbiosig
@@ -36,11 +34,9 @@ TRANSLATIONS += translations\sigviewer_de.ts \
     translations\sigviewer_en.ts \
     translations\sigviewer_es.ts \
     translations\sigviewer_fr.ts
-    
 include(base/base.pri)
-include(smart_canvas/smart_canvas.pri)	
+include(smart_canvas/smart_canvas.pri)
 include(signal_browser/signal_browser.pri)
-    
 HEADERS += basic_header_info_dialog.h \
     channel_selection_dialog.h \
     channel_separator_canvas_item.h \
@@ -63,7 +59,8 @@ HEADERS += basic_header_info_dialog.h \
     signal_canvas_item.h \
     x_axis_widget.h \
     x_grid_canvas_item.h \
-    y_axis_widget.h
+    y_axis_widget.h \
+    command_stack.h
 SOURCES += basic_header_info_dialog.cpp \
     channel_selection_dialog.cpp \
     channel_separator_canvas_item.cpp \
@@ -87,4 +84,5 @@ SOURCES += basic_header_info_dialog.cpp \
     sigviewer.cpp \
     x_axis_widget.cpp \
     x_grid_canvas_item.cpp \
-    y_axis_widget.cpp
+    y_axis_widget.cpp \
+    command_stack.cpp

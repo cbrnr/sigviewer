@@ -147,9 +147,6 @@ public:
     void changeSelectedEventType();
     void removeSelectedEvent();
 
-    //-------------------------------------------------------------------------
-    void resizeSelectedEvent (uint32 new_start_position, uint32 new_duration);
-
     void getEvents(SignalEventVector& event_vector);
     uint16 getActualEventCreationType () const;
 

@@ -10,7 +10,6 @@
 #include <QObject>
 #include <QStringList>
 #include <QString>
-#include <QUndoStack>
 
 class QAction;
 class QTextStream;
@@ -70,13 +69,6 @@ public:
     State getState();
     void setSelectionState(SelectionState selection_state);
     void setChanged();
-
-    //-------------------------------------------------------------------------
-    /// puts the given UndoCommand on the UndoStack (the stack cares for
-    /// destruction)
-    ///
-    /// @param command the command which should be executed
-    void executeUndoCommand (QUndoCommand* command);
 
 public slots:
 
@@ -149,7 +141,6 @@ private:
     QString log_string_;
     QString secs_per_page_;
     bool overflow_detection_;
-    QUndoStack undo_stack_;
 };
 
 } // namespace BioSig_

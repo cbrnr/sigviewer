@@ -159,6 +159,8 @@ void SignalGraphicsItem::autoScale(ScaleMode auto_zoom_type)
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
+    painter->drawRect(boundingRect());
+
     QRectF clip (option->exposedRect);
     painter->setClipping(true);
     painter->setClipRect(clip);

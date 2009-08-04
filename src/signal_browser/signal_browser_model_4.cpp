@@ -1242,13 +1242,6 @@ void SignalBrowserModel::removeSelectedEvent()
     removeEvent(id);
 }
 
-//-----------------------------------------------------------------------------
-void SignalBrowserModel::resizeSelectedEvent (uint32 new_start_position, uint32 new_duration)
-{
-    ResizeEventUndoCommand* command = new ResizeEventUndoCommand (*this, selected_event_item_->getSignalEvent(), new_start_position, new_duration);
-    main_window_model_.executeUndoCommand(command);
-}
-
 /*
 // get channel nr
 int32 SignalBrowserModel::getChannelNr(uint32 shown_nr)
