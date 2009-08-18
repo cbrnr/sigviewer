@@ -129,6 +129,7 @@ private:
     QToolBar* navigation_toolbar_;
 
     QAction* undo_action_;
+    QAction* redo_action_;
     QAction* file_open_action_;
     QAction* file_save_action_;
     QAction* file_save_as_action_;

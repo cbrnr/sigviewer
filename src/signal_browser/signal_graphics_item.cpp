@@ -2,7 +2,11 @@
 #include "event_graphics_item.h"
 #include "signal_browser_view.h"
 #include "signal_browser_model_4.h"
+#include "new_event_undo_command.h"
 #include "y_axis_widget_4.h"
+#include "../command_stack.h"
+#include "../event_color_manager.h"
+#include "../main_window_model.h"
 #include "../base/signal_data_block.h"
 #include "../base/signal_buffer.h"
 #include "../base/signal_event.h"
@@ -160,7 +164,8 @@ void SignalGraphicsItem::autoScale(ScaleMode auto_zoom_type)
 void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     painter->drawRect(boundingRect());
-
+    if (new_event_)
+        painter->fillRect(new_signal_event_->getPosition(), 0, new_signal_event_->getDuration(), height_, new_event_color_);
     QRectF clip (option->exposedRect);
     painter->setClipping(true);
     painter->setClipRect(clip);
@@ -381,20 +386,28 @@ void SignalGraphicsItem::enableXGrid(bool enabled)
 void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 {
     QPoint p = event->screenPos();
-    int32 dx = p.x() - move_start_point_.x();
-    int32 dy = p.y() - move_start_point_.y();
-    move_start_point_ = p;
     if (shifting_)
     {
+        int32 dx = p.x() - move_start_point_.x();
+        int32 dy = p.y() - move_start_point_.y();
+        move_start_point_ = p;
         move_start_point_ = p;
         float64 range = (maximum_ - minimum_) / y_zoom_;
-        //this->setPos(0, this->y() + dy);
         y_offset_ = y_offset_ + dy * range / height_;
         update();
         signal_browser_->updateWidgets(false);
     }
     else if (new_event_)
-        created_event_item_->mouseMoveEvent(event);
+    {
+        float old_width = new_signal_event_->getDuration();
+        float new_event_width = event->scenePos().x() - new_signal_event_->getPosition();
+        if (new_event_width < 0)
+            new_event_width = 0;
+        update(new_signal_event_->getPosition(), 0,
+                     new_event_width > old_width ? new_event_width : old_width,
+                     height_);
+        new_signal_event_->setDuration(new_event_width);
+    }
     else
         event->ignore();
 }
@@ -414,17 +427,11 @@ void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
             shifting_ = true;
 
             setCursor(QCursor(Qt::SizeVerCursor));
-            //signal_browser_->getCanvasView()->viewport()
-            //                        ->setCursor(QCursor(Qt::SizeVerCursor));
-            //canvas_view->addEventListener(SmartCanvasView::MOUSE_RELEASE_EVENT |
-            //                              SmartCanvasView::MOUSE_MOVE_EVENT,
-            //                              this);
             move_start_point_ = event->screenPos();
             break;
         case SignalBrowserMouseHandling::NEW_EVENT_ACTION:
-            {
+            {             
             // get shown events
-            std::cout << "new event..." << std::endl;
             SignalBrowserModel::IntList shown_events;
             signal_browser_model_.getShownEventTypes(shown_events);
 
@@ -438,47 +445,14 @@ void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
             if (signal_browser_model_.getActualEventCreationType() == static_cast<uint16>(-1))
             {
                 signal_browser_model_.changeSelectedEventType();
-                std::cout << "blub bla" << std::endl;
                 break;
             }
 
-            // add new event item
-            QSharedPointer<SignalEvent> new_event(new SignalEvent(0, 0));
-            QSharedPointer<EventGraphicsItem> selected_event_item
-                = signal_browser_model_.getSelectedEventItem();
-
-            if (selected_event_item)
-            {
-                QSharedPointer<SignalEvent> selected_event
-                    = signal_buffer_.getEvent(selected_event_item->getId());
-                new_event->setType(signal_browser_model_.getActualEventCreationType());
-
-                if (selected_event->getChannel() ==
-                    SignalEvent::UNDEFINED_CHANNEL)
-                    new_event->setChannel(SignalEvent::UNDEFINED_CHANNEL);
-                else
-                    new_event->setChannel(signal_channel_.getNumber());
-            }
-            else
-            {
-                new_event->setType(signal_browser_model_.getActualEventCreationType());
-                new_event->setChannel(signal_channel_.getNumber());
-            }
-
-            QPointF mouse_pos (event->scenePos());
-            new_event->setPosition((int32)(mouse_pos.x() /
-                                  signal_browser_model_.getPixelPerSec() *
-                                  signal_buffer_.getEventSamplerate()));
-
-            new_event->setDuration(0);
-            QSharedPointer<EventGraphicsItem> event_item
-                    = signal_browser_model_.addEvent(new_event);
-
-            // edit new event item
-            signal_browser_model_.unsetSelectedEventItem();
             new_event_ = true;
-            created_event_item_ = event_item;
-            event_item->startMouseMoveEnd();
+            new_signal_event_ = QSharedPointer<SignalEvent>(new SignalEvent(event->scenePos().x(), signal_browser_model_.getActualEventCreationType(),
+                                                                            signal_channel_.getNumber(), 0));
+            new_event_color_ = signal_browser_model_.getMainWindowModel().getEventColorManager().getEventColor(signal_browser_model_.getActualEventCreationType());
+            break;
         }
             break;
         default:
@@ -491,8 +465,12 @@ void SignalGraphicsItem::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 {
     if (hand_tool_on_)
         event->ignore();
+
     if (new_event_)
-        created_event_item_->mouseReleaseEvent(event);
+    {
+        NewEventUndoCommand* new_event_command = new NewEventUndoCommand(signal_browser_model_, new_signal_event_, signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec());
+        CommandStack::instance().executeCommand (new_event_command);
+    }
 
     shifting_ = false;
     hand_tool_on_ = false;

@@ -314,6 +314,12 @@ void MainWindowModel::undoAction()
     CommandStack::instance().undoLastCommand();
 }
 
+//-----------------------------------------------------------------------------
+void MainWindowModel::redoAction()
+{
+    CommandStack::instance().redoLastUndoneCommand();;
+}
+
 
 //-----------------------------------------------------------------------------
 // file open action

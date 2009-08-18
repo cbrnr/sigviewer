@@ -80,7 +80,10 @@ private:
     bool new_event_;
     QSharedPointer<EventGraphicsItem> created_event_item_;
     bool hand_tool_on_;
-    QPoint move_start_point_;
+    QPointF move_start_point_;
+
+    QSharedPointer<SignalEvent> new_signal_event_;
+    QColor new_event_color_;
 
     static float64 prefered_pixel_per_sample_;
 

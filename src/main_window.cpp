@@ -127,6 +127,12 @@ void MainWindow::initActions()
     connect(undo_action_, SIGNAL(triggered()),
             &model_, SLOT(undoAction()));
 
+    redo_action_ = new QAction(tr("Redo"), this);
+    redo_action_->setShortcut(tr("Ctrl+Shift+Z"));
+    connect(redo_action_, SIGNAL(triggered()),
+            &model_, SLOT(redoAction()));
+
+
     file_open_action_ = new QAction(file_open_icon_, tr("&Open..."), this);
     file_open_action_->setObjectName("file_open_action_");
     file_open_action_->setShortcut(tr("Ctrl+O"));
@@ -467,6 +473,7 @@ void MainWindow::initMenus()
 
     edit_menu_ = menuBar()->addMenu(tr("&Edit"));
     edit_menu_->addAction(undo_action_);
+    edit_menu_->addAction(redo_action_);
     edit_menu_->addSeparator();
     edit_menu_->addAction(edit_to_all_channels_action_);
     edit_menu_->addAction(edit_copy_to_channels_action_);

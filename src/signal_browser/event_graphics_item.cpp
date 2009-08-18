@@ -43,6 +43,7 @@ EventGraphicsItem::EventGraphicsItem(SignalBuffer& buffer, SignalBrowserModel& m
   is_selected_ (false),
   signal_event_ (signal_event)
 {
+    setAcceptHoverEvents (true);
 }
 
 //-----------------------------------------------------------------------------
@@ -205,6 +206,8 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
 //                setPos(mouse_event->scenePos().x(), pos().y());
                 int32 diff = (mouse_event->pos().x() - mouse_event->lastPos().x());
                 setPos (pos().x() + diff, pos().y());
+//                if (!(scene()->views().first()->visibleRegion().contains(mouse_event->scenePos().toPoint())))
+//                    std::cout << "not visible" << std::endl;
                 width_ -= diff;
                 scene()->update(mouse_pos.x(), pos().y(), width_ + diff, height_);
                 update();
@@ -212,6 +215,8 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
             break;
         case STATE_MOVE_END:
             {
+//                if (!(scene()->views().first()->visibleRegion().contains(mouse_event->scenePos().toPoint())))
+//                    std::cout << "not visible" << std::endl;
                 int32 diff = (mouse_event->pos().x() - mouse_event->lastPos().x());
                 width_ += diff;
                 scene()->update(mouse_pos.x(), pos().y(), width_ - diff, height_);
@@ -241,7 +246,7 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
     {
         case STATE_MOVE_BEGIN:
         {
-            uint32 pos = mouse_pos.x() * signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec();
+            uint32 pos = x() * signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec();
             int32 dur = width_ * (signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec());
 
             ResizeEventUndoCommand* command = new ResizeEventUndoCommand (signal_browser_model_, signal_event_, pos, dur);
@@ -259,6 +264,20 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
     setCursor(QCursor(Qt::ArrowCursor));
     state_ = STATE_NONE;
 }
+
+//-----------------------------------------------------------------------------
+void EventGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent * event )
+{
+    if (is_selected_)
+    {
+        if ((event->scenePos().x() > pos().x() && event->scenePos().x() < pos().x() + 5)
+            || (event->scenePos().x() < pos().x() + width_ && event->scenePos().x() > pos().x() + width_ - 5))
+            setCursor(QCursor(Qt::SizeHorCursor));
+        else
+            setCursor(QCursor(Qt::ArrowCursor));
+    }
+}
+
 
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event)

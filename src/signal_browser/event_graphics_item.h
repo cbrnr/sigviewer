@@ -42,6 +42,7 @@ public:
     virtual QRectF boundingRect () const;
     virtual void mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event);
     virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event);
+    virtual void hoverMoveEvent (QGraphicsSceneHoverEvent * event );
 
 protected:
     enum Action
