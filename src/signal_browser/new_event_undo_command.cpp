@@ -21,7 +21,7 @@ NewEventUndoCommand::NewEventUndoCommand (SignalBrowserModel& signal_browser_mod
 //-----------------------------------------------------------------------------
 NewEventUndoCommand::~NewEventUndoCommand ()
 {
-
+    // nothing to do here
 }
 
 //-----------------------------------------------------------------------------

@@ -6,8 +6,9 @@
 #include "y_axis_widget_4.h"
 #include "x_axis_widget_4.h"
 #include "event_graphics_item.h"
-#include "resize_event_undo_command.h"
+#include "change_channel_undo_command.h"
 
+#include "../command_stack.h"
 #include "../main_window_model.h"
 #include "../label_widget.h"
 #include "../base/file_signal_reader.h"
@@ -1095,8 +1096,8 @@ void SignalBrowserModel::changeSelectedEventChannel()
 
     if (ok && new_channel != event->getChannel())
     {
-        event->setChannel(new_channel);
-        setEventChanged(id);
+        QUndoCommand* changeChannelCommand = new ChangeChannelUndoCommand (*this, event, new_channel);
+        CommandStack::instance().executeCommand(changeChannelCommand);
 
         if (event->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
         {
