@@ -8,6 +8,7 @@
 #include "event_graphics_item.h"
 #include "change_channel_undo_command.h"
 #include "change_type_undo_command.h"
+#include "new_event_undo_command.h"
 
 #include "../command_stack.h"
 #include "../main_window_model.h"
@@ -1154,9 +1155,10 @@ void SignalBrowserModel::copySelectedEventToChannels()
     {
         if (copy_event_dialog.isSelected(channel_nr))
         {
-            QSharedPointer<SignalEvent> new_event(event);
+            QSharedPointer<SignalEvent> new_event = QSharedPointer<SignalEvent>(new SignalEvent(*event));
             new_event->setChannel(channel_nr);
-            addEvent(new_event, false);
+            NewEventUndoCommand* new_event_command = new NewEventUndoCommand(*this, new_event);
+            CommandStack::instance().executeCommand (new_event_command);
         }
     }
 

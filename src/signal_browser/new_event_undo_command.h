@@ -19,7 +19,7 @@ public:
     //-------------------------------------------------------------------------
     NewEventUndoCommand (SignalBrowserModel& signal_browser_model,
                          QSharedPointer<SignalEvent> signal_event,
-                         float scene_to_signal_factor);
+                         float scene_to_signal_factor = 1);
 
     //-------------------------------------------------------------------------
     virtual ~NewEventUndoCommand ();
