@@ -7,6 +7,7 @@
 #include "x_axis_widget_4.h"
 #include "event_graphics_item.h"
 #include "change_channel_undo_command.h"
+#include "change_type_undo_command.h"
 
 #include "../command_stack.h"
 #include "../main_window_model.h"
@@ -1210,8 +1211,8 @@ void SignalBrowserModel::changeSelectedEventType()
     {
         if (ok && new_type != event->getType())
         {
-            event->setType(new_type);
-            setEventChanged(selected_event_item_->getId());
+            QUndoCommand* changeTypeCommand = new ChangeTypeUndoCommand (*this, event, new_type);
+            CommandStack::instance().executeCommand(changeTypeCommand);
         }
     }
 
