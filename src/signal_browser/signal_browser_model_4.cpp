@@ -1044,10 +1044,8 @@ void SignalBrowserModel::setSelectedEventToAllChannels()
     uint32 id = selected_event_item_->getId();
     QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(id);
 
-    event->setChannel(SignalEvent::UNDEFINED_CHANNEL);
-    main_window_model_
-        .setSelectionState(MainWindowModel::SELECTION_STATE_ALL_CHANNELS);
-    setEventChanged(id);
+    QUndoCommand* changeChannelCommand = new ChangeChannelUndoCommand (*this, event, SignalEvent::UNDEFINED_CHANNEL);
+    CommandStack::instance().executeCommand(changeChannelCommand);
 }
 
 //-----------------------------------------------------------------------------
@@ -1100,17 +1098,6 @@ void SignalBrowserModel::changeSelectedEventChannel()
     {
         QUndoCommand* changeChannelCommand = new ChangeChannelUndoCommand (*this, event, new_channel);
         CommandStack::instance().executeCommand(changeChannelCommand);
-
-        if (event->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
-        {
-            main_window_model_
-              .setSelectionState(MainWindowModel::SELECTION_STATE_ALL_CHANNELS);
-        }
-        else
-        {
-            main_window_model_
-               .setSelectionState(MainWindowModel::SELECTION_STATE_ONE_CHANNEL);
-        }
     }
 }
 

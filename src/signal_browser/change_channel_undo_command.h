@@ -34,6 +34,9 @@ public:
 
 private:
     //-------------------------------------------------------------------------
+    void checkAndSetSelectChannelState ();
+
+    //-------------------------------------------------------------------------
     /// copy-constructor disabled
     ChangeChannelUndoCommand (ChangeChannelUndoCommand const &);
 
