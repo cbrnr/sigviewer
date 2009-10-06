@@ -136,6 +136,7 @@ void SignalGraphicsItem::zoomOut()
 // auto scale
 void SignalGraphicsItem::autoScale(ScaleMode auto_zoom_type)
 {
+    std::cout << "changed scale mode" << std::endl;
     float64 min = signal_buffer_.getMinValue(signal_channel_.getNumber());
     float64 max = signal_buffer_.getMaxValue(signal_channel_.getNumber());
 
@@ -477,6 +478,14 @@ void SignalGraphicsItem::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
     new_event_ = false;
     setCursor(QCursor());
 }
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event)
+{
+    event->accept();
+    EventGraphicsItem::displayContextMenu(event);
+}
+
 
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::drawYAxis (QPainter * painter, const QStyleOptionGraphicsItem * option)

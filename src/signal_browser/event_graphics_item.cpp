@@ -3,6 +3,7 @@
 #include "signal_browser_model_4.h"
 #include "signal_browser_view.h"
 #include "resize_event_undo_command.h"
+#include "event_context_menu.h"
 #include "../base/signal_buffer.h"
 #include "../base/signal_event.h"
 
@@ -18,7 +19,6 @@
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneContextMenuEvent>
-#include <QMenu>
 #include <QMutex>
 
 #include <algorithm>
@@ -33,6 +33,8 @@ namespace PortingToQT4_
 // move mouse range
 int EventGraphicsItem::move_mouse_range_ = 5;
 QMutex EventGraphicsItem::event_handling_mutex_;
+QMutex EventGraphicsItem::context_menu_mutex_;
+QSharedPointer<EventContextMenu> EventGraphicsItem::context_menu_;
 
 //-----------------------------------------------------------------------------
 EventGraphicsItem::EventGraphicsItem(SignalBuffer& buffer, SignalBrowserModel& model,
@@ -74,6 +76,22 @@ void EventGraphicsItem::startMouseMoveEnd ()
 }
 
 //-----------------------------------------------------------------------------
+void EventGraphicsItem::setSelected (bool selected)
+{
+    state_ = STATE_NONE;
+    QSharedPointer<EventGraphicsItem> old_selected_item
+        = signal_browser_model_.getSelectedEventItem();
+    if (!(old_selected_item.isNull()))
+    {
+        old_selected_item->is_selected_ = false;
+        old_selected_item->update();
+    }
+    is_selected_ = true;
+    signal_browser_model_.setSelectedEventItem(signal_browser_model_.getEventItem(signal_event_->getId()));
+    update();
+}
+
+//-----------------------------------------------------------------------------
 QSharedPointer<SignalEvent> EventGraphicsItem::getSignalEvent ()
 {
     return signal_event_;
@@ -88,6 +106,13 @@ void EventGraphicsItem::updateColor()
     color_ = event_color_manager.getEventColor(signal_event_->getType());
 }
 
+//-----------------------------------------------------------------------------
+void EventGraphicsItem::displayContextMenu (QGraphicsSceneContextMenuEvent * event)
+{
+    context_menu_mutex_.lock();
+    context_menu_->finaliseAndShowMenu (event);
+    context_menu_mutex_.unlock();
+}
 
 //-----------------------------------------------------------------------------
 QRectF EventGraphicsItem::boundingRect () const
@@ -282,7 +307,15 @@ void EventGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent * event )
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event)
 {
-    SignalBrowserModel::Mode mode = signal_browser_model_.getMode();
+    context_menu_mutex_.lock();
+    event->ignore();
+    if (context_menu_.isNull())
+        context_menu_ = QSharedPointer<EventContextMenu> (new EventContextMenu (signal_browser_model_));
+    context_menu_->addEvent(signal_browser_model_.getEventItem(signal_event_->getId()));
+    context_menu_mutex_.unlock();
+//    context_menu_->addAction();
+//    context_menu_.exec(event->screenPos());
+/*    SignalBrowserModel::Mode mode = signal_browser_model_.getMode();
     if (mode != SignalBrowserModel::MODE_POINTER &&
         mode != SignalBrowserModel::MODE_NEW)
     {
@@ -325,9 +358,10 @@ void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event
         {
             event_name = "Undefined";
         }
-        menu->addAction(/*tr*/QString("&Select ") + event_name);
+        menu->addAction(QString("&Select ") + event_name);
     }
-    menu->exec(event->screenPos());
+    menu->exec(event->screenPos());*/
+
 }
 
 

@@ -7,6 +7,7 @@
 #include <QGraphicsItem>
 #include <QSharedPointer>
 #include <QColor>
+#include <QVector>
 
 class QMutex;
 
@@ -21,6 +22,7 @@ namespace PortingToQT4_
 
 class SignalBrowserModel;
 class SignalBrowserView;
+class EventContextMenu;
 
 
 class EventGraphicsItem : public QGraphicsItem
@@ -36,8 +38,11 @@ public:
 
     void setSize (int32 width, int32 height);
     void startMouseMoveEnd ();
+    void setSelected (bool selected);
     QSharedPointer<SignalEvent> getSignalEvent ();
     void updateColor ();
+
+    static void displayContextMenu (QGraphicsSceneContextMenuEvent * event);
 
     virtual QRectF boundingRect () const;
     virtual void mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event);
@@ -83,6 +88,9 @@ protected:
     QSharedPointer<SignalEvent> signal_event_;
     static int move_mouse_range_;
     static QMutex event_handling_mutex_;
+
+    static QMutex context_menu_mutex_;
+    static QSharedPointer<EventContextMenu> context_menu_;
 
 };
 

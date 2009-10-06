@@ -1377,6 +1377,7 @@ void MainWindowModel::optionsShowSettingsAction()
         signal_browser_model_->setXGridVisible(settings_dialog.isShowGrid());
         signal_browser_model_->setYGridVisible(settings_dialog.isShowGrid());
         signal_browser_model_->setAutoZoomBehaviour(settings_dialog.getScaleModeType());
+        signal_browser_model_->autoScaleAll();
         signal_browser_model_->updateLayout();
     }
 }
