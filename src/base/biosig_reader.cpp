@@ -271,9 +271,11 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     for (uint32 channel_index = 0; channel_index < biosig_header_->NS; ++channel_index)
     if (biosig_header_->CHANNEL[channel_index].OnOff)	// show only selected channels - status channels are not shown.
     {
-        SignalChannel* channel = new SignalChannel(channel_index, QT_TR_NOOP(biosig_header_->CHANNEL[channel_index].Label),
-                                                   biosig_header_->SPR,
-                                                   biosig_header_->CHANNEL[channel_index].PhysDim,// depreciated, replace with PhysDim(physical_dimcode,...)
+         char p[MAX_LENGTH_PHYSDIM+1];
+         PhysDim(biosig_header_->CHANNEL[channel_index].PhysDimCode, p);
+ 
+         SignalChannel* channel = new SignalChannel(channel_index, QT_TR_NOOP(biosig_header_->CHANNEL[channel_index].Label),
+                                                   biosig_header_->SPR,p,
                                                    biosig_header_->CHANNEL[channel_index].PhysDimCode,
                                                    biosig_header_->CHANNEL[channel_index].PhysMin,
                                                    biosig_header_->CHANNEL[channel_index].PhysMax,
