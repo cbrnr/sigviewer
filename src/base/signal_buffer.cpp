@@ -462,6 +462,7 @@ int32 SignalBuffer::eventNumber2ID(uint32 event_number) const
     return iter.key();
 }
 
+//-----------------------------------------------------------------------------
 // get event
 QSharedPointer<SignalEvent> SignalBuffer::getEvent(uint32 event_id)
 {
@@ -478,6 +479,23 @@ QSharedPointer<SignalEvent> SignalBuffer::getEvent(uint32 event_id)
     return iter.value();
 }
 
+//-----------------------------------------------------------------------------
+QMap<int32, QSharedPointer<SignalEvent> > SignalBuffer::getEvents (uint16 type)
+{
+    QMutexLocker lock (&mutex_);
+    QMap<int32, QSharedPointer<SignalEvent> > events;
+
+    for (Int2SignalEventPtrMap::iterator iter = id2signal_events_map_.begin();
+         iter != id2signal_events_map_.end(); ++iter)
+    {
+        if (iter.value()->getType() == type)
+            events.insert(iter.value()->getPosition(), iter.value());
+    }
+
+    return events;
+}
+
+//-----------------------------------------------------------------------------
 // add event
 int32 SignalBuffer::addEvent(QSharedPointer<SignalEvent> event)
 {

@@ -800,6 +800,25 @@ void SignalBrowserModel::goTo(int32 sec, int32 channel_index)
 
     signal_browser_view_->goTo(x, y);
 }
+
+//-----------------------------------------------------------------------------
+// goToAndSelectNextEvent
+void SignalBrowserModel::goToAndSelectNextEvent ()
+{
+    // TODO: implement
+    if (!selected_event_item_.isNull())
+    {
+        QMap<int32, QSharedPointer<SignalEvent> > events (signal_buffer_.getEvents(selected_event_item_->getSignalEvent()->getType()));
+        QMap<int32, QSharedPointer<SignalEvent> >::iterator current_event_iter = events.find(selected_event_item_->getSignalEvent()->getPosition());
+        ++current_event_iter;
+        float x = (float)current_event_iter.value()->getPosition() / signal_buffer_.getEventSamplerate();
+        int32 y = 0;
+        goTo (x, y);
+        std::cout << "show and select next event (old = " << selected_event_item_->getSignalEvent()->getPosition() << ", new = " << x << ")" << std::endl;
+        //selected_event_item_ = current_event_iter.value();
+    }
+}
+
 /*
 // zoom rect
 void SignalBrowserModel::zoomRect(const QRect& rect)
@@ -1045,7 +1064,7 @@ void SignalBrowserModel::setSelectedEventToAllChannels()
     QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(id);
 
     QUndoCommand* changeChannelCommand = new ChangeChannelUndoCommand (*this, event, SignalEvent::UNDEFINED_CHANNEL);
-    CommandStack::instance().executeCommand(changeChannelCommand);
+    CommandStack::instance().executeEditCommand(changeChannelCommand);
 }
 
 //-----------------------------------------------------------------------------
@@ -1097,7 +1116,7 @@ void SignalBrowserModel::changeSelectedEventChannel()
     if (ok && new_channel != event->getChannel())
     {
         QUndoCommand* changeChannelCommand = new ChangeChannelUndoCommand (*this, event, new_channel);
-        CommandStack::instance().executeCommand(changeChannelCommand);
+        CommandStack::instance().executeEditCommand(changeChannelCommand);
     }
 }
 
@@ -1145,7 +1164,7 @@ void SignalBrowserModel::copySelectedEventToChannels()
             QSharedPointer<SignalEvent> new_event = QSharedPointer<SignalEvent>(new SignalEvent(*event));
             new_event->setChannel(channel_nr);
             NewEventUndoCommand* new_event_command = new NewEventUndoCommand(*this, new_event);
-            CommandStack::instance().executeCommand (new_event_command);
+            CommandStack::instance().executeEditCommand (new_event_command);
         }
     }
 
@@ -1201,7 +1220,7 @@ void SignalBrowserModel::changeSelectedEventType()
         if (ok && new_type != event->getType())
         {
             QUndoCommand* changeTypeCommand = new ChangeTypeUndoCommand (*this, event, new_type);
-            CommandStack::instance().executeCommand(changeTypeCommand);
+            CommandStack::instance().executeEditCommand(changeTypeCommand);
         }
     }
 

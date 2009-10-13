@@ -103,6 +103,12 @@ public:
     uint32 getNumberEvents() const;
     int32 eventNumber2ID(uint32 event_number) const;
     QSharedPointer<SignalEvent> getEvent(uint32 event_id);
+
+    //-------------------------------------------------------------------------
+    /// @return a map containing all events of the given type, sorted by x-position
+    QMap<int32, QSharedPointer<SignalEvent> > getEvents (uint16 type);
+
+    //-------------------------------------------------------------------------
     int32 addEvent(QSharedPointer<SignalEvent> event);
     void removeEvent(uint32 event_id);
     double getEventSamplerate() const;

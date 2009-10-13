@@ -20,18 +20,31 @@ public:
 
     //-------------------------------------------------------------------------
     /// cares for destruction of the given command
-    void executeCommand (QUndoCommand* command);
+    void executeEditCommand (QUndoCommand* command);
 
     //-------------------------------------------------------------------------
-    void undoLastCommand ();
+    void undoLastEditCommand ();
 
     //-------------------------------------------------------------------------
-    void redoLastUndoneCommand ();
+    void redoLastUndoneEditCommand ();
+
+
+    //-------------------------------------------------------------------------
+    /// cares for destruction of the given command
+    void executeViewCommand (QUndoCommand* command);
+
+    //-------------------------------------------------------------------------
+    void undoLastViewCommand ();
+
+    //-------------------------------------------------------------------------
+    void redoLastUndoneViewCommand ();
+
 
 private:
     CommandStack();
 
-    QUndoStack undo_stack_;
+    QUndoStack edit_command_undo_stack_;
+    QUndoStack view_command_undo_stack_;
 };
 
 }

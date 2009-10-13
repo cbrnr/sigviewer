@@ -84,11 +84,13 @@ void EventGraphicsItem::setSelected (bool selected)
     if (!(old_selected_item.isNull()))
     {
         old_selected_item->is_selected_ = false;
-        old_selected_item->update();
+        old_selected_item->state_ = STATE_NONE;
+        //old_selected_item->update();
     }
     is_selected_ = true;
     signal_browser_model_.setSelectedEventItem(signal_browser_model_.getEventItem(signal_event_->getId()));
-    update();
+    //update();
+    scene()->update(0, 0, scene()->width(), scene()->height());
 }
 
 //-----------------------------------------------------------------------------
@@ -130,7 +132,8 @@ void EventGraphicsItem::paint ( QPainter * painter, const QStyleOptionGraphicsIt
     {
         painter->drawRect(boundingRect());
     }
-    painter->fillRect(clip, color_);
+    //painter->fillRect(clip, color_);
+    painter->fillRect(boundingRect(), color_);
 }
 
 //-----------------------------------------------------------------------------
@@ -201,7 +204,8 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
             break;*/
         case ACTION_SELECT:
             {
-                state_ = STATE_NONE;
+                setSelected(true);
+                /*state_ = STATE_NONE;
                 QSharedPointer<EventGraphicsItem> old_selected_item
                     = signal_browser_model_.getSelectedEventItem();
                 if (!(old_selected_item.isNull()))
@@ -211,7 +215,7 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
                 }
                 is_selected_ = true;
                 signal_browser_model_.setSelectedEventItem(signal_browser_model_.getEventItem(signal_event_->getId()));
-                update();
+                update();*/
             }
             break;
     }
@@ -275,14 +279,14 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
             int32 dur = width_ * (signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec());
 
             ResizeEventUndoCommand* command = new ResizeEventUndoCommand (signal_browser_model_, signal_event_, pos, dur);
-            CommandStack::instance().executeCommand (command);
+            CommandStack::instance().executeEditCommand (command);
         }
         break;
         case STATE_MOVE_END:
         {
             int32 dur = width_ * (signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec());
             ResizeEventUndoCommand* command = new ResizeEventUndoCommand (signal_browser_model_, signal_event_, signal_event_->getPosition(), dur);
-            CommandStack::instance().executeCommand (command);
+            CommandStack::instance().executeEditCommand (command);
         }
         break;
     }

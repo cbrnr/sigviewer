@@ -315,6 +315,13 @@ void MainWindow::initActions()
     connect(view_go_to_action_, SIGNAL(triggered()),
             &model_, SLOT(viewGoToAction()));
 
+    view_show_and_select_next_event_action_= new QAction(tr("&Next Event..."), this);
+    view_show_and_select_next_event_action_->setShortcut(tr("Ctrl+Right"));
+    view_show_and_select_next_event_action_->setStatusTip(tr("Jumps to the next specified event and selects it"));
+    connect(view_show_and_select_next_event_action_, SIGNAL(triggered()),
+            &model_, SLOT(viewShowAndSelectNextEventAction()));
+
+
     options_channels_action_= new QAction(options_channels_icon_,
                                     tr("Channe&ls..."), this);
     options_channels_action_->setObjectName("options_channels_action_");
@@ -498,6 +505,7 @@ void MainWindow::initMenus()
     view_menu_->addAction(view_auto_scale_action_);
     view_menu_->addSeparator();
     view_menu_->addAction(view_go_to_action_);
+    view_menu_->addAction(view_show_and_select_next_event_action_);
 
     options_menu_ = menuBar()->addMenu(tr("&Options"));
     options_menu_->addAction(options_channels_action_);

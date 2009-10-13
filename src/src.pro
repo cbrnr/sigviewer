@@ -60,7 +60,8 @@ HEADERS += basic_header_info_dialog.h \
     x_axis_widget.h \
     x_grid_canvas_item.h \
     y_axis_widget.h \
-    command_stack.h
+    command_stack.h \
+    next_event_view_undo_command.h
 SOURCES += basic_header_info_dialog.cpp \
     channel_selection_dialog.cpp \
     channel_separator_canvas_item.cpp \
@@ -85,4 +86,5 @@ SOURCES += basic_header_info_dialog.cpp \
     x_axis_widget.cpp \
     x_grid_canvas_item.cpp \
     y_axis_widget.cpp \
-    command_stack.cpp
+    command_stack.cpp \
+    next_event_view_undo_command.cpp

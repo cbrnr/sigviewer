@@ -11,23 +11,40 @@ CommandStack& CommandStack::instance ()
 }
 
 //-----------------------------------------------------------------------------
-void CommandStack::executeCommand (QUndoCommand* command)
+void CommandStack::executeEditCommand (QUndoCommand* command)
 {
-    undo_stack_.push (command);
+    edit_command_undo_stack_.push (command);
 }
 
 //-----------------------------------------------------------------------------
-void CommandStack::undoLastCommand ()
+void CommandStack::undoLastEditCommand ()
 {
-    undo_stack_.undo ();
+    edit_command_undo_stack_.undo ();
 }
 
 //-----------------------------------------------------------------------------
-void CommandStack::redoLastUndoneCommand ()
+void CommandStack::redoLastUndoneEditCommand ()
 {
-    undo_stack_.redo ();
+    edit_command_undo_stack_.redo ();
 }
 
+//-----------------------------------------------------------------------------
+void CommandStack::executeViewCommand (QUndoCommand* command)
+{
+    view_command_undo_stack_.push (command);
+}
+
+//-----------------------------------------------------------------------------
+void CommandStack::undoLastViewCommand ()
+{
+    view_command_undo_stack_.undo ();
+}
+
+//-----------------------------------------------------------------------------
+void CommandStack::redoLastUndoneViewCommand ()
+{
+    view_command_undo_stack_.redo ();
+}
 
 
 //-----------------------------------------------------------------------------

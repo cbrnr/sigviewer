@@ -470,7 +470,7 @@ void SignalGraphicsItem::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
     if (new_event_)
     {
         NewEventUndoCommand* new_event_command = new NewEventUndoCommand(signal_browser_model_, new_signal_event_, signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec());
-        CommandStack::instance().executeCommand (new_event_command);
+        CommandStack::instance().executeEditCommand (new_event_command);
     }
 
     shifting_ = false;

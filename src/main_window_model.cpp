@@ -25,6 +25,7 @@
 #include "signal_browser/signal_browser_model_4.h"
 #include "signal_browser/signal_browser_view.h"
 #include "signal_browser/delete_event_undo_command.h"
+#include "next_event_view_undo_command.h"
 
 #include <QString>
 #include <QApplication>
@@ -311,13 +312,13 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
 //-----------------------------------------------------------------------------
 void MainWindowModel::undoAction()
 {
-    CommandStack::instance().undoLastCommand();
+    CommandStack::instance().undoLastEditCommand();
 }
 
 //-----------------------------------------------------------------------------
 void MainWindowModel::redoAction()
 {
-    CommandStack::instance().redoLastUndoneCommand();;
+    CommandStack::instance().redoLastUndoneEditCommand();;
 }
 
 
@@ -964,7 +965,7 @@ void MainWindowModel::editDeleteAction()
     signal_browser_model_->removeSelectedEvent();
 #else
     QUndoCommand* deleteCommand = new PortingToQT4_::DeleteEventUndoCommand (*signal_browser_model_, signal_browser_model_->getSelectedEventItem());
-    CommandStack::instance().executeCommand(deleteCommand);
+    CommandStack::instance().executeEditCommand(deleteCommand);
 #endif
 }
 
@@ -1171,6 +1172,24 @@ void MainWindowModel::viewGoToAction()
     signal_browser_model_->goTo(go_to_dialog.getSecond(),
 
                                 go_to_dialog.getChannelIndex());
+}
+
+//-------------------------------------------------------------------
+// view select next event action
+void MainWindowModel::viewShowAndSelectNextEventAction()
+{
+    if (!checkMainWindowPtr("viewSelectNextEventAction") ||
+        !checkNotClosedState("viewSelectNextEventAction"))
+    {
+        return;
+    }
+
+#ifndef QT4_PORTED
+    // not possible in this version
+#else
+    QUndoCommand* eventCommand = new PortingToQT4_::NextEventViewUndoCommand (*signal_browser_model_);
+    CommandStack::instance().executeViewCommand(eventCommand);
+#endif
 }
 
 // options channels action
