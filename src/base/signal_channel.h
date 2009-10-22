@@ -4,7 +4,7 @@
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
-    		  Alois Schloegl  2008
+    		  Alois Schloegl  2008,2009
     This file is part of the "SigViewer" repository 
     at http://biosig.sf.net/ 
 
@@ -64,7 +64,6 @@ public:
 
     SignalChannel(uint32 number, const QString& label,
                   uint32 samples_per_record, 
-                  const QString& physical_dim, 	// depreciated, replace with PhysDim(physical_dimcode,...)
                   uint32 physical_dimcode,
                   float64 physical_minimum, float64 physical_maximum,
                   float64 digital_minimum, float64 digital_maximum,

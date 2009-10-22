@@ -203,7 +203,6 @@ QString BioSigReader::open(const QString& file_name, const bool overflow_detecti
         biosig_header_->FLAG.OVERFLOWDETECTION = overflow_detection;
     */
     biosig_header_->FLAG.OVERFLOWDETECTION = overflow_detection;
-    biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
 
     return loadFixedHeader (file_name);
 }
@@ -226,19 +225,25 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         biosig_header_ = constructHDR(0,0);
         biosig_header_->FLAG.UCAL = 0;
         biosig_header_->FLAG.OVERFLOWDETECTION = 0;
-        biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
     }
 
     biosig_header_ = sopen(c_file_name, "r", biosig_header_ );
+#ifdef CHOLMOD_H
+    char *REREF_FILE;
+    REREF_FILE = "/home/as/trunk/biosig4c++/MM63.mmm";
+    REREF_FILE = NULL; 
+    /*
+    	TODD: 
+    	REREF_FILE must be the filename of the spatial filter in MarketMatrix format 
+    */
+    RerefCHANNEL(biosig_header_, REREF_FILE, 1);
+#endif
     if (biosig_header_ == NULL || serror())
     {
-        if (biosig_header_)
-        {
             sclose (biosig_header_);
             destructHDR(biosig_header_);
             biosig_header_ = 0;
-        }
-        return "file not supported";
+            return "file not supported";
     }
 
     // (C) 2008 AS: EVENT.DUR and EVENT.CHN are optional in SOPEN, but SigViewer needs them.
@@ -255,7 +260,12 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     {
         if (biosig_header_->CHANNEL[k].OnOff) NS++;
     }
+#ifdef CHOLMOD_H
+    if ((biosig_header_->Calib) && (biosig_header_->Calib->nrow==NS))
+	NS = biosig_header_->Calib->ncol;
+#endif
     basic_header_->setNumberChannels(NS);
+
     basic_header_->setVersion (QString::number(biosig_header_->VERSION));
     basic_header_->setNumberRecords (biosig_header_->NRec);
     basic_header_->setRecordSize (biosig_header_->SPR);
@@ -268,14 +278,14 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     else
         basic_header_->setEventSamplerate(biosig_header_->SampleRate);
 
+#ifdef CHOLMOD_H
+    if (biosig_header_->Calib==NULL) {
+#endif
     for (uint32 channel_index = 0; channel_index < biosig_header_->NS; ++channel_index)
     if (biosig_header_->CHANNEL[channel_index].OnOff)	// show only selected channels - status channels are not shown.
     {
-         char p[MAX_LENGTH_PHYSDIM+1];
-         PhysDim(biosig_header_->CHANNEL[channel_index].PhysDimCode, p);
- 
-         SignalChannel* channel = new SignalChannel(channel_index, QT_TR_NOOP(biosig_header_->CHANNEL[channel_index].Label),
-                                                   biosig_header_->SPR,p,
+        SignalChannel* channel = new SignalChannel(channel_index, QT_TR_NOOP(biosig_header_->CHANNEL[channel_index].Label),
+                                                   biosig_header_->SPR,
                                                    biosig_header_->CHANNEL[channel_index].PhysDimCode,
                                                    biosig_header_->CHANNEL[channel_index].PhysMin,
                                                    biosig_header_->CHANNEL[channel_index].PhysMax,
@@ -289,6 +299,26 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
                                                    biosig_header_->CHANNEL[channel_index].Notch > 0.0);
         basic_header_->addChannel(channel);
     }
+#ifdef CHOLMOD_H
+    } else 
+    for (uint32 channel_index = 0; channel_index < biosig_header_->Calib->ncol; ++channel_index)
+    {
+        SignalChannel* channel = new SignalChannel(channel_index, QT_TR_NOOP(biosig_header_->rerefCHANNEL[channel_index].Label),
+                                                   biosig_header_->SPR,
+                                                   biosig_header_->rerefCHANNEL[channel_index].PhysDimCode,
+                                                   biosig_header_->rerefCHANNEL[channel_index].PhysMin,
+                                                   biosig_header_->rerefCHANNEL[channel_index].PhysMax,
+                                                   biosig_header_->rerefCHANNEL[channel_index].DigMin,
+                                                   biosig_header_->rerefCHANNEL[channel_index].DigMax,
+                                                   biosig_header_->rerefCHANNEL[channel_index].GDFTYP,
+                                                   1 / 8, // TODO: really don't know what that means!
+                                                   "filter", // maybe useless
+                                                   biosig_header_->rerefCHANNEL[channel_index].LowPass,
+                                                   biosig_header_->rerefCHANNEL[channel_index].HighPass,
+                                                   biosig_header_->rerefCHANNEL[channel_index].Notch > 0.0);
+        basic_header_->addChannel(channel);
+    }
+#endif
     return "";
 }
 
@@ -357,10 +387,17 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
         {
         	if (samp < samples_in_read_data)
         	{
-        		data_block_buffer[samp] = read_data_[(*data_block)->channel_number * samples_in_read_data + samp];
-        		data_block_upper_buffer[samp] = data_block_buffer[samp];
-        		data_block_lower_buffer[samp] = data_block_buffer[samp];
-        		data_block_buffer_valid[samp] = data_block_buffer[samp]==data_block_buffer[samp];	// test for NaN
+        		size_t ix;
+        		if (biosig_header_->FLAG.ROW_BASED_CHANNELS)
+        			ix = (*data_block)->channel_number + samp * biosig_header_->data.size[0];
+        		else
+        			ix = (*data_block)->channel_number * samples_in_read_data + samp;
+        			
+        		double val = read_data_[ix];
+        		data_block_buffer[samp]       = val;
+        		data_block_upper_buffer[samp] = val;
+        		data_block_lower_buffer[samp] = val;
+        		data_block_buffer_valid[samp] = (val==val);	// test for NaN
         	}
         	else
         	{

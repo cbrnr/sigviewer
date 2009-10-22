@@ -4,7 +4,7 @@
     Copyright (C) Thomas Brunner  2006,2007 
     		  Christoph Eibel 2007,2008, 
 		  Clemens Brunner 2006,2007,2008  
-    		  Alois Schloegl  2008
+    		  Alois Schloegl  2008,2009
     This file is part of the "SigViewer" repository 
     at http://biosig.sf.net/ 
 
@@ -26,6 +26,7 @@
 // signal_channel.cpp
 
 #include "signal_channel.h"
+#include "../../extern/biosig.h"
 
 #include <QMutexLocker>
 
@@ -35,7 +36,6 @@ namespace BioSig_
 // constructor
 SignalChannel::SignalChannel(uint32 number, const QString& label,
                              uint32 samples_per_record,
-                             const QString& physical_dim,
                              uint32 physdimcode, 
                              float64 physical_minimum,
                              float64 physical_maximum,
@@ -46,7 +46,6 @@ SignalChannel::SignalChannel(uint32 number, const QString& label,
 : number_(number),
   label_(label),
   samples_per_record_(samples_per_record),
-  physical_dim_(physical_dim),
   physical_maximum_(physical_maximum),
   digital_maximum_(digital_maximum),
   physical_minimum_(physical_minimum),
@@ -61,8 +60,10 @@ SignalChannel::SignalChannel(uint32 number, const QString& label,
     scale_ = (physical_maximum - physical_minimum) /
              (digital_maximum - digital_minimum);
     offset_ = physical_minimum - digital_minimum * scale_;
-
-// fprintf(stdout,"#%i: %f %f %f %f %e %e \n",number,physical_maximum, physical_minimum,digital_maximum, digital_minimum, scale_, offset_);
+    
+    char p[MAX_LENGTH_PHYSDIM+1];
+    PhysDim(physdimcode,p);	
+    physical_dim_ = QString(p);
 
 }
 
