@@ -32,9 +32,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 //-----------------------------------------------------------------------------
 // TODO! constructor
 SignalBrowserModel::SignalBrowserModel(FileSignalReader& reader,
@@ -523,7 +520,7 @@ void SignalBrowserModel::updateLayout()
                    channel2signal_item_.size();
 
     QDialog* dialog = new QDialog;
-    dialog->setCaption("Initialize Chunk Matrix");
+    dialog->setWindowTitle("Initialize Chunk Matrix");
     dialog->resize(250, 50);
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     dialog->show();
@@ -1106,10 +1103,10 @@ void SignalBrowserModel::changeSelectedEventChannel()
     // dialog
     bool ok = false;
 
-    QString res = QInputDialog::getItem(tr("Change Channel"),
+    QString res = QInputDialog::getItem(signal_browser_view_, tr("Change Channel"),
                                         tr("Select new Channel:"),
                                         channel_list, current_item,
-                                        false, &ok, signal_browser_view_);
+                                        false, &ok);
 
     int32 new_channel = res.replace(')', '(').section('(', 1, 1).toInt() - 1;
 
@@ -1208,10 +1205,10 @@ void SignalBrowserModel::changeSelectedEventType()
     // dialog
     bool ok = false;
 
-    QString res = QInputDialog::getItem(tr("Change Type"),
+    QString res = QInputDialog::getItem(signal_browser_view_, tr("Change Type"),
                                         tr("Select new Type:"),
                                         event_type_list, current_item,
-                                        false, &ok, signal_browser_view_);
+                                        false, &ok);
 
     uint16 new_type = res.right(5).left(4).toUShort(0, 16);
 
@@ -1368,6 +1365,3 @@ void SignalBrowserModel::resetEventSizeAndPos (QSharedPointer<EventGraphicsItem>
 
 
 } // namespace PortingToQT4_
-
-} // namespace Biosig_
-

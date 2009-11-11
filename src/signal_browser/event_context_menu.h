@@ -12,9 +12,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 class SignalBrowserModel;
 
 //-----------------------------------------------------------------------------
@@ -71,8 +68,6 @@ public slots:
     void selectEvent (QAction* q);
 
 };
-
-}
 
 }
 

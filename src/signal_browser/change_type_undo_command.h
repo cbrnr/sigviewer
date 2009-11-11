@@ -10,9 +10,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 class ChangeTypeUndoCommand : public QUndoCommand
 {
 public:
@@ -48,8 +45,5 @@ private:
 };
 
 }
-
-}
-
 
 #endif // CHANGE_TYPE_UNDO_COMMAND_H

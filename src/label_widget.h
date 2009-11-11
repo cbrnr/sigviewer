@@ -4,6 +4,7 @@
 #define LABEL_WIDGET_H
 
 #include "base/user_types.h"
+#include "signal_browser/signal_browser_model_4.h"
 
 #include <QMap>
 #include <QWidget>
@@ -12,26 +13,13 @@
 namespace BioSig_
 {
 
-#ifndef QT4_PORTED
-class SignalBrowserModel;
-class SignalBrowser;
-#else
-namespace PortingToQT4_
-{
-class SignalBrowserModel;
 class SignalBrowserView;
-}
-#endif
 
 // label widget
 class LabelWidget : public QWidget
 {
 public:
-#ifndef QT4_PORTED
-    LabelWidget(SignalBrowserModel& model, SignalBrowser* browser);
-#else
-    LabelWidget(PortingToQT4_::SignalBrowserModel& model, PortingToQT4_::SignalBrowserView* browser);
-#endif
+    LabelWidget(SignalBrowserModel& model, SignalBrowserView* browser);
 
     void addChannel(int32 channel_nr, const QString& label);
     void removeChannel(int32 channel_nr);
@@ -47,13 +35,9 @@ protected:
     void paintEvent(QPaintEvent* pe);
 
 private:
-#ifndef QT4_PORTED
     SignalBrowserModel& signal_browser_model_;
-    SignalBrowser* signal_browser_;
-#else
-    PortingToQT4_::SignalBrowserModel& signal_browser_model_;
-    PortingToQT4_::SignalBrowserView* signal_browser_;
-#endif
+    SignalBrowserView* signal_browser_;
+
     QMap<int32, QString> channel_nr2label_;
     static QColor axis_color_;
 };

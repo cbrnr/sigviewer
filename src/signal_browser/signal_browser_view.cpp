@@ -1,7 +1,7 @@
 // signal_browser.cpp
 
 #include "signal_browser_view.h"
-#include "signal_browser_model.h"
+#include "signal_browser_model_4.h"
 #include "signal_graphics_item.h"
 #include "event_graphics_item.h"
 #include "y_axis_widget_4.h"
@@ -17,9 +17,6 @@
 
 
 namespace BioSig_
-{
-
-namespace PortingToQT4_
 {
 
 //-----------------------------------------------------------------------------
@@ -45,14 +42,10 @@ SignalBrowserView::SignalBrowserView(SignalBrowserModel* signal_browser_model, Q
     x_axis_widget_->resize(width()-300, 30);
     x_axis_widget_->setMinimumSize(0, 30);
 
-#ifdef QT4_PORTED
-    label_widget_ = new LabelWidget (*signal_browser_model, this);
-    label_widget_->resize(70, height());
-    label_widget_->setMinimumWidth(70);
-#endif
-
     horizontal_scrollbar_ = new QScrollBar (Qt::Horizontal, this);
     vertical_scrollbar_ = new QScrollBar (Qt::Vertical, this);
+
+    label_widget_ = new LabelWidget (*signal_browser_model, this);
 
     connect(horizontal_scrollbar_, SIGNAL(valueChanged(int)),
             graphics_view_->horizontalScrollBar(), SLOT(setValue(int)));
@@ -342,7 +335,5 @@ void SignalBrowserView::verticalSrollbarMoved(int)
     y_axis_widget_->repaint();
 }
 */
-} //namespace PortingToQT4_
 
 } // namespace BioSig_
-

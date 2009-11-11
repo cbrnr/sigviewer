@@ -3,9 +3,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 //-----------------------------------------------------------------------------
 ChangeTypeUndoCommand::ChangeTypeUndoCommand (SignalBrowserModel& signal_browser_model,
                                               QSharedPointer<SignalEvent> signal_event,
@@ -36,6 +33,5 @@ void ChangeTypeUndoCommand::redo ()
     old_type_ = signal_event_->getType();
     signal_event_->setType(new_type_);
     signal_browser_model_.setEventChanged(signal_event_->getId());
-}
 }
 }

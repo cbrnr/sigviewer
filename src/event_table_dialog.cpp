@@ -2,14 +2,9 @@
 
 #include "event_table_dialog.h"
 
-#ifndef QT4_PORTED
-    #include "signal_browser_model.h"
-#else
-    #include "signal_browser/signal_browser_model_4.h"
-#endif
+#include "signal_browser/signal_browser_model_4.h"
 
 #include "gui_signal_buffer.h"
-#include "event_canvas_item.h"
 #include "base/basic_header.h"
 #include "base/event_table_file_reader.h"
 #include "main_window_model.h"
@@ -227,14 +222,8 @@ void EventTableDialog::TableModel::sort(int column, Qt::SortOrder order)
 }
 
 // constructor
-#ifndef QT4_PORTED
 EventTableDialog::EventTableDialog(SignalBrowserModel& browser_model,
                                    QPointer<BasicHeader> basic_header, QWidget* parent)
-#else
-EventTableDialog::EventTableDialog(PortingToQT4_::SignalBrowserModel& browser_model,
-                                   QPointer<BasicHeader> basic_header, QWidget* parent)
-
-#endif
  : QDialog(parent),
    signal_browser_model_(browser_model),
    basic_header_(basic_header)

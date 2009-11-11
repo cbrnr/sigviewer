@@ -4,9 +4,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 //-----------------------------------------------------------------------------
 NewEventUndoCommand::NewEventUndoCommand (SignalBrowserModel& signal_browser_model,
                                           QSharedPointer<SignalEvent> signal_event,
@@ -36,6 +33,5 @@ void NewEventUndoCommand::redo ()
     QSharedPointer<EventGraphicsItem> event_item
         = signal_browser_model_.addEvent(signal_event_);
     signal_browser_model_.unsetSelectedEventItem();
-}
 }
 }

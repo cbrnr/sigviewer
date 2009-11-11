@@ -17,27 +17,15 @@ namespace BioSig_
 
 class BasicHeader;
 
-#ifndef QT4_PORTED
-    class SignalBrowserModel;
-#else
-    namespace PortingToQT4_
-    {
-        class SignalBrowserModel;
-    }
-#endif
+class SignalBrowserModel;
 
 // event table dialog
 class EventTableDialog : public QDialog
 {
     Q_OBJECT
 public:
-#ifndef QT4_PORTED
     EventTableDialog(SignalBrowserModel& browser_model,
                      QPointer<BasicHeader> basic_header, QWidget* parent = 0);
-#else
-    EventTableDialog(PortingToQT4_::SignalBrowserModel& browser_model,
-                     QPointer<BasicHeader> basic_header, QWidget* parent = 0);
-#endif
 
     void loadSettings();
     void saveSettings();
@@ -99,11 +87,7 @@ private:
 
     void buildEventTable();
 
-#ifndef QT4_PORTED
     SignalBrowserModel& signal_browser_model_;
-#else
-    PortingToQT4_::SignalBrowserModel& signal_browser_model_;
-#endif
     QPointer<BasicHeader> basic_header_;
     QTableView *event_table_view_;
     TableModel *event_table_model_;

@@ -3,9 +3,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 //-----------------------------------------------------------------------------
 ResizeEventUndoCommand::ResizeEventUndoCommand (SignalBrowserModel& signal_browser_model, QSharedPointer<SignalEvent> event, uint32 new_start_position, uint32 new_duration)
 : signal_browser_model_ (signal_browser_model),
@@ -40,7 +37,5 @@ void ResizeEventUndoCommand::redo ()
 }
 
 
-
-}
 
 }

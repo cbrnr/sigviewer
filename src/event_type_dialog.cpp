@@ -1,7 +1,6 @@
 // event_type_dialog.cpp
 
 #include "event_type_dialog.h"
-#include "event_canvas_item.h"
 #include "base/event_table_file_reader.h"
 #include "event_color_manager.h"
 
@@ -189,7 +188,7 @@ void EventTypeDialog::itemClicked(QTreeWidgetItem* item, int column)
     }
     else
     {
-        color.setAlpha(QInputDialog::getInteger(tr("Alpha"), "Enter new Value",
+        color.setAlpha(QInputDialog::getInteger(this, tr("Alpha"), "Enter new Value",
                                                 alpha, 0, 255, 25));
     }
 

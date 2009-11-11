@@ -8,9 +8,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 class NextEventViewUndoCommand : public QUndoCommand
 {
 public:
@@ -41,8 +38,6 @@ private:
 
 
 };
-
-}
 
 }
 

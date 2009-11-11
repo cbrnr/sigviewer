@@ -9,9 +9,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 class SignalBrowserModel;
 class SignalBrowserView;
 class SignalGraphicsItem;
@@ -35,8 +32,6 @@ private:
 
     QMap<int32, SignalGraphicsItem*> channel_nr2signal_graphics_item_;
 };
-
-}
 
 }
 

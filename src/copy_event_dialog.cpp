@@ -26,7 +26,8 @@ CopyEventDialog::CopyEventDialog(QPointer<BasicHeader> header,
     channel_list_widget_
                     ->setSelectionMode(QAbstractItemView::ExtendedSelection);
     top_layout->addWidget(channel_list_widget_);
-    QHBoxLayout* button_layout = new QHBoxLayout(top_layout);
+    //QHBoxLayout* button_layout = new QHBoxLayout(top_layout);
+    QHBoxLayout* button_layout = new QHBoxLayout(this);
     button_layout->setMargin(10);
     button_layout->addStretch(1);
     ok_button_ = new QPushButton(tr("OK"), this);

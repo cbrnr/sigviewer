@@ -17,10 +17,6 @@ namespace BioSig_
 {
 
 class LabelWidget;
-
-namespace PortingToQT4_
-{
-
 class YAxisWidget;
 class XAxisWidget;
 class SignalBrowserModel;
@@ -82,8 +78,6 @@ private:
 };
 
 } // namespace PortingToQT4_
-
-} // namespace BioSig_
 
 #endif // SIGNAL_BROWSER_VIEW_H
 

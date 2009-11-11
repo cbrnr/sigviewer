@@ -10,9 +10,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 class ResizeEventUndoCommand : public QUndoCommand
 {
 public:
@@ -42,8 +39,6 @@ private:
     uint32 old_duration_;
 
 };
-
-}
 
 }
 

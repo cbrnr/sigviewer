@@ -36,6 +36,7 @@
 #include <QApplication>
 #include <QTranslator>
 #include <QTextCodec>
+#include <QLocale>
 #include <QFile>
 #include <QTextStream>
 
@@ -130,12 +131,12 @@ int main(int32 argc, char* argv[])
     qInstallMsgHandler( myMessageOutput );
 
     QTranslator qt_translator(0);
-    qt_translator.load(QString("qt_") + QTextCodec::locale(),
+    qt_translator.load(QString("qt_") + QLocale::languageToString(QLocale::c().language()) +
                        QString(getenv("QTDIR")) + "/translations");
     application.installTranslator(&qt_translator);
 
     QTranslator sigviewer_translator(0);
-    sigviewer_translator.load(QString("sigviewer_") + QTextCodec::locale(),
+    sigviewer_translator.load(QString("sigviewer_") + QLocale::languageToString(QLocale::c().language()),
                               application.applicationDirPath());
     application.installTranslator(&sigviewer_translator);
 
@@ -143,7 +144,7 @@ int main(int32 argc, char* argv[])
     MainWindow main_window(main_window_model);
     main_window_model.setMainWindow(&main_window);
     main_window_model.getEventTableFileReader()
-        .load((application.applicationDirPath() + "/eventcodes.txt").ascii());
+        .load((application.applicationDirPath() + "/eventcodes.txt").toAscii());
     main_window_model.loadSettings();
     main_window.setUnifiedTitleAndToolBarOnMac(true);
     main_window.show();

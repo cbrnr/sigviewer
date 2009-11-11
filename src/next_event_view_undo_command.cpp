@@ -3,10 +3,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
-
 //-----------------------------------------------------------------------------
 NextEventViewUndoCommand::NextEventViewUndoCommand(SignalBrowserModel& signal_browser_model)
     : signal_browser_model_ (signal_browser_model)
@@ -33,5 +29,4 @@ void NextEventViewUndoCommand::redo ()
 }
 
 
-}
 }

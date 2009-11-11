@@ -395,38 +395,38 @@ void MainWindow::initToolBars()
 
     secs_per_page_combobox_ = new QComboBox;
     secs_per_page_combobox_->setEditable(true);
-    secs_per_page_combobox_->setInsertionPolicy(QComboBox::NoInsertion);
+    secs_per_page_combobox_->setInsertPolicy(QComboBox::NoInsert);
     secs_per_page_combobox_->setValidator(new QDoubleValidator(1.0, 10000.0, 1,
                                                                this));
-    secs_per_page_combobox_->insertItem("1");
-    secs_per_page_combobox_->insertItem("3");
-    secs_per_page_combobox_->insertItem("5");
-    secs_per_page_combobox_->insertItem("10");	// important for BCI
-    secs_per_page_combobox_->insertItem("20");	// important for sleep staging
-    secs_per_page_combobox_->insertItem("30");	// important for sleep staging
-    secs_per_page_combobox_->insertItem("50");
-    secs_per_page_combobox_->insertItem("100");
-    secs_per_page_combobox_->insertItem("300");
-    secs_per_page_combobox_->insertItem("500");
-    secs_per_page_combobox_->insertItem("1000");
-    secs_per_page_combobox_->insertItem(tr("whole"));
+    secs_per_page_combobox_->insertItem(1, "1");
+    secs_per_page_combobox_->insertItem(2, "3");
+    secs_per_page_combobox_->insertItem(3, "5");
+    secs_per_page_combobox_->insertItem(4, "10");	// important for BCI
+    secs_per_page_combobox_->insertItem(5, "20");	// important for sleep staging
+    secs_per_page_combobox_->insertItem(6, "30");	// important for sleep staging
+    secs_per_page_combobox_->insertItem(7, "50");
+    secs_per_page_combobox_->insertItem(8, "100");
+    secs_per_page_combobox_->insertItem(9, "300");
+    secs_per_page_combobox_->insertItem(10, "500");
+    secs_per_page_combobox_->insertItem(11, "1000");
+    secs_per_page_combobox_->insertItem(12, tr("whole"));
 
     signals_per_page_combobox_ = new QComboBox;
     signals_per_page_combobox_->setEditable(true);
-    signals_per_page_combobox_->setInsertionPolicy(QComboBox::NoInsertion);
+    signals_per_page_combobox_->setInsertPolicy(QComboBox::NoInsert);
     signals_per_page_combobox_->setValidator(new QDoubleValidator(1.0, 30.0, 1,
                                                                   this));
-    signals_per_page_combobox_->insertItem("1");
-    signals_per_page_combobox_->insertItem("2");
-    signals_per_page_combobox_->insertItem("3");
-    signals_per_page_combobox_->insertItem("5");
-    signals_per_page_combobox_->insertItem("7");
-    signals_per_page_combobox_->insertItem("10");
-    signals_per_page_combobox_->insertItem("15");
-    signals_per_page_combobox_->insertItem("20");
-    signals_per_page_combobox_->insertItem("25");
-    signals_per_page_combobox_->insertItem("30");
-    signals_per_page_combobox_->insertItem("all");
+    signals_per_page_combobox_->insertItem(1, "1");
+    signals_per_page_combobox_->insertItem(2, "2");
+    signals_per_page_combobox_->insertItem(3, "3");
+    signals_per_page_combobox_->insertItem(4, "5");
+    signals_per_page_combobox_->insertItem(5, "7");
+    signals_per_page_combobox_->insertItem(6, "10");
+    signals_per_page_combobox_->insertItem(7, "15");
+    signals_per_page_combobox_->insertItem(8, "20");
+    signals_per_page_combobox_->insertItem(9, "25");
+    signals_per_page_combobox_->insertItem(10, "30");
+    signals_per_page_combobox_->insertItem(11, "all");
 
     navigation_toolbar_ = addToolBar(tr("Navigation"));
     navigation_toolbar_->setIconSize(QSize(22, 22));
@@ -717,7 +717,7 @@ QString MainWindow::showOpenDialog(const QString& path,
                                    const QString& extensions)
 {
     QString extension_selection = tr("Signal files (%1)").arg(extensions);
-    QStringList ext_list = QStringList::split(" ", extensions);
+    QStringList ext_list = extensions.split (" ");//, QString::SkipEmptyParts, extensions);
     for (QStringList::iterator it = ext_list.begin();
          it != ext_list.end();
          it++)
@@ -741,7 +741,7 @@ QString MainWindow::showImportDialog(const QString& path,
                                      const QString& extensions)
 {
     QString extension_selection;
-    QStringList ext_list = QStringList::split(" ", extensions);
+    QStringList ext_list = extensions.split(" ");
     for (QStringList::iterator it = ext_list.begin();
          it != ext_list.end();
          it++)
@@ -789,7 +789,7 @@ QString MainWindow::showExportDialog(const QString& path,
 {
     //QString extension_selection = tr("Signal files (%1)").arg(extensions);
     QString extension_selection;
-    QStringList ext_list = QStringList::split(" ", extensions);
+    QStringList ext_list = extensions.split(" ");
     for (QStringList::iterator it = ext_list.begin();
          it != ext_list.end();
          it++)
@@ -818,7 +818,7 @@ QString MainWindow::showSaveAsDialog(const QString& path,
                                      const QString& extensions)
 {
     QString extension_selection;
-    QStringList ext_list = QStringList::split(" ", extensions);
+    QStringList ext_list = extensions.split(" ");
     for (QStringList::iterator it = ext_list.begin();
          it != ext_list.end();
          it++)
@@ -875,52 +875,27 @@ void MainWindow::setRecentFiles(const QStringList& recent_file_list)
 }
 
 // set mouse mode
-#ifndef QT4_PORTED
 void MainWindow::setMouseMode(SignalBrowserModel::Mode mode)
 {
     switch (mode)
     {
         case SignalBrowserModel::MODE_NEW:
-            mouse_mode_new_action_->setOn(true);
+            mouse_mode_new_action_->setChecked(true);
             break;
         case SignalBrowserModel::MODE_POINTER:
-            mouse_mode_pointer_action_->setOn(true);
+            mouse_mode_pointer_action_->setChecked(true);
             break;
         case SignalBrowserModel::MODE_HAND:
-            mouse_mode_hand_action_->setOn(true);
+            mouse_mode_hand_action_->setChecked(true);
             break;
         case SignalBrowserModel::MODE_SHIFT_SIGNAL:
-            mouse_mode_shift_signal_action_->setOn(true);
+            mouse_mode_shift_signal_action_->setChecked(true);
             break;
         case SignalBrowserModel::MODE_ZOOM:
-            mouse_mode_zoom_action_->setOn(true);
+            mouse_mode_zoom_action_->setChecked(true);
             break;
     }
 }
-#else
-void MainWindow::setMouseMode(PortingToQT4_::SignalBrowserModel::Mode mode)
-{
-    switch (mode)
-    {
-        case PortingToQT4_::SignalBrowserModel::MODE_NEW:
-            mouse_mode_new_action_->setOn(true);
-            break;
-        case PortingToQT4_::SignalBrowserModel::MODE_POINTER:
-            mouse_mode_pointer_action_->setOn(true);
-            break;
-        case PortingToQT4_::SignalBrowserModel::MODE_HAND:
-            mouse_mode_hand_action_->setOn(true);
-            break;
-        case PortingToQT4_::SignalBrowserModel::MODE_SHIFT_SIGNAL:
-            mouse_mode_shift_signal_action_->setOn(true);
-            break;
-        case PortingToQT4_::SignalBrowserModel::MODE_ZOOM:
-            mouse_mode_zoom_action_->setOn(true);
-            break;
-    }
-}
-#endif // QT4_PORTED
-
 
 // set signals per page
 void MainWindow::setSignalsPerPage(float64 signals_per_page)

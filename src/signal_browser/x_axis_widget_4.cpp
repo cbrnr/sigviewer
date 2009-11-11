@@ -8,9 +8,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 //-----------------------------------------------------------------------------
 XAxisWidget::XAxisWidget(QWidget* parent, SignalBrowserModel& model, SignalBrowserView* browser)
   : QWidget (parent),
@@ -66,8 +63,5 @@ void XAxisWidget::paintEvent(QPaintEvent* event)
                    QString::number(float_x / pixel_per_sec));
     }
 }
-
-}
-
 
 }

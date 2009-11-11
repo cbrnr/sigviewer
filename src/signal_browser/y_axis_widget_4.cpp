@@ -14,9 +14,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 //-----------------------------------------------------------------------------
 YAxisWidget::YAxisWidget(QWidget* parent, SignalBrowserModel& model, SignalBrowserView* browser)
   : QWidget (parent),
@@ -74,14 +71,14 @@ void YAxisWidget::paintEvent(QPaintEvent* event)
     {
         p.setClipRect(0, (int32)float_item_y, w, intervall);
 
-            float64 value_range = (iter.data()->getMaximum() - iter.data()->getMinimum()) /
-                                  iter.data()->getYZoom();
+            float64 value_range = (iter.value()->getMaximum() - iter.value()->getMinimum()) /
+                                  iter.value()->getYZoom();
             // std::cout << "float_item_y = " << float_item_y << std::endl;
-            float64 upper_value = iter.data()->getYOffset() + value_range / 2.0;
+            float64 upper_value = iter.value()->getYOffset() + value_range / 2.0;
             p.drawLine(0, (int32)float_item_y + signal_height,
                        w - 1, (int32)float_item_y + signal_height);
 
-            float64 y_grid_pixel_intervall = iter.data()->getYGridPixelIntervall();
+            float64 y_grid_pixel_intervall = iter.value()->getYGridPixelIntervall();
             float64 y_grid_intervall = y_grid_pixel_intervall / signal_height * value_range;
 
             float64 value = (int32)((upper_value + y_grid_intervall) / y_grid_intervall) * y_grid_intervall;
@@ -100,7 +97,5 @@ void YAxisWidget::paintEvent(QPaintEvent* event)
 
 }
 
-
-}
 
 }

@@ -5,7 +5,6 @@
 
 
 
-    #include "signal_browser_model.h"
     class QMouseEvent;
     class QWheelEvent;
 
@@ -35,11 +34,7 @@ public:
         COPY_EVENT_TO_CHANNEL_ACTION
     };
 
-#ifndef QT4_PORTED
-    static Action getAction(QMouseEvent* e, SignalBrowserModel::Mode mode);
-    static Action getAction(QWheelEvent* e, SignalBrowserModel::Mode mode);
-#endif
-    static Action getAction(QGraphicsSceneMouseEvent* e, PortingToQT4_::SignalBrowserModel::Mode mode);
+    static Action getAction(QGraphicsSceneMouseEvent* e, SignalBrowserModel::Mode mode);
 
 
 };

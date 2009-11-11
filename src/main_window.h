@@ -4,11 +4,7 @@
 #define MAIN_WINDOW_H
 
 #include "base/user_types.h"
-#ifndef QT4_PORTED
-#include "signal_browser_model.h"
-#else
 #include "signal_browser/signal_browser_model_4.h"
-#endif // QT4_PORTED
 
 #include <QMainWindow>
 #include <QIcon>
@@ -66,11 +62,7 @@ public:
     void setSignalsPerPage(float64 signals_per_page);
     void setSecsPerPage(float64 secs_per_page);
     void setSecsPerPage(const QString& secs_per_page);
-#ifndef QT4_PORTED
     void setMouseMode(SignalBrowserModel::Mode mode);
-#else
-    void setMouseMode(PortingToQT4_::SignalBrowserModel::Mode mode);
-#endif // QT4_PORTED
     void setStatusBarSignalLength(float64 length);
     void setStatusBarNrChannels(int32 nr_channels);
     void setStatusBarNrTrials(int32 nr_trials);

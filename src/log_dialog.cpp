@@ -25,7 +25,8 @@ LogDialog::LogDialog(QTextStream& log_stream, QWidget* parent)
     text_edit_->setReadOnly(true);
     text_edit_->append(*log_stream.string());
     top_layout->addWidget(text_edit_);
-    QHBoxLayout* button_layout = new QHBoxLayout(top_layout);
+//    QHBoxLayout* button_layout = new QHBoxLayout(top_layout);
+    QHBoxLayout* button_layout = new QHBoxLayout(this);
     button_layout->setMargin(10);
     button_layout->addStretch(1);
     close_button_ = new QPushButton(tr("Close"), this);

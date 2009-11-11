@@ -10,9 +10,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 class DeleteEventUndoCommand : public QUndoCommand
 {
 public:
@@ -49,8 +46,6 @@ private:
     DeleteEventUndoCommand& operator= (DeleteEventUndoCommand const &);
 
 };
-
-}
 
 }
 

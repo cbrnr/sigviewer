@@ -16,10 +16,6 @@ namespace BioSig_
 
 class SignalBuffer;
 class SignalEvent;
-
-namespace PortingToQT4_
-{
-
 class SignalBrowserModel;
 class SignalBrowserView;
 class EventContextMenu;
@@ -95,6 +91,4 @@ protected:
 };
 
 }
-}
-
 #endif // EVENT_GRAPHICS_ITEM_H

@@ -1,14 +1,7 @@
 // label_widget.cpp
 
 #include "label_widget.h"
-#ifndef QT4_PORTED
-#include "signal_browser_model.h"
-#include "signal_browser.h"
-#include "smart_canvas/smart_canvas_view.h"
-#else
-#include "signal_browser/signal_browser_model_4.h"
 #include "signal_browser/signal_browser_view.h"
-#endif
 
 #include <math.h>
 
@@ -27,11 +20,7 @@ namespace BioSig_
 QColor LabelWidget::axis_color_("#e0e0e0");
 
 // constructor
-#ifndef QT4_PORTED
-LabelWidget::LabelWidget(SignalBrowserModel& model, SignalBrowser* browser)
-#else
-LabelWidget::LabelWidget(PortingToQT4_::SignalBrowserModel& model, PortingToQT4_::SignalBrowserView* browser)
-#endif
+LabelWidget::LabelWidget(SignalBrowserModel& model, SignalBrowserView* browser)
 : QWidget(browser),
   signal_browser_model_(model),
   signal_browser_(browser)
@@ -69,11 +58,7 @@ void LabelWidget::paintEvent(QPaintEvent*)
     int32 signal_height = signal_browser_model_.getSignalHeight();
     int32 signal_spacing = signal_browser_model_.getSignalSpacing();
     float64 intervall = signal_height + signal_spacing;
-#ifndef QT4_PORTED
-    int32 y_start = signal_browser_->getCanvasView()->contentsY();
-#else
     int32 y_start = signal_browser_->getVisibleY();
-#endif
     int32 y_end = y_start + height();
     int32 w = width();
 
@@ -94,7 +79,7 @@ void LabelWidget::paintEvent(QPaintEvent*)
         {
             int32 y = (int32)(float_y + 0.5);
             p.drawText(0, (int32)(y - intervall /2) , w - 10, (int32)intervall,
-                       Qt::AlignHCenter | Qt::AlignVCenter, iter.data());
+                       Qt::AlignHCenter | Qt::AlignVCenter, iter.value());
         }
     }
 
@@ -132,7 +117,7 @@ void LabelWidget::addChannel(int32 channel_nr, const QString& label)
 // remove channel
 void LabelWidget::removeChannel(int32 channel_nr)
 {
-    channel_nr2label_.erase(channel_nr);
+    channel_nr2label_.erase(channel_nr2label_.find(channel_nr));
     int32 max_width = -1;
     QPixmap dummy(1,1);
     QPainter p(&dummy);
@@ -143,7 +128,7 @@ void LabelWidget::removeChannel(int32 channel_nr)
     {
         QRect bounding = p.boundingRect(0, 0, 500, 500,
                                         Qt::AlignHCenter | Qt::AlignVCenter,
-                                        iter.data());
+                                        iter.value());
 
         max_width = max_width < bounding.width() ? bounding.width() : max_width;
     }

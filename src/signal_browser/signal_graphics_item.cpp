@@ -27,9 +27,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 // prefered pixel per sample
 float64 SignalGraphicsItem::prefered_pixel_per_sample_ = 1.0;
 
@@ -540,9 +537,6 @@ void SignalGraphicsItem::drawYAxis (QPainter * painter, const QStyleOptionGraphi
             }
         }
     }*/
-}
-
-
 }
 
 

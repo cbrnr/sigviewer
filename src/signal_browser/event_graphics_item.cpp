@@ -27,9 +27,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 // move mouse range
 int EventGraphicsItem::move_mouse_range_ = 5;
 QMutex EventGraphicsItem::event_handling_mutex_;
@@ -448,7 +445,5 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
     return ACTION_NONE;
 }
 
-
-}
 
 }

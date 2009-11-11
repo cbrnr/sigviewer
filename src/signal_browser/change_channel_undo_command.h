@@ -10,9 +10,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 class ChangeChannelUndoCommand : public QUndoCommand
 {
 public:
@@ -50,8 +47,6 @@ private:
     int32 old_channel_;
 
 };
-
-}
 
 }
 

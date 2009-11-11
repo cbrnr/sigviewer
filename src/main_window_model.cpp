@@ -8,12 +8,7 @@
 #include "basic_header_info_dialog.h"
 #include "log_dialog.h"
 #include "channel_selection_dialog.h"
-#include "signal_browser.h"
-#include "signal_browser_model.h"
-#include "signal_browser.h"
 #include "go_to_dialog.h"
-#include "smart_canvas/smart_canvas.h"
-#include "smart_canvas/smart_canvas_view.h"
 #include "event_type_dialog.h"
 #include "gui_signal_buffer.h"
 #include "event_table_dialog.h"
@@ -21,7 +16,6 @@
 #include "settings_dialog.h"
 #include "command_stack.h"
 
-// QT4
 #include "signal_browser/signal_browser_model_4.h"
 #include "signal_browser/signal_browser_view.h"
 #include "signal_browser/delete_event_undo_command.h"
@@ -171,7 +165,7 @@ void MainWindowModel::setState(MainWindowModel::State state)
         case STATE_FILE_CLOSED:
             if (main_window_)
             {
-                main_window_->setCaption("SigViewer");
+                main_window_->setWindowTitle("SigViewer");
                 main_window_->setFileSaveEnabled(false);
                 main_window_->setFileSaveAsEnabled(false);
                 main_window_->SetFileExportEventsEnabled(false);
@@ -204,7 +198,7 @@ void MainWindowModel::setState(MainWindowModel::State state)
             {
                 QString caption = "SigViewer - [%1]";
                 caption = caption.arg(file_signal_reader_->getBasicHeader()->getFullFileName());
-                main_window_->setCaption(caption);
+                main_window_->setWindowTitle(caption);
                 main_window_->setFileSaveEnabled(false);
                 main_window_->setFileSaveAsEnabled(true);
                 main_window_->SetFileExportEventsEnabled(true);
@@ -235,7 +229,7 @@ void MainWindowModel::setState(MainWindowModel::State state)
             {
                 QString caption = "SigViewer - [%1*]";
                 caption = caption.arg(file_signal_reader_->getBasicHeader()->getFullFileName());
-                main_window_->setCaption(caption);
+                main_window_->setWindowTitle(caption);
                 main_window_->setFileSaveEnabled(true);
                 main_window_->setFileSaveAsEnabled(true);
                 main_window_->SetFileExportEventsEnabled(true);
@@ -360,17 +354,17 @@ void MainWindowModel::fileSaveAction()
 
     QString file_name = file_signal_reader_->getBasicHeader()->getFullFileName();
 
-    if (file_name.findRev('.') != -1)
+    if (file_name.lastIndexOf('.') != -1)
     {
         file_signal_writer = FileSignalWriterFactory::getInstance()->
-                    getElement(file_name.mid(file_name.findRev('.')));
+                    getElement(file_name.mid(file_name.lastIndexOf('.')));
     }
 
     if (!file_signal_writer)
     {
         *log_stream_ << "MainWindowModel::fileSaveAction Error: "
                      << "not suported file format: '"
-                     << file_name.mid(file_name.findRev('.')) << "'\n";
+                     << file_name.mid(file_name.lastIndexOf('.')) << "'\n";
 
         main_window_->showErrorWriteDialog(
                                 file_signal_reader_->getBasicHeader()->getFullFileName());
@@ -429,17 +423,17 @@ void MainWindowModel::fileSaveAsAction()
     // get writer for file
     FileSignalWriter* file_signal_writer = 0;
 
-    if (file_name.findRev('.') != -1)
+    if (file_name.lastIndexOf('.') != -1)
     {
         file_signal_writer = FileSignalWriterFactory::getInstance()
-                ->getElement(file_name.mid(file_name.findRev('.')));
+                ->getElement(file_name.mid(file_name.lastIndexOf('.')));
     }
 
     if (!file_signal_writer)
     {
         *log_stream_ << "MainWindowModel::fileSaveAsAction Error: "
                      << "not suported file format: '"
-                     << file_name.mid(file_name.findRev('.')) << "'\n";
+                     << file_name.mid(file_name.lastIndexOf('.')) << "'\n";
 
         main_window_->showErrorWriteDialog(
                                 file_signal_reader_->getBasicHeader()->getFullFileName());
@@ -468,7 +462,7 @@ void MainWindowModel::fileSaveAsAction()
                      << "Error: writing file:'" << file_name << "'\n";
 
         main_window_->showErrorWriteDialog(
-                                file_signal_reader_->getBasicHeader()->getFullFileName() + ": \"" + tr(save_error) + "\"");
+                                file_signal_reader_->getBasicHeader()->getFullFileName() + ": \"" + tr(save_error.toLatin1()) + "\"");
     }
 
     delete file_signal_writer;
@@ -489,11 +483,7 @@ void MainWindowModel::fileExportEventsAction()
     signal_browser_model_->getEvents(event_vector);
 
     // get event types
-#ifndef QT4_PORTED
     SignalBrowserModel::IntList event_types;
-#else
-    PortingToQT4_::SignalBrowserModel::IntList event_types;
-#endif
     FileSignalReader::SignalEventVector::iterator it;
 
     for (it = event_vector.begin(); it != event_vector.end(); it++)
@@ -540,17 +530,17 @@ void MainWindowModel::fileExportEventsAction()
     // get writer for file
     FileSignalWriter* file_signal_writer = 0;
 
-    if (file_name.findRev('.') != -1)
+    if (file_name.lastIndexOf('.') != -1)
     {
         file_signal_writer = FileSignalWriterFactory::getInstance()
-                    ->getElement(file_name.mid(file_name.findRev('.')));
+                    ->getElement(file_name.mid(file_name.lastIndexOf('.')));
     }
 
     if (!file_signal_writer)
     {
         *log_stream_ << "MainWindowModel::fileExportEventsAction Error: "
                      << "not suported file format: '"
-                     << file_name.mid(file_name.findRev('.')) << "'\n";
+                     << file_name.mid(file_name.lastIndexOf('.')) << "'\n";
 
         main_window_->showErrorWriteDialog(
                                 file_signal_reader_->getBasicHeader()->getFullFileName());
@@ -587,7 +577,7 @@ void MainWindowModel::fileExportEventsAction()
                      << "Error: writing file:'" << file_name << "'\n";
 
         main_window_->showErrorWriteDialog(
-                                file_signal_reader_->getBasicHeader()->getFullFileName() + ": \""+ tr(save_error) + "\"");
+                                file_signal_reader_->getBasicHeader()->getFullFileName() + ": \""+ tr(save_error.toLatin1()) + "\"");
     }
 
     delete file_signal_writer;
@@ -619,10 +609,10 @@ void MainWindowModel::fileImportEventsAction()
     FileSignalReader* signal_reader = 0;
 
     QString load;
-    if (file_name.findRev('.') != -1)
+    if (file_name.lastIndexOf('.') != -1)
     {
         signal_reader = FileSignalReaderFactory::getInstance()
-                    ->getElement(file_name.mid(file_name.findRev('.')));
+                    ->getElement(file_name.mid(file_name.lastIndexOf('.')));
 
         if (signal_reader)
         {
@@ -750,10 +740,10 @@ void MainWindowModel::openFile(const QString& file_name)
     FileSignalReader* signal_reader = 0;
     QString load;
 
-    if (file_name.findRev('.') != -1)
+    if (file_name.lastIndexOf('.') != -1)
     {
         signal_reader = FileSignalReaderFactory::getInstance()->
-                    getElement(file_name.mid(file_name.findRev('.')));
+                    getElement(file_name.mid(file_name.lastIndexOf('.')));
 
         if (signal_reader)
         {
@@ -779,31 +769,21 @@ void MainWindowModel::openFile(const QString& file_name)
 
     // loading successfull
     file_signal_reader_.reset(signal_reader);
-    int32 sep_pos = file_name.findRev(DIR_SEPARATOR);
+    int32 sep_pos = file_name.lastIndexOf(DIR_SEPARATOR);
     QString path = sep_pos == -1 ? "." : file_name.mid(0, sep_pos);
     QSettings settings("SigViewer");
     settings.setValue("MainWindowModel/file_open_path", path);
 
+    std::cout << "openFile before initialize browser" << std::endl;
     // initialize signal browser
-#ifndef QT4_PORTED
     signal_browser_model_.reset(new SignalBrowserModel(*signal_reader, *this));
     signal_browser_model_->setLogStream(log_stream_.get());
-    signal_browser_.reset(new SignalBrowser(*signal_browser_model_.get(),
-                          main_window_));
-
-    signal_browser_model_->setSignalBrowser(signal_browser_.get());
-    signal_browser_model_->loadSettings();
-    main_window_->setCentralWidget(signal_browser_.get());
-#else
-    signal_browser_model_.reset(new PortingToQT4_::SignalBrowserModel(*signal_reader, *this));
-    signal_browser_model_->setLogStream(log_stream_.get());
-    signal_browser_.reset (new PortingToQT4_::SignalBrowserView(signal_browser_model_.get(), main_window_));
+    signal_browser_.reset (new SignalBrowserView(signal_browser_model_.get(), main_window_));
 
     signal_browser_model_->setSignalBrowserView(signal_browser_.get());
     signal_browser_model_->loadSettings();
     main_window_->setCentralWidget(signal_browser_.get());
 
-#endif // QT4_PORTED
     setState(STATE_FILE_OPENED);
 
     // update recent files
@@ -823,15 +803,6 @@ void MainWindowModel::openFile(const QString& file_name)
 
 
     // set signals per page to all
-#ifndef QT4_PORTED
-    int32 nr_shown_channels = signal_browser_model_->getNumberShownChannels();
-    nr_shown_channels = nr_shown_channels == 0 ? 1 : nr_shown_channels;
-    int32 signal_height = (int32)(signal_browser_ ->getCanvasView()->visibleHeight() /
-                                  nr_shown_channels) -
-                          signal_browser_model_->getSignalSpacing();
-
-    signal_browser_model_->setSignalHeight(signal_height);
-#else
     int32 nr_shown_channels = signal_browser_model_->getNumberShownChannels();
     nr_shown_channels = nr_shown_channels == 0 ? 1 : nr_shown_channels;
 
@@ -840,7 +811,6 @@ void MainWindowModel::openFile(const QString& file_name)
                           (signal_browser_model_->getSignalSpacing() * 2);
 
     signal_browser_model_->setSignalHeight(signal_height);
-#endif // QT4_PORTED
     main_window_->setSignalsPerPage(-1); // all
 
     // set status bar
@@ -961,12 +931,8 @@ void MainWindowModel::editDeleteAction()
         return;
     }
 
-#ifndef QT4_PORTED
-    signal_browser_model_->removeSelectedEvent();
-#else
-    QUndoCommand* deleteCommand = new PortingToQT4_::DeleteEventUndoCommand (*signal_browser_model_, signal_browser_model_->getSelectedEventItem());
+    QUndoCommand* deleteCommand = new DeleteEventUndoCommand (*signal_browser_model_, signal_browser_model_->getSelectedEventItem());
     CommandStack::instance().executeEditCommand(deleteCommand);
-#endif
 }
 
 // edit change channel action
@@ -1002,16 +968,9 @@ void MainWindowModel::editEventTableAction()
         return;
     }
 
-#ifndef QT4_PORTED
     EventTableDialog event_table_dialog(*signal_browser_model_.get(),
                                         file_signal_reader_->getBasicHeader(),
                                         main_window_);
-#else
-    EventTableDialog event_table_dialog(*signal_browser_model_.get(),
-                                        file_signal_reader_->getBasicHeader(),
-                                        main_window_);
-#endif
-
     event_table_dialog.loadSettings();
     event_table_dialog.exec();
     event_table_dialog.saveSettings();
@@ -1038,14 +997,9 @@ void MainWindowModel::mouseModeNewAction()
         return;
     }
 
-#ifndef QT4_PORTED
-    signal_browser_model_->setSelectedEventItem(0);
-    signal_browser_model_->setMode(SignalBrowserModel::MODE_NEW);
-#else
     signal_browser_model_->unsetSelectedEventItem();
-    signal_browser_model_->setMode(PortingToQT4_::SignalBrowserModel::MODE_NEW);
+    signal_browser_model_->setMode(SignalBrowserModel::MODE_NEW);
     signal_browser_->setScrollMode(false);
-#endif
 }
 
 // mouse mode pointer action
@@ -1056,12 +1010,8 @@ void MainWindowModel::mouseModePointerAction()
     {
         return;
     }
-#ifndef QT4_PORTED
     signal_browser_model_->setMode(SignalBrowserModel::MODE_POINTER);
-#else
-    signal_browser_model_->setMode(PortingToQT4_::SignalBrowserModel::MODE_POINTER);
     signal_browser_->setScrollMode(false);
-#endif
 }
 
 // mouse mode hand action
@@ -1072,12 +1022,8 @@ void MainWindowModel::mouseModeHandAction()
     {
         return;
     }
-#ifndef QT4_PORTED
     signal_browser_model_->setMode(SignalBrowserModel::MODE_HAND);
-#else
-    signal_browser_model_->setMode(PortingToQT4_::SignalBrowserModel::MODE_HAND);
     signal_browser_->setScrollMode(true);
-#endif
 }
 
 // mouse mode shift signal action
@@ -1089,12 +1035,8 @@ void MainWindowModel::mouseModeShiftSignalAction()
         return;
     }
 
-#ifndef QT4_PORTED
     signal_browser_model_->setMode(SignalBrowserModel::MODE_SHIFT_SIGNAL);
-#else
-    signal_browser_model_->setMode(PortingToQT4_::SignalBrowserModel::MODE_SHIFT_SIGNAL);
     signal_browser_->setScrollMode(false);
-#endif
 }
 
 // mouse mode zoom action
@@ -1106,12 +1048,8 @@ void MainWindowModel::mouseModeZoomAction()
         return;
     }
 
-#ifndef QT4_PORTED
     signal_browser_model_->setMode(SignalBrowserModel::MODE_ZOOM);
-#else
-    signal_browser_model_->setMode(PortingToQT4_::SignalBrowserModel::MODE_ZOOM);
     signal_browser_->setScrollMode(false);
-#endif
 }
 
 // view zoom out action
@@ -1184,12 +1122,8 @@ void MainWindowModel::viewShowAndSelectNextEventAction()
         return;
     }
 
-#ifndef QT4_PORTED
-    // not possible in this version
-#else
-    QUndoCommand* eventCommand = new PortingToQT4_::NextEventViewUndoCommand (*signal_browser_model_);
+    QUndoCommand* eventCommand = new NextEventViewUndoCommand (*signal_browser_model_);
     CommandStack::instance().executeViewCommand(eventCommand);
-#endif
 }
 
 // options channels action
@@ -1281,38 +1215,6 @@ void MainWindowModel::channelSelection ()
     }
 
 
-#ifndef QT4_PORTED
-    signal_browser_model_->enableInitDownsampling(channel_dialog.
-                                                     isInitRangeSearch());
-    signal_browser_model_->enableInitMinMaxSearch(channel_dialog.
-                                                     isInitRangeSearch());
-    signal_browser_model_->setWholeDataBuffer(
-            (SignalBuffer::WHOLE_BUFFER)channel_dialog.wholeSubsampling());
-    signal_browser_model_->setDefaultRange(channel_dialog.rangeMin(),
-                                           channel_dialog.rangeMax());
-
-    // set new selected channels
-    for (uint32 channel_nr = 0;
-         channel_nr < file_signal_reader_->getBasicHeader()->getNumberChannels();
-         channel_nr++)
-    {
-        if (channel_dialog.isSelected(channel_nr))
-        {
-            signal_browser_model_->addChannel(channel_nr);
-        }
-        else
-        {
-            signal_browser_model_->removeChannel(channel_nr);
-        }
-    }
-
-    // init buffer
-    signal_browser_model_->initBuffer();
-
-    // update layout
-    signal_browser_model_->updateLayout();
-#else
-    // TODO: implement!
     for (uint32 channel_nr = 0;
          channel_nr < file_signal_reader_->getBasicHeader()->getNumberChannels();
          channel_nr++)
@@ -1328,7 +1230,6 @@ void MainWindowModel::channelSelection ()
     }
     signal_browser_model_->initBuffer();
     signal_browser_model_->updateLayout();
-#endif // QT4_PORTED
 }
 
 // options show events action
@@ -1467,28 +1368,16 @@ void MainWindowModel::secsPerPageChanged(const QString& secs_per_page)
 
     if (ok)
     {
-#ifndef QT4_PORTED
-        f_secs_per_page = (int32)(f_secs_per_page * 10) / 10.0;
-        pixel_per_sec = signal_browser_->getCanvasView()->visibleWidth() /
-                        f_secs_per_page;
-#else
         f_secs_per_page = (int32)(f_secs_per_page * 10) / 10.0;
         pixel_per_sec = signal_browser_->getVisibleWidth() /
                         f_secs_per_page;
-#endif // QT4_PORTED
     }
     else
     {
         // whole
-#ifndef QT4_PORTED
-        pixel_per_sec = signal_browser_->getCanvasView()->visibleWidth() /
-                        (file_signal_reader_->getBasicHeader()->getNumberRecords() *
-                         file_signal_reader_->getBasicHeader()->getRecordDuration());
-#else
         pixel_per_sec = signal_browser_->getVisibleWidth() /
                         (file_signal_reader_->getBasicHeader()->getNumberRecords() *
                          file_signal_reader_->getBasicHeader()->getRecordDuration());
-#endif // QT4_PORTED
     }
     signal_browser_model_->setPixelPerSec(pixel_per_sec);
 
@@ -1515,16 +1404,10 @@ void MainWindowModel::signalsPerPageChanged(const QString& signals_per_page)
     }
 
     int32 signal_height;
-#ifndef QT4_PORTED
-    signal_height = (int32)(signal_browser_->getCanvasView()->visibleHeight() / tmp) -
-                    signal_browser_model_->getSignalSpacing();
-    signal_browser_model_->setSignalHeight(signal_height);
-#else
     // TODO: move this calculation into signal_browser_model!
     signal_height = (int32)(signal_browser_->getVisibleHeight() / tmp) -
                     signal_browser_model_->getSignalSpacing();
     signal_browser_model_->setSignalHeight(signal_height);
-#endif
 }
 
 // pixel per sec changed
@@ -1536,13 +1419,8 @@ void MainWindowModel::pixelPerSecChanged(float64 pixel_per_sec)
         return;
     }
 
-#ifndef QT4_PORTED
-    float64 secs_per_page = signal_browser_->getCanvasView()->visibleWidth() /
-                            pixel_per_sec;
-#else
     float64 secs_per_page = signal_browser_->getVisibleWidth() /
                             pixel_per_sec;
-#endif
 
     secs_per_page = (int32)(secs_per_page * 10) / 10.0;
     main_window_->setSecsPerPage(secs_per_page);
@@ -1558,15 +1436,9 @@ void MainWindowModel::signalHeightChanged(int32 signal_height)
     }
 
     float64 signals_per_page;
-#ifndef QT4_PORTED
-    signals_per_page = signal_browser_->getCanvasView()->visibleHeight() /
-                       (float64)(signal_height +
-                                 signal_browser_model_->getSignalSpacing());
-#else
     signals_per_page = signal_browser_->getVisibleHeight() /
                        (float64)(signal_height +
                                  signal_browser_model_->getSignalSpacing());
-#endif
 
     signals_per_page = (int32)(signals_per_page * 10) / 10.0;
     main_window_->setSignalsPerPage(signals_per_page);

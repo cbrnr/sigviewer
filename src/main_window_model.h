@@ -19,16 +19,8 @@ namespace BioSig_
 
 class FileSignalReader;
 class MainWindow;
-#ifndef QT4_PORTED
 class SignalBrowserModel;
-class SignalBrowser;
-#else
-namespace PortingToQT4_
-{
-    class SignalBrowserView;
-    class SignalBrowserModel;
-}
-#endif
+class SignalBrowserView;
 class EventTableFileReader;
 class EventColorManager;
 
@@ -127,14 +119,8 @@ private:
     State state_;
     SelectionState selection_state_;
     std::auto_ptr<FileSignalReader> file_signal_reader_;
-#ifndef QT4_PORTED
     std::auto_ptr<SignalBrowserModel> signal_browser_model_;
-    std::auto_ptr<SignalBrowser> signal_browser_;
-#else
-    std::auto_ptr<PortingToQT4_::SignalBrowserModel> signal_browser_model_;
-    std::auto_ptr<PortingToQT4_::SignalBrowserView> signal_browser_;
-#endif
-
+    std::auto_ptr<SignalBrowserView> signal_browser_;
     std::auto_ptr<EventTableFileReader> event_table_file_reader_;
     std::auto_ptr<EventColorManager> event_color_manager_;
     QStringList recent_file_list_;

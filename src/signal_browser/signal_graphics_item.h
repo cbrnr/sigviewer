@@ -14,10 +14,6 @@ namespace BioSig_
 class SignalBuffer;
 class SignalChannel;
 class SignalEvent;
-
-namespace PortingToQT4_
-{
-
 class SignalBrowserModel;
 class SignalBrowserView;
 class EventGraphicsItem;
@@ -90,8 +86,6 @@ private:
 
 
 };
-
-}
 
 }
 

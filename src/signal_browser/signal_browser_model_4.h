@@ -27,10 +27,6 @@ namespace BioSig_
 class MainWindowModel;
 class BasicHeader;
 class FileSignalReader;
-
-namespace PortingToQT4_
-{
-
 class SignalBrowserView;
 class SignalGraphicsItem;
 class EventGraphicsItem;
@@ -227,8 +223,6 @@ private:
 };
 
 } // namespace PortingToQT4_
-
-} // namespace Biosig_
 
 #endif
 

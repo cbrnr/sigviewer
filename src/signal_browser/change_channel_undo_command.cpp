@@ -5,9 +5,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 //-----------------------------------------------------------------------------
 ChangeChannelUndoCommand::ChangeChannelUndoCommand (SignalBrowserModel& signal_browser_model,
                                           QSharedPointer<SignalEvent> signal_event,
@@ -51,5 +48,4 @@ void ChangeChannelUndoCommand::checkAndSetSelectChannelState ()
         signal_browser_model_.getMainWindowModel().setSelectionState(MainWindowModel::SELECTION_STATE_ONE_CHANNEL);
 }
 
-}
 }

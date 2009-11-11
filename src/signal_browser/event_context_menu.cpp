@@ -11,9 +11,6 @@
 namespace BioSig_
 {
 
-namespace PortingToQT4_
-{
-
 //-----------------------------------------------------------------------------
 EventContextMenu::EventContextMenu (SignalBrowserModel& model)
  : signal_browser_model_ (model)
@@ -116,9 +113,6 @@ void EventContextMenu::addActionsToMenu (QMenu& menu)
             &(signal_browser_model_.getMainWindowModel()), SLOT(editChangeChannelAction()));
 }
 
-
-
-}
 
 
 }
