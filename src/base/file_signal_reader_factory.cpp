@@ -45,29 +45,14 @@ FileSignalReaderFactory* FileSignalReaderFactory::getInstance()
         instance_.reset(new FileSignalReaderFactory);
 
         // register all readers
+		instance_->addPrototype(".gdf", new BioSigReader);
         instance_->addPrototype(".evt", new BioSigReader);
-        instance_->addPrototype(".gdf", new BioSigReader);
-        instance_->addPrototype(".edf", new BioSigReader);
        	instance_->addPrototype(".bdf", new BioSigReader);
         instance_->addPrototype(".bkr", new BioSigReader);
-        instance_->addPrototype(".bva", new BioSigReader);
         instance_->addPrototype(".cnt", new BioSigReader);
-        instance_->addPrototype(".dat", new BioSigReader);
+        instance_->addPrototype(".edf", new BioSigReader);
         instance_->addPrototype(".eeg", new BioSigReader);
-        instance_->addPrototype(".mwf", new BioSigReader);
-        instance_->addPrototype(".acq", new BioSigReader);
-        instance_->addPrototype(".ainf", new BioSigReader);
-        instance_->addPrototype(".cfw", new BioSigReader);
-        instance_->addPrototype(".scp", new BioSigReader);
-        instance_->addPrototype(".hea", new BioSigReader);
-        instance_->addPrototype(".hl7", new BioSigReader);
-        instance_->addPrototype(".xml", new BioSigReader);
-        instance_->addPrototype(".vhdr", new BioSigReader);
-        instance_->addPrototype(".alp", new BioSigReader);
-        instance_->addPrototype(".rec", new BioSigReader);
-        instance_->addPrototype(".bin", new BioSigReader);
-        instance_->addPrototype(".bscs*", new BioSigReader);
-        instance_->setDefaultPrototype(new BioSigReader);
+		instance_->setDefaultPrototype(new BioSigReader);
     }
     return instance_.get();
 }
