@@ -103,6 +103,9 @@ public slots:
     void signalHeightChanged(int32 signal_height);
     void recentFileMenuAboutToShow();
 
+    void openFile(const QString& file_name);
+
+
 private:
 
     // not allowed
@@ -110,7 +113,6 @@ private:
     const MainWindowModel& operator=(const MainWindowModel&);
 
     void setState(State state);
-    void openFile(const QString& file_name);
     bool checkMainWindowPtr(const QString function);
     bool checkNotClosedState(const QString function);
     void channelSelection ();

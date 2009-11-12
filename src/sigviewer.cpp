@@ -39,6 +39,8 @@
 #include <QFile>
 #include <QTextStream>
 
+#include <iostream>
+
 using BioSig_::MainWindow;
 using BioSig_::MainWindowModel;
 
@@ -113,6 +115,10 @@ int main(int32 argc, char* argv[])
     main_window_model.loadSettings();
     main_window.setUnifiedTitleAndToolBarOnMac(true);
     main_window.show();
+
+    if (application.arguments().count() > 1)
+        main_window_model.openFile (application.arguments().at(1));
+
     int result = application.exec();
     main_window_model.saveSettings();
 
