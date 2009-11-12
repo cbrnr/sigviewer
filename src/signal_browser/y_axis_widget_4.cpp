@@ -9,8 +9,6 @@
 
 #include <cmath>
 
-#include <iostream>
-
 namespace BioSig_
 {
 

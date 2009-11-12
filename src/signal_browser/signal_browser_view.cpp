@@ -13,9 +13,6 @@
 #include <QScrollBar>
 #include <QPointF>
 
-#include <iostream>
-
-
 namespace BioSig_
 {
 

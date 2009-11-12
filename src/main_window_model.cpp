@@ -27,7 +27,6 @@
 #include <QAction>
 #include <QTextStream>
 #include <QSettings>
-#include <iostream>
 
 namespace BioSig_
 {
@@ -774,7 +773,6 @@ void MainWindowModel::openFile(const QString& file_name)
     QSettings settings("SigViewer");
     settings.setValue("MainWindowModel/file_open_path", path);
 
-    std::cout << "openFile before initialize browser" << std::endl;
     // initialize signal browser
     signal_browser_model_.reset(new SignalBrowserModel(*signal_reader, *this));
     signal_browser_model_->setLogStream(log_stream_.get());

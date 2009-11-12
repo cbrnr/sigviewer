@@ -27,7 +27,6 @@
 
 #include <cmath>
 #include <algorithm>
-#include <iostream>
 
 namespace BioSig_
 {
@@ -263,7 +262,6 @@ void SignalBrowserModel::addChannel(uint32 channel_nr)
 
     if(channel2signal_item_.find(channel_nr) != channel2signal_item_.end())
     {
-        std::cout << "already added channel " << channel_nr << std::endl;
          return; // already added
     }
 
@@ -559,16 +557,12 @@ void SignalBrowserModel::updateLayout()
     int32 y_pos = 0;
     Int2SignalGraphicsItemPtrMap::iterator signal_iter;
 
-    std::cout << "signal_height_ = "<< signal_height_ << std::endl;
-
     for (signal_iter = channel2signal_item_.begin();
          signal_iter != channel2signal_item_.end();
          signal_iter++, y_pos += signal_height_ + signal_spacing_)
     {
         channel2y_pos_[signal_iter->first] = y_pos;
 
-        std::cout << "y_pos = "<< y_pos << std::endl;
-        //signal_iter->second->setRect(0, y_pos, width, signal_height_);
         signal_iter->second->setHeight (signal_height_);
         signal_iter->second->setPos (0, y_pos); // FIXME: why "/2" ????
         signal_iter->second->setZValue(SIGNAL_Z);
@@ -811,7 +805,6 @@ void SignalBrowserModel::goToAndSelectNextEvent ()
         float x = (float)current_event_iter.value()->getPosition() / signal_buffer_.getEventSamplerate();
         int32 y = 0;
         goTo (x, y);
-        std::cout << "show and select next event (old = " << selected_event_item_->getSignalEvent()->getPosition() << ", new = " << x << ")" << std::endl;
         //selected_event_item_ = current_event_iter.value();
     }
 }
@@ -996,8 +989,6 @@ void SignalBrowserModel::setSelectedEventItem(QSharedPointer<EventGraphicsItem> 
 //    }
 
     selected_event_item_ = item;
-    std::cout << "setting selected " << selected_event_item_.data() << " (should be " << item.data() << ")" << std::endl;
-
     if (selected_event_item_.isNull())
     {
         main_window_model_.setSelectionState(
@@ -1330,7 +1321,6 @@ bool SignalBrowserModel::isShowAllEventTypes() const
 void SignalBrowserModel::resetEventSizeAndPos (QSharedPointer<EventGraphicsItem> event)
 {
     QSharedPointer<SignalEvent> signal_event (event->getSignalEvent());
-    std::cout << "resetEventSizeAndPos " << signal_event.data() << std::endl;
     Int2IntMap::iterator y_pos_iter = channel2y_pos_.find(signal_event->getChannel());
     int32 height = (signal_height_  + signal_spacing_) *
                    channel2signal_item_.size();

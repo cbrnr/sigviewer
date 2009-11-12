@@ -22,7 +22,6 @@
 #include <QMutex>
 
 #include <algorithm>
-#include <iostream>
 
 namespace BioSig_
 {
@@ -154,7 +153,6 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
             break;
         case ACTION_MOVE_BEGIN:
             state_ = STATE_MOVE_BEGIN;
-            std::cout << "move begin" << std::endl;
             /*
             canvas_view->addEventListener(SmartCanvasView::MOUSE_RELEASE_EVENT |
                                           SmartCanvasView::MOUSE_MOVE_EVENT,
@@ -383,7 +381,6 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
                 // select event
                 if (old_selected_item.isNull())
                 {
-                    std::cout << "select" << std::endl;
                     return ACTION_SELECT;
                 }
 
@@ -396,7 +393,6 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
                 if (signal_event_->getId() == old_selected_item->signal_event_->getId() &&
                     move_end_rect.contains(mouse_pos))
                 {
-                    std::cout << "action move end" << std::endl;
                     return ACTION_MOVE_END;
                 }
 
@@ -407,7 +403,6 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
                 if (signal_event_->getId() == old_selected_item->signal_event_->getId() &&
                     move_begin_rect.contains(mouse_pos))
                 {
-                    std::cout << "action move begin" << std::endl;
                     return ACTION_MOVE_BEGIN;
                 }
 

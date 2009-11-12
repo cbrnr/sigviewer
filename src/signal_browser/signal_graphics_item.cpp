@@ -21,8 +21,6 @@
 #include <QObject>
 
 #include <cmath>
-#include <iostream>
-
 
 namespace BioSig_
 {
@@ -133,7 +131,6 @@ void SignalGraphicsItem::zoomOut()
 // auto scale
 void SignalGraphicsItem::autoScale(ScaleMode auto_zoom_type)
 {
-    std::cout << "changed scale mode" << std::endl;
     float64 min = signal_buffer_.getMinValue(signal_channel_.getNumber());
     float64 max = signal_buffer_.getMaxValue(signal_channel_.getNumber());
 
@@ -435,7 +432,6 @@ void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 
             if (shown_events.size() == 0)
             {
-                std::cout << "no events shown" << std::endl;
                 break; // no events shown
             }
 

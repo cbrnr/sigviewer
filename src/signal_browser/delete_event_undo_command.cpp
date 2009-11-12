@@ -1,7 +1,5 @@
 #include "delete_event_undo_command.h"
 
-#include <iostream>
-
 namespace BioSig_
 {
 

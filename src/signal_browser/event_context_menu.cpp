@@ -6,8 +6,6 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QAction>
 
-#include <iostream>
-
 namespace BioSig_
 {
 
