@@ -24,7 +24,6 @@ GoToDialog::GoToDialog(QPointer<BasicHeader> header, QWidget* parent)
     QVBoxLayout* top_layout = new QVBoxLayout(this);
     top_layout->setMargin(10);
     top_layout->setSpacing(10);
-//    QGridLayout* input_layout = new QGridLayout(top_layout);
     QGridLayout* input_layout = new QGridLayout(this);
     int32 duration = (int32)(basic_header_->getNumberRecords() *
                              basic_header_->getRecordDuration());
@@ -38,7 +37,6 @@ GoToDialog::GoToDialog(QPointer<BasicHeader> header, QWidget* parent)
     input_layout->addWidget(new QLabel(tr("Channel"), this), 2, 1);
     input_layout->addWidget(sec_spinbox_, 1, 2);
     input_layout->addWidget(channel_combobox_, 2, 2);
-//    QHBoxLayout* button_layout = new QHBoxLayout(top_layout);
     QHBoxLayout* button_layout = new QHBoxLayout(this);
     button_layout->setMargin(10);
     button_layout->addStretch(1);
@@ -47,7 +45,8 @@ GoToDialog::GoToDialog(QPointer<BasicHeader> header, QWidget* parent)
     cancel_button_ = new QPushButton(tr("Cancel"), this);
     button_layout->addWidget(cancel_button_);
     button_layout->addStretch(1);
-
+    top_layout->addLayout(input_layout);
+    top_layout->addLayout(button_layout);
     top_layout->activate();
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
