@@ -83,7 +83,9 @@ public:
 
 protected:
 
-    void closeEvent(QCloseEvent* close_event);
+    virtual void closeEvent(QCloseEvent* close_event);
+    virtual void dropEvent (QDropEvent* event);
+    virtual void dragEnterEvent(QDragEnterEvent *event);
 
 private slots:
 

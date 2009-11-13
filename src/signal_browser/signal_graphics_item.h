@@ -33,6 +33,7 @@ public:
     void updateYGridIntervall();
     void enableYGrid(bool enabled);
     void enableXGrid(bool enabled);
+    QString const &getLabel () const;
 
     float64 getMaximum();
     float64 getMinimum();

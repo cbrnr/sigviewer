@@ -45,7 +45,7 @@
 #include <QLabel>
 #include <QSettings>
 
-#include <iostream>
+#include <QUrl>
 
 namespace BioSig_
 {
@@ -55,6 +55,7 @@ MainWindow::MainWindow(MainWindowModel& model)
  : QMainWindow(0),
    model_(model)
 {
+    setAcceptDrops (true);
     setWindowIcon(QIcon(":images/sigviewer16.png"));
     initStatusBar();
     initIconSets();
@@ -531,6 +532,26 @@ void MainWindow::closeEvent(QCloseEvent* close_event)
         model_.fileExitAction();
     }
 }
+
+void MainWindow::dropEvent (QDropEvent* event)
+{
+    if (event->mimeData()->hasText())
+    {
+        QUrl url (event->mimeData()->text());
+        event->acceptProposedAction();
+        model_.openFile(url.path());
+    }
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (event->mimeData()->hasText())
+    {
+        event->acceptProposedAction();
+    }
+}
+
+
 
 // load settings
 void MainWindow::loadSettings()

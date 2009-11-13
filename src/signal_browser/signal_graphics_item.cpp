@@ -378,6 +378,12 @@ void SignalGraphicsItem::enableXGrid(bool enabled)
 }
 
 //-----------------------------------------------------------------------------
+QString const &SignalGraphicsItem::getLabel () const
+{
+    signal_channel_.getLabel();
+}
+
+//-----------------------------------------------------------------------------
 void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 {
     QPoint p = event->screenPos();
