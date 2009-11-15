@@ -188,6 +188,7 @@ LabelWidget& SignalBrowserView::getLabelWidget () const
 //-----------------------------------------------------------------------------
 void SignalBrowserView::goTo (int32 x, int32 y)
 {
+    x += graphics_view_->width() / 2;
     graphics_view_->centerOn(x, y);
     graphics_scene_->update(0, 0, graphics_scene_->width(), graphics_scene_->height());
 }

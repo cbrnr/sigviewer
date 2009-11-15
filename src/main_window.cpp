@@ -743,16 +743,9 @@ QString MainWindow::showOpenDialog(const QString& path,
          it != ext_list.end();
          it++)
     {
-        // std::cout << "extension_selection " << (*it).toStdString() << std::endl;
-        extension_selection += '\n' + *it;
+        extension_selection += ";; " + *it +" (" + *it + ")";
     }
-    extension_selection += "\n*.*";
-    for (QStringList::iterator it = ext_list.begin();
-         it != ext_list.end();
-         it++)
-    {
-        extension_selection += ";; "+ *it +" (" + *it + ")";
-    }
+    extension_selection += ";; *.* (*.*)";
     return QFileDialog::getOpenFileName(this, tr("Chose signal file to open"),
                                         path, extension_selection);
 }

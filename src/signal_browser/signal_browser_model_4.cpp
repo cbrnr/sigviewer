@@ -802,10 +802,16 @@ void SignalBrowserModel::goToAndSelectNextEvent ()
         QMap<int32, QSharedPointer<SignalEvent> > events (signal_buffer_.getEvents(selected_event_item_->getSignalEvent()->getType()));
         QMap<int32, QSharedPointer<SignalEvent> >::iterator current_event_iter = events.find(selected_event_item_->getSignalEvent()->getPosition());
         ++current_event_iter;
-        float x = (float)current_event_iter.value()->getPosition() / signal_buffer_.getEventSamplerate();
-        int32 y = 0;
-        goTo (x, y);
-        //selected_event_item_ = current_event_iter.value();
+        if (current_event_iter != events.end())
+        {
+            float x = (float)current_event_iter.value()->getPosition() / signal_buffer_.getEventSamplerate();
+            Int2EventGraphicsItemPtrMap::iterator event_graphics_item_it = id2event_item_.find(current_event_iter.value()->getId());
+
+            event_graphics_item_it.value()->setSelected (true);
+            int32 y = 0;
+
+            goTo (x, y);
+        }
     }
 }
 
