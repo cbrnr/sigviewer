@@ -27,6 +27,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 
 namespace BioSig_
 {
@@ -782,10 +783,10 @@ bool SignalBrowserModel::checkSignalBrowserPtr(const QString function)
 
 //-----------------------------------------------------------------------------
 // goTo
-void SignalBrowserModel::goTo(int32 sec, int32 channel_index)
+void SignalBrowserModel::goTo(float32 sec, int32 channel_index)
 {
-    int32 x = (int32)(sec * pixel_per_sec_);
-    int32 y = channel_index < 0 ? signal_browser_view_->getVisibleY()
+    float32 x = sec * pixel_per_sec_;
+    float32 y = channel_index < 0 ? signal_browser_view_->getVisibleY()
                                 : channel_index *
                                   (signal_height_ + signal_spacing_);
 
@@ -809,7 +810,7 @@ void SignalBrowserModel::goToAndSelectNextEvent ()
 
             event_graphics_item_it.value()->setSelected (true);
             int32 y = 0;
-
+            std::cout << "goto " << x << ", " << y << std::endl;
             goTo (x, y);
         }
     }

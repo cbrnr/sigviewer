@@ -47,7 +47,7 @@ public:
     LabelWidget& getLabelWidget () const;
     XAxisWidget& getXAxisWidget () const;
 
-    void goTo (int32 x, int32 y);
+    void goTo (float32 x, float32 y);
     void setViewCursor (QCursor const &cursor);
     void updateWidgets (bool update_view = true);
 

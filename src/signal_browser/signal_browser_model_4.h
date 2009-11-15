@@ -102,7 +102,7 @@ public:
 
     void autoScaleAll();
 
-    void goTo(int32 sec, int32 channel_index);
+    void goTo(float32 sec, int32 channel_index);
     void goToAndSelectNextEvent ();
 /*
     void zoomRect(const QRect& rect);
