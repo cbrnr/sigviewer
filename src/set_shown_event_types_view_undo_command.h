@@ -1,26 +1,21 @@
-#ifndef NEXT_EVENT_VIEW_UNDO_COMMAND_H
-#define NEXT_EVENT_VIEW_UNDO_COMMAND_H
+#ifndef SET_SHOWN_EVENT_TYPES_VIEW_UNDO_COMMAND_H
+#define SET_SHOWN_EVENT_TYPES_VIEW_UNDO_COMMAND_H
 
 #include "signal_browser/signal_browser_model_4.h"
-
 #include <QUndoCommand>
-#include <QSharedPointer>
-#include <QPointF>
 
 namespace BioSig_
 {
 
-class EventGraphicsItem;
-
-class NextEventViewUndoCommand : public QUndoCommand
+class SetShownEventTypesViewUndoCommand  : public QUndoCommand
 {
 public:
     //-------------------------------------------------------------------------
-    NextEventViewUndoCommand(SignalBrowserModel& signal_browser_model);
+    SetShownEventTypesViewUndoCommand (SignalBrowserModel& signal_browser_model, SignalBrowserModel::IntList const& event_types_to_show);
 
     //-------------------------------------------------------------------------
     /// destructor
-    virtual ~NextEventViewUndoCommand ();
+    virtual ~SetShownEventTypesViewUndoCommand ();
 
     //-------------------------------------------------------------------------
     virtual void undo ();
@@ -28,24 +23,20 @@ public:
     //-------------------------------------------------------------------------
     virtual void redo ();
 
-
 private:
-    QSharedPointer<EventGraphicsItem> previously_selected_event_;
-    QPointF previous_view_position_;
-
     SignalBrowserModel& signal_browser_model_;
+    SignalBrowserModel::IntList new_event_types_to_show_;
+    SignalBrowserModel::IntList previously_shown_event_types_;
 
     //-------------------------------------------------------------------------
     /// copy-constructor disabled
-    NextEventViewUndoCommand (NextEventViewUndoCommand const &);
+    SetShownEventTypesViewUndoCommand (SetShownEventTypesViewUndoCommand const &);
 
     //-------------------------------------------------------------------------
     /// assignment-operator disabled
-    NextEventViewUndoCommand& operator= (NextEventViewUndoCommand const &);
-
-
+    SetShownEventTypesViewUndoCommand& operator= (SetShownEventTypesViewUndoCommand const &);
 };
 
 }
 
-#endif // NEXT_EVENT_VIEW_UNDO_COMMAND_H
+#endif // SET_SHOWN_EVENT_TYPES_VIEW_UNDO_COMMAND_H

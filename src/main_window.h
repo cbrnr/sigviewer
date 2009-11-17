@@ -122,6 +122,8 @@ private:
     QToolBar* option_toolbar_;
     QToolBar* navigation_toolbar_;
 
+    QAction* undo_view_action_;
+    QAction* redo_view_action_;
     QAction* undo_action_;
     QAction* redo_action_;
     QAction* file_open_action_;
@@ -148,6 +150,7 @@ private:
     QAction* view_auto_scale_action_;
     QAction* view_go_to_action_;
     QAction* view_show_and_select_next_event_action_;
+    QAction* view_show_events_of_selected_type_action_;
     QAction* options_channels_action_;
     QAction* options_show_events_action_;
     QAction* help_log_action_;

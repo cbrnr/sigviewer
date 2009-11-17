@@ -125,6 +125,15 @@ void MainWindow::initIconSets()
 // init actions
 void MainWindow::initActions()
 {
+    undo_view_action_ = new QAction(tr("Previous View"), this);
+    connect(undo_view_action_, SIGNAL(triggered()),
+            &model_, SLOT(undoViewAction()));
+
+    redo_view_action_ = new QAction(tr("Redo View"), this);
+    connect(redo_view_action_, SIGNAL(triggered()),
+            &model_, SLOT(redoViewAction()));
+
+
     undo_action_ = new QAction(tr("Undo"), this);
     undo_action_->setShortcut(tr("Ctrl+Z"));
     connect(undo_action_, SIGNAL(triggered()),
@@ -322,6 +331,10 @@ void MainWindow::initActions()
     connect(view_show_and_select_next_event_action_, SIGNAL(triggered()),
             &model_, SLOT(viewShowAndSelectNextEventAction()));
 
+    view_show_events_of_selected_type_action_= new QAction(tr("Hide Events of other Type"), this);
+    view_show_events_of_selected_type_action_->setStatusTip(tr("Only shows events which are of the same type as the selected one"));
+    connect(view_show_events_of_selected_type_action_, SIGNAL(triggered()),
+            &model_, SLOT(viewShowEventsOfSelectedTypeAction()));
 
     options_channels_action_= new QAction(options_channels_icon_,
                                     tr("Channe&ls..."), this);
@@ -507,6 +520,10 @@ void MainWindow::initMenus()
     view_menu_->addSeparator();
     view_menu_->addAction(view_go_to_action_);
     view_menu_->addAction(view_show_and_select_next_event_action_);
+    view_menu_->addAction(view_show_events_of_selected_type_action_);
+    view_menu_->addSeparator();
+    view_menu_->addAction(undo_view_action_);
+    view_menu_->addAction(redo_view_action_);
 
     options_menu_ = menuBar()->addMenu(tr("&Options"));
     options_menu_->addAction(options_channels_action_);

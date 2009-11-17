@@ -65,6 +65,8 @@ public:
 public slots:
 
     // actions
+    void undoViewAction();
+    void redoViewAction();
     void undoAction();
     void redoAction();
     void fileOpenAction();
@@ -91,6 +93,7 @@ public slots:
     void viewAutoScaleAction();
     void viewGoToAction();
     void viewShowAndSelectNextEventAction();
+    void viewShowEventsOfSelectedTypeAction();
     void secsPerPageChanged(const QString& secs_per_page);
     void signalsPerPageChanged(const QString& signals_per_page);
     void optionsChannelsAction();

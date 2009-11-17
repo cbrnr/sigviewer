@@ -18,6 +18,7 @@ class QTextStream;
 #include <QObject>
 #include <QMap>
 #include <QSharedPointer>
+#include <QPointF>
 
 #include <map>
 
@@ -96,6 +97,10 @@ public:
 /*
     int32 getChannelNr(uint32 shown_nr);
 */
+
+    QPointF getViewingPosition ();
+    void setViewingPosition (QPointF topleft);
+
     // actions
     void zoomInAll();
     void zoomOutAll();
@@ -126,7 +131,7 @@ public:
 
     // events
     void getShownEventTypes(IntList& event_type);
-    void setShownEventTypes(const IntList& event_type, const bool all);
+    void setShownEventTypes(const IntList& event_type, const bool all = false);
     void setEventChanged(uint32 id, bool update = true);
     void removeEvent(uint32 id, bool update = true);
 
@@ -137,6 +142,7 @@ public:
     void setSelectedEventItem(QSharedPointer<EventGraphicsItem> item);
     void unsetSelectedEventItem();
     QSharedPointer<EventGraphicsItem> getSelectedEventItem();
+    QSharedPointer<SignalEvent> getSelectedSignalEvent();
     QSharedPointer<EventGraphicsItem> getEventItem(int32 id);
     void setSelectedEventToAllChannels();
     void changeSelectedEventChannel();
@@ -147,7 +153,8 @@ public:
     void getEvents(SignalEventVector& event_vector);
     uint16 getActualEventCreationType () const;
 
-    void updateLayout();
+    void updateLayout ();
+    void updateEventItems ();
 /*
 public slots:
 
@@ -182,6 +189,7 @@ private:
     void resetEventSizeAndPos (QSharedPointer<EventGraphicsItem> event);
     bool checkReadyState(const QString& function);
     bool checkSignalBrowserPtr(const QString function);
+    void updateEventItemsImpl ();
 
     GUISignalBuffer signal_buffer_;
 

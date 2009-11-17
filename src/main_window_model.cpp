@@ -5,6 +5,7 @@
 #include "base/file_signal_reader_factory.h"
 #include "base/file_signal_writer_factory.h"
 #include "base/event_table_file_reader.h"
+#include "base/signal_event.h"
 #include "basic_header_info_dialog.h"
 #include "log_dialog.h"
 #include "channel_selection_dialog.h"
@@ -20,6 +21,7 @@
 #include "signal_browser/signal_browser_view.h"
 #include "signal_browser/delete_event_undo_command.h"
 #include "next_event_view_undo_command.h"
+#include "set_shown_event_types_view_undo_command.h"
 
 #include <QString>
 #include <QApplication>
@@ -27,6 +29,7 @@
 #include <QAction>
 #include <QTextStream>
 #include <QSettings>
+#include <QSharedPointer>
 
 namespace BioSig_
 {
@@ -300,6 +303,18 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
             break;
     }
 
+}
+
+//-----------------------------------------------------------------------------
+void MainWindowModel::undoViewAction()
+{
+    CommandStack::instance().undoLastViewCommand();
+}
+
+//-----------------------------------------------------------------------------
+void MainWindowModel::redoViewAction()
+{
+    CommandStack::instance().redoLastUndoneViewCommand();
 }
 
 //-----------------------------------------------------------------------------
@@ -1124,6 +1139,24 @@ void MainWindowModel::viewShowAndSelectNextEventAction()
     CommandStack::instance().executeViewCommand(eventCommand);
 }
 
+//-------------------------------------------------------------------
+// view select next event action
+void MainWindowModel::viewShowEventsOfSelectedTypeAction()
+{
+    if (!checkMainWindowPtr("viewShowEventsOfSelectedTypeAction") ||
+        !checkNotClosedState("viewShowEventsOfSelectedTypeAction"))
+    {
+        return;
+    }
+
+    SignalBrowserModel::IntList shown_event_types;
+    shown_event_types.append (signal_browser_model_->getSelectedSignalEvent()->getType());
+
+    QUndoCommand* eventCommand = new SetShownEventTypesViewUndoCommand (*signal_browser_model_, shown_event_types);
+    CommandStack::instance().executeViewCommand(eventCommand);
+}
+
+
 // options channels action
 void MainWindowModel::optionsChannelsAction()
 {
@@ -1264,10 +1297,8 @@ void MainWindowModel::optionsShowEventsAction()
 
     // change shown event types
     event_type_dialog.getShownTypes(shown_event_types);
-    signal_browser_model_->setShownEventTypes(shown_event_types, event_type_dialog.isAllSelected());
-
-    // update layout
-    signal_browser_model_->updateLayout();
+    QUndoCommand* eventCommand = new SetShownEventTypesViewUndoCommand (*signal_browser_model_, shown_event_types);
+    CommandStack::instance().executeViewCommand(eventCommand);
 }
 
 // options show events action

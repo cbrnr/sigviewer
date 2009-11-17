@@ -109,6 +109,17 @@ void EventContextMenu::addActionsToMenu (QMenu& menu)
         ->setStatusTip(tr("Change the channel of the selected event (\"Edit Events\"-Mode: Shift+LeftMousePress)"));
     QObject::connect(edit_change_channel_action, SIGNAL(triggered()),
             &(signal_browser_model_.getMainWindowModel()), SLOT(editChangeChannelAction()));
+
+    menu.addSeparator();
+
+    QAction* hide_events_of_other_type_action = menu.addAction(tr("Hide Events of other Type"));
+    hide_events_of_other_type_action->setObjectName("view_show_events_of_selected_type_action_");
+    hide_events_of_other_type_action
+        ->setStatusTip(tr("Hide events which are not of the same type as the selected event."));
+    QObject::connect(hide_events_of_other_type_action, SIGNAL(triggered()),
+            &(signal_browser_model_.getMainWindowModel()), SLOT(viewShowEventsOfSelectedTypeAction()));
+
+
 }
 
 

@@ -27,7 +27,6 @@
 
 #include <cmath>
 #include <algorithm>
-#include <iostream>
 
 namespace BioSig_
 {
@@ -391,6 +390,22 @@ void SignalBrowserModel::initBuffer()
 
 
 //-----------------------------------------------------------------------------
+// get viewing position
+QPointF SignalBrowserModel::getViewingPosition ()
+{
+    return QPointF(static_cast<float>(signal_browser_view_->getVisibleX()) / pixel_per_sec_, signal_browser_view_->getVisibleY());
+}
+
+//-----------------------------------------------------------------------------
+// set viewing position
+void SignalBrowserModel::setViewingPosition (QPointF topleft)
+{
+    signal_browser_view_->goTo(topleft.x() * pixel_per_sec_, topleft.y());
+}
+
+
+
+//-----------------------------------------------------------------------------
 // zoom in all
 void SignalBrowserModel::zoomInAll()
 {
@@ -576,63 +591,7 @@ void SignalBrowserModel::updateLayout()
         signal_iter->second->show();
     }
 
-    // event items
-    Int2EventGraphicsItemPtrMap::iterator event_iter;
-    for (event_iter = id2event_item_.begin();
-         event_iter != id2event_item_.end();
-         event_iter++)
-    {
-        // std::cout << "blub" << std::endl;
-        QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(event_iter.key());
-        if (!event)
-        {
-            *log_stream_ << "SignalBrowserModel::updateLayout Error: "
-                         << "inconsistant events\n";
-            continue;
-        }
-
-        Int2IntMap::iterator y_pos_iter;
-        y_pos_iter = channel2y_pos_.find(event->getChannel());
-
-
-        if (!shown_event_types_.contains(event->getType()) ||
-            y_pos_iter == channel2y_pos_.end())
-        {
-            event_iter.value()->hide();
-            if (event_iter.value() == selected_event_item_)
-            {
-                selected_event_item_->setSelected(false);
-                selected_event_item_.clear();
-                main_window_model_.setSelectionState(
-                                        MainWindowModel::SELECTION_STATE_NONE);
-            }
-
-            continue; // event type or channel not shown
-        }
-
-        int32 event_width = (int32)(pixel_per_sec_ *
-                                    (float64)event->getDuration() /
-                                    signal_buffer_.getEventSamplerate() + 0.5);
-
-        event_width = std::max(event_width, 1);
-
-        if (event->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
-            event_iter.value()->setSize(event_width, height);
-        else
-            event_iter.value()->setSize(event_width, signal_height_);
-
-        event_iter.value()->setZValue(EVENT_Z + event->getType() / 100000.0);
-        int32 event_x = (int32)(pixel_per_sec_ * (float64)event->getPosition() /
-                                signal_buffer_.getEventSamplerate() + 0.5);
-
-        event_iter.value()->setPos(event_x, y_pos_iter->second);
-//        event_iter.value()->setX(event_x);
-        event_iter.value()->updateColor();
-
-        signal_browser_view_->addEventGraphicsItem(event_iter.value());
-
-        event_iter.value()->show();
-    }
+    updateEventItemsImpl ();
 
     // update x grid intervall
     float64 x_grid_intervall = round125(prefered_x_grid_pixel_intervall_ /
@@ -655,6 +614,14 @@ void SignalBrowserModel::updateLayout()
     signal_browser_->getYAxisWidget()->update();
     */
 }
+
+//-------------------------------------------------------------------
+void SignalBrowserModel::updateEventItems ()
+{
+    updateEventItemsImpl ();
+    signal_browser_view_->update ();
+}
+
 /*
 // set signal spacing
 void SignalBrowserModel::setSignalSpacing(int32 spacing)
@@ -782,6 +749,70 @@ bool SignalBrowserModel::checkSignalBrowserPtr(const QString function)
 }
 
 //-----------------------------------------------------------------------------
+void SignalBrowserModel::updateEventItemsImpl ()
+{
+    int32 height = (signal_height_  + signal_spacing_) *
+                   channel2signal_item_.size();
+
+    Int2EventGraphicsItemPtrMap::iterator event_iter;
+    for (event_iter = id2event_item_.begin();
+         event_iter != id2event_item_.end();
+         event_iter++)
+    {
+        // std::cout << "blub" << std::endl;
+        QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(event_iter.key());
+        if (!event)
+        {
+            *log_stream_ << "SignalBrowserModel::updateLayout Error: "
+                         << "inconsistant events\n";
+            continue;
+        }
+
+        Int2IntMap::iterator y_pos_iter;
+        y_pos_iter = channel2y_pos_.find(event->getChannel());
+
+
+        if (!shown_event_types_.contains(event->getType()) ||
+            y_pos_iter == channel2y_pos_.end())
+        {
+            event_iter.value()->hide();
+            if (event_iter.value() == selected_event_item_)
+            {
+                selected_event_item_->setSelected(false);
+                selected_event_item_.clear();
+                main_window_model_.setSelectionState(
+                                        MainWindowModel::SELECTION_STATE_NONE);
+            }
+
+            continue; // event type or channel not shown
+        }
+
+        int32 event_width = (int32)(pixel_per_sec_ *
+                                    (float64)event->getDuration() /
+                                    signal_buffer_.getEventSamplerate() + 0.5);
+
+        event_width = std::max(event_width, 1);
+
+        if (event->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
+            event_iter.value()->setSize(event_width, height);
+        else
+            event_iter.value()->setSize(event_width, signal_height_);
+
+        event_iter.value()->setZValue(EVENT_Z + event->getType() / 100000.0);
+        int32 event_x = (int32)(pixel_per_sec_ * (float64)event->getPosition() /
+                                signal_buffer_.getEventSamplerate() + 0.5);
+
+        event_iter.value()->setPos(event_x, y_pos_iter->second);
+        event_iter.value()->updateColor();
+
+        signal_browser_view_->addEventGraphicsItem(event_iter.value());
+
+        event_iter.value()->show();
+    }
+}
+
+
+//-----------------------------------------------------------------------------
 // goTo
 void SignalBrowserModel::goTo(float32 sec, int32 channel_index)
 {
@@ -810,7 +841,6 @@ void SignalBrowserModel::goToAndSelectNextEvent ()
 
             event_graphics_item_it.value()->setSelected (true);
             int32 y = 0;
-            std::cout << "goto " << x << ", " << y << std::endl;
             goTo (x, y);
         }
     }
@@ -1034,6 +1064,13 @@ QSharedPointer<EventGraphicsItem> SignalBrowserModel::getSelectedEventItem()
 {
     return selected_event_item_;
 }
+
+//-----------------------------------------------------------------------------
+QSharedPointer<SignalEvent> SignalBrowserModel::getSelectedSignalEvent()
+{
+    return selected_event_item_->getSignalEvent();
+}
+
 
 //-----------------------------------------------------------------------------
 // get event item
