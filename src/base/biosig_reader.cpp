@@ -2,10 +2,10 @@
 
     $Id: biosig_reader.cpp,v 1.36 2009/03/03 11:57:07 cle1109 Exp $
     Copyright (C) Thomas Brunner  2005,2006,2007
-    		  Christoph Eibel 2007,2008,
-		  Clemens Brunner 2006,2007,2008
-    		  Alois Schloegl  2008,2009
-    		  Oliver Terbu    2008
+    Copyright (C) Christoph Eibel 2007,2008
+    Copyright (C) Clemens Brunner 2006,2007,2008
+    Copyright (C) Alois Schloegl  2008,2009
+    Copyright (C) Oliver Terbu    2008
     This file is part of the "SigViewer" repository
     at http://biosig.sf.net/
 
@@ -220,7 +220,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
 //  VERBOSE_LEVEL=8;
 
     // set flags
-    if(!biosig_header_)
+    if(biosig_header_==NULL)
     {
         biosig_header_ = constructHDR(0,0);
         biosig_header_->FLAG.UCAL = 0;
@@ -228,6 +228,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     }
 
     biosig_header_ = sopen(c_file_name, "r", biosig_header_ );
+
 #ifdef CHOLMOD_H
     char *REREF_FILE;
     REREF_FILE = "/home/as/trunk/biosig4c++/MM63.mmm";
@@ -236,6 +237,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     	TODD: 
     	REREF_FILE must be the filename of the spatial filter in MarketMatrix format 
     */
+
     RerefCHANNEL(biosig_header_, REREF_FILE, 1);
 #endif
     if (biosig_header_ == NULL || serror())
@@ -260,6 +262,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     {
         if (biosig_header_->CHANNEL[k].OnOff) NS++;
     }
+
 #ifdef CHOLMOD_H
     if ((biosig_header_->Calib) && (biosig_header_->Calib->nrow==NS))
 	NS = biosig_header_->Calib->ncol;
@@ -284,41 +287,22 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     for (uint32 channel_index = 0; channel_index < biosig_header_->NS; ++channel_index)
     if (biosig_header_->CHANNEL[channel_index].OnOff)	// show only selected channels - status channels are not shown.
     {
-        SignalChannel* channel = new SignalChannel(channel_index, QT_TR_NOOP(biosig_header_->CHANNEL[channel_index].Label),
+        SignalChannel* channel = new SignalChannel(channel_index, 
                                                    biosig_header_->SPR,
-                                                   biosig_header_->CHANNEL[channel_index].PhysDimCode,
-                                                   biosig_header_->CHANNEL[channel_index].PhysMin,
-                                                   biosig_header_->CHANNEL[channel_index].PhysMax,
-                                                   biosig_header_->CHANNEL[channel_index].DigMin,
-                                                   biosig_header_->CHANNEL[channel_index].DigMax,
-                                                   biosig_header_->CHANNEL[channel_index].GDFTYP,
-                                                   1 / 8, // TODO: really don't know what that means!
-                                                   "filter", // maybe useless
-                                                   biosig_header_->CHANNEL[channel_index].LowPass,
-                                                   biosig_header_->CHANNEL[channel_index].HighPass,
-                                                   biosig_header_->CHANNEL[channel_index].Notch > 0.0);
+                                                   biosig_header_->CHANNEL[channel_index]);
         basic_header_->addChannel(channel);
     }
 #ifdef CHOLMOD_H
     } else 
     for (uint32 channel_index = 0; channel_index < biosig_header_->Calib->ncol; ++channel_index)
     {
-        SignalChannel* channel = new SignalChannel(channel_index, QT_TR_NOOP(biosig_header_->rerefCHANNEL[channel_index].Label),
+        SignalChannel* channel = new SignalChannel(channel_index, 
                                                    biosig_header_->SPR,
-                                                   biosig_header_->rerefCHANNEL[channel_index].PhysDimCode,
-                                                   biosig_header_->rerefCHANNEL[channel_index].PhysMin,
-                                                   biosig_header_->rerefCHANNEL[channel_index].PhysMax,
-                                                   biosig_header_->rerefCHANNEL[channel_index].DigMin,
-                                                   biosig_header_->rerefCHANNEL[channel_index].DigMax,
-                                                   biosig_header_->rerefCHANNEL[channel_index].GDFTYP,
-                                                   1 / 8, // TODO: really don't know what that means!
-                                                   "filter", // maybe useless
-                                                   biosig_header_->rerefCHANNEL[channel_index].LowPass,
-                                                   biosig_header_->rerefCHANNEL[channel_index].HighPass,
-                                                   biosig_header_->rerefCHANNEL[channel_index].Notch > 0.0);
+                                                   biosig_header_->rerefCHANNEL[channel_index]);
         basic_header_->addChannel(channel);
     }
 #endif
+
     return "";
 }
 

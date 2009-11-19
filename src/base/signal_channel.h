@@ -2,9 +2,9 @@
 
     $Id: signal_channel.h,v 1.10 2009-03-10 09:38:23 schloegl Exp $
     Copyright (C) Thomas Brunner  2006,2007 
-    		  Christoph Eibel 2007,2008, 
-		  Clemens Brunner 2006,2007,2008  
-    		  Alois Schloegl  2008,2009
+    Copyright (C) Christoph Eibel 2007,2008, 
+    Copyright (C) Clemens Brunner 2006,2007,2008  
+    Copyright (C) Alois Schloegl  2008,2009
     This file is part of the "SigViewer" repository 
     at http://biosig.sf.net/ 
 
@@ -29,6 +29,7 @@
 #define SIGNAL_CHANNEL_H
 
 #include "user_types.h"
+#include "../../extern/biosig.h"
 
 #include <QString>
 #include <QMutex>
@@ -62,14 +63,9 @@ public:
         UBITN   = 511
     };
 
-    SignalChannel(uint32 number, const QString& label,
+    SignalChannel(uint32 number, 
                   uint32 samples_per_record, 
-                  uint32 physical_dimcode,
-                  float64 physical_minimum, float64 physical_maximum,
-                  float64 digital_minimum, float64 digital_maximum,
-                  uint16_t data_type, uint32 data_offset,
-                  const QString filter_label, float64 lowpass,
-                  float64 highpass, bool notch);
+                  CHANNEL_STRUCT C);
 
     uint32 typeBitSize() const;
     QString typeString() const;
