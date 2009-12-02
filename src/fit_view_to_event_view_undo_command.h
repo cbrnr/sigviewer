@@ -1,26 +1,27 @@
-#ifndef NEXT_EVENT_VIEW_UNDO_COMMAND_H
-#define NEXT_EVENT_VIEW_UNDO_COMMAND_H
+#ifndef FIT_VIEW_TO_EVENT_VIEW_UNDO_COMMAND_H
+#define FIT_VIEW_TO_EVENT_VIEW_UNDO_COMMAND_H
 
-#include "signal_browser/signal_browser_model_4.h"
+#include "base/user_types.h"
 
-#include <QUndoCommand>
 #include <QSharedPointer>
+#include <QUndoCommand>
 #include <QPointF>
 
 namespace BioSig_
 {
 
-class EventGraphicsItem;
+class SignalBrowserModel;
+class SignalEvent;
 
-class NextEventViewUndoCommand : public QUndoCommand
+class FitViewToEventViewUndoCommand : public QUndoCommand
 {
 public:
     //-------------------------------------------------------------------------
-    NextEventViewUndoCommand(SignalBrowserModel& signal_browser_model, bool forward = true);
+    FitViewToEventViewUndoCommand(SignalBrowserModel& signal_browser_model);
 
     //-------------------------------------------------------------------------
     /// destructor
-    virtual ~NextEventViewUndoCommand ();
+    virtual ~FitViewToEventViewUndoCommand ();
 
     //-------------------------------------------------------------------------
     virtual void undo ();
@@ -31,22 +32,19 @@ public:
 
 private:
     SignalBrowserModel& signal_browser_model_;
-    bool forward_;
-    QSharedPointer<EventGraphicsItem> previously_selected_event_;
+    QSharedPointer<SignalEvent> selected_event_;
+    float64 previous_pixel_per_sec_;
     QPointF previous_view_position_;
-
 
     //-------------------------------------------------------------------------
     /// copy-constructor disabled
-    NextEventViewUndoCommand (NextEventViewUndoCommand const &);
+    FitViewToEventViewUndoCommand (FitViewToEventViewUndoCommand const &);
 
     //-------------------------------------------------------------------------
     /// assignment-operator disabled
-    NextEventViewUndoCommand& operator= (NextEventViewUndoCommand const &);
-
-
+    FitViewToEventViewUndoCommand& operator= (FitViewToEventViewUndoCommand const &);
 };
 
 }
 
-#endif // NEXT_EVENT_VIEW_UNDO_COMMAND_H
+#endif // FIT_VIEW_TO_EVENT_VIEW_UNDO_COMMAND_H

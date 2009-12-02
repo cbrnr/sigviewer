@@ -1,7 +1,6 @@
 #include "event_graphics_item.h"
 
 #include "signal_browser_model_4.h"
-#include "signal_browser_view.h"
 #include "resize_event_undo_command.h"
 #include "event_context_menu.h"
 #include "../base/signal_buffer.h"
@@ -20,6 +19,8 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QMutex>
+#include <QGraphicsScene>
+#include <QPainter>
 
 #include <algorithm>
 
@@ -34,7 +35,7 @@ QSharedPointer<EventContextMenu> EventGraphicsItem::context_menu_;
 
 //-----------------------------------------------------------------------------
 EventGraphicsItem::EventGraphicsItem(SignalBuffer& buffer, SignalBrowserModel& model,
-                    SignalBrowserView* browser, QSharedPointer<SignalEvent> signal_event)
+                                     QSharedPointer<SignalEvent> signal_event)
 : signal_browser_model_ (model),
   signal_buffer_ (buffer),
   state_ (STATE_NONE),
@@ -108,7 +109,8 @@ void EventGraphicsItem::updateColor()
 void EventGraphicsItem::displayContextMenu (QGraphicsSceneContextMenuEvent * event)
 {
     context_menu_mutex_.lock();
-    context_menu_->finaliseAndShowMenu (event);
+    if (context_menu_->getNumberOfEvents())
+        context_menu_->finaliseAndShowMenu (event);
     context_menu_mutex_.unlock();
 }
 

@@ -10,6 +10,13 @@ CommandStack& CommandStack::instance ()
     return command_stack;
 }
 
+//-------------------------------------------------------------------------
+void CommandStack::clearStacks ()
+{
+    edit_command_undo_stack_.clear();
+    view_command_undo_stack_.clear();
+}
+
 //-----------------------------------------------------------------------------
 void CommandStack::executeEditCommand (QUndoCommand* command)
 {

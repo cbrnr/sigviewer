@@ -485,7 +485,6 @@ void SignalGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * even
     EventGraphicsItem::displayContextMenu(event);
 }
 
-
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::drawYAxis (QPainter * painter, const QStyleOptionGraphicsItem * option)
 {

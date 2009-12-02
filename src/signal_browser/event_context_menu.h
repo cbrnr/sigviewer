@@ -36,6 +36,9 @@ public:
     void addEvent (QSharedPointer<EventGraphicsItem> event_item);
 
     //-------------------------------------------------------------------------
+    unsigned getNumberOfEvents () const;
+
+    //-------------------------------------------------------------------------
     void finaliseAndShowMenu (QGraphicsSceneContextMenuEvent* context_event);
 
 

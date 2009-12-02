@@ -24,6 +24,7 @@ SignalBrowserView::SignalBrowserView(SignalBrowserModel* signal_browser_model, Q
     resize(parent->contentsRect().width(), parent->contentsRect().height());
     graphics_scene_ = new QGraphicsScene (0,0,parent->contentsRect().width(), parent->contentsRect().height(), this);
     graphics_view_ = new QGraphicsView(graphics_scene_, this);
+    graphics_view_->setAcceptDrops(false);
     graphics_view_->scroll(0,0);
     graphics_view_->horizontalScrollBar()->hide();
     graphics_view_->verticalScrollBar()->hide();
@@ -113,15 +114,6 @@ void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsI
     // graphics_scene_->addLine(200, 0, 200, 200);
 
     graphics_view_->update();
-}
-
-//-----------------------------------------------------------------------------
-void SignalBrowserView::removeSignalGraphicsItem (int32 channel_nr)
-{
-//    graphics_scene_->removeItem(graphics_item);
-//    graphics_scene_->addItem(graphics_item);
-//    y_axis_widget_->addChannel(channel_nr, graphics_item);
-//    graphics_view_->update();
 }
 
 //-----------------------------------------------------------------------------
@@ -239,6 +231,19 @@ void SignalBrowserView::verticalScrollBarRangeChaned (int min, int max)
     vertical_scrollbar_->setRange(min, max);
     vertical_scrollbar_->setPageStep(graphics_view_->verticalScrollBar()->pageStep());
 }
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::dropEvent (QDropEvent* event)
+{
+    event->ignore();
+}
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::dragEnterEvent(QDragEnterEvent *event)
+{
+    event->ignore();
+}
+
 
 //-----------------------------------------------------------------------------
 void SignalBrowserView::createLayout()

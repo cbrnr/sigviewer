@@ -19,6 +19,9 @@ public:
     static CommandStack& instance ();
 
     //-------------------------------------------------------------------------
+    void clearStacks ();
+
+    //-------------------------------------------------------------------------
     /// cares for destruction of the given command
     void executeEditCommand (QUndoCommand* command);
 

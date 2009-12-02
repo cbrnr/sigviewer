@@ -36,6 +36,7 @@ public:
 
     SignalEvent();
     SignalEvent(uint32 position, uint16 type,
+                float64 sample_rate,
                 int16 channel = UNDEFINED_CHANNEL,
                 uint32 duration = UNDEFINED_DURATION, int32 id = UNDEFINED_ID);
 
@@ -43,9 +44,11 @@ public:
 
     int32 getId() const;
     uint32 getPosition() const;
+    float32 getPositionInSec() const;
     uint16 getType() const;
     int16 getChannel() const;
     uint32 getDuration() const;
+    float32 getDurationInSec() const;
 
     void setId (int32 id);
     void setPosition(uint32 position);
@@ -56,6 +59,7 @@ public:
 private:
     int32 id_;
     uint32 position_;
+    float64 sample_rate_;
     uint16 type_;
     int16 channel_;
     uint32 duration_;

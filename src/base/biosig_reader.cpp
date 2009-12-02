@@ -145,13 +145,13 @@ void BioSigReader::loadEvents(SignalEventVector& event_vector)
         {
             if (biosig_header_->EVENT.CHN)
             {
-                event_vector << SignalEvent(iter->position, iter->type,
+                event_vector << SignalEvent(iter->position, iter->type, biosig_header_->EVENT.SampleRate,
                                             (int32)iter->channel - 1,
                                             iter->duration);
             }
             else
             {
-                event_vector << SignalEvent(iter->position, iter->type);
+                event_vector << SignalEvent(iter->position, iter->type, biosig_header_->EVENT.SampleRate);
             }
         }
     }

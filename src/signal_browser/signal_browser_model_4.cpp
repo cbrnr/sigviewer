@@ -27,6 +27,8 @@
 
 #include <cmath>
 #include <algorithm>
+#include <iostream>
+
 
 namespace BioSig_
 {
@@ -72,7 +74,7 @@ MainWindowModel& SignalBrowserModel::getMainWindowModel()
 }
 
 //-----------------------------------------------------------------------------
-// TODO! set signal browser view
+// set signal browser view
 void SignalBrowserModel::setSignalBrowserView(SignalBrowserView* signal_browser_view)
 {
     signal_browser_view_ = signal_browser_view;
@@ -116,20 +118,16 @@ void SignalBrowserModel::loadSettings()
     show_y_grid_ = settings.value("show_y_grid", show_y_grid_).toBool();
 
     all_event_types_selected_ = settings.value("all_event_types_selected", all_event_types_selected_).toBool();
-    if (all_event_types_selected_)
+    int size = settings.beginReadArray("shown_event_types");
+    for (int i = 0; i < size; i++)
     {
-		int size = settings.beginReadArray("shown_event_types");
-		for (int i = 0; i < size; i++)
-		{
-			settings.setArrayIndex(i);
-			bool ok = false;
-			uint16 event_type = settings.value("shown_event_type").toInt(&ok);
-			if (ok)
-				shown_event_types_.append(event_type);
-		}
-
-		settings.endArray();
+        settings.setArrayIndex(i);
+        bool ok = false;
+        uint16 event_type = settings.value("shown_event_type").toInt(&ok);
+        if (ok)
+            shown_event_types_.append(event_type);
     }
+    settings.endArray();
 
     settings.endGroup();
 
@@ -163,16 +161,13 @@ void SignalBrowserModel::saveSettings()
     settings.setValue("show_y_grid", show_y_grid_);
 
     settings.setValue("all_event_types_selected", all_event_types_selected_);
-    if (all_event_types_selected_)
+    settings.beginWriteArray("shown_event_types", shown_event_types_.size());
+    for (int i = 0; i < shown_event_types_.size(); i++)
     {
-		settings.beginWriteArray("shown_event_types", shown_event_types_.size());
-		for (int i = 0; i < shown_event_types_.size(); i++)
-		{
-			settings.setArrayIndex(i);
-			settings.setValue("shown_event_type", shown_event_types_.at(i));
-		}
-		settings.endArray();
+        settings.setArrayIndex(i);
+        settings.setValue("shown_event_type", shown_event_types_.at(i));
     }
+    settings.endArray();
 
     settings.endGroup();
 
@@ -264,8 +259,6 @@ void SignalBrowserModel::addChannel(uint32 channel_nr)
     {
          return; // already added
     }
-
-    const SignalChannel& signal_channel = basic_header_->getChannel(channel_nr);
 
     // generate signal item
     SignalGraphicsItem* signal_item
@@ -382,7 +375,6 @@ void SignalBrowserModel::initBuffer()
             int32 event_id = signal_buffer_.eventNumber2ID(event_nr);
             id2event_item_[event_id] = QSharedPointer<EventGraphicsItem> (new EventGraphicsItem (signal_buffer_,
                                                            *this,
-                                                           signal_browser_view_,
                                                            signal_buffer_.getEvent(event_nr)));
         }
     }
@@ -527,6 +519,7 @@ int32 SignalBrowserModel::getSignalHeight()
 // update layout
 void SignalBrowserModel::updateLayout()
 {
+    std::cout << "start update layout " << std::endl;
     int32 width = (int32)(signal_buffer_.getBlockDuration() *
                           signal_buffer_.getNumberBlocks() * pixel_per_sec_);
 
@@ -613,6 +606,7 @@ void SignalBrowserModel::updateLayout()
     signal_browser_->getLabelWidget()->update();
     signal_browser_->getYAxisWidget()->update();
     */
+    std::cout << "finished update layout " << std::endl;
 }
 
 //-------------------------------------------------------------------
@@ -640,6 +634,12 @@ void SignalBrowserModel::setSignalSpacing(int32 spacing)
 int32 SignalBrowserModel::getSignalSpacing()
 {
     return signal_spacing_;
+}
+
+//-------------------------------------------------------------------
+int32 SignalBrowserModel::getVisibleWidth()
+{
+    return signal_browser_view_->getVisibleWidth();
 }
 /*
 // canvas view content moving
@@ -826,14 +826,19 @@ void SignalBrowserModel::goTo(float32 sec, int32 channel_index)
 
 //-----------------------------------------------------------------------------
 // goToAndSelectNextEvent
-void SignalBrowserModel::goToAndSelectNextEvent ()
+void SignalBrowserModel::goToAndSelectNextEvent (bool forward)
 {
-    // TODO: implement
     if (!selected_event_item_.isNull())
     {
         QMap<int32, QSharedPointer<SignalEvent> > events (signal_buffer_.getEvents(selected_event_item_->getSignalEvent()->getType()));
         QMap<int32, QSharedPointer<SignalEvent> >::iterator current_event_iter = events.find(selected_event_item_->getSignalEvent()->getPosition());
-        ++current_event_iter;
+        if (forward)
+            ++current_event_iter;
+        else if (current_event_iter != events.begin())
+            --current_event_iter;
+        else
+            return;
+
         if (current_event_iter != events.end())
         {
             float x = (float)current_event_iter.value()->getPosition() / signal_buffer_.getEventSamplerate();
@@ -992,7 +997,7 @@ QSharedPointer<EventGraphicsItem> SignalBrowserModel::addEvent(QSharedPointer<Si
 {
     int32 event_id = signal_buffer_.addEvent(event);
     QSharedPointer<EventGraphicsItem> event_item (new EventGraphicsItem(signal_buffer_,
-                                                      *this, signal_browser_view_, event));
+                                                      *this, event));
 
     id2event_item_[event_id] = event_item;
     setEventChanged(event_id, update);
@@ -1005,7 +1010,7 @@ QSharedPointer<EventGraphicsItem> SignalBrowserModel::addEvent(QSharedPointer<Si
 
 //-----------------------------------------------------------------------------
 // add event
-void SignalBrowserModel::addEvent(QSharedPointer<EventGraphicsItem> event, bool update)
+void SignalBrowserModel::addEvent(QSharedPointer<EventGraphicsItem> event)
 {
     int32 event_id = signal_buffer_.addEvent (event->getSignalEvent());
     //event->set

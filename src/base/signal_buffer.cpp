@@ -458,7 +458,8 @@ int32 SignalBuffer::eventNumber2ID(uint32 event_number) const
     }
 
     Int2SignalEventPtrMap::const_iterator iter = id2signal_events_map_.begin();
-    for (uint32 nr = 0; nr < event_number; nr++, iter++);
+    for (uint32 nr = 0; nr < event_number; nr++, iter++)
+        ;
     return iter.key();
 }
 

@@ -5,8 +5,9 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-NextEventViewUndoCommand::NextEventViewUndoCommand(SignalBrowserModel& signal_browser_model)
-    : signal_browser_model_ (signal_browser_model)
+NextEventViewUndoCommand::NextEventViewUndoCommand(SignalBrowserModel& signal_browser_model, bool forward)
+    : signal_browser_model_ (signal_browser_model),
+      forward_ (forward)
 {
     // nothing to do here
 }
@@ -30,7 +31,7 @@ void NextEventViewUndoCommand::redo ()
     previously_selected_event_ = signal_browser_model_.getSelectedEventItem();
     previous_view_position_ = signal_browser_model_.getViewingPosition();
 
-    signal_browser_model_.goToAndSelectNextEvent();
+    signal_browser_model_.goToAndSelectNextEvent(forward_);
 }
 
 

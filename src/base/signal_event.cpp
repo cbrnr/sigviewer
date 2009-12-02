@@ -9,6 +9,7 @@ namespace BioSig_
 SignalEvent::SignalEvent()
 : id_(UNDEFINED_ID),
   position_(0xFFFFFFFF),
+  sample_rate_ (1),
   type_(0xFFFF),
   channel_(UNDEFINED_CHANNEL),
   duration_(UNDEFINED_DURATION)
@@ -17,10 +18,11 @@ SignalEvent::SignalEvent()
 }
 
 // constructor
-SignalEvent::SignalEvent(uint32 position, uint16 type, int16 channel,
+SignalEvent::SignalEvent(uint32 position, uint16 type, float64 sample_rate, int16 channel,
                          uint32 duration, int32 id)
 : id_(id),
   position_(position),
+  sample_rate_ (sample_rate),
   type_(type),
   channel_(channel),
   duration_(duration)
@@ -32,6 +34,7 @@ SignalEvent::SignalEvent(uint32 position, uint16 type, int16 channel,
 SignalEvent::SignalEvent(const SignalEvent& src, int32 id)
 : id_(id),
   position_(src.position_),
+  sample_rate_ (src.sample_rate_),
   type_(src.type_),
   channel_(src.channel_),
   duration_(src.duration_)
@@ -51,6 +54,13 @@ uint32 SignalEvent::getPosition() const
     return position_;
 }
 
+//-----------------------------------------------------------------------------
+float32 SignalEvent::getPositionInSec() const
+{
+    return static_cast<float32>(position_) / sample_rate_;
+}
+
+
 // get type
 uint16 SignalEvent::getType() const
 {
@@ -68,6 +78,13 @@ uint32 SignalEvent::getDuration() const
 {
     return duration_;
 }
+
+//-----------------------------------------------------------------------------
+float32 SignalEvent::getDurationInSec() const
+{
+    return static_cast<float32>(duration_) / sample_rate_;
+}
+
 
 //-----------------------------------------------------------------------------
 void SignalEvent::setId (int32 id)

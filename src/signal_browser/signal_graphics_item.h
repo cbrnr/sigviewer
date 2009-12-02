@@ -54,7 +54,6 @@ protected:
     virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event);
     virtual void contextMenuEvent (QGraphicsSceneContextMenuEvent * event);
 
-
 private:
     void drawYAxis (QPainter * painter, const QStyleOptionGraphicsItem * option);
 

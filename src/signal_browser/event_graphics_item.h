@@ -17,7 +17,6 @@ namespace BioSig_
 class SignalBuffer;
 class SignalEvent;
 class SignalBrowserModel;
-class SignalBrowserView;
 class EventContextMenu;
 
 
@@ -25,7 +24,6 @@ class EventGraphicsItem : public QGraphicsItem
 {
 public:
     EventGraphicsItem(SignalBuffer& buffer, SignalBrowserModel& model,
-                    SignalBrowserView* browser,
                     QSharedPointer<SignalEvent> signal_event);
 
     virtual ~EventGraphicsItem ();

@@ -48,7 +48,8 @@ HEADERS += basic_header_info_dialog.h \
     signal_browser_mouse_handling.h \
     command_stack.h \
     next_event_view_undo_command.h \
-    set_shown_event_types_view_undo_command.h
+    set_shown_event_types_view_undo_command.h \
+    fit_view_to_event_view_undo_command.h
 SOURCES += basic_header_info_dialog.cpp \
     channel_selection_dialog.cpp \
     copy_event_dialog.cpp \
@@ -66,4 +67,5 @@ SOURCES += basic_header_info_dialog.cpp \
     sigviewer.cpp \
     command_stack.cpp \
     next_event_view_undo_command.cpp \
-    set_shown_event_types_view_undo_command.cpp
+    set_shown_event_types_view_undo_command.cpp \
+    fit_view_to_event_view_undo_command.cpp

@@ -331,10 +331,22 @@ void MainWindow::initActions()
     connect(view_show_and_select_next_event_action_, SIGNAL(triggered()),
             &model_, SLOT(viewShowAndSelectNextEventAction()));
 
+    view_show_and_select_previous_event_action_= new QAction(tr("&Previous Event..."), this);
+    view_show_and_select_previous_event_action_->setShortcut(tr("Ctrl+Left"));
+    view_show_and_select_previous_event_action_->setStatusTip(tr("Jumps to the previous specified event and selects it"));
+    connect(view_show_and_select_previous_event_action_, SIGNAL(triggered()),
+            &model_, SLOT(viewShowAndSelectPreviousEventAction()));
+
     view_show_events_of_selected_type_action_= new QAction(tr("Hide Events of other Type"), this);
     view_show_events_of_selected_type_action_->setStatusTip(tr("Only shows events which are of the same type as the selected one"));
     connect(view_show_events_of_selected_type_action_, SIGNAL(triggered()),
             &model_, SLOT(viewShowEventsOfSelectedTypeAction()));
+
+    view_fit_to_event_action_ = new QAction(tr("Fit View to Selected Event"), this);
+    view_fit_to_event_action_->setStatusTip(tr("Fits the view to the selected event"));
+    connect(view_fit_to_event_action_, SIGNAL(triggered()),
+            &model_, SLOT(viewFitToEventAction()));
+
 
     options_channels_action_= new QAction(options_channels_icon_,
                                     tr("Channe&ls..."), this);
@@ -520,7 +532,9 @@ void MainWindow::initMenus()
     view_menu_->addSeparator();
     view_menu_->addAction(view_go_to_action_);
     view_menu_->addAction(view_show_and_select_next_event_action_);
+    view_menu_->addAction(view_show_and_select_previous_event_action_);
     view_menu_->addAction(view_show_events_of_selected_type_action_);
+    view_menu_->addAction(view_fit_to_event_action_);
     view_menu_->addSeparator();
     view_menu_->addAction(undo_view_action_);
     view_menu_->addAction(redo_view_action_);

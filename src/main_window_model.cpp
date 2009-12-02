@@ -22,6 +22,7 @@
 #include "signal_browser/delete_event_undo_command.h"
 #include "next_event_view_undo_command.h"
 #include "set_shown_event_types_view_undo_command.h"
+#include "fit_view_to_event_view_undo_command.h"
 
 #include <QString>
 #include <QApplication>
@@ -41,13 +42,13 @@ MainWindowModel::MainWindowModel()
   selection_state_(SELECTION_STATE_NONE),
   number_recent_files_(8),
   secs_per_page_("10"),
-  overflow_detection_(false)
+  overflow_detection_(false),
+  signal_browser_ (0)
 {
     log_stream_.reset(new QTextStream(&log_string_));
     file_signal_reader_.reset(0);
 
     signal_browser_model_.reset(0);
-    signal_browser_.reset(0);
 
     event_table_file_reader_.reset(new EventTableFileReader);
     event_table_file_reader_->setLogStream(log_stream_.get());
@@ -791,11 +792,11 @@ void MainWindowModel::openFile(const QString& file_name)
     // initialize signal browser
     signal_browser_model_.reset(new SignalBrowserModel(*signal_reader, *this));
     signal_browser_model_->setLogStream(log_stream_.get());
-    signal_browser_.reset (new SignalBrowserView(signal_browser_model_.get(), main_window_));
+    signal_browser_ = new SignalBrowserView(signal_browser_model_.get(), main_window_);
 
-    signal_browser_model_->setSignalBrowserView(signal_browser_.get());
+    signal_browser_model_->setSignalBrowserView(signal_browser_);
     signal_browser_model_->loadSettings();
-    main_window_->setCentralWidget(signal_browser_.get());
+    main_window_->setCentralWidget(signal_browser_);
 
     setState(STATE_FILE_OPENED);
 
@@ -859,11 +860,12 @@ void MainWindowModel::fileCloseAction()
 
     // close
     signal_browser_model_->saveSettings();
+    signal_browser_model_.reset(0);
+    main_window_->setCentralWidget(0);
+    signal_browser_ = 0;
     file_signal_reader_->close();
     file_signal_reader_.reset(0);
-    signal_browser_model_.reset(0);
-    signal_browser_.reset(0);
-    main_window_->setCentralWidget(0);
+
 
     // reset status bar
     main_window_->setStatusBarSignalLength(-1);
@@ -1140,6 +1142,20 @@ void MainWindowModel::viewShowAndSelectNextEventAction()
 }
 
 //-------------------------------------------------------------------
+// view select previous event action
+void MainWindowModel::viewShowAndSelectPreviousEventAction()
+{
+    if (!checkMainWindowPtr("viewShowAndSelectPreviousEventAction") ||
+        !checkNotClosedState("viewShowAndSelectPreviousEventAction"))
+    {
+        return;
+    }
+
+    QUndoCommand* eventCommand = new NextEventViewUndoCommand (*signal_browser_model_, false);
+    CommandStack::instance().executeViewCommand(eventCommand);
+}
+
+//-------------------------------------------------------------------
 // view select next event action
 void MainWindowModel::viewShowEventsOfSelectedTypeAction()
 {
@@ -1156,6 +1172,21 @@ void MainWindowModel::viewShowEventsOfSelectedTypeAction()
     CommandStack::instance().executeViewCommand(eventCommand);
 }
 
+
+
+//-------------------------------------------------------------------
+// fits the view to the selected event action
+void MainWindowModel::viewFitToEventAction()
+{
+    if (!checkMainWindowPtr("viewFitToEventAction") ||
+        !checkNotClosedState("viewFitToEventAction"))
+    {
+        return;
+    }
+
+    QUndoCommand* eventCommand = new FitViewToEventViewUndoCommand (*signal_browser_model_);
+    CommandStack::instance().executeViewCommand(eventCommand);
+}
 
 // options channels action
 void MainWindowModel::optionsChannelsAction()

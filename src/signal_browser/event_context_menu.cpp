@@ -44,26 +44,40 @@ void EventContextMenu::addEvent (QSharedPointer<EventGraphicsItem> event_item)
 }
 
 //-------------------------------------------------------------------------
+unsigned EventContextMenu::getNumberOfEvents () const
+{
+    return event_items_.size();
+}
+
+
+//-------------------------------------------------------------------------
 void EventContextMenu::finaliseAndShowMenu (QGraphicsSceneContextMenuEvent* context_event)
 {
     QVector<QSharedPointer<EventGraphicsItem> >::iterator it = event_items_.begin();
-    while (it != event_items_.end())
+    if (event_items_.size() > 1)
     {
-        QString text (QString("Event No. ") + QString::number((*it)->getId()));
-        QMenu* submenu = new QMenu (text, this);
-        sub_menus_.append(submenu);
+        while (it != event_items_.end())
+        {
+            QString text (QString("Event No. ") + QString::number((*it)->getId()));
+            QMenu* submenu = new QMenu (text, this);
+            sub_menus_.append(submenu);
 
-        // context-menu actions
-        addActionsToMenu (*submenu);
+            // context-menu actions
+            addActionsToMenu (*submenu);
 
-        QAction* action = addMenu (submenu);//new QAction (text, this);
-        action->activate(QAction::Hover);
-        action->setData((*it)->getId());
-        //action->connect(action,SIGNAL(hovered()), this, SLOT(selectEvent()));
-        //connect (action, SIGNAL(hovered(void)), this, SLOT(selectEvent(void)));
-        addAction(action);
-        ++it;
+            QAction* action = addMenu (submenu);
+            action->activate(QAction::Hover);
+            action->setData((*it)->getId());
+            addAction(action);
+            ++it;
+        }
     }
+    else if (event_items_.size() == 1)
+    {
+        addActionsToMenu (*this);
+        (*it)->setSelected (true);
+    }
+
     event_items_.clear();
     QObject::connect(this, SIGNAL(hovered(QAction*)), this, SLOT(selectEvent(QAction*)));
     exec (context_event->screenPos());
@@ -118,6 +132,13 @@ void EventContextMenu::addActionsToMenu (QMenu& menu)
         ->setStatusTip(tr("Hide events which are not of the same type as the selected event."));
     QObject::connect(hide_events_of_other_type_action, SIGNAL(triggered()),
             &(signal_browser_model_.getMainWindowModel()), SLOT(viewShowEventsOfSelectedTypeAction()));
+
+    QAction* fit_view_action = menu.addAction(tr("Fit View"));
+    fit_view_action->setObjectName("view_fit_to_event_action_");
+    fit_view_action
+        ->setStatusTip(tr("Fit view to selected event."));
+    QObject::connect(fit_view_action, SIGNAL(triggered()),
+            &(signal_browser_model_.getMainWindowModel()), SLOT(viewFitToEventAction()));
 
 
 }

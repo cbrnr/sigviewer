@@ -150,7 +150,9 @@ private:
     QAction* view_auto_scale_action_;
     QAction* view_go_to_action_;
     QAction* view_show_and_select_next_event_action_;
+    QAction* view_show_and_select_previous_event_action_;
     QAction* view_show_events_of_selected_type_action_;
+    QAction* view_fit_to_event_action_;
     QAction* options_channels_action_;
     QAction* options_show_events_action_;
     QAction* help_log_action_;

@@ -108,7 +108,7 @@ public:
     void autoScaleAll();
 
     void goTo(float32 sec, int32 channel_index);
-    void goToAndSelectNextEvent ();
+    void goToAndSelectNextEvent (bool forward);
 /*
     void zoomRect(const QRect& rect);
 */
@@ -124,7 +124,8 @@ public:
     float64 getPixelPerSec();
     int32 getSignalHeight();
     int32 getSignalSpacing();
-/*    int32 getPreferedXGirdPixelIntervall();
+    int32 getVisibleWidth();
+    /*    int32 getPreferedXGirdPixelIntervall();
 */
     int32 getPreferedYGirdPixelIntervall();
     float64 getXGridPixelIntervall();
@@ -135,10 +136,8 @@ public:
     void setEventChanged(uint32 id, bool update = true);
     void removeEvent(uint32 id, bool update = true);
 
-    /// TODO QT4: also some addEvent-method is needed which returns the
-    ///           newly created EventGraphicsItem!!!
     QSharedPointer<EventGraphicsItem> addEvent(QSharedPointer<SignalEvent> event, bool update = true);
-    void addEvent(QSharedPointer<EventGraphicsItem> event, bool update = true);
+    void addEvent(QSharedPointer<EventGraphicsItem> event);
     void setSelectedEventItem(QSharedPointer<EventGraphicsItem> item);
     void unsetSelectedEventItem();
     QSharedPointer<EventGraphicsItem> getSelectedEventItem();

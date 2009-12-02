@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QStringList>
 #include <QString>
+#include <QSharedPointer>
 
 class QAction;
 class QTextStream;
@@ -93,7 +94,9 @@ public slots:
     void viewAutoScaleAction();
     void viewGoToAction();
     void viewShowAndSelectNextEventAction();
+    void viewShowAndSelectPreviousEventAction();
     void viewShowEventsOfSelectedTypeAction();
+    void viewFitToEventAction();
     void secsPerPageChanged(const QString& secs_per_page);
     void signalsPerPageChanged(const QString& signals_per_page);
     void optionsChannelsAction();
@@ -125,7 +128,7 @@ private:
     SelectionState selection_state_;
     std::auto_ptr<FileSignalReader> file_signal_reader_;
     std::auto_ptr<SignalBrowserModel> signal_browser_model_;
-    std::auto_ptr<SignalBrowserView> signal_browser_;
+    SignalBrowserView* signal_browser_; // main_window cares for destruction!!
     std::auto_ptr<EventTableFileReader> event_table_file_reader_;
     std::auto_ptr<EventColorManager> event_color_manager_;
     QStringList recent_file_list_;

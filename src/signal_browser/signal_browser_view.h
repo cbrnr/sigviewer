@@ -33,7 +33,6 @@ public:
     virtual ~SignalBrowserView ();
 
     void addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item);
-    void removeSignalGraphicsItem (int32 channel_nr);
     void addEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item);
     void removeEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item);
 
@@ -59,6 +58,8 @@ private slots:
     void horizontalSrollbarMoved(int value);
     void horizontalScrollBarRangeChaned (int min, int max);
     void verticalScrollBarRangeChaned (int min, int max);
+    virtual void dropEvent (QDropEvent* event);
+    virtual void dragEnterEvent(QDragEnterEvent *event);
 
 private:
     void createLayout ();
