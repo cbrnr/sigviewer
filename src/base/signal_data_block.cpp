@@ -1,10 +1,34 @@
+/*
+
+    $Id: signal_buffer.cpp,v 1.10 2009/03/06 22:29:18 brunnert Exp $
+    Copyright (C) Thomas Brunner  2005,2006
+    Copyright (C) Christoph Eibel 2008
+    Copyright (C) Clemens Brunner 2008,2009
+    Copyright (C) Alois Schloegl  2008,2009
+    This file is part of the "SigViewer" repository
+    at http://biosig.sf.net/
+
+    SigViewer is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 3
+    of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 // signal_data.cpp
 
 #include "signal_data_block.h"
-#include "math_utils.h"
 
-#define INIT_MIN_VALUE 1E50
-#define INIT_MAX_VALUE -1E50
+#define INIT_MIN_VALUE 1E30
+#define INIT_MAX_VALUE -1E30
 
 namespace BioSig_
 {
@@ -22,7 +46,7 @@ SignalDataBlock::SignalDataBlock(uint32 sub_sampl,uint32 channel_nr,
   buffer_(new float32[nr_samples]),
   upper_buffer_(new float32[nr_samples]),
   lower_buffer_(new float32[nr_samples]),
-  buffer_valid_(new bool[nr_samples]),
+  buffer_valid_(new bool[nr_samples]),	// ToDo: eventually this could be removed 
   min_value_(INIT_MIN_VALUE),
   max_value_(INIT_MAX_VALUE),
   min_max_calculated_(false)
@@ -108,10 +132,10 @@ bool SignalDataBlock::downsample(SignalDataBlock& dest_block, uint32 part_nr)
         dest_block.buffer_offset_ = buffer_offset_ / do_sub_sampl;
         dest_block.min_max_calculated_ = true;
     }
-    dest_block.min_value_ = dest_block.min_value_ > min_value_ ?
-                            min_value_ : dest_block.min_value_;
-    dest_block.max_value_ = dest_block.max_value_ < max_value_ ?
-                            max_value_ : dest_block.max_value_;
+    if (dest_block.min_value_ > min_value_ )
+        dest_block.min_value_ = min_value_ ;
+    if (dest_block.max_value_ < max_value_ )
+        dest_block.max_value_ = max_value_ ;
 
     bool* src_valid = buffer_valid_;
     float32* src = buffer_;
@@ -137,8 +161,8 @@ bool SignalDataBlock::downsample(SignalDataBlock& dest_block, uint32 part_nr)
                 {
                     *dest += *src;
                     *dest /= 2;
-                    *dest_upper = max(*dest_upper, *src_upper);
-                    *dest_lower = min(*dest_lower, *src_lower);
+                    if (*dest_upper < *src_upper) *dest_upper = *src_upper; 
+                    if (*dest_lower > *src_lower) *dest_lower = *src_lower; 
                 }
                 src++;
                 src_upper++;
@@ -175,8 +199,8 @@ bool SignalDataBlock::downsample(SignalDataBlock& dest_block, uint32 part_nr)
                 {
                     number_valid++;
                     *dest += *src;
-                    *dest_upper = max(*dest_upper, *src_upper);
-                    *dest_lower = min(*dest_lower, *src_lower);
+                    if (*dest_upper < *src_upper) *dest_upper = *src_upper; 
+                    if (*dest_lower > *src_lower) *dest_lower = *src_lower; 
                 }
                 src++;
                 src_upper++;
@@ -223,8 +247,8 @@ void SignalDataBlock::calcMinMaxValue()
     {
         if (*src_valid)
         {
-            min_value_ = min_value_ > *src ? *src : min_value_;
-            max_value_ = max_value_ < *src ? *src : max_value_;
+            if (min_value_ > *src) min_value_ = *src;	
+            if (max_value_ < *src) max_value_ = *src;	
         }
         src_valid++;
         src++;

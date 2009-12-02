@@ -1,14 +1,14 @@
 /*
 
-    $Id: signal_buffer.cpp,v 1.10 2009-03-06 22:29:18 brunnert Exp $
+    $Id: signal_buffer.cpp,v 1.10 2009/03/06 22:29:18 brunnert Exp $
     Copyright (C) Thomas Brunner  2006,2007
-              Christoph Eibel 2007,2008,
-          Clemens Brunner 2006,2007,2008
-              Alois Schloegl  2008
+    Copyright (C) Christoph Eibel 2007,2008,
+    Copyright (C) Clemens Brunner 2006,2007,2008
+    Copyright (C) Alois Schloegl  2008,2009
     This file is part of the "SigViewer" repository
     at http://biosig.sf.net/
 
-    This program is free software; you can redistribute it and/or
+    SigViewer is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 3
     of the License, or (at your option) any later version.
@@ -392,10 +392,11 @@ void SignalBuffer::initMinMax()
             }
             float64 min = data_block->getMinValue();
             float64 max = data_block->getMaxValue();
-            sub_buffers->min_value_ = sub_buffers->min_value_ > min ?
-                                        min : sub_buffers->min_value_;
-            sub_buffers->max_value_ = sub_buffers->max_value_ < max ?
-                                        max : sub_buffers->max_value_;
+
+            if (sub_buffers->min_value_ > min) 
+	            sub_buffers->min_value_ = min; 
+            if (sub_buffers->max_value_ < max) 
+	            sub_buffers->max_value_ = max; 
             sub_buffers->min_max_calculated_ = (block_nr == blocks - 1);
         }
     }
