@@ -12,8 +12,8 @@ namespace BioSig_
 SignalBrowserMouseHandling::Action SignalBrowserMouseHandling::getAction(QGraphicsSceneMouseEvent* e, SignalBrowserModel::Mode mode)
 {
         // hand scroll
-    if (e->button() == Qt::MidButton  && e->modifiers() == Qt::NoModifier ||
-        mode == SignalBrowserModel::MODE_HAND && e->button() == Qt::LeftButton)
+    if ((e->button() == Qt::MidButton  && e->modifiers() == Qt::NoModifier) ||
+        (mode == SignalBrowserModel::MODE_HAND && e->button() == Qt::LeftButton))
     {
         return HAND_SCROLL_ACTION;
     }
@@ -25,8 +25,8 @@ SignalBrowserMouseHandling::Action SignalBrowserMouseHandling::getAction(QGraphi
     }
 
     // shift channel
-    if (e->button() == Qt::MidButton && e->modifiers().testFlag(Qt::ShiftModifier) ||
-        mode == SignalBrowserModel::MODE_SHIFT_SIGNAL && e->button() == Qt::LeftButton)
+    if ((e->button() == Qt::MidButton && e->modifiers().testFlag(Qt::ShiftModifier)) ||
+        (mode == SignalBrowserModel::MODE_SHIFT_SIGNAL && e->button() == Qt::LeftButton))
     {
         return SHIFT_CHANNEL_ACTION;
     }

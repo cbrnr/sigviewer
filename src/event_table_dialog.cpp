@@ -65,7 +65,7 @@ Qt::ItemFlags EventTableDialog::TableModel::flags(const QModelIndex&) const
 
 // table model insert rows
 bool EventTableDialog::TableModel::insertRows(int row, int count,
-                                              const QModelIndex & parent)
+                                              const QModelIndex &)
 {
     if (row < 0 || count < 0 || row > data_.size())
     {
@@ -86,7 +86,7 @@ bool EventTableDialog::TableModel::insertRows(int row, int count,
 
 // table model remove rows
 bool EventTableDialog::TableModel::removeRows(int row, int count,
-                                              const QModelIndex & parent)
+                                              const QModelIndex &)
 {
     beginRemoveRows(QModelIndex(), row, row + count - 1);
 

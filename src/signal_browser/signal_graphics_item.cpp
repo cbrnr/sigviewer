@@ -156,7 +156,7 @@ void SignalGraphicsItem::autoScale(ScaleMode auto_zoom_type)
 
 
 //-----------------------------------------------------------------------------
-void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget*)
 {
     painter->drawRect(boundingRect());
     if (new_event_)
@@ -169,8 +169,6 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     int32 draw_start_x = clip.x(); //- 1;
     int32 draw_end_x = draw_start_x + clip.width(); //+ 1;
-    int32 draw_start_y = clip.y();
-    int32 draw_end_y = draw_start_y + clip.height();
 
     int32 item_height = height_;
 //    float64 item_y = y();
@@ -238,7 +236,6 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
         if (intervall > 1)
         {
-            float64 pixel_per_sec = signal_browser_model_.getPixelPerSec();
             int32 x_start = clip.x();
             int32 x_end = x_start + clip.width();
 
@@ -380,7 +377,7 @@ void SignalGraphicsItem::enableXGrid(bool enabled)
 //-----------------------------------------------------------------------------
 QString const &SignalGraphicsItem::getLabel () const
 {
-    signal_channel_.getLabel();
+    return signal_channel_.getLabel();
 }
 
 //-----------------------------------------------------------------------------
@@ -389,7 +386,6 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
     QPoint p = event->screenPos();
     if (shifting_)
     {
-        int32 dx = p.x() - move_start_point_.x();
         int32 dy = p.y() - move_start_point_.y();
         move_start_point_ = p;
         move_start_point_ = p;
@@ -491,7 +487,6 @@ void SignalGraphicsItem::drawYAxis (QPainter * painter, const QStyleOptionGraphi
     QRectF clip (option->exposedRect);
     int32 y_start = clip.y();
     int32 y_end = y_start + clip.height();
-    int32 x_start = clip.x();
     int32 w = 100;
     int32 x_end = clip.x() + w;
 

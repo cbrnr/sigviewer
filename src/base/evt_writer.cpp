@@ -57,7 +57,7 @@ FileSignalWriter* EVTWriter::clone()
 // save
   QString EVTWriter::save(FileSignalReader& file_signal_reader,
                           SignalEventVector& event_vector,
-                          const QString& file_name, bool save_signals)
+                          const QString& file_name, bool)
                           {
                             if (file_name == file_signal_reader.getBasicHeader()->getFullFileName())
                                 return "cannot remove signal data from open file";

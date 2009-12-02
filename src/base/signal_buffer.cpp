@@ -344,7 +344,7 @@ void SignalBuffer::initMinMax()
     uint32 block_size = records_per_block_ * samples_per_record;
     uint32 sub = downsampled_ ? (max_sub_sampling_ / whole_buffer_)
                                  * whole_buffer_
-                              : SUBSAMPLING_2;
+                              : static_cast<uint32>(SUBSAMPLING_2);
     uint32 blocks = samples / (block_size << sub);
 
     // calculate min and max value

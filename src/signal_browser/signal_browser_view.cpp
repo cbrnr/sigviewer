@@ -203,14 +203,14 @@ void SignalBrowserView::updateWidgets (bool update_view)
 }
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::verticalSrollbarMoved(int value)
+void SignalBrowserView::verticalSrollbarMoved(int)
 {
     y_axis_widget_->repaint();
     label_widget_->repaint();
 }
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::horizontalSrollbarMoved(int value)
+void SignalBrowserView::horizontalSrollbarMoved(int)
 {
     x_axis_widget_->repaint();
 }

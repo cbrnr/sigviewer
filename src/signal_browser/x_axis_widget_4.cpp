@@ -29,7 +29,7 @@ QSize XAxisWidget::sizeHint () const
 }
 
 //-----------------------------------------------------------------------------
-void XAxisWidget::paintEvent(QPaintEvent* event)
+void XAxisWidget::paintEvent(QPaintEvent*)
 {
     float64 intervall = signal_browser_model_.getXGridPixelIntervall();
 

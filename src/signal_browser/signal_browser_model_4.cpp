@@ -27,7 +27,6 @@
 
 #include <cmath>
 #include <algorithm>
-#include <iostream>
 
 
 namespace BioSig_
@@ -519,7 +518,6 @@ int32 SignalBrowserModel::getSignalHeight()
 // update layout
 void SignalBrowserModel::updateLayout()
 {
-    std::cout << "start update layout " << std::endl;
     int32 width = (int32)(signal_buffer_.getBlockDuration() *
                           signal_buffer_.getNumberBlocks() * pixel_per_sec_);
 
@@ -606,7 +604,6 @@ void SignalBrowserModel::updateLayout()
     signal_browser_->getLabelWidget()->update();
     signal_browser_->getYAxisWidget()->update();
     */
-    std::cout << "finished update layout " << std::endl;
 }
 
 //-------------------------------------------------------------------

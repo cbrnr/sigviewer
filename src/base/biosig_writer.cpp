@@ -52,7 +52,7 @@ FileSignalWriter* BioSigWriter::clone()
 QString BioSigWriter::save(FileSignalReader& file_signal_reader,
                   SignalEventVector& event_vector,
                   const QString& file_name,
-                  bool save_signals)
+                  bool)
 {
     QMutexLocker lock (&mutex_); 
     //return "not implemented yet"; 

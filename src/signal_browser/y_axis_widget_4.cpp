@@ -47,7 +47,7 @@ void YAxisWidget::removeChannel(int32 channel_nr)
 }
 
 //-----------------------------------------------------------------------------
-void YAxisWidget::paintEvent(QPaintEvent* event)
+void YAxisWidget::paintEvent(QPaintEvent*)
 {
     int32 signal_height = signal_browser_model_.getSignalHeight();
     int32 signal_spacing = signal_browser_model_.getSignalSpacing();
@@ -59,7 +59,6 @@ void YAxisWidget::paintEvent(QPaintEvent* event)
 
     QPainter p(this);
     p.setPen(Qt::black);
-    float64 float_y_start = floor(y_start / intervall) * intervall;
     float64 float_y_end = ceil(y_end / intervall) * intervall;
     QMap<int32, SignalGraphicsItem*>::iterator iter = channel_nr2signal_graphics_item_.begin();
 

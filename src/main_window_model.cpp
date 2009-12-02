@@ -40,10 +40,10 @@ MainWindowModel::MainWindowModel()
 : main_window_(0),
   state_(STATE_FILE_CLOSED),
   selection_state_(SELECTION_STATE_NONE),
+  signal_browser_ (0),
   number_recent_files_(8),
   secs_per_page_("10"),
-  overflow_detection_(false),
-  signal_browser_ (0)
+  overflow_detection_(false)
 {
     log_stream_.reset(new QTextStream(&log_string_));
     file_signal_reader_.reset(0);
@@ -429,8 +429,8 @@ void MainWindowModel::fileSaveAsAction()
 
     file_name = main_window_->showSaveAsDialog(path, extensions);
 
-    if (file_name.isEmpty() || QFile::exists(file_name) &&
-        !main_window_->showOverwriteDialog(file_name))
+    if (file_name.isEmpty() || (QFile::exists(file_name) &&
+        !main_window_->showOverwriteDialog(file_name)))
     {
         return; // user cancel
     }
@@ -536,8 +536,8 @@ void MainWindowModel::fileExportEventsAction()
     QString extensions = FileSignalWriterFactory::getInstance()->getExtensions();
     file_name = main_window_->showExportDialog(file_name, extensions);
 
-    if (file_name.isEmpty() || QFile::exists(file_name) &&
-        !main_window_->showOverwriteDialog(file_name))
+    if (file_name.isEmpty() || (QFile::exists(file_name) &&
+        !main_window_->showOverwriteDialog(file_name)))
     {
         return; // user cancel
     }

@@ -78,15 +78,15 @@ void EventGraphicsItem::setSelected (bool selected)
     state_ = STATE_NONE;
     QSharedPointer<EventGraphicsItem> old_selected_item
         = signal_browser_model_.getSelectedEventItem();
-    if (!(old_selected_item.isNull()))
+    if (!(old_selected_item.isNull()) && selected)
     {
         old_selected_item->is_selected_ = false;
         old_selected_item->state_ = STATE_NONE;
         //old_selected_item->update();
     }
-    is_selected_ = true;
-    signal_browser_model_.setSelectedEventItem(signal_browser_model_.getEventItem(signal_event_->getId()));
-    //update();
+    is_selected_ = selected;
+    if (selected)
+        signal_browser_model_.setSelectedEventItem(signal_browser_model_.getEventItem(signal_event_->getId()));
     scene()->update(0, 0, scene()->width(), scene()->height());
 }
 
@@ -121,7 +121,7 @@ QRectF EventGraphicsItem::boundingRect () const
 }
 
 //-----------------------------------------------------------------------------
-void EventGraphicsItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
+void EventGraphicsItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget*)
 {
     QRectF clip (option->exposedRect);
 
@@ -155,18 +155,10 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
             break;
         case ACTION_MOVE_BEGIN:
             state_ = STATE_MOVE_BEGIN;
-            /*
-            canvas_view->addEventListener(SmartCanvasView::MOUSE_RELEASE_EVENT |
-                                          SmartCanvasView::MOUSE_MOVE_EVENT,
-                                          this);*/
             setCursor(QCursor(Qt::SizeHorCursor));
             break;
         case ACTION_MOVE_END:
             state_ = STATE_MOVE_END;
-            //std::cout << "move end " << id_ << std::endl;
-            /*canvas_view->addEventListener(SmartCanvasView::MOUSE_RELEASE_EVENT |
-                                          SmartCanvasView::MOUSE_MOVE_EVENT,
-                                          this);*/
             setCursor(QCursor(Qt::SizeHorCursor));
             break;
         /*case ACTION_SHIFT_TO_CHANNEL:
@@ -215,6 +207,8 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
                 update();*/
             }
             break;
+        default:
+            break;
     }
     event_handling_mutex_.unlock();
 }
@@ -261,6 +255,8 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
                 last_shift_shown_nr_ = shown_nr;
             }
             break;*/
+    default:
+            break;
     }
 }
 
@@ -285,6 +281,8 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
             ResizeEventUndoCommand* command = new ResizeEventUndoCommand (signal_browser_model_, signal_event_, signal_event_->getPosition(), dur);
             CommandStack::instance().executeEditCommand (command);
         }
+        break;
+    default:
         break;
     }
     setCursor(QCursor(Qt::ArrowCursor));

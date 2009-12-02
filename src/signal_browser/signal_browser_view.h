@@ -54,8 +54,8 @@ protected:
 //    virtual void resizeEvent (QResizeEvent * event);
 
 private slots:
-    void verticalSrollbarMoved(int value);
-    void horizontalSrollbarMoved(int value);
+    void verticalSrollbarMoved(int);
+    void horizontalSrollbarMoved(int);
     void horizontalScrollBarRangeChaned (int min, int max);
     void verticalScrollBarRangeChaned (int min, int max);
     virtual void dropEvent (QDropEvent* event);

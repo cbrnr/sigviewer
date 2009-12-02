@@ -173,7 +173,7 @@ void EventTypeDialog::buildTree()
 // item clicked
 void EventTypeDialog::itemClicked(QTreeWidgetItem* item, int column)
 {
-    if (column != 1 && column != 2 || item->childCount() > 0)
+    if ((column != 1 && column != 2) || (item->childCount() > 0))
     {
         return;
     }
@@ -289,7 +289,7 @@ void EventTypeDialog::setShownTypes(IntList& shown_type_set, const bool all)
 }
 
 // item changed
-void EventTypeDialog::itemChanged(QTreeWidgetItem* item ,int column)
+void EventTypeDialog::itemChanged(QTreeWidgetItem* item ,int)
 {
     Qt::CheckState check_state = item->checkState(0);
 

@@ -4,6 +4,7 @@
 
 #include "../base/file_signal_reader.h"
 #include "../gui_signal_buffer.h"
+#include "event_graphics_item.h"
 
 /*
 #include <QColor>
@@ -30,7 +31,6 @@ class BasicHeader;
 class FileSignalReader;
 class SignalBrowserView;
 class SignalGraphicsItem;
-class EventGraphicsItem;
 
 // signal browser model
 class SignalBrowserModel : public QObject
