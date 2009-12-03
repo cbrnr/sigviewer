@@ -88,7 +88,7 @@ public slots:
     void mouseModePointerAction();
     void mouseModeHandAction();
     void mouseModeShiftSignalAction();
-    void mouseModeZoomAction();
+//    void mouseModeZoomAction();
     void viewZoomInAction();
     void viewZoomOutAction();
     void viewAutoScaleAction();

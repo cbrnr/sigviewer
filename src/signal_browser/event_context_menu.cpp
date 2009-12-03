@@ -27,7 +27,8 @@ EventContextMenu::~EventContextMenu ()
 }
 
 //-------------------------------------------------------------------------
-void EventContextMenu::addEvent (QSharedPointer<EventGraphicsItem> event_item)
+void EventContextMenu::addEvent (QSharedPointer<EventGraphicsItem> event_item,
+                                 QString const &type_name)
 {
     QVector<QMenu*>::iterator it = sub_menus_.begin();
     while (it != sub_menus_.end())
@@ -41,6 +42,7 @@ void EventContextMenu::addEvent (QSharedPointer<EventGraphicsItem> event_item)
     clear();
     QObject::disconnect(this, 0);
     event_items_.append (event_item);
+    event_item_type_names_.append(type_name);
 }
 
 //-------------------------------------------------------------------------
@@ -54,11 +56,14 @@ unsigned EventContextMenu::getNumberOfEvents () const
 void EventContextMenu::finaliseAndShowMenu (QGraphicsSceneContextMenuEvent* context_event)
 {
     QVector<QSharedPointer<EventGraphicsItem> >::iterator it = event_items_.begin();
+    QVector<QString>::iterator it_name = event_item_type_names_.begin();
     if (event_items_.size() > 1)
     {
         while (it != event_items_.end())
         {
-            QString text (QString("Event No. ") + QString::number((*it)->getId()));
+            QString text ("...");
+            if (it_name != event_item_type_names_.end())
+                text = *it_name;
             QMenu* submenu = new QMenu (text, this);
             sub_menus_.append(submenu);
 
@@ -70,6 +75,7 @@ void EventContextMenu::finaliseAndShowMenu (QGraphicsSceneContextMenuEvent* cont
             action->setData((*it)->getId());
             addAction(action);
             ++it;
+            ++it_name;
         }
     }
     else if (event_items_.size() == 1)
@@ -79,6 +85,7 @@ void EventContextMenu::finaliseAndShowMenu (QGraphicsSceneContextMenuEvent* cont
     }
 
     event_items_.clear();
+    event_item_type_names_.clear();
     QObject::connect(this, SIGNAL(hovered(QAction*)), this, SLOT(selectEvent(QAction*)));
     exec (context_event->screenPos());
 }

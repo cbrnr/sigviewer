@@ -324,7 +324,7 @@ void EventTableDialog::buildEventTable()
                                                            row_height);
 
         event_table_model_->setData(event_table_model_->index(event_nr, 0),
-                                    QVariant(it->getId()));
+                                    it->getId());
 
         event_table_model_->setData(event_table_model_->index(event_nr, 1),
                                     QString("%1").arg(it->getPosition() /

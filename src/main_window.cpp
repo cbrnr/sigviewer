@@ -63,6 +63,7 @@ MainWindow::MainWindow(MainWindowModel& model)
     initToolBars();
     initMenus();
     resize(QSize(800, 600).expandedTo(minimumSizeHint()));
+
 }
 
 // destructor
@@ -289,14 +290,14 @@ void MainWindow::initActions()
     connect(mouse_mode_shift_signal_action_, SIGNAL(triggered()),
             &model_, SLOT(mouseModeShiftSignalAction()));
 
-    mouse_mode_zoom_action_ = new QAction(mouse_mode_zoom_icon_,  tr("&Zoom"),
-                                          mouse_mode_action_group);
-    mouse_mode_zoom_action_->setObjectName("mouse_mode_zoom_action_");
-    mouse_mode_zoom_action_->setCheckable(true);
-    mouse_mode_zoom_action_->setShortcut(tr("Ctrl+5"));
-    mouse_mode_zoom_action_->setStatusTip(tr("Zoom to a window"));
-    connect(mouse_mode_zoom_action_, SIGNAL(triggered()),
-            &model_, SLOT(mouseModeZoomAction()));
+//    mouse_mode_zoom_action_ = new QAction(mouse_mode_zoom_icon_,  tr("&Zoom"),
+//                                          mouse_mode_action_group);
+//    mouse_mode_zoom_action_->setObjectName("mouse_mode_zoom_action_");
+//    mouse_mode_zoom_action_->setCheckable(true);
+//    mouse_mode_zoom_action_->setShortcut(tr("Ctrl+5"));
+//    mouse_mode_zoom_action_->setStatusTip(tr("Zoom to a window"));
+//    connect(mouse_mode_zoom_action_, SIGNAL(triggered()),
+//            &model_, SLOT(mouseModeZoomAction()));
 
     view_zoom_in_action_ = new QAction(view_zoom_in_icon_,  tr("Zoom &In"),
                                        this);
@@ -357,7 +358,7 @@ void MainWindow::initActions()
             &model_, SLOT(optionsChannelsAction()));
 
     options_show_events_action_= new QAction(options_show_events_icon_,
-                                    tr("Show &Events..."), this);
+                                    tr("&Events..."), this);
     options_show_events_action_->setObjectName("options_show_events_action_");
     options_show_events_action_->setShortcut(tr("Ctrl+E"));
     options_show_events_action_->setStatusTip(tr("Select the events that should be shown"));
@@ -403,7 +404,7 @@ void MainWindow::initToolBars()
     mouse_mode_toolbar_->addAction(mouse_mode_pointer_action_);
     mouse_mode_toolbar_->addAction(mouse_mode_hand_action_);
     mouse_mode_toolbar_->addAction(mouse_mode_shift_signal_action_);
-    mouse_mode_toolbar_->addAction(mouse_mode_zoom_action_);
+    //mouse_mode_toolbar_->addAction(mouse_mode_zoom_action_);
 
     edit_toolbar_ = addToolBar(tr("Edit"));
     edit_toolbar_->setIconSize(QSize(22, 22));
@@ -417,6 +418,7 @@ void MainWindow::initToolBars()
     option_toolbar_->setIconSize(QSize(22, 22));
     option_toolbar_->addAction(options_channels_action_);
     option_toolbar_->addAction(options_show_events_action_);
+    //option_toolbar_->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     //option_toolbar_->addAction(options_show_settings_action_);
 
     secs_per_page_combobox_ = new QComboBox;
@@ -437,7 +439,8 @@ void MainWindow::initToolBars()
     secs_per_page_combobox_->insertItem(11, "1000");
     secs_per_page_combobox_->insertItem(12, tr("whole"));
 
-    signals_per_page_combobox_ = new QComboBox;
+    signals_per_page_combobox_ = new QComboBox();
+    signals_per_page_combobox_->setToolTip("bla");
     signals_per_page_combobox_->setEditable(true);
     signals_per_page_combobox_->setInsertPolicy(QComboBox::NoInsert);
     signals_per_page_combobox_->setValidator(new QDoubleValidator(1.0, 30.0, 1,
@@ -523,7 +526,7 @@ void MainWindow::initMenus()
     mouse_mode_menu_->addAction(mouse_mode_pointer_action_);
     mouse_mode_menu_->addAction(mouse_mode_hand_action_);
     mouse_mode_menu_->addAction(mouse_mode_shift_signal_action_);
-    mouse_mode_menu_->addAction(mouse_mode_zoom_action_);
+//    mouse_mode_menu_->addAction(mouse_mode_zoom_action_);
 
     view_menu_ = menuBar()->addMenu(tr("&View"));
     view_menu_->addAction(view_zoom_in_action_);
@@ -701,10 +704,10 @@ void MainWindow::setMouseModeShiftSignalEnabled(bool enabled)
 }
 
 // set mouse mode zoom enabled
-void MainWindow::setMouseModeZoomEnabled(bool enabled)
-{
-    mouse_mode_zoom_action_->setEnabled(enabled);
-}
+//void MainWindow::setMouseModeZoomEnabled(bool enabled)
+//{
+//    mouse_mode_zoom_action_->setEnabled(enabled);
+//}
 
 // set options channels enabled
 void MainWindow::setOptionsChannelsEnabled(bool enabled)
@@ -740,6 +743,23 @@ void MainWindow::setViewAutoScaleEnabled(bool enabled)
 void MainWindow::setViewGoToEnabled(bool enabled)
 {
     view_go_to_action_->setEnabled(enabled);
+}
+
+void MainWindow::setViewFitToEvent(bool enabled)
+{
+    view_fit_to_event_action_->setEnabled(enabled);
+}
+
+void MainWindow::setViewHideEventsOfOtherType(bool enabled)
+{
+    view_show_events_of_selected_type_action_->setEnabled(enabled);
+}
+
+// set view go to next previous event enabled
+void MainWindow::setViewGoToNextPreviousEventEnabled(bool enabled)
+{
+    view_show_and_select_next_event_action_->setEnabled(enabled);
+    view_show_and_select_previous_event_action_->setEnabled(enabled);
 }
 
 // set secs per page enabled
@@ -936,9 +956,9 @@ void MainWindow::setMouseMode(SignalBrowserModel::Mode mode)
         case SignalBrowserModel::MODE_SHIFT_SIGNAL:
             mouse_mode_shift_signal_action_->setChecked(true);
             break;
-        case SignalBrowserModel::MODE_ZOOM:
-            mouse_mode_zoom_action_->setChecked(true);
-            break;
+//        case SignalBrowserModel::MODE_ZOOM:
+//            mouse_mode_zoom_action_->setChecked(true);
+//            break;
     }
 }
 

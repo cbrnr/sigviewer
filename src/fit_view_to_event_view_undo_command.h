@@ -35,6 +35,7 @@ private:
     QSharedPointer<SignalEvent> selected_event_;
     float64 previous_pixel_per_sec_;
     QPointF previous_view_position_;
+    static float32 const MARGIN_LEFT_RIGHT_;
 
     //-------------------------------------------------------------------------
     /// copy-constructor disabled

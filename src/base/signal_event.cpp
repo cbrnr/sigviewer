@@ -42,6 +42,18 @@ SignalEvent::SignalEvent(const SignalEvent& src, int32 id)
     // nothing   
 }
 
+// copy-constructor
+SignalEvent::SignalEvent(const SignalEvent& src)
+: id_(src.id_),
+  position_(src.position_),
+  sample_rate_ (src.sample_rate_),
+  type_(src.type_),
+  channel_(src.channel_),
+  duration_(src.duration_)
+{
+    // nothing
+}
+
 // get id
 int32 SignalEvent::getId() const
 {

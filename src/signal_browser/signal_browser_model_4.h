@@ -48,8 +48,8 @@ public:
         MODE_NEW,
         MODE_POINTER,
         MODE_HAND,
-        MODE_SHIFT_SIGNAL,
-        MODE_ZOOM
+        MODE_SHIFT_SIGNAL
+//        MODE_ZOOM
     };
 
     SignalBrowserModel(FileSignalReader& reader,

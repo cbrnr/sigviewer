@@ -40,7 +40,8 @@ public:
                 int16 channel = UNDEFINED_CHANNEL,
                 uint32 duration = UNDEFINED_DURATION, int32 id = UNDEFINED_ID);
 
-    SignalEvent(const SignalEvent& src, int32 id = UNDEFINED_ID);
+    SignalEvent(const SignalEvent& src, int32 id);
+    SignalEvent(const SignalEvent& src);
 
     int32 getId() const;
     uint32 getPosition() const;

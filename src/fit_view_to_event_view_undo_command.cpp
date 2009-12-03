@@ -7,6 +7,8 @@
 namespace BioSig_
 {
 
+float32 const FitViewToEventViewUndoCommand::MARGIN_LEFT_RIGHT_ = 0;
+
 //-----------------------------------------------------------------------------
 FitViewToEventViewUndoCommand::FitViewToEventViewUndoCommand(SignalBrowserModel& signal_browser_model)
     : signal_browser_model_ (signal_browser_model),
@@ -33,9 +35,9 @@ void FitViewToEventViewUndoCommand::redo ()
 {
     previous_pixel_per_sec_ = signal_browser_model_.getPixelPerSec();
     previous_view_position_ = signal_browser_model_.getViewingPosition();
-    float64 pixel_per_sec = static_cast<float64>(signal_browser_model_.getVisibleWidth()) / selected_event_->getDurationInSec();
+    float64 pixel_per_sec = static_cast<float64>(signal_browser_model_.getVisibleWidth()) / (selected_event_->getDurationInSec() + (2 * MARGIN_LEFT_RIGHT_));
     signal_browser_model_.setPixelPerSec(pixel_per_sec);
-    signal_browser_model_.goTo(selected_event_->getPositionInSec(), selected_event_->getChannel());
+    signal_browser_model_.goTo(selected_event_->getPositionInSec() - MARGIN_LEFT_RIGHT_, selected_event_->getChannel());
 }
 
 

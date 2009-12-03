@@ -19,10 +19,10 @@ SignalBrowserMouseHandling::Action SignalBrowserMouseHandling::getAction(QGraphi
     }
 
     // zoom window
-    if (mode == SignalBrowserModel::MODE_ZOOM && e->button() == Qt::LeftButton)
-    {
-        return ZOOM_WINDOW_ACTION;
-    }
+//    if (mode == SignalBrowserModel::MODE_ZOOM && e->button() == Qt::LeftButton)
+//    {
+//        return ZOOM_WINDOW_ACTION;
+//    }
 
     // shift channel
     if ((e->button() == Qt::MidButton && e->modifiers().testFlag(Qt::ShiftModifier)) ||

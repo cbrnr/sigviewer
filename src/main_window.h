@@ -50,13 +50,16 @@ public:
     void setMouseModeHandEnabled(bool enabled);
     void setMouseModeShiftSignalEnabled(bool enabled);
     void setMouseModePointerEnabled(bool enabled);
-    void setMouseModeZoomEnabled(bool enabled);
+//    void setMouseModeZoomEnabled(bool enabled);
     void setOptionsChannelsEnabled(bool enabled);
     void setOptionsShowEventsEnabled(bool enabled);
     void setViewZoomInEnabled(bool enabled);
     void setViewZoomOutEnabled(bool enabled);
     void setViewAutoScaleEnabled(bool enabled);
     void setViewGoToEnabled(bool  enabled);
+    void setViewFitToEvent(bool enabled);
+    void setViewHideEventsOfOtherType(bool enabled);
+    void setViewGoToNextPreviousEventEnabled(bool enabled);
     void setSecsPerPageEnabled(bool enabled);
     void setSignalsPerPageEnabled(bool enabled);
     void setSignalsPerPage(float64 signals_per_page);
@@ -144,7 +147,7 @@ private:
     QAction* mouse_mode_pointer_action_;
     QAction* mouse_mode_hand_action_;
     QAction* mouse_mode_shift_signal_action_;
-    QAction* mouse_mode_zoom_action_;
+    // QAction* mouse_mode_zoom_action_;
     QAction* view_zoom_in_action_;
     QAction* view_zoom_out_action_;
     QAction* view_auto_scale_action_;

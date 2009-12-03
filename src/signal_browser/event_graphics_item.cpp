@@ -106,12 +106,19 @@ void EventGraphicsItem::updateColor()
 }
 
 //-----------------------------------------------------------------------------
-void EventGraphicsItem::displayContextMenu (QGraphicsSceneContextMenuEvent * event)
+bool EventGraphicsItem::displayContextMenu (QGraphicsSceneContextMenuEvent * event)
 {
     context_menu_mutex_.lock();
-    if (context_menu_->getNumberOfEvents())
+    bool menu_shown = false;
+    if (context_menu_.isNull())
+        menu_shown = false;
+    else if (context_menu_->getNumberOfEvents())
+    {
         context_menu_->finaliseAndShowMenu (event);
+        menu_shown = true;
+    }
     context_menu_mutex_.unlock();
+    return menu_shown;
 }
 
 //-----------------------------------------------------------------------------
@@ -310,7 +317,12 @@ void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event
     event->ignore();
     if (context_menu_.isNull())
         context_menu_ = QSharedPointer<EventContextMenu> (new EventContextMenu (signal_browser_model_));
-    context_menu_->addEvent(signal_browser_model_.getEventItem(signal_event_->getId()));
+
+    EventTableFileReader& event_table_reader
+     = signal_browser_model_.getMainWindowModel().getEventTableFileReader();
+    QString event_name = event_table_reader.getEventName(signal_event_->getType());
+
+    context_menu_->addEvent(signal_browser_model_.getEventItem(signal_event_->getId()), event_name);
     context_menu_mutex_.unlock();
 //    context_menu_->addAction();
 //    context_menu_.exec(event->screenPos());

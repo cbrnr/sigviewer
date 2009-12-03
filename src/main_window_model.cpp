@@ -181,7 +181,7 @@ void MainWindowModel::setState(MainWindowModel::State state)
                 main_window_->setMouseModePointerEnabled(false);
                 main_window_->setMouseModeHandEnabled(false);
                 main_window_->setMouseModeShiftSignalEnabled(false);
-                main_window_->setMouseModeZoomEnabled(false);
+//                main_window_->setMouseModeZoomEnabled(false);
                 main_window_->setOptionsChannelsEnabled(false);
                 main_window_->setOptionsShowEventsEnabled(false);
                 main_window_->setViewZoomInEnabled(false);
@@ -214,7 +214,7 @@ void MainWindowModel::setState(MainWindowModel::State state)
                 main_window_->setMouseModePointerEnabled(true);
                 main_window_->setMouseModeHandEnabled(true);
                 main_window_->setMouseModeShiftSignalEnabled(true);
-                main_window_->setMouseModeZoomEnabled(true);
+//                main_window_->setMouseModeZoomEnabled(true);
                 main_window_->setOptionsChannelsEnabled(true);
                 main_window_->setOptionsShowEventsEnabled(true);
                 main_window_->setViewZoomInEnabled(true);
@@ -245,7 +245,7 @@ void MainWindowModel::setState(MainWindowModel::State state)
                 main_window_->setMouseModePointerEnabled(true);
                 main_window_->setMouseModeHandEnabled(true);
                 main_window_->setMouseModeShiftSignalEnabled(true);
-                main_window_->setMouseModeZoomEnabled(true);
+//                main_window_->setMouseModeZoomEnabled(true);
                 main_window_->setOptionsChannelsEnabled(true);
                 main_window_->setOptionsShowEventsEnabled(true);
                 main_window_->setViewZoomInEnabled(true);
@@ -273,6 +273,9 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
             main_window_->setEditDeleteEnabled(false);
             main_window_->setEditChangeChannelEnabled(false);
             main_window_->setEditChangeTypeEnabled(false);
+            main_window_->setViewGoToNextPreviousEventEnabled(false);
+            main_window_->setViewFitToEvent(false);
+            main_window_->setViewHideEventsOfOtherType(false);
 
             break;
 
@@ -282,6 +285,9 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
             main_window_->setEditDeleteEnabled(false);
             main_window_->setEditChangeChannelEnabled(false);
             main_window_->setEditChangeTypeEnabled(true);
+            main_window_->setViewGoToNextPreviousEventEnabled(false);
+            main_window_->setViewFitToEvent(false);
+            main_window_->setViewHideEventsOfOtherType(false);
 
             break;
 
@@ -291,6 +297,9 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
             main_window_->setEditDeleteEnabled(true);
             main_window_->setEditChangeChannelEnabled(true);
             main_window_->setEditChangeTypeEnabled(true);
+            main_window_->setViewGoToNextPreviousEventEnabled(true);
+            main_window_->setViewFitToEvent(true);
+            main_window_->setViewHideEventsOfOtherType(true);
 
             break;
 
@@ -300,6 +309,9 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
             main_window_->setEditDeleteEnabled(true);
             main_window_->setEditChangeChannelEnabled(true);
             main_window_->setEditChangeTypeEnabled(true);
+            main_window_->setViewGoToNextPreviousEventEnabled(true);
+            main_window_->setViewFitToEvent(true);
+            main_window_->setViewHideEventsOfOtherType(true);
 
             break;
     }
@@ -859,6 +871,7 @@ void MainWindowModel::fileCloseAction()
     }
 
     // close
+    CommandStack::instance().clearStacks();
     signal_browser_model_->saveSettings();
     signal_browser_model_.reset(0);
     main_window_->setCentralWidget(0);
@@ -1055,17 +1068,17 @@ void MainWindowModel::mouseModeShiftSignalAction()
 }
 
 // mouse mode zoom action
-void MainWindowModel::mouseModeZoomAction()
-{
-    if (!checkMainWindowPtr("mouseModeZoomAction") ||
-        !checkNotClosedState("mouseModeZoomAction"))
-    {
-        return;
-    }
-
-    signal_browser_model_->setMode(SignalBrowserModel::MODE_ZOOM);
-    signal_browser_->setScrollMode(false);
-}
+//void MainWindowModel::mouseModeZoomAction()
+//{
+//    if (!checkMainWindowPtr("mouseModeZoomAction") ||
+//        !checkNotClosedState("mouseModeZoomAction"))
+//    {
+//        return;
+//    }
+//
+//    signal_browser_model_->setMode(SignalBrowserModel::MODE_ZOOM);
+//    signal_browser_->setScrollMode(false);
+//}
 
 // view zoom out action
 void MainWindowModel::viewZoomOutAction()

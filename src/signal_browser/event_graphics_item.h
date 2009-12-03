@@ -36,7 +36,7 @@ public:
     QSharedPointer<SignalEvent> getSignalEvent ();
     void updateColor ();
 
-    static void displayContextMenu (QGraphicsSceneContextMenuEvent * event);
+    static bool displayContextMenu (QGraphicsSceneContextMenuEvent * event);
 
     virtual QRectF boundingRect () const;
     virtual void mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event);
