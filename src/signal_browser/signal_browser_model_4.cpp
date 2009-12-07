@@ -28,7 +28,6 @@
 #include <cmath>
 #include <algorithm>
 
-
 namespace BioSig_
 {
 
@@ -469,14 +468,8 @@ void SignalBrowserModel::setPixelPerSec(float64 pixel_per_sec)
     {
         return;
     }
-    // TODO: implement!
-
-    //int32 y = signal_browser_->getCanvasView()->contentsY();
-    //int32 x  = (int32)(signal_browser_->getCanvasView()->contentsX() *
-    //                   pixel_per_sec / pixel_per_sec_);
     pixel_per_sec_ = pixel_per_sec;
     updateLayout();
-    //signal_browser_->getCanvasView()->setContentsPos(x, y);
 }
 
 // get pixel per sec

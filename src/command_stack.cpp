@@ -1,5 +1,7 @@
 #include "command_stack.h"
 
+#include <iostream>
+
 namespace BioSig_
 {
 
@@ -33,6 +35,12 @@ void CommandStack::undoLastEditCommand ()
 void CommandStack::redoLastUndoneEditCommand ()
 {
     edit_command_undo_stack_.redo ();
+}
+
+//-----------------------------------------------------------------------------
+bool CommandStack::emptyEditCommandStack ()
+{
+    return !(edit_command_undo_stack_.canUndo());
 }
 
 //-----------------------------------------------------------------------------

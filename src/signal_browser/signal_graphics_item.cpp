@@ -21,6 +21,7 @@
 #include <QObject>
 
 #include <cmath>
+#include <iostream>
 
 namespace BioSig_
 {
@@ -49,6 +50,7 @@ SignalGraphicsItem::SignalGraphicsItem(SignalBuffer& buffer, const SignalChannel
   created_event_item_ (0),
   hand_tool_on_ (false)
 {
+    setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
     // nothing to do
 }
 
@@ -162,6 +164,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     if (new_event_)
         painter->fillRect(new_signal_event_->getPosition(), 0, new_signal_event_->getDuration(), height_, new_event_color_);
     QRectF clip (option->exposedRect);
+    std::cout << "exposedRect: " << option->exposedRect.width() << " x " << option->exposedRect.height() << std::endl;
     painter->setClipping(true);
     painter->setClipRect(clip);
     // clip.setWidth(clip.width()*2);
@@ -445,7 +448,7 @@ void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
             }
 
             new_event_ = true;
-            new_signal_event_ = QSharedPointer<SignalEvent>(new SignalEvent(event->scenePos().x(), signal_browser_model_.getActualEventCreationType(),
+            new_signal_event_ = QSharedPointer<SignalEvent>(new SignalEvent(event->scenePos().x(), signal_browser_model_.getActualEventCreationType(), signal_buffer_.getEventSamplerate(),
                                                                             signal_channel_.getNumber(), 0));
             new_event_color_ = signal_browser_model_.getMainWindowModel().getEventColorManager().getEventColor(signal_browser_model_.getActualEventCreationType());
             break;

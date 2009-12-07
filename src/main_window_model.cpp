@@ -334,6 +334,8 @@ void MainWindowModel::redoViewAction()
 void MainWindowModel::undoAction()
 {
     CommandStack::instance().undoLastEditCommand();
+    if (state_ == STATE_FILE_OPENED)
+        setState(STATE_FILE_CHANGED);
 }
 
 //-----------------------------------------------------------------------------
@@ -852,6 +854,7 @@ void MainWindowModel::openFile(const QString& file_name)
 
     secsPerPageChanged(secs_per_page_);
     main_window_->setSecsPerPage(secs_per_page_);
+    signal_browser_model_->updateLayout();
 }
 
 // file close action
