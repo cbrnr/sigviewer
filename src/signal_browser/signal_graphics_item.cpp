@@ -21,7 +21,6 @@
 #include <QObject>
 
 #include <cmath>
-#include <iostream>
 
 namespace BioSig_
 {
@@ -164,7 +163,6 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     if (new_event_)
         painter->fillRect(new_signal_event_->getPosition(), 0, new_signal_event_->getDuration(), height_, new_event_color_);
     QRectF clip (option->exposedRect);
-    std::cout << "exposedRect: " << option->exposedRect.width() << " x " << option->exposedRect.height() << std::endl;
     painter->setClipping(true);
     painter->setClipRect(clip);
     // clip.setWidth(clip.width()*2);
