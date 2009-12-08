@@ -50,7 +50,6 @@ SignalGraphicsItem::SignalGraphicsItem(SignalBuffer& buffer, const SignalChannel
   hand_tool_on_ (false)
 {
     setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
-    // nothing to do
 }
 
 //-----------------------------------------------------------------------------

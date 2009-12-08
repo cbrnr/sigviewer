@@ -23,6 +23,7 @@
 #include <QPainter>
 
 #include <algorithm>
+#include <iostream>
 
 namespace BioSig_
 {
@@ -250,7 +251,7 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
                 update();
             }
             break;
-        /*case STATE_SHIFT_TO_CHANNEL:
+        /*case STATE_SHIFT_TO_exportCHANNEL:
             int32 shown_nr;
             shown_nr = (int32)(mouse_pos.y() /
                                (signal_browser_model_.getSignalHeight() +
@@ -299,16 +300,16 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent * event )
 {
-    if (is_selected_)
+    QSharedPointer<EventGraphicsItem> item = signal_browser_model_.getSelectedEventItem();
+    if (!(item.isNull()))
     {
-        if ((event->scenePos().x() > pos().x() && event->scenePos().x() < pos().x() + 5)
-            || (event->scenePos().x() < pos().x() + width_ && event->scenePos().x() > pos().x() + width_ - 5))
+        if ((event->scenePos().x() > item->pos().x() && event->scenePos().x() < item->pos().x() + 5)
+            || (event->scenePos().x() < item->pos().x() + item->width_ && event->scenePos().x() > item->pos().x() + item->width_ - 5))
             setCursor(QCursor(Qt::SizeHorCursor));
         else
             setCursor(QCursor(Qt::ArrowCursor));
     }
 }
-
 
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event)
