@@ -574,12 +574,17 @@ void MainWindow::dropEvent (QDropEvent* event)
         QUrl url (event->mimeData()->text());
         event->acceptProposedAction();
         model_.openFile(url.path());
+    } else if (event->mimeData()->hasUrls())
+    {
+        QUrl url (event->mimeData()->urls().first().toLocalFile());
+        event->acceptProposedAction();
+        model_.openFile(url.path());
     }
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
-    if (event->mimeData()->hasText())
+    if (event->mimeData()->hasText() || event->mimeData()->hasUrls())
     {
         event->acceptProposedAction();
     }
