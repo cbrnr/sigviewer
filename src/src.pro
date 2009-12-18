@@ -4,9 +4,7 @@ TARGET = sigviewer
 CONFIG += warn_on \
     link_prl \
     qt \
-    thread \
-    x86 \
-    ppc
+    thread
 debug { 
     OBJECTS_DIR = ../tmp/debug
     MOC_DIR = ../tmp/debug
@@ -23,6 +21,7 @@ INCLUDEPATH += ../extern
 LIBS += -L../extern \
     -lbiosig
 win32:LIBS += -lws2_32
+macx:LIBS += -lz
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc
 ICON = sigviewer.icns
