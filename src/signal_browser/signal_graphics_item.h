@@ -41,7 +41,6 @@ public:
     float64 getYOffset();
     float64 getYGridPixelIntervall();
 
-public slots:
     void zoomIn();
     void zoomOut();
     void autoScale(ScaleMode auto_zoom_type = MAX_TO_MAX);

@@ -97,9 +97,6 @@ public:
     float64 getMaxValue(uint32 channel_nr) const;
 
     //---------------------------------------------------------------
-    float64 getMeanValue (uint32 channel_nr);
-
-    //---------------------------------------------------------------
     SignalDataBlock* getSignalDataBlock(uint32 channel_nr,
                                         uint32 sub_sampl, // SUB_SAMPLING
                                         uint32 block_nr); // in sub_sampl

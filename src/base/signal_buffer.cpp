@@ -729,34 +729,6 @@ float64 SignalBuffer::getMaxValue(uint32 channel_nr) const
 }
 
 //---------------------------------------------------------------
-float64 SignalBuffer::getMeanValue (uint32 channel_nr)
-{
-    QMutexLocker lock (&mutex_);
-    if (!checkReadyState("getMeanValue"))
-    {
-        return -10E20;
-    }
-
-    std::valarray<float32> signal;
-    for (uint32 block_index = 0; block_index < number_blocks_; block_index++)
-    {
-        SignalDataBlock* data_block = getSignalDataBlockImpl(channel_nr, 0, block_index);
-        float32* buffer = data_block->getBuffer();
-        unsigned old_size = signal.size();
-        signal.resize(signal.size() + data_block->number_samples);
-        for (uint32 sample_index = 0; sample_index < data_block->number_samples; sample_index++)
-            signal[old_size+sample_index] = buffer[sample_index];
-    }
-
-    float32 mean = signal.sum() / signal.size();
-    //signal -= (mean);
-    //signal *= signal;
-    //return sqrt(signal.sum() / signal.size());
-    return mean;
-}
-
-
-//---------------------------------------------------------------
 // check ready state
 bool SignalBuffer::checkReadyState(const QString& function) const
 {

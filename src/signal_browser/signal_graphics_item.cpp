@@ -21,7 +21,6 @@
 #include <QObject>
 
 #include <cmath>
-#include <iostream>
 
 namespace BioSig_
 {
@@ -413,7 +412,6 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 {
-    std::cout << "mean = " << signal_buffer_.getMeanValue(signal_channel_.getNumber()) << std::endl;
     SignalBrowserModel::Mode mode = signal_browser_model_.getMode();
 
     switch (SignalBrowserMouseHandling::getAction(event, mode))
