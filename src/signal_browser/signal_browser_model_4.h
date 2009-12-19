@@ -159,6 +159,9 @@ public slots:
 
     void canvasViewContentMoving(int content_x, int content_y);
 */
+signals:
+    void eventSelected (QSharedPointer<SignalEvent const> selected_event);
+
 private:
     static uint8 const NAVIGATION_Z = 1;
     static uint8 const X_GRID_Z = 2;

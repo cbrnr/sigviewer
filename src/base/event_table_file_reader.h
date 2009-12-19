@@ -34,7 +34,7 @@ public:
 
     IntIterator eventTypesBegin();
     IntIterator eventTypesEnd();
-    QString getEventName(uint16 event_type_id);
+    QString getEventName(uint16 event_type_id) const;
     QString getEventGroupId(uint16 event_type_id);
 
 private:

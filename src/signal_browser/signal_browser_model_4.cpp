@@ -950,8 +950,10 @@ void SignalBrowserModel::setEventChanged(uint32 id, bool update)
     {
         signal_browser_view_->updateWidgets();
     }
-
     main_window_model_.setChanged();
+    if (!selected_event_item_.isNull())
+        if (selected_event_item_->getId() == id)
+            eventSelected(event);
 }
 
 //-----------------------------------------------------------------------------
@@ -1042,6 +1044,7 @@ void SignalBrowserModel::setSelectedEventItem(QSharedPointer<EventGraphicsItem> 
             main_window_model_.setSelectionState(
                                 MainWindowModel::SELECTION_STATE_ONE_CHANNEL);
         }
+        eventSelected(item->getSignalEvent());
     }
 }
 

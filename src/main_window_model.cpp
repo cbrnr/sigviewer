@@ -20,6 +20,7 @@
 #include "signal_browser/signal_browser_model_4.h"
 #include "signal_browser/signal_browser_view.h"
 #include "signal_browser/delete_event_undo_command.h"
+#include "signal_browser/event_info_dockwidget.h"
 #include "next_event_view_undo_command.h"
 #include "set_shown_event_types_view_undo_command.h"
 #include "fit_view_to_event_view_undo_command.h"
@@ -31,6 +32,7 @@
 #include <QTextStream>
 #include <QSettings>
 #include <QSharedPointer>
+#include <QObject>
 
 namespace BioSig_
 {
@@ -41,6 +43,8 @@ MainWindowModel::MainWindowModel()
   state_(STATE_FILE_CLOSED),
   selection_state_(SELECTION_STATE_NONE),
   signal_browser_ (0),
+  event_info_widget_ (0),
+  tab_widget_ (0),
   number_recent_files_(8),
   secs_per_page_("10"),
   overflow_detection_(false)
@@ -806,11 +810,24 @@ void MainWindowModel::openFile(const QString& file_name)
     // initialize signal browser
     signal_browser_model_.reset(new SignalBrowserModel(*signal_reader, *this));
     signal_browser_model_->setLogStream(log_stream_.get());
-    signal_browser_ = new SignalBrowserView(signal_browser_model_.get(), main_window_);
 
+    if (!tab_widget_)
+        tab_widget_ = new QTabWidget (main_window_);
+
+    signal_browser_ = new SignalBrowserView(signal_browser_model_.get(), tab_widget_);
     signal_browser_model_->setSignalBrowserView(signal_browser_);
     signal_browser_model_->loadSettings();
-    main_window_->setCentralWidget(signal_browser_);
+
+    tab_widget_->addTab(signal_browser_, "Raw Data");
+    main_window_->setCentralWidget(tab_widget_);
+
+    if (!event_info_widget_)
+    {
+        event_info_widget_ = new EventInfoDockWidget (main_window_, *(event_table_file_reader_.get()));
+        event_info_widget_->hide();
+        main_window_->addDockWidget(Qt::RightDockWidgetArea, event_info_widget_);
+    }
+    QObject::connect(signal_browser_model_.get(), SIGNAL(eventSelected(QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(updateEvent(QSharedPointer<SignalEvent const>)));
 
     setState(STATE_FILE_OPENED);
 
@@ -878,10 +895,13 @@ void MainWindowModel::fileCloseAction()
     signal_browser_model_->saveSettings();
     signal_browser_model_.reset(0);
     main_window_->setCentralWidget(0);
+    // delete tab_widget_;
+    tab_widget_ = 0;
     signal_browser_ = 0;
     file_signal_reader_->close();
     file_signal_reader_.reset(0);
 
+    QObject::disconnect(event_info_widget_, SLOT(updateEvent(QSharedPointer<SignalEvent>)));
 
     // reset status bar
     main_window_->setStatusBarSignalLength(-1);

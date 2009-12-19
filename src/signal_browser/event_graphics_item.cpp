@@ -49,6 +49,7 @@ EventGraphicsItem::EventGraphicsItem(SignalBuffer& buffer, SignalBrowserModel& m
 //-----------------------------------------------------------------------------
 EventGraphicsItem::~EventGraphicsItem ()
 {
+
 }
 
 //-----------------------------------------------------------------------------

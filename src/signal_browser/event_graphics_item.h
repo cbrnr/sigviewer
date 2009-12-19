@@ -8,6 +8,7 @@
 #include <QSharedPointer>
 #include <QColor>
 #include <QVector>
+#include <QLabel>
 
 class QMutex;
 
@@ -80,6 +81,7 @@ protected:
     int32 width_;
     bool is_selected_;
     QSharedPointer<SignalEvent> signal_event_;
+
     static int move_mouse_range_;
     static QMutex event_handling_mutex_;
 
