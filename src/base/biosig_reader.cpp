@@ -284,17 +284,18 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
 #ifdef CHOLMOD_H
     if (biosig_header_->Calib==NULL) {
 #endif
-    for (uint32 channel_index = 0; channel_index < biosig_header_->NS; ++channel_index)
+    uint16_t chan=0;
+    for (uint16_t channel_index = 0; channel_index < biosig_header_->NS; ++channel_index)
     if (biosig_header_->CHANNEL[channel_index].OnOff)	// show only selected channels - status channels are not shown.
     {
-        SignalChannel* channel = new SignalChannel(channel_index, 
+        SignalChannel* channel = new SignalChannel(chan++, 
                                                    biosig_header_->SPR,
                                                    biosig_header_->CHANNEL[channel_index]);
         basic_header_->addChannel(channel);
     }
 #ifdef CHOLMOD_H
     } else 
-    for (uint32 channel_index = 0; channel_index < biosig_header_->Calib->ncol; ++channel_index)
+    for (uint16_t channel_index = 0; channel_index < biosig_header_->Calib->ncol; ++channel_index)
     {
         SignalChannel* channel = new SignalChannel(channel_index, 
                                                    biosig_header_->SPR,
