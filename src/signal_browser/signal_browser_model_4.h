@@ -136,7 +136,7 @@ public:
 
     // events
     void getShownEventTypes(IntList& event_type);
-    std::set<uint16> getPresentEventTypes () const;
+    std::set<uint16> getDisplayedEventTypes () const;
     void setShownEventTypes(const IntList& event_type, const bool all = false);
     void setEventChanged(uint32 id, bool update = true);
     void removeEvent(uint32 id, bool update = true);

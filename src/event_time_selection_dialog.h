@@ -56,8 +56,6 @@ private:
     QDoubleSpinBox* seconds_before_spinbox_;
     QDoubleSpinBox* length_spinbox_;
     QLabel* event_type_average_time_label_;
-    QLabel* event_type_max_time_label_;
-    QLabel* event_type_min_time_label_;
     QLabel* event_type_amount_label_;
 };
 

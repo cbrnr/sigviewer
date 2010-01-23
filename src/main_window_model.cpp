@@ -331,17 +331,20 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
 //-----------------------------------------------------------------------------
 void MainWindowModel::calculateMeanAction ()
 {
-    std::map<uint32, QString> shown_channels = signal_browser_model_->getShownChannels();
-    std::set<uint16> present_event_types = signal_browser_model_->getPresentEventTypes ();
+    if (!signal_browser_model_.get())
+        return;
+    std::map<uint32, QString> shown_channels = signal_browser_model_->getShownChannels ();
+    std::set<uint16> displayed_event_types = signal_browser_model_->getDisplayedEventTypes ();
     std::map<uint16, QString> shown_event_types;
-    for (std::set<uint16>::iterator event_type_it = present_event_types.begin();
-         event_type_it != present_event_types.end();
+    for (std::set<uint16>::iterator event_type_it = displayed_event_types.begin();
+         event_type_it != displayed_event_types.end();
          ++event_type_it)
     {
         shown_event_types[*event_type_it] = event_table_file_reader_->getEventName (*event_type_it);
     }
 
-    EventTimeSelectionDialog event_time_dialog (shown_event_types, shown_channels, signal_browser_model_->getSignalBuffer());
+    EventTimeSelectionDialog event_time_dialog (shown_event_types, shown_channels,
+                                                signal_browser_model_->getSignalBuffer());
     if (event_time_dialog.exec () == QDialog::Rejected)
         return;
     else

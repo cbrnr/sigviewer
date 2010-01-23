@@ -907,7 +907,7 @@ void SignalBrowserModel::getShownEventTypes(IntList& event_type)
 }
 
 //-----------------------------------------------------------------------------
-std::set<uint16> SignalBrowserModel::getPresentEventTypes () const
+std::set<uint16> SignalBrowserModel::getDisplayedEventTypes () const
 {
     std::set<uint16> present_event_types;
     for (Int2EventGraphicsItemPtrMap::const_iterator event_it =

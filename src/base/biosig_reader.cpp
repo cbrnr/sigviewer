@@ -275,6 +275,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     basic_header_->setRecordsPosition (biosig_header_->HeadLen);
 
     basic_header_->setRecordDuration (biosig_header_->SPR / biosig_header_->SampleRate);
+
     basic_header_->setNumberEvents(biosig_header_->EVENT.N);
     if (biosig_header_->EVENT.SampleRate)
         basic_header_->setEventSamplerate(biosig_header_->EVENT.SampleRate);
@@ -288,7 +289,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     for (uint16_t channel_index = 0; channel_index < biosig_header_->NS; ++channel_index)
     if (biosig_header_->CHANNEL[channel_index].OnOff)	// show only selected channels - status channels are not shown.
     {
-        SignalChannel* channel = new SignalChannel(chan++, 
+        SignalChannel* channel = new SignalChannel(chan++,
                                                    biosig_header_->SPR,
                                                    biosig_header_->CHANNEL[channel_index]);
         basic_header_->addChannel(channel);
