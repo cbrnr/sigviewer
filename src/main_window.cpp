@@ -135,6 +135,17 @@ void MainWindow::initActions()
             &model_, SLOT(redoViewAction()));
 
 
+    calculate_mean_action_ = new QAction(tr("Calculate Mean"), this);
+    calculate_mean_action_->setStatusTip(tr("Calculates mean of selected event type"));
+    connect(calculate_mean_action_, SIGNAL(triggered()),
+            &model_, SLOT(calculateMeanAction()));
+
+    calculate_frequency_spectrum_action_ = new QAction(tr("Calculate Frequency Spectrum"), this);
+    calculate_frequency_spectrum_action_->setStatusTip(tr("Calculates frequency spectrum of selected event type"));
+    connect(calculate_frequency_spectrum_action_, SIGNAL(triggered()),
+            &model_, SLOT(calculateFrequencySpectrumAction()));
+
+
     undo_action_ = new QAction(tr("Undo"), this);
     undo_action_->setShortcut(tr("Ctrl+Z"));
     connect(undo_action_, SIGNAL(triggered()),
@@ -541,6 +552,10 @@ void MainWindow::initMenus()
     view_menu_->addSeparator();
     view_menu_->addAction(undo_view_action_);
     view_menu_->addAction(redo_view_action_);
+
+    tools_menu_ = menuBar()->addMenu(tr("&Tools (UNDER DEVELOPMENT)"));
+    tools_menu_->addAction(calculate_mean_action_);
+    tools_menu_->addAction(calculate_frequency_spectrum_action_);
 
     options_menu_ = menuBar()->addMenu(tr("&Options"));
     options_menu_->addAction(options_channels_action_);

@@ -32,14 +32,13 @@
 #include <QTextStream>
 #include <QMutexLocker>
 
-#include <valarray>
-
+#include <algorithm>
 
 namespace BioSig_
 {
 
-#define min(a, b) ((a) < (b) ? (a) : (b))
-#define max(a, b) ((a) > (b) ? (a) : (b))
+//#define min(a, b) ((a) < (b) ? (a) : (b))
+//#define max(a, b) ((a) > (b) ? (a) : (b))
 
 // constructor
 SignalBuffer::SignalBuffer(FileSignalReader& reader)
@@ -57,7 +56,7 @@ SignalBuffer::SignalBuffer(FileSignalReader& reader)
    default_max_(100)
 {
     float64 rec_duration = signal_reader_.getBasicHeader()->getRecordDuration();
-    records_per_block_ = max((uint32)(1.0 / rec_duration + 0.5), 1);
+    records_per_block_ = std::max((uint32)(1.0 / rec_duration + 0.5), (uint32)1);
     if (records_per_block_ % 2 != 0)
     {
         records_per_block_++;
@@ -188,16 +187,20 @@ void SignalBuffer::addChannel(uint32 channel_nr)
         }
         else
         {
-            blocks = min(BUFFER_QUEUE_SIZE / block_size,
+            blocks = std::min(BUFFER_QUEUE_SIZE / block_size,
                          samples / (block_size << sub));
+            if (blocks < 1)
+                blocks = 1;
         }
         if (blocks == 0)
             break;
+
         sub_buffers->sub_queue[sub].reset(
             new SignalDataBlockQueue(channel_nr, samples_per_record,
                                      records_per_block_, blocks, 1 << sub));
         max_sub_sampling_ = sub;
     }
+
     channel_nr2sub_buffers_map_[channel_nr] = sub_buffers;
     if (!bGotWholeBuffer)
         whole_buffer_ = NO_WHOLE_BUFFER;
@@ -275,7 +278,7 @@ void SignalBuffer::initLoadEvents()
     SignalEventVector signal_events;
     signal_reader_.loadEvents(signal_events);
     uint32 number_events = signal_events.size();
-    uint32 step = max(number_events / 50, 1);
+    uint32 step = std::max(number_events / 50, (unsigned)1);
     FileSignalReader::SignalEventVector::iterator iter;
     uint32 event_nr = 0;
     for (iter = signal_events.begin();
@@ -318,11 +321,11 @@ void SignalBuffer::initDownsample()
     uint32 blocks = 0;
     for (uint32 sub = whole_buffer_;
          sub <= max_sub_sampling_;
-         sub += max(whole_buffer_,1))
+         sub += std::max((int)whole_buffer_,1))
     {
         // load all whole subsampling blocks
         blocks = iter.value()->sub_queue[sub]->getNumberBlocks();
-        uint32 step = max(blocks / 50, 1);
+        uint32 step = std::max(blocks / 50, (unsigned)1);
         for (uint32 block_nr = 0; block_nr < blocks; block_nr++)
         {
             if (block_nr % step == 0)
@@ -349,9 +352,12 @@ void SignalBuffer::initMinMax()
                               : static_cast<uint32>(SUBSAMPLING_2);
     uint32 blocks = samples / (block_size << sub);
 
+    if (blocks < 1)
+        blocks = 1;
+
     // calculate min and max value
-    uint32 step = max(blocks / 50, 1);
-    for (uint32 block_nr = 0; block_nr < blocks; block_nr++)
+    uint32 step = std::max(blocks / 50, (unsigned)1);
+    for (uint32 block_nr = 0; block_nr < blocks; block_nr+=step)
     {
         if (block_nr % step == 0)
         {
@@ -484,12 +490,12 @@ QSharedPointer<SignalEvent> SignalBuffer::getEvent(uint32 event_id)
 }
 
 //-----------------------------------------------------------------------------
-QMap<int32, QSharedPointer<SignalEvent> > SignalBuffer::getEvents (uint16 type)
+QMap<int32, QSharedPointer<SignalEvent> > SignalBuffer::getEvents (uint16 type) const
 {
     QMutexLocker lock (&mutex_);
     QMap<int32, QSharedPointer<SignalEvent> > events;
 
-    for (Int2SignalEventPtrMap::iterator iter = id2signal_events_map_.begin();
+    for (Int2SignalEventPtrMap::const_iterator iter = id2signal_events_map_.begin();
          iter != id2signal_events_map_.end(); ++iter)
     {
         if (iter.value()->getType() == type)
@@ -533,6 +539,44 @@ double SignalBuffer::getEventSamplerate() const
     return signal_reader_.getBasicHeader()->getEventSamplerate();
 }
 
+//-----------------------------------------------------------------------------
+DataBlock SignalBuffer::getSignalData (uint32 channel_nr,
+                                              uint32 start_sample,
+                                              uint32 number_samples) const
+{
+    QMutexLocker lock (&mutex_);
+    if (!checkReadyState("getSignalData"))
+        return DataBlock ();
+    if (channel_nr2sub_buffers_map_.find(channel_nr) ==
+        channel_nr2sub_buffers_map_.end())
+    {
+        return DataBlock (); // illegal channel number
+    }
+    uint32 samples_per_record = signal_reader_.getBasicHeader()->getChannel(channel_nr)
+                                    .getSamplesPerRecord();
+    uint32 block_size = records_per_block_ * samples_per_record;
+    uint32 start_block = start_sample / block_size;
+    uint32 end_block = start_block + (number_samples / block_size);
+    std::vector<float32> data;
+    for (unsigned block_nr = start_block; block_nr <= end_block; block_nr++)
+    {
+        SignalDataBlock* data_block = getSignalDataBlockImpl(channel_nr, 0, block_nr);
+        if (data_block->getBufferValid())
+        {
+            unsigned start_index = 0;
+            unsigned end_index = block_size;
+            if (block_nr == start_block)
+                start_index = start_sample - (block_size * start_block);
+            if (block_nr == end_block)
+                end_index = (number_samples + start_sample) - (block_size * end_block);
+            for (unsigned index = start_index; index < end_index; index++)
+                data.push_back(data_block->getBuffer()[index]);
+        }
+    }
+    return DataBlock (data);
+}
+
+
 // get signal data block
 SignalDataBlock* SignalBuffer::getSignalDataBlock(uint32 channel_nr,
                                                   uint32 sub_sampl,
@@ -550,7 +594,7 @@ SignalDataBlock* SignalBuffer::getSignalDataBlock(uint32 channel_nr,
 // get signal data block implementation
 SignalDataBlock* SignalBuffer::getSignalDataBlockImpl(uint32 channel_nr,
                                                       uint32 sub_sampl,
-                                                      uint32 block_nr)
+                                                      uint32 block_nr) const
 {
 //### TODO: simplify this function
 // fprintf(stdout,"getSignalDataBlockImpl(%i, %i, %i)\n",channel_nr, sub_sampl, block_nr);
@@ -561,7 +605,7 @@ SignalDataBlock* SignalBuffer::getSignalDataBlockImpl(uint32 channel_nr,
     }
 
     // set first blocks interesting
-    Int2SubBuffersPtrMap::iterator channel_iter;
+    Int2SubBuffersPtrMap::const_iterator channel_iter;
     for (channel_iter = channel_nr2sub_buffers_map_.begin();
          channel_iter != channel_nr2sub_buffers_map_.end();
          channel_iter++)

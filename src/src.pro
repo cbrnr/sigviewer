@@ -4,7 +4,8 @@ TARGET = sigviewer
 CONFIG += warn_on \
     link_prl \
     qt \
-    thread
+    thread \
+    debug
 debug { 
     OBJECTS_DIR = ../tmp/debug
     MOC_DIR = ../tmp/debug
@@ -19,7 +20,7 @@ else:release {
 }
 INCLUDEPATH += ../extern
 LIBS += -L../extern \
-    -lbiosig
+    -lbiosig -lfftw3
 win32:LIBS += -lws2_32
 macx:LIBS += -lz
 RESOURCES = src.qrc
@@ -31,6 +32,8 @@ TRANSLATIONS += translations\sigviewer_de.ts \
     translations\sigviewer_fr.ts
 include(base/base.pri)
 include(signal_browser/signal_browser.pri)
+include(block_visualisation/block_visualisation.pri)
+include(signal_processing/signal_processing.pri)
 HEADERS += basic_header_info_dialog.h \
     channel_selection_dialog.h \
     copy_event_dialog.h \
@@ -48,7 +51,8 @@ HEADERS += basic_header_info_dialog.h \
     command_stack.h \
     next_event_view_undo_command.h \
     set_shown_event_types_view_undo_command.h \
-    fit_view_to_event_view_undo_command.h
+    fit_view_to_event_view_undo_command.h \
+    event_time_selection_dialog.h
 SOURCES += basic_header_info_dialog.cpp \
     channel_selection_dialog.cpp \
     copy_event_dialog.cpp \
@@ -67,4 +71,5 @@ SOURCES += basic_header_info_dialog.cpp \
     command_stack.cpp \
     next_event_view_undo_command.cpp \
     set_shown_event_types_view_undo_command.cpp \
-    fit_view_to_event_view_undo_command.cpp
+    fit_view_to_event_view_undo_command.cpp \
+    event_time_selection_dialog.cpp

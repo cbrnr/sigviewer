@@ -35,6 +35,7 @@ public:
     void startMouseMoveEnd ();
     void setSelected (bool selected);
     QSharedPointer<SignalEvent> getSignalEvent ();
+    QSharedPointer<SignalEvent const> getSignalEvent () const;
     void updateColor ();
 
     static bool displayContextMenu (QGraphicsSceneContextMenuEvent * event);

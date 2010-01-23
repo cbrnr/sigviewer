@@ -312,18 +312,40 @@ void SignalBrowserModel::removeChannel(uint32 channel_nr)
     }
 }
 
+//-----------------------------------------------------------------------------
 // is signal shown
 bool SignalBrowserModel::isChannelShown(uint32 channel_nr)
 {
     return channel2signal_item_.find(channel_nr) != channel2signal_item_.end();
 }
 
+//-----------------------------------------------------------------------------
+std::map<uint32, QString> SignalBrowserModel::getShownChannels () const
+{
+    std::map<uint32, QString> shown_channels;
+    for (Int2SignalGraphicsItemPtrMap::const_iterator sig_iter =
+         channel2signal_item_.begin();
+         sig_iter != channel2signal_item_.end();
+         ++sig_iter)
+    {
+        shown_channels[sig_iter->first] = sig_iter->second->getLabel();
+    }
+    return shown_channels;
+}
 
+//-----------------------------------------------------------------------------
 // get number shown channels
 uint32 SignalBrowserModel::getNumberShownChannels()
 {
     return channel2signal_item_.size();
 }
+
+//-----------------------------------------------------------------------------
+SignalBuffer const& SignalBrowserModel::getSignalBuffer () const
+{
+    return signal_buffer_;
+}
+
 
 //-----------------------------------------------------------------------------
 // init buffer
@@ -469,11 +491,12 @@ void SignalBrowserModel::setPixelPerSec(float64 pixel_per_sec)
         return;
     }
     pixel_per_sec_ = pixel_per_sec;
+    signal_browser_view_->getXAxisWidget().changePixelPerSec (pixel_per_sec_);
     updateLayout();
 }
 
 // get pixel per sec
-float64 SignalBrowserModel::getPixelPerSec()
+float64 SignalBrowserModel::getPixelPerSec() const
 {
     return pixel_per_sec_;
 }
@@ -583,9 +606,11 @@ void SignalBrowserModel::updateLayout()
 
     x_grid_pixel_intervall_ = pixel_per_sec_ * x_grid_intervall;
 
+
     signal_browser_view_->getLabelWidget().setVisible(show_channel_labels_);
     signal_browser_view_->getYAxisWidget().setVisible(show_y_scales_);
     signal_browser_view_->getXAxisWidget().setVisible(show_x_scales_);
+    signal_browser_view_->getXAxisWidget().changeIntervall (x_grid_pixel_intervall_);
     /* TODO: IMPLEMENT!!!
   	signal_browser_->getLabelWidget()->setVisible(show_channel_labels_);
   	signal_browser_->getXAxisWidget()->setVisible(show_x_scales_);
@@ -880,6 +905,22 @@ void SignalBrowserModel::getShownEventTypes(IntList& event_type)
 {
     event_type = shown_event_types_;
 }
+
+//-----------------------------------------------------------------------------
+std::set<uint16> SignalBrowserModel::getPresentEventTypes () const
+{
+    std::set<uint16> present_event_types;
+    for (Int2EventGraphicsItemPtrMap::const_iterator event_it =
+         id2event_item_.begin();
+         event_it != id2event_item_.end();
+         ++event_it)
+    {
+        if (event_it.value()->isVisible())
+            present_event_types.insert (event_it.value()->getSignalEvent()->getType());
+    }
+    return present_event_types;
+}
+
 
 //-----------------------------------------------------------------------------
 void SignalBrowserModel::setShownEventTypes(const IntList& event_type, const bool all)

@@ -5,6 +5,7 @@
 
 #include "signal_event.h"
 #include "signal_data_block_queue.h"
+#include "data_block.h"
 
 #include <memory>
 
@@ -97,6 +98,17 @@ public:
     float64 getMaxValue(uint32 channel_nr) const;
 
     //---------------------------------------------------------------
+    ///
+    /// @param channel_nr the number of the channel
+    /// @param start_sample the number of the sample to start
+    /// @param number_samples the amount of samples ("length")
+    ///
+    /// @return a new data block which contains all samples
+    ///         which are requested by the parameters, the data
+    ///         is not subsampled!!
+    DataBlock getSignalData (uint32 channel_nr, uint32 start_sample, uint32 number_samples) const;
+
+    //---------------------------------------------------------------
     SignalDataBlock* getSignalDataBlock(uint32 channel_nr,
                                         uint32 sub_sampl, // SUB_SAMPLING
                                         uint32 block_nr); // in sub_sampl
@@ -107,7 +119,7 @@ public:
 
     //-------------------------------------------------------------------------
     /// @return a map containing all events of the given type, sorted by x-position
-    QMap<int32, QSharedPointer<SignalEvent> > getEvents (uint16 type);
+    QMap<int32, QSharedPointer<SignalEvent> > getEvents (uint16 type) const;
 
     //-------------------------------------------------------------------------
     int32 addEvent(QSharedPointer<SignalEvent> event);
@@ -149,7 +161,7 @@ private:
     bool checkReadyState(const QString& function) const;
     SignalDataBlock* getSignalDataBlockImpl(uint32 channel_nr,
                                            uint32 sub_sampl, // SUB_SAMPLING
-                                           uint32 block_nr); // in sub_sampl
+                                           uint32 block_nr) const; // in sub_sampl
 
     void initLoadEvents();
     void initDownsample();

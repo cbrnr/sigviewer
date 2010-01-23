@@ -50,6 +50,9 @@ public:
     void setViewCursor (QCursor const &cursor);
     void updateWidgets (bool update_view = true);
 
+signals:
+    void visibleXChanged (int32 new_x);
+
 protected:
 //    virtual void resizeEvent (QResizeEvent * event);
 

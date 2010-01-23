@@ -183,13 +183,13 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     uint32 sub_sampling_type = SignalBuffer::NO_SUBSAMPLING;
 
-   while (samples_per_sec / 2.0 * prefered_pixel_per_sample_ >= pixel_per_sec
+   /*while (samples_per_sec / 2.0 * prefered_pixel_per_sample_ >= pixel_per_sec
            && sub_sampling_type < signal_buffer_.getMaxSubsampling())
     {
         block_duration *= 2.0;
         samples_per_sec /= 2.0;
         sub_sampling_type++;
-    }
+    }*/
 
     // block range
     float64 tmp = draw_start_x / (block_duration * pixel_per_sec);

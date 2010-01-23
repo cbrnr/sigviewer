@@ -22,6 +22,8 @@ class QTextStream;
 #include <QPointF>
 
 #include <map>
+#include <vector>
+#include <set>
 
 namespace BioSig_
 {
@@ -84,6 +86,7 @@ public:
 
     // buffer
     void initBuffer();
+    SignalBuffer const& getSignalBuffer () const;
 /*
     void setReleaseBuffer(bool release);
     bool getReleaseBuffer();
@@ -93,6 +96,7 @@ public:
     void addChannel(uint32 channel_nr);
     void removeChannel(uint32 channel_nr);
     bool isChannelShown(uint32 channel_nr);
+    std::map<uint32, QString> getShownChannels () const;
     uint32 getNumberShownChannels();
 /*
     int32 getChannelNr(uint32 shown_nr);
@@ -121,7 +125,7 @@ public:
     void setPreferedYGirdPixelIntervall(int32 pixel_intervall);
 */
     // get parameters
-    float64 getPixelPerSec();
+    float64 getPixelPerSec() const;
     int32 getSignalHeight();
     int32 getSignalSpacing();
     int32 getVisibleWidth();
@@ -132,6 +136,7 @@ public:
 
     // events
     void getShownEventTypes(IntList& event_type);
+    std::set<uint16> getPresentEventTypes () const;
     void setShownEventTypes(const IntList& event_type, const bool all = false);
     void setEventChanged(uint32 id, bool update = true);
     void removeEvent(uint32 id, bool update = true);

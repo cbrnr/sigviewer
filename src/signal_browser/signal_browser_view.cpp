@@ -36,7 +36,7 @@ SignalBrowserView::SignalBrowserView(SignalBrowserModel* signal_browser_model, Q
     y_axis_widget_->resize(70, height());
     y_axis_widget_->setMinimumSize(70, 0);
 
-    x_axis_widget_ = new XAxisWidget (this, *signal_browser_model, this);
+    x_axis_widget_ = new XAxisWidget (this);
     x_axis_widget_->resize(width()-300, 30);
     x_axis_widget_->setMinimumSize(0, 30);
 
@@ -63,6 +63,7 @@ SignalBrowserView::SignalBrowserView(SignalBrowserModel* signal_browser_model, Q
     connect(vertical_scrollbar_, SIGNAL(valueChanged(int)),
             this, SLOT(verticalSrollbarMoved(int)));
 
+    connect(this, SIGNAL(visibleXChanged(int32)), x_axis_widget_, SLOT(changeXStart(int32)));
 
     graphics_view_->resize(width() - label_widget_->width() - y_axis_widget_->width() + (vertical_scrollbar_->width()*2), height() - x_axis_widget_->height() + horizontal_scrollbar_->height());
 
@@ -212,15 +213,15 @@ void SignalBrowserView::verticalSrollbarMoved(int)
 //-----------------------------------------------------------------------------
 void SignalBrowserView::horizontalSrollbarMoved(int)
 {
-    x_axis_widget_->repaint();
+    emit visibleXChanged (graphics_view_->mapToScene(0,0).x());
 }
 
 //-----------------------------------------------------------------------------
 void SignalBrowserView::horizontalScrollBarRangeChaned (int min, int max)
 {
-    x_axis_widget_->repaint();
     horizontal_scrollbar_->setRange(min, max);
     horizontal_scrollbar_->setPageStep(graphics_view_->horizontalScrollBar()->pageStep());
+    emit visibleXChanged (graphics_view_->mapToScene(0,0).x());
 }
 
 //-----------------------------------------------------------------------------

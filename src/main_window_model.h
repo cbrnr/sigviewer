@@ -4,6 +4,7 @@
 #define MAIN_WINDOW_MODEL_H
 
 #include "base/user_types.h"
+#include "block_visualisation/blocks_visualisation_model.h"
 
 #include <memory>
 
@@ -12,6 +13,8 @@
 #include <QString>
 #include <QSharedPointer>
 #include <QTabWidget>
+
+#include <list>
 
 class QAction;
 class QTextStream;
@@ -26,6 +29,7 @@ class SignalBrowserView;
 class EventInfoDockWidget;
 class EventTableFileReader;
 class EventColorManager;
+class BlocksVisualisationView;
 
 
 // main window model
@@ -65,9 +69,13 @@ public:
     void setSelectionState(SelectionState selection_state);
     void setChanged();
 
+    QSharedPointer<BlocksVisualisationModel> createBlocksVisualisationView ();
+
 public slots:
 
     // actions
+    void calculateMeanAction();
+    void calculateFrequencySpectrumAction();
     void undoViewAction();
     void redoViewAction();
     void undoAction();
@@ -141,6 +149,7 @@ private:
     QString log_string_;
     QString secs_per_page_;
     bool overflow_detection_;
+    std::list<QSharedPointer<BlocksVisualisationModel> > blocks_visualisation_models_;
 };
 
 } // namespace BioSig_

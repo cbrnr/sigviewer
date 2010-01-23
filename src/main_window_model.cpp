@@ -9,6 +9,7 @@
 #include "basic_header_info_dialog.h"
 #include "log_dialog.h"
 #include "channel_selection_dialog.h"
+#include "event_time_selection_dialog.h"
 #include "go_to_dialog.h"
 #include "event_type_dialog.h"
 #include "gui_signal_buffer.h"
@@ -21,9 +22,12 @@
 #include "signal_browser/signal_browser_view.h"
 #include "signal_browser/delete_event_undo_command.h"
 #include "signal_browser/event_info_dockwidget.h"
+#include "signal_browser/calculate_event_mean_command.h"
+#include "signal_browser/calculcate_frequency_spectrum_command.h"
 #include "next_event_view_undo_command.h"
 #include "set_shown_event_types_view_undo_command.h"
 #include "fit_view_to_event_view_undo_command.h"
+#include "block_visualisation/blocks_visualisation_view.h"
 
 #include <QString>
 #include <QApplication>
@@ -33,6 +37,8 @@
 #include <QSettings>
 #include <QSharedPointer>
 #include <QObject>
+
+#include <cmath>
 
 namespace BioSig_
 {
@@ -320,6 +326,40 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
             break;
     }
 
+}
+
+//-----------------------------------------------------------------------------
+void MainWindowModel::calculateMeanAction ()
+{
+    std::map<uint32, QString> shown_channels = signal_browser_model_->getShownChannels();
+    std::set<uint16> present_event_types = signal_browser_model_->getPresentEventTypes ();
+    std::map<uint16, QString> shown_event_types;
+    for (std::set<uint16>::iterator event_type_it = present_event_types.begin();
+         event_type_it != present_event_types.end();
+         ++event_type_it)
+    {
+        shown_event_types[*event_type_it] = event_table_file_reader_->getEventName (*event_type_it);
+    }
+
+    EventTimeSelectionDialog event_time_dialog (shown_event_types, shown_channels, signal_browser_model_->getSignalBuffer());
+    if (event_time_dialog.exec () == QDialog::Rejected)
+        return;
+    else
+    {
+        CalculateEventMeanCommand command (*(signal_browser_model_.get()), *this,
+                                           event_time_dialog.getSelectedEventType(),
+                                           event_time_dialog.getSelectedChannels(),
+                                           event_time_dialog.getSecondsBeforeEvent(),
+                                           event_time_dialog.getLengthInSeconds());
+        command.execute();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void MainWindowModel::calculateFrequencySpectrumAction ()
+{
+    CalculcateFrequencySpectrumCommand command (*(signal_browser_model_.get()), *this);
+    command.execute();
 }
 
 //-----------------------------------------------------------------------------
@@ -812,13 +852,17 @@ void MainWindowModel::openFile(const QString& file_name)
     signal_browser_model_->setLogStream(log_stream_.get());
 
     if (!tab_widget_)
+    {
         tab_widget_ = new QTabWidget (main_window_);
+        tab_widget_->setTabsClosable (true);
+    }
 
     signal_browser_ = new SignalBrowserView(signal_browser_model_.get(), tab_widget_);
     signal_browser_model_->setSignalBrowserView(signal_browser_);
     signal_browser_model_->loadSettings();
 
     tab_widget_->addTab(signal_browser_, "Raw Data");
+
     main_window_->setCentralWidget(tab_widget_);
 
     if (!event_info_widget_)
@@ -1560,6 +1604,21 @@ void MainWindowModel::setChanged()
         setState(STATE_FILE_CHANGED);
     }
 }
+
+//-----------------------------------------------------------------------------
+QSharedPointer<BlocksVisualisationModel> MainWindowModel::createBlocksVisualisationView ()
+{
+    BlocksVisualisationView* bv_view = new BlocksVisualisationView (tab_widget_);
+    SignalBuffer const& signal_buffer = signal_browser_model_->getSignalBuffer();
+    QSharedPointer<BlocksVisualisationModel> bv_model = QSharedPointer<BlocksVisualisationModel> (new BlocksVisualisationModel (bv_view, signal_browser_model_->getPixelPerSec (), static_cast<float64>(signal_buffer.getRecordsPerBlock()) / signal_buffer.getBlockDuration()));
+
+    blocks_visualisation_models_.push_back (bv_model);
+    tab_widget_->addTab(bv_view, "Mean");
+    tab_widget_->setCurrentWidget(bv_view);
+
+    return bv_model;
+}
+
 
 } // namespace BioSig_
 

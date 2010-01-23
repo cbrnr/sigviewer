@@ -116,6 +116,7 @@ private:
     QMenu* edit_menu_;
     QMenu* mouse_mode_menu_;
     QMenu* view_menu_;
+    QMenu* tools_menu_;
     QMenu* options_menu_;
     QMenu* help_menu_;
 
@@ -125,6 +126,8 @@ private:
     QToolBar* option_toolbar_;
     QToolBar* navigation_toolbar_;
 
+    QAction* calculate_mean_action_;
+    QAction* calculate_frequency_spectrum_action_;
     QAction* undo_view_action_;
     QAction* redo_view_action_;
     QAction* undo_action_;

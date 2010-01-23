@@ -98,6 +98,12 @@ QSharedPointer<SignalEvent> EventGraphicsItem::getSignalEvent ()
     return signal_event_;
 }
 
+//-----------------------------------------------------------------------------
+QSharedPointer<SignalEvent const> EventGraphicsItem::getSignalEvent () const
+{
+    return signal_event_;
+}
+
 
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::updateColor()
