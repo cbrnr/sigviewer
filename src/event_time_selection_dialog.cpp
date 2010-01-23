@@ -50,36 +50,35 @@ EventTimeSelectionDialog::EventTimeSelectionDialog (std::map<uint16, QString>
         event_type_combobox_->addItem(event_it->second);
     }
 
-    QHBoxLayout* spinbox_layout = new QHBoxLayout(this);
-    spinbox_layout->setMargin(0);
-    spinbox_layout->addStretch(1);
-
-    spinbox_layout->addWidget(new QLabel(tr("Include seconds before events"), this));
+    QGridLayout* event_type_info_layout = new QGridLayout (this);
+    event_type_info_layout->addWidget(new QLabel(tr("Include seconds before events"), this), 1, 1);
     seconds_before_spinbox_ = new QDoubleSpinBox (this);
     seconds_before_spinbox_->setMinimum (0);
     seconds_before_spinbox_->setSingleStep(0.25);
     seconds_before_spinbox_->setValue(0);
-    spinbox_layout->addWidget(seconds_before_spinbox_);
+    event_type_info_layout->addWidget(seconds_before_spinbox_, 1, 2);
 
-    spinbox_layout->addWidget(new QLabel(tr("Length (in seconds)"), this));
+    event_type_info_layout->addWidget(new QLabel(tr("Length (in seconds)"), this), 2, 1);
     length_spinbox_ = new QDoubleSpinBox (this);
     length_spinbox_->setMinimum (0);
     length_spinbox_->setSingleStep(0.25);
     length_spinbox_->setValue(0);
-    spinbox_layout->addWidget(length_spinbox_);
-
-    event_layout->addLayout(spinbox_layout);
+    event_type_info_layout->addWidget(length_spinbox_, 2, 2);
 
     event_type_average_time_label_ = new QLabel (this);
     event_type_max_time_label_ = new QLabel (this);
     event_type_min_time_label_ = new QLabel (this);
     event_type_amount_label_ = new QLabel (this);
 
-    QGridLayout* event_type_info_layout = new QGridLayout (this);
-    event_type_info_layout->addWidget (new QLabel(tr("Amount of Events"), this), 1, 1);
-    event_type_info_layout->addWidget (event_type_amount_label_, 1, 2);
-    event_type_info_layout->addWidget (new QLabel(tr("Average Event Duration"), this), 2, 1);
-    event_type_info_layout->addWidget (event_type_average_time_label_, 2, 2);
+    event_type_info_layout->addWidget (new QLabel(tr("Amount of Events"), this), 3, 1);
+    event_type_info_layout->addWidget (event_type_amount_label_, 3, 2);
+    event_type_info_layout->addWidget (new QLabel(tr("Average Event Duration"), this), 4, 1);
+    event_type_info_layout->addWidget (event_type_average_time_label_, 4, 2);
+    event_type_info_layout->addWidget (new QLabel(tr("Duration of shortest Event"), this), 5, 1);
+    event_type_info_layout->addWidget (event_type_min_time_label_, 5, 2);
+    event_type_info_layout->addWidget (new QLabel(tr("Duration of longest Event"), this), 6, 1);
+    event_type_info_layout->addWidget (event_type_max_time_label_, 6, 2);
+
 
     event_layout->addLayout (event_type_info_layout);
 
@@ -149,7 +148,7 @@ void EventTimeSelectionDialog::selectedEventTypeChanged (int combo_box_index)
 
     QMap<int32, QSharedPointer<SignalEvent> > events = signal_buffer_.getEvents (event_type_it->first);
 
-    float32 shortest_duration = 100; // FIXMEEE!!!!!!!!!!!!!!!!!! max float32!!
+    float32 shortest_duration = 100000.0; // FIXMEEE!!!!!!!!!!!!!!!!!! max float32!!
     float32 longest_duration = 0;
     float32 average_duration = 0;
 
@@ -168,6 +167,8 @@ void EventTimeSelectionDialog::selectedEventTypeChanged (int combo_box_index)
 
     event_type_amount_label_->setText (QString::number(events.size()));
     event_type_average_time_label_->setText (QString::number(average_duration) + QString("s"));
+    event_type_max_time_label_->setText(QString::number(longest_duration) + QString("s"));
+    event_type_min_time_label_->setText(QString::number(shortest_duration) + QString("s"));
     length_spinbox_->setValue(average_duration);
 }
 
