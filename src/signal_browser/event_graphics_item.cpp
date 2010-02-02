@@ -53,7 +53,7 @@ EventGraphicsItem::~EventGraphicsItem ()
 }
 
 //-----------------------------------------------------------------------------
-uint32 EventGraphicsItem                                                                                                                                                                                                                                                                                                                                    ::getId() const
+int32 EventGraphicsItem                                                                                                                                                                                                                                                                                                                                    ::getId() const
 {
     return signal_event_->getId();
 }
@@ -78,17 +78,7 @@ void EventGraphicsItem::startMouseMoveEnd ()
 void EventGraphicsItem::setSelected (bool selected)
 {
     state_ = STATE_NONE;
-    QSharedPointer<EventGraphicsItem> old_selected_item
-        = signal_browser_model_.getSelectedEventItem();
-    if (!(old_selected_item.isNull()) && selected)
-    {
-        old_selected_item->is_selected_ = false;
-        old_selected_item->state_ = STATE_NONE;
-        //old_selected_item->update();
-    }
     is_selected_ = selected;
-    if (selected)
-        signal_browser_model_.setSelectedEventItem(signal_browser_model_.getEventItem(signal_event_->getId()));
     scene()->update(0, 0, scene()->width(), scene()->height());
 }
 
@@ -122,12 +112,31 @@ bool EventGraphicsItem::displayContextMenu (QGraphicsSceneContextMenuEvent * eve
         menu_shown = false;
     else if (context_menu_->getNumberOfEvents())
     {
-        context_menu_->finaliseAndShowMenu (event);
+        context_menu_->finaliseAndShowContextMenu (event);
         menu_shown = true;
     }
     context_menu_mutex_.unlock();
     return menu_shown;
 }
+
+//-----------------------------------------------------------------------------
+bool EventGraphicsItem::displaySelectionMenu (QGraphicsSceneMouseEvent* event)
+{
+    context_menu_mutex_.lock();
+    bool menu_shown = false;
+    if (context_menu_.isNull())
+    {
+        menu_shown = false;
+    }
+    else if (context_menu_->getNumberOfEvents())
+    {
+        context_menu_->finaliseAndShowSelectionMenu(event);
+        menu_shown = true;
+    }
+    context_menu_mutex_.unlock();
+    return menu_shown;
+}
+
 
 //-----------------------------------------------------------------------------
 QRectF EventGraphicsItem::boundingRect () const
@@ -165,16 +174,19 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
     switch(getMousePressAction(event))
     {
         case ACTION_NONE:
+            //addContextMenuEntry ();
             event->ignore();
             state_ = STATE_NONE;
             break;
         case ACTION_MOVE_BEGIN:
             state_ = STATE_MOVE_BEGIN;
             setCursor(QCursor(Qt::SizeHorCursor));
+            emit mouseMoving (true);
             break;
         case ACTION_MOVE_END:
             state_ = STATE_MOVE_END;
             setCursor(QCursor(Qt::SizeHorCursor));
+            emit mouseMoving (true);
             break;
         /*case ACTION_SHIFT_TO_CHANNEL:
             state_ = STATE_SHIFT_TO_CHANNEL;
@@ -208,7 +220,10 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
             break;*/
         case ACTION_SELECT:
             {
-                setSelected(true);
+                addContextMenuEntry ();
+                event->ignore();
+//                signal_browser_model_.selectEvent (signal_event_->getId());
+                //setSelected(true);
                 /*state_ = STATE_NONE;
                 QSharedPointer<EventGraphicsItem> old_selected_item
                     = signal_browser_model_.getSelectedEventItem();
@@ -244,8 +259,9 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
 //                if (!(scene()->views().first()->visibleRegion().contains(mouse_event->scenePos().toPoint())))
 //                    std::cout << "not visible" << std::endl;
                 width_ -= diff;
-                scene()->update(mouse_pos.x(), pos().y(), width_ + diff, height_);
+                scene()->update(mouse_pos.x() - 5, pos().y(), width_ + diff, height_);
                 update();
+                emit mouseAtSecond (static_cast<float>(pos().x())  / signal_browser_model_.getPixelPerSec());
             }
             break;
         case STATE_MOVE_END:
@@ -256,6 +272,7 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
                 width_ += diff;
                 scene()->update(mouse_pos.x(), pos().y(), width_ - diff, height_);
                 update();
+                emit mouseAtSecond (static_cast<float>(pos().x() + width_)  / signal_browser_model_.getPixelPerSec());
             }
             break;
         /*case STATE_SHIFT_TO_exportCHANNEL:
@@ -302,6 +319,7 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
     }
     setCursor(QCursor(Qt::ArrowCursor));
     state_ = STATE_NONE;
+    emit mouseMoving (false);
 }
 
 //-----------------------------------------------------------------------------
@@ -321,66 +339,8 @@ void EventGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent * event )
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event)
 {
-    context_menu_mutex_.lock();
+    addContextMenuEntry ();
     event->ignore();
-    if (context_menu_.isNull())
-        context_menu_ = QSharedPointer<EventContextMenu> (new EventContextMenu (signal_browser_model_));
-
-    EventTableFileReader& event_table_reader
-     = signal_browser_model_.getMainWindowModel().getEventTableFileReader();
-    QString event_name = event_table_reader.getEventName(signal_event_->getType());
-
-    context_menu_->addEvent(signal_browser_model_.getEventItem(signal_event_->getId()), event_name);
-    context_menu_mutex_.unlock();
-//    context_menu_->addAction();
-//    context_menu_.exec(event->screenPos());
-/*    SignalBrowserModel::Mode mode = signal_browser_model_.getMode();
-    if (mode != SignalBrowserModel::MODE_POINTER &&
-        mode != SignalBrowserModel::MODE_NEW)
-    {
-        return;
-    }
-    //std::cout << "context menu for event " << id_ << std::endl;
-    QMenu* menu = new QMenu();
-
-//    MainWindow* main_window = signal_browser_model_.getMainWindowModel().getMainWindow();
-//    main_window->addActionTo(menu, "
-//    QAction *removeAction = menu.addAction("Remove");
-//    QAction *markAction = menu.addAction("Mark");
-//    QAction *selectedAction = menu.exec(event->screenPos());
-
-
-//    if (menu.count() > 0)
-//    {
-//        menu.insertSeparator();
-//    }
-
-
-    QSharedPointer<EventGraphicsItem> old_selected_item;
-    old_selected_item = signal_browser_model_.getSelectedEventItem();
-    if (old_selected_item == this)
-    {
-        MainWindow* main_window
-            = signal_browser_model_.getMainWindowModel().getMainWindow();
-        main_window->addActionTo(menu, "edit_to_all_channels_action_");
-        main_window->addActionTo(menu, "edit_copy_to_channels_action_");
-        main_window->addActionTo(menu, "edit_delete_action_");
-        main_window->addActionTo(menu, "edit_change_channel_action_");
-        main_window->addActionTo(menu, "edit_change_type_action_");
-    }
-    else
-    {
-        EventTableFileReader& event_table_reader
-         = signal_browser_model_.getMainWindowModel().getEventTableFileReader();
-        QString event_name = event_table_reader.getEventName(signal_event_->getType());
-        if (event_name.isEmpty())
-        {
-            event_name = "Undefined";
-        }
-        menu->addAction(QString("&Select ") + event_name);
-    }
-    menu->exec(event->screenPos());*/
-
 }
 
 
@@ -459,6 +419,22 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
     }
     return ACTION_NONE;
 }
+
+//-----------------------------------------------------------------------------
+void EventGraphicsItem::addContextMenuEntry ()
+{
+    context_menu_mutex_.lock();
+    if (context_menu_.isNull())
+        context_menu_ = QSharedPointer<EventContextMenu> (new EventContextMenu (signal_browser_model_));
+
+    EventTableFileReader& event_table_reader
+     = signal_browser_model_.getMainWindowModel().getEventTableFileReader();
+    QString event_name = event_table_reader.getEventName(signal_event_->getType());
+
+    context_menu_->addEvent(signal_browser_model_.getEventItem(signal_event_->getId()), event_name);
+    context_menu_mutex_.unlock();
+}
+
 
 
 }

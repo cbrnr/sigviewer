@@ -126,6 +126,7 @@ private:
     QToolBar* option_toolbar_;
     QToolBar* navigation_toolbar_;
 
+
     QAction* calculate_mean_action_;
     QAction* calculate_frequency_spectrum_action_;
     QAction* undo_view_action_;
@@ -141,6 +142,7 @@ private:
     QAction* file_info_action_;
     QAction* file_exit_action_;
     QAction* edit_to_all_channels_action_;
+    QAction* edit_fast_insert_event_action_;
     QAction* edit_copy_to_channels_action_;
     QAction* edit_delete_action_;
     QAction* edit_change_channel_action_;

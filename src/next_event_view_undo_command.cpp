@@ -22,7 +22,8 @@ NextEventViewUndoCommand::~NextEventViewUndoCommand ()
 void NextEventViewUndoCommand::undo ()
 {
     signal_browser_model_.setViewingPosition(previous_view_position_);
-    previously_selected_event_->setSelected(true);
+    //previously_selected_event_->setSelected(true);
+    signal_browser_model_.selectEvent (previously_selected_event_->getId());
 }
 
 //-----------------------------------------------------------------------------

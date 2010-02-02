@@ -2,8 +2,6 @@
 
 #include "event_table_dialog.h"
 
-#include "signal_browser/signal_browser_model_4.h"
-
 #include "gui_signal_buffer.h"
 #include "base/basic_header.h"
 #include "base/event_table_file_reader.h"
@@ -222,7 +220,7 @@ void EventTableDialog::TableModel::sort(int column, Qt::SortOrder order)
 }
 
 // constructor
-EventTableDialog::EventTableDialog(SignalBrowserModel& browser_model,
+EventTableDialog::EventTableDialog(QSharedPointer<SignalBrowserModel> browser_model,
                                    QPointer<BasicHeader> basic_header, QWidget* parent)
  : QDialog(parent),
    signal_browser_model_(browser_model),
@@ -306,10 +304,10 @@ void EventTableDialog::buildEventTable()
     event_table_view_->horizontalHeader()->setSortIndicatorShown(true);
 
     EventTableFileReader& event_table_reader
-        = signal_browser_model_.getMainWindowModel().getEventTableFileReader();
+        = signal_browser_model_->getMainWindowModel().getEventTableFileReader();
 
     FileSignalReader::SignalEventVector event_vector;
-    signal_browser_model_.getEvents(event_vector);
+    signal_browser_model_->getEvents(event_vector);
     int32 number_channels = (int32)basic_header_->getNumberChannels();
     float64 sample_rate = basic_header_->getEventSamplerate();
     event_table_model_->insertRows(0, event_vector.size());
@@ -411,13 +409,13 @@ void EventTableDialog::removeSelectedRows()
             int32 event_id = event_table_model_
                             ->data(event_table_model_->index(row, 0)).toInt();
 
-            signal_browser_model_.removeEvent(event_id, false);
+            signal_browser_model_->removeEvent(event_id, false);
             event_table_model_->removeRows(*it, 1);
         }
 
         while (it != selected_row_list.begin());
 
-        signal_browser_model_.updateLayout();
+        signal_browser_model_->updateLayout();
     }
 
     // update row heights

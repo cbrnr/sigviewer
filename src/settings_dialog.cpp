@@ -6,7 +6,7 @@
  */
 
 #include "settings_dialog.h"
-//#include "base/basic_header.h"
+#include "base/user_types.h"
 
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -39,9 +39,10 @@ const char* SettingsDialog::CANCEL_BUTTON_TEXT_ = "Cancel";
 
 // ------------------------------------------------------------------------------------------
 // constructor
-SettingsDialog::SettingsDialog(QWidget* parent)
-
-: QDialog(parent)
+SettingsDialog::SettingsDialog (QSharedPointer<SignalBrowserModel const> signal_browser_model,
+                                QWidget* parent)
+: QDialog(parent),
+  signal_browser_model_ (signal_browser_model)
 {
     setWindowTitle(tr("Preferences"));
 
@@ -52,6 +53,10 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     scale_max_to_max_radio_button_ = new QRadioButton(tr(SCALE_MAX_TO_MAX_BUTTON_TEXT_));
     scale_min_to_max_radio_button_ = new QRadioButton(tr(SCALE_MIN_TO_MAX_BUTTON_TEXT_));
 
+    bool max_to_max_zoom_enabled = signal_browser_model_->getAutoZoomBehaviour() == MAX_TO_MAX;
+    scale_max_to_max_radio_button_->setChecked (max_to_max_zoom_enabled);
+    scale_min_to_max_radio_button_->setChecked (!max_to_max_zoom_enabled);
+
     boxLayout->addWidget(scale_max_to_max_radio_button_);
     boxLayout->addWidget(scale_min_to_max_radio_button_);
     boxLayout->addStretch(1);
@@ -59,8 +64,12 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 
     overflow_detection_button_ = new QCheckBox(tr(OVERFLOW_DETECTION_BUTTON_TEXT_));
     show_channel_scales_button_ = new QCheckBox(tr(SHOW_CHANNEL_SCALES_BUTTON_TEXT_));
+    show_channel_scales_button_->setChecked (signal_browser_model_->getShowXScales());
     show_channel_labels_button_ = new QCheckBox(tr(SHOW_CHANNEL_LABELS_BUTTON_TEXT_));
+    show_channel_labels_button_->setChecked (signal_browser_model_->getShowChannelLabels());
+
     show_grid_button_ = new QCheckBox(tr(SHOW_GRID_BUTTON_TEXT_));
+    show_grid_button_->setChecked (signal_browser_model_->getGridVisible());
 
     QVBoxLayout* top_layout = new QVBoxLayout(this);
 
@@ -95,54 +104,6 @@ SettingsDialog::SettingsDialog(QWidget* parent)
     connect(ok_button_, SIGNAL(clicked()), this, SLOT(accept()));
     connect(cancel_button_, SIGNAL(clicked()), this, SLOT(reject()));
 //    connect(show_channel_labels_button_, SIGNAL(stateChanged(int)), this, SLOT(setShowChannels(int)));
-}
-
-//void SettingsDialog::setShowChannels(int channelState)
-//{
-//    show_channel_labels_ = ((channelState == Qt::Checked) ? (true) : (false));
-//}
-
-// ------------------------------------------------------------------------------------------
-// load settings
-void SettingsDialog::loadSettings()
-
-{
-    QSettings settings("SigViewer");
-
-    settings.beginGroup("SettingsDialog");
-
-    overflow_detection_button_->setChecked(settings.value("overflow_detection", false).toBool());
-    scale_max_to_max_radio_button_->setChecked(settings.value("scale_max_to_max_radio_button_", true).toBool());
-    scale_min_to_max_radio_button_->setChecked(settings.value("scale_min_to_max_radio_button_", false).toBool());
-    show_channel_scales_button_->setChecked(settings.value("show_channel_scales_button_", false).toBool());
-    show_channel_labels_button_->setChecked(settings.value("show_channel_labels_button_", false).toBool());
-    show_grid_button_->setChecked(settings.value("show_grid_button_", false).toBool());
-
-    resize(settings.value("size", QSize(250, 400)).toSize());
-    move(settings.value("pos", QPoint(200, 200)).toPoint());
-    settings.endGroup();
-
-}
-
-// ------------------------------------------------------------------------------------------
-// save settings
-void SettingsDialog::saveSettings()
-
-{
-    QSettings settings("SigViewer");
-
-    settings.beginGroup("SettingsDialog");
-
-    settings.setValue("overflow_detection", overflow_detection_button_->isChecked());
-    settings.setValue("scale_max_to_max_radio_button_", scale_max_to_max_radio_button_->isChecked());
-    settings.setValue("scale_min_to_max_radio_button_", scale_min_to_max_radio_button_->isChecked());
-    settings.setValue("show_channel_scales_button_", show_channel_scales_button_->isChecked());
-    settings.setValue("show_channel_labels_button_", show_channel_labels_button_->isChecked());
-    settings.setValue("show_grid_button_", show_grid_button_->isChecked());
-
-    settings.setValue("size", size());
-    settings.setValue("pos", pos());
-    settings.endGroup();
 }
 
 // ------------------------------------------------------------------------------------------

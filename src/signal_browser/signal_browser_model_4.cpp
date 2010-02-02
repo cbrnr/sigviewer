@@ -24,6 +24,7 @@
 #include <QDialog>
 #include <QInputDialog>
 #include <QSettings>
+#include <QTimer>
 
 #include <cmath>
 #include <algorithm>
@@ -50,7 +51,7 @@ SignalBrowserModel::SignalBrowserModel(FileSignalReader& reader,
   prefered_x_grid_pixel_intervall_(100),
   prefered_y_grid_pixel_intervall_(25),
   x_grid_pixel_intervall_(0),
-  actual_event_creation_type_ (-1),
+  actual_event_creation_type_ (1),
   show_y_grid_(true)
 {
     // nothing
@@ -60,7 +61,7 @@ SignalBrowserModel::SignalBrowserModel(FileSignalReader& reader,
 // destructor
 SignalBrowserModel::~SignalBrowserModel()
 {
-    // nothing to do
+    // nothing to do here
 }
 
 
@@ -114,6 +115,7 @@ void SignalBrowserModel::loadSettings()
     show_y_scales_ = settings.value("show_y_scales", show_y_scales_).toBool();
     show_x_scales_ = settings.value("show_x_scales", show_x_scales_).toBool();
     show_y_grid_ = settings.value("show_y_grid", show_y_grid_).toBool();
+    auto_zoom_type_ = static_cast<ScaleMode>(settings.value("auto_zoom_type_", auto_zoom_type_).toUInt());
 
     all_event_types_selected_ = settings.value("all_event_types_selected", all_event_types_selected_).toBool();
     int size = settings.beginReadArray("shown_event_types");
@@ -157,6 +159,7 @@ void SignalBrowserModel::saveSettings()
     settings.setValue("show_y_scales", show_y_scales_);
     settings.setValue("show_x_scales", show_x_scales_);
     settings.setValue("show_y_grid", show_y_grid_);
+    settings.setValue("auto_zoom_type_", auto_zoom_type_);
 
     settings.setValue("all_event_types_selected", all_event_types_selected_);
     settings.beginWriteArray("shown_event_types", shown_event_types_.size());
@@ -264,6 +267,8 @@ void SignalBrowserModel::addChannel(uint32 channel_nr)
                                signal_browser_view_);
 
     channel2signal_item_[channel_nr] = signal_item;
+    connect (signal_item, SIGNAL(mouseAtSecond(float64)), &(signal_browser_view_->getXAxisWidget()), SLOT(changeHighlightTime(float64)));
+    connect (signal_item, SIGNAL(mouseMoving(bool)), &(signal_browser_view_->getXAxisWidget()), SLOT(enableHighlightTime(bool)));
 
     // add label to label widget
 /*    signal_browser_->getLabelWidget()->addChannel(channel_nr,
@@ -391,7 +396,6 @@ void SignalBrowserModel::initBuffer()
     {
         for (uint32 event_nr = 0; event_nr < number_events; event_nr++)
         {
-            // std::cout << "SignalBrowserModel::initBuffer created EventGraphicsItem" << std::endl;
             int32 event_id = signal_buffer_.eventNumber2ID(event_nr);
             id2event_item_[event_id] = QSharedPointer<EventGraphicsItem> (new EventGraphicsItem (signal_buffer_,
                                                            *this,
@@ -585,7 +589,7 @@ void SignalBrowserModel::updateLayout()
          signal_iter++, y_pos += signal_height_ + signal_spacing_)
     {
         channel2y_pos_[signal_iter->first] = y_pos;
-
+        // signal_iter->second->setCacheMode (QGraphicsItem::NoCache);
         signal_iter->second->setHeight (signal_height_);
         signal_iter->second->setPos (0, y_pos); // FIXME: why "/2" ????
         signal_iter->second->setZValue(SIGNAL_Z);
@@ -596,6 +600,7 @@ void SignalBrowserModel::updateLayout()
         signal_browser_view_->addSignalGraphicsItem(signal_iter->first, signal_iter->second);
 
         signal_iter->second->show();
+        // signal_iter->second->setCacheMode (QGraphicsItem::DeviceCoordinateCache);
     }
 
     updateEventItemsImpl ();
@@ -630,6 +635,64 @@ void SignalBrowserModel::updateEventItems ()
     updateEventItemsImpl ();
     signal_browser_view_->update ();
 }
+
+//-------------------------------------------------------------------
+void SignalBrowserModel::setActualEventCreationType (uint16 new_type)
+{
+    actual_event_creation_type_ = new_type;
+}
+
+//-------------------------------------------------------------------
+void SignalBrowserModel::selectEvent (int32 id)
+{
+    if (!id2event_item_.contains (id))
+    {
+        main_window_model_.setSelectionState(
+                                MainWindowModel::SELECTION_STATE_NONE);
+        selected_event_item_ = QSharedPointer<EventGraphicsItem>(0);
+        emit eventSelected (QSharedPointer<SignalEvent>(0));
+        return;
+    }
+
+    QSharedPointer<EventGraphicsItem> item = id2event_item_.find (id).value();
+    if (item.isNull())
+    {
+        main_window_model_.setSelectionState(
+                                MainWindowModel::SELECTION_STATE_NONE);
+        selected_event_item_ = QSharedPointer<EventGraphicsItem>(0);
+        emit eventSelected (QSharedPointer<SignalEvent>(0));
+        return;
+    }
+
+    if (signal_buffer_.getEvent(item->getId())->getChannel() ==
+        SignalEvent::UNDEFINED_CHANNEL)
+    {
+        main_window_model_.setSelectionState(
+                                MainWindowModel::SELECTION_STATE_ALL_CHANNELS);
+    }
+    else
+    {
+        main_window_model_.setSelectionState(
+                                MainWindowModel::SELECTION_STATE_ONE_CHANNEL);
+    }
+
+    if (!selected_event_item_.isNull())
+        selected_event_item_->setSelected (false);
+    selected_event_item_ = item;
+    selected_event_item_->setSelected (true);
+
+    emit eventSelected(item->getSignalEvent());
+}
+
+//-------------------------------------------------------------------
+void SignalBrowserModel::unselectEvent ()
+{    
+    if (!selected_event_item_.isNull())
+        selected_event_item_->setSelected (false);
+    selected_event_item_ = QSharedPointer<EventGraphicsItem>(0);
+    emit eventSelected (QSharedPointer<SignalEvent>(0));
+}
+
 
 /*
 // set signal spacing
@@ -823,6 +886,8 @@ void SignalBrowserModel::updateEventItemsImpl ()
         signal_browser_view_->addEventGraphicsItem(event_iter.value());
 
         event_iter.value()->show();
+        connect (event_iter.value().data(), SIGNAL(mouseAtSecond(float64)), &(signal_browser_view_->getXAxisWidget()), SLOT(changeHighlightTime(float64)));
+        connect (event_iter.value().data(), SIGNAL(mouseMoving(bool)), &(signal_browser_view_->getXAxisWidget()), SLOT(enableHighlightTime(bool)));
     }
 }
 
@@ -835,8 +900,8 @@ void SignalBrowserModel::goTo(float32 sec, int32 channel_index)
     float32 y = channel_index < 0 ? signal_browser_view_->getVisibleY()
                                 : channel_index *
                                   (signal_height_ + signal_spacing_);
-
-    signal_browser_view_->goTo(x, y);
+    //signal_browser_view_->goTo(x, y);
+    signal_browser_view_->smoothGoTo (x, y);
 }
 
 //-----------------------------------------------------------------------------
@@ -857,9 +922,10 @@ void SignalBrowserModel::goToAndSelectNextEvent (bool forward)
         if (current_event_iter != events.end())
         {
             float x = (float)current_event_iter.value()->getPosition() / signal_buffer_.getEventSamplerate();
-            Int2EventGraphicsItemPtrMap::iterator event_graphics_item_it = id2event_item_.find(current_event_iter.value()->getId());
+            //Int2EventGraphicsItemPtrMap::iterator event_graphics_item_it = id2event_item_.find(current_event_iter.value()->getId());
+            //event_graphics_item_it.value()->setSelected (true);
+            selectEvent (current_event_iter.value()->getId());
 
-            event_graphics_item_it.value()->setSelected (true);
             int32 y = 0;
             goTo (x, y);
         }
@@ -907,6 +973,13 @@ void SignalBrowserModel::getShownEventTypes(IntList& event_type)
 }
 
 //-----------------------------------------------------------------------------
+// get shown event types
+std::set<uint16> SignalBrowserModel::getShownEventTypes () const
+{
+
+}
+
+//-----------------------------------------------------------------------------
 std::set<uint16> SignalBrowserModel::getDisplayedEventTypes () const
 {
     std::set<uint16> present_event_types;
@@ -931,7 +1004,7 @@ void SignalBrowserModel::setShownEventTypes(const IntList& event_type, const boo
 
 //-----------------------------------------------------------------------------
 // set event changed
-void SignalBrowserModel::setEventChanged(uint32 id, bool update)
+void SignalBrowserModel::setEventChanged(int32 id)
 {
     if (!checkSignalBrowserPtr("setEventChanged") ||
         !checkReadyState("setEventChanged"))
@@ -987,10 +1060,7 @@ void SignalBrowserModel::setEventChanged(uint32 id, bool update)
         signal_browser_view_->addEventGraphicsItem(event_item);
     }
 
-    if (update)
-    {
-        signal_browser_view_->updateWidgets();
-    }
+    signal_browser_view_->updateWidgets();
     main_window_model_.setChanged();
     if (!selected_event_item_.isNull())
         if (selected_event_item_->getId() == id)
@@ -1007,6 +1077,9 @@ void SignalBrowserModel::removeEvent(uint32 id, bool update)
     {
         return;
     }
+
+    if (!selected_event_item_.isNull())
+        unselectEvent();
 
     QSharedPointer<EventGraphicsItem> event_item = it.value();
 
@@ -1033,10 +1106,13 @@ QSharedPointer<EventGraphicsItem> SignalBrowserModel::addEvent(QSharedPointer<Si
                                                       *this, event));
 
     id2event_item_[event_id] = event_item;
-    setEventChanged(event_id, update);
+    setEventChanged(event_id);
 
     resetEventSizeAndPos(event_item);
     signal_browser_view_->addEventGraphicsItem(event_item);
+    connect (event_item.data(), SIGNAL(mouseAtSecond(float64)), &(signal_browser_view_->getXAxisWidget()), SLOT(changeHighlightTime(float64)));
+    connect (event_item.data(), SIGNAL(mouseMoving(bool)), &(signal_browser_view_->getXAxisWidget()), SLOT(enableHighlightTime(bool)));
+
     event_item->show();
     return event_item;
 }
@@ -1051,42 +1127,6 @@ void SignalBrowserModel::addEvent(QSharedPointer<EventGraphicsItem> event)
     resetEventSizeAndPos(event);
     signal_browser_view_->addEventGraphicsItem(event);
     event->show();
-}
-
-
-//-----------------------------------------------------------------------------
-// set selected event item
-void SignalBrowserModel::setSelectedEventItem(QSharedPointer<EventGraphicsItem> item)
-{
-//    if (selected_event_item_)
-//    {
-//        selected_event_item_->setSelected(false);
-//    }
-
-    selected_event_item_ = item;
-    if (selected_event_item_.isNull())
-    {
-        main_window_model_.setSelectionState(
-                                MainWindowModel::SELECTION_STATE_NONE);
-    }
-    else
-    {
-//        selected_event_item_->setSelected(true);
-        //signal_browser_view_->updateWidgets();
-
-        if (signal_buffer_.getEvent(item->getId())->getChannel() ==
-            SignalEvent::UNDEFINED_CHANNEL)
-        {
-            main_window_model_.setSelectionState(
-                                MainWindowModel::SELECTION_STATE_ALL_CHANNELS);
-        }
-        else
-        {
-            main_window_model_.setSelectionState(
-                                MainWindowModel::SELECTION_STATE_ONE_CHANNEL);
-        }
-        eventSelected(item->getSignalEvent());
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -1290,8 +1330,9 @@ void SignalBrowserModel::changeSelectedEventType()
     {
         if (ok && new_type != event->getType())
         {
-            QUndoCommand* changeTypeCommand = new ChangeTypeUndoCommand (*this, event, new_type);
-            CommandStack::instance().executeEditCommand(changeTypeCommand);
+            ChangeTypeUndoCommand* change_type_command = new ChangeTypeUndoCommand (event, new_type);
+            connect (change_type_command, SIGNAL(eventChanged(int32)), this, SLOT(setEventChanged(int32)));
+            CommandStack::instance().executeEditCommand(change_type_command);
         }
     }
 
@@ -1362,6 +1403,13 @@ void SignalBrowserModel::showXScales(bool enabled)
 }
 
 //-------------------------------------------------------------------------
+bool SignalBrowserModel::getShowXScales () const
+{
+    return show_x_scales_;
+}
+
+
+//-------------------------------------------------------------------------
 void SignalBrowserModel::showYScales(bool enabled)
 {
     show_y_scales_ = enabled;
@@ -1375,10 +1423,23 @@ void SignalBrowserModel::showChannelLabels(bool enabled)
 }
 
 //-------------------------------------------------------------------------
+bool SignalBrowserModel::getShowChannelLabels () const
+{
+    return show_channel_labels_;
+}
+
+//-------------------------------------------------------------------------
 void SignalBrowserModel::setXGridVisible(bool visible)
 {
     show_x_grid_ = visible;
 }
+
+//-------------------------------------------------------------------------
+bool SignalBrowserModel::getGridVisible () const
+{
+    return show_x_grid_ || show_y_grid_;
+}
+
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::setYGridVisible(bool visible)
@@ -1391,6 +1452,13 @@ void SignalBrowserModel::setAutoZoomBehaviour(ScaleMode auto_zoom_type)
 {
     auto_zoom_type_ = auto_zoom_type;
 }
+
+//-------------------------------------------------------------------------
+ScaleMode SignalBrowserModel::getAutoZoomBehaviour () const
+{
+    return auto_zoom_type_;
+}
+
 
 
 // TODO QT4: IMPLEMENT!!!!

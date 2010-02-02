@@ -5,6 +5,7 @@
 #include "../main_window_model.h"
 
 #include <QObject>
+#include <QSharedPointer>
 
 #include <vector>
 
@@ -16,7 +17,7 @@ class CalculateEventMeanCommand : public QObject
     Q_OBJECT
 
 public:
-    CalculateEventMeanCommand (SignalBrowserModel const& signal_browser_model,
+    CalculateEventMeanCommand (QSharedPointer<SignalBrowserModel const> signal_browser_model,
                                MainWindowModel& main_window_model,
                                uint16 event_type,
                                std::vector<uint32> channels,
@@ -27,7 +28,7 @@ public slots:
     void execute ();
 
 private:
-    SignalBrowserModel const& signal_browser_model_;
+    QSharedPointer<SignalBrowserModel const> signal_browser_model_;
     MainWindowModel& main_window_model_;
     uint16 event_type_;
     std::vector<uint32> channels_;

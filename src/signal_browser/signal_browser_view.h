@@ -29,12 +29,12 @@ class SignalBrowserView : public QFrame
     Q_OBJECT
 
 public:
-    SignalBrowserView(SignalBrowserModel* signal_browser_model, QWidget* parent = 0);
+    SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_browser_model, QWidget* parent = 0);
     virtual ~SignalBrowserView ();
 
     void addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item);
     void addEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item);
-    void removeEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item);
+    void removeEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item, bool update_view = true);
 
     void setScrollMode (bool activated);
     void resizeScene (int32 width, int32 height);
@@ -47,6 +47,7 @@ public:
     XAxisWidget& getXAxisWidget () const;
 
     void goTo (float32 x, float32 y);
+    void smoothGoTo (float32 x, float32 y);
     void setViewCursor (QCursor const &cursor);
     void updateWidgets (bool update_view = true);
 
@@ -63,10 +64,12 @@ private slots:
     void verticalScrollBarRangeChaned (int min, int max);
     virtual void dropEvent (QDropEvent* event);
     virtual void dragEnterEvent(QDragEnterEvent *event);
+    void scroll ();
 
 private:
     void createLayout ();
 
+    QTimer* scroll_timer_;
     QGraphicsScene* graphics_scene_;
     QGraphicsView* graphics_view_;
 
@@ -77,8 +80,10 @@ private:
     LabelWidget* label_widget_;
 
     QGridLayout* layout_;
-
-
+    float32 scroll_x_destination_;
+    float32 scroll_x_halfway_;
+    int32 scroll_x_step_;
+    bool scroll_x_left_;
 };
 
 } // namespace PortingToQT4_

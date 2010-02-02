@@ -140,8 +140,8 @@ void MainWindow::initActions()
     connect(calculate_mean_action_, SIGNAL(triggered()),
             &model_, SLOT(calculateMeanAction()));
 
-    calculate_frequency_spectrum_action_ = new QAction(tr("Calculate Frequency Spectrum"), this);
-    calculate_frequency_spectrum_action_->setStatusTip(tr("Calculates frequency spectrum of selected event type"));
+    calculate_frequency_spectrum_action_ = new QAction(tr("Calculate Power Spectrum"), this);
+    calculate_frequency_spectrum_action_->setStatusTip(tr("Calculates power spectrum of selected event type"));
     connect(calculate_frequency_spectrum_action_, SIGNAL(triggered()),
             &model_, SLOT(calculateFrequencySpectrumAction()));
 
@@ -432,7 +432,8 @@ void MainWindow::initToolBars()
     //option_toolbar_->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     //option_toolbar_->addAction(options_show_settings_action_);
 
-    secs_per_page_combobox_ = new QComboBox;
+    secs_per_page_combobox_ = new QComboBox();
+    secs_per_page_combobox_->setToolTip(tr("Seconds per Page"));
     secs_per_page_combobox_->setEditable(true);
     secs_per_page_combobox_->setInsertPolicy(QComboBox::NoInsert);
     secs_per_page_combobox_->setValidator(new QDoubleValidator(1.0, 10000.0, 1,
@@ -451,7 +452,7 @@ void MainWindow::initToolBars()
     secs_per_page_combobox_->insertItem(12, tr("whole"));
 
     signals_per_page_combobox_ = new QComboBox();
-    signals_per_page_combobox_->setToolTip("bla");
+    signals_per_page_combobox_->setToolTip("Signals per Page");
     signals_per_page_combobox_->setEditable(true);
     signals_per_page_combobox_->setInsertPolicy(QComboBox::NoInsert);
     signals_per_page_combobox_->setValidator(new QDoubleValidator(1.0, 30.0, 1,
@@ -475,6 +476,8 @@ void MainWindow::initToolBars()
     navigation_toolbar_->addAction(view_zoom_in_action_);
     navigation_toolbar_->addAction(view_zoom_out_action_);
     navigation_toolbar_->addAction(view_auto_scale_action_);
+    //navigation_toolbar_->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+
     connect(secs_per_page_combobox_, SIGNAL(activated(const QString&)),
             &model_, SLOT(secsPerPageChanged(const QString&)));
     connect(signals_per_page_combobox_, SIGNAL(activated(const QString&)),
@@ -553,7 +556,7 @@ void MainWindow::initMenus()
     view_menu_->addAction(undo_view_action_);
     view_menu_->addAction(redo_view_action_);
 
-    tools_menu_ = menuBar()->addMenu(tr("&Tools (UNDER DEVELOPMENT)"));
+    tools_menu_ = menuBar()->addMenu(tr("&Tools"));
     tools_menu_->addAction(calculate_mean_action_);
     tools_menu_->addAction(calculate_frequency_spectrum_action_);
 

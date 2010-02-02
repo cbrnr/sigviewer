@@ -120,4 +120,13 @@ DataBlock DataBlock::calculateStandardDeviationImpl (std::list<DataBlock> const 
     return stddev_block;
 }
 
+//-------------------------------------------------------------------------
+unsigned DataBlock::getLengthOfSmallestBlock (std::list<DataBlock> const &data_blocks)
+{
+    std::list<DataBlock>::const_iterator it = data_blocks.begin();
+    //for (it = data_blocks.begin(); it != data_blocks.end(); ++it)
+}
+
+
+
 }

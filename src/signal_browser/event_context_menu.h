@@ -40,7 +40,10 @@ public:
     unsigned getNumberOfEvents () const;
 
     //-------------------------------------------------------------------------
-    void finaliseAndShowMenu (QGraphicsSceneContextMenuEvent* context_event);
+    void finaliseAndShowContextMenu (QGraphicsSceneContextMenuEvent* context_event);
+
+    //-------------------------------------------------------------------------
+    void finaliseAndShowSelectionMenu (QGraphicsSceneMouseEvent* context_event);
 
 
 private:

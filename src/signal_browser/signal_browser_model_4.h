@@ -74,15 +74,18 @@ public:
 
 
     //settings
-    void showXScales(bool enabled);
+    void showXScales (bool enabled);
+    bool getShowXScales () const;
     void showYScales(bool enabled);
     void showChannelLabels(bool enabled);
+    bool getShowChannelLabels () const;
     void setXGridVisible(bool visible);
+    bool getGridVisible () const;
     void setYGridVisible(bool visible);
-
     bool isShowAllEventTypes() const;
+    void setAutoZoomBehaviour (ScaleMode auto_zoom_type);
+    ScaleMode getAutoZoomBehaviour () const;
 
-    void setAutoZoomBehaviour(ScaleMode auto_zoom_type);
 
     // buffer
     void initBuffer();
@@ -136,14 +139,13 @@ public:
 
     // events
     void getShownEventTypes(IntList& event_type);
+    std::set<uint16> getShownEventTypes () const;
     std::set<uint16> getDisplayedEventTypes () const;
     void setShownEventTypes(const IntList& event_type, const bool all = false);
-    void setEventChanged(uint32 id, bool update = true);
     void removeEvent(uint32 id, bool update = true);
 
     QSharedPointer<EventGraphicsItem> addEvent(QSharedPointer<SignalEvent> event, bool update = true);
     void addEvent(QSharedPointer<EventGraphicsItem> event);
-    void setSelectedEventItem(QSharedPointer<EventGraphicsItem> item);
     void unsetSelectedEventItem();
     QSharedPointer<EventGraphicsItem> getSelectedEventItem();
     QSharedPointer<SignalEvent> getSelectedSignalEvent();
@@ -159,13 +161,15 @@ public:
 
     void updateLayout ();
     void updateEventItems ();
-/*
-public slots:
 
-    void canvasViewContentMoving(int content_x, int content_y);
-*/
+public slots:
+    void setEventChanged(int32 id);
+    void setActualEventCreationType (uint16 new_type);
+    void selectEvent (int32 id);
+    void unselectEvent ();
+
 signals:
-    void eventSelected (QSharedPointer<SignalEvent const> selected_event);
+    void eventSelected (QSharedPointer<SignalEvent> selected_event);
 
 private:
     static uint8 const NAVIGATION_Z = 1;

@@ -42,6 +42,7 @@ public:
 
     SignalEvent(const SignalEvent& src, int32 id);
     SignalEvent(const SignalEvent& src);
+    SignalEvent& operator= (const SignalEvent& src);
 
     int32 getId() const;
     uint32 getPosition() const;
@@ -50,6 +51,7 @@ public:
     int16 getChannel() const;
     uint32 getDuration() const;
     float32 getDurationInSec() const;
+    float32 getEndInSec () const;
 
     void setId (int32 id);
     void setPosition(uint32 position);

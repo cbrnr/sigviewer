@@ -4,10 +4,13 @@
 #define EVENT_TABLE_DIALOG_H
 
 #include "base/user_types.h"
+#include "signal_browser/signal_browser_model_4.h"
+
 
 #include <qdialog.h>
 #include <QAbstractTableModel>
 #include <QPointer>
+#include <QSharedPointer>
 
 class QPushButton;
 class QTableView;
@@ -17,14 +20,12 @@ namespace BioSig_
 
 class BasicHeader;
 
-class SignalBrowserModel;
-
 // event table dialog
 class EventTableDialog : public QDialog
 {
     Q_OBJECT
 public:
-    EventTableDialog(SignalBrowserModel& browser_model,
+    EventTableDialog(QSharedPointer<SignalBrowserModel> browser_model,
                      QPointer<BasicHeader> basic_header, QWidget* parent = 0);
 
     void loadSettings();
@@ -87,7 +88,7 @@ private:
 
     void buildEventTable();
 
-    SignalBrowserModel& signal_browser_model_;
+    QSharedPointer<SignalBrowserModel> signal_browser_model_;
     QPointer<BasicHeader> basic_header_;
     QTableView *event_table_view_;
     TableModel *event_table_model_;

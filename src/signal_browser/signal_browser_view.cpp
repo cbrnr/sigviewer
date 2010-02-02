@@ -12,15 +12,18 @@
 #include <QGridLayout>
 #include <QScrollBar>
 #include <QPointF>
+#include <QTimer>
 
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
 // constructor
-SignalBrowserView::SignalBrowserView(SignalBrowserModel* signal_browser_model, QWidget* parent)
+SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_browser_model, QWidget* parent)
 : QFrame(parent)
 {
+    scroll_timer_ = new QTimer (this);
+    connect (scroll_timer_, SIGNAL(timeout()), this, SLOT(scroll()));
     resize(parent->contentsRect().width(), parent->contentsRect().height());
     graphics_scene_ = new QGraphicsScene (0,0,parent->contentsRect().width(), parent->contentsRect().height(), this);
     graphics_view_ = new QGraphicsView(graphics_scene_, this);
@@ -77,7 +80,11 @@ SignalBrowserView::SignalBrowserView(SignalBrowserModel* signal_browser_model, Q
 //-----------------------------------------------------------------------------
 SignalBrowserView::~SignalBrowserView ()
 {
-
+    QList<QGraphicsItem*> items = graphics_scene_->items();
+    for (QList<QGraphicsItem*>::iterator it = items.begin();
+         it != items.end();
+         ++it)
+        graphics_scene_->removeItem(*it);
 }
 
 //-----------------------------------------------------------------------------
@@ -128,10 +135,12 @@ void SignalBrowserView::addEventGraphicsItem (QSharedPointer<EventGraphicsItem> 
 }
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::removeEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item)
+void SignalBrowserView::removeEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item,
+                                                 bool update_view)
 {
     graphics_scene_->removeItem(event_graphics_item.data());
-    graphics_view_->update();
+    if (update_view)
+        graphics_view_->update();
 }
 
 
@@ -185,6 +194,22 @@ void SignalBrowserView::goTo (float32 x, float32 y)
     graphics_view_->centerOn(x, y);
     graphics_scene_->update(0, 0, graphics_scene_->width(), graphics_scene_->height());
 }
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::smoothGoTo (float32 x, float32 y)
+{
+    scroll_timer_->setInterval (1);
+    scroll_x_halfway_ = x + graphics_view_->mapToScene(0,0).x();
+    scroll_x_halfway_ /= 2;
+    scroll_x_step_ = 10;
+    if (scroll_x_halfway_ > x)
+        scroll_x_left_ = true;
+    else
+        scroll_x_left_ = false;
+    scroll_x_destination_ = x;
+    scroll_timer_->start();
+}
+
 
 //-----------------------------------------------------------------------------
 void SignalBrowserView::setViewCursor (QCursor const &cursor)
@@ -243,6 +268,24 @@ void SignalBrowserView::dropEvent (QDropEvent* event)
 void SignalBrowserView::dragEnterEvent(QDragEnterEvent *event)
 {
     event->ignore();
+}
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::scroll ()
+{
+    if ((scroll_x_left_ && graphics_view_->mapToScene(0,0).x() >= scroll_x_halfway_)
+        || (!scroll_x_left_ && graphics_view_->mapToScene(0,0).x() <= scroll_x_halfway_))
+        scroll_x_step_ += 10;
+    else
+        scroll_x_step_ -= 10;
+
+    if (scroll_x_step_ < 0)
+        scroll_x_step_ = 1;
+
+    horizontal_scrollbar_->setValue (horizontal_scrollbar_->value() + (scroll_x_left_ ? -scroll_x_step_ : scroll_x_step_));
+    if ((scroll_x_left_ && graphics_view_->mapToScene(0,0).x() <= scroll_x_destination_)
+        || (!scroll_x_left_ && graphics_view_->mapToScene(0,0).x() >= scroll_x_destination_))
+        scroll_timer_->stop();
 }
 
 

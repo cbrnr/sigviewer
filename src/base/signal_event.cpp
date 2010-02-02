@@ -54,6 +54,18 @@ SignalEvent::SignalEvent(const SignalEvent& src)
     // nothing
 }
 
+SignalEvent& SignalEvent::operator= (const SignalEvent& src)
+{
+    id_ = src.id_;
+    position_ = src.position_;
+    sample_rate_ = src.sample_rate_;
+    type_ = src.type_;
+    channel_ = src.channel_;
+    duration_ = src.duration_;
+    return *this;
+}
+
+
 // get id
 int32 SignalEvent::getId() const
 {
@@ -95,6 +107,12 @@ uint32 SignalEvent::getDuration() const
 float32 SignalEvent::getDurationInSec() const
 {
     return static_cast<float32>(duration_) / sample_rate_;
+}
+
+//-----------------------------------------------------------------------------
+float32 SignalEvent::getEndInSec () const
+{
+    return (static_cast<float32>(duration_ + position_)) / sample_rate_;
 }
 
 

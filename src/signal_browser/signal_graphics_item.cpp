@@ -49,7 +49,8 @@ SignalGraphicsItem::SignalGraphicsItem(SignalBuffer& buffer, const SignalChannel
   created_event_item_ (0),
   hand_tool_on_ (false)
 {
-    setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
+    setFlag (QGraphicsItem::ItemUsesExtendedStyleOption, true);
+    //setCacheMode (QGraphicsItem::DeviceCoordinateCache);
 }
 
 //-----------------------------------------------------------------------------
@@ -160,7 +161,9 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 {
     painter->drawRect(boundingRect());
     if (new_event_)
+    {
         painter->fillRect(new_signal_event_->getPosition(), 0, new_signal_event_->getDuration(), height_, new_event_color_);
+    }
     QRectF clip (option->exposedRect);
     painter->setClipping(true);
     painter->setClipRect(clip);
@@ -400,17 +403,24 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
         float new_event_width = event->scenePos().x() - new_signal_event_->getPosition();
         if (new_event_width < 0)
             new_event_width = 0;
-        update(new_signal_event_->getPosition(), 0,
-                     new_event_width > old_width ? new_event_width : old_width,
-                     height_);
+        if (old_width < new_event_width)
+            update (new_signal_event_->getPosition() + old_width, 0,
+                    new_event_width - old_width, height_);
+        else
+            update (new_signal_event_->getPosition() + new_event_width, 0,
+                    old_width - new_event_width, height_);
+//        update(new_signal_event_->getPosition(), 0,
+//                     new_event_width > old_width ? new_event_width - old_width : old_width,
+//                     height_);
         new_signal_event_->setDuration(new_event_width);
+        emit mouseAtSecond (static_cast<float64>(event->scenePos().x()) / signal_browser_model_.getPixelPerSec());
     }
     else
         event->ignore();
 }
 
 //-----------------------------------------------------------------------------
-void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
+void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
 {
     SignalBrowserModel::Mode mode = signal_browser_model_.getMode();
 
@@ -445,14 +455,16 @@ void SignalGraphicsItem::mousePressEvent ( QGraphicsSceneMouseEvent * event )
             }
 
             new_event_ = true;
-            new_signal_event_ = QSharedPointer<SignalEvent>(new SignalEvent(event->scenePos().x(), signal_browser_model_.getActualEventCreationType(), signal_buffer_.getEventSamplerate(),
-                                                                            signal_channel_.getNumber(), 0));
+            new_signal_event_ = QSharedPointer<SignalEvent>(new SignalEvent(event->scenePos().x(), signal_browser_model_.getActualEventCreationType(), signal_buffer_.getEventSamplerate(),                                                                            signal_channel_.getNumber(), 0));
             new_event_color_ = signal_browser_model_.getMainWindowModel().getEventColorManager().getEventColor(signal_browser_model_.getActualEventCreationType());
+            emit mouseMoving (true);
             break;
         }
             break;
         default:
-            event->ignore();
+            event->accept();
+            if (!EventGraphicsItem::displaySelectionMenu (event))
+                signal_browser_model_.unselectEvent ();
     }
 }
 
@@ -464,6 +476,7 @@ void SignalGraphicsItem::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 
     if (new_event_)
     {
+        emit mouseMoving (false);
         NewEventUndoCommand* new_event_command = new NewEventUndoCommand(signal_browser_model_, new_signal_event_, signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec());
         CommandStack::instance().executeEditCommand (new_event_command);
     }

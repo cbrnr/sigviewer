@@ -5,14 +5,13 @@
 #include "../block_visualisation/blocks_visualisation_view.h"
 #include "../block_visualisation/blocks_visualisation_model.h"
 
-#include <QSharedPointer>
 #include <QMap>
 
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-CalculateEventMeanCommand::CalculateEventMeanCommand (SignalBrowserModel const&
+CalculateEventMeanCommand::CalculateEventMeanCommand (QSharedPointer<SignalBrowserModel const>
                                                       signal_browser_model,
                                                       MainWindowModel&
                                                       main_window_model,
@@ -33,8 +32,8 @@ CalculateEventMeanCommand::CalculateEventMeanCommand (SignalBrowserModel const&
 //-----------------------------------------------------------------------------
 void CalculateEventMeanCommand::execute ()
 {
-    SignalBuffer const& signal_buffer = signal_browser_model_.getSignalBuffer();
-    QSharedPointer<BlocksVisualisationModel> bv_model = main_window_model_.createBlocksVisualisationView ();
+    SignalBuffer const& signal_buffer = signal_browser_model_->getSignalBuffer();
+    QSharedPointer<BlocksVisualisationModel> bv_model = main_window_model_.createBlocksVisualisationView (tr("Mean"));
 
     uint32 samples_before_event = seconds_before_event_ * signal_buffer.getEventSamplerate();
     uint32 number_samples = length_in_seconds_ * signal_buffer.getEventSamplerate();
@@ -55,9 +54,9 @@ void CalculateEventMeanCommand::execute ()
         }
 
         QSharedPointer<DataBlock> mean = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateMean (data)));
-        QSharedPointer<DataBlock> standard_deviation = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateStandardDeviation (data)));
+        //QSharedPointer<DataBlock> standard_deviation = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateStandardDeviation (data)));
 
-        bv_model->visualiseBlock (mean, standard_deviation);//QSharedPointer<DataBlock>(0));//standard_deviation);
+        bv_model->visualiseBlock (mean, QSharedPointer<DataBlock>(0));//standard_deviation);
     }
     bv_model->updateLayout();
 }

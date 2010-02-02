@@ -9,8 +9,10 @@
 #define SETTINGS_DIALOG_H_
 
 #include "base/user_types.h"
+#include "signal_browser/signal_browser_model_4.h"
 
 #include <QDialog>
+#include <QSharedPointer>
 
 class QPushButton;
 class QRadioButton;
@@ -18,8 +20,6 @@ class QCheckBox;
 
 namespace BioSig_
 {
-
-
 
 // channel selection dialog
 class SettingsDialog : public QDialog
@@ -29,9 +29,8 @@ class SettingsDialog : public QDialog
 
 public:
 
-	SettingsDialog(QWidget* parent = 0);
-    void loadSettings();
-    void saveSettings();
+    SettingsDialog (QSharedPointer<SignalBrowserModel const> signal_browser_model,
+                    QWidget* parent = 0);
 
     bool isShowChannelScales();
     bool isShowChannelLables();
@@ -57,6 +56,7 @@ private:
 	static const char* CANCEL_BUTTON_TEXT_;
 
 	//buttons
+    QSharedPointer<SignalBrowserModel const> const signal_browser_model_;
     QPushButton* ok_button_;
     QPushButton* cancel_button_;
     QRadioButton* scale_max_to_max_radio_button_;

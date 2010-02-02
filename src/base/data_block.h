@@ -49,6 +49,9 @@ private:
     static DataBlock calculateStandardDeviationImpl (std::list<DataBlock> const &data_blocks,
                                                      DataBlock const &means);
 
+    //-------------------------------------------------------------------------
+    static unsigned getLengthOfSmallestBlock (std::list<DataBlock> const &data_blocks);
+
     std::vector<float32> data_;
 
 };

@@ -5,6 +5,7 @@
 
 #include <QGraphicsItem>
 #include <QSharedPointer>
+#include <QObject>
 
 class QPoint;
 
@@ -18,8 +19,9 @@ class SignalBrowserModel;
 class SignalBrowserView;
 class EventGraphicsItem;
 
-class SignalGraphicsItem : public QGraphicsItem
+class SignalGraphicsItem : public QObject, public QGraphicsItem
 {
+    Q_OBJECT
 public:
     SignalGraphicsItem(SignalBuffer& buffer, const SignalChannel& channel,
                      SignalBrowserModel& model, SignalBrowserView* browser);
@@ -45,6 +47,9 @@ public:
     void zoomOut();
     void autoScale(ScaleMode auto_zoom_type = MAX_TO_MAX);
 
+signals:
+    void mouseAtSecond (float64 sec);
+    void mouseMoving (bool mouse_is_moving);
 
 protected:
     virtual void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );

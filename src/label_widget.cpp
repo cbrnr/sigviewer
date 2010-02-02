@@ -126,7 +126,7 @@ void LabelWidget::removeChannel(int32 channel_nr)
          iter != channel_nr2label_.end();
          iter++)
     {
-        QRect bounding = p.boundingRect(0, 0, 500, 500,
+        QRect bounding = p.boundingRect(0, 0, 200, p.font().pixelSize(),
                                         Qt::AlignHCenter | Qt::AlignVCenter,
                                         iter.value());
 

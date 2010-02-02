@@ -5,6 +5,7 @@
 #include "../base/user_types.h"
 
 #include <QGraphicsItem>
+#include <QObject>
 #include <QSharedPointer>
 #include <QColor>
 #include <QVector>
@@ -21,15 +22,16 @@ class SignalBrowserModel;
 class EventContextMenu;
 
 
-class EventGraphicsItem : public QGraphicsItem
+class EventGraphicsItem : public QObject, public QGraphicsItem
 {
+    Q_OBJECT
 public:
     EventGraphicsItem(SignalBuffer& buffer, SignalBrowserModel& model,
                     QSharedPointer<SignalEvent> signal_event);
 
     virtual ~EventGraphicsItem ();
 
-    uint32 getId() const;
+    int32 getId() const;
 
     void setSize (int32 width, int32 height);
     void startMouseMoveEnd ();
@@ -39,11 +41,17 @@ public:
     void updateColor ();
 
     static bool displayContextMenu (QGraphicsSceneContextMenuEvent * event);
+    static bool displaySelectionMenu (QGraphicsSceneMouseEvent* event);
 
     virtual QRectF boundingRect () const;
     virtual void mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event);
     virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event);
     virtual void hoverMoveEvent (QGraphicsSceneHoverEvent * event );
+
+signals:
+    void mouseAtSecond (float64 sec);
+    void mouseMoving (bool mouse_is_moving);
+
 
 protected:
     enum Action
@@ -72,6 +80,8 @@ protected:
     //-----------------------------------------------------------------------------
     Action getMousePressAction(QGraphicsSceneMouseEvent* e);
 
+    //-----------------------------------------------------------------------------
+    void addContextMenuEntry ();
 
     SignalBrowserModel& signal_browser_model_;
     SignalBuffer& signal_buffer_;

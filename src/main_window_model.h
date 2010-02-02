@@ -26,7 +26,7 @@ class FileSignalReader;
 class MainWindow;
 class SignalBrowserModel;
 class SignalBrowserView;
-class EventInfoDockWidget;
+class EventInfoWidget;
 class EventTableFileReader;
 class EventColorManager;
 class BlocksVisualisationView;
@@ -69,7 +69,7 @@ public:
     void setSelectionState(SelectionState selection_state);
     void setChanged();
 
-    QSharedPointer<BlocksVisualisationModel> createBlocksVisualisationView ();
+    QSharedPointer<BlocksVisualisationModel> createBlocksVisualisationView (QString const& title);
 
 public slots:
 
@@ -137,10 +137,11 @@ private:
     State state_;
     SelectionState selection_state_;
     std::auto_ptr<FileSignalReader> file_signal_reader_;
-    std::auto_ptr<SignalBrowserModel> signal_browser_model_;
+    QSharedPointer<SignalBrowserModel> signal_browser_model_;
     SignalBrowserView* signal_browser_; // main_window cares for destruction!!
-    EventInfoDockWidget* event_info_widget_;
+    EventInfoWidget* event_info_widget_;
     QTabWidget* tab_widget_;
+    QWidget* signal_browser_tab_;
     std::auto_ptr<EventTableFileReader> event_table_file_reader_;
     std::auto_ptr<EventColorManager> event_color_manager_;
     QStringList recent_file_list_;

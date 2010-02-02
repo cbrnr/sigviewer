@@ -53,7 +53,7 @@ unsigned EventContextMenu::getNumberOfEvents () const
 
 
 //-------------------------------------------------------------------------
-void EventContextMenu::finaliseAndShowMenu (QGraphicsSceneContextMenuEvent* context_event)
+void EventContextMenu::finaliseAndShowContextMenu (QGraphicsSceneContextMenuEvent* context_event)
 {
     QVector<QSharedPointer<EventGraphicsItem> >::iterator it = event_items_.begin();
     QVector<QString>::iterator it_name = event_item_type_names_.begin();
@@ -81,7 +81,7 @@ void EventContextMenu::finaliseAndShowMenu (QGraphicsSceneContextMenuEvent* cont
     else if (event_items_.size() == 1)
     {
         addActionsToMenu (*this);
-        (*it)->setSelected (true);
+        signal_browser_model_.selectEvent ((*it)->getId());
     }
 
     event_items_.clear();
@@ -91,15 +91,43 @@ void EventContextMenu::finaliseAndShowMenu (QGraphicsSceneContextMenuEvent* cont
 }
 
 //-------------------------------------------------------------------------
+void EventContextMenu::finaliseAndShowSelectionMenu (QGraphicsSceneMouseEvent* event)
+{
+    QVector<QSharedPointer<EventGraphicsItem> >::iterator it = event_items_.begin();
+    QVector<QString>::iterator it_name = event_item_type_names_.begin();
+    if (event_items_.size() > 1)
+    {
+        while (it != event_items_.end())
+        {
+            QString text ("...");
+            if (it_name != event_item_type_names_.end())
+                text = *it_name;
+
+            QAction* action = addAction(text);
+            action->activate(QAction::Hover);
+            action->setData((*it)->getId());
+            //addAction(action);
+            ++it;
+            ++it_name;
+        }
+        QObject::connect(this, SIGNAL(hovered(QAction*)), this, SLOT(selectEvent(QAction*)));
+        exec (event->screenPos());
+    }
+    else if (event_items_.size() == 1)
+        signal_browser_model_.selectEvent ((*it)->getId());
+
+    event_items_.clear();
+    event_item_type_names_.clear();
+}
+
+
+//-------------------------------------------------------------------------
 void EventContextMenu::selectEvent (QAction* q)
 {
     bool ok = false;
     int32 event_id = q->data().toInt(&ok);
     if (q->data().isValid())
-    {
-        QSharedPointer<EventGraphicsItem> item = signal_browser_model_.getEventItem(event_id);
-        item->setSelected (true);
-    }
+        signal_browser_model_.selectEvent (event_id);
 }
 
 //-------------------------------------------------------------------------

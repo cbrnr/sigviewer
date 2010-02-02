@@ -4,7 +4,8 @@ TARGET = sigviewer
 CONFIG += warn_on \
     link_prl \
     qt \
-    thread
+    thread \
+    debug
 debug { 
     OBJECTS_DIR = ../tmp/debug
     MOC_DIR = ../tmp/debug
