@@ -8,6 +8,7 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QAction>
+#include <QGroupBox>
 
 #include <cmath>
 #include <iostream>
@@ -27,7 +28,7 @@ EventInfoWidget::EventInfoWidget(QWidget* parent,
     layout_ = new QVBoxLayout(this);
     layout_->setSpacing (50);
 
-    QGridLayout* creation_info_layout = new QGridLayout (this);
+    QVBoxLayout* creation_info_layout = new QVBoxLayout (this);
     event_creation_type_combobox_ = new QComboBox (this);
     event_type_combobox_ = new QComboBox (this);
     for (std::map<uint16, QString>::const_iterator event_it = shown_event_types_.begin();
@@ -38,8 +39,8 @@ EventInfoWidget::EventInfoWidget(QWidget* parent,
         event_type_combobox_->addItem (event_it->second, QVariant(event_it->first));
     }
     event_type_combobox_->setEnabled (false);
-    creation_info_layout->addWidget (new QLabel(tr("Creation Type"), this), 1, 1);
-    creation_info_layout->addWidget (event_creation_type_combobox_, 1, 2);
+    creation_info_layout->addWidget (new QLabel(tr("Creation Type"), this));
+    creation_info_layout->addWidget (event_creation_type_combobox_);
     connect(event_creation_type_combobox_, SIGNAL(currentIndexChanged(int)), this, SLOT(selfChangedCreationType(int)));
     connect(event_type_combobox_, SIGNAL(currentIndexChanged(int)), this, SLOT(selfChangedType(int)));
     layout_->addLayout (creation_info_layout);
@@ -49,22 +50,23 @@ EventInfoWidget::EventInfoWidget(QWidget* parent,
     layout_->addWidget (insert_event_button_);
     connect (insert_event_button_, SIGNAL(clicked()), this, SLOT(insertEvent()));
 
+    QGroupBox* selected_event_group_box = new QGroupBox (tr("Selected Event"), this);
     QGridLayout* info_layout = new QGridLayout (this);
     info_layout->setVerticalSpacing(1);
-    layout_->addLayout(info_layout);
 
-    id_label_ = new QLabel (this);
-    duration_label_ = new QLabel (this);
-    start_label_ = new QLabel (this);
-    info_layout->addWidget(new QLabel(QString("Type")), 1, 1);
+    id_label_ = new QLabel (selected_event_group_box);
+    duration_label_ = new QLabel (selected_event_group_box);
+    start_label_ = new QLabel (selected_event_group_box);
+    info_layout->addWidget(new QLabel(QString("Type"), selected_event_group_box), 1, 1);
     info_layout->addWidget(event_type_combobox_, 1, 2);
-    info_layout->addWidget(new QLabel(QString("ID")), 2, 1);
+    info_layout->addWidget(new QLabel(QString("ID"), selected_event_group_box), 2, 1);
     info_layout->addWidget(id_label_, 2, 2);
-    info_layout->addWidget(new QLabel(QString("Begin")), 3, 1);
+    info_layout->addWidget(new QLabel(QString("Begin"), selected_event_group_box), 3, 1);
     info_layout->addWidget(start_label_, 3, 2);
-    info_layout->addWidget(new QLabel(QString("Duration")), 4, 1);
+    info_layout->addWidget(new QLabel(QString("Duration"), selected_event_group_box), 4, 1);
     info_layout->addWidget(duration_label_, 4, 2);
-
+    selected_event_group_box->setLayout (info_layout);
+    layout_->addWidget (selected_event_group_box);
     setLayout(layout_);
 }
 

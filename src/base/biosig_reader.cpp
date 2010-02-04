@@ -35,6 +35,7 @@
 #include <QMutexLocker>
 
 #include <cmath>
+#include <iostream>
 
 using namespace std;
 
@@ -263,6 +264,8 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         if (biosig_header_->CHANNEL[k].OnOff) NS++;
     }
 
+    std::cout << "row based channels = " << static_cast<int>(biosig_header_->FLAG.ROW_BASED_CHANNELS) << std::endl;
+
 #ifdef CHOLMOD_H
     if ((biosig_header_->Calib) && (biosig_header_->Calib->nrow==NS))
 	NS = biosig_header_->Calib->ncol;
@@ -357,6 +360,8 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
 	// read data as block
     memset(read_data_, 0, samples_in_read_data * biosig_header_->NS*sizeof(double));
     sread(read_data_, start_record, record_count, biosig_header_);
+
+
 
     // fill data blocks
     for (FileSignalReader::SignalDataBlockPtrIterator data_block = begin;

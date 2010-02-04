@@ -589,7 +589,7 @@ void SignalBrowserModel::updateLayout()
          signal_iter++, y_pos += signal_height_ + signal_spacing_)
     {
         channel2y_pos_[signal_iter->first] = y_pos;
-        // signal_iter->second->setCacheMode (QGraphicsItem::NoCache);
+        signal_iter->second->setCacheMode (QGraphicsItem::NoCache);
         signal_iter->second->setHeight (signal_height_);
         signal_iter->second->setPos (0, y_pos); // FIXME: why "/2" ????
         signal_iter->second->setZValue(SIGNAL_Z);
@@ -600,7 +600,7 @@ void SignalBrowserModel::updateLayout()
         signal_browser_view_->addSignalGraphicsItem(signal_iter->first, signal_iter->second);
 
         signal_iter->second->show();
-        // signal_iter->second->setCacheMode (QGraphicsItem::DeviceCoordinateCache);
+        signal_iter->second->setCacheMode (QGraphicsItem::DeviceCoordinateCache);
     }
 
     updateEventItemsImpl ();
@@ -900,8 +900,8 @@ void SignalBrowserModel::goTo(float32 sec, int32 channel_index)
     float32 y = channel_index < 0 ? signal_browser_view_->getVisibleY()
                                 : channel_index *
                                   (signal_height_ + signal_spacing_);
-    //signal_browser_view_->goTo(x, y);
-    signal_browser_view_->smoothGoTo (x, y);
+    signal_browser_view_->goTo(x, y);
+    //signal_browser_view_->smoothGoTo (x, y);
 }
 
 //-----------------------------------------------------------------------------
@@ -1457,6 +1457,18 @@ void SignalBrowserModel::setAutoZoomBehaviour(ScaleMode auto_zoom_type)
 ScaleMode SignalBrowserModel::getAutoZoomBehaviour () const
 {
     return auto_zoom_type_;
+}
+
+//-------------------------------------------------------------------------
+bool SignalBrowserModel::getShowEventInfo () const
+{
+    return show_event_info_;
+}
+
+//-------------------------------------------------------------------------
+void SignalBrowserModel::setShowEventInfo (bool visible)
+{
+    show_event_info_ = visible;
 }
 
 

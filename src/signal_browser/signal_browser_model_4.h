@@ -85,6 +85,8 @@ public:
     bool isShowAllEventTypes() const;
     void setAutoZoomBehaviour (ScaleMode auto_zoom_type);
     ScaleMode getAutoZoomBehaviour () const;
+    bool getShowEventInfo () const;
+    void setShowEventInfo (bool visible);
 
 
     // buffer
@@ -238,6 +240,7 @@ private:
     bool show_x_scales_;
     ScaleMode auto_zoom_type_;
     bool all_event_types_selected_;
+    bool show_event_info_;
 
 };
 

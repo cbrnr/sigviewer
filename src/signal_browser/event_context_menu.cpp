@@ -104,13 +104,13 @@ void EventContextMenu::finaliseAndShowSelectionMenu (QGraphicsSceneMouseEvent* e
                 text = *it_name;
 
             QAction* action = addAction(text);
-            action->activate(QAction::Hover);
+            //action->activate(QAction::Hover);
             action->setData((*it)->getId());
             //addAction(action);
             ++it;
             ++it_name;
         }
-        QObject::connect(this, SIGNAL(hovered(QAction*)), this, SLOT(selectEvent(QAction*)));
+        QObject::connect(this, SIGNAL(triggered(QAction*)), this, SLOT(selectEvent(QAction*)));
         exec (event->screenPos());
     }
     else if (event_items_.size() == 1)
