@@ -275,7 +275,7 @@ void SignalBrowserModel::addChannel(uint32 channel_nr)
                                                   signal_channel.getLabel());
 */
     // add label to y axis widget
-    signal_browser_view_->getYAxisWidget().addChannel(channel_nr, signal_item);
+    //signal_browser_view_->getYAxisWidget().addChannel(channel_nr, signal_item);
     //signal_browser_view_->addSignalGraphicsItem(signal_item);//
 
     // add channel to buffer
@@ -300,9 +300,9 @@ void SignalBrowserModel::removeChannel(uint32 channel_nr)
     }
 
     // remove signal canvas item
+    signal_browser_view_->removeSignalGraphicsItem (sig_iter->second);
     channel2signal_item_.erase(sig_iter);
     delete sig_iter->second;
-
     signal_browser_view_->getLabelWidget().removeChannel(channel_nr);
     signal_browser_view_->getYAxisWidget().removeChannel(channel_nr);
 
@@ -379,6 +379,7 @@ void SignalBrowserModel::initBuffer()
     signal_buffer_.init();
     QApplication::restoreOverrideCursor();
     state_ = STATE_READY;
+
 
     // get range from buffer
     for (iter = channel2signal_item_.begin();
@@ -511,6 +512,7 @@ float64 SignalBrowserModel::getPixelPerSec() const
 void SignalBrowserModel::setSignalHeight(int32 height)
 {
     signal_height_ = height;
+    emit signalHeightChanged (height);
     updateLayout();
     // TODO: reimplement!
 //    if (!checkSignalBrowserPtr("setSignalHeight") ||
@@ -589,7 +591,7 @@ void SignalBrowserModel::updateLayout()
          signal_iter++, y_pos += signal_height_ + signal_spacing_)
     {
         channel2y_pos_[signal_iter->first] = y_pos;
-        signal_iter->second->setCacheMode (QGraphicsItem::NoCache);
+//        signal_iter->second->setCacheMode (QGraphicsItem::NoCache);
         signal_iter->second->setHeight (signal_height_);
         signal_iter->second->setPos (0, y_pos); // FIXME: why "/2" ????
         signal_iter->second->setZValue(SIGNAL_Z);
@@ -598,9 +600,9 @@ void SignalBrowserModel::updateLayout()
         signal_iter->second->enableYGrid(show_y_grid_);
         signal_iter->second->enableXGrid(show_x_grid_);
         signal_browser_view_->addSignalGraphicsItem(signal_iter->first, signal_iter->second);
-
         signal_iter->second->show();
-        signal_iter->second->setCacheMode (QGraphicsItem::DeviceCoordinateCache);
+
+//        signal_iter->second->setCacheMode (QGraphicsItem::DeviceCoordinateCache);
     }
 
     updateEventItemsImpl ();

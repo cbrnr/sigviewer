@@ -311,6 +311,8 @@ void SignalBuffer::initDownsample()
 
     // first active sub buffers
     Int2SubBuffersPtrMap::iterator iter = channel_nr2sub_buffers_map_.begin();
+    //if (iter == channel_nr2sub_buffers_map_.end())
+    //    return;
     while (!iter.value()->active)
     {
         iter++;
@@ -340,8 +342,8 @@ void SignalBuffer::initDownsample()
 
 void SignalBuffer::initMinMax()
 {
-    if (minmax_found_)
-        return;
+    //if (minmax_found_)
+    //    return;
 
     uint32 samples_per_record = signal_reader_.getBasicHeader()->getChannel(0)
                                     .getSamplesPerRecord();
@@ -371,18 +373,24 @@ void SignalBuffer::initMinMax()
         {
             SubBuffers* sub_buffers = iter.value();
             int32 channel_nr = iter.key();
+
             if (/*sub_buffers->min_max_calculated_ ||*/ !sub_buffers->active)
             {
                 continue;
             }
 
-            bool valid;
-            SignalDataBlock* data_block;
+            bool valid = false;
+            SignalDataBlock* data_block = 0;
             if (downsampled_)
             {
                 data_block = &channel_nr2sub_buffers_map_[channel_nr]
                                 ->sub_queue[sub]
                                     ->getSignalDataBlock(block_nr, valid);
+                if (!valid)
+                {
+                    data_block = getSignalDataBlockImpl(iter.key(), sub, block_nr);
+                    valid = true;
+                }
             }
             else
             {
@@ -401,9 +409,9 @@ void SignalBuffer::initMinMax()
             float64 min = data_block->getMinValue();
             float64 max = data_block->getMaxValue();
 
-            if (sub_buffers->min_value_ > min) 
+            if (sub_buffers->min_value_ > min)
 	            sub_buffers->min_value_ = min; 
-            if (sub_buffers->max_value_ < max) 
+            if (sub_buffers->max_value_ < max)
 	            sub_buffers->max_value_ = max; 
             sub_buffers->min_max_calculated_ = (block_nr == blocks - 1);
         }

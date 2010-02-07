@@ -172,6 +172,8 @@ public slots:
 
 signals:
     void eventSelected (QSharedPointer<SignalEvent> selected_event);
+    void signalHeightChanged (unsigned signal_height);
+    void signalSpacingChanged (unsigned signal_spacing);
 
 private:
     static uint8 const NAVIGATION_Z = 1;

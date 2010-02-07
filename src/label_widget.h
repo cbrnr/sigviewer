@@ -9,6 +9,7 @@
 #include <QMap>
 #include <QWidget>
 #include <QPaintEvent>
+#include <QPixmap>
 
 namespace BioSig_
 {
@@ -35,9 +36,15 @@ protected:
     void paintEvent(QPaintEvent* pe);
 
 private:
+    void redrawPixmap ();
+
     SignalBrowserModel& signal_browser_model_;
     SignalBrowserView* signal_browser_;
 
+    unsigned signal_height_;
+    unsigned signal_spacing_;
+
+    QSharedPointer<QPixmap> pixmap_;
     QMap<int32, QString> channel_nr2label_;
     static QColor axis_color_;
 };

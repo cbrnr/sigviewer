@@ -37,11 +37,11 @@ public:
     void enableXGrid(bool enabled);
     QString const &getLabel () const;
 
-    float64 getMaximum();
-    float64 getMinimum();
-    float64 getYZoom();
-    float64 getYOffset();
-    float64 getYGridPixelIntervall();
+    float64 getMaximum() const;
+    float64 getMinimum() const;
+    float64 getYZoom() const;
+    float64 getYOffset() const;
+    float64 getYGridPixelIntervall() const;
 
     void zoomIn();
     void zoomOut();
@@ -50,6 +50,7 @@ public:
 signals:
     void mouseAtSecond (float64 sec);
     void mouseMoving (bool mouse_is_moving);
+    void shifting (int32 channel_nr);
 
 protected:
     virtual void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );

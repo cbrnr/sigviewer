@@ -35,7 +35,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     graphics_view_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 //    graphics_view_->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
 
-    y_axis_widget_ = new YAxisWidget (this, *signal_browser_model, this);
+    y_axis_widget_ = new YAxisWidget (this);//, *signal_browser_model, this);
     y_axis_widget_->resize(70, height());
     y_axis_widget_->setMinimumSize(70, 0);
 
@@ -67,6 +67,8 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
             this, SLOT(verticalSrollbarMoved(int)));
 
     connect(this, SIGNAL(visibleXChanged(int32)), x_axis_widget_, SLOT(changeXStart(int32)));
+    connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
+    connect(signal_browser_model.data(), SIGNAL(signalHeightChanged(unsigned)), y_axis_widget_, SLOT(changeSignalHeight(unsigned)));
 
     graphics_view_->resize(width() - label_widget_->width() - y_axis_widget_->width() + (vertical_scrollbar_->width()*2), height() - x_axis_widget_->height() + horizontal_scrollbar_->height());
 
@@ -123,6 +125,14 @@ void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsI
 
     graphics_view_->update();
 }
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::removeSignalGraphicsItem (SignalGraphicsItem* graphics_item)
+{
+    graphics_scene_->removeItem (graphics_item);
+    graphics_view_->update ();
+}
+
 
 //-----------------------------------------------------------------------------
 void SignalBrowserView::addEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item)
@@ -231,8 +241,9 @@ void SignalBrowserView::updateWidgets (bool update_view)
 //-----------------------------------------------------------------------------
 void SignalBrowserView::verticalSrollbarMoved(int)
 {
-    y_axis_widget_->repaint();
-    label_widget_->repaint();
+    //y_axis_widget_->update();//repaint();
+    label_widget_->update();//repaint();
+    emit visibleYChanged (graphics_view_->mapToScene(0,0).y());
 }
 
 //-----------------------------------------------------------------------------
@@ -252,10 +263,11 @@ void SignalBrowserView::horizontalScrollBarRangeChaned (int min, int max)
 //-----------------------------------------------------------------------------
 void SignalBrowserView::verticalScrollBarRangeChaned (int min, int max)
 {
-    y_axis_widget_->repaint();
-    label_widget_->repaint();
+    //y_axis_widget_->repaint();
+    label_widget_->update ();//repaint();
     vertical_scrollbar_->setRange(min, max);
     vertical_scrollbar_->setPageStep(graphics_view_->verticalScrollBar()->pageStep());
+    emit visibleYChanged (graphics_view_->mapToScene(0,0).y());
 }
 
 //-----------------------------------------------------------------------------

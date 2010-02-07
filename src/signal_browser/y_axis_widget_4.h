@@ -6,31 +6,41 @@
 #include <QWidget>
 #include <QMap>
 
+class QPixmap;
+
 namespace BioSig_
 {
 
-class SignalBrowserModel;
-class SignalBrowserView;
 class SignalGraphicsItem;
 
 class YAxisWidget : public QWidget
 {
+    Q_OBJECT
 public:
-    YAxisWidget(QWidget* parent,
-                SignalBrowserModel& model, SignalBrowserView* browser);
+    YAxisWidget(QWidget* parent);//, SignalBrowserModel& model, SignalBrowserView* browser);
 
+    virtual ~YAxisWidget ();
     virtual QSize sizeHint () const;
 
-    void addChannel(int32 channel_nr, SignalGraphicsItem* signal_item);
+    void addChannel(int32 channel_nr, SignalGraphicsItem const* const signal_item);
     void removeChannel(int32 channel_nr);
+
+public slots:
+    void changeSignalHeight (unsigned signal_height);
+    void changeSignalSpacing (unsigned signal_spacing);
+    void changeYStart (int32 y_start);
+    void updateChannel (int32 channel_nr);
 
 private:
     virtual void paintEvent(QPaintEvent* event = 0);
+    void repaintPixmap ();
 
-    SignalBrowserModel& signal_browser_model_;
-    SignalBrowserView* signal_browser_;
+    QPixmap* pixmap_;
+    unsigned signal_height_;
+    unsigned signal_spacing_;
+    int32 y_start_;
 
-    QMap<int32, SignalGraphicsItem*> channel_nr2signal_graphics_item_;
+    QMap<int32, SignalGraphicsItem const*> channel_nr2signal_graphics_item_;
 };
 
 }

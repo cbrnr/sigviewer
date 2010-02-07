@@ -33,6 +33,7 @@ public:
     virtual ~SignalBrowserView ();
 
     void addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item);
+    void removeSignalGraphicsItem (SignalGraphicsItem* graphics_item);
     void addEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item);
     void removeEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item, bool update_view = true);
 
@@ -53,6 +54,7 @@ public:
 
 signals:
     void visibleXChanged (int32 new_x);
+    void visibleYChanged (int32 new_y);
 
 protected:
 //    virtual void resizeEvent (QResizeEvent * event);

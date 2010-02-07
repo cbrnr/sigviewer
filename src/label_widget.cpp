@@ -24,7 +24,6 @@ LabelWidget::LabelWidget(SignalBrowserModel& model, SignalBrowserView* browser)
 : QWidget(browser),
   signal_browser_model_(model),
   signal_browser_(browser)
-
 {
     QPalette palette;
     palette.setColor(backgroundRole(), axis_color_);
@@ -135,6 +134,52 @@ void LabelWidget::removeChannel(int32 channel_nr)
 
     setMinimumWidth(10 + max_width);
 }
+
+//-----------------------------------------------------------------------------
+void LabelWidget::redrawPixmap ()
+{
+    pixmap_.clear();
+    float64 intervall = signal_height_ + signal_spacing_;
+    unsigned total_height = channel_nr2label_.size() * intervall;
+    pixmap_ = QSharedPointer<QPixmap>(new QPixmap(width(), total_height));
+
+    QPainter painter (pixmap_.data());
+    painter.drawLine(0, 0, 0, pixmap_->height());
+
+    /*
+    // labels
+    QMap<int32, QString>::iterator iter = channel_nr2label_.begin();
+
+    for (float32 float_y = signal_height / 2;
+         float_y < float_y_end && iter != channel_nr2label_.end();
+         float_y += intervall, iter++)
+    {
+        if (float_y > float_y_start)
+        {
+            int32 y = (int32)(float_y + 0.5);
+            p.drawText(0, (int32)(y - intervall /2) , w - 10, (int32)intervall,
+                       Qt::AlignHCenter | Qt::AlignVCenter, iter.value());
+        }
+    }
+
+    // markers
+    float_y_start = ceil((y_start - signal_height - signal_spacing / 2) /
+                         intervall) *
+                    intervall + signal_height + signal_spacing / 2;
+
+    float_y_end = min(floor((y_end + signal_height + signal_spacing / 2) /
+                            intervall), channel_nr2label_.size()) *
+                  intervall - signal_spacing / 2 + intervall / 2;
+
+    for (float32 float_y = float_y_start;
+         float_y < float_y_end;
+         float_y += intervall)
+    {
+        int32 y = (int32)(float_y + 0.5);
+        p.drawLine(0, y, w - 1, y);
+    }*/
+}
+
 
 ////-----------------------------------------------------------------------------
 //QSize LabelWidget::sizeHint () const

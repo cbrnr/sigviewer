@@ -21,6 +21,7 @@
 #include <QObject>
 
 #include <cmath>
+#include <iostream>
 
 namespace BioSig_
 {
@@ -39,18 +40,19 @@ SignalGraphicsItem::SignalGraphicsItem(SignalBuffer& buffer, const SignalChannel
   minimum_(channel.getPhysicalMinimum()),
   maximum_(channel.getPhysicalMaximum()),
   y_zoom_(1),
-  y_grid_pixel_intervall_(0),
+  y_grid_pixel_intervall_(1),
   draw_y_grid_ (true),
   y_offset_((channel.getPhysicalMinimum() +
              channel.getPhysicalMaximum()) / 2.0),
-  height_ (100), // FIXME: arbitrary number!!
+  height_ (1), // FIXME: arbitrary number!!
   shifting_ (false),
   new_event_ (false),
   created_event_item_ (0),
   hand_tool_on_ (false)
 {
     setFlag (QGraphicsItem::ItemUsesExtendedStyleOption, true);
-    //setCacheMode (QGraphicsItem::DeviceCoordinateCache);
+    std::cout << signal_channel_.getNumber() << " minimum_ = " << minimum_;
+    std::cout << "; maximum_ = " << maximum_ << std::endl;
 }
 
 //-----------------------------------------------------------------------------
@@ -84,32 +86,32 @@ QRectF SignalGraphicsItem::boundingRect () const
 
 //-----------------------------------------------------------------------------
 // get maximum
-float64 SignalGraphicsItem::getMaximum()
+float64 SignalGraphicsItem::getMaximum() const
 {
     return maximum_;
 }
 
 //-----------------------------------------------------------------------------
 // get minimum
-float64 SignalGraphicsItem::getMinimum()
+float64 SignalGraphicsItem::getMinimum() const
 {
     return minimum_;
 }
 
 //-----------------------------------------------------------------------------
-float64 SignalGraphicsItem::getYZoom()
+float64 SignalGraphicsItem::getYZoom() const
 {
     return y_zoom_;
 }
 
 //-----------------------------------------------------------------------------
-float64 SignalGraphicsItem::getYOffset()
+float64 SignalGraphicsItem::getYOffset() const
 {
     return y_offset_;
 }
 
 //-----------------------------------------------------------------------------
-float64 SignalGraphicsItem::getYGridPixelIntervall()
+float64 SignalGraphicsItem::getYGridPixelIntervall() const
 {
     return y_grid_pixel_intervall_;
 }
@@ -168,7 +170,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     painter->setClipping(true);
     painter->setClipRect(clip);
     // clip.setWidth(clip.width()*2);
-    signal_buffer_.setChannelActive(signal_channel_.getNumber(), true);
+    //signal_buffer_.setChannelActive(signal_channel_.getNumber(), true);
 
     int32 draw_start_x = clip.x(); //- 1;
     int32 draw_end_x = draw_start_x + clip.width(); //+ 1;
@@ -207,7 +209,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
 
     // y range
-    float64 value_range = (maximum_ - minimum_) / y_zoom_;
+    float64 value_range = (fabs(maximum_) + fabs(minimum_)) / y_zoom_;
     float64 upper_value = y_offset_ + value_range / 2.0;
 
 
@@ -350,15 +352,20 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 // get range from buffer
 void SignalGraphicsItem::getRangeFromBuffer(float64 factor)
 {
+//    std::cout << signal_channel_.getNumber() << " minimum_ = " << minimum_;
+//    std::cout << "; maximum_ = " << maximum_ << std::endl;
+
     minimum_ = round125(signal_buffer_.getMinValue(signal_channel_.getNumber()) * factor);
     maximum_ = round125(signal_buffer_.getMaxValue(signal_channel_.getNumber()) * factor);
+    std::cout << signal_channel_.getNumber() << " minimum_ = " << signal_buffer_.getMinValue(signal_channel_.getNumber());
+    std::cout << "; maximum_ = " << maximum_ << std::endl;
 }
 
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::updateYGridIntervall()
 {
     float64 value_range = (maximum_ - minimum_) / y_zoom_;
-    float64 item_height = this->boundingRect().height();
+    float64 item_height = height_;//this->boundingRect().height();
     float64 y_grid_intervall
         = round125(value_range / item_height *
                    signal_browser_model_.getPreferedYGirdPixelIntervall());
@@ -395,7 +402,7 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
         float64 range = (maximum_ - minimum_) / y_zoom_;
         y_offset_ = y_offset_ + dy * range / height_;
         update();
-        signal_browser_->updateWidgets(false);
+        emit shifting (signal_channel_.getNumber());
     }
     else if (new_event_)
     {
