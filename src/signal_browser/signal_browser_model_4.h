@@ -6,15 +6,6 @@
 #include "../gui_signal_buffer.h"
 #include "event_graphics_item.h"
 
-/*
-#include <QColor>
-#include <QMap>
-
-
-class QRect;
-class QTextStream;
-*/
-
 #include <QPointer>
 #include <QObject>
 #include <QMap>
@@ -33,6 +24,7 @@ class BasicHeader;
 class FileSignalReader;
 class SignalBrowserView;
 class SignalGraphicsItem;
+class EventTableFileReader;
 
 // signal browser model
 class SignalBrowserModel : public QObject
@@ -55,7 +47,8 @@ public:
     };
 
     SignalBrowserModel(FileSignalReader& reader,
-                       MainWindowModel& main_window_model);
+                       MainWindowModel& main_window_model,
+                       QSharedPointer<EventTableFileReader const> event_table_file_reader);
     virtual ~SignalBrowserModel();
 
     MainWindowModel& getMainWindowModel();
@@ -140,6 +133,8 @@ public:
     float64 getXGridPixelIntervall();
 
     // events
+    QString getEventName (uint16 event_type_id) const;
+    QColor getEventColor (uint16 event_type_id) const;
     void getShownEventTypes(IntList& event_type);
     std::set<uint16> getShownEventTypes () const;
     std::set<uint16> getDisplayedEventTypes () const;
@@ -174,6 +169,7 @@ signals:
     void eventSelected (QSharedPointer<SignalEvent> selected_event);
     void signalHeightChanged (unsigned signal_height);
     void signalSpacingChanged (unsigned signal_spacing);
+    void shownEventTypesChanged (std::set<uint16> shown_event_types);
 
 private:
     static uint8 const NAVIGATION_Z = 1;
@@ -213,15 +209,11 @@ private:
 
     // items
     Int2SignalGraphicsItemPtrMap channel2signal_item_;
-/*
-    XGridCanvasItem* x_grid_item_;
-    ChannelSeparatorCanvasItem* channel_separator_item_;
-    NavigationCanvasItem* navigation_item_;
-*/
     Int2EventGraphicsItemPtrMap id2event_item_;
 
     Int2IntMap channel2y_pos_;
     QSharedPointer<EventGraphicsItem> selected_event_item_;
+    QSharedPointer<EventTableFileReader const> event_table_file_reader_;
 
     // parameters
     bool release_buffer_;
@@ -231,7 +223,7 @@ private:
     int32 prefered_x_grid_pixel_intervall_;
     int32 prefered_y_grid_pixel_intervall_;
     float64 x_grid_pixel_intervall_;
-    IntList shown_event_types_;
+    std::set<uint16> shown_event_types_;
     uint16 actual_event_creation_type_;
 
     bool show_y_grid_;

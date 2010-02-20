@@ -52,14 +52,14 @@ signals:
     void mouseMoving (bool mouse_is_moving);
     void shifting (int32 channel_nr);
 
-protected:
+private:
     virtual void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
     virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );
     virtual void mousePressEvent ( QGraphicsSceneMouseEvent * event );
     virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event);
     virtual void contextMenuEvent (QGraphicsSceneContextMenuEvent * event);
+    virtual void wheelEvent (QGraphicsSceneWheelEvent * event);
 
-private:
     void drawYAxis (QPainter * painter, const QStyleOptionGraphicsItem * option);
 
     SignalBuffer& signal_buffer_;

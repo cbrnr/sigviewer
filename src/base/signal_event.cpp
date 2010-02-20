@@ -115,6 +115,11 @@ float32 SignalEvent::getEndInSec () const
     return (static_cast<float32>(duration_ + position_)) / sample_rate_;
 }
 
+//-----------------------------------------------------------------------------
+float64 SignalEvent::getSampleRate () const
+{
+    return sample_rate_;
+}
 
 //-----------------------------------------------------------------------------
 void SignalEvent::setId (int32 id)

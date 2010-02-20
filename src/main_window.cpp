@@ -137,17 +137,20 @@ void MainWindow::initActions()
 
     calculate_mean_action_ = new QAction(tr("Calculate Mean"), this);
     calculate_mean_action_->setStatusTip(tr("Calculates mean of selected event type"));
+    calculate_mean_action_->setEnabled(false);
     connect(calculate_mean_action_, SIGNAL(triggered()),
             &model_, SLOT(calculateMeanAction()));
 
     calculate_frequency_spectrum_action_ = new QAction(tr("Calculate Power Spectrum"), this);
     calculate_frequency_spectrum_action_->setStatusTip(tr("Calculates power spectrum of selected event type"));
+    calculate_frequency_spectrum_action_->setEnabled(false);
     connect(calculate_frequency_spectrum_action_, SIGNAL(triggered()),
             &model_, SLOT(calculateFrequencySpectrumAction()));
 
 
     undo_action_ = new QAction(tr("Undo"), this);
     undo_action_->setShortcut(tr("Ctrl+Z"));
+    undo_action_->setShortcutContext(Qt::ApplicationShortcut);
     connect(undo_action_, SIGNAL(triggered()),
             &model_, SLOT(undoAction()));
 
@@ -230,7 +233,7 @@ void MainWindow::initActions()
 
     edit_delete_action_ = new QAction(edit_delete_icon_, tr("&Delete"), this);
     edit_delete_action_->setObjectName("edit_delete_action_");
-    edit_delete_action_->setShortcut(tr("Ctrl+D"));
+    edit_delete_action_->setShortcut(tr("Del"));
     edit_delete_action_->setStatusTip(tr("Delete the selected event"));
     connect(edit_delete_action_, SIGNAL(triggered()),
             &model_, SLOT(editDeleteAction()));
@@ -453,6 +456,7 @@ void MainWindow::initToolBars()
 
     signals_per_page_combobox_ = new QComboBox();
     signals_per_page_combobox_->setToolTip("Signals per Page");
+    signals_per_page_combobox_->setStatusTip(tr("Number of shown signals per page"));
     signals_per_page_combobox_->setEditable(true);
     signals_per_page_combobox_->setInsertPolicy(QComboBox::NoInsert);
     signals_per_page_combobox_->setValidator(new QDoubleValidator(1.0, 30.0, 1,

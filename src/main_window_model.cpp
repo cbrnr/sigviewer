@@ -21,7 +21,6 @@
 #include "signal_browser/signal_browser_model_4.h"
 #include "signal_browser/signal_browser_view.h"
 #include "signal_browser/delete_event_undo_command.h"
-#include "signal_browser/event_info_widget.h"
 #include "signal_browser/calculate_event_mean_command.h"
 #include "signal_browser/calculcate_frequency_spectrum_command.h"
 #include "next_event_view_undo_command.h"
@@ -50,7 +49,6 @@ MainWindowModel::MainWindowModel()
   selection_state_(SELECTION_STATE_NONE),
   signal_browser_model_ (0),
   signal_browser_ (0),
-  event_info_widget_ (0),
   tab_widget_ (0),
   number_recent_files_(8),
   secs_per_page_("10"),
@@ -59,10 +57,10 @@ MainWindowModel::MainWindowModel()
     log_stream_.reset(new QTextStream(&log_string_));
     file_signal_reader_.reset(0);
 
-    event_table_file_reader_.reset(new EventTableFileReader);
+    event_table_file_reader_ = QSharedPointer<EventTableFileReader>(new EventTableFileReader);
     event_table_file_reader_->setLogStream(log_stream_.get());
     event_color_manager_
-        .reset(new EventColorManager(*event_table_file_reader_.get()));
+        .reset(new EventColorManager(*(event_table_file_reader_.data())));
 }
 
 // destructor
@@ -78,9 +76,9 @@ QTextStream& MainWindowModel::getLogStream()
 }
 
 // get event table file reader
-EventTableFileReader& MainWindowModel::getEventTableFileReader()
+QSharedPointer<EventTableFileReader> MainWindowModel::getEventTableFileReader()
 {
-    return *event_table_file_reader_.get();
+    return event_table_file_reader_;
 }
 
 // get event color manager
@@ -594,7 +592,7 @@ void MainWindowModel::fileExportEventsAction()
     // event type dialog
     EventTypeDialog event_type_dialog(tr("Export Events"),
                                       *event_color_manager_.get(),
-                                      *event_table_file_reader_.get(),
+                                      *event_table_file_reader_.data(),
                                       main_window_);
 
     event_type_dialog.setShownTypes(event_types); //, signal_browser_model_->isShowAllEventTypes());
@@ -755,7 +753,7 @@ void MainWindowModel::fileImportEventsAction()
     // event type dialog
     EventTypeDialog event_type_dialog(tr("Import Events"),
                                       *event_color_manager_.get(),
-                                      *event_table_file_reader_.get(),
+                                      *event_table_file_reader_.data(),
                                       main_window_);
 
     event_type_dialog.setShownTypes(event_types); //, signal_browser_model_->isShowAllEventTypes());
@@ -873,7 +871,7 @@ void MainWindowModel::openFile(const QString& file_name)
     settings.setValue("MainWindowModel/file_open_path", path);
 
     // initialize signal browser
-    signal_browser_model_ = QSharedPointer<SignalBrowserModel>(new SignalBrowserModel(*signal_reader, *this));
+    signal_browser_model_ = QSharedPointer<SignalBrowserModel>(new SignalBrowserModel(*signal_reader, *this, event_table_file_reader_));
     signal_browser_model_->setLogStream(log_stream_.get());
 
     if (!tab_widget_)
@@ -886,30 +884,7 @@ void MainWindowModel::openFile(const QString& file_name)
     signal_browser_model_->setSignalBrowserView(signal_browser_);
     signal_browser_model_->loadSettings();
 
-    if (!event_info_widget_)
-    {
-        // TODO: USE OTHER FUNCTION
-        std::map<uint16, QString> shown_event_types;
-        for (EventTableFileReader::IntIterator event_type_it = event_table_file_reader_->eventTypesBegin();
-             event_type_it != event_table_file_reader_->eventTypesEnd();
-             ++event_type_it)
-        {
-            shown_event_types[*event_type_it] = event_table_file_reader_->getEventName (*event_type_it);
-        }
-        event_info_widget_ = new EventInfoWidget (main_window_, signal_browser_model_, shown_event_types);
-        connect (event_info_widget_, SIGNAL(eventCreationTypeChanged(uint16)), signal_browser_model_.data(), SLOT(setActualEventCreationType (uint16)));
-    }
-
-    signal_browser_tab_ = new QWidget (tab_widget_);
-    QHBoxLayout* tab_layout = new QHBoxLayout ();
-    tab_layout->addWidget(signal_browser_);
-    event_info_widget_->setFixedWidth(250);
-    tab_layout->addWidget(event_info_widget_);
-    signal_browser_tab_->setLayout(tab_layout);
-    tab_widget_->addTab(signal_browser_tab_, "Raw Data");
-
-
-    QObject::connect(signal_browser_model_.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent>)), event_info_widget_, SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent>)));
+    tab_widget_->addTab(signal_browser_, tr("Signal Data"));
 
     main_window_->setCentralWidget(tab_widget_);
 
@@ -976,7 +951,6 @@ void MainWindowModel::fileCloseAction()
         return; // user cancel
     }
 
-    //QObject::disconnect(event_info_widget_, SLOT(updateEvent(QSharedPointer<SignalEvent>)));
     signal_browser_model_->disconnect (SIGNAL(eventSelected(QSharedPointer<SignalEvent>)));
 
     // close
@@ -987,7 +961,6 @@ void MainWindowModel::fileCloseAction()
     main_window_->setCentralWidget(0);
     tab_widget_ = 0;
     signal_browser_ = 0;
-    event_info_widget_ = 0;
     signal_browser_tab_ = 0;
     file_signal_reader_->close();
     file_signal_reader_.reset(0);
@@ -1437,7 +1410,7 @@ void MainWindowModel::optionsShowEventsAction()
 
     EventTypeDialog event_type_dialog(tr("Show Events"),
                                       *event_color_manager_.get(),
-                                      *event_table_file_reader_.get(),
+                                      *event_table_file_reader_.data(),
                                       main_window_);
 
     event_type_dialog.setShownTypes(shown_event_types, signal_browser_model_->isShowAllEventTypes());
@@ -1489,6 +1462,7 @@ void MainWindowModel::optionsShowSettingsAction()
         signal_browser_model_->setXGridVisible(settings_dialog.isShowGrid());
         signal_browser_model_->setYGridVisible(settings_dialog.isShowGrid());
         signal_browser_model_->setAutoZoomBehaviour(settings_dialog.getScaleModeType());
+        signal_browser_model_->setShowEventInfo(settings_dialog.isShowEventInfo());
         signal_browser_model_->autoScaleAll();
         signal_browser_model_->updateLayout();
     }

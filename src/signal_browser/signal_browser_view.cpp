@@ -7,6 +7,7 @@
 #include "y_axis_widget_4.h"
 #include "x_axis_widget_4.h"
 #include "../label_widget.h"
+#include "event_info_widget.h"
 
 #include <QGraphicsLineItem>
 #include <QGridLayout>
@@ -33,7 +34,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     graphics_view_->verticalScrollBar()->hide();
     graphics_view_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphics_view_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//    graphics_view_->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
+    graphics_view_->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
 
     y_axis_widget_ = new YAxisWidget (this);//, *signal_browser_model, this);
     y_axis_widget_->resize(70, height());
@@ -47,6 +48,8 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     vertical_scrollbar_ = new QScrollBar (Qt::Vertical, this);
 
     label_widget_ = new LabelWidget (*signal_browser_model, this);
+
+    event_info_widget_ = new EventInfoWidget (this, signal_browser_model);
 
     connect(horizontal_scrollbar_, SIGNAL(valueChanged(int)),
             graphics_view_->horizontalScrollBar(), SLOT(setValue(int)));
@@ -69,6 +72,9 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     connect(this, SIGNAL(visibleXChanged(int32)), x_axis_widget_, SLOT(changeXStart(int32)));
     connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
     connect(signal_browser_model.data(), SIGNAL(signalHeightChanged(unsigned)), y_axis_widget_, SLOT(changeSignalHeight(unsigned)));
+    connect(event_info_widget_, SIGNAL(eventCreationTypeChanged(uint16)), signal_browser_model.data(), SLOT(setActualEventCreationType(uint16)));
+    connect(signal_browser_model.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent>)), event_info_widget_, SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent>)));
+    connect(signal_browser_model.data(), SIGNAL(shownEventTypesChanged(std::set<uint16>)), event_info_widget_, SLOT(updateShownEventTypes(std::set<uint16>)));
 
     graphics_view_->resize(width() - label_widget_->width() - y_axis_widget_->width() + (vertical_scrollbar_->width()*2), height() - x_axis_widget_->height() + horizontal_scrollbar_->height());
 
@@ -177,6 +183,42 @@ int32 SignalBrowserView::getVisibleY () const
 {
     return graphics_view_->mapToScene(0,0).y();
 }
+
+//-----------------------------------------------------------------------------
+std::set<std::string> SignalBrowserView::getHideAbleWidgets () const
+{
+    std::set<std::string> widgets;
+    for (std::map<std::string, QWidget*>::const_iterator widget_iterator =
+         hideable_widgets_.begin();
+         widget_iterator != hideable_widgets_.end();
+         ++widget_iterator)
+    {
+        widgets.insert(widget_iterator->first);
+    }
+    return widgets;
+}
+
+//-----------------------------------------------------------------------------
+bool SignalBrowserView::getWidgetVisibility (std::string const &widget_name) const
+{
+    std::map<std::string, QWidget*>::const_iterator widget_iterator = hideable_widgets_.find(widget_name);
+    if (widget_iterator == hideable_widgets_.end())
+        return false;
+    else
+        return widget_iterator->second->isVisible ();
+}
+
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::setWidgetVisibility (std::string const &widget_name, bool visibility)
+{
+    std::map<std::string, QWidget*>::iterator widget_iterator = hideable_widgets_.find(widget_name);
+    if (widget_iterator == hideable_widgets_.end())
+        return;
+    else
+        widget_iterator->second->setVisible (visibility);
+}
+
 
 //-----------------------------------------------------------------------------
 YAxisWidget& SignalBrowserView::getYAxisWidget () const
@@ -317,18 +359,8 @@ void SignalBrowserView::createLayout()
     layout_->addWidget(horizontal_scrollbar_, 3, 2);
     layout_->addWidget(label_widget_, 1, 3);
     layout_->addWidget(vertical_scrollbar_, 1, 4);
-//    layout_->addWidget(label_widget_, 1, 3);
-//    layout_->addWidget(x_axis_widget_, 2, 2);
-//    layout_->addWidget(h_scrollbar_, 3, 1, 1, 3);
-//    layout_->addWidget(v_scrollbar_, 1, 4, 2, 1);
-//
-//    QWidget* dummy = new QWidget(this);
-//    dummy->setBackgroundColor(XAxisWidget::getAxisColor());
-//    layout_->addWidget(dummy, 2, 1);
-//
-//    dummy = new QWidget(this);
-//    dummy->setBackgroundColor(XAxisWidget::getAxisColor());
-//    layout_->addWidget(dummy, 2, 3);
+    event_info_widget_->setMaximumWidth(250);
+    layout_->addWidget(event_info_widget_, 1, 5, 3, Qt::AlignCenter);
 }
 /*
 // get canvas

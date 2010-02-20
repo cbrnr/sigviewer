@@ -9,6 +9,10 @@
 #include <QGraphicsView>
 #include <QSharedPointer>
 
+#include <set>
+#include <map>
+#include <string>
+
 class QGridLayout;
 class QScrollBar;
 class QCursor;
@@ -22,6 +26,7 @@ class XAxisWidget;
 class SignalBrowserModel;
 class SignalGraphicsItem;
 class EventGraphicsItem;
+class EventInfoWidget;
 
 // signal browser view
 class SignalBrowserView : public QFrame
@@ -43,6 +48,10 @@ public:
     int32 getVisibleHeight () const;
     int32 getVisibleX () const;
     int32 getVisibleY () const;
+
+    std::set<std::string> getHideAbleWidgets () const;
+    bool getWidgetVisibility (std::string const &widget_name) const;
+    void setWidgetVisibility (std::string const &widget_name, bool visibility);
     YAxisWidget& getYAxisWidget () const;
     LabelWidget& getLabelWidget () const;
     XAxisWidget& getXAxisWidget () const;
@@ -80,12 +89,14 @@ private:
     QScrollBar* horizontal_scrollbar_;
     QScrollBar* vertical_scrollbar_;
     LabelWidget* label_widget_;
+    EventInfoWidget* event_info_widget_;
 
     QGridLayout* layout_;
     float32 scroll_x_destination_;
     float32 scroll_x_halfway_;
     int32 scroll_x_step_;
     bool scroll_x_left_;
+    std::map<std::string, QWidget*> hideable_widgets_;
 };
 
 } // namespace PortingToQT4_

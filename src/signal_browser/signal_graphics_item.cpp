@@ -5,8 +5,6 @@
 #include "new_event_undo_command.h"
 #include "y_axis_widget_4.h"
 #include "../command_stack.h"
-#include "../event_color_manager.h"
-#include "../main_window_model.h"
 #include "../base/signal_data_block.h"
 #include "../base/signal_buffer.h"
 #include "../base/signal_event.h"
@@ -19,6 +17,7 @@
 #include <QPoint>
 #include <QTime>
 #include <QObject>
+#include <QMenu>
 
 #include <cmath>
 #include <iostream>
@@ -463,7 +462,7 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
 
             new_event_ = true;
             new_signal_event_ = QSharedPointer<SignalEvent>(new SignalEvent(event->scenePos().x(), signal_browser_model_.getActualEventCreationType(), signal_buffer_.getEventSamplerate(),                                                                            signal_channel_.getNumber(), 0));
-            new_event_color_ = signal_browser_model_.getMainWindowModel().getEventColorManager().getEventColor(signal_browser_model_.getActualEventCreationType());
+            new_event_color_ = signal_browser_model_.getEventColor(signal_browser_model_.getActualEventCreationType());
             emit mouseMoving (true);
             break;
         }
@@ -498,8 +497,38 @@ void SignalGraphicsItem::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 void SignalGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event)
 {
     event->accept();
-    EventGraphicsItem::displayContextMenu(event);
+    if (!EventGraphicsItem::displayContextMenu(event))
+    {
+        QMenu context_menu;
+        context_menu.addAction("Set Scaling");
+        context_menu.addSeparator();
+        context_menu.exec(event->screenPos());
+    }
 }
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::wheelEvent (QGraphicsSceneWheelEvent* event)
+{
+    if (event->modifiers().testFlag(Qt::ControlModifier))
+    {
+        if (event->delta() > 0)
+            y_zoom_ *= event->delta() / 60;
+        else if (event->delta() < 0)
+            y_zoom_ /= -(event->delta()) / 60;
+        update ();
+        emit shifting (signal_channel_.getNumber());
+    }
+    else if (event->modifiers().testFlag(Qt::ShiftModifier))
+    {
+        if (event->delta() > 0)
+            signal_browser_model_.zoomInAll ();
+        else if (event->delta() < 0)
+            signal_browser_model_.zoomOutAll ();
+    }
+    else
+        event->ignore();
+}
+
 
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::drawYAxis (QPainter * painter, const QStyleOptionGraphicsItem * option)

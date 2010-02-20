@@ -52,6 +52,7 @@ public:
     uint32 getDuration() const;
     float32 getDurationInSec() const;
     float32 getEndInSec () const;
+    float64 getSampleRate () const;
 
     void setId (int32 id);
     void setPosition(uint32 position);

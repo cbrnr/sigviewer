@@ -7,11 +7,7 @@
 #include "../base/signal_event.h"
 
 #include "../command_stack.h"
-#include "../main_window_model.h"
-#include "../event_color_manager.h"
 #include "../signal_browser_mouse_handling.h"
-#include "../main_window_model.h"
-#include "../main_window.h"
 #include "../base/event_table_file_reader.h"
 
 #include <QRectF>
@@ -98,9 +94,7 @@ QSharedPointer<SignalEvent const> EventGraphicsItem::getSignalEvent () const
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::updateColor()
 {
-    EventColorManager& event_color_manager
-        = signal_browser_model_.getMainWindowModel().getEventColorManager();
-    color_ = event_color_manager.getEventColor(signal_event_->getType());
+    color_ = signal_browser_model_.getEventColor(signal_event_->getType());
 }
 
 //-----------------------------------------------------------------------------
@@ -253,25 +247,21 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
             break;
         case STATE_MOVE_BEGIN:
             {
-//                setPos(mouse_event->scenePos().x(), pos().y());
                 int32 diff = (mouse_event->pos().x() - mouse_event->lastPos().x());
                 setPos (pos().x() + diff, pos().y());
-//                if (!(scene()->views().first()->visibleRegion().contains(mouse_event->scenePos().toPoint())))
-//                    std::cout << "not visible" << std::endl;
                 width_ -= diff;
-                scene()->update(mouse_pos.x() - 5, pos().y(), width_ + diff, height_);
-                update();
+                setSize (width_, height_);
                 emit mouseAtSecond (static_cast<float>(pos().x())  / signal_browser_model_.getPixelPerSec());
             }
             break;
         case STATE_MOVE_END:
             {
-//                if (!(scene()->views().first()->visibleRegion().contains(mouse_event->scenePos().toPoint())))
-//                    std::cout << "not visible" << std::endl;
                 int32 diff = (mouse_event->pos().x() - mouse_event->lastPos().x());
                 width_ += diff;
-                scene()->update(mouse_pos.x(), pos().y(), width_ - diff, height_);
-                update();
+                if (diff > 0)
+                    scene()->update (mouse_pos.x() - diff, pos().y(), diff + 5, height_);
+                else
+                    scene()->update (mouse_pos.x(), pos().y(), (-diff) + 5, height_);
                 emit mouseAtSecond (static_cast<float>(pos().x() + width_)  / signal_browser_model_.getPixelPerSec());
             }
             break;
@@ -428,9 +418,7 @@ void EventGraphicsItem::addContextMenuEntry ()
     if (context_menu_.isNull())
         context_menu_ = QSharedPointer<EventContextMenu> (new EventContextMenu (signal_browser_model_));
 
-    EventTableFileReader& event_table_reader
-     = signal_browser_model_.getMainWindowModel().getEventTableFileReader();
-    QString event_name = event_table_reader.getEventName(signal_event_->getType());
+    QString event_name = signal_browser_model_.getEventName(signal_event_->getType());
 
     context_menu_->addEvent(signal_browser_model_.getEventItem(signal_event_->getId()), event_name);
     context_menu_mutex_.unlock();

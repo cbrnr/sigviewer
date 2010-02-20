@@ -303,7 +303,7 @@ void EventTableDialog::buildEventTable()
     event_table_view_->horizontalHeader()->setClickable(false);
     event_table_view_->horizontalHeader()->setSortIndicatorShown(true);
 
-    EventTableFileReader& event_table_reader
+    QSharedPointer<EventTableFileReader> event_table_reader
         = signal_browser_model_->getMainWindowModel().getEventTableFileReader();
 
     FileSignalReader::SignalEventVector event_vector;
@@ -354,7 +354,7 @@ void EventTableDialog::buildEventTable()
         event_table_model_->setData(event_table_model_->index(event_nr, 3),
                                     QVariant(tmp));
 
-        tmp = event_table_reader.getEventName(it->getType()) +
+        tmp = event_table_reader->getEventName(it->getType()) +
               QString(" ") + QString("(0x%1)").arg(it->getType(), 4, 16)
                                               .replace(' ', '0');
 

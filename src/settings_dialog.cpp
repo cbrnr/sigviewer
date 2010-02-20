@@ -33,6 +33,8 @@ const char* SettingsDialog::SHOW_CHANNEL_SCALES_BUTTON_TEXT_ =
             "Show channel scales";
 const char* SettingsDialog::SHOW_CHANNEL_LABELS_BUTTON_TEXT_ =
             "Show channel labels";
+const char* SettingsDialog::SHOW_EVENT_INFO_TEXT_ =
+            "Show event info widget";
 const char* SettingsDialog::SHOW_GRID_BUTTON_TEXT_ = "Show grid";
 const char* SettingsDialog::OK_BUTTON_TEXT_ = "OK";
 const char* SettingsDialog::CANCEL_BUTTON_TEXT_ = "Cancel";
@@ -71,6 +73,9 @@ SettingsDialog::SettingsDialog (QSharedPointer<SignalBrowserModel const> signal_
     show_grid_button_ = new QCheckBox(tr(SHOW_GRID_BUTTON_TEXT_));
     show_grid_button_->setChecked (signal_browser_model_->getGridVisible());
 
+    show_event_info_button_ = new QCheckBox (tr(SHOW_EVENT_INFO_TEXT_), this);
+    show_event_info_button_->setChecked(signal_browser_model_->getShowEventInfo());
+
     QVBoxLayout* top_layout = new QVBoxLayout(this);
 
     top_layout->addWidget(box);
@@ -78,6 +83,7 @@ SettingsDialog::SettingsDialog (QSharedPointer<SignalBrowserModel const> signal_
     top_layout->addWidget(show_channel_scales_button_);
     top_layout->addWidget(show_channel_labels_button_);
     top_layout->addWidget(show_grid_button_);
+    top_layout->addWidget(show_event_info_button_);
 
     top_layout->setMargin(10);
     top_layout->setSpacing(10);
@@ -129,6 +135,13 @@ bool SettingsDialog::isOverflowDetection()
 {
     return overflow_detection_button_->isChecked();
 }
+
+// ------------------------------------------------------------------------------------------
+bool SettingsDialog::isShowEventInfo()
+{
+    return show_event_info_button_->isChecked();
+}
+
 
 // ------------------------------------------------------------------------------------------
 ScaleMode SettingsDialog::getScaleModeType()

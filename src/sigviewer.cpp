@@ -111,7 +111,7 @@ int main(int32 argc, char* argv[])
     MainWindow main_window(main_window_model);
     main_window_model.setMainWindow(&main_window);
     main_window_model.getEventTableFileReader()
-        .load((application.applicationDirPath() + "/eventcodes.txt").toAscii());
+        ->load((application.applicationDirPath() + "/eventcodes.txt").toAscii());
     main_window_model.loadSettings();
     main_window.setUnifiedTitleAndToolBarOnMac(true);
     main_window.show();

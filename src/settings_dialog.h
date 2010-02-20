@@ -36,6 +36,7 @@ public:
     bool isShowChannelLables();
     bool isShowGrid();
     bool isOverflowDetection();
+    bool isShowEventInfo();
     ScaleMode getScaleModeType();
 
 //private slots:
@@ -54,6 +55,7 @@ private:
 	static const char* SHOW_GRID_BUTTON_TEXT_;
 	static const char* OK_BUTTON_TEXT_;
 	static const char* CANCEL_BUTTON_TEXT_;
+        static const char* SHOW_EVENT_INFO_TEXT_;
 
 	//buttons
     QSharedPointer<SignalBrowserModel const> const signal_browser_model_;
@@ -65,6 +67,7 @@ private:
     QCheckBox* show_channel_scales_button_;
     QCheckBox* show_channel_labels_button_;
     QCheckBox* show_grid_button_;
+    QCheckBox* show_event_info_button_;
 
 //    bool show_channel_labels_;
 };

@@ -3,7 +3,9 @@
 #include "signal_browser_model_4.h"
 #include "change_type_undo_command.h"
 #include "new_event_undo_command.h"
+#include "resize_event_undo_command.h"
 #include "../command_stack.h"
+
 
 #include <QGridLayout>
 #include <QPushButton>
@@ -11,6 +13,7 @@
 #include <QGroupBox>
 
 #include <cmath>
+#include <set>
 #include <iostream>
 
 namespace BioSig_
@@ -18,36 +21,43 @@ namespace BioSig_
 
 //-------------------------------------------------------------------
 EventInfoWidget::EventInfoWidget(QWidget* parent,
-                                         QSharedPointer<SignalBrowserModel> signal_browser_model,
-                                         std::map<uint16, QString> const& shown_event_types)
+                                 QSharedPointer<SignalBrowserModel> signal_browser_model)
     : QWidget (parent),
       signal_browser_model_ (signal_browser_model),
-      event_creation_type_ (1),
-      shown_event_types_ (shown_event_types)
+      event_creation_type_ (1)
 {
     layout_ = new QVBoxLayout(this);
     layout_->setSpacing (50);
 
-    QVBoxLayout* creation_info_layout = new QVBoxLayout (this);
+//    std::set<uint16> event_types = signal_browser_model_->getShownEventTypes();
+//    for (std::set<uint16>::const_iterator it = event_types.begin();
+//         it != event_types.end();
+//         ++it)
+//        shown_event_types_[*it] = signal_browser_model_->getEventName(*it);
+
+    QGroupBox* settings_group_box = new QGroupBox (tr("Settings"), this);
+    settings_group_box->setFlat(false);
+    QVBoxLayout* creation_info_layout = new QVBoxLayout (settings_group_box);
     event_creation_type_combobox_ = new QComboBox (this);
     event_type_combobox_ = new QComboBox (this);
-    for (std::map<uint16, QString>::const_iterator event_it = shown_event_types_.begin();
-         event_it != shown_event_types_.end();
-         ++event_it)
-    {
-        event_creation_type_combobox_->addItem (event_it->second, QVariant(event_it->first));
-        event_type_combobox_->addItem (event_it->second, QVariant(event_it->first));
-    }
-    event_type_combobox_->setEnabled (false);
+//    for (std::map<uint16, QString>::const_iterator event_it = shown_event_types_.begin();
+//         event_it != shown_event_types_.end();
+//         ++event_it)
+//    {
+//        event_creation_type_combobox_->addItem (event_it->second, QVariant(event_it->first));
+//        event_type_combobox_->addItem (event_it->second, QVariant(event_it->first));
+//    }
+    disabled_widgets_if_nothing_selected_.push_back(event_type_combobox_);
     creation_info_layout->addWidget (new QLabel(tr("Creation Type"), this));
     creation_info_layout->addWidget (event_creation_type_combobox_);
-    connect(event_creation_type_combobox_, SIGNAL(currentIndexChanged(int)), this, SLOT(selfChangedCreationType(int)));
-    connect(event_type_combobox_, SIGNAL(currentIndexChanged(int)), this, SLOT(selfChangedType(int)));
-    layout_->addLayout (creation_info_layout);
+    layout_->addWidget (settings_group_box);
 
-    insert_event_button_ = new QPushButton (tr("Insert Event"), this);
-    insert_event_button_->setEnabled (false);
-    layout_->addWidget (insert_event_button_);
+    QGroupBox* editing_tools_group_box = new QGroupBox (tr("Editing Tools"), this);
+    QVBoxLayout* editing_tools_layout = new QVBoxLayout (editing_tools_group_box);
+    insert_event_button_ = new QPushButton (tr("Insert Event"), editing_tools_group_box);
+    disabled_widgets_if_nothing_selected_.push_back(insert_event_button_);
+    editing_tools_layout->addWidget(insert_event_button_);
+    layout_->addWidget (editing_tools_group_box);
     connect (insert_event_button_, SIGNAL(clicked()), this, SLOT(insertEvent()));
 
     QGroupBox* selected_event_group_box = new QGroupBox (tr("Selected Event"), this);
@@ -55,7 +65,14 @@ EventInfoWidget::EventInfoWidget(QWidget* parent,
     info_layout->setVerticalSpacing(1);
 
     id_label_ = new QLabel (selected_event_group_box);
-    duration_label_ = new QLabel (selected_event_group_box);
+    duration_spinbox_ = new QDoubleSpinBox (selected_event_group_box);
+    duration_spinbox_->setSuffix (tr("s"));
+    duration_spinbox_->setMinimum (0);
+    duration_spinbox_->setSingleStep (0.1);
+    duration_spinbox_->setDecimals (3);
+    duration_spinbox_->setKeyboardTracking (false);
+    connect (duration_spinbox_, SIGNAL(valueChanged(double)), this, SLOT(selfChangedDuration(double)));
+    disabled_widgets_if_nothing_selected_.push_back(duration_spinbox_);
     start_label_ = new QLabel (selected_event_group_box);
     info_layout->addWidget(new QLabel(QString("Type"), selected_event_group_box), 1, 1);
     info_layout->addWidget(event_type_combobox_, 1, 2);
@@ -64,10 +81,12 @@ EventInfoWidget::EventInfoWidget(QWidget* parent,
     info_layout->addWidget(new QLabel(QString("Begin"), selected_event_group_box), 3, 1);
     info_layout->addWidget(start_label_, 3, 2);
     info_layout->addWidget(new QLabel(QString("Duration"), selected_event_group_box), 4, 1);
-    info_layout->addWidget(duration_label_, 4, 2);
+    info_layout->addWidget(duration_spinbox_, 4, 2);
     selected_event_group_box->setLayout (info_layout);
     layout_->addWidget (selected_event_group_box);
     setLayout(layout_);
+    foreach (QWidget* widget, disabled_widgets_if_nothing_selected_)
+        widget->setEnabled(false);
 }
 
 //-------------------------------------------------------------------
@@ -82,16 +101,16 @@ void EventInfoWidget::updateSelectedEventInfo (QSharedPointer<SignalEvent> selec
     selected_signal_event_ = selected_signal_event;
     if (selected_signal_event_.isNull())
     {
-        insert_event_button_->setEnabled (false);
-        event_type_combobox_->setEnabled (false);
+        foreach (QWidget* widget, disabled_widgets_if_nothing_selected_)
+            widget->setEnabled (false);
     }
     else
     {
-        insert_event_button_->setEnabled (true);
-        event_type_combobox_->setEnabled (true);
+        foreach (QWidget* widget, disabled_widgets_if_nothing_selected_)
+            widget->setEnabled (true);
         event_type_combobox_->setCurrentIndex (event_type_combobox_->findData (QVariant(selected_signal_event->getType())));
         id_label_->setText(QString::number(selected_signal_event->getId()));
-        duration_label_->setText(QString::number(round(selected_signal_event->getDurationInSec()*100)/100) + QString(" s"));
+        duration_spinbox_->setValue(selected_signal_event->getDurationInSec());
         start_label_->setText(QString::number(round(selected_signal_event->getPositionInSec()*100)/100) + QString(" s"));
     }
 }
@@ -103,30 +122,76 @@ void EventInfoWidget::updateCreationType (uint16 new_creation_type)
 }
 
 //-------------------------------------------------------------------
+void EventInfoWidget::updateShownEventTypes (std::set<uint16> shown_event_types)
+{
+    shown_event_types_.clear ();
+    event_creation_type_combobox_->disconnect();
+    event_type_combobox_->disconnect();
+    event_creation_type_combobox_->clear();
+    event_type_combobox_->clear();
+
+    for (std::set<uint16>::const_iterator it = shown_event_types.begin();
+         it != shown_event_types.end();
+         ++it)
+    {
+        QString event_name = signal_browser_model_->getEventName(*it);
+        shown_event_types_[*it] = event_name;
+        event_creation_type_combobox_->addItem (event_name, QVariant(*it));
+        event_type_combobox_->addItem (event_name, QVariant(*it));
+    }
+    connect(event_creation_type_combobox_, SIGNAL(currentIndexChanged(int)), this, SLOT(selfChangedCreationType(int)));
+    connect(event_type_combobox_, SIGNAL(currentIndexChanged(int)), this, SLOT(selfChangedType(int)));
+}
+
+
+//-------------------------------------------------------------------
 void EventInfoWidget::selfChangedCreationType (int combo_box_index)
 {
-    bool ok;
-    event_creation_type_ = event_creation_type_combobox_->itemData(combo_box_index).toUInt(&ok);
-    emit eventCreationTypeChanged (event_creation_type_);
+    uint16 new_type = event_creation_type_combobox_->itemData(combo_box_index).toUInt();
+    if (event_creation_type_ != new_type)
+    {
+        event_creation_type_ = new_type;
+        emit eventCreationTypeChanged (event_creation_type_);
+    }
 }
 
 //-------------------------------------------------------------------
 void EventInfoWidget::selfChangedType (int combo_box_index)
 {
-    bool ok;
-    uint16 event_type = event_type_combobox_->itemData(combo_box_index).toUInt(&ok);
+    uint16 event_type = event_type_combobox_->itemData(combo_box_index).toUInt();
 
-    ChangeTypeUndoCommand* change_type_command = new ChangeTypeUndoCommand (selected_signal_event_, event_type);
-    connect (change_type_command, SIGNAL(eventChanged(int32)), signal_browser_model_.data(), SLOT(setEventChanged(int32)));
-    CommandStack::instance().executeEditCommand(change_type_command);
+    if (event_type != selected_signal_event_->getType())
+    {
+        ChangeTypeUndoCommand* change_type_command = new ChangeTypeUndoCommand (selected_signal_event_, event_type);
+        connect (change_type_command, SIGNAL(eventChanged(int32)), signal_browser_model_.data(), SLOT(setEventChanged(int32)));
+        CommandStack::instance().executeEditCommand(change_type_command);
+    }
 }
 
+//-------------------------------------------------------------------
+void EventInfoWidget::selfChangedDuration (double new_duration)
+{
+    if (selected_signal_event_.isNull())
+        return;
+
+    int rounding_factor = pow (10, duration_spinbox_->decimals());
+    double rounded_old_duration = round (selected_signal_event_->getDurationInSec() * rounding_factor);
+    rounded_old_duration /= rounding_factor;
+    if (rounded_old_duration == new_duration)
+        return;
+
+    int new_duration_in_samples = new_duration * selected_signal_event_->getSampleRate ();
+    ResizeEventUndoCommand* resize_command = new ResizeEventUndoCommand (*(signal_browser_model_.data()), selected_signal_event_, selected_signal_event_->getPosition(), new_duration_in_samples);
+    CommandStack::instance().executeEditCommand (resize_command);
+}
 
 //-------------------------------------------------------------------
 void EventInfoWidget::insertEvent ()
 {
     bool ok;
     uint16 event_type = event_creation_type_combobox_->itemData(event_creation_type_combobox_->currentIndex()).toUInt(&ok);
+    if (!ok)
+        return;
     QSharedPointer<SignalEvent> new_event = QSharedPointer<SignalEvent>(new SignalEvent(*selected_signal_event_));
     new_event->setType (event_type);
 
