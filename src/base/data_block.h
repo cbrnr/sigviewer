@@ -40,6 +40,9 @@ public:
     float32 getMax () const;
 
     //-------------------------------------------------------------------------
+    DataBlock getBandpassFilteredBlock (unsigned sample_rate, float32 lower_hz_boundary, float32 upper_hz_boundary) const;
+
+    //-------------------------------------------------------------------------
     static DataBlock calculateMean (std::list<DataBlock> const &data_blocks);
 
     //-------------------------------------------------------------------------

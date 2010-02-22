@@ -1,5 +1,7 @@
 #include "data_block.h"
 
+#include "../signal_processing/fftw++.h"
+
 #include <algorithm>
 #include <cmath>
 
@@ -69,6 +71,51 @@ float32 DataBlock::getMax () const
     else
         return 0;
 }
+
+//-----------------------------------------------------------------------------
+DataBlock DataBlock::getBandpassFilteredBlock (unsigned sample_rate, float32 lower_hz_boundary, float32 upper_hz_boundary) const
+{
+    // calculate frequency spectrum
+    unsigned num_samples = data_.size();
+    double* data_in = new double[num_samples];
+    for (unsigned x = 0; x < num_samples; x++)
+        data_in[x] = data_[x];
+
+    Complex* data_out = FFTWComplex((num_samples / 2) + 1);
+
+    rcfft1d forward (num_samples, data_in, data_out);
+    forward.fft0Normalized (data_in, data_out);
+
+    float32 hz_step_size = (static_cast<float32>(sample_rate) / 2.0) / (static_cast<float32>(num_samples) / 2.0);
+
+    float32 frequency = 0;
+    for (unsigned index = 1; index < (num_samples / 2); index++)
+    {
+        frequency += hz_step_size;
+        if (frequency < lower_hz_boundary || frequency > upper_hz_boundary)
+        {
+            //data_out[index] =
+            //data_out[index].imag() = 0;
+            //data_out[index].real() = 0;
+            data_out[index] = 0;
+        }
+    }
+
+    crfft1d backward (num_samples, data_out, data_in);
+    backward.fft (data_out, data_in);
+
+    std::vector<float32> band_passed_data;
+    for (unsigned x = 0; x < num_samples; x++)
+        band_passed_data.push_back (data_in[x]);// = data_in[x] = data_[x];
+
+    DataBlock band_passed_block (band_passed_data);
+
+    delete[] data_in;
+    FFTWdelete(data_out);
+
+    return band_passed_block;
+}
+
 
 
 //-----------------------------------------------------------------------------

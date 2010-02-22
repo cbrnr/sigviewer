@@ -569,6 +569,7 @@ void MainWindow::initMenus()
     tools_menu_ = menuBar()->addMenu(tr("&Tools"));
     tools_menu_->addAction(calculate_mean_action_);
     tools_menu_->addAction(calculate_frequency_spectrum_action_);
+    tools_menu_->addAction(calculate_erd_ers_map_action_);
 
     options_menu_ = menuBar()->addMenu(tr("&Options"));
     options_menu_->addAction(options_channels_action_);
