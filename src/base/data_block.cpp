@@ -14,24 +14,31 @@ DataBlock::DataBlock()
 }
 
 //-----------------------------------------------------------------------------
-DataBlock::DataBlock (std::vector<float32> const &data)
-    : data_ (data)
+DataBlock::DataBlock (std::vector<float32> const &data,
+                      float32 sample_rate_per_unit)
+    : data_ (data),
+      sample_rate_per_unit_ (sample_rate_per_unit)
 {
     // nothing to do here
 }
 
 //-----------------------------------------------------------------------------
 DataBlock::DataBlock (DataBlock const &src)
-    : data_ (src.data_)
+    : data_ (src.data_),
+      label_ (src.label_),
+      x_unit_label_ (src.x_unit_label_),
+      y_unit_label_ (src.y_unit_label_)
 {
     // nothing to do here
 }
 
 
 //-----------------------------------------------------------------------------
-void DataBlock::setData (std::vector<float32> const &data)
+void DataBlock::setData (std::vector<float32> const &data,
+                         float32 sample_rate_per_unit)
 {
     data_ = data;
+    sample_rate_per_unit_ = sample_rate_per_unit;
 }
 
 //-----------------------------------------------------------------------------
@@ -51,6 +58,37 @@ void DataBlock::setLabel (std::string const &label)
 {
     label_ = label;
 }
+
+//-------------------------------------------------------------------------
+void DataBlock::setXUnitLabel (std::string const &unit_label)
+{
+    x_unit_label_ = unit_label;
+}
+
+//-------------------------------------------------------------------------
+std::string DataBlock::getXUnitLabel () const
+{
+    return x_unit_label_;
+}
+
+//-------------------------------------------------------------------------
+void DataBlock::setYUnitLabel (std::string const &unit_label)
+{
+    y_unit_label_ = unit_label;
+}
+
+//-------------------------------------------------------------------------
+std::string DataBlock::getYUnitLabel () const
+{
+    return y_unit_label_;
+}
+
+//-------------------------------------------------------------------------
+float32 DataBlock::getSampleRatePerUnit () const
+{
+    return sample_rate_per_unit_;
+}
+
 
 //-----------------------------------------------------------------------------
 float32 DataBlock::getMin () const
@@ -73,7 +111,7 @@ float32 DataBlock::getMax () const
 }
 
 //-----------------------------------------------------------------------------
-DataBlock DataBlock::getBandpassFilteredBlock (unsigned sample_rate, float32 lower_hz_boundary, float32 upper_hz_boundary) const
+DataBlock DataBlock::getBandpassFilteredBlock (float32 lower_hz_boundary, float32 upper_hz_boundary) const
 {
     // calculate frequency spectrum
     unsigned num_samples = data_.size();
@@ -86,7 +124,7 @@ DataBlock DataBlock::getBandpassFilteredBlock (unsigned sample_rate, float32 low
     rcfft1d forward (num_samples, data_in, data_out);
     forward.fft0Normalized (data_in, data_out);
 
-    float32 hz_step_size = (static_cast<float32>(sample_rate) / 2.0) / (static_cast<float32>(num_samples) / 2.0);
+    float32 hz_step_size = (static_cast<float32>(sample_rate_per_unit_) / 2.0) / (static_cast<float32>(num_samples) / 2.0);
 
     float32 frequency = 0;
     for (unsigned index = 1; index < (num_samples / 2); index++)
@@ -108,7 +146,7 @@ DataBlock DataBlock::getBandpassFilteredBlock (unsigned sample_rate, float32 low
     for (unsigned x = 0; x < num_samples; x++)
         band_passed_data.push_back (data_in[x]);// = data_in[x] = data_[x];
 
-    DataBlock band_passed_block (band_passed_data);
+    DataBlock band_passed_block (band_passed_data, sample_rate_per_unit_);
 
     delete[] data_in;
     FFTWdelete(data_out);
@@ -126,6 +164,7 @@ DataBlock DataBlock::calculateMean (std::list<DataBlock> const &data_blocks)
         return mean_block;
 
     std::list<DataBlock>::const_iterator it = data_blocks.begin();
+    mean_block.sample_rate_per_unit_ = it->sample_rate_per_unit_;
     float32 tmp_mean = 0;
     for (unsigned index = 0; index < (*(data_blocks.begin())).data_.size(); index++)
     {
@@ -163,6 +202,7 @@ DataBlock DataBlock::calculateStandardDeviationImpl (std::list<DataBlock> const 
         return stddev_block;
 
     std::list<DataBlock>::const_iterator it = data_blocks.begin();
+    stddev_block.sample_rate_per_unit_ = it->sample_rate_per_unit_;
     float32 tmp_stddev = 0;
     for (unsigned index = 0; index < (*(data_blocks.begin())).data_.size(); index++)
     {

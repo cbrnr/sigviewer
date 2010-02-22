@@ -55,6 +55,7 @@ void CalculateEventMeanCommand::execute ()
 
         QSharedPointer<DataBlock> mean = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateMean (data)));
         mean->setLabel (signal_browser_model_->getShownChannels()[channels_[index]].toStdString());
+        mean->setXUnitLabel ("s");
         //QSharedPointer<DataBlock> standard_deviation = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateStandardDeviation (data)));
 
         bv_model->visualiseBlock (mean, QSharedPointer<DataBlock>(0));//standard_deviation);

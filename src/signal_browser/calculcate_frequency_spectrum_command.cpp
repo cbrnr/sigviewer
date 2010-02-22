@@ -70,7 +70,7 @@ void CalculcateFrequencySpectrumCommand::execute ()
             for (unsigned x = 1; x < (num_samples / 2) + 1; x++)
                 spectrum_data.push_back(pow(data_out[x].real(),2) + pow(data_out[x].imag(), 2));
 
-            DataBlock frequency_data (spectrum_data);
+            DataBlock frequency_data (spectrum_data, static_cast<float32>(num_samples) / signal_data.getSampleRatePerUnit());
 
             delete[] data_in;
             FFTWdelete(data_out);
@@ -81,6 +81,7 @@ void CalculcateFrequencySpectrumCommand::execute ()
 
         QSharedPointer<DataBlock> mean = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateMean (data)));
         mean->setLabel (signal_browser_model_->getShownChannels()[channels_[index]].toStdString());
+        mean->setXUnitLabel ("Hz");
         //QSharedPointer<DataBlock> standard_deviation = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateStandardDeviation (data)));
 
         bv_model->visualiseBlock (mean, QSharedPointer<DataBlock>(0));//standard_deviation);

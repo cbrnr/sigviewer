@@ -29,6 +29,8 @@ private:
     QGraphicsScene* scene_;
     QGraphicsItemGroup* item_group_;
     QGraphicsTextItem* label_item_;
+    QGraphicsTextItem* x_unit_label_item_;
+    QGraphicsTextItem* y_unit_label_item_;
     BlockGraphicsItem* data_item_;
 
 };

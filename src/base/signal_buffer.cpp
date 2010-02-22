@@ -581,7 +581,7 @@ DataBlock SignalBuffer::getSignalData (uint32 channel_nr,
                 data.push_back(data_block->getBuffer()[index]);
         }
     }
-    return DataBlock (data);
+    return DataBlock (data, signal_reader_.getBasicHeader()->getEventSamplerate());
 }
 
 
