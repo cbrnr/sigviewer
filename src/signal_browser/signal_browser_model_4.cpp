@@ -463,7 +463,7 @@ void SignalBrowserModel::autoScaleAll()
 }
 
 // set pixel per sec
-void SignalBrowserModel::setPixelPerSec(float64 pixel_per_sec)
+void SignalBrowserModel::setPixelPerXUnit(float64 pixel_per_sec)
 {
     if (!checkSignalBrowserPtr("setPixelPerSec") ||
         !checkReadyState("setPixelPerSec"))
@@ -472,11 +472,10 @@ void SignalBrowserModel::setPixelPerSec(float64 pixel_per_sec)
     }
     pixel_per_sec_ = pixel_per_sec;
     signal_browser_view_->getXAxisWidget().changePixelPerSec (pixel_per_sec_);
-    updateLayout();
 }
 
 // get pixel per sec
-float64 SignalBrowserModel::getPixelPerSec() const
+float64 SignalBrowserModel::getPixelPerXUnit() const
 {
     return pixel_per_sec_;
 }

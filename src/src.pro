@@ -20,7 +20,8 @@ else:release {
 }
 INCLUDEPATH += ../extern
 LIBS += -L../extern \
-    -lbiosig -lfftw3
+    -lbiosig \
+    -lfftw3
 win32:LIBS += -lws2_32
 macx:LIBS += -lz
 RESOURCES = src.qrc
@@ -52,7 +53,8 @@ HEADERS += basic_header_info_dialog.h \
     next_event_view_undo_command.h \
     set_shown_event_types_view_undo_command.h \
     fit_view_to_event_view_undo_command.h \
-    event_time_selection_dialog.h
+    event_time_selection_dialog.h \
+    abstract_browser_model.h
 SOURCES += basic_header_info_dialog.cpp \
     channel_selection_dialog.cpp \
     copy_event_dialog.cpp \

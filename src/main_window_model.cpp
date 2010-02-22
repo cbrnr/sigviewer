@@ -18,6 +18,8 @@
 #include "settings_dialog.h"
 #include "command_stack.h"
 
+#include "abstract_browser_model.h"
+
 #include "signal_browser/signal_browser_model_4.h"
 #include "signal_browser/signal_browser_view.h"
 #include "signal_browser/delete_event_undo_command.h"
@@ -323,6 +325,21 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
             break;
     }
 
+}
+
+//-----------------------------------------------------------------------------
+void MainWindowModel::tabChanged (int tab_index)
+{
+
+}
+
+//-----------------------------------------------------------------------------
+void MainWindowModel::closeTab (int tab_index)
+{
+    QWidget* widget = tab_widget_->widget (tab_index);
+    browser_models_.erase (tab_index);
+    tab_widget_->removeTab (tab_index);
+    delete widget;
 }
 
 //-----------------------------------------------------------------------------
@@ -877,6 +894,8 @@ void MainWindowModel::openFile(const QString& file_name)
     if (!tab_widget_)
     {
         tab_widget_ = new QTabWidget (main_window_);
+        connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+        connect (tab_widget_, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
         tab_widget_->setTabsClosable (true);
     }
 
@@ -884,7 +903,8 @@ void MainWindowModel::openFile(const QString& file_name)
     signal_browser_model_->setSignalBrowserView(signal_browser_);
     signal_browser_model_->loadSettings();
 
-    tab_widget_->addTab(signal_browser_, tr("Signal Data"));
+    int tab_index = tab_widget_->addTab(signal_browser_, tr("Signal Data"));
+    browser_models_[tab_index] = signal_browser_model_;
 
     main_window_->setCentralWidget(tab_widget_);
 
@@ -1547,14 +1567,8 @@ void MainWindowModel::secsPerPageChanged(const QString& secs_per_page)
                         (file_signal_reader_->getBasicHeader()->getNumberRecords() *
                          file_signal_reader_->getBasicHeader()->getRecordDuration());
     }
-    signal_browser_model_->setPixelPerSec(pixel_per_sec);
-    for (std::list<QSharedPointer<BlocksVisualisationModel> >::iterator it = blocks_visualisation_models_.begin();
-         it != blocks_visualisation_models_.end();
-         ++it)
-    {
-        (*it)->setPixelPerSec (pixel_per_sec);
-        (*it)->updateLayout ();
-    }
+    browser_models_[tab_widget_->currentIndex()]->setPixelPerXUnit (pixel_per_sec);
+    browser_models_[tab_widget_->currentIndex()]->updateLayout ();
 
     secs_per_page_ = secs_per_page;
 }
@@ -1645,10 +1659,11 @@ QSharedPointer<BlocksVisualisationModel> MainWindowModel::createBlocksVisualisat
 {
     BlocksVisualisationView* bv_view = new BlocksVisualisationView (tab_widget_);
     SignalBuffer const& signal_buffer = signal_browser_model_->getSignalBuffer();
-    QSharedPointer<BlocksVisualisationModel> bv_model = QSharedPointer<BlocksVisualisationModel> (new BlocksVisualisationModel (bv_view, signal_browser_model_->getPixelPerSec (), static_cast<float64>(signal_buffer.getRecordsPerBlock()) / signal_buffer.getBlockDuration()));
+    QSharedPointer<BlocksVisualisationModel> bv_model = QSharedPointer<BlocksVisualisationModel> (new BlocksVisualisationModel (bv_view, signal_browser_model_->getPixelPerXUnit (), static_cast<float64>(signal_buffer.getRecordsPerBlock()) / signal_buffer.getBlockDuration()));
 
     blocks_visualisation_models_.push_back (bv_model);
-    tab_widget_->addTab(bv_view, title);
+    int tab_index = tab_widget_->addTab(bv_view, title);
+    browser_models_[tab_index] = bv_model;
     tab_widget_->setCurrentWidget(bv_view);
 
     return bv_model;

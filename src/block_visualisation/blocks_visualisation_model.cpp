@@ -54,9 +54,9 @@ void BlocksVisualisationModel::visualiseBlock (QSharedPointer<DataBlock> data_bl
 }
 
 //-----------------------------------------------------------------------------
-void BlocksVisualisationModel::setPixelPerSec(float64 pixel_per_sec)
+void BlocksVisualisationModel::setPixelPerXUnit (float64 pixel_per_x_unit)
 {
-    pixel_per_sec_ = pixel_per_sec;
+    pixel_per_sec_ = pixel_per_x_unit;
     float32 pixel_per_sample = pixel_per_sec_ / sample_rate_;
     for (std::list<BlockVisualisationItemModel*>::iterator it = items_.begin();
          it != items_.end();
@@ -66,6 +66,13 @@ void BlocksVisualisationModel::setPixelPerSec(float64 pixel_per_sec)
     }
 
 }
+
+//-----------------------------------------------------------------------------
+float64 BlocksVisualisationModel::getPixelPerXUnit() const
+{
+    return pixel_per_sec_;
+}
+
 
 //-----------------------------------------------------------------------------
 unsigned BlocksVisualisationModel::getBlockHeight () const

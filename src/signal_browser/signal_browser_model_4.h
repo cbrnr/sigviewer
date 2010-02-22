@@ -4,6 +4,7 @@
 
 #include "../base/file_signal_reader.h"
 #include "../gui_signal_buffer.h"
+#include "../abstract_browser_model.h"
 #include "event_graphics_item.h"
 
 #include <QPointer>
@@ -27,7 +28,7 @@ class SignalGraphicsItem;
 class EventTableFileReader;
 
 // signal browser model
-class SignalBrowserModel : public QObject
+class SignalBrowserModel : public QObject, public AbstractBrowserModel
 {
     Q_OBJECT
 
@@ -50,6 +51,12 @@ public:
                        MainWindowModel& main_window_model,
                        QSharedPointer<EventTableFileReader const> event_table_file_reader);
     virtual ~SignalBrowserModel();
+
+    virtual void setPixelPerXUnit (float64 pixel_per_sec);
+    virtual float64 getPixelPerXUnit () const;
+    virtual void updateLayout ();
+
+
 
     MainWindowModel& getMainWindowModel();
     void setSignalBrowserView(SignalBrowserView* signal_browser_view);
@@ -109,7 +116,6 @@ public:
     void zoomRect(const QRect& rect);
 */
     // set parameters
-    void setPixelPerSec(float64 pixel_per_sec);
     void setSignalHeight(int32 height);
 /*
     void setSignalSpacing(int32 spacing);
@@ -117,7 +123,6 @@ public:
     void setPreferedYGirdPixelIntervall(int32 pixel_intervall);
 */
     // get parameters
-    float64 getPixelPerSec() const;
     int32 getSignalHeight();
     int32 getSignalSpacing();
     int32 getVisibleWidth();
@@ -150,7 +155,6 @@ public:
     void getEvents(SignalEventVector& event_vector);
     uint16 getActualEventCreationType () const;
 
-    void updateLayout ();
     void updateEventItems ();
 
 public slots:

@@ -2,6 +2,7 @@
 #define BLOCKS_VISUALISATION_MODEL_H
 
 #include "../base/data_block.h"
+#include "../abstract_browser_model.h"
 
 #include <QSharedPointer>
 
@@ -13,7 +14,7 @@ class BlocksVisualisationView;
 class BlockVisualisationItemModel;
 
 //-----------------------------------------------------------------------------
-class BlocksVisualisationModel
+class BlocksVisualisationModel : public AbstractBrowserModel
 {
 public:
     BlocksVisualisationModel (BlocksVisualisationView* view,
@@ -22,13 +23,16 @@ public:
 
     virtual ~BlocksVisualisationModel ();
 
+    virtual void setPixelPerXUnit (float64 pixel_per_x_unit);
+    virtual float64 getPixelPerXUnit() const;
+
+    virtual void updateLayout ();
+
     void visualiseBlock (QSharedPointer<DataBlock> data_block,
                          QSharedPointer<DataBlock> deviation);
-    void setPixelPerSec(float64 pixel_per_sec);
 
     unsigned getBlockHeight () const;
 
-    void updateLayout ();
 private:
     BlocksVisualisationView* view_;
     float64 pixel_per_sec_;

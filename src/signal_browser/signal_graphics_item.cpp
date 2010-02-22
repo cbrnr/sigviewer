@@ -73,7 +73,7 @@ QRectF SignalGraphicsItem::boundingRect () const
 {
     // TODO: implement!
         int32 width = (int32)(signal_buffer_.getBlockDuration() *
-                          signal_buffer_.getNumberBlocks() * signal_browser_model_.getPixelPerSec());
+                          signal_buffer_.getNumberBlocks() * signal_browser_model_.getPixelPerXUnit());
 
     // std::cout << "SignalGraphicsItem::boundingRect width = " << width << std::endl;
     // std::cout << "SignalGraphicsItem::boundingRect top_margin_ = " << top_margin_ << std::endl;
@@ -176,7 +176,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 //    float64 item_y = y();
 
     float64 block_duration = signal_buffer_.getBlockDuration();
-    float64 pixel_per_sec = signal_browser_model_.getPixelPerSec();
+    float64 pixel_per_sec = signal_browser_model_.getPixelPerXUnit();
 
     // subsampling
     float64 samples_per_sec =  signal_channel_.getSamplesPerRecord() *
@@ -415,7 +415,7 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 //                     new_event_width > old_width ? new_event_width - old_width : old_width,
 //                     height_);
         new_signal_event_->setDuration(new_event_width);
-        emit mouseAtSecond (static_cast<float64>(event->scenePos().x()) / signal_browser_model_.getPixelPerSec());
+        emit mouseAtSecond (static_cast<float64>(event->scenePos().x()) / signal_browser_model_.getPixelPerXUnit());
     }
     else
         event->ignore();
@@ -479,7 +479,7 @@ void SignalGraphicsItem::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
     if (new_event_)
     {
         emit mouseMoving (false);
-        NewEventUndoCommand* new_event_command = new NewEventUndoCommand(signal_browser_model_, new_signal_event_, signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerSec());
+        NewEventUndoCommand* new_event_command = new NewEventUndoCommand(signal_browser_model_, new_signal_event_, signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit());
         CommandStack::instance().executeEditCommand (new_event_command);
     }
 

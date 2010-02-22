@@ -15,6 +15,7 @@
 #include <QTabWidget>
 
 #include <list>
+#include <map>
 
 class QAction;
 class QTextStream;
@@ -29,7 +30,7 @@ class SignalBrowserView;
 class EventTableFileReader;
 class EventColorManager;
 class BlocksVisualisationView;
-
+class AbstractBrowserModel;
 
 // main window model
 class MainWindowModel : public QObject
@@ -71,6 +72,9 @@ public:
     QSharedPointer<BlocksVisualisationModel> createBlocksVisualisationView (QString const& title);
 
 public slots:
+
+    void tabChanged (int tab_index);
+    void closeTab (int tab_index);
 
     // actions
     void calculateMeanAction();
@@ -148,6 +152,7 @@ private:
     QString log_string_;
     QString secs_per_page_;
     bool overflow_detection_;
+    std::map<int, QSharedPointer<AbstractBrowserModel> > browser_models_;
     std::list<QSharedPointer<BlocksVisualisationModel> > blocks_visualisation_models_;
 };
 
