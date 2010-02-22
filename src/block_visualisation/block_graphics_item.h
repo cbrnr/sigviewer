@@ -11,7 +11,7 @@ namespace BioSig_ {
 class BlockGraphicsItem : public QGraphicsItem
 {
 public:
-    BlockGraphicsItem (QSharedPointer<DataBlock> data,
+    BlockGraphicsItem (QSharedPointer<DataBlock const> data,
                        float32 pixel_per_sample,
                        unsigned height,
                        QSharedPointer<DataBlock> deviation = QSharedPointer<DataBlock>(0));
@@ -25,7 +25,7 @@ protected:
     virtual void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
 
 private:
-    QSharedPointer<DataBlock> data_;
+    QSharedPointer<DataBlock const> data_;
     QSharedPointer<DataBlock> deviation_;
     float32 pixel_per_sample_;
     float32 y_zoom_;

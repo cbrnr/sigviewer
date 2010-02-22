@@ -10,7 +10,7 @@
 namespace BioSig_ {
 
 //-----------------------------------------------------------------------------
-BlockGraphicsItem::BlockGraphicsItem (QSharedPointer<DataBlock> data,
+BlockGraphicsItem::BlockGraphicsItem (QSharedPointer<DataBlock const> data,
                                       float32 pixel_per_sample,
                                       unsigned height,
                                       QSharedPointer<DataBlock> deviation)

@@ -5,7 +5,8 @@
 
 #include <QWidget>
 
-class QPixmap;
+class QGraphicsScene;
+class QGraphicsView;
 
 namespace BioSig_
 {
@@ -29,7 +30,7 @@ public slots:
 
 private:
     virtual void paintEvent(QPaintEvent*);
-    void redrawScalePixmap ();
+    void redrawScene ();
 
     float64 intervall_;
     int32 x_start_;
@@ -37,9 +38,9 @@ private:
     float64 length_in_sec_;
     bool highlighting_enabled_;
     float64 time_to_highlight_;
-    QPixmap* scale_pixmap_;
-    QPixmap* highlight_pixmap_;
     QRect last_highlight_rect_;
+    QGraphicsScene* scene_;
+    QGraphicsView* view_;
 };
 
 }

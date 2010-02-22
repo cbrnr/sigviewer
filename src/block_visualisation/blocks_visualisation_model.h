@@ -10,7 +10,7 @@
 namespace BioSig_ {
 
 class BlocksVisualisationView;
-class BlockGraphicsItem;
+class BlockVisualisationItemModel;
 
 //-----------------------------------------------------------------------------
 class BlocksVisualisationModel
@@ -19,6 +19,8 @@ public:
     BlocksVisualisationModel (BlocksVisualisationView* view,
                               float64 pixel_per_sec,
                               float64 sample_rate);
+
+    virtual ~BlocksVisualisationModel ();
 
     void visualiseBlock (QSharedPointer<DataBlock> data_block,
                          QSharedPointer<DataBlock> deviation);
@@ -35,7 +37,7 @@ private:
     unsigned block_height_;
     unsigned max_block_length_;
 
-    std::list<BlockGraphicsItem*> items_;
+    std::list<BlockVisualisationItemModel*> items_;
 };
 
 }

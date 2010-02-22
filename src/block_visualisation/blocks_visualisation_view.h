@@ -8,6 +8,7 @@
 namespace BioSig_ {
 
 class BlockGraphicsItem;
+class BlockVisualisationItemView;
 
 ///----------------------------------------------------------------------------
 /// BlocksVisualisationView
@@ -19,6 +20,7 @@ class BlocksVisualisationView : public QFrame
 public:
     BlocksVisualisationView (QWidget* parent);
 
+    BlockVisualisationItemView* createBlockVisualisationItemView ();
     void addBlockGraphicsItem (BlockGraphicsItem* block_graphics_item);
 
     void fitScene ();
@@ -26,7 +28,6 @@ public:
 private:
     QGraphicsScene* graphics_scene_;
     QGraphicsView* graphics_view_;
-
 
 };
 
