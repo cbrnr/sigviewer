@@ -129,6 +129,7 @@ private:
 
     QAction* calculate_mean_action_;
     QAction* calculate_frequency_spectrum_action_;
+    QAction* calculate_erd_ers_map_action_;
     QAction* undo_view_action_;
     QAction* redo_view_action_;
     QAction* undo_action_;

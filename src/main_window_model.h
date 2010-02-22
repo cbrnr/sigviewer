@@ -79,6 +79,7 @@ public slots:
     // actions
     void calculateMeanAction();
     void calculateFrequencySpectrumAction();
+    void calculateERDERSMap ();
     void undoViewAction();
     void redoViewAction();
     void undoAction();
