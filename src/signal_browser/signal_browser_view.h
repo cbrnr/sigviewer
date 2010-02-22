@@ -38,7 +38,7 @@ public:
     virtual ~SignalBrowserView ();
 
     void addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item);
-    void removeSignalGraphicsItem (SignalGraphicsItem* graphics_item);
+    void removeSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item);
     void addEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item);
     void removeEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item, bool update_view = true);
 
@@ -49,11 +49,8 @@ public:
     int32 getVisibleX () const;
     int32 getVisibleY () const;
 
-    std::set<std::string> getHideAbleWidgets () const;
-    bool getWidgetVisibility (std::string const &widget_name) const;
+    std::map<std::string, bool> getWidgetVisibilities () const;
     void setWidgetVisibility (std::string const &widget_name, bool visibility);
-    YAxisWidget& getYAxisWidget () const;
-    LabelWidget& getLabelWidget () const;
     XAxisWidget& getXAxisWidget () const;
 
     void goTo (float32 x, float32 y);
@@ -79,6 +76,8 @@ private slots:
 
 private:
     void createLayout ();
+    void loadSettings ();
+    void saveSettings () const;
 
     QTimer* scroll_timer_;
     QGraphicsScene* graphics_scene_;
@@ -97,9 +96,10 @@ private:
     int32 scroll_x_step_;
     bool scroll_x_left_;
     std::map<std::string, QWidget*> hideable_widgets_;
+    std::map<std::string, bool> hideable_widgets_visibilities_;
 };
 
-} // namespace PortingToQT4_
+} // namespace BioSig_
 
 #endif // SIGNAL_BROWSER_VIEW_H
 

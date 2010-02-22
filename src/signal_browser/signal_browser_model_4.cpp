@@ -3,7 +3,6 @@
 #include "signal_browser_model_4.h"
 #include "signal_browser_view.h"
 #include "signal_graphics_item.h"
-#include "y_axis_widget_4.h"
 #include "x_axis_widget_4.h"
 #include "event_graphics_item.h"
 #include "change_channel_undo_command.h"
@@ -114,9 +113,6 @@ void SignalBrowserModel::loadSettings()
     prefered_y_grid_pixel_intervall_ = settings.value("prefered_y_grid_pixel_intervall",
                                                       prefered_y_grid_pixel_intervall_).toInt();
     show_x_grid_ = settings.value("show_x_grid", show_x_grid_).toBool();
-    show_channel_labels_ = settings.value("show_channel_labels", show_channel_labels_).toBool();
-    show_y_scales_ = settings.value("show_y_scales", show_y_scales_).toBool();
-    show_x_scales_ = settings.value("show_x_scales", show_x_scales_).toBool();
     show_y_grid_ = settings.value("show_y_grid", show_y_grid_).toBool();
     auto_zoom_type_ = static_cast<ScaleMode>(settings.value("auto_zoom_type_", auto_zoom_type_).toUInt());
 
@@ -134,14 +130,6 @@ void SignalBrowserModel::loadSettings()
 
     settings.endGroup();
     emit shownEventTypesChanged (shown_event_types_);
-
-    /*
-    SignalCanvasItem::loadSettings();
-    XAxisWidget::loadSettings();
-    YAxisWidget::loadSettings();
-    LabelWidget::loadSettings();
-    EventCanvasItem::loadSettings();
-*/
 }
 
 //-----------------------------------------------------------------------------
@@ -159,9 +147,6 @@ void SignalBrowserModel::saveSettings()
     settings.setValue("prefered_x_grid_pixel_intervall", prefered_x_grid_pixel_intervall_);
     settings.setValue("prefered_y_grid_pixel_intervall", prefered_y_grid_pixel_intervall_);
     settings.setValue("show_x_grid", show_x_grid_);
-    settings.setValue("show_channel_labels", show_channel_labels_);
-    settings.setValue("show_y_scales", show_y_scales_);
-    settings.setValue("show_x_scales", show_x_scales_);
     settings.setValue("show_y_grid", show_y_grid_);
     settings.setValue("auto_zoom_type_", auto_zoom_type_);
 
@@ -177,12 +162,6 @@ void SignalBrowserModel::saveSettings()
     settings.endArray();
 
     settings.endGroup();
-
-//    SignalGraphicsItem::saveSettings();
-//    XAxisWidget::saveSettings();
-//    YAxisWidget::saveSettings();
-//    LabelWidget::saveSettings();
-//    EventGraphicsItem::saveSettings();
 }
 
 //-----------------------------------------------------------------------------
@@ -276,14 +255,6 @@ void SignalBrowserModel::addChannel(uint32 channel_nr)
     connect (signal_item, SIGNAL(mouseAtSecond(float64)), &(signal_browser_view_->getXAxisWidget()), SLOT(changeHighlightTime(float64)));
     connect (signal_item, SIGNAL(mouseMoving(bool)), &(signal_browser_view_->getXAxisWidget()), SLOT(enableHighlightTime(bool)));
 
-    // add label to label widget
-/*    signal_browser_->getLabelWidget()->addChannel(channel_nr,
-                                                  signal_channel.getLabel());
-*/
-    // add label to y axis widget
-    //signal_browser_view_->getYAxisWidget().addChannel(channel_nr, signal_item);
-    //signal_browser_view_->addSignalGraphicsItem(signal_item);//
-
     // add channel to buffer
     signal_buffer_.addChannel(channel_nr);
 }
@@ -306,11 +277,9 @@ void SignalBrowserModel::removeChannel(uint32 channel_nr)
     }
 
     // remove signal canvas item
-    signal_browser_view_->removeSignalGraphicsItem (sig_iter->second);
+    signal_browser_view_->removeSignalGraphicsItem (channel_nr, sig_iter->second);
     channel2signal_item_.erase(sig_iter);
     delete sig_iter->second;
-    signal_browser_view_->getLabelWidget().removeChannel(channel_nr);
-    signal_browser_view_->getYAxisWidget().removeChannel(channel_nr);
 
     // remove channel from buffer
     if (release_buffer_)
@@ -618,26 +587,10 @@ void SignalBrowserModel::updateLayout()
                                         pixel_per_sec_);
 
     x_grid_pixel_intervall_ = pixel_per_sec_ * x_grid_intervall;
-
-
-    signal_browser_view_->getLabelWidget().setVisible(show_channel_labels_);
-    signal_browser_view_->getYAxisWidget().setVisible(show_y_scales_);
-    signal_browser_view_->getXAxisWidget().setVisible(show_x_scales_);
     signal_browser_view_->getXAxisWidget().changeTotalLengthInSecs(signal_buffer_.getBlockDuration() *
                                                                    signal_buffer_.getNumberBlocks());
     signal_browser_view_->getXAxisWidget().changeIntervall (x_grid_pixel_intervall_);
-
-    /* TODO: IMPLEMENT!!!
-  	signal_browser_->getLabelWidget()->setVisible(show_channel_labels_);
-  	signal_browser_->getXAxisWidget()->setVisible(show_x_scales_);
-  	signal_browser_->getYAxisWidget()->setVisible(show_y_scales_);
-*/
     signal_browser_view_->update();
-    /* TODO: IMPLEMENT!!!!
-    signal_browser_->getXAxisWidget()->update();
-    signal_browser_->getLabelWidget()->update();
-    signal_browser_->getYAxisWidget()->update();
-    */
 }
 
 //-------------------------------------------------------------------
@@ -1430,35 +1383,20 @@ void SignalBrowserModel::getEvents(SignalEventVector& event_vector)
 }
 
 //-------------------------------------------------------------------------
-void SignalBrowserModel::showXScales(bool enabled)
+std::map<std::string, bool> SignalBrowserModel::getHideableWidgetsVisibilities () const
 {
-    show_x_scales_ = enabled;
+    return signal_browser_view_->getWidgetVisibilities();
 }
 
 //-------------------------------------------------------------------------
-bool SignalBrowserModel::getShowXScales () const
+void SignalBrowserModel::setHideableWidgetsVisibilities (std::map<std::string, bool> const &widgets_visiblities)
 {
-    return show_x_scales_;
-}
-
-
-//-------------------------------------------------------------------------
-void SignalBrowserModel::showYScales(bool enabled)
-{
-    show_y_scales_ = enabled;
-}
-
-
-//-------------------------------------------------------------------------
-void SignalBrowserModel::showChannelLabels(bool enabled)
-{
-    show_channel_labels_ = enabled;
-}
-
-//-------------------------------------------------------------------------
-bool SignalBrowserModel::getShowChannelLabels () const
-{
-    return show_channel_labels_;
+    for (std::map<std::string, bool>::const_iterator widget_iterator = widgets_visiblities.begin();
+         widget_iterator != widgets_visiblities.end();
+         ++widget_iterator)
+    {
+        signal_browser_view_->setWidgetVisibility(widget_iterator->first, widget_iterator->second);
+    }
 }
 
 //-------------------------------------------------------------------------
@@ -1491,19 +1429,6 @@ ScaleMode SignalBrowserModel::getAutoZoomBehaviour () const
 {
     return auto_zoom_type_;
 }
-
-//-------------------------------------------------------------------------
-bool SignalBrowserModel::getShowEventInfo () const
-{
-    return show_event_info_;
-}
-
-//-------------------------------------------------------------------------
-void SignalBrowserModel::setShowEventInfo (bool visible)
-{
-    show_event_info_ = visible;
-}
-
 
 
 // TODO QT4: IMPLEMENT!!!!

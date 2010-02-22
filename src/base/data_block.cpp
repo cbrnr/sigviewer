@@ -38,6 +38,18 @@ std::vector<float32> const &DataBlock::getData () const
     return data_;
 }
 
+//-------------------------------------------------------------------------
+std::string DataBlock::getLabel () const
+{
+    return label_;
+}
+
+//-------------------------------------------------------------------------
+void DataBlock::setLabel (std::string const &label)
+{
+    label_ = label;
+}
+
 //-----------------------------------------------------------------------------
 float32 DataBlock::getMin () const
 {

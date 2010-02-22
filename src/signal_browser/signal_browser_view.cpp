@@ -14,6 +14,7 @@
 #include <QScrollBar>
 #include <QPointF>
 #include <QTimer>
+#include <QSettings>
 
 namespace BioSig_
 {
@@ -37,10 +38,12 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     graphics_view_->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
 
     y_axis_widget_ = new YAxisWidget (this);//, *signal_browser_model, this);
+    hideable_widgets_["Y Axis"] = y_axis_widget_;
     y_axis_widget_->resize(70, height());
     y_axis_widget_->setMinimumSize(70, 0);
 
     x_axis_widget_ = new XAxisWidget (this);
+    hideable_widgets_["X Axis"] = x_axis_widget_;
     x_axis_widget_->resize(width()-300, 30);
     x_axis_widget_->setMinimumSize(0, 30);
 
@@ -48,8 +51,10 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     vertical_scrollbar_ = new QScrollBar (Qt::Vertical, this);
 
     label_widget_ = new LabelWidget (*signal_browser_model, this);
+    hideable_widgets_["Channel Labels"] = label_widget_;
 
     event_info_widget_ = new EventInfoWidget (this, signal_browser_model);
+    hideable_widgets_["Event Info Widget"] = event_info_widget_;
 
     connect(horizontal_scrollbar_, SIGNAL(valueChanged(int)),
             graphics_view_->horizontalScrollBar(), SLOT(setValue(int)));
@@ -82,12 +87,15 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     //graphics_view_->setOptimizationFlag(QGraphicsView::DontClipPainter, true);
     graphics_view_->setMinimumSize(0, 0);
     setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+    loadSettings();
+
     createLayout();
 }
 
 //-----------------------------------------------------------------------------
 SignalBrowserView::~SignalBrowserView ()
 {
+    saveSettings();
     QList<QGraphicsItem*> items = graphics_scene_->items();
     for (QList<QGraphicsItem*>::iterator it = items.begin();
          it != items.end();
@@ -133,8 +141,10 @@ void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsI
 }
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::removeSignalGraphicsItem (SignalGraphicsItem* graphics_item)
+void SignalBrowserView::removeSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item)
 {
+    y_axis_widget_->removeChannel(channel_nr);
+    label_widget_->removeChannel(channel_nr);
     graphics_scene_->removeItem (graphics_item);
     graphics_view_->update ();
 }
@@ -185,27 +195,9 @@ int32 SignalBrowserView::getVisibleY () const
 }
 
 //-----------------------------------------------------------------------------
-std::set<std::string> SignalBrowserView::getHideAbleWidgets () const
+std::map<std::string, bool> SignalBrowserView::getWidgetVisibilities () const
 {
-    std::set<std::string> widgets;
-    for (std::map<std::string, QWidget*>::const_iterator widget_iterator =
-         hideable_widgets_.begin();
-         widget_iterator != hideable_widgets_.end();
-         ++widget_iterator)
-    {
-        widgets.insert(widget_iterator->first);
-    }
-    return widgets;
-}
-
-//-----------------------------------------------------------------------------
-bool SignalBrowserView::getWidgetVisibility (std::string const &widget_name) const
-{
-    std::map<std::string, QWidget*>::const_iterator widget_iterator = hideable_widgets_.find(widget_name);
-    if (widget_iterator == hideable_widgets_.end())
-        return false;
-    else
-        return widget_iterator->second->isVisible ();
+    return hideable_widgets_visibilities_;
 }
 
 
@@ -216,27 +208,16 @@ void SignalBrowserView::setWidgetVisibility (std::string const &widget_name, boo
     if (widget_iterator == hideable_widgets_.end())
         return;
     else
+    {
         widget_iterator->second->setVisible (visibility);
-}
-
-
-//-----------------------------------------------------------------------------
-YAxisWidget& SignalBrowserView::getYAxisWidget () const
-{
-    return *y_axis_widget_;
+        hideable_widgets_visibilities_[widget_iterator->first] = visibility;
+    }
 }
 
 //-----------------------------------------------------------------------------
 XAxisWidget& SignalBrowserView::getXAxisWidget () const
 {
     return *x_axis_widget_;
-}
-
-
-//-----------------------------------------------------------------------------
-LabelWidget& SignalBrowserView::getLabelWidget () const
-{
-    return *label_widget_;
 }
 
 //-----------------------------------------------------------------------------
@@ -362,6 +343,44 @@ void SignalBrowserView::createLayout()
     event_info_widget_->setMaximumWidth(250);
     layout_->addWidget(event_info_widget_, 1, 5, 3, Qt::AlignCenter);
 }
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::loadSettings ()
+{
+    QSettings settings("SigViewer");
+    settings.beginGroup("SignalBrowserView");
+
+    for (std::map<std::string, QWidget*>::iterator widget_iterator =
+         hideable_widgets_.begin();
+         widget_iterator != hideable_widgets_.end();
+         ++widget_iterator)
+    {
+        widget_iterator->second->setVisible (settings.value(widget_iterator->first.c_str()).toBool());
+        hideable_widgets_visibilities_[widget_iterator->first] = settings.value(widget_iterator->first.c_str()).toBool();
+    }
+
+    settings.endGroup();
+}
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::saveSettings () const
+{
+    QSettings settings("SigViewer");
+    settings.beginGroup("SignalBrowserView");
+
+    for (std::map<std::string, bool>::const_iterator widget_iterator =
+         hideable_widgets_visibilities_.begin();
+         widget_iterator != hideable_widgets_visibilities_.end();
+         ++widget_iterator)
+    {
+        settings.setValue(widget_iterator->first.c_str(),
+                          widget_iterator->second);
+    }
+
+    settings.endGroup();
+}
+
+
 /*
 // get canvas
 SmartCanvas* SignalBrowserView::getCanvas()

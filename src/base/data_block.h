@@ -5,6 +5,7 @@
 
 #include <list>
 #include <vector>
+#include <string>
 
 namespace BioSig_ {
 
@@ -25,6 +26,12 @@ public:
 
     //-------------------------------------------------------------------------
     std::vector<float32> const &getData () const;
+
+    //-------------------------------------------------------------------------
+    std::string getLabel () const;
+
+    //-------------------------------------------------------------------------
+    void setLabel (std::string const &label);
 
     //-------------------------------------------------------------------------
     float32 getMin () const;
@@ -53,6 +60,8 @@ private:
     static unsigned getLengthOfSmallestBlock (std::list<DataBlock> const &data_blocks);
 
     std::vector<float32> data_;
+
+    std::string label_;
 
 };
 

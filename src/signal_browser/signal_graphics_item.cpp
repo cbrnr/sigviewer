@@ -50,8 +50,6 @@ SignalGraphicsItem::SignalGraphicsItem(SignalBuffer& buffer, const SignalChannel
   hand_tool_on_ (false)
 {
     setFlag (QGraphicsItem::ItemUsesExtendedStyleOption, true);
-    std::cout << signal_channel_.getNumber() << " minimum_ = " << minimum_;
-    std::cout << "; maximum_ = " << maximum_ << std::endl;
 }
 
 //-----------------------------------------------------------------------------
@@ -356,8 +354,6 @@ void SignalGraphicsItem::getRangeFromBuffer(float64 factor)
 
     minimum_ = round125(signal_buffer_.getMinValue(signal_channel_.getNumber()) * factor);
     maximum_ = round125(signal_buffer_.getMaxValue(signal_channel_.getNumber()) * factor);
-    std::cout << signal_channel_.getNumber() << " minimum_ = " << signal_buffer_.getMinValue(signal_channel_.getNumber());
-    std::cout << "; maximum_ = " << maximum_ << std::endl;
 }
 
 //-----------------------------------------------------------------------------

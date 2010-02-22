@@ -1439,7 +1439,9 @@ void MainWindowModel::optionsShowSettingsAction()
     {
         return;
     }
-    SettingsDialog settings_dialog (signal_browser_model_, main_window_);
+    SettingsDialog settings_dialog (signal_browser_model_,
+                                    signal_browser_model_->getHideableWidgetsVisibilities(),
+                                    main_window_);
 
 //    settings_dialog.loadSettings();
     settings_dialog.exec();
@@ -1456,13 +1458,13 @@ void MainWindowModel::optionsShowSettingsAction()
 
     if (state_ == STATE_FILE_OPENED ||
         state_ == STATE_FILE_CHANGED) {
-        signal_browser_model_->showChannelLabels(settings_dialog.isShowChannelLables());
-        signal_browser_model_->showXScales(settings_dialog.isShowChannelScales());
-        signal_browser_model_->showYScales(settings_dialog.isShowChannelScales());
+        signal_browser_model_->setHideableWidgetsVisibilities(settings_dialog.getWidgetVisibilities());
+        //signal_browser_model_->showChannelLabels(settings_dialog.isShowChannelLables());
+        //signal_browser_model_->showXScales(settings_dialog.isShowChannelScales());
+        //signal_browser_model_->showYScales(settings_dialog.isShowChannelScales());
         signal_browser_model_->setXGridVisible(settings_dialog.isShowGrid());
         signal_browser_model_->setYGridVisible(settings_dialog.isShowGrid());
         signal_browser_model_->setAutoZoomBehaviour(settings_dialog.getScaleModeType());
-        signal_browser_model_->setShowEventInfo(settings_dialog.isShowEventInfo());
         signal_browser_model_->autoScaleAll();
         signal_browser_model_->updateLayout();
     }

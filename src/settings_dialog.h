@@ -30,13 +30,14 @@ class SettingsDialog : public QDialog
 public:
 
     SettingsDialog (QSharedPointer<SignalBrowserModel const> signal_browser_model,
+                    std::map<std::string, bool> const &widgets_visiblities,
                     QWidget* parent = 0);
 
-    bool isShowChannelScales();
-    bool isShowChannelLables();
+//    bool isShowChannelScales();
+//    bool isShowChannelLables();
+    std::map<std::string, bool> getWidgetVisibilities () const;
     bool isShowGrid();
     bool isOverflowDetection();
-    bool isShowEventInfo();
     ScaleMode getScaleModeType();
 
 //private slots:
@@ -59,17 +60,13 @@ private:
 
 	//buttons
     QSharedPointer<SignalBrowserModel const> const signal_browser_model_;
+    std::map<std::string, QCheckBox*> widgets_visiblity_checkboxes_;
     QPushButton* ok_button_;
     QPushButton* cancel_button_;
     QRadioButton* scale_max_to_max_radio_button_;
     QRadioButton* scale_min_to_max_radio_button_;
     QCheckBox* overflow_detection_button_;
-    QCheckBox* show_channel_scales_button_;
-    QCheckBox* show_channel_labels_button_;
     QCheckBox* show_grid_button_;
-    QCheckBox* show_event_info_button_;
-
-//    bool show_channel_labels_;
 };
 
 } //namespace BioSig_

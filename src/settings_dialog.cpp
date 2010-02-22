@@ -42,6 +42,7 @@ const char* SettingsDialog::CANCEL_BUTTON_TEXT_ = "Cancel";
 // ------------------------------------------------------------------------------------------
 // constructor
 SettingsDialog::SettingsDialog (QSharedPointer<SignalBrowserModel const> signal_browser_model,
+                                std::map<std::string, bool> const &widgets_visiblities,
                                 QWidget* parent)
 : QDialog(parent),
   signal_browser_model_ (signal_browser_model)
@@ -65,25 +66,30 @@ SettingsDialog::SettingsDialog (QSharedPointer<SignalBrowserModel const> signal_
     box->setLayout(boxLayout);
 
     overflow_detection_button_ = new QCheckBox(tr(OVERFLOW_DETECTION_BUTTON_TEXT_));
-    show_channel_scales_button_ = new QCheckBox(tr(SHOW_CHANNEL_SCALES_BUTTON_TEXT_));
-    show_channel_scales_button_->setChecked (signal_browser_model_->getShowXScales());
-    show_channel_labels_button_ = new QCheckBox(tr(SHOW_CHANNEL_LABELS_BUTTON_TEXT_));
-    show_channel_labels_button_->setChecked (signal_browser_model_->getShowChannelLabels());
+    //show_channel_scales_button_ = new QCheckBox(tr(SHOW_CHANNEL_SCALES_BUTTON_TEXT_));
+    //show_channel_scales_button_->setChecked (signal_browser_model_->getShowXScales());
+    //show_channel_labels_button_ = new QCheckBox(tr(SHOW_CHANNEL_LABELS_BUTTON_TEXT_));
+    //show_channel_labels_button_->setChecked (signal_browser_model_->getShowChannelLabels());
 
     show_grid_button_ = new QCheckBox(tr(SHOW_GRID_BUTTON_TEXT_));
     show_grid_button_->setChecked (signal_browser_model_->getGridVisible());
-
-    show_event_info_button_ = new QCheckBox (tr(SHOW_EVENT_INFO_TEXT_), this);
-    show_event_info_button_->setChecked(signal_browser_model_->getShowEventInfo());
 
     QVBoxLayout* top_layout = new QVBoxLayout(this);
 
     top_layout->addWidget(box);
     top_layout->addWidget(overflow_detection_button_);
-    top_layout->addWidget(show_channel_scales_button_);
-    top_layout->addWidget(show_channel_labels_button_);
+
+    for (std::map<std::string, bool>::const_iterator widget_iterator = widgets_visiblities.begin();
+         widget_iterator != widgets_visiblities.end();
+         ++widget_iterator)
+    {
+        QCheckBox* widget_visibility_checkbox = new QCheckBox (widget_iterator->first.c_str(), this);
+        widget_visibility_checkbox->setChecked(widget_iterator->second);
+        top_layout->addWidget(widget_visibility_checkbox);
+        widgets_visiblity_checkboxes_[widget_iterator->first] = widget_visibility_checkbox;
+    }
+
     top_layout->addWidget(show_grid_button_);
-    top_layout->addWidget(show_event_info_button_);
 
     top_layout->setMargin(10);
     top_layout->setSpacing(10);
@@ -112,17 +118,29 @@ SettingsDialog::SettingsDialog (QSharedPointer<SignalBrowserModel const> signal_
 //    connect(show_channel_labels_button_, SIGNAL(stateChanged(int)), this, SLOT(setShowChannels(int)));
 }
 
-// ------------------------------------------------------------------------------------------
-bool SettingsDialog::isShowChannelScales()
-{
-    return show_channel_scales_button_->isChecked();
-}
+//// ------------------------------------------------------------------------------------------
+//bool SettingsDialog::isShowChannelScales()
+//{
+//    return show_channel_scales_button_->isChecked();
+//}
+//
+//// ------------------------------------------------------------------------------------------
+//bool SettingsDialog::isShowChannelLables()
+//{
+//    return show_channel_labels_button_->isChecked();
+//}
 
 // ------------------------------------------------------------------------------------------
-bool SettingsDialog::isShowChannelLables()
+std::map<std::string, bool> SettingsDialog::getWidgetVisibilities () const
 {
-    return show_channel_labels_button_->isChecked();
+    std::map<std::string, bool> visibilities;
+    for (std::map<std::string, QCheckBox*>::const_iterator vis_it = widgets_visiblity_checkboxes_.begin();
+         vis_it != widgets_visiblity_checkboxes_.end();
+         ++vis_it)
+        visibilities[vis_it->first] = vis_it->second->isChecked ();
+    return visibilities;
 }
+
 
 // ------------------------------------------------------------------------------------------
 bool SettingsDialog::isShowGrid()
@@ -135,13 +153,6 @@ bool SettingsDialog::isOverflowDetection()
 {
     return overflow_detection_button_->isChecked();
 }
-
-// ------------------------------------------------------------------------------------------
-bool SettingsDialog::isShowEventInfo()
-{
-    return show_event_info_button_->isChecked();
-}
-
 
 // ------------------------------------------------------------------------------------------
 ScaleMode SettingsDialog::getScaleModeType()
