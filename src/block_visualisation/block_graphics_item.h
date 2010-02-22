@@ -19,18 +19,21 @@ public:
     virtual QRectF boundingRect () const;
 
     void setPixelPerSample (float32 pixel_per_sample);
-
+    void setHeight (int32 height);
 
 protected:
     virtual void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
 
 private:
+    void recalcYOffsettAndYZoom ();
+
     QSharedPointer<DataBlock const> data_;
     QSharedPointer<DataBlock> deviation_;
     float32 pixel_per_sample_;
     float32 y_zoom_;
-    unsigned height_;
+    int32 height_;
     float32 y_offset_;
+    unsigned x_grid_intervall_;
 };
 
 }

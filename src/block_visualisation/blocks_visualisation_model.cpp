@@ -36,9 +36,9 @@ void BlocksVisualisationModel::visualiseBlock (QSharedPointer<DataBlock> data_bl
                                                QSharedPointer<DataBlock> deviation)
 {
     BlockVisualisationItemModel* item_model =
-            new BlockVisualisationItemModel (view_->createBlockVisualisationItemView(),
+            new BlockVisualisationItemModel (view_->createBlockVisualisationItemView (),
                                              data_block);
-
+    item_model->setHeight (block_height_);
     items_.push_back (item_model);
 //    float32 pixel_per_sample = pixel_per_sec_ / sample_rate_;
 //    BlockGraphicsItem* block_graphics_item = new BlockGraphicsItem (data_block,
@@ -71,6 +71,18 @@ void BlocksVisualisationModel::setPixelPerXUnit (float64 pixel_per_x_unit)
 float64 BlocksVisualisationModel::getPixelPerXUnit() const
 {
     return pixel_per_sec_;
+}
+
+//-----------------------------------------------------------------------------
+void BlocksVisualisationModel::setItemsHeight (int32 block_height)
+{
+    block_height_ = block_height;
+    for (std::list<BlockVisualisationItemModel*>::iterator it = items_.begin();
+         it != items_.end();
+         ++it)
+    {
+        (*it)->setHeight (block_height_);
+    }
 }
 
 

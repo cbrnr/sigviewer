@@ -9,7 +9,8 @@ namespace BioSig_ {
 
 //-----------------------------------------------------------------------------
 BlocksVisualisationView::BlocksVisualisationView (QWidget* parent)
-    : QFrame (parent)
+    : QFrame (parent),
+      spacing_ (20)
 {
     resize(parent->contentsRect().width(), parent->contentsRect().height());
     graphics_scene_ = new QGraphicsScene (0, 0, parent->contentsRect().width(), parent->contentsRect().height(), this);
@@ -28,24 +29,22 @@ BlocksVisualisationView::BlocksVisualisationView (QWidget* parent)
 //-----------------------------------------------------------------------------
 BlockVisualisationItemView* BlocksVisualisationView::createBlockVisualisationItemView ()
 {
-    static int count = 0;
     BlockVisualisationItemView* vis = new BlockVisualisationItemView (graphics_scene_);
-    vis->setYPos (count * 130);
-    count++;
+    block_views_.push_back (vis);
     return vis;
-}
-
-//-----------------------------------------------------------------------------
-void BlocksVisualisationView::addBlockGraphicsItem (BlockGraphicsItem* block_graphics_item)
-{
-    graphics_scene_->addItem (block_graphics_item);
-    graphics_scene_->update();
-    graphics_view_->update();
 }
 
 //-----------------------------------------------------------------------------
 void BlocksVisualisationView::fitScene ()
 {
+    unsigned accumulated_height = 0;
+    for (unsigned index = 0;
+         index < block_views_.size();
+         index++)
+    {
+        block_views_[index]->setYPos (accumulated_height);
+        accumulated_height += block_views_[index]->getHeight () + spacing_;
+    }
     graphics_scene_->setSceneRect(graphics_scene_->itemsBoundingRect());
 }
 

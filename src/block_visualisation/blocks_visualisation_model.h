@@ -26,6 +26,9 @@ public:
     virtual void setPixelPerXUnit (float64 pixel_per_x_unit);
     virtual float64 getPixelPerXUnit() const;
 
+    virtual void setItemsHeight (int32 block_height);
+
+
     virtual void updateLayout ();
 
     void visualiseBlock (QSharedPointer<DataBlock> data_block,

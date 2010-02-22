@@ -483,11 +483,10 @@ float64 SignalBrowserModel::getPixelPerXUnit() const
 
 
 // set signal height
-void SignalBrowserModel::setSignalHeight(int32 height)
+void SignalBrowserModel::setItemsHeight(int32 height)
 {
     signal_height_ = height;
     emit signalHeightChanged (height);
-    updateLayout();
     // TODO: reimplement!
 //    if (!checkSignalBrowserPtr("setSignalHeight") ||
 //        !checkReadyState("setSignalHeight"))

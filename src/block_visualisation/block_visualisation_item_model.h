@@ -16,6 +16,7 @@ public:
                                  QSharedPointer<DataBlock const> data_block);
 
     void setPixelPerSample (float32 pixel_per_sample);
+    void setHeight (int32 height);
 
 private:
     BlockVisualisationItemView* view_;

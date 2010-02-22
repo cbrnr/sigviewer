@@ -21,12 +21,16 @@ public:
 
     void setYPos (int y_pos);
     void setPixelPerSample (float32 pixel_per_sample);
+    void setHeight (int32 height);
+    int32 getHeight () const;
 
 private:
+    int32 height_;
     QGraphicsScene* scene_;
     QGraphicsItemGroup* item_group_;
     QGraphicsTextItem* label_item_;
     BlockGraphicsItem* data_item_;
+
 };
 
 } // namespace BioSig_

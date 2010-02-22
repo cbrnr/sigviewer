@@ -19,5 +19,11 @@ void BlockVisualisationItemModel::setPixelPerSample (float32 pixel_per_sample)
     view_->setPixelPerSample (pixel_per_sample);
 }
 
+//-------------------------------------------------------------------
+void BlockVisualisationItemModel::setHeight (int32 height)
+{
+    view_->setHeight (height);
+}
+
 
 } // namespace BioSig_

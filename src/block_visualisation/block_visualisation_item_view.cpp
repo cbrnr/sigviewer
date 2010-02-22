@@ -39,8 +39,24 @@ void BlockVisualisationItemView::setYPos (int y_pos)
 void BlockVisualisationItemView::setPixelPerSample (float32 pixel_per_sample)
 {
     data_item_->setPixelPerSample (pixel_per_sample);
-    item_group_->update ();
     label_item_->setX (data_item_->boundingRect().width() + 1);
+    item_group_->update ();
+}
+
+//-------------------------------------------------------------------
+void BlockVisualisationItemView::setHeight (int32 height)
+{
+    height_ = height;
+    data_item_->setHeight (height_);
+    label_item_->setY ((height_ -
+                        label_item_->boundingRect().height()) / 2);
+    item_group_->update ();
+}
+
+//-------------------------------------------------------------------
+int32 BlockVisualisationItemView::getHeight () const
+{
+    return height_;
 }
 
 

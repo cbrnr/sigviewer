@@ -5,6 +5,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 
+#include <vector>
+
 namespace BioSig_ {
 
 class BlockGraphicsItem;
@@ -21,14 +23,14 @@ public:
     BlocksVisualisationView (QWidget* parent);
 
     BlockVisualisationItemView* createBlockVisualisationItemView ();
-    void addBlockGraphicsItem (BlockGraphicsItem* block_graphics_item);
 
     void fitScene ();
 
 private:
     QGraphicsScene* graphics_scene_;
     QGraphicsView* graphics_view_;
-
+    std::vector<BlockVisualisationItemView*> block_views_;
+    unsigned spacing_;
 };
 
 }

@@ -935,7 +935,7 @@ void MainWindowModel::openFile(const QString& file_name)
                                   nr_shown_channels) -
                           (signal_browser_model_->getSignalSpacing() * 2);
 
-    signal_browser_model_->setSignalHeight(signal_height);
+    signal_browser_model_->setItemsHeight(signal_height);
     main_window_->setSignalsPerPage(-1); // all
 
     // set status bar
@@ -1593,10 +1593,11 @@ void MainWindowModel::signalsPerPageChanged(const QString& signals_per_page)
     }
 
     int32 signal_height;
-    // TODO: move this calculation into signal_browser_model!
+    // TODO: move this calculation into browser-model!!!
     signal_height = (int32)(signal_browser_->getVisibleHeight() / tmp) -
                     signal_browser_model_->getSignalSpacing();
-    signal_browser_model_->setSignalHeight(signal_height);
+    browser_models_[tab_widget_->currentIndex()]->setItemsHeight (signal_height);
+    browser_models_[tab_widget_->currentIndex()]->updateLayout ();
 }
 
 // pixel per sec changed

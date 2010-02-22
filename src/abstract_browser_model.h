@@ -15,6 +15,8 @@ public:
     virtual void setPixelPerXUnit (float64) = 0;
     virtual float64 getPixelPerXUnit () const = 0;
 
+    virtual void setItemsHeight (int32) = 0;
+
     virtual void updateLayout () = 0;
 };
 

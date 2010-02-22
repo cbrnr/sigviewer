@@ -54,6 +54,10 @@ public:
 
     virtual void setPixelPerXUnit (float64 pixel_per_sec);
     virtual float64 getPixelPerXUnit () const;
+
+    virtual void setItemsHeight (int32 height);
+
+
     virtual void updateLayout ();
 
 
@@ -115,8 +119,6 @@ public:
 /*
     void zoomRect(const QRect& rect);
 */
-    // set parameters
-    void setSignalHeight(int32 height);
 /*
     void setSignalSpacing(int32 spacing);
     void setPreferedXGirdPixelIntervall(int32 pixel_intervall);
