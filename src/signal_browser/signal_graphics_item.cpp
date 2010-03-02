@@ -495,6 +495,7 @@ void SignalGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * even
     event->accept();
     if (!EventGraphicsItem::displayContextMenu(event))
     {
+        return; // TODO: implement!!!!
         QMenu context_menu;
         context_menu.addAction("Set Scaling");
         context_menu.addSeparator();

@@ -143,13 +143,13 @@ void MainWindow::initActions()
 
     calculate_frequency_spectrum_action_ = new QAction(tr("Calculate Power Spectrum"), this);
     calculate_frequency_spectrum_action_->setStatusTip(tr("Calculates power spectrum of selected event type"));
-    calculate_frequency_spectrum_action_->setEnabled(true);
+    calculate_frequency_spectrum_action_->setEnabled(false);
     connect(calculate_frequency_spectrum_action_, SIGNAL(triggered()),
             &model_, SLOT(calculateFrequencySpectrumAction()));
 
-    calculate_erd_ers_map_action_ = new QAction(tr("Calculate ERD/ERS Map"), this);
+    calculate_erd_ers_map_action_ = new QAction(tr("Generate ERD/ERS Map"), this);
     calculate_erd_ers_map_action_->setStatusTip(tr("Calculates ERD/ERS map of selected event type"));
-    calculate_erd_ers_map_action_->setEnabled(true);
+    calculate_erd_ers_map_action_->setEnabled(false);
     connect(calculate_erd_ers_map_action_, SIGNAL(triggered()),
             &model_, SLOT(calculateERDERSMap()));
 
