@@ -22,6 +22,7 @@ class EventGraphicsItem;
 class SignalGraphicsItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
+    Q_INTERFACES(QGraphicsItem)
 public:
     SignalGraphicsItem(SignalBuffer& buffer, const SignalChannel& channel,
                      SignalBrowserModel& model, SignalBrowserView* browser);

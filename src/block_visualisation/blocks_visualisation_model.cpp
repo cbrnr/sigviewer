@@ -33,7 +33,7 @@ BlocksVisualisationModel::~BlocksVisualisationModel ()
 
 //-----------------------------------------------------------------------------
 void BlocksVisualisationModel::visualiseBlock (QSharedPointer<DataBlock> data_block,
-                                               QSharedPointer<DataBlock> deviation)
+                                               QSharedPointer<DataBlock>)
 {
     BlockVisualisationItemModel* item_model =
             new BlockVisualisationItemModel (view_->createBlockVisualisationItemView (),

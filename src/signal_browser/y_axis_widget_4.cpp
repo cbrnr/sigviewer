@@ -84,7 +84,7 @@ void YAxisWidget::changeYStart (int y_start)
 }
 
 //-----------------------------------------------------------------------------
-void YAxisWidget::updateChannel (int32 channel_nr)
+void YAxisWidget::updateChannel (int32)
 {
     repaintPixmap ();
     update ();

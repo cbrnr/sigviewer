@@ -328,9 +328,9 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::tabChanged (int tab_index)
+void MainWindowModel::tabChanged (int)
 {
-
+    // TODO: implement!!!
 }
 
 //-----------------------------------------------------------------------------

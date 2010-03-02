@@ -1082,7 +1082,7 @@ void SignalBrowserModel::removeEvent(uint32 id, bool update)
 //-----------------------------------------------------------------------------
 // add event
 QSharedPointer<EventGraphicsItem> SignalBrowserModel::addEvent(QSharedPointer<SignalEvent> event,
-                                              bool update)
+                                              bool)
 {
     int32 event_id = signal_buffer_.addEvent(event);
     QSharedPointer<EventGraphicsItem> event_item (new EventGraphicsItem(signal_buffer_,

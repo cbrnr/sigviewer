@@ -25,6 +25,7 @@ class EventContextMenu;
 class EventGraphicsItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
+    Q_INTERFACES(QGraphicsItem)
 public:
     EventGraphicsItem(SignalBuffer& buffer, SignalBrowserModel& model,
                     QSharedPointer<SignalEvent> signal_event);

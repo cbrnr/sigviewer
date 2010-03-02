@@ -66,13 +66,13 @@ EventTimeSelectionDialog::EventTimeSelectionDialog (std::map<uint16, QString>
     event_type_info_layout->addWidget(length_spinbox_, 2, 2);
 
     event_type_average_time_label_ = new QLabel (this);
+    event_type_average_time_label_->setWordWrap (true);
     event_type_amount_label_ = new QLabel (this);
 
     event_type_info_layout->addWidget (new QLabel(tr("Amount of Events"), this), 3, 1);
     event_type_info_layout->addWidget (event_type_amount_label_, 3, 2);
     event_type_info_layout->addWidget (new QLabel(tr("Average Event Duration"), this), 4, 1);
     event_type_info_layout->addWidget (event_type_average_time_label_, 4, 2);
-
 
     event_layout->addLayout (event_type_info_layout);
 
@@ -94,6 +94,7 @@ EventTimeSelectionDialog::EventTimeSelectionDialog (std::map<uint16, QString>
     connect(ok_button_, SIGNAL(clicked()), this, SLOT(accept()));
     connect(cancel_button_, SIGNAL(clicked()), this, SLOT(reject()));
     connect(event_type_combobox_, SIGNAL(currentIndexChanged(int)), this, SLOT(selectedEventTypeChanged(int)));
+    selectedEventTypeChanged (0);
 }
 
 //-----------------------------------------------------------------------------
@@ -137,6 +138,9 @@ float EventTimeSelectionDialog::getLengthInSeconds () const
 void EventTimeSelectionDialog::selectedEventTypeChanged (int combo_box_index)
 {
     std::map<uint16, QString>::const_iterator event_type_it = shown_event_types_.begin();
+    if (event_type_it == shown_event_types_.end())
+        return;
+
     for (int i = 0; i < combo_box_index; i++)
         ++event_type_it;
 

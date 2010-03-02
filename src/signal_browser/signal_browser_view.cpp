@@ -229,7 +229,7 @@ void SignalBrowserView::goTo (float32 x, float32 y)
 }
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::smoothGoTo (float32 x, float32 y)
+void SignalBrowserView::smoothGoTo (float32 x, float32)
 {
     scroll_timer_->setInterval (1);
     scroll_x_halfway_ = x + graphics_view_->mapToScene(0,0).x();

@@ -9,7 +9,7 @@ FrequencySpectrumProcessor::FrequencySpectrumProcessor()
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<DataBlock> FrequencySpectrumProcessor::processData (QSharedPointer<const DataBlock> data) const
+QSharedPointer<DataBlock> FrequencySpectrumProcessor::processData (QSharedPointer<const DataBlock>) const
 {
     // TODO: implement
     return QSharedPointer<DataBlock> (0);

@@ -379,9 +379,9 @@ void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
         	if (samp < samples_in_read_data)
         	{
         		size_t ix;
-        		if (biosig_header_->FLAG.ROW_BASED_CHANNELS)
-        			ix = (*data_block)->channel_number + samp * biosig_header_->data.size[0];
-        		else
+                        if (biosig_header_->FLAG.ROW_BASED_CHANNELS)
+                                ix = (*data_block)->channel_number + samp * biosig_header_->data.size[0];
+                        else
         			ix = (*data_block)->channel_number * samples_in_read_data + samp;
         			
         		double val = read_data_[ix];

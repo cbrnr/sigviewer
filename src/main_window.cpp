@@ -207,7 +207,7 @@ void MainWindow::initActions()
 
     file_info_action_ = new QAction(file_info_icon_, tr("&Info..."), this);
     file_info_action_->setObjectName("file_info_action_");
-    file_info_action_->setShortcut(tr("Ctrl+I"));
+    //file_info_action_->setShortcut(tr("Ctrl+I"));
     file_info_action_->setStatusTip(tr("Show the basic information of the signal file"));
     connect(file_info_action_, SIGNAL(triggered()),
             &model_, SLOT(fileInfoAction()));

@@ -82,7 +82,7 @@ private:
                                                      DataBlock const &means);
 
     //-------------------------------------------------------------------------
-    static unsigned getLengthOfSmallestBlock (std::list<DataBlock> const &data_blocks);
+    // static unsigned getLengthOfSmallestBlock (std::list<DataBlock> const &data_blocks);
 
     std::vector<float32> data_;
     float32 sample_rate_per_unit_;
