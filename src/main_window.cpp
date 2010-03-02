@@ -135,7 +135,7 @@ void MainWindow::initActions()
             &model_, SLOT(redoViewAction()));
 
 
-    calculate_mean_action_ = new QAction(tr("Calculate Mean"), this);
+    calculate_mean_action_ = new QAction(tr("Calculate Mean (alpha)"), this);
     calculate_mean_action_->setStatusTip(tr("Calculates mean of selected event type"));
     calculate_mean_action_->setEnabled(true);
     connect(calculate_mean_action_, SIGNAL(triggered()),
