@@ -1,36 +1,32 @@
-<!DOCTYPE RCC><RCC version="1.0">
-
-<qresource>
-
-    <file>images/auto_scale_22x22.png</file>
-    <file>images/channels_22x22.png</file>
-    <file>images/exit_22x22.png</file>
-    <file>images/fileclose_22x22.png</file>
-    <file>images/file_info_22x22.png</file>
-    <file>images/fileopen_22x22.png</file>
-    <file>images/hand_22x22.png</file>
-    <file>images/help_22x22.png</file>
-    <file>images/pointer_22x22.png</file>
-    <file>images/shift_signal_22x22.png</file>
-    <file>images/sigviewer16.png</file>
-
-    <file>images/sigviewer128.png</file>
-    <file>images/zoom_22x22.png</file>
-    <file>images/zoom_in_22x22.png</file>
-    <file>images/zoom_out_22x22.png</file>
-    <file>images/events_22x22.png</file>
-    <file>images/new_22x22.png</file>
-    <file>images/delete_22x22.png</file>
-    <file>images/copy_to_channels_22x22.png</file>
-    <file>images/change_channel_22x22.png</file>
-    <file>images/to_all_channels_22x22.png</file>
-    <file>images/change_type_22x22.png</file>
-    <file>images/save_22x22.png</file>
-    <file>images/save_as_22x22.png</file>
-    <file>images/file_16x16.png</file>
-    <file>images/info_16x16.png</file>
-    <file>images/patient_16x16.png</file>
-</qresource>
-
+<RCC>
+    <qresource prefix="/">
+        <file>images/auto_scale_22x22.png</file>
+        <file>images/channels_22x22.png</file>
+        <file>images/exit_22x22.png</file>
+        <file>images/fileclose_22x22.png</file>
+        <file>images/file_info_22x22.png</file>
+        <file>images/fileopen_22x22.png</file>
+        <file>images/hand_22x22.png</file>
+        <file>images/help_22x22.png</file>
+        <file>images/pointer_22x22.png</file>
+        <file>images/shift_signal_22x22.png</file>
+        <file>images/sigviewer16.png</file>
+        <file>images/sigviewer128.png</file>
+        <file>images/zoom_22x22.png</file>
+        <file>images/zoom_in_22x22.png</file>
+        <file>images/zoom_out_22x22.png</file>
+        <file>images/events_22x22.png</file>
+        <file>images/new_22x22.png</file>
+        <file>images/delete_22x22.png</file>
+        <file>images/copy_to_channels_22x22.png</file>
+        <file>images/change_channel_22x22.png</file>
+        <file>images/to_all_channels_22x22.png</file>
+        <file>images/change_type_22x22.png</file>
+        <file>images/save_22x22.png</file>
+        <file>images/save_as_22x22.png</file>
+        <file>images/file_16x16.png</file>
+        <file>images/info_16x16.png</file>
+        <file>images/patient_16x16.png</file>
+        <file>eventcodes.txt</file>
+    </qresource>
 </RCC>
-
