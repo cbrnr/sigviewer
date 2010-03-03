@@ -1,0 +1,10 @@
+Package: sigviewer
+Version: 0.3.0
+Section: science
+Priority: extra
+Architecture: <architecture-via-script>
+Depends: libqt4-core, libqt4-gui
+Installed-Size: 2355
+Maintainer: Christoph Eibel <christoph.eibel@student.tugraz.at>
+Homepage: http://biosig.sourceforge.net
+Description: SigViewer - EEG ... 

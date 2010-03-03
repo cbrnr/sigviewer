@@ -38,5 +38,13 @@ Building Installation Packages
 ------------------------------
 
 Debian / Ubuntu:
-coming soon
+  1. run the script build-deb.sh with your processor architecture
+     as parameter e.g.:
+     
+        ./build-deb.sh i386
 
+     or
+
+        ./build-deb.sh amd64
+  
+  2. the deb file is automatically generated
