@@ -57,7 +57,7 @@ QSize XAxisWidget::sizeHint () const
 void XAxisWidget::changeIntervall (float64 intervall)
 {
     intervall_ = intervall;
-    redrawScene ();
+//    redrawScene ();
     update ();
 }
 
@@ -72,17 +72,17 @@ void XAxisWidget::changeXStart(int32 x_start)
 void XAxisWidget::changePixelPerSec(float64 pixel_per_sec)
 {
     pixel_per_sec_ = pixel_per_sec;
-    redrawScene ();
+//    redrawScene ();
     update ();
 }
 
 //-----------------------------------------------------------------------------
-void XAxisWidget::changeTotalLengthInSecs (float64 seconds)
-{
-    length_in_sec_ = seconds;
-    redrawScene ();
-    update ();
-}
+//void XAxisWidget::changeTotalLengthInSecs (float64 seconds)
+//{
+//    length_in_sec_ = seconds;
+//    redrawScene ();
+//    update ();
+//}
 
 
 //-----------------------------------------------------------------------------
@@ -166,54 +166,54 @@ void XAxisWidget::paintEvent(QPaintEvent*)
 }
 
 //-----------------------------------------------------------------------------
-void XAxisWidget::redrawScene ()
-{
-    return;
-    scene_->setSceneRect(0, 0, length_in_sec_ * pixel_per_sec_, 30);
-    scene_->clear();
-    scene_->addLine(0, 0, scene_->width(), 0);
-    for (float64 float_x = 0;
-         float_x < length_in_sec_ * pixel_per_sec_;
-         float_x += intervall_)
-    {
-        QGraphicsTextItem* text = scene_->addText (QString::number(float_x / pixel_per_sec_));
-        int32 x = float_x + 0.5;
-        text->setPos (x, 5);
-        scene_->addLine (x, 0, x, 5);
-//        painter.drawLine(x, 0, x, 5);
-//        painter.drawText((int32)(x - intervall_ / 2), 5, (int32)intervall_, font_height,
-//                   Qt::AlignHCenter | Qt::AlignVCenter,
-//                   QString::number(float_x / pixel_per_sec_));
-    }
-
-    return;
-//    if (scale_pixmap_)
-//        delete scale_pixmap_;
-//    std::cout << "new pixmap " << length_in_sec_ * pixel_per_sec_ << "x" << height () << std::endl;
-    //scale_pixmap_ = new QPixmap (length_in_sec_ * pixel_per_sec_, height ());
-//    scale_pixmap_ = new QPixmap (4000, 50);
-//    scale_pixmap_->fill (Qt::black);//palette().background().color());
-//
-//
-//    QPainter painter (scale_pixmap_);
-//    painter.setPen(Qt::black);
-//
-//    int32 font_height = height() - 5;
-//
-//    painter.drawLine(0, 0, scale_pixmap_->width(), 0);
-//
+//void XAxisWidget::redrawScene ()
+//{
+//    return;
+//    scene_->setSceneRect(0, 0, length_in_sec_ * pixel_per_sec_, 30);
+//    scene_->clear();
+//    scene_->addLine(0, 0, scene_->width(), 0);
 //    for (float64 float_x = 0;
 //         float_x < length_in_sec_ * pixel_per_sec_;
 //         float_x += intervall_)
 //    {
+//        QGraphicsTextItem* text = scene_->addText (QString::number(float_x / pixel_per_sec_));
 //        int32 x = float_x + 0.5;
-//        painter.drawLine(x, 0, x, 5);
-//        painter.drawText((int32)(x - intervall_ / 2), 5, (int32)intervall_, font_height,
-//                   Qt::AlignHCenter | Qt::AlignVCenter,
-//                   QString::number(float_x / pixel_per_sec_));
+//        text->setPos (x, 5);
+//        scene_->addLine (x, 0, x, 5);
+////        painter.drawLine(x, 0, x, 5);
+////        painter.drawText((int32)(x - intervall_ / 2), 5, (int32)intervall_, font_height,
+////                   Qt::AlignHCenter | Qt::AlignVCenter,
+////                   QString::number(float_x / pixel_per_sec_));
 //    }
-
-}
+//
+//    return;
+////    if (scale_pixmap_)
+////        delete scale_pixmap_;
+////    std::cout << "new pixmap " << length_in_sec_ * pixel_per_sec_ << "x" << height () << std::endl;
+//    //scale_pixmap_ = new QPixmap (length_in_sec_ * pixel_per_sec_, height ());
+////    scale_pixmap_ = new QPixmap (4000, 50);
+////    scale_pixmap_->fill (Qt::black);//palette().background().color());
+////
+////
+////    QPainter painter (scale_pixmap_);
+////    painter.setPen(Qt::black);
+////
+////    int32 font_height = height() - 5;
+////
+////    painter.drawLine(0, 0, scale_pixmap_->width(), 0);
+////
+////    for (float64 float_x = 0;
+////         float_x < length_in_sec_ * pixel_per_sec_;
+////         float_x += intervall_)
+////    {
+////        int32 x = float_x + 0.5;
+////        painter.drawLine(x, 0, x, 5);
+////        painter.drawText((int32)(x - intervall_ / 2), 5, (int32)intervall_, font_height,
+////                   Qt::AlignHCenter | Qt::AlignVCenter,
+////                   QString::number(float_x / pixel_per_sec_));
+////    }
+//
+//}
 
 
 }

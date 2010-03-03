@@ -24,13 +24,13 @@ public slots:
     void changeIntervall (float64 intervall);
     void changeXStart (int32 x_start);
     void changePixelPerSec (float64 pixel_per_sec);
-    void changeTotalLengthInSecs (float64 seconds);
+//    void changeTotalLengthInSecs (float64 seconds);
     void changeHighlightTime (float64 time_to_highlight);
     void enableHighlightTime (bool highlighting_enabled);
 
 private:
     virtual void paintEvent(QPaintEvent*);
-    void redrawScene ();
+//    void redrawScene ();
 
     float64 intervall_;
     int32 x_start_;

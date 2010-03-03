@@ -80,6 +80,8 @@ void EventContextMenu::finaliseAndShowContextMenu (QGraphicsSceneContextMenuEven
     }
     else if (event_items_.size() == 1)
     {
+        QAction* title = addAction (*it_name);
+        title->setEnabled (false);
         addActionsToMenu (*this);
         signal_browser_model_.selectEvent ((*it)->getId());
     }

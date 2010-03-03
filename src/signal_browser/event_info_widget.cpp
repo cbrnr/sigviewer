@@ -29,24 +29,12 @@ EventInfoWidget::EventInfoWidget(QWidget* parent,
     layout_ = new QVBoxLayout(this);
     layout_->setSpacing (50);
 
-//    std::set<uint16> event_types = signal_browser_model_->getShownEventTypes();
-//    for (std::set<uint16>::const_iterator it = event_types.begin();
-//         it != event_types.end();
-//         ++it)
-//        shown_event_types_[*it] = signal_browser_model_->getEventName(*it);
-
     QGroupBox* settings_group_box = new QGroupBox (tr("Settings"), this);
     settings_group_box->setFlat(false);
     QVBoxLayout* creation_info_layout = new QVBoxLayout (settings_group_box);
     event_creation_type_combobox_ = new QComboBox (this);
     event_type_combobox_ = new QComboBox (this);
-//    for (std::map<uint16, QString>::const_iterator event_it = shown_event_types_.begin();
-//         event_it != shown_event_types_.end();
-//         ++event_it)
-//    {
-//        event_creation_type_combobox_->addItem (event_it->second, QVariant(event_it->first));
-//        event_type_combobox_->addItem (event_it->second, QVariant(event_it->first));
-//    }
+
     disabled_widgets_if_nothing_selected_.push_back(event_type_combobox_);
     creation_info_layout->addWidget (new QLabel(tr("Creation Type"), this));
     creation_info_layout->addWidget (event_creation_type_combobox_);
@@ -85,6 +73,15 @@ EventInfoWidget::EventInfoWidget(QWidget* parent,
     info_layout->addWidget(duration_spinbox_, 4, 2);
     selected_event_group_box->setLayout (info_layout);
     layout_->addWidget (selected_event_group_box);
+
+    hovered_info_label_ = new QLabel ();
+    hovered_info_label_->setWordWrap (true);
+    QGroupBox* hovered_event_group_box = new QGroupBox (tr("Hovered Events"), this);
+    QVBoxLayout* hovered_layout = new QVBoxLayout (hovered_event_group_box);
+    hovered_layout->addWidget (hovered_info_label_);
+    hovered_event_group_box->setLayout(hovered_layout);
+    layout_->addWidget (hovered_event_group_box);
+
     setLayout(layout_);
     foreach (QWidget* widget, disabled_widgets_if_nothing_selected_)
         widget->setEnabled(false);
@@ -144,6 +141,19 @@ void EventInfoWidget::updateShownEventTypes (std::set<uint16> shown_event_types)
     connect(event_type_combobox_, SIGNAL(currentIndexChanged(int)), this, SLOT(selfChangedType(int)));
 }
 
+//-------------------------------------------------------------------
+void EventInfoWidget::addHoveredEvent (QSharedPointer<SignalEvent const> event)
+{
+    hovered_events_.insert (event->getId(), event);
+    updateHoveredInfoLabel ();
+}
+
+//-------------------------------------------------------------------
+void EventInfoWidget::removeHoveredEvent (QSharedPointer<SignalEvent const> event)
+{
+    hovered_events_.remove(event->getId ());
+    updateHoveredInfoLabel ();
+}
 
 //-------------------------------------------------------------------
 void EventInfoWidget::selfChangedCreationType (int combo_box_index)
@@ -199,5 +209,19 @@ void EventInfoWidget::insertEvent ()
     NewEventUndoCommand* new_event_command = new NewEventUndoCommand (*signal_browser_model_, new_event);
     CommandStack::instance().executeEditCommand(new_event_command);
 }
+
+//-------------------------------------------------------------------
+void EventInfoWidget::updateHoveredInfoLabel ()
+{
+    QMap<int32, QSharedPointer<SignalEvent const> >::const_iterator iterator = hovered_events_.begin ();
+    QString text;
+    while (iterator != hovered_events_.end())
+    {
+        text.append (signal_browser_model_->getEventName(iterator.value()->getType()));
+        ++iterator;
+    }
+    hovered_info_label_->setText (text);
+}
+
 
 }

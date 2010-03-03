@@ -51,12 +51,15 @@ public:
 
     std::map<std::string, bool> getWidgetVisibilities () const;
     void setWidgetVisibility (std::string const &widget_name, bool visibility);
-    XAxisWidget& getXAxisWidget () const;
 
     void goTo (float32 x, float32 y);
     void smoothGoTo (float32 x, float32 y);
     void setViewCursor (QCursor const &cursor);
     void updateWidgets (bool update_view = true);
+
+public slots:
+    void setXAxisIntervall (float64 intervall);
+    void setPixelPerSec (float64 pixel_per_sec);
 
 signals:
     void visibleXChanged (int32 new_x);

@@ -16,6 +16,7 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QMutex>
 #include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QPainter>
 
 #include <algorithm>
@@ -315,6 +316,7 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent * event )
 {
+    event->ignore ();
     QSharedPointer<EventGraphicsItem> item = signal_browser_model_.getSelectedEventItem();
     if (!(item.isNull()))
     {
@@ -325,6 +327,21 @@ void EventGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent * event )
             setCursor(QCursor(Qt::ArrowCursor));
     }
 }
+
+//-----------------------------------------------------------------------------
+void EventGraphicsItem::hoverEnterEvent (QGraphicsSceneHoverEvent* event)
+{
+    event->ignore ();
+    emit hoverEnterSignalEvent (signal_event_);
+}
+
+//-----------------------------------------------------------------------------
+void EventGraphicsItem::hoverLeaveEvent (QGraphicsSceneHoverEvent* event)
+{
+    event->ignore ();
+    emit hoverLeaveSignalEvent (signal_event_);
+}
+
 
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event)

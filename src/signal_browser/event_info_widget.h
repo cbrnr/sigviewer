@@ -13,6 +13,7 @@
 #include <QPushButton>
 #include <QDoubleSpinBox>
 #include <QList>
+#include <QMap>
 
 #include <map>
 #include <set>
@@ -36,6 +37,8 @@ public slots:
     void updateSelectedEventInfo (QSharedPointer<SignalEvent> selected_signal_event);
     void updateCreationType (uint16 new_creation_type);
     void updateShownEventTypes (std::set<uint16> shown_event_types);
+    void addHoveredEvent (QSharedPointer<SignalEvent const> event);
+    void removeHoveredEvent (QSharedPointer<SignalEvent const> event);
 
 signals:
     void eventCreationTypeChanged (uint16 new_creation_type);
@@ -47,6 +50,8 @@ private slots:
     void insertEvent ();
 
 private:
+    void updateHoveredInfoLabel ();
+
     QSharedPointer<SignalBrowserModel> signal_browser_model_;
     uint16 event_creation_type_;
     std::map<uint16, QString> shown_event_types_;
@@ -54,6 +59,7 @@ private:
     QSharedPointer<SignalEvent> selected_signal_event_;
 
     QList<QWidget*> disabled_widgets_if_nothing_selected_;
+    QMap<int32, QSharedPointer<SignalEvent const> > hovered_events_;
 
     QLabel* id_label_;
     QDoubleSpinBox* duration_spinbox_;
@@ -62,6 +68,7 @@ private:
     QComboBox* event_type_combobox_;
     QPushButton* insert_event_button_;
     QVBoxLayout* layout_;
+    QLabel* hovered_info_label_;
 };
 
 }

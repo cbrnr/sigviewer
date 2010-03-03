@@ -169,8 +169,10 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     // clip.setWidth(clip.width()*2);
     //signal_buffer_.setChannelActive(signal_channel_.getNumber(), true);
 
-    int32 draw_start_x = clip.x(); //- 1;
-    int32 draw_end_x = draw_start_x + clip.width(); //+ 1;
+    int32 draw_start_x = clip.x() - 4; // some pixels before
+    int32 draw_end_x = draw_start_x + clip.width() + 4;
+    if (draw_start_x < 0)
+        draw_start_x = 0;
 
     int32 item_height = height_;
 //    float64 item_y = y();
@@ -402,7 +404,10 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
     else if (new_event_)
     {
         float old_width = new_signal_event_->getDuration();
-        float new_event_width = event->scenePos().x() - new_signal_event_->getPosition();
+        float pos = event->scenePos().x();
+        if (pos < new_signal_event_->getPosition())
+            pos = new_signal_event_->getPosition();
+        float new_event_width = pos - new_signal_event_->getPosition();
         if (new_event_width < 0)
             new_event_width = 0;
         if (old_width < new_event_width)
@@ -415,7 +420,7 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 //                     new_event_width > old_width ? new_event_width - old_width : old_width,
 //                     height_);
         new_signal_event_->setDuration(new_event_width);
-        emit mouseAtSecond (static_cast<float64>(event->scenePos().x()) / signal_browser_model_.getPixelPerXUnit());
+        emit mouseAtSecond (pos / signal_browser_model_.getPixelPerXUnit());
     }
     else
         event->ignore();

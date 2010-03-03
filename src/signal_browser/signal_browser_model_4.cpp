@@ -3,7 +3,6 @@
 #include "signal_browser_model_4.h"
 #include "signal_browser_view.h"
 #include "signal_graphics_item.h"
-#include "x_axis_widget_4.h"
 #include "event_graphics_item.h"
 #include "change_channel_undo_command.h"
 #include "change_type_undo_command.h"
@@ -12,7 +11,6 @@
 #include "../command_stack.h"
 #include "../main_window_model.h"
 #include "../event_color_manager.h"
-#include "../label_widget.h"
 #include "../base/file_signal_reader.h"
 #include "../base/math_utils.h"
 #include "../base/signal_event.h"
@@ -252,8 +250,6 @@ void SignalBrowserModel::addChannel(uint32 channel_nr)
                                signal_browser_view_);
 
     channel2signal_item_[channel_nr] = signal_item;
-    connect (signal_item, SIGNAL(mouseAtSecond(float64)), &(signal_browser_view_->getXAxisWidget()), SLOT(changeHighlightTime(float64)));
-    connect (signal_item, SIGNAL(mouseMoving(bool)), &(signal_browser_view_->getXAxisWidget()), SLOT(enableHighlightTime(bool)));
 
     // add channel to buffer
     signal_buffer_.addChannel(channel_nr);
@@ -471,7 +467,7 @@ void SignalBrowserModel::setPixelPerXUnit(float64 pixel_per_sec)
         return;
     }
     pixel_per_sec_ = pixel_per_sec;
-    signal_browser_view_->getXAxisWidget().changePixelPerSec (pixel_per_sec_);
+    signal_browser_view_->setPixelPerSec (pixel_per_sec_);
 }
 
 // get pixel per sec
@@ -585,9 +581,7 @@ void SignalBrowserModel::updateLayout()
                                         pixel_per_sec_);
 
     x_grid_pixel_intervall_ = pixel_per_sec_ * x_grid_intervall;
-    signal_browser_view_->getXAxisWidget().changeTotalLengthInSecs(signal_buffer_.getBlockDuration() *
-                                                                   signal_buffer_.getNumberBlocks());
-    signal_browser_view_->getXAxisWidget().changeIntervall (x_grid_pixel_intervall_);
+    signal_browser_view_->setXAxisIntervall (x_grid_pixel_intervall_);
     signal_browser_view_->update();
 }
 
@@ -848,8 +842,6 @@ void SignalBrowserModel::updateEventItemsImpl ()
         signal_browser_view_->addEventGraphicsItem(event_iter.value());
 
         event_iter.value()->show();
-        connect (event_iter.value().data(), SIGNAL(mouseAtSecond(float64)), &(signal_browser_view_->getXAxisWidget()), SLOT(changeHighlightTime(float64)));
-        connect (event_iter.value().data(), SIGNAL(mouseMoving(bool)), &(signal_browser_view_->getXAxisWidget()), SLOT(enableHighlightTime(bool)));
     }
 }
 
@@ -1093,9 +1085,6 @@ QSharedPointer<EventGraphicsItem> SignalBrowserModel::addEvent(QSharedPointer<Si
 
     resetEventSizeAndPos(event_item);
     signal_browser_view_->addEventGraphicsItem(event_item);
-    connect (event_item.data(), SIGNAL(mouseAtSecond(float64)), &(signal_browser_view_->getXAxisWidget()), SLOT(changeHighlightTime(float64)));
-    connect (event_item.data(), SIGNAL(mouseMoving(bool)), &(signal_browser_view_->getXAxisWidget()), SLOT(enableHighlightTime(bool)));
-
     event_item->show();
     return event_item;
 }

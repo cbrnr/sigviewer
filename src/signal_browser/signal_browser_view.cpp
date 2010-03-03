@@ -126,18 +126,15 @@ void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsI
 {
     // TODO: really remove before add????
 
-//    graphics_scene_->removeItem(graphics_item->childItems());
     graphics_scene_->removeItem(graphics_item);
-    //QGraphicsLineItem* signal_separator_item = new QGraphicsLineItem (0, graphics_item->boundingRect().bottom(), graphics_item->boundingRect().right(), graphics_item->boundingRect().bottom(), graphics_item);
     graphics_scene_->addItem(graphics_item);
-    //    int separator_y = graphics_item->pos().y() + graphics_item->boundingRect().height() + 1;
-//    graphics_scene_->addLine(0, separator_y, graphics_item->boundingRect().width(),separator_y);
     y_axis_widget_->addChannel(channel_nr, graphics_item);
-
     label_widget_->addChannel(channel_nr, graphics_item->getLabel());
-    // graphics_scene_->addLine(200, 0, 200, 200);
 
     graphics_view_->update();
+
+    connect (graphics_item, SIGNAL(mouseAtSecond(float64)), x_axis_widget_, SLOT(changeHighlightTime(float64)));
+    connect (graphics_item, SIGNAL(mouseMoving(bool)), x_axis_widget_, SLOT(enableHighlightTime(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -158,6 +155,10 @@ void SignalBrowserView::addEventGraphicsItem (QSharedPointer<EventGraphicsItem> 
     graphics_scene_->addItem(event_graphics_item.data());
 
     graphics_view_->update();
+    connect (event_graphics_item.data(), SIGNAL(hoverEnterSignalEvent (QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(addHoveredEvent(QSharedPointer<SignalEvent const>)));
+    connect (event_graphics_item.data(), SIGNAL(hoverLeaveSignalEvent(QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(removeHoveredEvent(QSharedPointer<SignalEvent const>)));
+    connect (event_graphics_item.data(), SIGNAL(mouseAtSecond(float64)), x_axis_widget_, SLOT(changeHighlightTime(float64)));
+    connect (event_graphics_item.data(), SIGNAL(mouseMoving(bool)), x_axis_widget_, SLOT(enableHighlightTime(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -215,12 +216,6 @@ void SignalBrowserView::setWidgetVisibility (std::string const &widget_name, boo
 }
 
 //-----------------------------------------------------------------------------
-XAxisWidget& SignalBrowserView::getXAxisWidget () const
-{
-    return *x_axis_widget_;
-}
-
-//-----------------------------------------------------------------------------
 void SignalBrowserView::goTo (float32 x, float32 y)
 {
     x += graphics_view_->width() / 2;
@@ -259,6 +254,18 @@ void SignalBrowserView::updateWidgets (bool update_view)
     y_axis_widget_->update();
     x_axis_widget_->update();
     label_widget_->update();
+}
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::setXAxisIntervall (float64 intervall)
+{
+    x_axis_widget_->changeIntervall (intervall);
+}
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::setPixelPerSec (float64 pixel_per_sec)
+{
+    x_axis_widget_->changePixelPerSec (pixel_per_sec);
 }
 
 //-----------------------------------------------------------------------------
