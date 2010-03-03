@@ -21,24 +21,26 @@ General building steps:
 1. install qt4 development packages
 
 2. compile and copy the static biosig library (libbiosig.a, biosig.lib, ...) 
-   and the biosig header file (biosig.h) into the "extern" folder
+   and the biosig header file (biosig.h) into the "extern" directory
 
 3. Install libfftw3-dev
-   or put the static libfftw3 library (libfftw3.a, fftw3.lib, ...) and
-      the header file (fftw3.h) into the "extern" folder
+   OR put the static libfftw3 library (libfftw3.a, fftw3.lib, ...) and
+      the header file (fftw3.h) into the "extern" directory
 
 4. use qmake to generate a makefile and call make:
    qmake sigviewer.pro && make
 
-The SigViewer binary can be found in the bin folder.
+The SigViewer binary can be found in the "bin" directory.
 
 
 
 Building Installation Packages
 ------------------------------
 
-Debian / Ubuntu:
-  1. run the script build-deb.sh with your processor architecture
+Debian / Ubuntu / Kubuntu:
+  1. build/compile SigViewer
+
+  2. run the script build-deb.sh with your processor architecture
      as parameter e.g.:
      
         ./build-deb.sh i386
@@ -47,4 +49,4 @@ Debian / Ubuntu:
 
         ./build-deb.sh amd64
   
-  2. the deb file is automatically generated
+  3. the deb file is automatically generated
