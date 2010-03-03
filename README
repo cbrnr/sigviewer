@@ -1,0 +1,42 @@
+Content
+=======
+- Compiling
+- Building Installation Packages
+
+
+Compiling
+---------
+
+SigViewer depends on the following external libraries:
+
+- QT 4 (qt4-core and qt4-gui)
+  http://www.qtsoftware.com
+- FFTW 3
+  http://www.fftw.org
+- biosig4c++
+  http://biosig.sourceforge.net
+
+General building steps:
+
+1. install qt4 development packages
+
+2. compile and copy the static biosig library (libbiosig.a, biosig.lib, ...) 
+   and the biosig header file (biosig.h) into the "extern" folder
+
+3. Install libfftw3-dev
+   or put the static libfftw3 library (libfftw3.a, fftw3.lib, ...) and
+      the header file (fftw3.h) into the "extern" folder
+
+4. use qmake to generate a makefile and call make:
+   qmake sigviewer.pro && make
+
+The SigViewer binary can be found in the bin folder.
+
+
+
+Building Installation Packages
+------------------------------
+
+Debian / Ubuntu:
+coming soon
+

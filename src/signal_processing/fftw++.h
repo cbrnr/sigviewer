@@ -23,7 +23,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
-#include "../../extern/fftw3.h"
+#include <fftw3.h>
 
 #ifndef __Complex_h__
 #include <complex>
