@@ -68,7 +68,6 @@ public:
     void setMouseMode(SignalBrowserMode mode);
     void setStatusBarSignalLength(float64 length);
     void setStatusBarNrChannels(int32 nr_channels);
-    void setStatusBarNrTrials(int32 nr_trials);
 
     // do actions
     bool showFileCloseDialog(const QString& file_name);
@@ -197,7 +196,6 @@ private:
 
     QLabel* status_bar_signal_length_label_;
     QLabel* status_bar_nr_channels_label_;
-    QLabel* status_bar_nr_trials_label_;
 };
 
 } // namespace BioSig_

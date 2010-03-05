@@ -51,6 +51,7 @@ SignalBrowserModel::SignalBrowserModel(FileSignalReader& reader,
   prefered_x_grid_pixel_intervall_(100),
   prefered_y_grid_pixel_intervall_(25),
   x_grid_pixel_intervall_(0),
+  shown_event_types_ (event_table_file_reader->getAllEventTypes()),
   actual_event_creation_type_ (1),
   show_y_grid_(true)
 {
@@ -114,17 +115,17 @@ void SignalBrowserModel::loadSettings()
     show_y_grid_ = settings.value("show_y_grid", show_y_grid_).toBool();
     auto_zoom_type_ = static_cast<ScaleMode>(settings.value("auto_zoom_type_", auto_zoom_type_).toUInt());
 
-    all_event_types_selected_ = settings.value("all_event_types_selected", all_event_types_selected_).toBool();
-    int size = settings.beginReadArray("shown_event_types");
-    for (int i = 0; i < size; i++)
-    {
-        settings.setArrayIndex(i);
-        bool ok = false;
-        uint16 event_type = settings.value("shown_event_type").toInt(&ok);
-        if (ok)
-            shown_event_types_.insert(event_type);
-    }
-    settings.endArray();
+//    all_event_types_selected_ = settings.value("all_event_types_selected", all_event_types_selected_).toBool();
+//    int size = settings.beginReadArray("shown_event_types");
+//    for (int i = 0; i < size; i++)
+//    {
+//        settings.setArrayIndex(i);
+//        bool ok = false;
+//        uint16 event_type = settings.value("shown_event_type").toInt(&ok);
+//        if (ok)
+//            shown_event_types_.insert(event_type);
+//    }
+//    settings.endArray();
 
     settings.endGroup();
     emit shownEventTypesChanged (shown_event_types_);
@@ -148,16 +149,16 @@ void SignalBrowserModel::saveSettings()
     settings.setValue("show_y_grid", show_y_grid_);
     settings.setValue("auto_zoom_type_", auto_zoom_type_);
 
-    settings.setValue("all_event_types_selected", all_event_types_selected_);
-    settings.beginWriteArray("shown_event_types", shown_event_types_.size());
-    unsigned array_index = 0;
-    foreach (uint16 event_type, shown_event_types_)
-    {
-        settings.setArrayIndex(array_index);
-        settings.setValue("shown_event_type", event_type);
-        array_index++;
-    }
-    settings.endArray();
+//    settings.setValue("all_event_types_selected", all_event_types_selected_);
+//    settings.beginWriteArray("shown_event_types", shown_event_types_.size());
+//    unsigned array_index = 0;
+//    foreach (uint16 event_type, shown_event_types_)
+//    {
+//        settings.setArrayIndex(array_index);
+//        settings.setValue("shown_event_type", event_type);
+//        array_index++;
+//    }
+//    settings.endArray();
 
     settings.endGroup();
 }

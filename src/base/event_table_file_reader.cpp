@@ -135,6 +135,20 @@ QString EventTableFileReader::getEventGroupId(uint16 event_type_id)
                                         : "";
 }
 
+//-------------------------------------------------------------------
+std::set<uint16> EventTableFileReader::getAllEventTypes () const
+{
+    std::set<uint16> type_set;
+    for (IntIterator it = event_types_.begin();
+         it != event_types_.end();
+         ++it)
+    {
+        type_set.insert (*it);
+    }
+    return type_set;
+}
+
+
 // get event group name
 QString EventTableFileReader::getEventGroupName(const QString& group_id)
 {

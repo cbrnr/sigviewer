@@ -9,6 +9,8 @@
 #include <QMap>
 #include <QList>
 
+#include <set>
+
 class QTextStream;
 
 namespace BioSig_
@@ -37,6 +39,7 @@ public:
     QString getEventName(uint16 event_type_id) const;
     QString getEventGroupId(uint16 event_type_id);
 
+    std::set<uint16> getAllEventTypes () const;
 private:
     struct EventItem
     {

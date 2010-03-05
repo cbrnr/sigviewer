@@ -80,16 +80,12 @@ void MainWindow::initStatusBar()
 
     status_bar_signal_length_label_ = new QLabel(tr("Length: %1 s").arg("----.-"));
     status_bar_nr_channels_label_ = new QLabel(tr("Channels: %1").arg("---"));
-    status_bar_nr_trials_label_ = new QLabel(tr("Trials: %1").arg("---"));
     status_bar_signal_length_label_->setAlignment(Qt::AlignHCenter);
     status_bar_nr_channels_label_->setAlignment(Qt::AlignHCenter);
-    status_bar_nr_trials_label_->setAlignment(Qt::AlignHCenter);
     status_bar_signal_length_label_->setMinimumWidth(status_bar_signal_length_label_->sizeHint().width() + 10);
     status_bar_nr_channels_label_->setMinimumWidth(status_bar_nr_channels_label_->sizeHint().width() + 10);
-    status_bar_nr_trials_label_->setMinimumWidth(status_bar_nr_trials_label_->sizeHint().width() + 10);
     status_bar->addPermanentWidget(status_bar_signal_length_label_);
     status_bar->addPermanentWidget(status_bar_nr_channels_label_);
-    status_bar->addPermanentWidget(status_bar_nr_trials_label_);
 }
 
 // init icons sets
@@ -1063,14 +1059,6 @@ void MainWindow::setStatusBarNrChannels(int32 nr_channels)
     QString tmp = nr_channels < 0 ? "---" : QString("%1").arg(nr_channels, 3);
     status_bar_nr_channels_label_->setText(tr("Channels: %1").arg(tmp));
     status_bar_nr_channels_label_->setMinimumWidth(status_bar_nr_channels_label_->sizeHint().width() + 10);
-}
-
-// set status bar nr trials
-void MainWindow::setStatusBarNrTrials(int32 nr_trials)
-{
-    QString tmp = nr_trials < 0 ? "---" : QString("%1").arg(nr_trials, 3);
-    status_bar_nr_trials_label_->setText(tr("Trials: %1").arg(tmp));
-    status_bar_nr_trials_label_->setMinimumWidth(status_bar_nr_trials_label_->sizeHint().width() + 10);
 }
 
 } // namespace BioSig_
