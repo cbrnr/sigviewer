@@ -93,6 +93,7 @@ private slots:
 
     void secsPerPageReturnPressed();
     void signalsPerPageReturnPressed();
+    void toggleStatusBar (bool visible);
 
 private:
 
@@ -115,6 +116,7 @@ private:
     QMenu* edit_menu_;
     QMenu* mouse_mode_menu_;
     QMenu* view_menu_;
+    QMenu* view_toolbar_views_menu_;
     QMenu* tools_menu_;
     QMenu* options_menu_;
     QMenu* help_menu_;

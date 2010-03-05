@@ -406,7 +406,10 @@ void MainWindow::initActions()
 // init tool bars
 void MainWindow::initToolBars()
 {
+    view_toolbar_views_menu_ = new QMenu (tr("Toolbars"), this);
+
     file_toolbar_ = addToolBar(tr("File"));
+    view_toolbar_views_menu_->addAction (file_toolbar_->toggleViewAction());
     file_toolbar_->setIconSize(QSize(22, 22));
     file_toolbar_->addAction(file_open_action_);
     file_toolbar_->addAction(file_save_action_);
@@ -415,6 +418,7 @@ void MainWindow::initToolBars()
     file_toolbar_->addAction(file_close_action_);
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
+    view_toolbar_views_menu_->addAction (mouse_mode_toolbar_->toggleViewAction());
     mouse_mode_toolbar_->setIconSize(QSize(22, 22));
     mouse_mode_toolbar_->addAction(mouse_mode_new_action_);
     mouse_mode_toolbar_->addAction(mouse_mode_pointer_action_);
@@ -423,6 +427,7 @@ void MainWindow::initToolBars()
     //mouse_mode_toolbar_->addAction(mouse_mode_zoom_action_);
 
     edit_toolbar_ = addToolBar(tr("Edit"));
+    view_toolbar_views_menu_->addAction (edit_toolbar_->toggleViewAction());
     edit_toolbar_->setIconSize(QSize(22, 22));
     edit_toolbar_->addAction(edit_to_all_channels_action_);
     edit_toolbar_->addAction(edit_copy_to_channels_action_);
@@ -431,6 +436,7 @@ void MainWindow::initToolBars()
     edit_toolbar_->addAction(edit_change_type_action_);
 
     option_toolbar_ = addToolBar(tr("Options"));
+    view_toolbar_views_menu_->addAction (option_toolbar_->toggleViewAction());
     option_toolbar_->setIconSize(QSize(22, 22));
     option_toolbar_->addAction(options_channels_action_);
     option_toolbar_->addAction(options_show_events_action_);
@@ -476,6 +482,7 @@ void MainWindow::initToolBars()
     signals_per_page_combobox_->insertItem(11, "all");
 
     navigation_toolbar_ = addToolBar(tr("Navigation"));
+    view_toolbar_views_menu_->addAction (navigation_toolbar_->toggleViewAction());
     navigation_toolbar_->setIconSize(QSize(22, 22));
     navigation_toolbar_->addWidget(secs_per_page_combobox_);
     navigation_toolbar_->addWidget(signals_per_page_combobox_);
@@ -505,6 +512,13 @@ void MainWindow::signalsPerPageReturnPressed()
 {
     model_.signalsPerPageChanged(signals_per_page_combobox_->currentText());
 }
+
+//-------------------------------------------------------------------
+void MainWindow::toggleStatusBar (bool visible)
+{
+    statusBar()->setVisible (visible);
+}
+
 
 // init menus
 void MainWindow::initMenus()
@@ -549,6 +563,15 @@ void MainWindow::initMenus()
 //    mouse_mode_menu_->addAction(mouse_mode_zoom_action_);
 
     view_menu_ = menuBar()->addMenu(tr("&View"));
+    view_menu_->addM
+
+    view_menu_->addMenu(view_toolbar_views_menu_);
+    QAction* toggle_status_bar = new QAction (tr("Statusbar"), this);
+    toggle_status_bar->setCheckable (true);
+    toggle_status_bar->setChecked (true);
+    connect (toggle_status_bar, SIGNAL(toggled(bool)), this, SLOT(toggleStatusBar(bool)));
+    view_menu_->addAction(toggle_status_bar);
+    view_menu_->addSeparator();
     view_menu_->addAction(view_zoom_in_action_);
     view_menu_->addAction(view_zoom_out_action_);
     view_menu_->addAction(view_auto_scale_action_);
