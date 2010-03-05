@@ -919,6 +919,8 @@ void MainWindowModel::openFile(const QString& file_name)
     int tab_index = tab_widget_->addTab(signal_browser_, tr("Signal Data"));
     browser_models_[tab_index] = signal_browser_model_;
 
+    tab_widget_->hide();
+
     main_window_->setCentralWidget(tab_widget_);
 
 
@@ -935,6 +937,10 @@ void MainWindowModel::openFile(const QString& file_name)
 
     // select channels
     channelSelection ();
+
+    tab_widget_->show();
+    signal_browser_->show();
+
 
     // mouse mode
     main_window_->setMouseMode(signal_browser_model_->getMode());
@@ -960,7 +966,6 @@ void MainWindowModel::openFile(const QString& file_name)
     // show signal_browser
     signal_browser_model_->autoScaleAll(); // autoscale on startup
 
-    signal_browser_->show();
 
     secsPerPageChanged(secs_per_page_);
     main_window_->setSecsPerPage(secs_per_page_);
