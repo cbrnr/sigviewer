@@ -563,8 +563,6 @@ void MainWindow::initMenus()
 //    mouse_mode_menu_->addAction(mouse_mode_zoom_action_);
 
     view_menu_ = menuBar()->addMenu(tr("&View"));
-    view_menu_->addM
-
     view_menu_->addMenu(view_toolbar_views_menu_);
     QAction* toggle_status_bar = new QAction (tr("Statusbar"), this);
     toggle_status_bar->setCheckable (true);
