@@ -14,7 +14,8 @@ HEADERS += signal_browser/signal_browser_view.h \
     signal_browser/calculate_event_mean_command.h \
     signal_browser/calculcate_frequency_spectrum_command.h \
     signal_browser/choose_event_type_dialog.h \
-    signal_browser/calculate_erd_ers_map_command.h
+    signal_browser/calculate_erd_ers_map_command.h \
+    signal_browser/signal_browser_modes.h
 SOURCES += signal_browser/signal_browser_view.cpp \
     signal_browser/signal_browser_model_4.cpp \
     signal_browser/signal_graphics_item.cpp \

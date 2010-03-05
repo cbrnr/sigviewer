@@ -164,7 +164,7 @@ void SignalBrowserModel::saveSettings()
 
 //-----------------------------------------------------------------------------
 // TODO! set mode
-void SignalBrowserModel::setMode(Mode mode)
+void SignalBrowserModel::setMode(SignalBrowserMode mode)
 {
     if (!checkSignalBrowserPtr("setMode") ||
         !checkReadyState("setMode"))
@@ -180,7 +180,7 @@ void SignalBrowserModel::setMode(Mode mode)
 
 //-----------------------------------------------------------------------------
 // get mode
-SignalBrowserModel::Mode SignalBrowserModel::getMode()
+SignalBrowserMode SignalBrowserModel::getMode()
 {
     return mode_;
 }

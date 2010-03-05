@@ -974,20 +974,20 @@ void MainWindow::setRecentFiles(const QStringList& recent_file_list)
 }
 
 // set mouse mode
-void MainWindow::setMouseMode(SignalBrowserModel::Mode mode)
+void MainWindow::setMouseMode(SignalBrowserMode mode)
 {
     switch (mode)
     {
-        case SignalBrowserModel::MODE_NEW:
+        case MODE_NEW:
             mouse_mode_new_action_->setChecked(true);
             break;
-        case SignalBrowserModel::MODE_POINTER:
+        case MODE_POINTER:
             mouse_mode_pointer_action_->setChecked(true);
             break;
-        case SignalBrowserModel::MODE_HAND:
+        case MODE_HAND:
             mouse_mode_hand_action_->setChecked(true);
             break;
-        case SignalBrowserModel::MODE_SHIFT_SIGNAL:
+        case MODE_SHIFT_SIGNAL:
             mouse_mode_shift_signal_action_->setChecked(true);
             break;
 //        case SignalBrowserModel::MODE_ZOOM:

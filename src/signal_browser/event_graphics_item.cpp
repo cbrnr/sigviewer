@@ -360,7 +360,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
     QPoint mouse_pos (e->scenePos().x(), e->scenePos().y());  //canvas_view->inverseWorldMatrix().map(e->pos());
 
 
-    SignalBrowserModel::Mode mode = signal_browser_model_.getMode();
+    SignalBrowserMode mode = signal_browser_model_.getMode();
     switch (SignalBrowserMouseHandling::getAction(e, mode))
     {
         case SignalBrowserMouseHandling::SELECT_RESIZE_EVENT_ACTION:

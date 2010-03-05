@@ -29,6 +29,8 @@
 #include "set_shown_event_types_view_undo_command.h"
 #include "fit_view_to_event_view_undo_command.h"
 #include "block_visualisation/blocks_visualisation_view.h"
+#include "block_visualisation/blocks_visualisation_model.h"
+
 
 #include <QString>
 #include <QApplication>
@@ -1143,7 +1145,7 @@ void MainWindowModel::mouseModeNewAction()
     }
 
     signal_browser_model_->unsetSelectedEventItem();
-    signal_browser_model_->setMode(SignalBrowserModel::MODE_NEW);
+    signal_browser_model_->setMode(MODE_NEW);
     signal_browser_->setScrollMode(false);
 }
 
@@ -1155,7 +1157,7 @@ void MainWindowModel::mouseModePointerAction()
     {
         return;
     }
-    signal_browser_model_->setMode(SignalBrowserModel::MODE_POINTER);
+    signal_browser_model_->setMode(MODE_POINTER);
     signal_browser_->setScrollMode(false);
 }
 
@@ -1167,7 +1169,7 @@ void MainWindowModel::mouseModeHandAction()
     {
         return;
     }
-    signal_browser_model_->setMode(SignalBrowserModel::MODE_HAND);
+    signal_browser_model_->setMode(MODE_HAND);
     signal_browser_->setScrollMode(true);
 }
 
@@ -1180,7 +1182,7 @@ void MainWindowModel::mouseModeShiftSignalAction()
         return;
     }
 
-    signal_browser_model_->setMode(SignalBrowserModel::MODE_SHIFT_SIGNAL);
+    signal_browser_model_->setMode(MODE_SHIFT_SIGNAL);
     signal_browser_->setScrollMode(false);
 }
 

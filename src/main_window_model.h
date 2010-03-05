@@ -4,7 +4,6 @@
 #define MAIN_WINDOW_MODEL_H
 
 #include "base/user_types.h"
-#include "block_visualisation/blocks_visualisation_model.h"
 
 #include <memory>
 
@@ -31,6 +30,7 @@ class EventTableFileReader;
 class EventColorManager;
 class BlocksVisualisationView;
 class AbstractBrowserModel;
+class BlocksVisualisationModel;
 
 // main window model
 class MainWindowModel : public QObject

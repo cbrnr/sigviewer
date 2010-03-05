@@ -5,6 +5,7 @@
 #include "../base/file_signal_reader.h"
 #include "../gui_signal_buffer.h"
 #include "../abstract_browser_model.h"
+#include "signal_browser_modes.h"
 #include "event_graphics_item.h"
 
 #include <QPointer>
@@ -37,16 +38,6 @@ public:
     typedef FileSignalReader::SignalEventVector SignalEventVector;
     typedef QList<uint16> IntList;
 
-
-    enum Mode
-    {
-        MODE_NEW,
-        MODE_POINTER,
-        MODE_HAND,
-        MODE_SHIFT_SIGNAL
-//        MODE_ZOOM
-    };
-
     SignalBrowserModel(FileSignalReader& reader,
                        MainWindowModel& main_window_model,
                        QSharedPointer<EventTableFileReader const> event_table_file_reader);
@@ -68,8 +59,8 @@ public:
     QTextStream& getLogStream();
     void loadSettings();
     void saveSettings();
-    void setMode(Mode mode);
-    Mode getMode();
+    void setMode(SignalBrowserMode mode);
+    SignalBrowserMode getMode();
 
     void setWholeDataBuffer(SignalBuffer::WHOLE_BUFFER whole_buffer);
     void enableInitDownsampling(bool enabled);
@@ -188,7 +179,7 @@ private:
     QTextStream* log_stream_; // no auto_ptr
     MainWindowModel& main_window_model_;
     State state_;
-    Mode mode_;
+    SignalBrowserMode mode_;
 
 
 
