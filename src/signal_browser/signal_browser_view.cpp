@@ -251,7 +251,7 @@ void SignalBrowserView::updateWidgets (bool update_view)
 {
     if (update_view)
         graphics_view_->viewport()->update();
-    y_axis_widget_->update();
+    y_axis_widget_->updateAllChannels();
     x_axis_widget_->update();
     label_widget_->update();
 }

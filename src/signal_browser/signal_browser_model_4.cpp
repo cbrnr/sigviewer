@@ -1035,7 +1035,6 @@ void SignalBrowserModel::setEventChanged(int32 id)
         signal_browser_view_->addEventGraphicsItem(event_item);
     }
 
-    signal_browser_view_->updateWidgets();
     main_window_model_.setChanged();
     if (!selected_event_item_.isNull())
         if (selected_event_item_->getId() == id)
@@ -1044,7 +1043,7 @@ void SignalBrowserModel::setEventChanged(int32 id)
 
 //-----------------------------------------------------------------------------
 // remove event
-void SignalBrowserModel::removeEvent(uint32 id, bool update)
+void SignalBrowserModel::removeEvent(uint32 id, bool)
 {
     Int2EventGraphicsItemPtrMap::iterator it = id2event_item_.find(id);
 
@@ -1062,11 +1061,6 @@ void SignalBrowserModel::removeEvent(uint32 id, bool update)
     // delete event_item;
     signal_buffer_.removeEvent(id);
     signal_browser_view_->removeEventGraphicsItem(event_item);
-
-    if (update)
-    {
-        signal_browser_view_->updateWidgets();
-    }
 
     main_window_model_.setChanged();
     main_window_model_.setSelectionState(MainWindowModel::SELECTION_STATE_NONE);
@@ -1252,8 +1246,6 @@ void SignalBrowserModel::copySelectedEventToChannels()
             CommandStack::instance().executeEditCommand (new_event_command);
         }
     }
-
-    signal_browser_view_->updateWidgets();
 }
 
 //-----------------------------------------------------------------------------

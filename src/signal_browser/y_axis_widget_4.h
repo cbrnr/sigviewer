@@ -30,6 +30,7 @@ public slots:
     void changeSignalSpacing (unsigned signal_spacing);
     void changeYStart (int32 y_start);
     void updateChannel (int32 channel_nr);
+    void updateAllChannels ();
 
 private:
     virtual void paintEvent(QPaintEvent* event = 0);

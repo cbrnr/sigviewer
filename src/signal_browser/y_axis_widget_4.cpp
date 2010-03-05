@@ -86,10 +86,17 @@ void YAxisWidget::changeYStart (int y_start)
 //-----------------------------------------------------------------------------
 void YAxisWidget::updateChannel (int32)
 {
+    // TODO: repaint selective and not all!!
     repaintPixmap ();
     update ();
 }
 
+//-----------------------------------------------------------------------------
+void YAxisWidget::updateAllChannels ()
+{
+    repaintPixmap ();
+    update ();
+}
 
 
 //-----------------------------------------------------------------------------
