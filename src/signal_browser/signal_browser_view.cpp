@@ -86,6 +86,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     // graphics_view_->setVerticalScrollBarPolicy(setViewportMargins(0, 0, 0, 0);
     //graphics_view_->setOptimizationFlag(QGraphicsView::DontClipPainter, true);
     graphics_view_->setMinimumSize(0, 0);
+    graphics_view_->setFrameStyle(QFrame::NoFrame);
     setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     loadSettings();
 

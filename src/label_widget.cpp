@@ -66,8 +66,8 @@ void LabelWidget::paintEvent(QPaintEvent*)
     p.drawLine(0, y_start, 0, y_end);
 
     // labels
-    float64 float_y_start = floor(y_start / intervall) * intervall;
-    float64 float_y_end = ceil(y_end / intervall) * intervall;
+    float64 float_y_start = y_start;//floor(static_cast<float64>(y_start) / intervall) * intervall;
+    float64 float_y_end = y_end;//ceil(y_end / intervall) * intervall;
     QMap<int32, QString>::iterator iter = channel_nr2label_.begin();
 
     for (float32 float_y = signal_height / 2;
@@ -82,21 +82,11 @@ void LabelWidget::paintEvent(QPaintEvent*)
         }
     }
 
-    // markers
-    float_y_start = ceil((y_start - signal_height - signal_spacing / 2) /
-                         intervall) *
-                    intervall + signal_height + signal_spacing / 2;
-
-    float_y_end = min(floor((y_end + signal_height + signal_spacing / 2) /
-                            intervall), channel_nr2label_.size()) *
-                  intervall - signal_spacing / 2 + intervall / 2;
-
-    for (float32 float_y = float_y_start;
-         float_y < float_y_end;
+    for (float32 float_y = 0;
+         float_y <= intervall * channel_nr2label_.size();
          float_y += intervall)
     {
-        int32 y = (int32)(float_y + 0.5);
-        p.drawLine(0, y, w - 1, y);
+        p.drawLine(0, float_y, w - 1, float_y);
     }
 }
 
