@@ -824,7 +824,7 @@ void SignalBrowserModel::updateEventItemsImpl ()
 
         int32 event_width = (int32)(pixel_per_sec_ *
                                     (float64)event->getDuration() /
-                                    signal_buffer_.getEventSamplerate() + 0.5);
+                                    signal_buffer_.getEventSamplerate());// + 0.5);
 
         event_width = std::max(event_width, 1);
 
@@ -835,7 +835,7 @@ void SignalBrowserModel::updateEventItemsImpl ()
 
         event_iter.value()->setZValue(EVENT_Z + event->getType() / 100000.0);
         int32 event_x = (int32)(pixel_per_sec_ * (float64)event->getPosition() /
-                                signal_buffer_.getEventSamplerate() + 0.5);
+                                signal_buffer_.getEventSamplerate());// + 0.5);
 
         event_iter.value()->setPos(event_x, y_pos_iter->second);
         event_iter.value()->updateColor();
@@ -1011,7 +1011,7 @@ void SignalBrowserModel::setEventChanged(int32 id)
                         channel2signal_item_.size();
         int32 event_width = (int32)(pixel_per_sec_ *
                                     (float64)event->getDuration() /
-                                    signal_buffer_.getEventSamplerate() + 0.5);
+                                    signal_buffer_.getEventSamplerate());// + 0.5);
 
         event_width = std::max(event_width, 1);
         event_item->setPos(event_item->pos().x(), y_pos_iter->second);
@@ -1027,7 +1027,7 @@ void SignalBrowserModel::setEventChanged(int32 id)
 
         event_item->setZValue(EVENT_Z + event->getType() / 100000.0);
         int32 event_x = (int32)(pixel_per_sec_ * (float64)event->getPosition() /
-                                signal_buffer_.getEventSamplerate() + 0.5);
+                                signal_buffer_.getEventSamplerate());// + 0.5);
 
         event_item->setPos(event_x, event_item->pos().y());
         event_item->updateColor();
@@ -1436,7 +1436,7 @@ void SignalBrowserModel::resetEventSizeAndPos (QSharedPointer<EventGraphicsItem>
 
     int32 event_width = (int32)(pixel_per_sec_ *
                                (float64)signal_event->getDuration() /
-                               signal_buffer_.getEventSamplerate() + 0.5);
+                               signal_buffer_.getEventSamplerate());// + 0.5);
 
     event_width = std::max(event_width, 1);
 
@@ -1447,7 +1447,7 @@ void SignalBrowserModel::resetEventSizeAndPos (QSharedPointer<EventGraphicsItem>
 
     event->setZValue(EVENT_Z + signal_event->getType() / 100000.0);
     int32 event_x = (int32)(pixel_per_sec_ * (float64)signal_event->getPosition() /
-                            signal_buffer_.getEventSamplerate() + 0.5);
+                            signal_buffer_.getEventSamplerate());// + 0.5);
 
     event->setPos(event_x, y_pos_iter->second);
     event->updateColor();

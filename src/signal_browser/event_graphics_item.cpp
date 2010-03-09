@@ -248,7 +248,7 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
             break;
         case STATE_MOVE_BEGIN:
             {
-                int32 diff = (mouse_event->pos().x() - mouse_event->lastPos().x());
+                int32 diff = (mouse_event->scenePos().x() - mouse_event->lastScenePos().x());
                 setPos (pos().x() + diff, pos().y());
                 width_ -= diff;
                 setSize (width_, height_);
@@ -291,8 +291,8 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
     {
         case STATE_MOVE_BEGIN:
         {
-            uint32 pos = x() * signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit();
-            int32 dur = width_ * (signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit());
+            uint32 pos = (signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit()) * x();
+            int32 dur = (signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit()) * width_;
 
             ResizeEventUndoCommand* command = new ResizeEventUndoCommand (signal_browser_model_, signal_event_, pos, dur);
             CommandStack::instance().executeEditCommand (command);

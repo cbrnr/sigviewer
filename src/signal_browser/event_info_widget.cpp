@@ -74,13 +74,13 @@ EventInfoWidget::EventInfoWidget(QWidget* parent,
     selected_event_group_box->setLayout (info_layout);
     layout_->addWidget (selected_event_group_box);
 
-    hovered_info_label_ = new QLabel ();
-    hovered_info_label_->setWordWrap (true);
-    QGroupBox* hovered_event_group_box = new QGroupBox (tr("Hovered Events"), this);
-    QVBoxLayout* hovered_layout = new QVBoxLayout (hovered_event_group_box);
-    hovered_layout->addWidget (hovered_info_label_);
-    hovered_event_group_box->setLayout(hovered_layout);
-    layout_->addWidget (hovered_event_group_box);
+//    hovered_info_label_ = new QLabel ();
+//    hovered_info_label_->setWordWrap (true);
+//    QGroupBox* hovered_event_group_box = new QGroupBox (tr("Hovered Events"), this);
+//    QVBoxLayout* hovered_layout = new QVBoxLayout (hovered_event_group_box);
+//    hovered_layout->addWidget (hovered_info_label_);
+//    hovered_event_group_box->setLayout(hovered_layout);
+//    layout_->addWidget (hovered_event_group_box);
 
     setLayout(layout_);
     foreach (QWidget* widget, disabled_widgets_if_nothing_selected_)
@@ -220,7 +220,7 @@ void EventInfoWidget::updateHoveredInfoLabel ()
         text.append (signal_browser_model_->getEventName(iterator.value()->getType()));
         ++iterator;
     }
-    hovered_info_label_->setText (text);
+    // hovered_info_label_->setText (text);
 }
 
 
