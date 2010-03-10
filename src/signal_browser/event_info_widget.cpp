@@ -59,7 +59,7 @@ EventInfoWidget::EventInfoWidget(QWidget* parent,
     duration_spinbox_->setSuffix (tr("s"));
     duration_spinbox_->setMinimum (0);
     duration_spinbox_->setSingleStep (0.1);
-    duration_spinbox_->setDecimals (3);
+    duration_spinbox_->setDecimals (2);
     duration_spinbox_->setKeyboardTracking (false);
     connect (duration_spinbox_, SIGNAL(valueChanged(double)), this, SLOT(selfChangedDuration(double)));
     disabled_widgets_if_nothing_selected_.push_back(duration_spinbox_);
