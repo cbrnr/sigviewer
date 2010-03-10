@@ -47,9 +47,11 @@ public:
     virtual QRectF boundingRect () const;
     virtual void mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event);
     virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event);
-    virtual void hoverMoveEvent (QGraphicsSceneHoverEvent * event);
-    virtual void hoverEnterEvent (QGraphicsSceneHoverEvent* event);
-    virtual void hoverLeaveEvent (QGraphicsSceneHoverEvent* event);
+
+    // have to be implemented otherwise
+//    virtual void hoverMoveEvent (QGraphicsSceneHoverEvent * event);
+//    virtual void hoverEnterEvent (QGraphicsSceneHoverEvent* event);
+//    virtual void hoverLeaveEvent (QGraphicsSceneHoverEvent* event);
 
 signals:
     void mouseAtSecond (float64 sec);

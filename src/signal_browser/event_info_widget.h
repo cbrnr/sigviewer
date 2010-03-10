@@ -14,6 +14,7 @@
 #include <QDoubleSpinBox>
 #include <QList>
 #include <QMap>
+#include <QMutex>
 
 #include <map>
 #include <set>
@@ -51,6 +52,9 @@ private slots:
 
 private:
     void updateHoveredInfoLabel ();
+    void setSelfUpdating (bool self_updating);
+    bool isSelfUpdating ();
+
 
     QSharedPointer<SignalBrowserModel> signal_browser_model_;
     uint16 event_creation_type_;
@@ -69,6 +73,9 @@ private:
     QPushButton* insert_event_button_;
     QVBoxLayout* layout_;
     QLabel* hovered_info_label_;
+
+    QMutex self_updating_mutex_;
+    bool self_updating_;
 };
 
 }

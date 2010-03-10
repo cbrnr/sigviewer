@@ -26,6 +26,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 
 namespace BioSig_
 {
@@ -824,7 +825,7 @@ void SignalBrowserModel::updateEventItemsImpl ()
 
         int32 event_width = (int32)(pixel_per_sec_ *
                                     (float64)event->getDuration() /
-                                    signal_buffer_.getEventSamplerate());// + 0.5);
+                                    signal_buffer_.getEventSamplerate() + 0.5);
 
         event_width = std::max(event_width, 1);
 
@@ -835,7 +836,9 @@ void SignalBrowserModel::updateEventItemsImpl ()
 
         event_iter.value()->setZValue(EVENT_Z + event->getType() / 100000.0);
         int32 event_x = (int32)(pixel_per_sec_ * (float64)event->getPosition() /
-                                signal_buffer_.getEventSamplerate());// + 0.5);
+                                signal_buffer_.getEventSamplerate() + 0.5);
+
+        std::cout << "event_x (updateEventItemsImpl) = " << event_x << std::endl;
 
         event_iter.value()->setPos(event_x, y_pos_iter->second);
         event_iter.value()->updateColor();
@@ -1007,14 +1010,16 @@ void SignalBrowserModel::setEventChanged(int32 id)
     }
     else
     {
+        float64 factor = pixel_per_sec_ / signal_buffer_.getEventSamplerate();
         int32 height = (signal_height_  + signal_spacing_) *
                         channel2signal_item_.size();
-        int32 event_width = (int32)(pixel_per_sec_ *
-                                    (float64)event->getDuration() /
-                                    signal_buffer_.getEventSamplerate());// + 0.5);
+        int32 event_width = (factor * event->getDuration()) + 0.5;//(int32)(pixel_per_sec_ *
+                            //        (float64)event->getDuration() /
+                            //        signal_buffer_.getEventSamplerate() + 0.5);
 
         event_width = std::max(event_width, 1);
-        event_item->setPos(event_item->pos().x(), y_pos_iter->second);
+//        std::cout << "event_x (setEventChanged) = " << event_item->pos().x() << std::endl;
+//        event_item->setPos(event_item->pos().x(), y_pos_iter->second);
 
         if (event->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
         {
@@ -1026,19 +1031,21 @@ void SignalBrowserModel::setEventChanged(int32 id)
         }
 
         event_item->setZValue(EVENT_Z + event->getType() / 100000.0);
-        int32 event_x = (int32)(pixel_per_sec_ * (float64)event->getPosition() /
-                                signal_buffer_.getEventSamplerate());// + 0.5);
+        int32 event_x = (factor * event->getPosition()) + 0.5;//(int32)(pixel_per_sec_ * (float64)event->getPosition() /
+                        //        signal_buffer_.getEventSamplerate() + 0.5);
 
-        event_item->setPos(event_x, event_item->pos().y());
+        std::cout << "event_x (setEventChanged) = " << event_x << "; pos = " << event->getPosition() << std::endl;
+        event_item->setPos(event_x, y_pos_iter->second);
         event_item->updateColor();
         event_item->show();
         signal_browser_view_->addEventGraphicsItem(event_item);
     }
 
     main_window_model_.setChanged();
+
     if (!selected_event_item_.isNull())
         if (selected_event_item_->getId() == id)
-            eventSelected(event);
+            emit eventSelected(event);
 }
 
 //-----------------------------------------------------------------------------
@@ -1436,7 +1443,7 @@ void SignalBrowserModel::resetEventSizeAndPos (QSharedPointer<EventGraphicsItem>
 
     int32 event_width = (int32)(pixel_per_sec_ *
                                (float64)signal_event->getDuration() /
-                               signal_buffer_.getEventSamplerate());// + 0.5);
+                               signal_buffer_.getEventSamplerate() + 0.5);
 
     event_width = std::max(event_width, 1);
 
@@ -1447,8 +1454,9 @@ void SignalBrowserModel::resetEventSizeAndPos (QSharedPointer<EventGraphicsItem>
 
     event->setZValue(EVENT_Z + signal_event->getType() / 100000.0);
     int32 event_x = (int32)(pixel_per_sec_ * (float64)signal_event->getPosition() /
-                            signal_buffer_.getEventSamplerate());// + 0.5);
+                            signal_buffer_.getEventSamplerate() + 0.5);
 
+    std::cout << "event_x (resetEventSizeAndPos) = " << event_x << std::endl;
     event->setPos(event_x, y_pos_iter->second);
     event->updateColor();
     //event->show();

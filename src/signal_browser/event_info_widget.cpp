@@ -11,6 +11,7 @@
 #include <QPushButton>
 #include <QAction>
 #include <QGroupBox>
+#include <QMutexLocker>
 
 #include <cmath>
 #include <set>
@@ -96,6 +97,7 @@ EventInfoWidget::~EventInfoWidget()
 //-------------------------------------------------------------------
 void EventInfoWidget::updateSelectedEventInfo (QSharedPointer<SignalEvent> selected_signal_event)
 {
+    setSelfUpdating (true);
     selected_signal_event_ = selected_signal_event;
     if (selected_signal_event_.isNull())
     {
@@ -111,6 +113,7 @@ void EventInfoWidget::updateSelectedEventInfo (QSharedPointer<SignalEvent> selec
         duration_spinbox_->setValue(selected_signal_event->getDurationInSec());
         start_label_->setText(QString::number(round(selected_signal_event->getPositionInSec()*100)/100) + QString(" s"));
     }
+    setSelfUpdating (false);
 }
 
 //-------------------------------------------------------------------
@@ -162,13 +165,17 @@ void EventInfoWidget::selfChangedCreationType (int combo_box_index)
     if (event_creation_type_ != new_type)
     {
         event_creation_type_ = new_type;
-        emit eventCreationTypeChanged (event_creation_type_);
+        if (!isSelfUpdating())
+            emit eventCreationTypeChanged (event_creation_type_);
     }
 }
 
 //-------------------------------------------------------------------
 void EventInfoWidget::selfChangedType (int combo_box_index)
 {
+    if (isSelfUpdating())
+        return;
+
     uint16 event_type = event_type_combobox_->itemData(combo_box_index).toUInt();
 
     if (event_type != selected_signal_event_->getType())
@@ -183,6 +190,8 @@ void EventInfoWidget::selfChangedType (int combo_box_index)
 void EventInfoWidget::selfChangedDuration (double new_duration)
 {
     if (selected_signal_event_.isNull())
+        return;
+    if (isSelfUpdating())
         return;
 
     int rounding_factor = pow (10, duration_spinbox_->decimals());
@@ -222,6 +231,21 @@ void EventInfoWidget::updateHoveredInfoLabel ()
     }
     // hovered_info_label_->setText (text);
 }
+
+//-------------------------------------------------------------------
+void EventInfoWidget::setSelfUpdating (bool self_updating)
+{
+    QMutexLocker locker (&self_updating_mutex_);
+    self_updating_ = self_updating;
+}
+
+//-------------------------------------------------------------------
+bool EventInfoWidget::isSelfUpdating ()
+{
+    QMutexLocker locker (&self_updating_mutex_);
+    return self_updating_;
+}
+
 
 
 }

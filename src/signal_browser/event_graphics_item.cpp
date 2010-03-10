@@ -59,6 +59,8 @@ int32 EventGraphicsItem                                                         
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::setSize (int32 width, int32 height)
 {
+    if (signal_event_->getId() == 0)
+        std::cout << "changing width from " << width_ << " to " << width << std::endl;
     width_ = width;
     height_ = height;
 }
@@ -248,21 +250,25 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
             break;
         case STATE_MOVE_BEGIN:
             {
+                float64 factor = signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit();
                 int32 diff = (mouse_event->scenePos().x() - mouse_event->lastScenePos().x());
-                setPos (pos().x() + diff, pos().y());
-                width_ -= diff;
-                setSize (width_, height_);
+                int32 old_pos = pos().x();
+                int32 new_pos = (((old_pos + diff) * factor) / factor) + 0.5;
+                width_ = (((width_ - (new_pos - old_pos)) * factor) / factor) + 0.5;
+                std::cout << "new pos moving = " << new_pos << std::endl;
+                setPos (new_pos, pos().y());
                 emit mouseAtSecond (static_cast<float>(pos().x())  / signal_browser_model_.getPixelPerXUnit());
             }
             break;
         case STATE_MOVE_END:
             {
-                int32 diff = (mouse_event->pos().x() - mouse_event->lastPos().x());
-                width_ += diff;
+                int32 diff = (mouse_event->scenePos().x() - mouse_event->lastScenePos().x());
+                float64 factor = signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit();
+                width_ = (((width_ + diff) * factor) / factor) + 0.5;
                 if (diff > 0)
-                    scene()->update (mouse_pos.x() - diff, pos().y(), diff + 5, height_);
+                    scene()->update (mouse_pos.x() - diff - 20, pos().y(), diff + 40, height_);
                 else
-                    scene()->update (mouse_pos.x(), pos().y(), (-diff) + 5, height_);
+                    scene()->update (mouse_pos.x() - 20, pos().y(), (-diff) + 40, height_);
                 emit mouseAtSecond (static_cast<float>(pos().x() + width_)  / signal_browser_model_.getPixelPerXUnit());
             }
             break;
@@ -291,16 +297,31 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
     {
         case STATE_MOVE_BEGIN:
         {
-            uint32 pos = (signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit()) * x();
-            int32 dur = (signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit()) * width_;
+//            int32 diff = (event->pos().x() - event->lastPos().x());
+//            float64 factor = signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit();
+//            width_ = (((width_ + diff) * factor) / factor) + 0.5;
+//            int32 dur = width_ * (signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit());
+//            uint32 pos = factor * x();
 
-            ResizeEventUndoCommand* command = new ResizeEventUndoCommand (signal_browser_model_, signal_event_, pos, dur);
+            float64 factor = signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit();
+            int32 diff = 0; //(event->scenePos().x() - event->lastScenePos().x());
+            int32 old_pos = pos().x();
+            int32 new_pos = (((old_pos + diff) * factor) / factor) + 0.5;
+            width_ = (((width_ - (new_pos - old_pos)) * factor) / factor) + 0.5;
+            std::cout << "new pos = " << new_pos << "; pos = " << (new_pos * factor) + 0.5 << std::endl;
+            setPos (new_pos, pos().y());
+            int32 dur = (factor * width_) + 0.5;
+
+            ResizeEventUndoCommand* command = new ResizeEventUndoCommand (signal_browser_model_, signal_event_, (new_pos * factor) + 0.5, dur);
             CommandStack::instance().executeEditCommand (command);
         }
         break;
         case STATE_MOVE_END:
         {
-            int32 dur = width_ * (signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit());
+            int32 diff = (event->pos().x() - event->lastPos().x());
+            float64 factor = signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit();
+            width_ = (((width_ + diff) * factor) / factor) + 0.5;
+            int32 dur = (factor * width_) + 0.5;
             ResizeEventUndoCommand* command = new ResizeEventUndoCommand (signal_browser_model_, signal_event_, signal_event_->getPosition(), dur);
             CommandStack::instance().executeEditCommand (command);
         }
@@ -314,33 +335,33 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
 }
 
 //-----------------------------------------------------------------------------
-void EventGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent * event )
-{
-    event->ignore ();
-    QSharedPointer<EventGraphicsItem> item = signal_browser_model_.getSelectedEventItem();
-    if (!(item.isNull()))
-    {
-        if ((event->scenePos().x() > item->pos().x() && event->scenePos().x() < item->pos().x() + 5)
-            || (event->scenePos().x() < item->pos().x() + item->width_ && event->scenePos().x() > item->pos().x() + item->width_ - 5))
-            setCursor(QCursor(Qt::SizeHorCursor));
-        else
-            setCursor(QCursor(Qt::ArrowCursor));
-    }
-}
+//void EventGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent * event )
+//{
+//    event->ignore ();
+//    QSharedPointer<EventGraphicsItem> item = signal_browser_model_.getSelectedEventItem();
+//    if (!(item.isNull()))
+//    {
+//        if ((event->scenePos().x() > item->pos().x() && event->scenePos().x() < item->pos().x() + 5)
+//            || (event->scenePos().x() < item->pos().x() + item->width_ && event->scenePos().x() > item->pos().x() + item->width_ - 5))
+//            setCursor(QCursor(Qt::SizeHorCursor));
+//        else
+//            setCursor(QCursor(Qt::ArrowCursor));
+//    }
+//}
 
-//-----------------------------------------------------------------------------
-void EventGraphicsItem::hoverEnterEvent (QGraphicsSceneHoverEvent* event)
-{
-    event->ignore ();
-    emit hoverEnterSignalEvent (signal_event_);
-}
-
-//-----------------------------------------------------------------------------
-void EventGraphicsItem::hoverLeaveEvent (QGraphicsSceneHoverEvent* event)
-{
-    event->ignore ();
-    emit hoverLeaveSignalEvent (signal_event_);
-}
+////-----------------------------------------------------------------------------
+//void EventGraphicsItem::hoverEnterEvent (QGraphicsSceneHoverEvent* event)
+//{
+//    event->ignore ();
+//    emit hoverEnterSignalEvent (signal_event_);
+//}
+//
+////-----------------------------------------------------------------------------
+//void EventGraphicsItem::hoverLeaveEvent (QGraphicsSceneHoverEvent* event)
+//{
+//    event->ignore ();
+//    emit hoverLeaveSignalEvent (signal_event_);
+//}
 
 
 //-----------------------------------------------------------------------------
