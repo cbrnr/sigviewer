@@ -89,9 +89,10 @@ public:
     // channels
     void addChannel(uint32 channel_nr);
     void removeChannel(uint32 channel_nr);
-    bool isChannelShown(uint32 channel_nr);
+    bool isChannelShown(uint32 channel_nr) const;
     std::map<uint32, QString> getShownChannels () const;
-    uint32 getNumberShownChannels();
+    uint32 getNumberShownChannels() const;
+    int32 getYPosOfChannel (uint32 channel_nr) const;
 /*
     int32 getChannelNr(uint32 shown_nr);
 */
@@ -188,7 +189,6 @@ private:
 
     typedef std::map<int32, int32> Int2IntMap;
 
-    void resetEventSizeAndPos (QSharedPointer<EventGraphicsItem> event);
     bool checkReadyState(const QString& function);
     bool checkSignalBrowserPtr(const QString function);
     void updateEventItemsImpl ();

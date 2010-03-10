@@ -34,24 +34,23 @@ public:
 
     int32 getId() const;
 
-    void setSize (int32 width, int32 height);
-    void startMouseMoveEnd ();
+    //void setSize (int32 width, int32 height);
     void setSelected (bool selected);
     QSharedPointer<SignalEvent> getSignalEvent ();
     QSharedPointer<SignalEvent const> getSignalEvent () const;
-    void updateColor ();
+    //void updateColor ();
 
     static bool displayContextMenu (QGraphicsSceneContextMenuEvent * event);
     static bool displaySelectionMenu (QGraphicsSceneMouseEvent* event);
 
-    virtual QRectF boundingRect () const;
-    virtual void mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event);
-    virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event);
 
     // have to be implemented otherwise
 //    virtual void hoverMoveEvent (QGraphicsSceneHoverEvent * event);
 //    virtual void hoverEnterEvent (QGraphicsSceneHoverEvent* event);
 //    virtual void hoverLeaveEvent (QGraphicsSceneHoverEvent* event);
+
+public slots:
+    void updateToSignalEvent ();
 
 signals:
     void mouseAtSecond (float64 sec);
@@ -59,7 +58,12 @@ signals:
     void hoverEnterSignalEvent (QSharedPointer<SignalEvent const>);
     void hoverLeaveSignalEvent (QSharedPointer<SignalEvent const>);
 
-protected:
+private:
+    virtual QRectF boundingRect () const;
+    virtual void mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event);
+    virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event);
+
+
     enum Action
     {
         ACTION_NONE,

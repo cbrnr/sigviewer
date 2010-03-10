@@ -26,7 +26,6 @@
 
 #include <cmath>
 #include <algorithm>
-#include <iostream>
 
 namespace BioSig_
 {
@@ -292,7 +291,7 @@ void SignalBrowserModel::removeChannel(uint32 channel_nr)
 
 //-----------------------------------------------------------------------------
 // is signal shown
-bool SignalBrowserModel::isChannelShown(uint32 channel_nr)
+bool SignalBrowserModel::isChannelShown(uint32 channel_nr) const
 {
     return channel2signal_item_.find(channel_nr) != channel2signal_item_.end();
 }
@@ -313,10 +312,22 @@ std::map<uint32, QString> SignalBrowserModel::getShownChannels () const
 
 //-----------------------------------------------------------------------------
 // get number shown channels
-uint32 SignalBrowserModel::getNumberShownChannels()
+uint32 SignalBrowserModel::getNumberShownChannels() const
 {
     return channel2signal_item_.size();
 }
+
+//-----------------------------------------------------------------------------
+int32 SignalBrowserModel::getYPosOfChannel (uint32 channel_nr) const
+{
+    Int2IntMap::const_iterator y_iter =
+             channel2y_pos_.find(channel_nr);
+    if (y_iter != channel2y_pos_.end())
+        return y_iter->second;
+    else
+        return 0;
+}
+
 
 //-----------------------------------------------------------------------------
 SignalBuffer const& SignalBrowserModel::getSignalBuffer () const
@@ -485,21 +496,6 @@ void SignalBrowserModel::setItemsHeight(int32 height)
 {
     signal_height_ = height;
     emit signalHeightChanged (height);
-    // TODO: reimplement!
-//    if (!checkSignalBrowserPtr("setSignalHeight") ||
-//        !checkReadyState("setSignalHeight"))
-//    {
-//        return;
-//    }
-//
-//    int32 x = signal_browser_->getCanvasView()->contentsX();
-//    int32 y  = (int32)(signal_browser_->getCanvasView()->contentsY() *
-//                       (height + signal_spacing_) /
-//                       (signal_height_ + signal_spacing_));
-//
-//    signal_height_ = height;
-//    updateLayout();
-//    signal_browser_->getCanvasView()->setContentsPos(x, y);
 }
 
 // get signal height
@@ -527,30 +523,6 @@ void SignalBrowserModel::updateLayout()
     dialog->hide();
     delete dialog;
 
-    // TODO: implement other items!!!
-    /*
-    // navigation item
-    navigation_item_->setSize(width, height);
-    navigation_item_->setX(0);
-    navigation_item_->setY(0);
-    navigation_item_->setZ(NAVIGATION_Z);
-    navigation_item_->show();
-
-    // x grid
-    x_grid_item_->setSize(width, height);
-    x_grid_item_->setX(0);
-    x_grid_item_->setY(0);
-    x_grid_item_->setZ(X_GRID_Z);
-
-    x_grid_item_->setVisible(show_x_grid_);
-
-    // channel separator
-    channel_separator_item_->setSize(width, height);
-    channel_separator_item_->setX(0);
-    channel_separator_item_->setY(0);
-    channel_separator_item_->setZ(CHANNEL_SEPARATOR_Z);
-    channel_separator_item_->show();
-    */
     // singanls position
     channel2y_pos_.clear();
     channel2y_pos_[SignalEvent::UNDEFINED_CHANNEL] = 0;
@@ -562,7 +534,6 @@ void SignalBrowserModel::updateLayout()
          signal_iter++, y_pos += signal_height_ + signal_spacing_)
     {
         channel2y_pos_[signal_iter->first] = y_pos;
-//        signal_iter->second->setCacheMode (QGraphicsItem::NoCache);
         signal_iter->second->setHeight (signal_height_);
         signal_iter->second->setPos (0, y_pos); // FIXME: why "/2" ????
         signal_iter->second->setZValue(SIGNAL_Z);
@@ -572,8 +543,6 @@ void SignalBrowserModel::updateLayout()
         signal_iter->second->enableXGrid(show_x_grid_);
         signal_browser_view_->addSignalGraphicsItem(signal_iter->first, signal_iter->second);
         signal_iter->second->show();
-
-//        signal_iter->second->setCacheMode (QGraphicsItem::DeviceCoordinateCache);
     }
 
     updateEventItemsImpl ();
@@ -651,21 +620,6 @@ void SignalBrowserModel::unselectEvent ()
     emit eventSelected (QSharedPointer<SignalEvent>(0));
 }
 
-
-/*
-// set signal spacing
-void SignalBrowserModel::setSignalSpacing(int32 spacing)
-{
-    if (!checkSignalBrowserPtr("setSignalSpacing") ||
-        !checkReadyState("setSignalSpacing"))
-    {
-        return;
-    }
-
-    signal_spacing_ = spacing;
-    updateLayout();
-}
-*/
 // get signal spacing
 int32 SignalBrowserModel::getSignalSpacing()
 {
@@ -677,71 +631,7 @@ int32 SignalBrowserModel::getVisibleWidth()
 {
     return signal_browser_view_->getVisibleWidth();
 }
-/*
-// canvas view content moving
-void SignalBrowserModel::canvasViewContentMoving(int content_x, int content_y)
-{
-    if (!checkSignalBrowserPtr("canvasViewContentMoving") ||
-        !checkReadyState("canvasViewContentMoving"))
-    {
-        return;
-    }
 
-    SmartCanvasView* canvas_view = signal_browser_->getCanvasView();
-    int32 visible_height = canvas_view->visibleHeight();
-    int32 signal_view_y = 0;
-    Int2SignalCanvasItemPtrMap::iterator iter;
-
-    for (iter = channel2signal_item_.begin();
-         iter != channel2signal_item_.end();
-         iter++)
-    {
-        if (signal_view_y + signal_height_ > content_y &&
-            signal_view_y < content_y + visible_height)
-        {
-            signal_buffer_.setChannelActive(iter.key(), true);
-        }
-        else
-        {
-            signal_buffer_.setChannelActive(iter.key(), false); // prediction
-        }
-
-        signal_view_y += signal_height_ + signal_spacing_;
-    }
-}
-
-// set prefered x grid pixel intervall
-void SignalBrowserModel::setPreferedXGirdPixelIntervall(int32 pixel_intervall)
-{
-    if (!checkSignalBrowserPtr("setPreferedXGirdPixelIntervall") ||
-        !checkReadyState("setPreferedXGirdPixelIntervall"))
-    {
-        return;
-    }
-
-    prefered_x_grid_pixel_intervall_ = pixel_intervall;
-    updateLayout();
-}
-
-// set prefered y grid pixel intervall
-void SignalBrowserModel::setPreferedYGirdPixelIntervall(int32 pixel_intervall)
-{
-    if (!checkSignalBrowserPtr("setPreferedYGirdPixelIntervall") ||
-        !checkReadyState("setPreferedYGirdPixelIntervall"))
-    {
-        return;
-    }
-
-    prefered_y_grid_pixel_intervall_ = pixel_intervall;
-    updateLayout();
-}
-
-// get prefered x grid pixel intervall
-int32 SignalBrowserModel::getPreferedXGirdPixelIntervall()
-{
-    return prefered_x_grid_pixel_intervall_;
-}
-*/
 // get prefered y grid pixel intervall
 int32 SignalBrowserModel::getPreferedYGirdPixelIntervall()
 {
@@ -753,10 +643,6 @@ float64 SignalBrowserModel::getXGridPixelIntervall()
 {
     return x_grid_pixel_intervall_;
 }
-
-
-
-
 
 // check ready state
 inline bool SignalBrowserModel::checkReadyState(const QString& function)
@@ -822,26 +708,7 @@ void SignalBrowserModel::updateEventItemsImpl ()
 
             continue; // event type or channel not shown
         }
-
-        int32 event_width = (int32)(pixel_per_sec_ *
-                                    (float64)event->getDuration() /
-                                    signal_buffer_.getEventSamplerate() + 0.5);
-
-        event_width = std::max(event_width, 1);
-
-        if (event->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
-            event_iter.value()->setSize(event_width, height);
-        else
-            event_iter.value()->setSize(event_width, signal_height_);
-
-        event_iter.value()->setZValue(EVENT_Z + event->getType() / 100000.0);
-        int32 event_x = (int32)(pixel_per_sec_ * (float64)event->getPosition() /
-                                signal_buffer_.getEventSamplerate() + 0.5);
-
-        std::cout << "event_x (updateEventItemsImpl) = " << event_x << std::endl;
-
-        event_iter.value()->setPos(event_x, y_pos_iter->second);
-        event_iter.value()->updateColor();
+        event_iter.value()->updateToSignalEvent ();
 
         signal_browser_view_->addEventGraphicsItem(event_iter.value());
 
@@ -1010,33 +877,7 @@ void SignalBrowserModel::setEventChanged(int32 id)
     }
     else
     {
-        float64 factor = pixel_per_sec_ / signal_buffer_.getEventSamplerate();
-        int32 height = (signal_height_  + signal_spacing_) *
-                        channel2signal_item_.size();
-        int32 event_width = (factor * event->getDuration()) + 0.5;//(int32)(pixel_per_sec_ *
-                            //        (float64)event->getDuration() /
-                            //        signal_buffer_.getEventSamplerate() + 0.5);
-
-        event_width = std::max(event_width, 1);
-//        std::cout << "event_x (setEventChanged) = " << event_item->pos().x() << std::endl;
-//        event_item->setPos(event_item->pos().x(), y_pos_iter->second);
-
-        if (event->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
-        {
-            event_item->setSize(event_width, height);
-        }
-        else
-        {
-            event_item->setSize(event_width, signal_height_);
-        }
-
-        event_item->setZValue(EVENT_Z + event->getType() / 100000.0);
-        int32 event_x = (factor * event->getPosition()) + 0.5;//(int32)(pixel_per_sec_ * (float64)event->getPosition() /
-                        //        signal_buffer_.getEventSamplerate() + 0.5);
-
-        std::cout << "event_x (setEventChanged) = " << event_x << "; pos = " << event->getPosition() << std::endl;
-        event_item->setPos(event_x, y_pos_iter->second);
-        event_item->updateColor();
+        event_item->updateToSignalEvent();
         event_item->show();
         signal_browser_view_->addEventGraphicsItem(event_item);
     }
@@ -1065,7 +906,6 @@ void SignalBrowserModel::removeEvent(uint32 id, bool)
     QSharedPointer<EventGraphicsItem> event_item = it.value();
 
     id2event_item_.erase(it);
-    // delete event_item;
     signal_buffer_.removeEvent(id);
     signal_browser_view_->removeEventGraphicsItem(event_item);
 
@@ -1084,8 +924,6 @@ QSharedPointer<EventGraphicsItem> SignalBrowserModel::addEvent(QSharedPointer<Si
 
     id2event_item_[event_id] = event_item;
     setEventChanged(event_id);
-
-    resetEventSizeAndPos(event_item);
     signal_browser_view_->addEventGraphicsItem(event_item);
     event_item->show();
     return event_item;
@@ -1096,9 +934,8 @@ QSharedPointer<EventGraphicsItem> SignalBrowserModel::addEvent(QSharedPointer<Si
 void SignalBrowserModel::addEvent(QSharedPointer<EventGraphicsItem> event)
 {
     int32 event_id = signal_buffer_.addEvent (event->getSignalEvent());
-    //event->set
     id2event_item_[event_id] = event;
-    resetEventSizeAndPos(event);
+    event->updateToSignalEvent();
     signal_browser_view_->addEventGraphicsItem(event);
     event->show();
 }
@@ -1337,26 +1174,6 @@ void SignalBrowserModel::removeSelectedEvent()
     removeEvent(id);
 }
 
-/*
-// get channel nr
-int32 SignalBrowserModel::getChannelNr(uint32 shown_nr)
-{
-    if (static_cast<int32>(shown_nr) >= channel2signal_item_.size())
-    {
-        return -1;
-    }
-
-    Int2SignalCanvasItemPtrMap::iterator it = channel2signal_item_.begin();
-
-    while (shown_nr > 0)
-    {
-        it++;
-        shown_nr--;
-    }
-
-    return it.key();
-}
-*/
 // get events
 void SignalBrowserModel::getEvents(SignalEventVector& event_vector)
 {
@@ -1425,42 +1242,4 @@ bool SignalBrowserModel::isShowAllEventTypes() const
     return false; /// TODO QT4 : RETURN all_event_types_selected_
 }
 
-//-----------------------------------------------------------------------------
-void SignalBrowserModel::resetEventSizeAndPos (QSharedPointer<EventGraphicsItem> event)
-{
-    QSharedPointer<SignalEvent> signal_event (event->getSignalEvent());
-    Int2IntMap::iterator y_pos_iter = channel2y_pos_.find(signal_event->getChannel());
-    int32 height = (signal_height_  + signal_spacing_) *
-                   channel2signal_item_.size();
-
-
-    if (!shown_event_types_.count(signal_event->getType()) ||
-        y_pos_iter == channel2y_pos_.end())
-    {
-        event->hide();
-        return;
-    }
-
-    int32 event_width = (int32)(pixel_per_sec_ *
-                               (float64)signal_event->getDuration() /
-                               signal_buffer_.getEventSamplerate() + 0.5);
-
-    event_width = std::max(event_width, 1);
-
-    if (signal_event->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
-        event->setSize(event_width, height);
-    else
-        event->setSize(event_width, signal_height_);
-
-    event->setZValue(EVENT_Z + signal_event->getType() / 100000.0);
-    int32 event_x = (int32)(pixel_per_sec_ * (float64)signal_event->getPosition() /
-                            signal_buffer_.getEventSamplerate() + 0.5);
-
-    std::cout << "event_x (resetEventSizeAndPos) = " << event_x << std::endl;
-    event->setPos(event_x, y_pos_iter->second);
-    event->updateColor();
-    //event->show();
-}
-
-
-} // namespace PortingToQT4_
+} // namespace BioSig_

@@ -20,7 +20,6 @@
 #include <QPainter>
 
 #include <algorithm>
-#include <iostream>
 
 namespace BioSig_
 {
@@ -57,28 +56,19 @@ int32 EventGraphicsItem                                                         
 
 
 //-----------------------------------------------------------------------------
-void EventGraphicsItem::setSize (int32 width, int32 height)
-{
-    if (signal_event_->getId() == 0)
-        std::cout << "changing width from " << width_ << " to " << width << std::endl;
-    width_ = width;
-    height_ = height;
-}
+//void EventGraphicsItem::setSize (int32 width, int32 height)
+//{
+//    width_ = width;
+//    height_ = height;
+//}
 
-
-//-----------------------------------------------------------------------------
-void EventGraphicsItem::startMouseMoveEnd ()
-{
-    state_ = STATE_MOVE_END;
-    setCursor(QCursor(Qt::SizeHorCursor));
-}
 
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::setSelected (bool selected)
 {
     state_ = STATE_NONE;
     is_selected_ = selected;
-    scene()->update(0, 0, scene()->width(), scene()->height());
+    scene()->update(pos().x(), pos().y(), width_, height_);
 }
 
 //-----------------------------------------------------------------------------
@@ -95,10 +85,10 @@ QSharedPointer<SignalEvent const> EventGraphicsItem::getSignalEvent () const
 
 
 //-----------------------------------------------------------------------------
-void EventGraphicsItem::updateColor()
-{
-    color_ = signal_browser_model_.getEventColor(signal_event_->getType());
-}
+//void EventGraphicsItem::updateColor()
+//{
+//    color_ = signal_browser_model_.getEventColor(signal_event_->getType());
+//}
 
 //-----------------------------------------------------------------------------
 bool EventGraphicsItem::displayContextMenu (QGraphicsSceneContextMenuEvent * event)
@@ -134,6 +124,32 @@ bool EventGraphicsItem::displaySelectionMenu (QGraphicsSceneMouseEvent* event)
     return menu_shown;
 }
 
+//-----------------------------------------------------------------------------
+void EventGraphicsItem::updateToSignalEvent ()
+{
+    float64 factor = signal_browser_model_.getPixelPerXUnit() / signal_buffer_.getEventSamplerate();
+    width_ = factor * signal_event_->getDuration() + 0.5;
+    int32 x_pos = factor * signal_event_->getPosition() + 0.5;
+    int32 y_pos = 0;
+
+    if (signal_event_->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
+        height_ = (signal_browser_model_.getSignalHeight() + signal_browser_model_.getSignalSpacing()) * signal_browser_model_.getNumberShownChannels();
+    else
+    {
+        height_ = signal_browser_model_.getSignalHeight();
+        y_pos = signal_browser_model_.getYPosOfChannel(signal_event_->getChannel());
+    }
+
+
+    color_ = signal_browser_model_.getEventColor(signal_event_->getType());
+
+    /// FIXXME: REMOVE MAGIC NUMBER
+    setZValue (5 + signal_event_->getType() / 100000.0);
+
+
+    setPos (x_pos, y_pos);
+}
+
 
 //-----------------------------------------------------------------------------
 QRectF EventGraphicsItem::boundingRect () const
@@ -142,24 +158,21 @@ QRectF EventGraphicsItem::boundingRect () const
 }
 
 //-----------------------------------------------------------------------------
-void EventGraphicsItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget*)
+void EventGraphicsItem::paint (QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget*)
 {
-    QRectF clip (option->exposedRect);
+    QRect clip (option->exposedRect.toRect());
 
-    // TODO: draw frame if event is selected
     if (is_selected_)
     {
         painter->drawRect(boundingRect());
     }
-    //painter->fillRect(clip, color_);
-    painter->fillRect(boundingRect(), color_);
+
+    painter->fillRect(clip, color_);
 }
 
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
 {
-//    std::cout << "clicked on event " << id_ << std::endl;
-//    event->ignore();
     event_handling_mutex_.lock();
 
     if (state_ != STATE_NONE)
@@ -255,7 +268,6 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
                 int32 old_pos = pos().x();
                 int32 new_pos = (((old_pos + diff) * factor) / factor) + 0.5;
                 width_ = (((width_ - (new_pos - old_pos)) * factor) / factor) + 0.5;
-                std::cout << "new pos moving = " << new_pos << std::endl;
                 setPos (new_pos, pos().y());
                 emit mouseAtSecond (static_cast<float>(pos().x())  / signal_browser_model_.getPixelPerXUnit());
             }
@@ -308,7 +320,6 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
             int32 old_pos = pos().x();
             int32 new_pos = (((old_pos + diff) * factor) / factor) + 0.5;
             width_ = (((width_ - (new_pos - old_pos)) * factor) / factor) + 0.5;
-            std::cout << "new pos = " << new_pos << "; pos = " << (new_pos * factor) + 0.5 << std::endl;
             setPos (new_pos, pos().y());
             int32 dur = (factor * width_) + 0.5;
 
