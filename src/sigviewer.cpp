@@ -28,6 +28,8 @@
 #include "base/user_types.h"
 #include "main_window.h"
 #include "main_window_model.h"
+#include "gui_action_manager.h"
+#include "application_context.h"
 #include "base/event_table_file_reader.h"
 
 #include <stdlib.h>
@@ -43,6 +45,8 @@
 
 using BioSig_::MainWindow;
 using BioSig_::MainWindowModel;
+using BioSig_::GUIActionManager;
+using BioSig_::ApplicationContext;
 
 void myMessageOutput( QtMsgType type, const char* msg )
 {
@@ -108,7 +112,11 @@ int main(int32 argc, char* argv[])
     application.installTranslator(&sigviewer_translator);
 
     MainWindowModel main_window_model;
-    MainWindow main_window(main_window_model);
+    GUIActionManager action_manager (&main_window_model);
+    action_manager.setMode (GUIActionManager::MODE_NO_FILE);
+    ApplicationContext application_context (action_manager, main_window_model);
+    main_window_model.setApplicationContext (&application_context);
+    MainWindow main_window (application_context);
     main_window_model.setMainWindow(&main_window);
     main_window_model.getEventTableFileReader()
         ->load(":/eventcodes.txt");

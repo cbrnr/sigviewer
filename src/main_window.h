@@ -18,7 +18,9 @@ class QLabel;
 namespace BioSig_
 {
 
+class ApplicationContext;
 class MainWindowModel;
+class GUIActionManager;
 
 // main window
 class MainWindow : public QMainWindow
@@ -27,8 +29,8 @@ class MainWindow : public QMainWindow
 
 public:
 
-    MainWindow(MainWindowModel& model);
-    ~MainWindow();
+    MainWindow (ApplicationContext& application_context);
+    ~MainWindow ();
 
     void loadSettings();
     void saveSettings();
@@ -110,6 +112,7 @@ private:
     void initStatusBar();
 
     MainWindowModel& model_;
+    GUIActionManager& action_manager_;
 
     QMenu* file_menu_;
     QMenu* file_recent_files_menu_;

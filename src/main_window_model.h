@@ -31,6 +31,7 @@ class EventColorManager;
 class BlocksVisualisationView;
 class AbstractBrowserModel;
 class BlocksVisualisationModel;
+class ApplicationContext;
 
 // main window model
 class MainWindowModel : public QObject
@@ -62,7 +63,7 @@ public:
     QSharedPointer<EventTableFileReader> getEventTableFileReader();
     EventColorManager& getEventColorManager();
     void setMainWindow(MainWindow* main_window);
-    MainWindow* getMainWindow();
+    void setApplicationContext (ApplicationContext* application_context);
     void loadSettings();
     void saveSettings();
     State getState();
@@ -138,6 +139,7 @@ private:
     void channelSelection ();
 
     MainWindow* main_window_;
+    ApplicationContext* application_context_;
     State state_;
     SelectionState selection_state_;
     std::auto_ptr<FileSignalReader> file_signal_reader_;

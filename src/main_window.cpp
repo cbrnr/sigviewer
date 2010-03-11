@@ -28,6 +28,8 @@
 
 #include "main_window.h"
 #include "main_window_model.h"
+#include "gui_action_manager.h"
+#include "application_context.h"
 
 #include <QAction>
 #include <QMessageBox>
@@ -51,9 +53,10 @@ namespace BioSig_
 {
 
 // constructor
-MainWindow::MainWindow(MainWindowModel& model)
+MainWindow::MainWindow (ApplicationContext& application_context)
  : QMainWindow(0),
-   model_(model)
+   model_(application_context.getMainWindowModel()),
+   action_manager_ (application_context.getGUIActionManager())
 {
     setAcceptDrops (true);
     setWindowIcon(QIcon(":images/sigviewer16.png"));
@@ -520,28 +523,20 @@ void MainWindow::toggleStatusBar (bool visible)
 }
 
 
-// init menus
+//-----------------------------------------------------------------------------
 void MainWindow::initMenus()
 {
-    file_menu_ = menuBar()->addMenu(tr("&File"));
-    file_menu_->addAction(file_open_action_);
-    file_menu_->addAction(file_save_action_);
-    file_menu_->addAction(file_save_as_action_);
-    file_menu_->addSeparator();
-    file_menu_->addAction(file_export_events_action_);
-    file_menu_->addAction(file_import_events_action_);
-    file_menu_->addSeparator();
-    file_menu_->addAction(file_info_action_);
-    file_menu_->addSeparator();
-    file_recent_files_menu_ = file_menu_->addMenu(tr("&Recent Files"));
+    QList<QAction*> file_menu_actions =
+            action_manager_.getActionsOfGroup(GUIActionManager::FILE_ACTIONS);
+    file_recent_files_menu_ = new QMenu(tr("Open &Recent"), this);
     connect(file_recent_files_menu_, SIGNAL(aboutToShow()),
             &model_, SLOT(recentFileMenuAboutToShow()));
     connect(file_recent_files_menu_, SIGNAL(triggered(QAction*)),
             &model_, SLOT(recentFileActivated(QAction*)));
-    file_menu_->addSeparator();
-    file_menu_->addAction(file_close_action_);
-    file_menu_->addSeparator();
-    file_menu_->addAction(file_exit_action_);
+    file_menu_actions.insert (1, file_recent_files_menu_->menuAction());
+    file_menu_ = new QMenu(tr("File"), this);
+    file_menu_->addActions(file_menu_actions);
+    menuBar()->addMenu(file_menu_);
 
     edit_menu_ = menuBar()->addMenu(tr("&Edit"));
     edit_menu_->addAction(undo_action_);

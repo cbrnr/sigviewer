@@ -17,6 +17,8 @@
 #include "event_color_manager.h"
 #include "settings_dialog.h"
 #include "command_stack.h"
+#include "application_context.h"
+#include "gui_action_manager.h"
 
 #include "abstract_browser_model.h"
 
@@ -98,11 +100,13 @@ void MainWindowModel::setMainWindow(MainWindow* main_window)
     setState(STATE_FILE_CLOSED);
 }
 
-// get main window
-MainWindow* MainWindowModel::getMainWindow()
+//-----------------------------------------------------------------------------
+void MainWindowModel::setApplicationContext (ApplicationContext*
+                                             application_context)
 {
-    return main_window_;
+    application_context_ = application_context;
 }
+
 
 // void load settings
 void MainWindowModel::loadSettings()
@@ -177,6 +181,10 @@ void MainWindowModel::setState(MainWindowModel::State state)
             break;
 
         case STATE_FILE_CLOSED:
+            if (application_context_)
+            {
+                application_context_->getGUIActionManager().setMode(GUIActionManager::MODE_NO_FILE);
+            }
             if (main_window_)
             {
                 main_window_->setWindowTitle("SigViewer");
@@ -208,6 +216,10 @@ void MainWindowModel::setState(MainWindowModel::State state)
             break;
 
         case STATE_FILE_OPENED:
+            if (application_context_)
+            {
+                application_context_->getGUIActionManager().setMode(GUIActionManager::MODE_FILE_OPEN);
+            }
             if (main_window_)
             {
                 QString caption = "SigViewer - [%1]";
