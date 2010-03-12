@@ -183,7 +183,7 @@ void MainWindowModel::setState(MainWindowModel::State state)
         case STATE_FILE_CLOSED:
             if (application_context_)
             {
-                application_context_->getGUIActionManager().setMode(GUIActionManager::MODE_NO_FILE);
+                application_context_->getGUIActionManager().setApplicationState(ApplicationContext::NO_FILE_OPEN);
             }
             if (main_window_)
             {
@@ -218,7 +218,7 @@ void MainWindowModel::setState(MainWindowModel::State state)
         case STATE_FILE_OPENED:
             if (application_context_)
             {
-                application_context_->getGUIActionManager().setMode(GUIActionManager::MODE_FILE_OPEN);
+                application_context_->getGUIActionManager().setApplicationState(ApplicationContext::FILE_OPEN);
             }
             if (main_window_)
             {

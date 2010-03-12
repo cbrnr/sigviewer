@@ -527,7 +527,7 @@ void MainWindow::toggleStatusBar (bool visible)
 void MainWindow::initMenus()
 {
     QList<QAction*> file_menu_actions =
-            action_manager_.getActionsOfGroup(GUIActionManager::FILE_ACTIONS);
+            action_manager_.getActionsOfGroup(GUIActionManager::FILE_MENU_ACTIONS);
     file_recent_files_menu_ = new QMenu(tr("Open &Recent"), this);
     connect(file_recent_files_menu_, SIGNAL(aboutToShow()),
             &model_, SLOT(recentFileMenuAboutToShow()));

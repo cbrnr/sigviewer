@@ -113,7 +113,6 @@ int main(int32 argc, char* argv[])
 
     MainWindowModel main_window_model;
     GUIActionManager action_manager (&main_window_model);
-    action_manager.setMode (GUIActionManager::MODE_NO_FILE);
     ApplicationContext application_context (action_manager, main_window_model);
     main_window_model.setApplicationContext (&application_context);
     MainWindow main_window (application_context);

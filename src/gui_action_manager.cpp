@@ -9,53 +9,54 @@ namespace BioSig_
 
 //-----------------------------------------------------------------------------
 GUIActionManager::GUIActionManager (MainWindowModel* main_window_model)
-    : mode_ (MODE_ZERO),
-      main_window_model_ (main_window_model)
+    : main_window_model_ (main_window_model),
+      application_state_ (ApplicationContext::NO_FILE_OPEN),
+      file_state_ (FileContext::UNCHANGED)
 {
     QStyle* style = QApplication::style ();
 
+    action_map_[ACTION_SEPARATOR] = new QAction (this);
+    action_map_[ACTION_SEPARATOR]->setSeparator (true);
+
     // init file actions
-    addAction (FILE_ACTIONS, tr("&Open..."), SLOT(fileOpenAction()),
-               tr("Open a signal file"), MODE_ZERO, QKeySequence::Open,
+    createAction (ACTION_FILE_OPEN, tr("&Open..."), SLOT(fileOpenAction()),
+               tr("Open a signal file"),
                style->standardIcon (QStyle::SP_DialogOpenButton));
 
-    addAction (FILE_ACTIONS, tr("&Save..."), SLOT(fileSaveAction()),
-               tr("Save signal file"), MODE_NO_FILE, QKeySequence::Save,
+    createAction (ACTION_FILE_SAVE, tr("&Save..."), SLOT(fileSaveAction()),
+               tr("Save signal file"),
                style->standardIcon (QStyle::SP_DialogSaveButton));
 
-    addAction (FILE_ACTIONS, tr("Save As..."), SLOT(fileSaveAsAction()),
-               tr("Save the signal file under a new name"), MODE_NO_FILE,
-               QKeySequence::SaveAs);
+    createAction (ACTION_FILE_SAVE_AS, tr("Save As..."), SLOT(fileSaveAsAction()),
+               tr("Save the signal file under a new name"));
 
-    addSeparator (FILE_ACTIONS);
+    createAction (ACTION_EXPORT_EVENTS, tr("Export Events..."),
+                  SLOT(fileExportEventsAction()),
+                   tr("Export events to file"));
 
-    addAction (FILE_ACTIONS, tr("Export Events..."),
-               SLOT(fileExportEventsAction()),
-               tr("Export events to file"), MODE_NO_FILE);
+    createAction (ACTION_IMPORT_EVENTS, tr("Import Events..."),
+                  SLOT(fileImportEventsAction()),
+                  tr("Import events from file"));
 
-    addAction (FILE_ACTIONS, tr("Import Events..."),
-               SLOT(fileImportEventsAction()),
-               tr("Import events from file"), MODE_NO_FILE);
+    createAction (ACTION_FILE_INFO, tr("&Info..."), SLOT(fileInfoAction()),
+                  tr("Show the basic information of the signal file"),
+                  style->standardIcon (QStyle::SP_MessageBoxInformation));
 
-    addSeparator (FILE_ACTIONS);
+    createAction (ACTION_FILE_CLOSE, tr("&Close"), SLOT(fileCloseAction()),
+                  tr("Close the opened signal file"),
+                  style->standardIcon (QStyle::SP_DockWidgetCloseButton));
 
-    addAction (FILE_ACTIONS, tr("&Info..."), SLOT(fileInfoAction()),
-               tr("Show the basic information of the signal file"),
-               MODE_NO_FILE, tr(""),
-               style->standardIcon (QStyle::SP_MessageBoxInformation));
 
-    addSeparator (FILE_ACTIONS);
+    createAction (ACTION_EXIT, tr("E&xit"), SLOT(fileExitAction()),
+                  tr("Exit the application"),
+                  style->standardIcon (QStyle::SP_DialogCloseButton));
 
-    addAction (FILE_ACTIONS, tr("&Close"), SLOT(fileCloseAction()),
-               tr("Close the opened signal file"), MODE_NO_FILE, tr(""),
-               style->standardIcon (QStyle::SP_DockWidgetCloseButton));
 
-    addSeparator (FILE_ACTIONS);
-
-    addAction (FILE_ACTIONS, tr("E&xit"), SLOT(fileExitAction()),
-               tr("Exit the application"), MODE_ZERO, QKeySequence::Quit,
-               style->standardIcon (QStyle::SP_DialogCloseButton));
-
+    initShortcuts ();
+    initGroups ();
+    initDisabledStates ();
+    setApplicationState (application_state_);
+    setFileState (file_state_);
 }
 
 //-----------------------------------------------------------------------------
@@ -65,36 +66,37 @@ GUIActionManager::~GUIActionManager ()
     // GUIActionManager object!
 }
 
-//-----------------------------------------------------------------------------
-void GUIActionManager::setMode (Mode mode)
+//-------------------------------------------------------------------------
+void GUIActionManager::setApplicationState (ApplicationContext::State
+                                            application_state)
 {
-    ActionModeMap::iterator mode_iter =
-            disabled_actions_in_mode_map_.find (mode_);
+    ActionAppStateMap::iterator state_iter =
+            app_state_action_map_.find (application_state_);
+    if (state_iter != app_state_action_map_.end ())
+        setActionsEnabled (state_iter->second, true);
 
-    if (mode_iter != disabled_actions_in_mode_map_.end())
-    {
-        for (ActionList::iterator action_iter = mode_iter->second.begin();
-             action_iter != mode_iter->second.end ();
-             ++action_iter)
-        {
-            (*action_iter)->setEnabled (true);
-        }
-    }
+    application_state_ = application_state;
 
-    mode_ = mode;
-
-    mode_iter = disabled_actions_in_mode_map_.find (mode_);
-    if (mode_iter != disabled_actions_in_mode_map_.end())
-    {
-        for (ActionList::iterator action_iter = mode_iter->second.begin();
-             action_iter != mode_iter->second.end ();
-             ++action_iter)
-        {
-            (*action_iter)->setEnabled (false);
-        }
-    }
-
+    state_iter = app_state_action_map_.find (application_state_);
+    if (state_iter != app_state_action_map_.end ())
+        setActionsEnabled (state_iter->second, false);
 }
+
+//-------------------------------------------------------------------------
+void GUIActionManager::setFileState (FileContext::State file_state)
+{
+    ActionFileStateMap::iterator state_iter =
+            file_state_action_map_.find (file_state_);
+    if (state_iter != file_state_action_map_.end ())
+        setActionsEnabled (state_iter->second, true);
+
+    file_state_ = file_state;
+
+    state_iter = file_state_action_map_.find (file_state_);
+    if (state_iter != file_state_action_map_.end ())
+        setActionsEnabled (state_iter->second, false);
+}
+
 
 //-----------------------------------------------------------------------------
 QMenu* GUIActionManager::getGroupAsMenu (ActionGroup group, QString const& title,
@@ -108,7 +110,16 @@ QMenu* GUIActionManager::getGroupAsMenu (ActionGroup group, QString const& title
              action_iter != group_iter->second.end ();
              ++action_iter)
         {
-            menu->addAction (*action_iter);
+            ActionMap::iterator action = action_map_.find (*action_iter);
+            if (action == action_map_.end())
+                menu->addAction (tr("ACTION NOT INITIALIZED!!!!"));
+            else
+            {
+                if (action->second->isSeparator ())
+                    menu->addSeparator ();
+                else
+                    menu->addAction (action->second);
+            }
         }
     }
     return menu;
@@ -125,7 +136,16 @@ QList<QAction*> GUIActionManager::getActionsOfGroup (ActionGroup group)
              action_iter != group_iter->second.end ();
              ++action_iter)
         {
-            list.append (*action_iter);
+            ActionMap::iterator action = action_map_.find (*action_iter);
+            if (action == action_map_.end())
+                list.append (new QAction (tr("ACTION NOT INITIALIZED!!!!"), this));
+            else
+            {
+                if (action->second->isSeparator ())
+                    list.append (createSeparator());
+                else
+                    list.append (action->second);
+            }
         }
     }
     return list;
@@ -133,33 +153,98 @@ QList<QAction*> GUIActionManager::getActionsOfGroup (ActionGroup group)
 
 
 //-----------------------------------------------------------------------------
-void GUIActionManager::addAction (ActionGroup group, QString const& text,
-                                  char const * const slot,
-                                  QString const& status_tip,
-                                  Mode mode_of_disabledness,
-                                  QKeySequence const& short_cut,
-                                  QIcon const& icon)
+void GUIActionManager::initShortcuts ()
+{
+    setShortCut (ACTION_FILE_OPEN, QKeySequence::Open);
+    setShortCut (ACTION_FILE_SAVE, QKeySequence::Save);
+    setShortCut (ACTION_FILE_SAVE, QKeySequence::SaveAs);
+}
+
+//-----------------------------------------------------------------------------
+void GUIActionManager::initGroups ()
+{
+    // FILE_MENU_ACTIONS
+    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_FILE_OPEN);
+    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_FILE_SAVE);
+    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_FILE_SAVE_AS);
+    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
+    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_IMPORT_EVENTS);
+    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_EXPORT_EVENTS);
+    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
+    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_FILE_INFO);
+    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
+    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_FILE_CLOSE);
+    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
+    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_EXIT);
+
+
+    // FILE_TOOLBAR_ACTIONS
+    action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_FILE_OPEN);
+    action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_FILE_SAVE);
+    action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_FILE_SAVE_AS);
+    action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_FILE_INFO);
+    action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_FILE_CLOSE);
+}
+
+//-----------------------------------------------------------------------------
+void GUIActionManager::initDisabledStates ()
+{
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_FILE_SAVE);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_FILE_SAVE_AS);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_IMPORT_EVENTS);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_EXPORT_EVENTS);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_FILE_INFO);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_FILE_CLOSE);
+}
+
+
+//-----------------------------------------------------------------------------
+void GUIActionManager::createAction (GUIAction action_id,
+                                     QString const& text,
+                                     char const * const slot,
+                                     QString const& status_tip,
+                                     QIcon const& icon)
 {
     QAction* action = new QAction (text, this);
     if (!icon.isNull())
         action->setIcon (icon);
-    if (!short_cut.isEmpty())
-        action->setShortcut (short_cut);
     if (!status_tip.isEmpty())
         action->setStatusTip (status_tip);
     main_window_model_->connect (action, SIGNAL(triggered()), slot);
-    action_group_map_[group].push_back (action);
-    if (mode_of_disabledness != MODE_ZERO)
-        disabled_actions_in_mode_map_[mode_of_disabledness].push_back (action);
+    action_map_[action_id] = action;
 }
 
-//-----------------------------------------------------------------------------
-void GUIActionManager::addSeparator (ActionGroup group)
+//-------------------------------------------------------------------------
+QAction* GUIActionManager::createSeparator ()
 {
-    QAction* action = new QAction (this);
-    action->setSeparator (true);
-    action_group_map_[group].push_back (action);
+    QAction* separator = new QAction (this);
+    separator->setSeparator (true);
+    return separator;
 }
+
+
+//-------------------------------------------------------------------------
+void GUIActionManager::setShortCut (GUIAction const&  gui_action,
+                                    QKeySequence const& key_sequence)
+{
+    ActionMap::iterator action_iter = action_map_.find (gui_action);
+    if (action_iter != action_map_.end())
+        action_map_[gui_action]->setShortcut (key_sequence);
+}
+
+//-------------------------------------------------------------------------
+void GUIActionManager::setActionsEnabled (ActionList& action_list, bool enabled)
+{
+    for (ActionList::iterator action_iter = action_list.begin();
+         action_iter != action_list.end ();
+         ++action_iter)
+    {
+        ActionMap::iterator action = action_map_.find (*action_iter);
+        if (action != action_map_.end())
+            action->second->setEnabled (enabled);
+    }
+}
+
 
 
 } // namespace BioSig_

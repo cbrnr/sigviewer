@@ -56,7 +56,8 @@ HEADERS += basic_header_info_dialog.h \
     event_time_selection_dialog.h \
     abstract_browser_model.h \
     gui_action_manager.h \
-    application_context.h
+    application_context.h \
+    file_context.h
 SOURCES += basic_header_info_dialog.cpp \
     channel_selection_dialog.cpp \
     copy_event_dialog.cpp \
@@ -78,4 +79,5 @@ SOURCES += basic_header_info_dialog.cpp \
     fit_view_to_event_view_undo_command.cpp \
     event_time_selection_dialog.cpp \
     gui_action_manager.cpp \
-    application_context.cpp
+    application_context.cpp \
+    file_context.cpp

@@ -24,6 +24,14 @@ MainWindowModel& ApplicationContext::getMainWindowModel ()
     return main_window_model_;
 }
 
+//-----------------------------------------------------------------------------
+void ApplicationContext::setState (State state)
+{
+    state_ = state;
+    emit stateChanged (state_);
+}
+
+
 
 
 } // namespace BioSig_
