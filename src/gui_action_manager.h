@@ -39,7 +39,7 @@ public:
     //-------------------------------------------------------------------------
     enum ActionGroup
     {
-        EVENT_EDITING_ACTIONS,
+        EVENT_EDITING_MENU_ACTIONS,
         FILE_MENU_ACTIONS,
         FILE_TOOLBAR_ACTIONS
     };
@@ -104,7 +104,7 @@ private:
     void createAction (GUIAction action_id,
                        QString const& text,
                        char const * const slot,
-                       QString const& status_tip = tr(""),
+                       QString const& status_tip,
                        QIcon const& icon = QIcon ());
 
     //-------------------------------------------------------------------------

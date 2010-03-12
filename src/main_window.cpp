@@ -94,12 +94,6 @@ void MainWindow::initStatusBar()
 // init icons sets
 void MainWindow::initIconSets()
 {
-    file_open_icon_.addFile(":/images/fileopen_22x22.png");
-    file_save_icon_.addFile(":/images/save_22x22.png");
-    file_save_as_icon_.addFile(":/images/save_as_22x22.png");
-    file_close_icon_.addFile(":/images/fileclose_22x22.png");
-    file_info_icon_.addFile(":/images/file_info_22x22.png");
-    file_exit_icon_.addFile(":/images/exit_22x22.png");
     edit_to_all_channels_icon_.addFile(":/images/to_all_channels_22x22.png");
     edit_copy_to_channels_icon_.addFile(":/images/copy_to_channels_22x22.png");
     edit_delete_icon_.addFile(":/images/delete_22x22.png");
@@ -163,59 +157,6 @@ void MainWindow::initActions()
     redo_action_->setShortcut(tr("Ctrl+Shift+Z"));
     connect(redo_action_, SIGNAL(triggered()),
             &model_, SLOT(redoAction()));
-
-
-    file_open_action_ = new QAction(file_open_icon_, tr("&Open..."), this);
-    file_open_action_->setObjectName("file_open_action_");
-    file_open_action_->setShortcut(tr("Ctrl+O"));
-    file_open_action_->setStatusTip(tr("Open a signal file"));
-    connect(file_open_action_, SIGNAL(triggered()),
-            &model_, SLOT(fileOpenAction()));
-
-    file_save_action_ = new QAction(file_save_icon_, tr("&Save..."), this);
-    file_save_action_->setObjectName("file_save_action_");
-    file_save_action_->setShortcut(tr("Ctrl+S"));
-    file_save_action_->setStatusTip(tr("Save signal file"));
-    connect(file_save_action_, SIGNAL(triggered()),
-            &model_, SLOT(fileSaveAction()));
-
-    file_save_as_action_ = new QAction(file_save_as_icon_, tr("Save As..."),
-                                       this);
-    file_save_as_action_->setObjectName("file_save_as_action_");
-    file_save_as_action_->setStatusTip(tr("Save the signal file under a new name"));
-    connect(file_save_as_action_, SIGNAL(triggered()),
-            &model_, SLOT(fileSaveAsAction()));
-
-    file_export_events_action_ = new QAction(tr("Export Events..."), this);
-    file_export_events_action_->setObjectName("file_export_events_action_");
-    file_export_events_action_->setStatusTip(tr("Export events to file"));
-    connect(file_export_events_action_, SIGNAL(triggered()),
-            &model_, SLOT(fileExportEventsAction()));
-
-    file_import_events_action_ = new QAction(tr("Import Events..."), this);
-    file_import_events_action_->setObjectName("file_import_events_action_");
-    file_import_events_action_->setStatusTip(tr("Import events from file"));
-    connect(file_import_events_action_, SIGNAL(triggered()),
-            &model_, SLOT(fileImportEventsAction()));
-
-    file_close_action_ = new QAction(file_close_icon_, tr("&Close"), this);
-    file_close_action_->setObjectName("file_close_action_");
-    file_close_action_->setStatusTip(tr("Close the opened signal file"));
-    connect(file_close_action_, SIGNAL(triggered()),
-            &model_, SLOT(fileCloseAction()));
-
-    file_info_action_ = new QAction(file_info_icon_, tr("&Info..."), this);
-    file_info_action_->setObjectName("file_info_action_");
-    //file_info_action_->setShortcut(tr("Ctrl+I"));
-    file_info_action_->setStatusTip(tr("Show the basic information of the signal file"));
-    connect(file_info_action_, SIGNAL(triggered()),
-            &model_, SLOT(fileInfoAction()));
-
-    file_exit_action_ = new QAction(file_exit_icon_, tr("E&xit"), this);
-    file_exit_action_->setObjectName("file_exit_action_");
-    file_exit_action_->setStatusTip(tr("Exit the application"));
-    connect(file_exit_action_, SIGNAL(triggered()),
-            &model_, SLOT(fileExitAction()));
 
     edit_to_all_channels_action_ = new QAction(edit_to_all_channels_icon_,
                                                tr("To &all Channels..."), this);
@@ -413,12 +354,8 @@ void MainWindow::initToolBars()
 
     file_toolbar_ = addToolBar(tr("File"));
     view_toolbar_views_menu_->addAction (file_toolbar_->toggleViewAction());
-    file_toolbar_->setIconSize(QSize(22, 22));
-    file_toolbar_->addAction(file_open_action_);
-    file_toolbar_->addAction(file_save_action_);
-    file_toolbar_->addAction(file_save_as_action_);
-    file_toolbar_->addAction(file_info_action_);
-    file_toolbar_->addAction(file_close_action_);
+    file_toolbar_->addActions (action_manager_.getActionsOfGroup(GUIActionManager::FILE_TOOLBAR_ACTIONS));
+
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
     view_toolbar_views_menu_->addAction (mouse_mode_toolbar_->toggleViewAction());
@@ -651,42 +588,6 @@ void MainWindow::saveSettings()
     settings.setValue("size", size());
     settings.setValue("pos", pos());
     settings.endGroup();
-}
-
-// set file save enabled
-void MainWindow::setFileSaveEnabled(bool enabled)
-{
-    file_save_action_->setEnabled(enabled);
-}
-
-// set file save as enabled
-void MainWindow::setFileSaveAsEnabled(bool enabled)
-{
-    file_save_as_action_->setEnabled(enabled);
-}
-
-// set file export events enabled
-void MainWindow::SetFileExportEventsEnabled(bool enabled)
-{
-    file_export_events_action_->setEnabled(enabled);
-}
-
-// set file import events enabled
-void MainWindow::SetFileImportEventsEnabled(bool enabled)
-{
-    file_import_events_action_->setEnabled(enabled);
-}
-
-// set file close enabled
-void MainWindow::setFileCloseEnabled(bool enabled)
-{
-    file_close_action_->setEnabled(enabled);
-}
-
-// set file info enabled
-void MainWindow::setFileInfoEnabled(bool enabled)
-{
-    file_info_action_->setEnabled(enabled);
 }
 
 // set edit to all channels enabled

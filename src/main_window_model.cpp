@@ -188,12 +188,6 @@ void MainWindowModel::setState(MainWindowModel::State state)
             if (main_window_)
             {
                 main_window_->setWindowTitle("SigViewer");
-                main_window_->setFileSaveEnabled(false);
-                main_window_->setFileSaveAsEnabled(false);
-                main_window_->SetFileExportEventsEnabled(false);
-                main_window_->SetFileImportEventsEnabled(false);
-                main_window_->setFileCloseEnabled(false);
-                main_window_->setFileInfoEnabled(false);
                 main_window_->setEditEventTableEnabled(false);
                 main_window_->setEditChangeTypeEnabled(false);
                 main_window_->setMouseModeNewEnabled(false);
@@ -225,12 +219,6 @@ void MainWindowModel::setState(MainWindowModel::State state)
                 QString caption = "SigViewer - [%1]";
                 caption = caption.arg(file_signal_reader_->getBasicHeader()->getFullFileName());
                 main_window_->setWindowTitle(caption);
-                main_window_->setFileSaveEnabled(false);
-                main_window_->setFileSaveAsEnabled(true);
-                main_window_->SetFileExportEventsEnabled(true);
-                main_window_->SetFileImportEventsEnabled(true);
-                main_window_->setFileCloseEnabled(true);
-                main_window_->setFileInfoEnabled(true);
                 main_window_->setEditEventTableEnabled(true);
                 main_window_->setEditChangeTypeEnabled(true);
                 main_window_->setMouseModeNewEnabled(true);
@@ -256,12 +244,6 @@ void MainWindowModel::setState(MainWindowModel::State state)
                 QString caption = "SigViewer - [%1*]";
                 caption = caption.arg(file_signal_reader_->getBasicHeader()->getFullFileName());
                 main_window_->setWindowTitle(caption);
-                main_window_->setFileSaveEnabled(true);
-                main_window_->setFileSaveAsEnabled(true);
-                main_window_->SetFileExportEventsEnabled(true);
-                main_window_->SetFileImportEventsEnabled(true);
-                main_window_->setFileCloseEnabled(true);
-                main_window_->setFileInfoEnabled(true);
                 main_window_->setEditEventTableEnabled(true);
                 main_window_->setEditChangeTypeEnabled(true);
                 main_window_->setMouseModeNewEnabled(true);

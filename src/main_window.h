@@ -36,12 +36,6 @@ public:
     void saveSettings();
 
     // enable,disable actions
-    void setFileSaveEnabled(bool enabled);
-    void setFileSaveAsEnabled(bool enabled);
-    void SetFileExportEventsEnabled(bool enabled);
-    void SetFileImportEventsEnabled(bool enabled);
-    void setFileCloseEnabled(bool enabled);
-    void setFileInfoEnabled(bool enabled);
     void setEditToAllChannelsEnabled(bool enabled);
     void setEditCopyToChannelsEnabled(bool enabled);
     void setEditDeleteEnabled(bool enabled);
@@ -138,14 +132,6 @@ private:
     QAction* redo_view_action_;
     QAction* undo_action_;
     QAction* redo_action_;
-    QAction* file_open_action_;
-    QAction* file_save_action_;
-    QAction* file_save_as_action_;
-    QAction* file_export_events_action_;
-    QAction* file_import_events_action_;
-    QAction* file_close_action_;
-    QAction* file_info_action_;
-    QAction* file_exit_action_;
     QAction* edit_to_all_channels_action_;
     QAction* edit_fast_insert_event_action_;
     QAction* edit_copy_to_channels_action_;
@@ -172,12 +158,6 @@ private:
     QAction* help_about_action_;
     QAction* options_show_settings_action_;
 
-    QIcon file_open_icon_;
-    QIcon file_save_icon_;
-    QIcon file_save_as_icon_;
-    QIcon file_close_icon_;
-    QIcon file_info_icon_;
-    QIcon file_exit_icon_;
     QIcon edit_to_all_channels_icon_;
     QIcon edit_copy_to_channels_icon_;
     QIcon edit_delete_icon_;
