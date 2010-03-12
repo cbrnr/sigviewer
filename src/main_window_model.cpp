@@ -1407,7 +1407,8 @@ void MainWindowModel::channelSelection ()
         return; // user cancel
     }
 
-    signal_browser_model_->enableInitMinMaxSearch(channel_dialog.isInitRangeSearch());
+    //signal_browser_model_->enableInitMinMaxSearch(channel_dialog.isInitRangeSearch());
+    signal_browser_model_->enableInitMinMaxSearch (true);
 
     for (uint32 channel_nr = 0;
          channel_nr < file_signal_reader_->getBasicHeader()->getNumberChannels();

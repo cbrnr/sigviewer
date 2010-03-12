@@ -31,10 +31,10 @@ public:
 
     bool isSelected(uint32 channel_nr);
     void setSelected(uint32 channel_nr, bool selected);
-    bool isInitRangeSearch() const;
-    uint32 wholeSubsampling() const;
-    float32 rangeMin() const;
-    float32 rangeMax() const;
+//    bool isInitRangeSearch() const;
+//    uint32 wholeSubsampling() const;
+//    float32 rangeMin() const;
+//    float32 rangeMax() const;
 
 private:
     // not allowed
@@ -58,9 +58,9 @@ private:
  private slots:
     void unselectAll();
     void selectAll();
-    void maxChanged(double value);
-    void minChanged(double value);
-    void rangeSearchChanged(bool checked);
+//    void maxChanged(double value);
+//    void minChanged(double value);
+//    void rangeSearchChanged(bool checked);
 };
 
 } // namespace BioSig_
