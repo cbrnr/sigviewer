@@ -193,10 +193,10 @@ void MainWindowModel::setState(MainWindowModel::State state)
                 main_window_->setWindowTitle("SigViewer");
                 //main_window_->setEditEventTableEnabled(false);
                 //main_window_->setEditChangeTypeEnabled(false);
-                main_window_->setMouseModeNewEnabled(false);
-                main_window_->setMouseModePointerEnabled(false);
-                main_window_->setMouseModeHandEnabled(false);
-                main_window_->setMouseModeShiftSignalEnabled(false);
+                //main_window_->setMouseModeNewEnabled(false);
+//                main_window_->setMouseModePointerEnabled(false);
+//                main_window_->setMouseModeHandEnabled(false);
+//                main_window_->setMouseModeShiftSignalEnabled(false);
 //                main_window_->setMouseModeZoomEnabled(false);
                 main_window_->setOptionsChannelsEnabled(false);
                 main_window_->setOptionsShowEventsEnabled(false);
@@ -224,10 +224,10 @@ void MainWindowModel::setState(MainWindowModel::State state)
                 main_window_->setWindowTitle(caption);
                 //main_window_->setEditEventTableEnabled(true);
                 //main_window_->setEditChangeTypeEnabled(true);
-                main_window_->setMouseModeNewEnabled(true);
-                main_window_->setMouseModePointerEnabled(true);
-                main_window_->setMouseModeHandEnabled(true);
-                main_window_->setMouseModeShiftSignalEnabled(true);
+//                main_window_->setMouseModeNewEnabled(true);
+//                main_window_->setMouseModePointerEnabled(true);
+//                main_window_->setMouseModeHandEnabled(true);
+//                main_window_->setMouseModeShiftSignalEnabled(true);
 //                main_window_->setMouseModeZoomEnabled(true);
                 main_window_->setOptionsChannelsEnabled(true);
                 main_window_->setOptionsShowEventsEnabled(true);
@@ -249,10 +249,10 @@ void MainWindowModel::setState(MainWindowModel::State state)
                 main_window_->setWindowTitle(caption);
                 //main_window_->setEditEventTableEnabled(true);
                 //main_window_->setEditChangeTypeEnabled(true);
-                main_window_->setMouseModeNewEnabled(true);
-                main_window_->setMouseModePointerEnabled(true);
-                main_window_->setMouseModeHandEnabled(true);
-                main_window_->setMouseModeShiftSignalEnabled(true);
+//                main_window_->setMouseModeNewEnabled(true);
+//                main_window_->setMouseModePointerEnabled(true);
+//                main_window_->setMouseModeHandEnabled(true);
+//                main_window_->setMouseModeShiftSignalEnabled(true);
 //                main_window_->setMouseModeZoomEnabled(true);
                 main_window_->setOptionsChannelsEnabled(true);
                 main_window_->setOptionsShowEventsEnabled(true);
@@ -944,11 +944,6 @@ void MainWindowModel::openFile(const QString& file_name)
 
     tab_widget_->show();
     signal_browser_->show();
-
-
-    // mouse mode
-    main_window_->setMouseMode(signal_browser_model_->getMode());
-
 
     // set signals per page to all
     int32 nr_shown_channels = signal_browser_model_->getNumberShownChannels();

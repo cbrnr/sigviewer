@@ -94,11 +94,6 @@ void MainWindow::initStatusBar()
 // init icons sets
 void MainWindow::initIconSets()
 {
-    mouse_mode_new_icon_.addFile(":/images/new_22x22.png");
-    mouse_mode_pointer_icon_.addFile(":/images/pointer_22x22.png");
-    mouse_mode_hand_icon_.addFile(":/images/hand_22x22.png");
-    mouse_mode_shift_signal_icon_.addFile(":/images/shift_signal_22x22.png");
-    mouse_mode_zoom_icon_.addFile(":/images/zoom_22x22.png");
     view_zoom_in_icon_.addFile(":/images/zoom_in_22x22.png");
     view_zoom_out_icon_.addFile(":/images/zoom_out_22x22.png");
     view_auto_scale_icon_.addFile(":/images/auto_scale_22x22.png");
@@ -140,58 +135,6 @@ void MainWindow::initActions()
     calculate_erd_ers_map_action_->setEnabled(false);
     connect(calculate_erd_ers_map_action_, SIGNAL(triggered()),
             &model_, SLOT(calculateERDERSMap()));
-
-    QActionGroup* mouse_mode_action_group = new QActionGroup(this);
-    mouse_mode_action_group->setExclusive(true);
-
-    mouse_mode_new_action_ = new QAction(mouse_mode_new_icon_,
-                                         tr("&New Events"), mouse_mode_action_group);
-    mouse_mode_new_action_->setObjectName("mouse_mode_new_action_");
-    mouse_mode_new_action_->setCheckable(true);
-    mouse_mode_new_action_->setShortcut(tr("Ctrl+1"));
-    mouse_mode_new_action_->setStatusTip(tr("Set new events"));
-    connect(mouse_mode_new_action_, SIGNAL(triggered()),
-            &model_, SLOT(mouseModeNewAction()));
-
-    mouse_mode_pointer_action_ = new QAction(mouse_mode_pointer_icon_,
-                                             tr("&Edit Events"),
-                                             mouse_mode_action_group);
-    mouse_mode_pointer_action_->setObjectName("mouse_mode_pointer_action_");
-    mouse_mode_pointer_action_->setCheckable(true);
-    mouse_mode_pointer_action_->setShortcut(tr("Ctrl+2"));
-    mouse_mode_pointer_action_->setStatusTip(tr("Edit existing events"));
-    connect(mouse_mode_pointer_action_, SIGNAL(triggered()),
-            &model_, SLOT(mouseModePointerAction()));
-
-    mouse_mode_hand_action_ = new QAction(mouse_mode_hand_icon_,
-                                             tr("&Scroll"),
-                                             mouse_mode_action_group);
-    mouse_mode_hand_action_->setObjectName("mouse_mode_hand_action_");
-    mouse_mode_hand_action_->setCheckable(true);
-    mouse_mode_hand_action_->setShortcut(tr("Ctrl+3"));
-    mouse_mode_hand_action_->setStatusTip(tr("Scroll signal file (All Modes: MiddleMousePress)"));
-    connect(mouse_mode_hand_action_, SIGNAL(triggered()),
-            &model_, SLOT(mouseModeHandAction()));
-
-    mouse_mode_shift_signal_action_ = new QAction(mouse_mode_shift_signal_icon_,
-                                                  tr("&Shift Signal"),
-                                                  mouse_mode_action_group);
-    mouse_mode_shift_signal_action_
-        ->setObjectName("mouse_mode_shift_signal_action_");
-    mouse_mode_shift_signal_action_->setCheckable(true);
-    mouse_mode_shift_signal_action_->setShortcut(tr("Ctrl+4"));
-    mouse_mode_shift_signal_action_->setStatusTip(tr("Shift one channel in y-direction (All Modes: Shift+MiddleMousePress)"));
-    connect(mouse_mode_shift_signal_action_, SIGNAL(triggered()),
-            &model_, SLOT(mouseModeShiftSignalAction()));
-
-//    mouse_mode_zoom_action_ = new QAction(mouse_mode_zoom_icon_,  tr("&Zoom"),
-//                                          mouse_mode_action_group);
-//    mouse_mode_zoom_action_->setObjectName("mouse_mode_zoom_action_");
-//    mouse_mode_zoom_action_->setCheckable(true);
-//    mouse_mode_zoom_action_->setShortcut(tr("Ctrl+5"));
-//    mouse_mode_zoom_action_->setStatusTip(tr("Zoom to a window"));
-//    connect(mouse_mode_zoom_action_, SIGNAL(triggered()),
-//            &model_, SLOT(mouseModeZoomAction()));
 
     view_zoom_in_action_ = new QAction(view_zoom_in_icon_,  tr("Zoom &In"),
                                        this);
@@ -293,12 +236,7 @@ void MainWindow::initToolBars()
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
     view_toolbar_views_menu_->addAction (mouse_mode_toolbar_->toggleViewAction());
-    mouse_mode_toolbar_->setIconSize(QSize(22, 22));
-    mouse_mode_toolbar_->addAction(mouse_mode_new_action_);
-    mouse_mode_toolbar_->addAction(mouse_mode_pointer_action_);
-    mouse_mode_toolbar_->addAction(mouse_mode_hand_action_);
-    mouse_mode_toolbar_->addAction(mouse_mode_shift_signal_action_);
-    //mouse_mode_toolbar_->addAction(mouse_mode_zoom_action_);
+    mouse_mode_toolbar_->addActions (action_manager_.getActionsOfGroup(GUIActionManager::MODE_ACTIONS));
 
     edit_toolbar_ = addToolBar(tr("Edit"));
     view_toolbar_views_menu_->addAction (edit_toolbar_->toggleViewAction());
@@ -408,11 +346,7 @@ void MainWindow::initMenus()
     edit_menu_->addActions (action_manager_.getActionsOfGroup (GUIActionManager::EDIT_MENU_ACTIONS));
 
     mouse_mode_menu_ = menuBar()->addMenu(tr("&Mode"));
-    mouse_mode_menu_->addAction(mouse_mode_new_action_);
-    mouse_mode_menu_->addAction(mouse_mode_pointer_action_);
-    mouse_mode_menu_->addAction(mouse_mode_hand_action_);
-    mouse_mode_menu_->addAction(mouse_mode_shift_signal_action_);
-//    mouse_mode_menu_->addAction(mouse_mode_zoom_action_);
+    mouse_mode_menu_->addActions (action_manager_.getActionsOfGroup(GUIActionManager::MODE_ACTIONS));
 
     view_menu_ = menuBar()->addMenu(tr("&View"));
     view_menu_->addMenu(view_toolbar_views_menu_);
@@ -509,37 +443,6 @@ void MainWindow::saveSettings()
     settings.setValue("pos", pos());
     settings.endGroup();
 }
-
-
-// set mouse mode new anabled
-void MainWindow::setMouseModeNewEnabled(bool enabled)
-{
-    mouse_mode_new_action_->setEnabled(enabled);
-}
-
-// set mouse mode pointer anabled
-void MainWindow::setMouseModePointerEnabled(bool enabled)
-{
-    mouse_mode_pointer_action_->setEnabled(enabled);
-}
-
-// set mouse mode hand enabled
-void MainWindow::setMouseModeHandEnabled(bool enabled)
-{
-    mouse_mode_hand_action_->setEnabled(enabled);
-}
-
-// set mouse mode shift signal enabled
-void MainWindow::setMouseModeShiftSignalEnabled(bool enabled)
-{
-    mouse_mode_shift_signal_action_->setEnabled(enabled);
-}
-
-// set mouse mode zoom enabled
-//void MainWindow::setMouseModeZoomEnabled(bool enabled)
-//{
-//    mouse_mode_zoom_action_->setEnabled(enabled);
-//}
 
 // set options channels enabled
 void MainWindow::setOptionsChannelsEnabled(bool enabled)
@@ -768,29 +671,6 @@ void MainWindow::setRecentFiles(const QStringList& recent_file_list)
          it++)
     {
         file_recent_files_menu_->addAction(*it);
-    }
-}
-
-// set mouse mode
-void MainWindow::setMouseMode(SignalBrowserMode mode)
-{
-    switch (mode)
-    {
-        case MODE_NEW:
-            mouse_mode_new_action_->setChecked(true);
-            break;
-        case MODE_POINTER:
-            mouse_mode_pointer_action_->setChecked(true);
-            break;
-        case MODE_HAND:
-            mouse_mode_hand_action_->setChecked(true);
-            break;
-        case MODE_SHIFT_SIGNAL:
-            mouse_mode_shift_signal_action_->setChecked(true);
-            break;
-//        case SignalBrowserModel::MODE_ZOOM:
-//            mouse_mode_zoom_action_->setChecked(true);
-//            break;
     }
 }
 

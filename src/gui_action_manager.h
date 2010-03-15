@@ -44,7 +44,8 @@ public:
         EDIT_TOOLBAR_ACTIONS,
         EVENT_CONTEXT_ACTIONS,
         FILE_MENU_ACTIONS,
-        FILE_TOOLBAR_ACTIONS
+        FILE_TOOLBAR_ACTIONS,
+        MODE_ACTIONS
     };
 
 
@@ -97,7 +98,11 @@ private:
         ACTION_DELETE,
         ACTION_CHANGE_CHANNEL,
         ACTION_CHANGE_TYPE,
-        ACTION_SHOW_EVENT_TABLE
+        ACTION_SHOW_EVENT_TABLE,
+        ACTION_MODE_NEW,
+        ACTION_MODE_POINTER,
+        ACTION_MODE_HAND,
+        ACTION_MODE_SHIFT
     };
 
     //-------------------------------------------------------------------------
@@ -112,6 +117,9 @@ private:
     void initEditActions ();
 
     //-------------------------------------------------------------------------
+    void initMouseModeActions ();
+
+    //-------------------------------------------------------------------------
     void initShortcuts ();
 
     //-------------------------------------------------------------------------
@@ -121,11 +129,11 @@ private:
     void initDisabledStates ();
 
     //-------------------------------------------------------------------------
-    void createAction (GUIAction action_id,
-                       QString const& text,
-                       char const * const slot,
-                       QString const& status_tip,
-                       QIcon const& icon = QIcon ());
+    QAction* createAction (GUIAction action_id,
+                           QString const& text,
+                           char const * const slot,
+                           QString const& status_tip,
+                           QIcon const& icon = QIcon ());
 
     //-------------------------------------------------------------------------
     QAction* createSeparator ();

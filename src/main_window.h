@@ -4,7 +4,6 @@
 #define MAIN_WINDOW_H
 
 #include "base/user_types.h"
-#include "signal_browser/signal_browser_modes.h"
 
 #include <QMainWindow>
 #include <QIcon>
@@ -36,11 +35,6 @@ public:
     void saveSettings();
 
     // enable,disable actions
-    void setMouseModeNewEnabled(bool enabled);
-    void setMouseModeHandEnabled(bool enabled);
-    void setMouseModeShiftSignalEnabled(bool enabled);
-    void setMouseModePointerEnabled(bool enabled);
-//    void setMouseModeZoomEnabled(bool enabled);
     void setOptionsChannelsEnabled(bool enabled);
     void setOptionsShowEventsEnabled(bool enabled);
     void setViewZoomInEnabled(bool enabled);
@@ -55,7 +49,6 @@ public:
     void setSignalsPerPage(float64 signals_per_page);
     void setSecsPerPage(float64 secs_per_page);
     void setSecsPerPage(const QString& secs_per_page);
-    void setMouseMode(SignalBrowserMode mode);
     void setStatusBarSignalLength(float64 length);
     void setStatusBarNrChannels(int32 nr_channels);
 
@@ -124,11 +117,6 @@ private:
     QAction* calculate_erd_ers_map_action_;
     QAction* undo_view_action_;
     QAction* redo_view_action_;
-    QAction* mouse_mode_new_action_;
-    QAction* mouse_mode_pointer_action_;
-    QAction* mouse_mode_hand_action_;
-    QAction* mouse_mode_shift_signal_action_;
-    // QAction* mouse_mode_zoom_action_;
     QAction* view_zoom_in_action_;
     QAction* view_zoom_out_action_;
     QAction* view_auto_scale_action_;
@@ -143,11 +131,6 @@ private:
     QAction* help_about_action_;
     QAction* options_show_settings_action_;
 
-    QIcon mouse_mode_new_icon_;
-    QIcon mouse_mode_pointer_icon_;
-    QIcon mouse_mode_hand_icon_;
-    QIcon mouse_mode_shift_signal_icon_;
-    QIcon mouse_mode_zoom_icon_;
     QIcon view_zoom_in_icon_;
     QIcon view_zoom_out_icon_;
     QIcon view_auto_scale_icon_;

@@ -19,6 +19,7 @@ GUIActionManager::GUIActionManager (MainWindowModel* main_window_model)
 
     initFileActions ();
     initEditActions ();
+    initMouseModeActions();
     initShortcuts ();
     initGroups ();
     initDisabledStates ();
@@ -203,6 +204,42 @@ void GUIActionManager::initEditActions ()
                   SLOT(editEventTableAction()), tr("Edit the events in a Table"));
 }
 
+//-----------------------------------------------------------------------------
+void GUIActionManager::initMouseModeActions ()
+{
+    QActionGroup* mouse_mode_action_group = new QActionGroup (this);
+    mouse_mode_action_group->setExclusive(true);
+
+    QAction* action = createAction (ACTION_MODE_NEW, tr("&New Event"),
+                                    SLOT (mouseModeNewAction()),
+                                    tr("Create new events"),
+                                    QIcon (":/images/new_22x22.png"));
+    action->setCheckable (true);
+    mouse_mode_action_group->addAction(action);
+
+    action = createAction (ACTION_MODE_POINTER, tr("&Edit Events"),
+                           SLOT (mouseModePointerAction()),
+                           tr("Edit existing events"),
+                           QIcon (":/images/pointer_22x22.png"));
+    action->setCheckable (true);
+    mouse_mode_action_group->addAction(action);
+
+    action = createAction (ACTION_MODE_HAND, tr("&Scroll"),
+                           SLOT (mouseModeHandAction()),
+                           tr("Scroll area"),
+                           QIcon (":/images/hand_22x22.png"));
+    action->setCheckable (true);
+    mouse_mode_action_group->addAction(action);
+
+    action = createAction (ACTION_MODE_SHIFT, tr("&Shift Signal"),
+                           SLOT (mouseModeShiftSignalAction()),
+                           tr("Shift one channel in y-direction"),
+                           QIcon (":/images/shift_signal_22x22.png"));
+    action->setCheckable (true);
+    mouse_mode_action_group->addAction(action);
+}
+
+
 
 //-----------------------------------------------------------------------------
 void GUIActionManager::initShortcuts ()
@@ -211,8 +248,13 @@ void GUIActionManager::initShortcuts ()
     setShortCut (ACTION_FILE_SAVE, QKeySequence::Save);
     setShortCut (ACTION_FILE_SAVE, QKeySequence::SaveAs);
     setShortCut (ACTION_UNDO, QKeySequence::Undo);
-    setShortCut (ACTION_UNDO, QKeySequence::Redo);
+    setShortCut (ACTION_REDO, QKeySequence::Redo);
     setShortCut (ACTION_DELETE, QKeySequence::Delete);
+
+    setShortCut (ACTION_MODE_NEW, QString("Ctrl+1"));
+    setShortCut (ACTION_MODE_POINTER, QString("Ctrl+2"));
+    setShortCut (ACTION_MODE_HAND, QString("Ctrl+3"));
+    setShortCut (ACTION_MODE_SHIFT, QString("Ctrl+4"));
 }
 
 //-----------------------------------------------------------------------------
@@ -262,6 +304,13 @@ void GUIActionManager::initGroups ()
     action_group_map_[EDIT_TOOLBAR_ACTIONS].push_back (ACTION_CHANGE_TYPE);
 
     // EVENT_CONTEXT_ACTIONS
+
+
+    // MODE ACTIONS
+    action_group_map_[MODE_ACTIONS].push_back (ACTION_MODE_NEW);
+    action_group_map_[MODE_ACTIONS].push_back (ACTION_MODE_POINTER);
+    action_group_map_[MODE_ACTIONS].push_back (ACTION_MODE_HAND);
+    action_group_map_[MODE_ACTIONS].push_back (ACTION_MODE_SHIFT);
 }
 
 //-----------------------------------------------------------------------------
@@ -281,6 +330,10 @@ void GUIActionManager::initDisabledStates ()
     app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_CHANGE_CHANNEL);
     app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_CHANGE_TYPE);
     app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_SHOW_EVENT_TABLE);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_MODE_HAND);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_MODE_POINTER);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_MODE_NEW);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_MODE_SHIFT);
 
     file_state_action_map_[FileContext::UNCHANGED].push_back (ACTION_UNDO);
 
@@ -295,15 +348,17 @@ void GUIActionManager::initDisabledStates ()
     tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_CHANGE_CHANNEL);
     tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_CHANGE_TYPE);
     tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_CHANGE_TYPE);
+    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_MODE_NEW);
+    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_MODE_POINTER);
 }
 
 
 //-----------------------------------------------------------------------------
-void GUIActionManager::createAction (GUIAction action_id,
-                                     QString const& text,
-                                     char const * const slot,
-                                     QString const& status_tip,
-                                     QIcon const& icon)
+QAction* GUIActionManager::createAction (GUIAction action_id,
+                                         QString const& text,
+                                         char const * const slot,
+                                         QString const& status_tip,
+                                         QIcon const& icon)
 {
     QAction* action = new QAction (text, this);
     if (!icon.isNull())
@@ -312,6 +367,7 @@ void GUIActionManager::createAction (GUIAction action_id,
         action->setStatusTip (status_tip);
     main_window_model_->connect (action, SIGNAL(triggered()), slot);
     action_map_[action_id] = action;
+    return action;
 }
 
 //-------------------------------------------------------------------------
