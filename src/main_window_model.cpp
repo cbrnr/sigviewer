@@ -47,21 +47,23 @@
 #include <QObject>
 
 #include <cmath>
+#include <iostream>
 
 namespace BioSig_
 {
 
 // constructor
-MainWindowModel::MainWindowModel()
+MainWindowModel::MainWindowModel (ApplicationContext& application_context)
 : main_window_(0),
-  state_(STATE_FILE_CLOSED),
+  application_context_ (application_context),
   selection_state_(SELECTION_STATE_NONE),
   signal_browser_model_ (0),
   signal_browser_ (0),
   tab_widget_ (0),
   number_recent_files_(8),
   secs_per_page_("10"),
-  overflow_detection_(false)
+  overflow_detection_(false),
+  file_context_ (0)
 {
     log_stream_.reset(new QTextStream(&log_string_));
     file_signal_reader_.reset(0);
@@ -100,16 +102,8 @@ EventColorManager& MainWindowModel::getEventColorManager()
 void MainWindowModel::setMainWindow(MainWindow* main_window)
 {
     main_window_ = main_window;
-    setState(STATE_FILE_CLOSED);
+    application_context_.setState(APP_STATE_NO_FILE_OPEN);
 }
-
-//-----------------------------------------------------------------------------
-void MainWindowModel::setApplicationContext (ApplicationContext*
-                                             application_context)
-{
-    application_context_ = application_context;
-}
-
 
 // void load settings
 void MainWindowModel::loadSettings()
@@ -163,109 +157,6 @@ void MainWindowModel::saveSettings()
     settings.setValue("secs_per_page", secs_per_page_);
     settings.setValue("overflow_detection", overflow_detection_);
     settings.endGroup();
-}
-
-// get state
-MainWindowModel::State MainWindowModel::getState()
-{
-    return state_;
-}
-
-// set state
-void MainWindowModel::setState(MainWindowModel::State state)
-{
-    state_ = state;
-
-    switch(state_)
-    {
-        case STATE_EXIT:
-            QApplication::exit();
-            // main_window->close();
-            break;
-
-        case STATE_FILE_CLOSED:
-            if (application_context_)
-            {
-                application_context_->getGUIActionManager().setApplicationState(ApplicationContext::NO_FILE_OPEN);
-            }
-            if (main_window_)
-            {
-                main_window_->setWindowTitle("SigViewer");
-                //main_window_->setEditEventTableEnabled(false);
-                //main_window_->setEditChangeTypeEnabled(false);
-                //main_window_->setMouseModeNewEnabled(false);
-//                main_window_->setMouseModePointerEnabled(false);
-//                main_window_->setMouseModeHandEnabled(false);
-//                main_window_->setMouseModeShiftSignalEnabled(false);
-//                main_window_->setMouseModeZoomEnabled(false);
-                main_window_->setOptionsChannelsEnabled(false);
-                main_window_->setOptionsShowEventsEnabled(false);
-                main_window_->setViewZoomInEnabled(false);
-                main_window_->setViewZoomOutEnabled(false);
-                main_window_->setViewAutoScaleEnabled(false);
-                main_window_->setViewGoToEnabled(false);
-                main_window_->setSecsPerPageEnabled(false);
-                main_window_->setSignalsPerPageEnabled(false);
-
-                setSelectionState(SELECTION_STATE_OFF);
-            }
-
-            break;
-
-        case STATE_FILE_OPENED:
-            if (application_context_)
-            {
-                application_context_->getGUIActionManager().setApplicationState(ApplicationContext::FILE_OPEN);
-            }
-            if (main_window_)
-            {
-                QString caption = "SigViewer - [%1]";
-                caption = caption.arg(file_signal_reader_->getBasicHeader()->getFullFileName());
-                main_window_->setWindowTitle(caption);
-                //main_window_->setEditEventTableEnabled(true);
-                //main_window_->setEditChangeTypeEnabled(true);
-//                main_window_->setMouseModeNewEnabled(true);
-//                main_window_->setMouseModePointerEnabled(true);
-//                main_window_->setMouseModeHandEnabled(true);
-//                main_window_->setMouseModeShiftSignalEnabled(true);
-//                main_window_->setMouseModeZoomEnabled(true);
-                main_window_->setOptionsChannelsEnabled(true);
-                main_window_->setOptionsShowEventsEnabled(true);
-                main_window_->setViewZoomInEnabled(true);
-                main_window_->setViewZoomOutEnabled(true);
-                main_window_->setViewAutoScaleEnabled(true);
-                main_window_->setViewGoToEnabled(true);
-                main_window_->setSecsPerPageEnabled(true);
-                main_window_->setSignalsPerPageEnabled(true);
-            }
-
-            break;
-
-        case STATE_FILE_CHANGED:
-            if (main_window_)
-            {
-                QString caption = "SigViewer - [%1*]";
-                caption = caption.arg(file_signal_reader_->getBasicHeader()->getFullFileName());
-                main_window_->setWindowTitle(caption);
-                //main_window_->setEditEventTableEnabled(true);
-                //main_window_->setEditChangeTypeEnabled(true);
-//                main_window_->setMouseModeNewEnabled(true);
-//                main_window_->setMouseModePointerEnabled(true);
-//                main_window_->setMouseModeHandEnabled(true);
-//                main_window_->setMouseModeShiftSignalEnabled(true);
-//                main_window_->setMouseModeZoomEnabled(true);
-                main_window_->setOptionsChannelsEnabled(true);
-                main_window_->setOptionsShowEventsEnabled(true);
-                main_window_->setViewZoomInEnabled(true);
-                main_window_->setViewZoomOutEnabled(true);
-                main_window_->setViewAutoScaleEnabled(true);
-                main_window_->setViewGoToEnabled(true);
-                main_window_->setSecsPerPageEnabled(true);
-                main_window_->setSignalsPerPageEnabled(true);
-            }
-
-            break;
-    }
 }
 
 // set selection state
@@ -428,8 +319,8 @@ void MainWindowModel::redoViewAction()
 void MainWindowModel::undoAction()
 {
     CommandStack::instance().undoLastEditCommand();
-    if (state_ == STATE_FILE_OPENED)
-        setState(STATE_FILE_CHANGED);
+    //if (state_ == STATE_FILE_OPENED)
+    //    setState(STATE_FILE_CHANGED);
 }
 
 //-----------------------------------------------------------------------------
@@ -467,7 +358,7 @@ void MainWindowModel::fileOpenAction()
 void MainWindowModel::fileSaveAction()
 {
     if (!checkMainWindowPtr("fileSaveAction") ||
-        !checkNotClosedState("fileCloseAction"))
+        !file_context_)
     {
         return;
     }
@@ -505,7 +396,7 @@ void MainWindowModel::fileSaveAction()
 
     if (save_error.size() == 0)
     {
-        setState(STATE_FILE_OPENED);
+        //setState(STATE_FILE_OPENED);
     }
     else
     {
@@ -524,7 +415,7 @@ void MainWindowModel::fileSaveAction()
 void MainWindowModel::fileSaveAsAction()
 {
     if (!checkMainWindowPtr("fileSaveAsAction") ||
-        !checkNotClosedState("fileSaveAsAction"))
+        !file_context_)
     {
         return;
     }
@@ -577,7 +468,7 @@ void MainWindowModel::fileSaveAsAction()
     {
         file_signal_reader_->close();
         file_signal_reader_->open(file_name, overflow_detection_);
-        setState(STATE_FILE_OPENED);
+        //setState(STATE_FILE_OPENED);
     }
     else
     {
@@ -595,7 +486,7 @@ void MainWindowModel::fileSaveAsAction()
 void MainWindowModel::fileExportEventsAction()
 {
     if (!checkMainWindowPtr("fileExportEventsAction") ||
-        !checkNotClosedState("fileExportEventsAction"))
+        !file_context_)
     {
         return;
     }
@@ -692,7 +583,7 @@ void MainWindowModel::fileExportEventsAction()
 
     if (save_error.size () == 0)
     {
-        setState(STATE_FILE_OPENED);
+        //setState(STATE_FILE_OPENED);
     }
     else
     {
@@ -710,7 +601,7 @@ void MainWindowModel::fileExportEventsAction()
 void MainWindowModel::fileImportEventsAction()
 {
     if (!checkMainWindowPtr("fileImportEventsAction") ||
-        !checkNotClosedState("fileImportEventsAction"))
+        !file_context_)
     {
         return;
     }
@@ -849,15 +740,18 @@ void MainWindowModel::recentFileActivated(QAction* recent_file_action)
 void MainWindowModel::openFile(const QString& file_name)
 {
     // close
-    if (state_ == STATE_FILE_CHANGED || state_ == STATE_FILE_OPENED)
+    if (file_context_)
     {
         fileCloseAction();
 
-        if (state_ != STATE_FILE_CLOSED)
+        if (application_context_.getState() != APP_STATE_NO_FILE_OPEN)
         {
             return; // user cancel
         }
     }
+
+    file_context_ = new FileContext ();
+    application_context_.getGUIActionManager().connect(file_context_, SIGNAL(stateChanged(FileState)), SLOT(setFileState(FileState)));
 
     // open siganl reader
     FileSignalReader* signal_reader = 0;
@@ -918,7 +812,7 @@ void MainWindowModel::openFile(const QString& file_name)
     int tab_index = tab_widget_->addTab(signal_browser_, tr("Signal Data"));
     tab_contexts_[tab_index] = tab_context;
 
-    application_context_->getGUIActionManager().connect(tab_context, SIGNAL(stateChanged(TabContext::State)), SLOT(setTabState(TabContext::State)));
+    application_context_.getGUIActionManager().connect(tab_context, SIGNAL(stateChanged(TabContext::State)), SLOT(setTabState(TabContext::State)));
 
     tab_context->setState (TabContext::NO_EVENT_SELECTED);
     browser_models_[tab_index] = signal_browser_model_;
@@ -928,7 +822,7 @@ void MainWindowModel::openFile(const QString& file_name)
     main_window_->setCentralWidget(tab_widget_);
 
 
-    setState(STATE_FILE_OPENED);
+    application_context_.setState(APP_STATE_FILE_OPEN);
 
     // update recent files
     recent_file_list_.removeAll(file_name);
@@ -976,12 +870,12 @@ void MainWindowModel::openFile(const QString& file_name)
 void MainWindowModel::fileCloseAction()
 {
     if (!checkMainWindowPtr("fileCloseAction") ||
-        !checkNotClosedState("fileCloseAction"))
+        !file_context_)
     {
         return;
     }
 
-    if (state_ == STATE_FILE_CHANGED &&
+    if (file_context_->getState() == FILE_STATE_CHANGED &&
         !main_window_
         ->showFileCloseDialog(file_signal_reader_->getBasicHeader()->getFullFileName()))
     {
@@ -1007,14 +901,17 @@ void MainWindowModel::fileCloseAction()
     main_window_->setStatusBarSignalLength(-1);
     main_window_->setStatusBarNrChannels(-1);
 
-    setState(STATE_FILE_CLOSED);
+    delete file_context_;
+    file_context_ = 0;
+
+    application_context_.setState(APP_STATE_NO_FILE_OPEN);
 }
 
 // file info action
 void MainWindowModel::fileInfoAction()
 {
     if (!checkMainWindowPtr("fileInfoAction") ||
-        !checkNotClosedState("fileInfoAction"))
+        !file_context_)
     {
         return;
     }
@@ -1036,24 +933,24 @@ void MainWindowModel::fileExitAction()
         return;
     }
 
-    if (state_ == STATE_FILE_CHANGED || state_ == STATE_FILE_OPENED)
+    if (file_context_)
     {
         fileCloseAction();
 
-        if (state_ != STATE_FILE_CLOSED)
+        if (file_context_)
         {
             return; // user cancel;
         }
     }
 
-    setState(STATE_EXIT);
+    QApplication::exit();
 }
 
 // edit to all channels action
 void MainWindowModel::editToAllChannelsAction()
 {
     if (!checkMainWindowPtr("editToAllChannelsAction") ||
-        !checkNotClosedState("editToAllChannelsAction"))
+        !file_context_)
     {
         return;
     }
@@ -1065,7 +962,7 @@ void MainWindowModel::editToAllChannelsAction()
 void MainWindowModel::editCopyToChannelsAction()
 {
     if (!checkMainWindowPtr("editCopyToChannelsAction") ||
-        !checkNotClosedState("editCopyToChannelsAction"))
+        !file_context_)
     {
         return;
     }
@@ -1077,7 +974,7 @@ void MainWindowModel::editCopyToChannelsAction()
 void MainWindowModel::editDeleteAction()
 {
     if (!checkMainWindowPtr("editDeleteAction") ||
-        !checkNotClosedState("editDeleteAction"))
+        !file_context_)
     {
         return;
     }
@@ -1090,7 +987,7 @@ void MainWindowModel::editDeleteAction()
 void MainWindowModel::editChangeChannelAction()
 {
     if (!checkMainWindowPtr("editChangeChannelAction") ||
-        !checkNotClosedState("editChangeChannelAction"))
+        !file_context_)
     {
         return;
     }
@@ -1102,7 +999,7 @@ void MainWindowModel::editChangeChannelAction()
 void MainWindowModel::editChangeTypeAction()
 {
     if (!checkMainWindowPtr("editChangeTypeAction") ||
-        !checkNotClosedState("editChangeTypeAction"))
+        !file_context_)
     {
         return;
     }
@@ -1114,7 +1011,7 @@ void MainWindowModel::editChangeTypeAction()
 void MainWindowModel::editEventTableAction()
 {
     if (!checkMainWindowPtr("editEventTableAction") ||
-        !checkNotClosedState("editEventTableAction"))
+        !file_context_)
     {
         return;
     }
@@ -1131,7 +1028,7 @@ void MainWindowModel::editEventTableAction()
 void MainWindowModel::viewZoomInAction()
 {
     if (!checkMainWindowPtr("viewZoomInAction") ||
-        !checkNotClosedState("viewZoomInAction"))
+        !file_context_)
     {
         return;
     }
@@ -1143,7 +1040,7 @@ void MainWindowModel::viewZoomInAction()
 void MainWindowModel::mouseModeNewAction()
 {
     if (!checkMainWindowPtr("mouseModeNewAction") ||
-        !checkNotClosedState("mouseModeNewAction"))
+        !file_context_)
     {
         return;
     }
@@ -1157,7 +1054,7 @@ void MainWindowModel::mouseModeNewAction()
 void MainWindowModel::mouseModePointerAction()
 {
     if (!checkMainWindowPtr("mouseModePointerAction") ||
-        !checkNotClosedState("mouseModePointerAction"))
+        !file_context_)
     {
         return;
     }
@@ -1169,7 +1066,7 @@ void MainWindowModel::mouseModePointerAction()
 void MainWindowModel::mouseModeHandAction()
 {
     if (!checkMainWindowPtr("mouseModeHandAction") ||
-        !checkNotClosedState("mouseModeHandAction"))
+        !file_context_)
     {
         return;
     }
@@ -1181,7 +1078,7 @@ void MainWindowModel::mouseModeHandAction()
 void MainWindowModel::mouseModeShiftSignalAction()
 {
     if (!checkMainWindowPtr("mouseModeShiftSignalAction") ||
-        !checkNotClosedState("mouseModeShiftSignalAction"))
+        !file_context_)
     {
         return;
     }
@@ -1207,7 +1104,7 @@ void MainWindowModel::mouseModeShiftSignalAction()
 void MainWindowModel::viewZoomOutAction()
 {
     if (!checkMainWindowPtr("viewZoomOutAction") ||
-        !checkNotClosedState("viewZoomOutAction"))
+        !file_context_)
     {
         return;
     }
@@ -1219,7 +1116,7 @@ void MainWindowModel::viewZoomOutAction()
 void MainWindowModel::viewAutoScaleAction()
 {
     if (!checkMainWindowPtr("viewAutoScaleAction") ||
-        !checkNotClosedState("viewAutoScaleAction"))
+        !file_context_)
     {
         return;
     }
@@ -1231,7 +1128,7 @@ void MainWindowModel::viewAutoScaleAction()
 void MainWindowModel::viewGoToAction()
 {
     if (!checkMainWindowPtr("viewGoToAction") ||
-        !checkNotClosedState("viewGoToAction"))
+        !file_context_)
     {
         return;
     }
@@ -1268,7 +1165,7 @@ void MainWindowModel::viewGoToAction()
 void MainWindowModel::viewShowAndSelectNextEventAction()
 {
     if (!checkMainWindowPtr("viewSelectNextEventAction") ||
-        !checkNotClosedState("viewSelectNextEventAction"))
+        !file_context_)
     {
         return;
     }
@@ -1282,7 +1179,7 @@ void MainWindowModel::viewShowAndSelectNextEventAction()
 void MainWindowModel::viewShowAndSelectPreviousEventAction()
 {
     if (!checkMainWindowPtr("viewShowAndSelectPreviousEventAction") ||
-        !checkNotClosedState("viewShowAndSelectPreviousEventAction"))
+        !file_context_)
     {
         return;
     }
@@ -1296,7 +1193,7 @@ void MainWindowModel::viewShowAndSelectPreviousEventAction()
 void MainWindowModel::viewShowEventsOfSelectedTypeAction()
 {
     if (!checkMainWindowPtr("viewShowEventsOfSelectedTypeAction") ||
-        !checkNotClosedState("viewShowEventsOfSelectedTypeAction"))
+        !file_context_)
     {
         return;
     }
@@ -1315,7 +1212,7 @@ void MainWindowModel::viewShowEventsOfSelectedTypeAction()
 void MainWindowModel::viewFitToEventAction()
 {
     if (!checkMainWindowPtr("viewFitToEventAction") ||
-        !checkNotClosedState("viewFitToEventAction"))
+        !file_context_)
     {
         return;
     }
@@ -1381,7 +1278,7 @@ void MainWindowModel::optionsChannelsAction()
 void MainWindowModel::channelSelection ()
 {
     if (!checkMainWindowPtr("optionsChannelsAction") ||
-        !checkNotClosedState("optionsChannelsAction"))
+        !file_context_)
     {
         return;
     }
@@ -1436,7 +1333,7 @@ void MainWindowModel::channelSelection ()
 void MainWindowModel::optionsShowEventsAction()
 {
     if (!checkMainWindowPtr("optionsShowEventsAction") ||
-        !checkNotClosedState("optionsShowEventsAction"))
+        !file_context_)
     {
         return;
     }
@@ -1473,7 +1370,7 @@ void MainWindowModel::optionsShowEventsAction()
 // options show events action
 void MainWindowModel::optionsShowSettingsAction()
 {
-    if (!checkNotClosedState("optionsShowSettingsAction"))
+    if (!file_context_)
     {
         return;
     }
@@ -1494,8 +1391,7 @@ void MainWindowModel::optionsShowSettingsAction()
 
     overflow_detection_ = settings_dialog.isOverflowDetection();
 
-    if (state_ == STATE_FILE_OPENED ||
-        state_ == STATE_FILE_CHANGED) {
+    if (file_context_) {
         signal_browser_model_->setHideableWidgetsVisibilities(settings_dialog.getWidgetVisibilities());
         //signal_browser_model_->showChannelLabels(settings_dialog.isShowChannelLables());
         //signal_browser_model_->showXScales(settings_dialog.isShowChannelScales());
@@ -1547,23 +1443,11 @@ inline bool MainWindowModel::checkMainWindowPtr(const QString function)
     return true;
 }
 
-// check not closed state
-bool MainWindowModel::checkNotClosedState(const QString function)
-{
-    if (state_ == STATE_FILE_CLOSED)
-    {
-        *log_stream_ << "MainWindowModel::" << function
-                     << " Error: illegal state\n";
-        return false;
-    }
-    return true;
-}
-
 // secs per page changed
 void MainWindowModel::secsPerPageChanged(const QString& secs_per_page)
 {
     if (!checkMainWindowPtr("secsPerPageChanged") ||
-        !checkNotClosedState("secsPerPageChanged"))
+        !file_context_)
     {
         return;
     }
@@ -1595,7 +1479,7 @@ void MainWindowModel::secsPerPageChanged(const QString& secs_per_page)
 void MainWindowModel::signalsPerPageChanged(const QString& signals_per_page)
 {
     if (!checkMainWindowPtr("signalsPerPageChanged") ||
-        !checkNotClosedState("signalsPerPageChanged"))
+        !file_context_)
     {
         return;
     }
@@ -1622,7 +1506,7 @@ void MainWindowModel::signalsPerPageChanged(const QString& signals_per_page)
 void MainWindowModel::pixelPerSecChanged(float64 pixel_per_sec)
 {
     if (!checkMainWindowPtr("pixelPerSecChanged") ||
-        !checkNotClosedState("pixelPerSecChanged"))
+        !file_context_)
     {
         return;
     }
@@ -1638,7 +1522,7 @@ void MainWindowModel::pixelPerSecChanged(float64 pixel_per_sec)
 void MainWindowModel::signalHeightChanged(int32 signal_height)
 {
     if (!checkMainWindowPtr("signalHeightChanged") ||
-        !checkNotClosedState("signalHeightChanged"))
+        !file_context_)
     {
         return;
     }
@@ -1660,17 +1544,14 @@ void MainWindowModel::setChanged()
         return;
     }
 
-    if (state_ != STATE_FILE_OPENED && state_ != STATE_FILE_CHANGED)
+    if (!file_context_)
     {
         *log_stream_ << "MainWindowModel::setChanged"
                      << " Error: illegal state\n";
         return;
     }
-
-    if (state_ != STATE_FILE_CHANGED)
-    {
-        setState(STATE_FILE_CHANGED);
-    }
+    else
+        file_context_->setState (FILE_STATE_CHANGED);
 }
 
 //-----------------------------------------------------------------------------

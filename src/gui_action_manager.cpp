@@ -8,15 +8,29 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-GUIActionManager::GUIActionManager (MainWindowModel* main_window_model)
-    : main_window_model_ (main_window_model),
-      application_state_ (ApplicationContext::NO_FILE_OPEN),
-      file_state_ (FileContext::UNCHANGED),
+GUIActionManager::GUIActionManager ()
+    : main_window_model_ (0),
+      application_state_ (APP_STATE_NO_FILE_OPEN),
+      file_state_ (FILE_STATE_UNCHANGED),
       tab_state_ (TabContext::NO_EVENTS_POSSIBLE)
 {
     action_map_[ACTION_SEPARATOR] = new QAction (this);
     action_map_[ACTION_SEPARATOR]->setSeparator (true);
+}
 
+//-----------------------------------------------------------------------------
+GUIActionManager::~GUIActionManager ()
+{
+    // QActions are deleted automatically because they are children of this
+    // GUIActionManager object!
+}
+
+//-----------------------------------------------------------------------------
+void GUIActionManager::init (MainWindowModel* main_window_model,
+                             ApplicationContext* app_context)
+{
+    connect (app_context, SIGNAL(stateChanged(ApplicationState)), SLOT(setApplicationState(ApplicationState)));
+    main_window_model_ = main_window_model;
     initFileActions ();
     initEditActions ();
     initMouseModeActions();
@@ -27,15 +41,8 @@ GUIActionManager::GUIActionManager (MainWindowModel* main_window_model)
     setFileState (file_state_);
 }
 
-//-----------------------------------------------------------------------------
-GUIActionManager::~GUIActionManager ()
-{
-    // QActions are deleted automatically because they are children of this
-    // GUIActionManager object!
-}
-
 //-------------------------------------------------------------------------
-void GUIActionManager::setApplicationState (ApplicationContext::State
+void GUIActionManager::setApplicationState (ApplicationState
                                             application_state)
 {
     ActionAppStateMap::iterator state_iter =
@@ -49,7 +56,7 @@ void GUIActionManager::setApplicationState (ApplicationContext::State
 }
 
 //-------------------------------------------------------------------------
-void GUIActionManager::setFileState (FileContext::State file_state)
+void GUIActionManager::setFileState (FileState file_state)
 {
     ActionFileStateMap::iterator state_iter =
             file_state_action_map_.find (file_state_);
@@ -280,6 +287,8 @@ void GUIActionManager::initGroups ()
     action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_FILE_SAVE);
     action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_FILE_SAVE_AS);
     action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_FILE_INFO);
+    action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_UNDO);
+    action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_REDO);
     action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_FILE_CLOSE);
 
     // EDIT_MENU_ACTIONS
@@ -295,8 +304,6 @@ void GUIActionManager::initGroups ()
     action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SHOW_EVENT_TABLE);
 
     // EDIT_TOOLBAR_ACTIONS
-    action_group_map_[EDIT_TOOLBAR_ACTIONS].push_back (ACTION_UNDO);
-    action_group_map_[EDIT_TOOLBAR_ACTIONS].push_back (ACTION_REDO);
     action_group_map_[EDIT_TOOLBAR_ACTIONS].push_back (ACTION_TO_ALL_CHANNELS);
     action_group_map_[EDIT_TOOLBAR_ACTIONS].push_back (ACTION_COPY_TO_CHANNELS);
     action_group_map_[EDIT_TOOLBAR_ACTIONS].push_back (ACTION_DELETE);
@@ -316,26 +323,26 @@ void GUIActionManager::initGroups ()
 //-----------------------------------------------------------------------------
 void GUIActionManager::initDisabledStates ()
 {
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_FILE_SAVE);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_FILE_SAVE_AS);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_IMPORT_EVENTS);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_EXPORT_EVENTS);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_FILE_INFO);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_FILE_CLOSE);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_UNDO);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_REDO);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_TO_ALL_CHANNELS);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_COPY_TO_CHANNELS);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_DELETE);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_CHANGE_CHANNEL);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_CHANGE_TYPE);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_SHOW_EVENT_TABLE);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_MODE_HAND);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_MODE_POINTER);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_MODE_NEW);
-    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_MODE_SHIFT);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_FILE_SAVE);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_FILE_SAVE_AS);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_IMPORT_EVENTS);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_EXPORT_EVENTS);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_FILE_INFO);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_FILE_CLOSE);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_UNDO);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_REDO);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_TO_ALL_CHANNELS);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_COPY_TO_CHANNELS);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_DELETE);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_CHANGE_CHANNEL);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_CHANGE_TYPE);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_SHOW_EVENT_TABLE);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_MODE_HAND);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_MODE_POINTER);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_MODE_NEW);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_MODE_SHIFT);
 
-    file_state_action_map_[FileContext::UNCHANGED].push_back (ACTION_UNDO);
+    file_state_action_map_[FILE_STATE_UNCHANGED].push_back (ACTION_FILE_SAVE);
 
     tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_TO_ALL_CHANNELS);
     tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_TO_ALL_CHANNELS);

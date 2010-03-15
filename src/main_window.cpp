@@ -53,9 +53,10 @@ namespace BioSig_
 {
 
 // constructor
-MainWindow::MainWindow (ApplicationContext& application_context)
+MainWindow::MainWindow (ApplicationContext& application_context,
+                        MainWindowModel& model)
  : QMainWindow(0),
-   model_(application_context.getMainWindowModel()),
+   model_(model),
    action_manager_ (application_context.getGUIActionManager())
 {
     setAcceptDrops (true);
@@ -388,15 +389,15 @@ void MainWindow::initMenus()
 // close event
 void MainWindow::closeEvent(QCloseEvent* close_event)
 {
-    if (model_.getState() == MainWindowModel::STATE_EXIT)
+/*    if (model_.getState() == MainWindowModel::STATE_EXIT)
     {
         close_event->accept();
     }
     else
     {
-        close_event->ignore();
+        close_event->ignore();*/
         model_.fileExitAction();
-    }
+    //}
 }
 
 void MainWindow::dropEvent (QDropEvent* event)

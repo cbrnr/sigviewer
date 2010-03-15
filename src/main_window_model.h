@@ -32,6 +32,7 @@ class BlocksVisualisationView;
 class AbstractBrowserModel;
 class BlocksVisualisationModel;
 class ApplicationContext;
+class FileContext;
 class TabContext;
 
 // main window model
@@ -40,15 +41,6 @@ class MainWindowModel : public QObject
     Q_OBJECT
 
 public:
-
-    enum State
-    {
-        STATE_EXIT,
-        STATE_FILE_CLOSED,
-        STATE_FILE_OPENED,
-        STATE_FILE_CHANGED
-    };
-
     enum SelectionState
     {
         SELECTION_STATE_OFF,
@@ -57,17 +49,15 @@ public:
         SELECTION_STATE_ALL_CHANNELS
     };
 
-    MainWindowModel();
+    MainWindowModel (ApplicationContext& application_context);
     ~MainWindowModel();
 
     QTextStream& getLogStream();
     QSharedPointer<EventTableFileReader> getEventTableFileReader();
     EventColorManager& getEventColorManager();
     void setMainWindow(MainWindow* main_window);
-    void setApplicationContext (ApplicationContext* application_context);
     void loadSettings();
     void saveSettings();
-    State getState();
     void setSelectionState(SelectionState selection_state);
     void setChanged();
 
@@ -104,7 +94,6 @@ public slots:
     void mouseModePointerAction();
     void mouseModeHandAction();
     void mouseModeShiftSignalAction();
-//    void mouseModeZoomAction();
     void viewZoomInAction();
     void viewZoomOutAction();
     void viewAutoScaleAction();
@@ -134,14 +123,11 @@ private:
     MainWindowModel(const MainWindowModel&);
     const MainWindowModel& operator=(const MainWindowModel&);
 
-    void setState(State state);
     bool checkMainWindowPtr(const QString function);
-    bool checkNotClosedState(const QString function);
     void channelSelection ();
 
     MainWindow* main_window_;
-    ApplicationContext* application_context_;
-    State state_;
+    ApplicationContext& application_context_;
     SelectionState selection_state_;
     std::auto_ptr<FileSignalReader> file_signal_reader_;
     QSharedPointer<SignalBrowserModel> signal_browser_model_;
@@ -156,6 +142,7 @@ private:
     QString log_string_;
     QString secs_per_page_;
     bool overflow_detection_;
+    FileContext* file_context_;
     std::map<int, QSharedPointer<AbstractBrowserModel> > browser_models_;
     std::list<QSharedPointer<BlocksVisualisationModel> > blocks_visualisation_models_;
     std::map<int, TabContext*> tab_contexts_;

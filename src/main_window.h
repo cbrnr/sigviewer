@@ -28,7 +28,7 @@ class MainWindow : public QMainWindow
 
 public:
 
-    MainWindow (ApplicationContext& application_context);
+    MainWindow (ApplicationContext& application_context, MainWindowModel& model);
     ~MainWindow ();
 
     void loadSettings();

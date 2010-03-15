@@ -5,7 +5,7 @@ namespace BioSig_
 
 //-----------------------------------------------------------------------------
 FileContext::FileContext ()
-    : state_ (UNCHANGED)
+    : state_ (FILE_STATE_UNCHANGED)
 {
     // nothing to do here
 }
@@ -16,8 +16,15 @@ FileContext::~FileContext ()
     // nothing to do here
 }
 
+//-------------------------------------------------------------------------
+FileState FileContext::getState () const
+{
+    return state_;
+}
+
+
 //-----------------------------------------------------------------------------
-void FileContext::setState (State state)
+void FileContext::setState (FileState state)
 {
     state_ = state;
     emit stateChanged (state_);

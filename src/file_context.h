@@ -6,6 +6,12 @@
 namespace BioSig_
 {
 
+enum FileState
+{
+    FILE_STATE_UNCHANGED,
+    FILE_STATE_CHANGED
+};
+
 //-----------------------------------------------------------------------------
 ///
 /// FileContext
@@ -16,11 +22,7 @@ class FileContext : public QObject
 {
     Q_OBJECT
 public:
-    enum State
-    {
-        UNCHANGED,
-        CHANGED
-    };
+
 
     //-------------------------------------------------------------------------
     FileContext ();
@@ -28,13 +30,16 @@ public:
     //-------------------------------------------------------------------------
     ~FileContext ();
 
+    //-------------------------------------------------------------------------
+    FileState getState () const;
+
 signals:
     //-------------------------------------------------------------------------
-    void stateChanged (State state);
+    void stateChanged (FileState state);
 
 public slots:
     //-------------------------------------------------------------------------
-    void setState (State state);
+    void setState (FileState state);
 
 private:
     //-------------------------------------------------------------------------
@@ -42,7 +47,7 @@ private:
     FileContext (FileContext const&);
     FileContext& operator= (FileContext const&);
 
-    State state_;
+    FileState state_;
 };
 
 } // namespace BioSig_

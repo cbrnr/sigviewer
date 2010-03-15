@@ -426,16 +426,6 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
                 }
 
                 return ACTION_SELECT;
-                // select smallest clicked event
-                //if (old_selected_item->signal_event_->getId() != signal_event_->getId() &&
-                //    (!old_rect.contains(mouse_pos) ||
-                //     old_selected_item->sceneBoundingRect().width() > sceneBoundingRect().width() ||
-                //     (old_selected_item->sceneBoundingRect().width() == sceneBoundingRect().width() &&
-                //      old_selected_item->sceneBoundingRect().height() > sceneBoundingRect().height())))
-                //{
-                //    return ACTION_SELECT;
-                //}
-
             }
             break;
         case SignalBrowserMouseHandling::SHIFT_EVENT_TO_CHANNEL_ACTION:

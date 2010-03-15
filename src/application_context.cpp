@@ -4,10 +4,8 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-ApplicationContext::ApplicationContext (GUIActionManager& gui_action_manager,
-                                        MainWindowModel& main_window_model)
-    : gui_action_manager_ (gui_action_manager),
-      main_window_model_ (main_window_model)
+ApplicationContext::ApplicationContext (GUIActionManager& gui_action_manager)
+    : gui_action_manager_ (gui_action_manager)
 {
     // nothing to do here
 }
@@ -19,13 +17,13 @@ GUIActionManager& ApplicationContext::getGUIActionManager ()
 }
 
 //-----------------------------------------------------------------------------
-MainWindowModel& ApplicationContext::getMainWindowModel ()
+ApplicationState ApplicationContext::getState () const
 {
-    return main_window_model_;
+    return state_;
 }
 
 //-----------------------------------------------------------------------------
-void ApplicationContext::setState (State state)
+void ApplicationContext::setState (ApplicationState state)
 {
     state_ = state;
     emit stateChanged (state_);

@@ -111,11 +111,11 @@ int main(int32 argc, char* argv[])
                               application.applicationDirPath());
     application.installTranslator(&sigviewer_translator);
 
-    MainWindowModel main_window_model;
-    GUIActionManager action_manager (&main_window_model);
-    ApplicationContext application_context (action_manager, main_window_model);
-    main_window_model.setApplicationContext (&application_context);
-    MainWindow main_window (application_context);
+    GUIActionManager action_manager;
+    ApplicationContext application_context (action_manager);
+    MainWindowModel main_window_model (application_context);
+    action_manager.init (&main_window_model, &application_context);
+    MainWindow main_window (application_context, main_window_model);
     main_window_model.setMainWindow(&main_window);
     main_window_model.getEventTableFileReader()
         ->load(":/eventcodes.txt");

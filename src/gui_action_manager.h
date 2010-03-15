@@ -50,11 +50,14 @@ public:
 
 
     //-------------------------------------------------------------------------
-    /// @param main_window_model the given model will act as the receiver of
-    ///                          all actions
-    GUIActionManager (MainWindowModel* main_window_model);
+    GUIActionManager ();
     virtual ~GUIActionManager ();
 
+    //-------------------------------------------------------------------------
+    /// @param main_window_model the given model will act as the receiver of
+    ///                          all actions
+    void init (MainWindowModel* main_window_model, ApplicationContext*
+               app_context);
 
     //-------------------------------------------------------------------------
     /// creates a QMenu with all actions of the given group
@@ -70,10 +73,10 @@ public:
 
 public slots:
     //-------------------------------------------------------------------------
-    void setApplicationState (ApplicationContext::State application_state);
+    void setApplicationState (ApplicationState application_state);
 
     //-------------------------------------------------------------------------
-    void setFileState (FileContext::State file_state);
+    void setFileState (FileState file_state);
 
     //-------------------------------------------------------------------------
     void setTabState (TabContext::State tab_state);
@@ -148,8 +151,8 @@ private:
     typedef std::list<GUIAction> ActionList;
     typedef std::map<GUIAction, QAction*> ActionMap;
     typedef std::map<ActionGroup, ActionList > ActionGroupMap;
-    typedef std::map<ApplicationContext::State, ActionList > ActionAppStateMap;
-    typedef std::map<FileContext::State, ActionList > ActionFileStateMap;
+    typedef std::map<ApplicationState, ActionList > ActionAppStateMap;
+    typedef std::map<FileState, ActionList > ActionFileStateMap;
     typedef std::map<TabContext::State, ActionList > ActionTabStateMap;
 
     //-------------------------------------------------------------------------
@@ -160,8 +163,8 @@ private:
 
     MainWindowModel* main_window_model_;
 
-    ApplicationContext::State application_state_;
-    FileContext::State file_state_;
+    ApplicationState application_state_;
+    FileState file_state_;
     TabContext::State tab_state_;
 
     ActionMap action_map_;

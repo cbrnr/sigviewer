@@ -7,7 +7,14 @@ namespace BioSig_
 {
 
 class GUIActionManager;
-class MainWindowModel;
+
+enum ApplicationState
+{
+    APP_STATE_NO_FILE_OPEN,
+    APP_STATE_FILE_OPEN
+};
+
+
 
 //-----------------------------------------------------------------------------
 /// ApplicationContext
@@ -18,32 +25,24 @@ class ApplicationContext : public QObject
 {
     Q_OBJECT
 public:
-    enum State
-    {
-        NO_FILE_OPEN,
-        FILE_OPEN
-    };
-
     //-------------------------------------------------------------------------
-    ApplicationContext (GUIActionManager& gui_action_manager,
-                        MainWindowModel& main_window_model);
+    ApplicationContext (GUIActionManager& gui_action_manager);
 
     //-------------------------------------------------------------------------
     GUIActionManager& getGUIActionManager ();
 
     //-------------------------------------------------------------------------
-    MainWindowModel& getMainWindowModel ();
+    ApplicationState getState () const;
 
 public slots:
-    void setState (State state);
+    void setState (ApplicationState state);
 
 signals:
-    void stateChanged (State state);
+    void stateChanged (ApplicationState state);
 
 private:
     GUIActionManager& gui_action_manager_;
-    MainWindowModel& main_window_model_;
-    State state_;
+    ApplicationState state_;
 };
 
 } // namespace BioSig_
