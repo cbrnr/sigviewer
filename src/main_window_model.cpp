@@ -56,7 +56,6 @@ namespace BioSig_
 MainWindowModel::MainWindowModel (ApplicationContext& application_context)
 : main_window_(0),
   application_context_ (application_context),
-  selection_state_(SELECTION_STATE_NONE),
   signal_browser_model_ (0),
   signal_browser_ (0),
   tab_widget_ (0),
@@ -157,64 +156,6 @@ void MainWindowModel::saveSettings()
     settings.setValue("secs_per_page", secs_per_page_);
     settings.setValue("overflow_detection", overflow_detection_);
     settings.endGroup();
-}
-
-// set selection state
-void MainWindowModel::setSelectionState(SelectionState selection_state)
-{
-    selection_state_ = selection_state;
-
-    switch(selection_state_)
-    {
-        case SELECTION_STATE_OFF:
-//            main_window_->setEditToAllChannelsEnabled(false);
-//            main_window_->setEditCopyToChannelsEnabled(false);
-//            main_window_->setEditDeleteEnabled(false);
-//            main_window_->setEditChangeChannelEnabled(false);
-//            main_window_->setEditChangeTypeEnabled(false);
-            main_window_->setViewGoToNextPreviousEventEnabled(false);
-            main_window_->setViewFitToEvent(false);
-            main_window_->setViewHideEventsOfOtherType(false);
-
-            break;
-
-        case SELECTION_STATE_NONE:
-//            main_window_->setEditToAllChannelsEnabled(false);
-//            main_window_->setEditCopyToChannelsEnabled(false);
-//            main_window_->setEditDeleteEnabled(false);
-//            main_window_->setEditChangeChannelEnabled(false);
-//            main_window_->setEditChangeTypeEnabled(true);
-            main_window_->setViewGoToNextPreviousEventEnabled(false);
-            main_window_->setViewFitToEvent(false);
-            main_window_->setViewHideEventsOfOtherType(false);
-
-            break;
-
-        case SELECTION_STATE_ONE_CHANNEL:
-//            main_window_->setEditToAllChannelsEnabled(true);
-//            main_window_->setEditCopyToChannelsEnabled(true);
-//            main_window_->setEditDeleteEnabled(true);
-//            main_window_->setEditChangeChannelEnabled(true);
-//            main_window_->setEditChangeTypeEnabled(true);
-            main_window_->setViewGoToNextPreviousEventEnabled(true);
-            main_window_->setViewFitToEvent(true);
-            main_window_->setViewHideEventsOfOtherType(true);
-
-            break;
-
-        case SELECTION_STATE_ALL_CHANNELS:
-//            main_window_->setEditToAllChannelsEnabled(false);
-//            main_window_->setEditCopyToChannelsEnabled(false);
-//            main_window_->setEditDeleteEnabled(true);
-//            main_window_->setEditChangeChannelEnabled(true);
-//            main_window_->setEditChangeTypeEnabled(true);
-            main_window_->setViewGoToNextPreviousEventEnabled(true);
-            main_window_->setViewFitToEvent(true);
-            main_window_->setViewHideEventsOfOtherType(true);
-
-            break;
-    }
-
 }
 
 //-----------------------------------------------------------------------------
@@ -794,7 +735,7 @@ void MainWindowModel::openFile(const QString& file_name)
 
     // initialize signal browser
     TabContext* tab_context = new TabContext ();
-    signal_browser_model_ = QSharedPointer<SignalBrowserModel>(new SignalBrowserModel(*signal_reader, *this, event_table_file_reader_, *tab_context));
+    signal_browser_model_ = QSharedPointer<SignalBrowserModel>(new SignalBrowserModel(*signal_reader, *this, event_table_file_reader_, application_context_, *tab_context));
     signal_browser_model_->setLogStream(log_stream_.get());
 
     if (!tab_widget_)

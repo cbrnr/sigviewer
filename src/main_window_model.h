@@ -41,14 +41,6 @@ class MainWindowModel : public QObject
     Q_OBJECT
 
 public:
-    enum SelectionState
-    {
-        SELECTION_STATE_OFF,
-        SELECTION_STATE_NONE,
-        SELECTION_STATE_ONE_CHANNEL,
-        SELECTION_STATE_ALL_CHANNELS
-    };
-
     MainWindowModel (ApplicationContext& application_context);
     ~MainWindowModel();
 
@@ -58,7 +50,6 @@ public:
     void setMainWindow(MainWindow* main_window);
     void loadSettings();
     void saveSettings();
-    void setSelectionState(SelectionState selection_state);
     void setChanged();
 
     QSharedPointer<BlocksVisualisationModel> createBlocksVisualisationView (QString const& title);
@@ -128,7 +119,6 @@ private:
 
     MainWindow* main_window_;
     ApplicationContext& application_context_;
-    SelectionState selection_state_;
     std::auto_ptr<FileSignalReader> file_signal_reader_;
     QSharedPointer<SignalBrowserModel> signal_browser_model_;
     SignalBrowserView* signal_browser_; // main_window cares for destruction!!

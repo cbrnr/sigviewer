@@ -45,7 +45,9 @@ public:
         EVENT_CONTEXT_ACTIONS,
         FILE_MENU_ACTIONS,
         FILE_TOOLBAR_ACTIONS,
-        MODE_ACTIONS
+        MODE_ACTIONS,
+        VIEW_MENU_ACTIONS,
+        VIEW_TOOLBAR_ACTIONS
     };
 
 
@@ -105,7 +107,15 @@ private:
         ACTION_MODE_NEW,
         ACTION_MODE_POINTER,
         ACTION_MODE_HAND,
-        ACTION_MODE_SHIFT
+        ACTION_MODE_SHIFT,
+        ACTION_VIEW_ZOOM_IN,
+        ACTION_VIEW_ZOOM_OUT,
+        ACTION_VIEW_AUTO_SCALE,
+        ACTION_VIEW_GOTO,
+        ACTION_VIEW_GOTO_NEXT_EVENT,
+        ACTION_VIEW_GOTO_PREVIOUS_EVENT,
+        ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE,
+        ACTION_VIEW_FIT_TO_EVENT
     };
 
     //-------------------------------------------------------------------------
@@ -121,6 +131,9 @@ private:
 
     //-------------------------------------------------------------------------
     void initMouseModeActions ();
+
+    //-------------------------------------------------------------------------
+    void initViewActions ();
 
     //-------------------------------------------------------------------------
     void initShortcuts ();

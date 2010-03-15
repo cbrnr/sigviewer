@@ -34,6 +34,7 @@ void GUIActionManager::init (MainWindowModel* main_window_model,
     initFileActions ();
     initEditActions ();
     initMouseModeActions();
+    initViewActions();
     initShortcuts ();
     initGroups ();
     initDisabledStates ();
@@ -225,7 +226,7 @@ void GUIActionManager::initMouseModeActions ()
     mouse_mode_action_group->addAction(action);
 
     action = createAction (ACTION_MODE_POINTER, tr("&Edit Events"),
-                           SLOT (mouseModePointerAction()),
+                           SLOT(mouseModePointerAction()),
                            tr("Edit existing events"),
                            QIcon (":/images/pointer_22x22.png"));
     action->setCheckable (true);
@@ -239,14 +240,56 @@ void GUIActionManager::initMouseModeActions ()
     mouse_mode_action_group->addAction(action);
 
     action = createAction (ACTION_MODE_SHIFT, tr("&Shift Signal"),
-                           SLOT (mouseModeShiftSignalAction()),
+                           SLOT(mouseModeShiftSignalAction()),
                            tr("Shift one channel in y-direction"),
                            QIcon (":/images/shift_signal_22x22.png"));
     action->setCheckable (true);
     mouse_mode_action_group->addAction(action);
 }
 
+//-----------------------------------------------------------------------------
+void GUIActionManager::initViewActions ()
+{
+    createAction (ACTION_VIEW_ZOOM_IN, tr("Zoom &In"),
+                  SLOT(viewZoomInAction()),
+                  tr("Zoom in all channels"),
+                  QIcon(":/images/zoom_in_22x22.png"));
 
+    createAction (ACTION_VIEW_ZOOM_OUT, tr("Zoom &Out"),
+                  SLOT(viewZoomOutAction()),
+                  tr("Zoom out all channels"),
+                  QIcon(":/images/zoom_out_22x22.png"));
+
+    createAction (ACTION_VIEW_AUTO_SCALE, tr("&Auto Scale"),
+                  SLOT(viewAutoScaleAction()),
+                  tr("Autoscale all channels"),
+                  QIcon(":/images/auto_scale_22x22.png"));
+
+    createAction (ACTION_VIEW_GOTO, tr("&Go To..."),
+                  SLOT(viewGoToAction()),
+                  tr("Go to a specified point of the signal"));
+
+    createAction (ACTION_VIEW_GOTO, tr("&Go To..."),
+                  SLOT(viewGoToAction()),
+                  tr("Go to a specified point of the signal"));
+
+    createAction (ACTION_VIEW_GOTO_NEXT_EVENT, tr("Select &Next Event"),
+                  SLOT(viewShowAndSelectNextEventAction()),
+                  tr("Jumps to the next specified event and selects it"));
+
+    createAction (ACTION_VIEW_GOTO_PREVIOUS_EVENT, tr("Select &Previous Event"),
+                  SLOT(viewShowAndSelectPreviousEventAction()),
+                  tr("Jumps to the previous specified event and selects it"));
+
+    createAction (ACTION_VIEW_FIT_TO_EVENT, tr("Fit View to Selected Event"),
+                  SLOT(viewFitToEventAction()),
+                  tr("Fits the view to the selected event"));
+
+    createAction (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE,
+                  tr("Hide Events of other Type"),
+                  SLOT(viewShowEventsOfSelectedTypeAction()),
+                  tr("Only shows events which are of the same type as the selected one"));
+}
 
 //-----------------------------------------------------------------------------
 void GUIActionManager::initShortcuts ()
@@ -262,6 +305,13 @@ void GUIActionManager::initShortcuts ()
     setShortCut (ACTION_MODE_POINTER, QString("Ctrl+2"));
     setShortCut (ACTION_MODE_HAND, QString("Ctrl+3"));
     setShortCut (ACTION_MODE_SHIFT, QString("Ctrl+4"));
+
+    setShortCut (ACTION_VIEW_ZOOM_IN, QKeySequence::ZoomIn);
+    setShortCut (ACTION_VIEW_ZOOM_OUT, QKeySequence::ZoomOut);
+    setShortCut (ACTION_VIEW_GOTO, QKeySequence("Ctrl+G"));
+    setShortCut (ACTION_VIEW_GOTO_NEXT_EVENT, QKeySequence("Ctrl+Right"));
+    setShortCut (ACTION_VIEW_GOTO_PREVIOUS_EVENT, QKeySequence("Ctrl+Left"));
+
 }
 
 //-----------------------------------------------------------------------------
@@ -311,13 +361,43 @@ void GUIActionManager::initGroups ()
     action_group_map_[EDIT_TOOLBAR_ACTIONS].push_back (ACTION_CHANGE_TYPE);
 
     // EVENT_CONTEXT_ACTIONS
+    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_TO_ALL_CHANNELS);
+    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_COPY_TO_CHANNELS);
+    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_DELETE);
+    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_CHANGE_CHANNEL);
+    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_CHANGE_TYPE);
+    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_SEPARATOR);
+    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
+    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
+    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_SEPARATOR);
+    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
+    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_VIEW_FIT_TO_EVENT);
 
 
-    // MODE ACTIONS
+    // MODE_ACTIONS
     action_group_map_[MODE_ACTIONS].push_back (ACTION_MODE_NEW);
     action_group_map_[MODE_ACTIONS].push_back (ACTION_MODE_POINTER);
     action_group_map_[MODE_ACTIONS].push_back (ACTION_MODE_HAND);
     action_group_map_[MODE_ACTIONS].push_back (ACTION_MODE_SHIFT);
+
+    // VIEW_MENU_ACTIONS
+    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_ZOOM_IN);
+    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_ZOOM_OUT);
+    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_AUTO_SCALE);
+    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
+    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_GOTO);
+    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
+    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
+    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
+    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
+    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
+    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_FIT_TO_EVENT);
+
+
+    // VIEW_TOOLBAR_ACTIONS
+    action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_ZOOM_IN);
+    action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_ZOOM_OUT);
+    action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_AUTO_SCALE);
 }
 
 //-----------------------------------------------------------------------------
@@ -341,6 +421,14 @@ void GUIActionManager::initDisabledStates ()
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_MODE_POINTER);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_MODE_NEW);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_MODE_SHIFT);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_ZOOM_IN);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_ZOOM_OUT);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_AUTO_SCALE);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_GOTO);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_FIT_TO_EVENT);
 
     file_state_action_map_[FILE_STATE_UNCHANGED].push_back (ACTION_FILE_SAVE);
 
@@ -357,6 +445,14 @@ void GUIActionManager::initDisabledStates ()
     tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_CHANGE_TYPE);
     tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_MODE_NEW);
     tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_MODE_POINTER);
+    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
+    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
+    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
+    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
+    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
+    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
+    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_VIEW_FIT_TO_EVENT);
+    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_VIEW_FIT_TO_EVENT);
 }
 
 

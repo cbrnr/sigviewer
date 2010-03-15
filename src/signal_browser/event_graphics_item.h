@@ -20,6 +20,7 @@ class SignalBuffer;
 class SignalEvent;
 class SignalBrowserModel;
 class EventContextMenu;
+class ApplicationContext;
 
 
 class EventGraphicsItem : public QObject, public QGraphicsItem
@@ -28,7 +29,8 @@ class EventGraphicsItem : public QObject, public QGraphicsItem
     Q_INTERFACES(QGraphicsItem)
 public:
     EventGraphicsItem(SignalBuffer& buffer, SignalBrowserModel& model,
-                    QSharedPointer<SignalEvent> signal_event);
+                      QSharedPointer<SignalEvent> signal_event,
+                      ApplicationContext& app_context);
 
     virtual ~EventGraphicsItem ();
 
@@ -94,6 +96,7 @@ private:
     void addContextMenuEntry ();
 
     SignalBrowserModel& signal_browser_model_;
+    ApplicationContext& app_context_;
     SignalBuffer& signal_buffer_;
     QColor color_;
     State state_;

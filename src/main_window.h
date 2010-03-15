@@ -37,13 +37,6 @@ public:
     // enable,disable actions
     void setOptionsChannelsEnabled(bool enabled);
     void setOptionsShowEventsEnabled(bool enabled);
-    void setViewZoomInEnabled(bool enabled);
-    void setViewZoomOutEnabled(bool enabled);
-    void setViewAutoScaleEnabled(bool enabled);
-    void setViewGoToEnabled(bool  enabled);
-    void setViewFitToEvent(bool enabled);
-    void setViewHideEventsOfOtherType(bool enabled);
-    void setViewGoToNextPreviousEventEnabled(bool enabled);
     void setSecsPerPageEnabled(bool enabled);
     void setSignalsPerPageEnabled(bool enabled);
     void setSignalsPerPage(float64 signals_per_page);
@@ -109,31 +102,19 @@ private:
     QToolBar* mouse_mode_toolbar_;
     QToolBar* edit_toolbar_;
     QToolBar* option_toolbar_;
+    QToolBar* view_toolbar_;
     QToolBar* navigation_toolbar_;
 
 
     QAction* calculate_mean_action_;
     QAction* calculate_frequency_spectrum_action_;
     QAction* calculate_erd_ers_map_action_;
-    QAction* undo_view_action_;
-    QAction* redo_view_action_;
-    QAction* view_zoom_in_action_;
-    QAction* view_zoom_out_action_;
-    QAction* view_auto_scale_action_;
-    QAction* view_go_to_action_;
-    QAction* view_show_and_select_next_event_action_;
-    QAction* view_show_and_select_previous_event_action_;
-    QAction* view_show_events_of_selected_type_action_;
-    QAction* view_fit_to_event_action_;
     QAction* options_channels_action_;
     QAction* options_show_events_action_;
     QAction* help_log_action_;
     QAction* help_about_action_;
     QAction* options_show_settings_action_;
 
-    QIcon view_zoom_in_icon_;
-    QIcon view_zoom_out_icon_;
-    QIcon view_auto_scale_icon_;
     QIcon options_channels_icon_;
     QIcon options_show_events_icon_;
     QIcon help_about_icon_;

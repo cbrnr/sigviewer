@@ -1,7 +1,5 @@
 #include "change_channel_undo_command.h"
 
-#include "../main_window_model.h"
-
 namespace BioSig_
 {
 
@@ -27,7 +25,6 @@ void ChangeChannelUndoCommand::undo ()
 {
     signal_event_->setChannel(old_channel_);
     signal_browser_model_.setEventChanged(signal_event_->getId());
-    checkAndSetSelectChannelState();
 }
 
 //-----------------------------------------------------------------------------
@@ -36,16 +33,6 @@ void ChangeChannelUndoCommand::redo ()
     old_channel_ = signal_event_->getChannel();
     signal_event_->setChannel(new_channel_);
     signal_browser_model_.setEventChanged(signal_event_->getId());
-    checkAndSetSelectChannelState();
-}
-
-//-----------------------------------------------------------------------------
-void ChangeChannelUndoCommand::checkAndSetSelectChannelState ()
-{
-    if (signal_event_->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
-        signal_browser_model_.getMainWindowModel().setSelectionState(MainWindowModel::SELECTION_STATE_ALL_CHANNELS);
-    else
-        signal_browser_model_.getMainWindowModel().setSelectionState(MainWindowModel::SELECTION_STATE_ONE_CHANNEL);
 }
 
 }

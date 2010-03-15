@@ -28,6 +28,7 @@ class FileSignalReader;
 class SignalBrowserView;
 class SignalGraphicsItem;
 class EventTableFileReader;
+class ApplicationContext;
 
 // signal browser model
 class SignalBrowserModel : public QObject, public AbstractBrowserModel
@@ -42,6 +43,7 @@ public:
     SignalBrowserModel(FileSignalReader& reader,
                        MainWindowModel& main_window_model,
                        QSharedPointer<EventTableFileReader const> event_table_file_reader,
+                       ApplicationContext& app_context,
                        TabContext& tab_context);
     virtual ~SignalBrowserModel();
 
@@ -178,6 +180,7 @@ private:
         STATE_INIT_BUFFER
     };
 
+    ApplicationContext& app_context_;
     TabContext& tab_context_;
     SignalBrowserView* signal_browser_view_;
     QTextStream* log_stream_; // no auto_ptr

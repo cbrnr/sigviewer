@@ -32,8 +32,10 @@ QSharedPointer<EventContextMenu> EventGraphicsItem::context_menu_;
 
 //-----------------------------------------------------------------------------
 EventGraphicsItem::EventGraphicsItem(SignalBuffer& buffer, SignalBrowserModel& model,
-                                     QSharedPointer<SignalEvent> signal_event)
+                                     QSharedPointer<SignalEvent> signal_event,
+                                     ApplicationContext& app_context)
 : signal_browser_model_ (model),
+  app_context_ (app_context),
   signal_buffer_ (buffer),
   state_ (STATE_NONE),
   is_selected_ (false),
@@ -455,7 +457,7 @@ void EventGraphicsItem::addContextMenuEntry ()
 {
     context_menu_mutex_.lock();
     if (context_menu_.isNull())
-        context_menu_ = QSharedPointer<EventContextMenu> (new EventContextMenu (signal_browser_model_));
+        context_menu_ = QSharedPointer<EventContextMenu> (new EventContextMenu (signal_browser_model_, app_context_));
 
     QString event_name = signal_browser_model_.getEventName(signal_event_->getType());
 

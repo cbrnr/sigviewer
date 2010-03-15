@@ -95,9 +95,6 @@ void MainWindow::initStatusBar()
 // init icons sets
 void MainWindow::initIconSets()
 {
-    view_zoom_in_icon_.addFile(":/images/zoom_in_22x22.png");
-    view_zoom_out_icon_.addFile(":/images/zoom_out_22x22.png");
-    view_auto_scale_icon_.addFile(":/images/auto_scale_22x22.png");
     options_channels_icon_.addFile(":/images/channels_22x22.png");
     options_show_events_icon_.addFile(":/images/events_22x22.png");
     //TODO: (Oliver) add icon
@@ -110,15 +107,6 @@ void MainWindow::initIconSets()
 // init actions
 void MainWindow::initActions()
 {
-    undo_view_action_ = new QAction(tr("Previous View"), this);
-    connect(undo_view_action_, SIGNAL(triggered()),
-            &model_, SLOT(undoViewAction()));
-
-    redo_view_action_ = new QAction(tr("Redo View"), this);
-    connect(redo_view_action_, SIGNAL(triggered()),
-            &model_, SLOT(redoViewAction()));
-
-
     calculate_mean_action_ = new QAction(tr("Calculate Mean (alpha)"), this);
     calculate_mean_action_->setStatusTip(tr("Calculates mean of selected event type"));
     calculate_mean_action_->setEnabled(true);
@@ -136,56 +124,6 @@ void MainWindow::initActions()
     calculate_erd_ers_map_action_->setEnabled(false);
     connect(calculate_erd_ers_map_action_, SIGNAL(triggered()),
             &model_, SLOT(calculateERDERSMap()));
-
-    view_zoom_in_action_ = new QAction(view_zoom_in_icon_,  tr("Zoom &In"),
-                                       this);
-    view_zoom_in_action_->setObjectName("view_zoom_in_action_");
-    view_zoom_in_action_->setStatusTip(tr("Zoom in all channels (All Modes: Shift+MouseWheel or Ctrl+MouseWheel)"));
-    connect(view_zoom_in_action_, SIGNAL(triggered()),
-            &model_, SLOT(viewZoomInAction()));
-
-    view_zoom_out_action_= new QAction(view_zoom_out_icon_,  tr("Zoom &Out"),
-                                       this);
-    view_zoom_out_action_->setObjectName("view_zoom_out_action_");
-    view_zoom_out_action_->setStatusTip(tr("Zoom out all channels (All Modes: Shift+MouseWheel or Ctrl+MouseWheel)"));
-    connect(view_zoom_out_action_, SIGNAL(triggered()),
-            &model_, SLOT(viewZoomOutAction()));
-
-    view_auto_scale_action_= new QAction(view_auto_scale_icon_,
-                                         tr("&Auto Scale"), this);
-    view_auto_scale_action_->setObjectName("view_auto_scale_action_");
-    view_auto_scale_action_->setStatusTip(tr("Autoscale all channels"));
-    connect(view_auto_scale_action_, SIGNAL(triggered()),
-            &model_, SLOT(viewAutoScaleAction()));
-
-    view_go_to_action_= new QAction(tr("&Go To..."), this);
-    view_go_to_action_->setShortcut(tr("Ctrl+G"));
-    view_go_to_action_->setStatusTip(tr("Go to a specified point of the signal file"));
-    connect(view_go_to_action_, SIGNAL(triggered()),
-            &model_, SLOT(viewGoToAction()));
-
-    view_show_and_select_next_event_action_= new QAction(tr("&Next Event..."), this);
-    view_show_and_select_next_event_action_->setShortcut(tr("Ctrl+Right"));
-    view_show_and_select_next_event_action_->setStatusTip(tr("Jumps to the next specified event and selects it"));
-    connect(view_show_and_select_next_event_action_, SIGNAL(triggered()),
-            &model_, SLOT(viewShowAndSelectNextEventAction()));
-
-    view_show_and_select_previous_event_action_= new QAction(tr("&Previous Event..."), this);
-    view_show_and_select_previous_event_action_->setShortcut(tr("Ctrl+Left"));
-    view_show_and_select_previous_event_action_->setStatusTip(tr("Jumps to the previous specified event and selects it"));
-    connect(view_show_and_select_previous_event_action_, SIGNAL(triggered()),
-            &model_, SLOT(viewShowAndSelectPreviousEventAction()));
-
-    view_show_events_of_selected_type_action_= new QAction(tr("Hide Events of other Type"), this);
-    view_show_events_of_selected_type_action_->setStatusTip(tr("Only shows events which are of the same type as the selected one"));
-    connect(view_show_events_of_selected_type_action_, SIGNAL(triggered()),
-            &model_, SLOT(viewShowEventsOfSelectedTypeAction()));
-
-    view_fit_to_event_action_ = new QAction(tr("Fit View to Selected Event"), this);
-    view_fit_to_event_action_->setStatusTip(tr("Fits the view to the selected event"));
-    connect(view_fit_to_event_action_, SIGNAL(triggered()),
-            &model_, SLOT(viewFitToEventAction()));
-
 
     options_channels_action_= new QAction(options_channels_icon_,
                                     tr("Channe&ls..."), this);
@@ -248,8 +186,10 @@ void MainWindow::initToolBars()
     option_toolbar_->setIconSize(QSize(22, 22));
     option_toolbar_->addAction(options_channels_action_);
     option_toolbar_->addAction(options_show_events_action_);
-    //option_toolbar_->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    //option_toolbar_->addAction(options_show_settings_action_);
+
+    view_toolbar_ = addToolBar(tr("View"));
+    view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
+    view_toolbar_->addActions(action_manager_.getActionsOfGroup(GUIActionManager::VIEW_TOOLBAR_ACTIONS));
 
     secs_per_page_combobox_ = new QComboBox();
     secs_per_page_combobox_->setToolTip(tr("Seconds per Page"));
@@ -294,10 +234,6 @@ void MainWindow::initToolBars()
     navigation_toolbar_->setIconSize(QSize(22, 22));
     navigation_toolbar_->addWidget(secs_per_page_combobox_);
     navigation_toolbar_->addWidget(signals_per_page_combobox_);
-    navigation_toolbar_->addAction(view_zoom_in_action_);
-    navigation_toolbar_->addAction(view_zoom_out_action_);
-    navigation_toolbar_->addAction(view_auto_scale_action_);
-    //navigation_toolbar_->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
     connect(secs_per_page_combobox_, SIGNAL(activated(const QString&)),
             &model_, SLOT(secsPerPageChanged(const QString&)));
@@ -357,18 +293,7 @@ void MainWindow::initMenus()
     connect (toggle_status_bar, SIGNAL(toggled(bool)), this, SLOT(toggleStatusBar(bool)));
     view_menu_->addAction(toggle_status_bar);
     view_menu_->addSeparator();
-    view_menu_->addAction(view_zoom_in_action_);
-    view_menu_->addAction(view_zoom_out_action_);
-    view_menu_->addAction(view_auto_scale_action_);
-    view_menu_->addSeparator();
-    view_menu_->addAction(view_go_to_action_);
-    view_menu_->addAction(view_show_and_select_next_event_action_);
-    view_menu_->addAction(view_show_and_select_previous_event_action_);
-    view_menu_->addAction(view_show_events_of_selected_type_action_);
-    view_menu_->addAction(view_fit_to_event_action_);
-    view_menu_->addSeparator();
-    view_menu_->addAction(undo_view_action_);
-    view_menu_->addAction(redo_view_action_);
+    view_menu_->addActions (action_manager_.getActionsOfGroup(GUIActionManager::VIEW_MENU_ACTIONS));
 
     tools_menu_ = menuBar()->addMenu(tr("&Tools"));
     tools_menu_->addAction(calculate_mean_action_);
@@ -389,15 +314,7 @@ void MainWindow::initMenus()
 // close event
 void MainWindow::closeEvent(QCloseEvent* close_event)
 {
-/*    if (model_.getState() == MainWindowModel::STATE_EXIT)
-    {
-        close_event->accept();
-    }
-    else
-    {
-        close_event->ignore();*/
-        model_.fileExitAction();
-    //}
+    model_.fileExitAction();
 }
 
 void MainWindow::dropEvent (QDropEvent* event)
@@ -455,47 +372,6 @@ void MainWindow::setOptionsChannelsEnabled(bool enabled)
 void MainWindow::setOptionsShowEventsEnabled(bool enabled)
 {
     options_show_events_action_->setEnabled(enabled);
-}
-
-// set view zoom in enabled
-void MainWindow::setViewZoomInEnabled(bool enabled)
-{
-    view_zoom_in_action_->setEnabled(enabled);
-}
-
-// set view zoom out enabled
-void MainWindow::setViewZoomOutEnabled(bool enabled)
-{
-    view_zoom_out_action_->setEnabled(enabled);
-}
-
-// set view auto scale enabled
-void MainWindow::setViewAutoScaleEnabled(bool enabled)
-{
-    view_auto_scale_action_->setEnabled(enabled);
-}
-
-// set view go to enabled
-void MainWindow::setViewGoToEnabled(bool enabled)
-{
-    view_go_to_action_->setEnabled(enabled);
-}
-
-void MainWindow::setViewFitToEvent(bool enabled)
-{
-    view_fit_to_event_action_->setEnabled(enabled);
-}
-
-void MainWindow::setViewHideEventsOfOtherType(bool enabled)
-{
-    view_show_events_of_selected_type_action_->setEnabled(enabled);
-}
-
-// set view go to next previous event enabled
-void MainWindow::setViewGoToNextPreviousEventEnabled(bool enabled)
-{
-    view_show_and_select_next_event_action_->setEnabled(enabled);
-    view_show_and_select_previous_event_action_->setEnabled(enabled);
 }
 
 // set secs per page enabled

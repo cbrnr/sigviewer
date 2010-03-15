@@ -35,8 +35,10 @@ namespace BioSig_
 SignalBrowserModel::SignalBrowserModel(FileSignalReader& reader,
                                        MainWindowModel& main_window_model,
                                        QSharedPointer<EventTableFileReader const> event_table_file_reader,
+                                       ApplicationContext& app_context,
                                        TabContext& tab_context)
-: tab_context_ (tab_context),
+: app_context_ (app_context),
+  tab_context_ (tab_context),
   signal_browser_view_ (0),
   log_stream_(0),
   main_window_model_(main_window_model),
@@ -386,7 +388,8 @@ void SignalBrowserModel::initBuffer()
             int32 event_id = signal_buffer_.eventNumber2ID(event_nr);
             id2event_item_[event_id] = QSharedPointer<EventGraphicsItem> (new EventGraphicsItem (signal_buffer_,
                                                            *this,
-                                                           signal_buffer_.getEvent(event_nr)));
+                                                           signal_buffer_.getEvent(event_nr),
+                                                           app_context_));
         }
     }
 }
@@ -697,8 +700,7 @@ void SignalBrowserModel::updateEventItemsImpl ()
             {
                 selected_event_item_->setSelected(false);
                 selected_event_item_.clear();
-                main_window_model_.setSelectionState(
-                                        MainWindowModel::SELECTION_STATE_NONE);
+                tab_context_.setState (TabContext::NO_EVENT_SELECTED);
             }
 
             continue; // event type or channel not shown
@@ -913,7 +915,7 @@ void SignalBrowserModel::removeEvent(uint32 id, bool)
     signal_browser_view_->removeEventGraphicsItem(event_item);
 
     main_window_model_.setChanged();
-    main_window_model_.setSelectionState(MainWindowModel::SELECTION_STATE_NONE);
+    tab_context_.setState (TabContext::NO_EVENT_SELECTED);
 }
 
 //-----------------------------------------------------------------------------
@@ -923,7 +925,7 @@ QSharedPointer<EventGraphicsItem> SignalBrowserModel::addEvent(QSharedPointer<Si
 {
     int32 event_id = signal_buffer_.addEvent(event);
     QSharedPointer<EventGraphicsItem> event_item (new EventGraphicsItem(signal_buffer_,
-                                                      *this, event));
+                                                      *this, event, app_context_));
 
     id2event_item_[event_id] = event_item;
     setEventChanged(event_id);
@@ -948,7 +950,7 @@ void SignalBrowserModel::addEvent(QSharedPointer<EventGraphicsItem> event)
 void SignalBrowserModel::unsetSelectedEventItem()
 {
     selected_event_item_.clear();
-    main_window_model_.setSelectionState(MainWindowModel::SELECTION_STATE_NONE);
+    tab_context_.setState (TabContext::NO_EVENT_SELECTED);
 }
 
 
@@ -1173,7 +1175,7 @@ void SignalBrowserModel::removeSelectedEvent()
     uint32 id = selected_event_item_->getId();
 
     selected_event_item_.clear();
-    main_window_model_.setSelectionState(MainWindowModel::SELECTION_STATE_NONE);
+    tab_context_.setState (TabContext::NO_EVENT_SELECTED);
     removeEvent(id);
 }
 

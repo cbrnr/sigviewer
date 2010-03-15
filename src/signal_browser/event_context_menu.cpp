@@ -1,6 +1,7 @@
 #include "event_context_menu.h"
 #include "signal_browser_model_4.h"
-#include "../main_window_model.h"
+#include "../application_context.h"
+#include "../gui_action_manager.h"
 
 
 #include <QGraphicsSceneContextMenuEvent>
@@ -10,14 +11,12 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-EventContextMenu::EventContextMenu (SignalBrowserModel& model)
- : signal_browser_model_ (model)
+EventContextMenu::EventContextMenu (SignalBrowserModel& model,
+                                    ApplicationContext& app_context)
+ : signal_browser_model_ (model),
+   app_context_ (app_context)
 {
-    edit_to_all_channels_icon_.addFile(":/images/to_all_channels_22x22.png");
-    edit_copy_to_channels_icon_.addFile(":/images/copy_to_channels_22x22.png");
-    edit_delete_icon_.addFile(":/images/delete_22x22.png");
-    edit_change_channel_icon_.addFile(":/images/change_channel_22x22.png");
-    edit_change_type_icon_.addFile(":/images/change_type_22x22.png");
+    // nothing to do here
 }
 
 //-----------------------------------------------------------------------------
@@ -135,49 +134,7 @@ void EventContextMenu::selectEvent (QAction* q)
 //-------------------------------------------------------------------------
 void EventContextMenu::addActionsToMenu (QMenu& menu)
 {
-    QAction* delete_action = menu.addAction(edit_delete_icon_, "Delete");
-    delete_action->setObjectName("delete_action");
-    delete_action->setStatusTip(tr("Delete the selected event"));
-    QObject::connect(delete_action, SIGNAL(triggered()),
-        &(signal_browser_model_.getMainWindowModel()), SLOT(editDeleteAction()));
-
-    QAction* to_all_channels_action = menu.addAction(edit_to_all_channels_icon_, "To all channels");
-    to_all_channels_action->setObjectName("to_all_channels_action");
-    to_all_channels_action->setStatusTip(tr("Selected event to all channels"));
-    QObject::connect(to_all_channels_action, SIGNAL(triggered()),
-            &(signal_browser_model_.getMainWindowModel()), SLOT(editToAllChannelsAction()));
-
-    QAction* edit_change_type_action = menu.addAction(edit_change_type_icon_, tr("Change &Type..."));
-    edit_change_type_action->setObjectName("edit_change_type_action");
-    edit_change_type_action->setStatusTip(tr("Change the type of the selected event"));
-    QObject::connect(edit_change_type_action, SIGNAL(triggered()),
-            &(signal_browser_model_.getMainWindowModel()), SLOT(editChangeTypeAction()));
-
-    QAction* edit_change_channel_action = menu.addAction(edit_change_channel_icon_,
-                                              tr("Change Cha&nnel..."));
-    edit_change_channel_action->setObjectName("edit_change_channel_action_");
-    edit_change_channel_action
-        ->setStatusTip(tr("Change the channel of the selected event (\"Edit Events\"-Mode: Shift+LeftMousePress)"));
-    QObject::connect(edit_change_channel_action, SIGNAL(triggered()),
-            &(signal_browser_model_.getMainWindowModel()), SLOT(editChangeChannelAction()));
-
-    menu.addSeparator();
-
-    QAction* hide_events_of_other_type_action = menu.addAction(tr("Hide Events of other Type"));
-    hide_events_of_other_type_action->setObjectName("view_show_events_of_selected_type_action_");
-    hide_events_of_other_type_action
-        ->setStatusTip(tr("Hide events which are not of the same type as the selected event."));
-    QObject::connect(hide_events_of_other_type_action, SIGNAL(triggered()),
-            &(signal_browser_model_.getMainWindowModel()), SLOT(viewShowEventsOfSelectedTypeAction()));
-
-    QAction* fit_view_action = menu.addAction(tr("Fit View"));
-    fit_view_action->setObjectName("view_fit_to_event_action_");
-    fit_view_action
-        ->setStatusTip(tr("Fit view to selected event."));
-    QObject::connect(fit_view_action, SIGNAL(triggered()),
-            &(signal_browser_model_.getMainWindowModel()), SLOT(viewFitToEventAction()));
-
-
+    menu.addActions (app_context_.getGUIActionManager().getActionsOfGroup(GUIActionManager::EVENT_CONTEXT_ACTIONS));
 }
 
 
