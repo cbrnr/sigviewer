@@ -34,8 +34,10 @@ namespace BioSig_
 // TODO! constructor
 SignalBrowserModel::SignalBrowserModel(FileSignalReader& reader,
                                        MainWindowModel& main_window_model,
-                                       QSharedPointer<EventTableFileReader const> event_table_file_reader)
-: signal_browser_view_ (0),
+                                       QSharedPointer<EventTableFileReader const> event_table_file_reader,
+                                       TabContext& tab_context)
+: tab_context_ (tab_context),
+  signal_browser_view_ (0),
   log_stream_(0),
   main_window_model_(main_window_model),
   state_(STATE_READY),
@@ -574,8 +576,7 @@ void SignalBrowserModel::selectEvent (int32 id)
 {
     if (!id2event_item_.contains (id))
     {
-        main_window_model_.setSelectionState(
-                                MainWindowModel::SELECTION_STATE_NONE);
+        tab_context_.setState (TabContext::NO_EVENT_SELECTED);
         selected_event_item_ = QSharedPointer<EventGraphicsItem>(0);
         emit eventSelected (QSharedPointer<SignalEvent>(0));
         return;
@@ -584,8 +585,7 @@ void SignalBrowserModel::selectEvent (int32 id)
     QSharedPointer<EventGraphicsItem> item = id2event_item_.find (id).value();
     if (item.isNull())
     {
-        main_window_model_.setSelectionState(
-                                MainWindowModel::SELECTION_STATE_NONE);
+        tab_context_.setState (TabContext::NO_EVENT_SELECTED);
         selected_event_item_ = QSharedPointer<EventGraphicsItem>(0);
         emit eventSelected (QSharedPointer<SignalEvent>(0));
         return;
@@ -593,15 +593,9 @@ void SignalBrowserModel::selectEvent (int32 id)
 
     if (signal_buffer_.getEvent(item->getId())->getChannel() ==
         SignalEvent::UNDEFINED_CHANNEL)
-    {
-        main_window_model_.setSelectionState(
-                                MainWindowModel::SELECTION_STATE_ALL_CHANNELS);
-    }
+        tab_context_.setState (TabContext::EVENT_SELECTED_ALL_CHANNELS);
     else
-    {
-        main_window_model_.setSelectionState(
-                                MainWindowModel::SELECTION_STATE_ONE_CHANNEL);
-    }
+        tab_context_.setState (TabContext::EVENT_SELECTED_ONE_CHANNEL);
 
     if (!selected_event_item_.isNull())
         selected_event_item_->setSelected (false);
@@ -614,6 +608,7 @@ void SignalBrowserModel::selectEvent (int32 id)
 //-------------------------------------------------------------------
 void SignalBrowserModel::unselectEvent ()
 {    
+    tab_context_.setState (TabContext::NO_EVENT_SELECTED);
     if (!selected_event_item_.isNull())
         selected_event_item_->setSelected (false);
     selected_event_item_ = QSharedPointer<EventGraphicsItem>(0);
@@ -886,7 +881,15 @@ void SignalBrowserModel::setEventChanged(int32 id)
 
     if (!selected_event_item_.isNull())
         if (selected_event_item_->getId() == id)
+        {
+            if (selected_event_item_->getSignalEvent()->getChannel() ==
+                SignalEvent::UNDEFINED_CHANNEL)
+                tab_context_.setState (TabContext::EVENT_SELECTED_ALL_CHANNELS);
+            else
+                tab_context_.setState (TabContext::EVENT_SELECTED_ONE_CHANNEL);
+
             emit eventSelected(event);
+        }
 }
 
 //-----------------------------------------------------------------------------

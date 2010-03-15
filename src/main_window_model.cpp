@@ -2,6 +2,11 @@
 
 #include "main_window_model.h"
 #include "main_window.h"
+#include "tab_context.h"
+#include "file_context.h"
+#include "application_context.h"
+#include "gui_action_manager.h"
+
 #include "base/file_signal_reader_factory.h"
 #include "base/file_signal_writer_factory.h"
 #include "base/event_table_file_reader.h"
@@ -17,8 +22,6 @@
 #include "event_color_manager.h"
 #include "settings_dialog.h"
 #include "command_stack.h"
-#include "application_context.h"
-#include "gui_action_manager.h"
 
 #include "abstract_browser_model.h"
 
@@ -188,8 +191,8 @@ void MainWindowModel::setState(MainWindowModel::State state)
             if (main_window_)
             {
                 main_window_->setWindowTitle("SigViewer");
-                main_window_->setEditEventTableEnabled(false);
-                main_window_->setEditChangeTypeEnabled(false);
+                //main_window_->setEditEventTableEnabled(false);
+                //main_window_->setEditChangeTypeEnabled(false);
                 main_window_->setMouseModeNewEnabled(false);
                 main_window_->setMouseModePointerEnabled(false);
                 main_window_->setMouseModeHandEnabled(false);
@@ -219,8 +222,8 @@ void MainWindowModel::setState(MainWindowModel::State state)
                 QString caption = "SigViewer - [%1]";
                 caption = caption.arg(file_signal_reader_->getBasicHeader()->getFullFileName());
                 main_window_->setWindowTitle(caption);
-                main_window_->setEditEventTableEnabled(true);
-                main_window_->setEditChangeTypeEnabled(true);
+                //main_window_->setEditEventTableEnabled(true);
+                //main_window_->setEditChangeTypeEnabled(true);
                 main_window_->setMouseModeNewEnabled(true);
                 main_window_->setMouseModePointerEnabled(true);
                 main_window_->setMouseModeHandEnabled(true);
@@ -244,8 +247,8 @@ void MainWindowModel::setState(MainWindowModel::State state)
                 QString caption = "SigViewer - [%1*]";
                 caption = caption.arg(file_signal_reader_->getBasicHeader()->getFullFileName());
                 main_window_->setWindowTitle(caption);
-                main_window_->setEditEventTableEnabled(true);
-                main_window_->setEditChangeTypeEnabled(true);
+                //main_window_->setEditEventTableEnabled(true);
+                //main_window_->setEditChangeTypeEnabled(true);
                 main_window_->setMouseModeNewEnabled(true);
                 main_window_->setMouseModePointerEnabled(true);
                 main_window_->setMouseModeHandEnabled(true);
@@ -273,11 +276,11 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
     switch(selection_state_)
     {
         case SELECTION_STATE_OFF:
-            main_window_->setEditToAllChannelsEnabled(false);
-            main_window_->setEditCopyToChannelsEnabled(false);
-            main_window_->setEditDeleteEnabled(false);
-            main_window_->setEditChangeChannelEnabled(false);
-            main_window_->setEditChangeTypeEnabled(false);
+//            main_window_->setEditToAllChannelsEnabled(false);
+//            main_window_->setEditCopyToChannelsEnabled(false);
+//            main_window_->setEditDeleteEnabled(false);
+//            main_window_->setEditChangeChannelEnabled(false);
+//            main_window_->setEditChangeTypeEnabled(false);
             main_window_->setViewGoToNextPreviousEventEnabled(false);
             main_window_->setViewFitToEvent(false);
             main_window_->setViewHideEventsOfOtherType(false);
@@ -285,11 +288,11 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
             break;
 
         case SELECTION_STATE_NONE:
-            main_window_->setEditToAllChannelsEnabled(false);
-            main_window_->setEditCopyToChannelsEnabled(false);
-            main_window_->setEditDeleteEnabled(false);
-            main_window_->setEditChangeChannelEnabled(false);
-            main_window_->setEditChangeTypeEnabled(true);
+//            main_window_->setEditToAllChannelsEnabled(false);
+//            main_window_->setEditCopyToChannelsEnabled(false);
+//            main_window_->setEditDeleteEnabled(false);
+//            main_window_->setEditChangeChannelEnabled(false);
+//            main_window_->setEditChangeTypeEnabled(true);
             main_window_->setViewGoToNextPreviousEventEnabled(false);
             main_window_->setViewFitToEvent(false);
             main_window_->setViewHideEventsOfOtherType(false);
@@ -297,11 +300,11 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
             break;
 
         case SELECTION_STATE_ONE_CHANNEL:
-            main_window_->setEditToAllChannelsEnabled(true);
-            main_window_->setEditCopyToChannelsEnabled(true);
-            main_window_->setEditDeleteEnabled(true);
-            main_window_->setEditChangeChannelEnabled(true);
-            main_window_->setEditChangeTypeEnabled(true);
+//            main_window_->setEditToAllChannelsEnabled(true);
+//            main_window_->setEditCopyToChannelsEnabled(true);
+//            main_window_->setEditDeleteEnabled(true);
+//            main_window_->setEditChangeChannelEnabled(true);
+//            main_window_->setEditChangeTypeEnabled(true);
             main_window_->setViewGoToNextPreviousEventEnabled(true);
             main_window_->setViewFitToEvent(true);
             main_window_->setViewHideEventsOfOtherType(true);
@@ -309,11 +312,11 @@ void MainWindowModel::setSelectionState(SelectionState selection_state)
             break;
 
         case SELECTION_STATE_ALL_CHANNELS:
-            main_window_->setEditToAllChannelsEnabled(false);
-            main_window_->setEditCopyToChannelsEnabled(false);
-            main_window_->setEditDeleteEnabled(true);
-            main_window_->setEditChangeChannelEnabled(true);
-            main_window_->setEditChangeTypeEnabled(true);
+//            main_window_->setEditToAllChannelsEnabled(false);
+//            main_window_->setEditCopyToChannelsEnabled(false);
+//            main_window_->setEditDeleteEnabled(true);
+//            main_window_->setEditChangeChannelEnabled(true);
+//            main_window_->setEditChangeTypeEnabled(true);
             main_window_->setViewGoToNextPreviousEventEnabled(true);
             main_window_->setViewFitToEvent(true);
             main_window_->setViewHideEventsOfOtherType(true);
@@ -894,8 +897,10 @@ void MainWindowModel::openFile(const QString& file_name)
     QSettings settings("SigViewer");
     settings.setValue("MainWindowModel/file_open_path", path);
 
+
     // initialize signal browser
-    signal_browser_model_ = QSharedPointer<SignalBrowserModel>(new SignalBrowserModel(*signal_reader, *this, event_table_file_reader_));
+    TabContext* tab_context = new TabContext ();
+    signal_browser_model_ = QSharedPointer<SignalBrowserModel>(new SignalBrowserModel(*signal_reader, *this, event_table_file_reader_, *tab_context));
     signal_browser_model_->setLogStream(log_stream_.get());
 
     if (!tab_widget_)
@@ -911,6 +916,11 @@ void MainWindowModel::openFile(const QString& file_name)
     signal_browser_model_->loadSettings();
 
     int tab_index = tab_widget_->addTab(signal_browser_, tr("Signal Data"));
+    tab_contexts_[tab_index] = tab_context;
+
+    application_context_->getGUIActionManager().connect(tab_context, SIGNAL(stateChanged(TabContext::State)), SLOT(setTabState(TabContext::State)));
+
+    tab_context->setState (TabContext::NO_EVENT_SELECTED);
     browser_models_[tab_index] = signal_browser_model_;
 
     tab_widget_->hide();

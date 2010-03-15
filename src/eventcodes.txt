@@ -137,8 +137,6 @@
 0x058d	325 Watt
 0x058e	350 Watt
 #0x8580  end
-### 0x100_	neural spikes 
-#
 ### 0x00__	user specific events
 # the use of these types is discouraged, because of ambigous definitions. 
 0x0001	condition 1
@@ -203,7 +201,6 @@
 0x00a7	condition 167
 0x00a8	condition 168
 0x00a9	condition 169
-### 0x4___	up to 4096 different stimuli
 ### 0x7f__      special codes
 0x7ffe	start of a new segment (after a break)
 0x7fff  non-equidistant sampling value

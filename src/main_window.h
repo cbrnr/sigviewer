@@ -36,12 +36,6 @@ public:
     void saveSettings();
 
     // enable,disable actions
-    void setEditToAllChannelsEnabled(bool enabled);
-    void setEditCopyToChannelsEnabled(bool enabled);
-    void setEditDeleteEnabled(bool enabled);
-    void setEditChangeChannelEnabled(bool enabled);
-    void setEditChangeTypeEnabled(bool enabled);
-    void setEditEventTableEnabled(bool enabled);
     void setMouseModeNewEnabled(bool enabled);
     void setMouseModeHandEnabled(bool enabled);
     void setMouseModeShiftSignalEnabled(bool enabled);
@@ -130,15 +124,6 @@ private:
     QAction* calculate_erd_ers_map_action_;
     QAction* undo_view_action_;
     QAction* redo_view_action_;
-    QAction* undo_action_;
-    QAction* redo_action_;
-    QAction* edit_to_all_channels_action_;
-    QAction* edit_fast_insert_event_action_;
-    QAction* edit_copy_to_channels_action_;
-    QAction* edit_delete_action_;
-    QAction* edit_change_channel_action_;
-    QAction* edit_change_type_action_;
-    QAction* edit_event_table_action_;
     QAction* mouse_mode_new_action_;
     QAction* mouse_mode_pointer_action_;
     QAction* mouse_mode_hand_action_;
@@ -158,11 +143,6 @@ private:
     QAction* help_about_action_;
     QAction* options_show_settings_action_;
 
-    QIcon edit_to_all_channels_icon_;
-    QIcon edit_copy_to_channels_icon_;
-    QIcon edit_delete_icon_;
-    QIcon edit_change_channel_icon_;
-    QIcon edit_change_type_icon_;
     QIcon mouse_mode_new_icon_;
     QIcon mouse_mode_pointer_icon_;
     QIcon mouse_mode_hand_icon_;

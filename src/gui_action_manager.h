@@ -3,6 +3,7 @@
 
 #include "application_context.h"
 #include "file_context.h"
+#include "tab_context.h"
 
 #include <QObject>
 #include <QAction>
@@ -39,7 +40,9 @@ public:
     //-------------------------------------------------------------------------
     enum ActionGroup
     {
-        EVENT_EDITING_MENU_ACTIONS,
+        EDIT_MENU_ACTIONS,
+        EDIT_TOOLBAR_ACTIONS,
+        EVENT_CONTEXT_ACTIONS,
         FILE_MENU_ACTIONS,
         FILE_TOOLBAR_ACTIONS
     };
@@ -71,6 +74,9 @@ public slots:
     //-------------------------------------------------------------------------
     void setFileState (FileContext::State file_state);
 
+    //-------------------------------------------------------------------------
+    void setTabState (TabContext::State tab_state);
+
 private:
     //-------------------------------------------------------------------------
     enum GUIAction
@@ -83,13 +89,27 @@ private:
         ACTION_FILE_INFO,
         ACTION_FILE_CLOSE,
         ACTION_EXIT,
-        ACTION_SEPARATOR
+        ACTION_SEPARATOR,
+        ACTION_UNDO,
+        ACTION_REDO,
+        ACTION_TO_ALL_CHANNELS,
+        ACTION_COPY_TO_CHANNELS,
+        ACTION_DELETE,
+        ACTION_CHANGE_CHANNEL,
+        ACTION_CHANGE_TYPE,
+        ACTION_SHOW_EVENT_TABLE
     };
 
     //-------------------------------------------------------------------------
     // disabled assignment and copy-ctr
     GUIActionManager (GUIActionManager const&);
     GUIActionManager& operator= (GUIActionManager const&);
+
+    //-------------------------------------------------------------------------
+    void initFileActions ();
+
+    //-------------------------------------------------------------------------
+    void initEditActions ();
 
     //-------------------------------------------------------------------------
     void initShortcuts ();
@@ -122,6 +142,10 @@ private:
     typedef std::map<ActionGroup, ActionList > ActionGroupMap;
     typedef std::map<ApplicationContext::State, ActionList > ActionAppStateMap;
     typedef std::map<FileContext::State, ActionList > ActionFileStateMap;
+    typedef std::map<TabContext::State, ActionList > ActionTabStateMap;
+
+    //-------------------------------------------------------------------------
+    void updateAllActionsDisabling ();
 
     //-------------------------------------------------------------------------
     void setActionsEnabled (ActionList& action_list, bool enabled);
@@ -130,12 +154,13 @@ private:
 
     ApplicationContext::State application_state_;
     FileContext::State file_state_;
+    TabContext::State tab_state_;
 
     ActionMap action_map_;
     ActionGroupMap action_group_map_;
     ActionAppStateMap app_state_action_map_;
     ActionFileStateMap file_state_action_map_;
-
+    ActionTabStateMap tab_state_action_map_;
 };
 
 } // namespace BioSig_

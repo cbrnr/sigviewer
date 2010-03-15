@@ -94,11 +94,6 @@ void MainWindow::initStatusBar()
 // init icons sets
 void MainWindow::initIconSets()
 {
-    edit_to_all_channels_icon_.addFile(":/images/to_all_channels_22x22.png");
-    edit_copy_to_channels_icon_.addFile(":/images/copy_to_channels_22x22.png");
-    edit_delete_icon_.addFile(":/images/delete_22x22.png");
-    edit_change_channel_icon_.addFile(":/images/change_channel_22x22.png");
-    edit_change_type_icon_.addFile(":/images/change_type_22x22.png");
     mouse_mode_new_icon_.addFile(":/images/new_22x22.png");
     mouse_mode_pointer_icon_.addFile(":/images/pointer_22x22.png");
     mouse_mode_hand_icon_.addFile(":/images/hand_22x22.png");
@@ -145,67 +140,6 @@ void MainWindow::initActions()
     calculate_erd_ers_map_action_->setEnabled(false);
     connect(calculate_erd_ers_map_action_, SIGNAL(triggered()),
             &model_, SLOT(calculateERDERSMap()));
-
-
-    undo_action_ = new QAction(tr("Undo"), this);
-    undo_action_->setShortcut(tr("Ctrl+Z"));
-    undo_action_->setShortcutContext(Qt::ApplicationShortcut);
-    connect(undo_action_, SIGNAL(triggered()),
-            &model_, SLOT(undoAction()));
-
-    redo_action_ = new QAction(tr("Redo"), this);
-    redo_action_->setShortcut(tr("Ctrl+Shift+Z"));
-    connect(redo_action_, SIGNAL(triggered()),
-            &model_, SLOT(redoAction()));
-
-    edit_to_all_channels_action_ = new QAction(edit_to_all_channels_icon_,
-                                               tr("To &all Channels..."), this);
-    edit_to_all_channels_action_->setObjectName("edit_to_all_channels_action_");
-    edit_to_all_channels_action_->setShortcut(tr("Ctrl+A"));
-    edit_to_all_channels_action_->setStatusTip(tr("Put the selected event to all channels"));
-    connect(edit_to_all_channels_action_, SIGNAL(triggered()),
-            &model_, SLOT(editToAllChannelsAction()));
-
-    edit_copy_to_channels_action_ = new QAction(edit_copy_to_channels_icon_,
-                                                tr("Co&py To Channels..."),
-                                                this);
-    edit_copy_to_channels_action_
-        ->setObjectName("edit_copy_to_channels_action_");
-    edit_copy_to_channels_action_->setShortcut(tr("Ctrl+P"));
-    edit_copy_to_channels_action_
-        ->setStatusTip(tr("Copy the selected event to other channels (\"Edit Events\"-Mode: Ctrl+LeftMousePress)"));
-    connect(edit_copy_to_channels_action_, SIGNAL(triggered()),
-            &model_, SLOT(editCopyToChannelsAction()));
-
-    edit_delete_action_ = new QAction(edit_delete_icon_, tr("&Delete"), this);
-    edit_delete_action_->setObjectName("edit_delete_action_");
-    edit_delete_action_->setShortcut(tr("Del"));
-    edit_delete_action_->setStatusTip(tr("Delete the selected event"));
-    connect(edit_delete_action_, SIGNAL(triggered()),
-            &model_, SLOT(editDeleteAction()));
-
-    edit_change_channel_action_ = new QAction(edit_change_channel_icon_,
-                                              tr("Change Cha&nnel..."), this);
-    edit_change_channel_action_->setObjectName("edit_change_channel_action_");
-    edit_change_channel_action_->setShortcut(tr("Ctrl+N"));
-    edit_change_channel_action_
-        ->setStatusTip(tr("Change the channel of the selected event (\"Edit Events\"-Mode: Shift+LeftMousePress)"));
-    connect(edit_change_channel_action_, SIGNAL(triggered()),
-            &model_, SLOT(editChangeChannelAction()));
-
-    edit_change_type_action_ = new QAction(edit_change_type_icon_,
-                                           tr("Change &Type..."), this);
-    edit_change_type_action_->setObjectName("edit_change_type_action_");
-    edit_change_type_action_->setShortcut(tr("Ctrl+T"));
-    edit_change_type_action_->setStatusTip(tr("Change the type of the selected event"));
-    connect(edit_change_type_action_, SIGNAL(triggered()),
-            &model_, SLOT(editChangeTypeAction()));
-
-    edit_event_table_action_ = new QAction(tr("&Event Table..."), this);
-    edit_event_table_action_->setObjectName("edit_event_table_action_");
-    edit_event_table_action_->setStatusTip(tr("Edit the events in a Table"));
-    connect(edit_event_table_action_, SIGNAL(triggered()),
-            &model_, SLOT(editEventTableAction()));
 
     QActionGroup* mouse_mode_action_group = new QActionGroup(this);
     mouse_mode_action_group->setExclusive(true);
@@ -368,12 +302,7 @@ void MainWindow::initToolBars()
 
     edit_toolbar_ = addToolBar(tr("Edit"));
     view_toolbar_views_menu_->addAction (edit_toolbar_->toggleViewAction());
-    edit_toolbar_->setIconSize(QSize(22, 22));
-    edit_toolbar_->addAction(edit_to_all_channels_action_);
-    edit_toolbar_->addAction(edit_copy_to_channels_action_);
-    edit_toolbar_->addAction(edit_delete_action_);
-    edit_toolbar_->addAction(edit_change_channel_action_);
-    edit_toolbar_->addAction(edit_change_type_action_);
+    edit_toolbar_->addActions (action_manager_.getActionsOfGroup(GUIActionManager::EDIT_TOOLBAR_ACTIONS));
 
     option_toolbar_ = addToolBar(tr("Options"));
     view_toolbar_views_menu_->addAction (option_toolbar_->toggleViewAction());
@@ -476,16 +405,7 @@ void MainWindow::initMenus()
     menuBar()->addMenu(file_menu_);
 
     edit_menu_ = menuBar()->addMenu(tr("&Edit"));
-    edit_menu_->addAction(undo_action_);
-    edit_menu_->addAction(redo_action_);
-    edit_menu_->addSeparator();
-    edit_menu_->addAction(edit_to_all_channels_action_);
-    edit_menu_->addAction(edit_copy_to_channels_action_);
-    edit_menu_->addAction(edit_delete_action_);
-    edit_menu_->addAction(edit_change_channel_action_);
-    edit_menu_->addAction(edit_change_type_action_);
-    edit_menu_->addSeparator();
-    edit_menu_->addAction(edit_event_table_action_);
+    edit_menu_->addActions (action_manager_.getActionsOfGroup (GUIActionManager::EDIT_MENU_ACTIONS));
 
     mouse_mode_menu_ = menuBar()->addMenu(tr("&Mode"));
     mouse_mode_menu_->addAction(mouse_mode_new_action_);
@@ -590,41 +510,6 @@ void MainWindow::saveSettings()
     settings.endGroup();
 }
 
-// set edit to all channels enabled
-void MainWindow::setEditToAllChannelsEnabled(bool enabled)
-{
-    edit_to_all_channels_action_->setEnabled(enabled);
-}
-
-// set edit copy to channels enabled
-void MainWindow::setEditCopyToChannelsEnabled(bool enabled)
-{
-    edit_copy_to_channels_action_->setEnabled(enabled);
-}
-
-// set edit delete enabled
-void MainWindow::setEditDeleteEnabled(bool enabled)
-{
-    edit_delete_action_->setEnabled(enabled);
-}
-
-// set edit change channel enabled
-void MainWindow::setEditChangeChannelEnabled(bool enabled)
-{
-    edit_change_channel_action_->setEnabled(enabled);
-}
-
-// set edit change type enabled
-void MainWindow::setEditChangeTypeEnabled(bool enabled)
-{
-    edit_change_type_action_->setEnabled(enabled);
-}
-
-// set edit event table enabled
-void MainWindow::setEditEventTableEnabled(bool enabled)
-{
-    edit_event_table_action_->setEnabled(enabled);
-}
 
 // set mouse mode new anabled
 void MainWindow::setMouseModeNewEnabled(bool enabled)

@@ -11,47 +11,14 @@ namespace BioSig_
 GUIActionManager::GUIActionManager (MainWindowModel* main_window_model)
     : main_window_model_ (main_window_model),
       application_state_ (ApplicationContext::NO_FILE_OPEN),
-      file_state_ (FileContext::UNCHANGED)
+      file_state_ (FileContext::UNCHANGED),
+      tab_state_ (TabContext::NO_EVENTS_POSSIBLE)
 {
-    QStyle* style = QApplication::style ();
-
     action_map_[ACTION_SEPARATOR] = new QAction (this);
     action_map_[ACTION_SEPARATOR]->setSeparator (true);
 
-    // init file actions
-    createAction (ACTION_FILE_OPEN, tr("&Open..."), SLOT(fileOpenAction()),
-               tr("Open a signal file"),
-               style->standardIcon (QStyle::SP_DialogOpenButton));
-
-    createAction (ACTION_FILE_SAVE, tr("&Save..."), SLOT(fileSaveAction()),
-               tr("Save signal file"),
-               style->standardIcon (QStyle::SP_DialogSaveButton));
-
-    createAction (ACTION_FILE_SAVE_AS, tr("Save As..."), SLOT(fileSaveAsAction()),
-               tr("Save the signal file under a new name"));
-
-    createAction (ACTION_EXPORT_EVENTS, tr("Export Events..."),
-                  SLOT(fileExportEventsAction()),
-                   tr("Export events to file"));
-
-    createAction (ACTION_IMPORT_EVENTS, tr("Import Events..."),
-                  SLOT(fileImportEventsAction()),
-                  tr("Import events from file"));
-
-    createAction (ACTION_FILE_INFO, tr("&Info..."), SLOT(fileInfoAction()),
-                  tr("Show the basic information of the signal file"),
-                  style->standardIcon (QStyle::SP_MessageBoxInformation));
-
-    createAction (ACTION_FILE_CLOSE, tr("&Close"), SLOT(fileCloseAction()),
-                  tr("Close the opened signal file"),
-                  style->standardIcon (QStyle::SP_DockWidgetCloseButton));
-
-
-    createAction (ACTION_EXIT, tr("E&xit"), SLOT(fileExitAction()),
-                  tr("Exit the application"),
-                  style->standardIcon (QStyle::SP_DialogCloseButton));
-
-
+    initFileActions ();
+    initEditActions ();
     initShortcuts ();
     initGroups ();
     initDisabledStates ();
@@ -77,9 +44,7 @@ void GUIActionManager::setApplicationState (ApplicationContext::State
 
     application_state_ = application_state;
 
-    state_iter = app_state_action_map_.find (application_state_);
-    if (state_iter != app_state_action_map_.end ())
-        setActionsEnabled (state_iter->second, false);
+    updateAllActionsDisabling ();
 }
 
 //-------------------------------------------------------------------------
@@ -92,9 +57,20 @@ void GUIActionManager::setFileState (FileContext::State file_state)
 
     file_state_ = file_state;
 
-    state_iter = file_state_action_map_.find (file_state_);
-    if (state_iter != file_state_action_map_.end ())
-        setActionsEnabled (state_iter->second, false);
+    updateAllActionsDisabling ();
+}
+
+//-----------------------------------------------------------------------------
+void GUIActionManager::setTabState (TabContext::State tab_state)
+{
+    ActionTabStateMap::iterator state_iter =
+            tab_state_action_map_.find (tab_state_);
+    if (state_iter != tab_state_action_map_.end ())
+        setActionsEnabled (state_iter->second, true);
+
+    tab_state_ = tab_state;
+
+    updateAllActionsDisabling ();
 }
 
 
@@ -153,11 +129,90 @@ QList<QAction*> GUIActionManager::getActionsOfGroup (ActionGroup group)
 
 
 //-----------------------------------------------------------------------------
+void GUIActionManager::initFileActions ()
+{
+    QStyle* style = QApplication::style ();
+
+    createAction (ACTION_FILE_OPEN, tr("&Open..."), SLOT(fileOpenAction()),
+               tr("Open a signal file"),
+               style->standardIcon (QStyle::SP_DialogOpenButton));
+
+    createAction (ACTION_FILE_SAVE, tr("&Save..."), SLOT(fileSaveAction()),
+               tr("Save signal file"),
+               style->standardIcon (QStyle::SP_DialogSaveButton));
+
+    createAction (ACTION_FILE_SAVE_AS, tr("Save As..."), SLOT(fileSaveAsAction()),
+               tr("Save the signal file under a new name"));
+
+    createAction (ACTION_EXPORT_EVENTS, tr("Export Events..."),
+                  SLOT(fileExportEventsAction()),
+                   tr("Export events to file"));
+
+    createAction (ACTION_IMPORT_EVENTS, tr("Import Events..."),
+                  SLOT(fileImportEventsAction()),
+                  tr("Import events from file"));
+
+    createAction (ACTION_FILE_INFO, tr("&Info..."), SLOT(fileInfoAction()),
+                  tr("Show the basic information of the signal file"),
+                  style->standardIcon (QStyle::SP_MessageBoxInformation));
+
+    createAction (ACTION_FILE_CLOSE, tr("&Close"), SLOT(fileCloseAction()),
+                  tr("Close the opened signal file"),
+                  style->standardIcon (QStyle::SP_DockWidgetCloseButton));
+
+    createAction (ACTION_EXIT, tr("E&xit"), SLOT(fileExitAction()),
+                  tr("Exit the application"),
+                  style->standardIcon (QStyle::SP_DialogCloseButton));
+
+}
+
+//-----------------------------------------------------------------------------
+void GUIActionManager::initEditActions ()
+{
+    QStyle* style = QApplication::style ();
+
+    createAction (ACTION_UNDO, tr("Undo"), SLOT(undoAction()),
+                  tr("Undo last editing command"),
+                  style->standardIcon (QStyle::SP_ArrowLeft));
+
+    createAction (ACTION_REDO, tr("Redo"), SLOT(redoAction()),
+                  tr("Redo last undone command"),
+                  style->standardIcon (QStyle::SP_ArrowRight));
+
+    createAction (ACTION_TO_ALL_CHANNELS, tr("To all channels"), SLOT(editToAllChannelsAction()),
+                  tr("Put the selected event to all channels"),
+                  QIcon (":/images/to_all_channels_22x22.png"));
+
+    createAction (ACTION_COPY_TO_CHANNELS, tr("Co&py to Channels..."), SLOT(editCopyToChannelsAction()),
+                  tr("Copy the selected event to other channels"),
+                  QIcon (":/images/copy_to_channels_22x22.png"));
+
+    createAction (ACTION_DELETE, tr("&Delete"), SLOT(editDeleteAction()),
+                  tr("Delete the selected event"),
+                  QIcon (":/images/delete_22x22.png"));
+
+    createAction (ACTION_CHANGE_CHANNEL, tr("Change Cha&nnel..."), SLOT(editChangeChannelAction()),
+                  tr("Change the channel of the selected event"),
+                  QIcon (":/images/change_channel_22x22.png"));
+
+    createAction (ACTION_CHANGE_TYPE, tr("Change &Type..."), SLOT(editChangeTypeAction()),
+                  tr("Change the type of the selected event"),
+                  QIcon (":/images/change_type_22x22.png"));
+
+    createAction (ACTION_SHOW_EVENT_TABLE, tr("&Event Table..."),
+                  SLOT(editEventTableAction()), tr("Edit the events in a Table"));
+}
+
+
+//-----------------------------------------------------------------------------
 void GUIActionManager::initShortcuts ()
 {
     setShortCut (ACTION_FILE_OPEN, QKeySequence::Open);
     setShortCut (ACTION_FILE_SAVE, QKeySequence::Save);
     setShortCut (ACTION_FILE_SAVE, QKeySequence::SaveAs);
+    setShortCut (ACTION_UNDO, QKeySequence::Undo);
+    setShortCut (ACTION_UNDO, QKeySequence::Redo);
+    setShortCut (ACTION_DELETE, QKeySequence::Delete);
 }
 
 //-----------------------------------------------------------------------------
@@ -184,6 +239,29 @@ void GUIActionManager::initGroups ()
     action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_FILE_SAVE_AS);
     action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_FILE_INFO);
     action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_FILE_CLOSE);
+
+    // EDIT_MENU_ACTIONS
+    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_UNDO);
+    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_REDO);
+    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
+    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_TO_ALL_CHANNELS);
+    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_COPY_TO_CHANNELS);
+    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_DELETE);
+    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_CHANGE_CHANNEL);
+    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_CHANGE_TYPE);
+    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
+    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SHOW_EVENT_TABLE);
+
+    // EDIT_TOOLBAR_ACTIONS
+    action_group_map_[EDIT_TOOLBAR_ACTIONS].push_back (ACTION_UNDO);
+    action_group_map_[EDIT_TOOLBAR_ACTIONS].push_back (ACTION_REDO);
+    action_group_map_[EDIT_TOOLBAR_ACTIONS].push_back (ACTION_TO_ALL_CHANNELS);
+    action_group_map_[EDIT_TOOLBAR_ACTIONS].push_back (ACTION_COPY_TO_CHANNELS);
+    action_group_map_[EDIT_TOOLBAR_ACTIONS].push_back (ACTION_DELETE);
+    action_group_map_[EDIT_TOOLBAR_ACTIONS].push_back (ACTION_CHANGE_CHANNEL);
+    action_group_map_[EDIT_TOOLBAR_ACTIONS].push_back (ACTION_CHANGE_TYPE);
+
+    // EVENT_CONTEXT_ACTIONS
 }
 
 //-----------------------------------------------------------------------------
@@ -195,6 +273,28 @@ void GUIActionManager::initDisabledStates ()
     app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_EXPORT_EVENTS);
     app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_FILE_INFO);
     app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_FILE_CLOSE);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_UNDO);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_REDO);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_TO_ALL_CHANNELS);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_COPY_TO_CHANNELS);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_DELETE);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_CHANGE_CHANNEL);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_CHANGE_TYPE);
+    app_state_action_map_[ApplicationContext::NO_FILE_OPEN].push_back (ACTION_SHOW_EVENT_TABLE);
+
+    file_state_action_map_[FileContext::UNCHANGED].push_back (ACTION_UNDO);
+
+    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_TO_ALL_CHANNELS);
+    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_TO_ALL_CHANNELS);
+    tab_state_action_map_[TabContext::EVENT_SELECTED_ALL_CHANNELS].push_back (ACTION_TO_ALL_CHANNELS);
+    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_COPY_TO_CHANNELS);
+    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_COPY_TO_CHANNELS);
+    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_DELETE);
+    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_DELETE);
+    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_CHANGE_CHANNEL);
+    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_CHANGE_CHANNEL);
+    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_CHANGE_TYPE);
+    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_CHANGE_TYPE);
 }
 
 
@@ -231,6 +331,27 @@ void GUIActionManager::setShortCut (GUIAction const&  gui_action,
     if (action_iter != action_map_.end())
         action_map_[gui_action]->setShortcut (key_sequence);
 }
+
+//-------------------------------------------------------------------------
+void GUIActionManager::updateAllActionsDisabling ()
+{
+    ActionTabStateMap::iterator tab_state_iter =
+            tab_state_action_map_.find (tab_state_);
+    if (tab_state_iter != tab_state_action_map_.end ())
+        setActionsEnabled (tab_state_iter->second, false);
+
+    ActionAppStateMap::iterator app_state_iter =
+            app_state_action_map_.find (application_state_);
+    if (app_state_iter != app_state_action_map_.end ())
+        setActionsEnabled (app_state_iter->second, false);
+
+    ActionFileStateMap::iterator file_state_iter =
+            file_state_action_map_.find (file_state_);
+    if (file_state_iter != file_state_action_map_.end ())
+        setActionsEnabled (file_state_iter->second, false);
+
+}
+
 
 //-------------------------------------------------------------------------
 void GUIActionManager::setActionsEnabled (ActionList& action_list, bool enabled)

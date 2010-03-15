@@ -5,6 +5,7 @@
 #include "../base/file_signal_reader.h"
 #include "../gui_signal_buffer.h"
 #include "../abstract_browser_model.h"
+#include "../tab_context.h"
 #include "signal_browser_modes.h"
 #include "event_graphics_item.h"
 
@@ -40,7 +41,8 @@ public:
 
     SignalBrowserModel(FileSignalReader& reader,
                        MainWindowModel& main_window_model,
-                       QSharedPointer<EventTableFileReader const> event_table_file_reader);
+                       QSharedPointer<EventTableFileReader const> event_table_file_reader,
+                       TabContext& tab_context);
     virtual ~SignalBrowserModel();
 
     virtual void setPixelPerXUnit (float64 pixel_per_sec);
@@ -176,6 +178,7 @@ private:
         STATE_INIT_BUFFER
     };
 
+    TabContext& tab_context_;
     SignalBrowserView* signal_browser_view_;
     QTextStream* log_stream_; // no auto_ptr
     MainWindowModel& main_window_model_;

@@ -32,6 +32,7 @@ class BlocksVisualisationView;
 class AbstractBrowserModel;
 class BlocksVisualisationModel;
 class ApplicationContext;
+class TabContext;
 
 // main window model
 class MainWindowModel : public QObject
@@ -157,6 +158,8 @@ private:
     bool overflow_detection_;
     std::map<int, QSharedPointer<AbstractBrowserModel> > browser_models_;
     std::list<QSharedPointer<BlocksVisualisationModel> > blocks_visualisation_models_;
+    std::map<int, TabContext*> tab_contexts_;
+
 };
 
 } // namespace BioSig_
