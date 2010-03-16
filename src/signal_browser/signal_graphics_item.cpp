@@ -49,7 +49,9 @@ SignalGraphicsItem::SignalGraphicsItem(SignalBuffer& buffer, const SignalChannel
   created_event_item_ (0),
   hand_tool_on_ (false)
 {
+#if QT_VERSION >= 0x040600
     setFlag (QGraphicsItem::ItemUsesExtendedStyleOption, true);
+#endif    
 }
 
 //-----------------------------------------------------------------------------

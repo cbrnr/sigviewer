@@ -24,7 +24,9 @@ BlockGraphicsItem::BlockGraphicsItem (QSharedPointer<DataBlock const> data,
       y_offset_ (height / 2),
       x_grid_intervall_ (50)
 {
+#if QT_VERSION>= 0x040600
     setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
+#endif
     recalcYOffsettAndYZoom ();
 }
 

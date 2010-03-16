@@ -275,7 +275,7 @@ void MainWindow::initMenus()
     connect(file_recent_files_menu_, SIGNAL(triggered(QAction*)),
             &model_, SLOT(recentFileActivated(QAction*)));
     file_menu_actions.insert (1, file_recent_files_menu_->menuAction());
-    file_menu_ = new QMenu(tr("File"), this);
+    file_menu_ = new QMenu(tr("&File"), this);
     file_menu_->addActions(file_menu_actions);
     menuBar()->addMenu(file_menu_);
 
