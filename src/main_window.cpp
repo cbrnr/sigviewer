@@ -95,12 +95,6 @@ void MainWindow::initStatusBar()
 // init icons sets
 void MainWindow::initIconSets()
 {
-    options_channels_icon_.addFile(":/images/channels_22x22.png");
-    options_show_events_icon_.addFile(":/images/events_22x22.png");
-    //TODO: (Oliver) add icon
-    //OLIVER - CHANGE - BEGINS
-    //options_show_settings_icon_.addFile(":/images/settings_22x22.png");
-    //OLIVER - CHANGE - ENDS
     help_about_icon_.addFile(":/images/help_22x22.png");
 }
 
@@ -124,22 +118,6 @@ void MainWindow::initActions()
     calculate_erd_ers_map_action_->setEnabled(false);
     connect(calculate_erd_ers_map_action_, SIGNAL(triggered()),
             &model_, SLOT(calculateERDERSMap()));
-
-    options_channels_action_= new QAction(options_channels_icon_,
-                                    tr("Channe&ls..."), this);
-    options_channels_action_->setObjectName("options_channels_action_");
-    options_channels_action_->setShortcut(tr("Ctrl+L"));
-    options_channels_action_->setStatusTip(tr("Select the channels that should be shown"));
-    connect(options_channels_action_, SIGNAL(triggered()),
-            &model_, SLOT(optionsChannelsAction()));
-
-    options_show_events_action_= new QAction(options_show_events_icon_,
-                                    tr("&Events..."), this);
-    options_show_events_action_->setObjectName("options_show_events_action_");
-    options_show_events_action_->setShortcut(tr("Ctrl+E"));
-    options_show_events_action_->setStatusTip(tr("Select the events that should be shown"));
-    connect(options_show_events_action_, SIGNAL(triggered()),
-            &model_, SLOT(optionsShowEventsAction()));
 
     options_show_settings_action_= new QAction(options_show_settings_icon_,
                                     tr("&Preferences..."), this);
@@ -180,12 +158,6 @@ void MainWindow::initToolBars()
     edit_toolbar_ = addToolBar(tr("Edit"));
     view_toolbar_views_menu_->addAction (edit_toolbar_->toggleViewAction());
     edit_toolbar_->addActions (action_manager_.getActionsOfGroup(GUIActionManager::EDIT_TOOLBAR_ACTIONS));
-
-    option_toolbar_ = addToolBar(tr("Options"));
-    view_toolbar_views_menu_->addAction (option_toolbar_->toggleViewAction());
-    option_toolbar_->setIconSize(QSize(22, 22));
-    option_toolbar_->addAction(options_channels_action_);
-    option_toolbar_->addAction(options_show_events_action_);
 
     view_toolbar_ = addToolBar(tr("View"));
     view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
@@ -301,8 +273,6 @@ void MainWindow::initMenus()
     tools_menu_->addAction(calculate_erd_ers_map_action_);
 
     options_menu_ = menuBar()->addMenu(tr("&Options"));
-    options_menu_->addAction(options_channels_action_);
-    options_menu_->addAction(options_show_events_action_);
     options_menu_->addAction(options_show_settings_action_);
 
     help_menu_ = menuBar()->addMenu(tr("&Help"));
@@ -312,7 +282,7 @@ void MainWindow::initMenus()
 }
 
 // close event
-void MainWindow::closeEvent(QCloseEvent* close_event)
+void MainWindow::closeEvent(QCloseEvent*)
 {
     model_.fileExitAction();
 }
@@ -360,18 +330,6 @@ void MainWindow::saveSettings()
     settings.setValue("size", size());
     settings.setValue("pos", pos());
     settings.endGroup();
-}
-
-// set options channels enabled
-void MainWindow::setOptionsChannelsEnabled(bool enabled)
-{
-    options_channels_action_->setEnabled(enabled);
-}
-
-// set options show events enabled
-void MainWindow::setOptionsShowEventsEnabled(bool enabled)
-{
-    options_show_events_action_->setEnabled(enabled);
 }
 
 // set secs per page enabled
@@ -586,22 +544,6 @@ void MainWindow::setSecsPerPage(const QString& secs_per_page)
         signals_per_page_combobox_->clearFocus();
         secs_per_page_combobox_->setEditText(secs_per_page);
     }
-}
-
-
-// add Action
-bool MainWindow::addActionTo(QMenu* menu, const QString& action_name)
-{
-    QAction* action = findChild<QAction*>(action_name);
-    if (!action)
-    {
-        model_.getLogStream() << "MainWindow::addActionTo Error: "
-                              << " unknow Action: '" << action_name
-                              << "'\n";
-        return false;
-    }
-    menu->addAction(action);
-    return true;
 }
 
 // set status bar signal length

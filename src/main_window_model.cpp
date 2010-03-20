@@ -30,6 +30,7 @@
 #include "signal_browser/delete_event_undo_command.h"
 #include "signal_browser/calculate_event_mean_command.h"
 #include "signal_browser/calculcate_frequency_spectrum_command.h"
+#include "signal_browser/new_event_undo_command.h"
 #include "next_event_view_undo_command.h"
 #include "set_shown_event_types_view_undo_command.h"
 #include "fit_view_to_event_view_undo_command.h"
@@ -753,9 +754,10 @@ void MainWindowModel::openFile(const QString& file_name)
     int tab_index = tab_widget_->addTab(signal_browser_, tr("Signal Data"));
     tab_contexts_[tab_index] = tab_context;
 
-    application_context_.getGUIActionManager().connect(tab_context, SIGNAL(stateChanged(TabContext::State)), SLOT(setTabState(TabContext::State)));
+    application_context_.getGUIActionManager().connect(tab_context, SIGNAL(selectionStateChanged(TabSelectionState)), SLOT(setTabSelectionState(TabSelectionState)));
+    application_context_.getGUIActionManager().connect(tab_context, SIGNAL(editStateChanged(TabEditState)), SLOT(setTabEditState(TabEditState)));
 
-    tab_context->setState (TabContext::NO_EVENT_SELECTED);
+    tab_context->setSelectionState(TAB_STATE_NO_EVENT_SELECTED);
     browser_models_[tab_index] = signal_browser_model_;
 
     tab_widget_->hide();
@@ -775,7 +777,11 @@ void MainWindowModel::openFile(const QString& file_name)
     recent_file_list_.push_front(file_name);
 
     // select channels
-    channelSelection ();
+    if (!channelSelection ())
+    {
+        fileCloseAction ();
+        return;
+    }
 
     tab_widget_->show();
     signal_browser_->show();
@@ -964,6 +970,19 @@ void MainWindowModel::editEventTableAction()
     event_table_dialog.exec();
     event_table_dialog.saveSettings();
 }
+
+//-----------------------------------------------------------------------------
+void MainWindowModel::editInsertOverAction()
+{
+    if (!file_context_)
+        return;
+    uint16 event_type = signal_browser_model_->getActualEventCreationType();
+    QSharedPointer<SignalEvent> new_event = QSharedPointer<SignalEvent>(new SignalEvent(*(signal_browser_model_->getSelectedSignalEvent().data())));
+    new_event->setType (event_type);
+    NewEventUndoCommand* new_event_command = new NewEventUndoCommand (*signal_browser_model_, new_event);
+    CommandStack::instance().executeEditCommand(new_event_command);
+}
+
 
 // view zoom in action
 void MainWindowModel::viewZoomInAction()
@@ -1216,12 +1235,12 @@ void MainWindowModel::optionsChannelsAction()
 
 }
 
-void MainWindowModel::channelSelection ()
+bool MainWindowModel::channelSelection ()
 {
     if (!checkMainWindowPtr("optionsChannelsAction") ||
         !file_context_)
     {
-        return;
+        return false;
     }
 
     ChannelSelectionDialog channel_dialog(file_signal_reader_->getBasicHeader(),
@@ -1247,7 +1266,7 @@ void MainWindowModel::channelSelection ()
 
     if (channel_dialog.result() == QDialog::Rejected)
     {
-        return; // user cancel
+        return false; // user cancel
     }
 
     //signal_browser_model_->enableInitMinMaxSearch(channel_dialog.isInitRangeSearch());
@@ -1268,6 +1287,7 @@ void MainWindowModel::channelSelection ()
     }
     signal_browser_model_->initBuffer();
     signal_browser_model_->updateLayout();
+    return true;
 }
 
 // options show events action

@@ -5,7 +5,8 @@ namespace BioSig_
 
 //-----------------------------------------------------------------------------
 TabContext::TabContext ()
-    : state_ (NO_EVENTS_POSSIBLE)
+    : selection_state_ (TAB_STATE_NO_EVENT_SELECTED),
+      edit_state_ (TAB_STATE_READONLY)
 {
     // nothing to do here
 }
@@ -17,10 +18,17 @@ TabContext::~TabContext ()
 }
 
 //-----------------------------------------------------------------------------
-void TabContext::setState (TabContext::State state)
+void TabContext::setSelectionState (TabSelectionState state)
 {
-    state_ = state;
-    emit stateChanged (state_);
+    selection_state_ = state;
+    emit selectionStateChanged (selection_state_);
+}
+
+//-----------------------------------------------------------------------------
+void TabContext::setEditState (TabEditState state)
+{
+    edit_state_ = state;
+    emit editStateChanged (edit_state_);
 }
 
 

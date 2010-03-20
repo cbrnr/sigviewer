@@ -81,7 +81,10 @@ public slots:
     void setFileState (FileState file_state);
 
     //-------------------------------------------------------------------------
-    void setTabState (TabContext::State tab_state);
+    void setTabSelectionState (TabSelectionState tab_state);
+
+    //-------------------------------------------------------------------------
+    void setTabEditState (TabEditState tab_state);
 
 private:
     //-------------------------------------------------------------------------
@@ -101,6 +104,7 @@ private:
         ACTION_TO_ALL_CHANNELS,
         ACTION_COPY_TO_CHANNELS,
         ACTION_DELETE,
+        ACTION_INSERT_OVER,
         ACTION_CHANGE_CHANNEL,
         ACTION_CHANGE_TYPE,
         ACTION_SHOW_EVENT_TABLE,
@@ -115,7 +119,9 @@ private:
         ACTION_VIEW_GOTO_NEXT_EVENT,
         ACTION_VIEW_GOTO_PREVIOUS_EVENT,
         ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE,
-        ACTION_VIEW_FIT_TO_EVENT
+        ACTION_VIEW_FIT_TO_EVENT,
+        ACTION_VIEW_CHANNELS,
+        ACTION_VIEW_EVENTS
     };
 
     //-------------------------------------------------------------------------
@@ -166,7 +172,8 @@ private:
     typedef std::map<ActionGroup, ActionList > ActionGroupMap;
     typedef std::map<ApplicationState, ActionList > ActionAppStateMap;
     typedef std::map<FileState, ActionList > ActionFileStateMap;
-    typedef std::map<TabContext::State, ActionList > ActionTabStateMap;
+    typedef std::map<TabSelectionState, ActionList > ActionTabSelectionStateMap;
+    typedef std::map<TabEditState, ActionList > ActionTabEditStateMap;
 
     //-------------------------------------------------------------------------
     void updateAllActionsDisabling ();
@@ -178,13 +185,15 @@ private:
 
     ApplicationState application_state_;
     FileState file_state_;
-    TabContext::State tab_state_;
+    TabSelectionState tab_selection_state_;
+    TabEditState tab_edit_state_;
 
     ActionMap action_map_;
     ActionGroupMap action_group_map_;
     ActionAppStateMap app_state_action_map_;
     ActionFileStateMap file_state_action_map_;
-    ActionTabStateMap tab_state_action_map_;
+    ActionTabSelectionStateMap tab_selection_state_action_map_;
+    ActionTabEditStateMap tab_edit_state_action_map_;
 };
 
 } // namespace BioSig_

@@ -81,6 +81,7 @@ public slots:
     void editChangeChannelAction();
     void editChangeTypeAction();
     void editEventTableAction();
+    void editInsertOverAction();
     void mouseModeNewAction();
     void mouseModePointerAction();
     void mouseModeHandAction();
@@ -115,7 +116,7 @@ private:
     const MainWindowModel& operator=(const MainWindowModel&);
 
     bool checkMainWindowPtr(const QString function);
-    void channelSelection ();
+    bool channelSelection ();
 
     MainWindow* main_window_;
     ApplicationContext& application_context_;

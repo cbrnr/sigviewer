@@ -311,8 +311,8 @@ void SignalBuffer::initDownsample()
 
     // first active sub buffers
     Int2SubBuffersPtrMap::iterator iter = channel_nr2sub_buffers_map_.begin();
-    //if (iter == channel_nr2sub_buffers_map_.end())
-    //    return;
+    if (iter == channel_nr2sub_buffers_map_.end())
+        return;
     while (!iter.value()->active)
     {
         iter++;

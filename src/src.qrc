@@ -28,5 +28,17 @@
         <file>images/info_16x16.png</file>
         <file>images/patient_16x16.png</file>
         <file>eventcodes.txt</file>
+        <file>images/zoom_in_vertical_22x22.png</file>
+        <file>images/icons/fileclose.png</file>
+        <file>images/icons/fileopen.png</file>
+        <file>images/icons/filesaveas.png</file>
+        <file>images/icons/filesave.png</file>
+        <file>images/icons/exit.png</file>
+        <file>images/icons/next.png</file>
+        <file>images/icons/previous.png</file>
+        <file>images/icons/redo.png</file>
+        <file>images/icons/undo.png</file>
+        <file>images/icons/editdelete.png</file>
+        <file>images/icons/add.png</file>
     </qresource>
 </RCC>

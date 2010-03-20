@@ -44,7 +44,6 @@ EventInfoWidget::EventInfoWidget(QWidget* parent,
     QGroupBox* editing_tools_group_box = new QGroupBox (tr("Editing Tools"), this);
     QVBoxLayout* editing_tools_layout = new QVBoxLayout (editing_tools_group_box);
     insert_event_button_ = new QPushButton (tr("Insert Event"), editing_tools_group_box);
-    insert_event_button_->setShortcut(tr("Ctrl+I"));
     disabled_widgets_if_nothing_selected_.push_back(insert_event_button_);
     editing_tools_layout->addWidget(insert_event_button_);
     layout_->addWidget (editing_tools_group_box);

@@ -35,8 +35,6 @@ public:
     void saveSettings();
 
     // enable,disable actions
-    void setOptionsChannelsEnabled(bool enabled);
-    void setOptionsShowEventsEnabled(bool enabled);
     void setSecsPerPageEnabled(bool enabled);
     void setSignalsPerPageEnabled(bool enabled);
     void setSignalsPerPage(float64 signals_per_page);
@@ -57,7 +55,6 @@ public:
     QString showImportDialog(const QString& path, const QString& extensions);
     void showInconsistentEventsDialog();
     void setRecentFiles(const QStringList& recent_file_list);
-    bool addActionTo(QMenu* menu, const QString& action_name);
 
 protected:
 
@@ -101,7 +98,6 @@ private:
     QToolBar* file_toolbar_;
     QToolBar* mouse_mode_toolbar_;
     QToolBar* edit_toolbar_;
-    QToolBar* option_toolbar_;
     QToolBar* view_toolbar_;
     QToolBar* navigation_toolbar_;
 
@@ -109,14 +105,10 @@ private:
     QAction* calculate_mean_action_;
     QAction* calculate_frequency_spectrum_action_;
     QAction* calculate_erd_ers_map_action_;
-    QAction* options_channels_action_;
-    QAction* options_show_events_action_;
     QAction* help_log_action_;
     QAction* help_about_action_;
     QAction* options_show_settings_action_;
 
-    QIcon options_channels_icon_;
-    QIcon options_show_events_icon_;
     QIcon help_about_icon_;
     QIcon options_show_settings_icon_;
 

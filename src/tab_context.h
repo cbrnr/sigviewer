@@ -6,18 +6,23 @@
 namespace BioSig_
 {
 
+enum TabSelectionState
+{
+    TAB_STATE_NO_EVENT_SELECTED,
+    TAB_STATE_EVENT_SELECTED_ONE_CHANNEL,
+    TAB_STATE_EVENT_SELECTED_ALL_CHANNELS
+};
+
+enum TabEditState
+{
+    TAB_STATE_READONLY,
+    TAB_STATE_EDITABLE
+};
+
 class TabContext : public QObject
 {
     Q_OBJECT
 public:
-    enum State
-    {
-        NO_EVENTS_POSSIBLE,
-        NO_EVENT_SELECTED,
-        EVENT_SELECTED_ONE_CHANNEL,
-        EVENT_SELECTED_ALL_CHANNELS
-    };
-
     //-------------------------------------------------------------------------
     TabContext ();
 
@@ -26,11 +31,17 @@ public:
 
 signals:
     //-------------------------------------------------------------------------
-    void stateChanged (TabContext::State state);
+    void selectionStateChanged (TabSelectionState state);
+
+    //-------------------------------------------------------------------------
+    void editStateChanged (TabEditState state);
 
 public slots:
     //-------------------------------------------------------------------------
-    void setState (TabContext::State state);
+    void setSelectionState (TabSelectionState state);
+
+    //-------------------------------------------------------------------------
+    void setEditState (TabEditState state);
 
 private:
     //-------------------------------------------------------------------------
@@ -38,7 +49,8 @@ private:
     TabContext (TabContext const&);
     TabContext& operator= (TabContext const&);
 
-    State state_;
+    TabSelectionState selection_state_;
+    TabEditState edit_state_;
 };
 
 }

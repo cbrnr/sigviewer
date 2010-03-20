@@ -11,8 +11,7 @@ namespace BioSig_
 GUIActionManager::GUIActionManager ()
     : main_window_model_ (0),
       application_state_ (APP_STATE_NO_FILE_OPEN),
-      file_state_ (FILE_STATE_UNCHANGED),
-      tab_state_ (TabContext::NO_EVENTS_POSSIBLE)
+      file_state_ (FILE_STATE_UNCHANGED)
 {
     action_map_[ACTION_SEPARATOR] = new QAction (this);
     action_map_[ACTION_SEPARATOR]->setSeparator (true);
@@ -70,18 +69,30 @@ void GUIActionManager::setFileState (FileState file_state)
 }
 
 //-----------------------------------------------------------------------------
-void GUIActionManager::setTabState (TabContext::State tab_state)
+void GUIActionManager::setTabSelectionState(TabSelectionState tab_state)
 {
-    ActionTabStateMap::iterator state_iter =
-            tab_state_action_map_.find (tab_state_);
-    if (state_iter != tab_state_action_map_.end ())
+    ActionTabSelectionStateMap::iterator state_iter =
+            tab_selection_state_action_map_.find (tab_selection_state_);
+    if (state_iter != tab_selection_state_action_map_.end ())
         setActionsEnabled (state_iter->second, true);
 
-    tab_state_ = tab_state;
+    tab_selection_state_ = tab_state;
 
     updateAllActionsDisabling ();
 }
 
+//-----------------------------------------------------------------------------
+void GUIActionManager::setTabEditState(TabEditState tab_state)
+{
+    ActionTabEditStateMap::iterator state_iter =
+            tab_edit_state_action_map_.find (tab_edit_state_);
+    if (state_iter != tab_edit_state_action_map_.end ())
+        setActionsEnabled (state_iter->second, true);
+
+    tab_edit_state_ = tab_state;
+
+    updateAllActionsDisabling ();
+}
 
 //-----------------------------------------------------------------------------
 QMenu* GUIActionManager::getGroupAsMenu (ActionGroup group, QString const& title,
@@ -143,15 +154,16 @@ void GUIActionManager::initFileActions ()
     QStyle* style = QApplication::style ();
 
     createAction (ACTION_FILE_OPEN, tr("&Open..."), SLOT(fileOpenAction()),
-               tr("Open a signal file"),
-               style->standardIcon (QStyle::SP_DialogOpenButton));
+                  tr("Open a signal file"),
+                  QIcon(":/images/icons/fileopen.png"));
 
     createAction (ACTION_FILE_SAVE, tr("&Save..."), SLOT(fileSaveAction()),
-               tr("Save signal file"),
-               style->standardIcon (QStyle::SP_DialogSaveButton));
+                  tr("Save signal file"),
+                  QIcon(":/images/icons/filesave.png"));
 
     createAction (ACTION_FILE_SAVE_AS, tr("Save As..."), SLOT(fileSaveAsAction()),
-               tr("Save the signal file under a new name"));
+                  tr("Save the signal file under a new name"),
+                  QIcon(":/images/icons/filesaveas.png"));
 
     createAction (ACTION_EXPORT_EVENTS, tr("Export Events..."),
                   SLOT(fileExportEventsAction()),
@@ -167,26 +179,24 @@ void GUIActionManager::initFileActions ()
 
     createAction (ACTION_FILE_CLOSE, tr("&Close"), SLOT(fileCloseAction()),
                   tr("Close the opened signal file"),
-                  style->standardIcon (QStyle::SP_DockWidgetCloseButton));
+                  QIcon(":/images/icons/fileclose.png"));
 
     createAction (ACTION_EXIT, tr("E&xit"), SLOT(fileExitAction()),
                   tr("Exit the application"),
-                  style->standardIcon (QStyle::SP_DialogCloseButton));
+                  QIcon(":/images/icons/exit.png"));
 
 }
 
 //-----------------------------------------------------------------------------
 void GUIActionManager::initEditActions ()
 {
-    QStyle* style = QApplication::style ();
-
     createAction (ACTION_UNDO, tr("Undo"), SLOT(undoAction()),
                   tr("Undo last editing command"),
-                  style->standardIcon (QStyle::SP_ArrowLeft));
+                  QIcon(":/images/icons/undo.png"));
 
     createAction (ACTION_REDO, tr("Redo"), SLOT(redoAction()),
                   tr("Redo last undone command"),
-                  style->standardIcon (QStyle::SP_ArrowRight));
+                  QIcon(":/images/icons/redo.png"));
 
     createAction (ACTION_TO_ALL_CHANNELS, tr("To all channels"), SLOT(editToAllChannelsAction()),
                   tr("Put the selected event to all channels"),
@@ -198,7 +208,7 @@ void GUIActionManager::initEditActions ()
 
     createAction (ACTION_DELETE, tr("&Delete"), SLOT(editDeleteAction()),
                   tr("Delete the selected event"),
-                  QIcon (":/images/delete_22x22.png"));
+                  QIcon (":/images/icons/editdelete.png"));
 
     createAction (ACTION_CHANGE_CHANNEL, tr("Change Cha&nnel..."), SLOT(editChangeChannelAction()),
                   tr("Change the channel of the selected event"),
@@ -207,6 +217,10 @@ void GUIActionManager::initEditActions ()
     createAction (ACTION_CHANGE_TYPE, tr("Change &Type..."), SLOT(editChangeTypeAction()),
                   tr("Change the type of the selected event"),
                   QIcon (":/images/change_type_22x22.png"));
+
+    createAction (ACTION_INSERT_OVER, tr("&Insert Over"), SLOT(editInsertOverAction()),
+                  tr("Insert an event at the exact same position as the selected event"),
+                  QIcon (":/images/icons/add.png"));
 
     createAction (ACTION_SHOW_EVENT_TABLE, tr("&Event Table..."),
                   SLOT(editEventTableAction()), tr("Edit the events in a Table"));
@@ -250,10 +264,20 @@ void GUIActionManager::initMouseModeActions ()
 //-----------------------------------------------------------------------------
 void GUIActionManager::initViewActions ()
 {
+    createAction (ACTION_VIEW_EVENTS, tr("&Events..."),
+                  SLOT(optionsShowEventsAction()),
+                  tr("Select the events that should be shown"),
+                  QIcon(":/images/events_22x22.png"));
+
+    createAction (ACTION_VIEW_CHANNELS, tr("Channe&ls..."),
+                  SLOT(optionsChannelsAction()),
+                  tr("Select the channels that should be shown"),
+                  QIcon(":/images/channels_22x22.png"));
+
     createAction (ACTION_VIEW_ZOOM_IN, tr("Zoom &In"),
                   SLOT(viewZoomInAction()),
                   tr("Zoom in all channels"),
-                  QIcon(":/images/zoom_in_22x22.png"));
+                  QIcon(":/images/zoom_in_vertical_22x22.png"));
 
     createAction (ACTION_VIEW_ZOOM_OUT, tr("Zoom &Out"),
                   SLOT(viewZoomOutAction()),
@@ -267,19 +291,18 @@ void GUIActionManager::initViewActions ()
 
     createAction (ACTION_VIEW_GOTO, tr("&Go To..."),
                   SLOT(viewGoToAction()),
-                  tr("Go to a specified point of the signal"));
-
-    createAction (ACTION_VIEW_GOTO, tr("&Go To..."),
-                  SLOT(viewGoToAction()),
-                  tr("Go to a specified point of the signal"));
+                  tr("Go to a specified point of the signal"),
+                  QIcon(":/images/icons/goto.png"));
 
     createAction (ACTION_VIEW_GOTO_NEXT_EVENT, tr("Select &Next Event"),
                   SLOT(viewShowAndSelectNextEventAction()),
-                  tr("Jumps to the next specified event and selects it"));
+                  tr("Jumps to the next specified event and selects it"),
+                  QIcon(":/images/icons/next.png"));
 
     createAction (ACTION_VIEW_GOTO_PREVIOUS_EVENT, tr("Select &Previous Event"),
                   SLOT(viewShowAndSelectPreviousEventAction()),
-                  tr("Jumps to the previous specified event and selects it"));
+                  tr("Jumps to the previous specified event and selects it"),
+                  QIcon(":/images/icons/previous.png"));
 
     createAction (ACTION_VIEW_FIT_TO_EVENT, tr("Fit View to Selected Event"),
                   SLOT(viewFitToEventAction()),
@@ -300,6 +323,7 @@ void GUIActionManager::initShortcuts ()
     setShortCut (ACTION_UNDO, QKeySequence::Undo);
     setShortCut (ACTION_REDO, QKeySequence::Redo);
     setShortCut (ACTION_DELETE, QKeySequence::Delete);
+    setShortCut (ACTION_INSERT_OVER, QKeySequence("Ctrl+I"));
 
     setShortCut (ACTION_MODE_NEW, QString("Ctrl+1"));
     setShortCut (ACTION_MODE_POINTER, QString("Ctrl+2"));
@@ -351,6 +375,8 @@ void GUIActionManager::initGroups ()
     action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_CHANGE_CHANNEL);
     action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_CHANGE_TYPE);
     action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
+    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_INSERT_OVER);
+    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SHOW_EVENT_TABLE);
 
     // EDIT_TOOLBAR_ACTIONS
@@ -367,6 +393,8 @@ void GUIActionManager::initGroups ()
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_CHANGE_CHANNEL);
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_CHANGE_TYPE);
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_SEPARATOR);
+    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_INSERT_OVER);
+    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_SEPARATOR);
@@ -381,6 +409,9 @@ void GUIActionManager::initGroups ()
     action_group_map_[MODE_ACTIONS].push_back (ACTION_MODE_SHIFT);
 
     // VIEW_MENU_ACTIONS
+    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_CHANNELS);
+    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_EVENTS);
+    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_ZOOM_IN);
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_ZOOM_OUT);
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_AUTO_SCALE);
@@ -395,6 +426,8 @@ void GUIActionManager::initGroups ()
 
 
     // VIEW_TOOLBAR_ACTIONS
+    action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_CHANNELS);
+    action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_EVENTS);
     action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_ZOOM_IN);
     action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_ZOOM_OUT);
     action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_AUTO_SCALE);
@@ -429,30 +462,34 @@ void GUIActionManager::initDisabledStates ()
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_FIT_TO_EVENT);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_CHANNELS);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_EVENTS);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_INSERT_OVER);
 
     file_state_action_map_[FILE_STATE_UNCHANGED].push_back (ACTION_FILE_SAVE);
 
-    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_TO_ALL_CHANNELS);
-    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_TO_ALL_CHANNELS);
-    tab_state_action_map_[TabContext::EVENT_SELECTED_ALL_CHANNELS].push_back (ACTION_TO_ALL_CHANNELS);
-    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_COPY_TO_CHANNELS);
-    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_COPY_TO_CHANNELS);
-    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_DELETE);
-    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_DELETE);
-    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_CHANGE_CHANNEL);
-    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_CHANGE_CHANNEL);
-    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_CHANGE_TYPE);
-    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_CHANGE_TYPE);
-    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_MODE_NEW);
-    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_MODE_POINTER);
-    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
-    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
-    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
-    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
-    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
-    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
-    tab_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_VIEW_FIT_TO_EVENT);
-    tab_state_action_map_[TabContext::NO_EVENT_SELECTED].push_back (ACTION_VIEW_FIT_TO_EVENT);
+//    tab_selection_state_action_map_[TAB_STATE_READONLY].push_back (ACTION_TO_ALL_CHANNELS);
+    tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_TO_ALL_CHANNELS);
+    tab_selection_state_action_map_[TAB_STATE_EVENT_SELECTED_ALL_CHANNELS].push_back (ACTION_TO_ALL_CHANNELS);
+//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_COPY_TO_CHANNELS);
+    tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_COPY_TO_CHANNELS);
+//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_DELETE);
+    tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_DELETE);
+//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_CHANGE_CHANNEL);
+    tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_CHANGE_CHANNEL);
+//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_CHANGE_TYPE);
+    tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_CHANGE_TYPE);
+//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_MODE_NEW);
+//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_MODE_POINTER);
+//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
+    tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
+//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
+    tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
+//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
+    tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
+//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_VIEW_FIT_TO_EVENT);
+    tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_VIEW_FIT_TO_EVENT);
+    tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_INSERT_OVER);
 }
 
 
@@ -494,10 +531,15 @@ void GUIActionManager::setShortCut (GUIAction const&  gui_action,
 //-------------------------------------------------------------------------
 void GUIActionManager::updateAllActionsDisabling ()
 {
-    ActionTabStateMap::iterator tab_state_iter =
-            tab_state_action_map_.find (tab_state_);
-    if (tab_state_iter != tab_state_action_map_.end ())
+    ActionTabSelectionStateMap::iterator tab_state_iter =
+            tab_selection_state_action_map_.find (tab_selection_state_);
+    if (tab_state_iter != tab_selection_state_action_map_.end ())
         setActionsEnabled (tab_state_iter->second, false);
+
+    ActionTabEditStateMap::iterator tab_edit_state_iter =
+            tab_edit_state_action_map_.find (tab_edit_state_);
+    if (tab_edit_state_iter != tab_edit_state_action_map_.end ())
+        setActionsEnabled (tab_edit_state_iter->second, false);
 
     ActionAppStateMap::iterator app_state_iter =
             app_state_action_map_.find (application_state_);

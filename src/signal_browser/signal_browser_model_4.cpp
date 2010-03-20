@@ -579,7 +579,7 @@ void SignalBrowserModel::selectEvent (int32 id)
 {
     if (!id2event_item_.contains (id))
     {
-        tab_context_.setState (TabContext::NO_EVENT_SELECTED);
+        tab_context_.setSelectionState(TAB_STATE_NO_EVENT_SELECTED);
         selected_event_item_ = QSharedPointer<EventGraphicsItem>(0);
         emit eventSelected (QSharedPointer<SignalEvent>(0));
         return;
@@ -588,7 +588,7 @@ void SignalBrowserModel::selectEvent (int32 id)
     QSharedPointer<EventGraphicsItem> item = id2event_item_.find (id).value();
     if (item.isNull())
     {
-        tab_context_.setState (TabContext::NO_EVENT_SELECTED);
+        tab_context_.setSelectionState (TAB_STATE_NO_EVENT_SELECTED);
         selected_event_item_ = QSharedPointer<EventGraphicsItem>(0);
         emit eventSelected (QSharedPointer<SignalEvent>(0));
         return;
@@ -596,9 +596,9 @@ void SignalBrowserModel::selectEvent (int32 id)
 
     if (signal_buffer_.getEvent(item->getId())->getChannel() ==
         SignalEvent::UNDEFINED_CHANNEL)
-        tab_context_.setState (TabContext::EVENT_SELECTED_ALL_CHANNELS);
+        tab_context_.setSelectionState(TAB_STATE_EVENT_SELECTED_ALL_CHANNELS);
     else
-        tab_context_.setState (TabContext::EVENT_SELECTED_ONE_CHANNEL);
+        tab_context_.setSelectionState (TAB_STATE_EVENT_SELECTED_ONE_CHANNEL);
 
     if (!selected_event_item_.isNull())
         selected_event_item_->setSelected (false);
@@ -611,7 +611,7 @@ void SignalBrowserModel::selectEvent (int32 id)
 //-------------------------------------------------------------------
 void SignalBrowserModel::unselectEvent ()
 {    
-    tab_context_.setState (TabContext::NO_EVENT_SELECTED);
+    tab_context_.setSelectionState (TAB_STATE_NO_EVENT_SELECTED);
     if (!selected_event_item_.isNull())
         selected_event_item_->setSelected (false);
     selected_event_item_ = QSharedPointer<EventGraphicsItem>(0);
@@ -671,15 +671,11 @@ bool SignalBrowserModel::checkSignalBrowserPtr(const QString function)
 //-----------------------------------------------------------------------------
 void SignalBrowserModel::updateEventItemsImpl ()
 {
-    int32 height = (signal_height_  + signal_spacing_) *
-                   channel2signal_item_.size();
-
     Int2EventGraphicsItemPtrMap::iterator event_iter;
     for (event_iter = id2event_item_.begin();
          event_iter != id2event_item_.end();
          event_iter++)
     {
-        // std::cout << "blub" << std::endl;
         QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(event_iter.key());
         if (!event)
         {
@@ -700,7 +696,7 @@ void SignalBrowserModel::updateEventItemsImpl ()
             {
                 selected_event_item_->setSelected(false);
                 selected_event_item_.clear();
-                tab_context_.setState (TabContext::NO_EVENT_SELECTED);
+                tab_context_.setSelectionState (TAB_STATE_NO_EVENT_SELECTED);
             }
 
             continue; // event type or channel not shown
@@ -886,9 +882,9 @@ void SignalBrowserModel::setEventChanged(int32 id)
         {
             if (selected_event_item_->getSignalEvent()->getChannel() ==
                 SignalEvent::UNDEFINED_CHANNEL)
-                tab_context_.setState (TabContext::EVENT_SELECTED_ALL_CHANNELS);
+                tab_context_.setSelectionState (TAB_STATE_EVENT_SELECTED_ALL_CHANNELS);
             else
-                tab_context_.setState (TabContext::EVENT_SELECTED_ONE_CHANNEL);
+                tab_context_.setSelectionState (TAB_STATE_EVENT_SELECTED_ONE_CHANNEL);
 
             emit eventSelected(event);
         }
@@ -915,7 +911,7 @@ void SignalBrowserModel::removeEvent(uint32 id, bool)
     signal_browser_view_->removeEventGraphicsItem(event_item);
 
     main_window_model_.setChanged();
-    tab_context_.setState (TabContext::NO_EVENT_SELECTED);
+    tab_context_.setSelectionState (TAB_STATE_NO_EVENT_SELECTED);
 }
 
 //-----------------------------------------------------------------------------
@@ -950,7 +946,7 @@ void SignalBrowserModel::addEvent(QSharedPointer<EventGraphicsItem> event)
 void SignalBrowserModel::unsetSelectedEventItem()
 {
     selected_event_item_.clear();
-    tab_context_.setState (TabContext::NO_EVENT_SELECTED);
+    tab_context_.setSelectionState (TAB_STATE_NO_EVENT_SELECTED);
 }
 
 
@@ -1175,7 +1171,7 @@ void SignalBrowserModel::removeSelectedEvent()
     uint32 id = selected_event_item_->getId();
 
     selected_event_item_.clear();
-    tab_context_.setState (TabContext::NO_EVENT_SELECTED);
+    tab_context_.setSelectionState (TAB_STATE_NO_EVENT_SELECTED);
     removeEvent(id);
 }
 

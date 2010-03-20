@@ -22,7 +22,9 @@ EventContextMenu::EventContextMenu (SignalBrowserModel& model,
 //-----------------------------------------------------------------------------
 EventContextMenu::~EventContextMenu ()
 {
-
+    event_items_.clear();
+    event_item_type_names_.clear();
+    sub_menus_.clear();
 }
 
 //-------------------------------------------------------------------------
