@@ -4,7 +4,7 @@
     Copyright (C) Thomas Brunner  2005
     		  Christoph Eibel 2008
 		  Clemens Brunner 2005,2008
-    		  Alois Schloegl  2009
+    		  Alois Schloegl  2009,2010
     This file is part of the "SigViewer" repository
     at http://biosig.sf.net/
 
@@ -45,14 +45,20 @@ FileSignalReaderFactory* FileSignalReaderFactory::getInstance()
         instance_.reset(new FileSignalReaderFactory);
 
         // register all readers
-		instance_->addPrototype(".gdf", new BioSigReader);
+        instance_->addPrototype(".gdf", new BioSigReader);
         instance_->addPrototype(".evt", new BioSigReader);
        	instance_->addPrototype(".bdf", new BioSigReader);
         instance_->addPrototype(".bkr", new BioSigReader);
         instance_->addPrototype(".cnt", new BioSigReader);
         instance_->addPrototype(".edf", new BioSigReader);
         instance_->addPrototype(".eeg", new BioSigReader);
-		instance_->setDefaultPrototype(new BioSigReader);
+
+        instance_->addPrototype(".acq", new BioSigReader);	// Biopac 
+        instance_->addPrototype(".ahdr", new BioSigReader);	// BrainVision file format 
+        instance_->addPrototype(".vhdr", new BioSigReader);	// BrainVision file format 
+        instance_->addPrototype(".scp", new BioSigReader);	// SCP-ECG: EN1064, ISO 11073-91064 
+        
+        instance_->setDefaultPrototype(new BioSigReader);
     }
     return instance_.get();
 }
