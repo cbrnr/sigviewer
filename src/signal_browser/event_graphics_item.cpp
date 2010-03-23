@@ -28,7 +28,7 @@ namespace BioSig_
 int EventGraphicsItem::move_mouse_range_ = 5;
 QMutex EventGraphicsItem::event_handling_mutex_;
 QMutex EventGraphicsItem::context_menu_mutex_;
-QSharedPointer<EventContextMenu> EventGraphicsItem::context_menu_;
+QSharedPointer<EventContextMenu> EventGraphicsItem::context_menu_ (0);
 
 //-----------------------------------------------------------------------------
 EventGraphicsItem::EventGraphicsItem(SignalBuffer& buffer, SignalBrowserModel& model,
@@ -389,7 +389,7 @@ void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event
 // get mouse press action
 EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneMouseEvent* e)
 {
-    QSharedPointer<EventGraphicsItem> old_selected_item
+    EventGraphicsItem* old_selected_item
         = signal_browser_model_.getSelectedEventItem();
     QPoint mouse_pos (e->scenePos().x(), e->scenePos().y());  //canvas_view->inverseWorldMatrix().map(e->pos());
 
@@ -400,7 +400,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
         case SignalBrowserMouseHandling::SELECT_RESIZE_EVENT_ACTION:
             {
                 // select event
-                if (old_selected_item.isNull())
+                if (!old_selected_item)
                 {
                     return ACTION_SELECT;
                 }
@@ -431,7 +431,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
             }
             break;
         case SignalBrowserMouseHandling::SHIFT_EVENT_TO_CHANNEL_ACTION:
-            if (this == old_selected_item.data() &&
+            if (this == old_selected_item &&
                 old_selected_item->boundingRect().contains(mouse_pos) &&
                 signal_event_->getChannel() != SignalEvent::UNDEFINED_CHANNEL)
             {
@@ -439,7 +439,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
             }
             break;
         case SignalBrowserMouseHandling::COPY_EVENT_TO_CHANNEL_ACTION:
-            if (this == old_selected_item.data() &&
+            if (this == old_selected_item &&
                 old_selected_item->boundingRect().contains(mouse_pos) &&
                 signal_event_->getChannel() != SignalEvent::UNDEFINED_CHANNEL)
             {
@@ -458,10 +458,18 @@ void EventGraphicsItem::addContextMenuEntry ()
     context_menu_mutex_.lock();
     if (context_menu_.isNull())
         context_menu_ = QSharedPointer<EventContextMenu> (new EventContextMenu (signal_browser_model_, app_context_));
+    else
+    {
+        if (context_menu_->getNumberOfEvents() == 0)
+        {
+            context_menu_.clear();
+            context_menu_ = QSharedPointer<EventContextMenu> (new EventContextMenu (signal_browser_model_, app_context_));
+        }
+    }
 
     QString event_name = signal_browser_model_.getEventName(signal_event_->getType());
 
-    context_menu_->addEvent(signal_browser_model_.getEventItem(signal_event_->getId()), event_name);
+    context_menu_->addEvent(signal_event_->getId(), event_name);
     context_menu_mutex_.unlock();
 }
 

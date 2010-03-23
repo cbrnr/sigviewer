@@ -30,7 +30,7 @@ void NewEventUndoCommand::undo ()
 //-----------------------------------------------------------------------------
 void NewEventUndoCommand::redo ()
 {
-    QSharedPointer<EventGraphicsItem> event_item
+    EventGraphicsItem* event_item
         = signal_browser_model_.addEvent(signal_event_);
     signal_browser_model_.unsetSelectedEventItem();
 }

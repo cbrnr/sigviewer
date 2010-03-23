@@ -17,7 +17,7 @@ public:
     /// constructor
     ///
     /// @param
-    DeleteEventUndoCommand (SignalBrowserModel& signal_browser_model, QSharedPointer<EventGraphicsItem> event_item);
+    DeleteEventUndoCommand (SignalBrowserModel& signal_browser_model, EventGraphicsItem* event_item);
 
     //-------------------------------------------------------------------------
     /// destructor
@@ -34,7 +34,7 @@ public:
 
 private:
     SignalBrowserModel& signal_browser_model_;
-    QSharedPointer<EventGraphicsItem> event_item_;
+    EventGraphicsItem* event_item_;
 
 
     //-------------------------------------------------------------------------

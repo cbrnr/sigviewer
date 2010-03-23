@@ -35,7 +35,7 @@ public:
     virtual ~EventContextMenu ();
 
     //-------------------------------------------------------------------------
-    void addEvent (QSharedPointer<EventGraphicsItem> event_item,
+    void addEvent (uint16 event_id,
                    QString const &type_name);
 
     //-------------------------------------------------------------------------
@@ -52,7 +52,7 @@ private:
     //-------------------------------------------------------------------------
     void addActionsToMenu (QMenu& menu);
 
-    QVector<QSharedPointer<EventGraphicsItem> > event_items_;
+    QVector<uint16> event_ids_;
     QVector<QString> event_item_type_names_;
     QVector<QMenu*> sub_menus_;
     SignalBrowserModel& signal_browser_model_;

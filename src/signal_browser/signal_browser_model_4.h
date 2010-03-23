@@ -138,12 +138,12 @@ public:
     void setShownEventTypes(const IntList& event_type, const bool all = false);
     void removeEvent(uint32 id, bool update = true);
 
-    QSharedPointer<EventGraphicsItem> addEvent(QSharedPointer<SignalEvent> event, bool update = true);
-    void addEvent(QSharedPointer<EventGraphicsItem> event);
+    EventGraphicsItem* addEvent(QSharedPointer<SignalEvent> event, bool update = true);
+    void addEvent(EventGraphicsItem* event);
     void unsetSelectedEventItem();
-    QSharedPointer<EventGraphicsItem> getSelectedEventItem();
+    EventGraphicsItem* getSelectedEventItem();
     QSharedPointer<SignalEvent> getSelectedSignalEvent();
-    QSharedPointer<EventGraphicsItem> getEventItem(int32 id);
+    EventGraphicsItem* getEventItem(int32 id);
     void setSelectedEventToAllChannels();
     void changeSelectedEventChannel();
     void copySelectedEventToChannels();
@@ -191,7 +191,7 @@ private:
 
 
     typedef std::map<int32, SignalGraphicsItem*> Int2SignalGraphicsItemPtrMap;
-    typedef QMap<int32, QSharedPointer<EventGraphicsItem> > Int2EventGraphicsItemPtrMap;
+    typedef std::map<int32, EventGraphicsItem*> Int2EventGraphicsItemPtrMap;
 
     typedef std::map<int32, int32> Int2IntMap;
 
@@ -209,7 +209,7 @@ private:
     Int2EventGraphicsItemPtrMap id2event_item_;
 
     Int2IntMap channel2y_pos_;
-    QSharedPointer<EventGraphicsItem> selected_event_item_;
+    EventGraphicsItem* selected_event_item_;
     QSharedPointer<EventTableFileReader const> event_table_file_reader_;
 
     // parameters

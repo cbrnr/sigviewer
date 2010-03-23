@@ -22,13 +22,13 @@ EventContextMenu::EventContextMenu (SignalBrowserModel& model,
 //-----------------------------------------------------------------------------
 EventContextMenu::~EventContextMenu ()
 {
-    event_items_.clear();
+    event_ids_.clear();
     event_item_type_names_.clear();
     sub_menus_.clear();
 }
 
 //-------------------------------------------------------------------------
-void EventContextMenu::addEvent (QSharedPointer<EventGraphicsItem> event_item,
+void EventContextMenu::addEvent (uint16 event_id,
                                  QString const &type_name)
 {
     QVector<QMenu*>::iterator it = sub_menus_.begin();
@@ -42,25 +42,25 @@ void EventContextMenu::addEvent (QSharedPointer<EventGraphicsItem> event_item,
 
     clear();
     QObject::disconnect(this, 0);
-    event_items_.append (event_item);
+    event_ids_.append (event_id);
     event_item_type_names_.append(type_name);
 }
 
 //-------------------------------------------------------------------------
 unsigned EventContextMenu::getNumberOfEvents () const
 {
-    return event_items_.size();
+    return event_ids_.size();
 }
 
 
 //-------------------------------------------------------------------------
 void EventContextMenu::finaliseAndShowContextMenu (QGraphicsSceneContextMenuEvent* context_event)
 {
-    QVector<QSharedPointer<EventGraphicsItem> >::iterator it = event_items_.begin();
+    QVector<uint16>::iterator it = event_ids_.begin();
     QVector<QString>::iterator it_name = event_item_type_names_.begin();
-    if (event_items_.size() > 1)
+    if (event_ids_.size() > 1)
     {
-        while (it != event_items_.end())
+        while (it != event_ids_.end())
         {
             QString text ("...");
             if (it_name != event_item_type_names_.end())
@@ -73,21 +73,21 @@ void EventContextMenu::finaliseAndShowContextMenu (QGraphicsSceneContextMenuEven
 
             QAction* action = addMenu (submenu);
             action->activate(QAction::Hover);
-            action->setData((*it)->getId());
+            action->setData(*it);
             addAction(action);
             ++it;
             ++it_name;
         }
     }
-    else if (event_items_.size() == 1)
+    else if (event_ids_.size() == 1)
     {
         QAction* title = addAction (*it_name);
         title->setEnabled (false);
         addActionsToMenu (*this);
-        signal_browser_model_.selectEvent ((*it)->getId());
+        signal_browser_model_.selectEvent (*it);
     }
 
-    event_items_.clear();
+    event_ids_.clear();
     event_item_type_names_.clear();
     QObject::connect(this, SIGNAL(hovered(QAction*)), this, SLOT(selectEvent(QAction*)));
     exec (context_event->screenPos());
@@ -96,11 +96,11 @@ void EventContextMenu::finaliseAndShowContextMenu (QGraphicsSceneContextMenuEven
 //-------------------------------------------------------------------------
 void EventContextMenu::finaliseAndShowSelectionMenu (QGraphicsSceneMouseEvent* event)
 {
-    QVector<QSharedPointer<EventGraphicsItem> >::iterator it = event_items_.begin();
+    QVector<uint16>::iterator it = event_ids_.begin();
     QVector<QString>::iterator it_name = event_item_type_names_.begin();
-    if (event_items_.size() > 1)
+    if (event_ids_.size() > 1)
     {
-        while (it != event_items_.end())
+        while (it != event_ids_.end())
         {
             QString text ("...");
             if (it_name != event_item_type_names_.end())
@@ -108,7 +108,7 @@ void EventContextMenu::finaliseAndShowSelectionMenu (QGraphicsSceneMouseEvent* e
 
             QAction* action = addAction(text);
             //action->activate(QAction::Hover);
-            action->setData((*it)->getId());
+            action->setData(*it);
             //addAction(action);
             ++it;
             ++it_name;
@@ -116,10 +116,10 @@ void EventContextMenu::finaliseAndShowSelectionMenu (QGraphicsSceneMouseEvent* e
         QObject::connect(this, SIGNAL(triggered(QAction*)), this, SLOT(selectEvent(QAction*)));
         exec (event->screenPos());
     }
-    else if (event_items_.size() == 1)
-        signal_browser_model_.selectEvent ((*it)->getId());
+    else if (event_ids_.size() == 1)
+        signal_browser_model_.selectEvent (*it);
 
-    event_items_.clear();
+    event_ids_.clear();
     event_item_type_names_.clear();
 }
 

@@ -4,7 +4,7 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-DeleteEventUndoCommand::DeleteEventUndoCommand(SignalBrowserModel& signal_browser_model, QSharedPointer<EventGraphicsItem> event_item)
+DeleteEventUndoCommand::DeleteEventUndoCommand(SignalBrowserModel& signal_browser_model, EventGraphicsItem* event_item)
     : signal_browser_model_ (signal_browser_model),
       event_item_ (event_item)
 {

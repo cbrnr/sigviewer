@@ -83,7 +83,7 @@ private:
 
     bool shifting_;
     bool new_event_;
-    QSharedPointer<EventGraphicsItem> created_event_item_;
+    EventGraphicsItem* created_event_item_;
     bool hand_tool_on_;
     QPointF move_start_point_;
 

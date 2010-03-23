@@ -32,7 +32,7 @@ public:
 private:
     SignalBrowserModel& signal_browser_model_;
     bool forward_;
-    QSharedPointer<EventGraphicsItem> previously_selected_event_;
+    EventGraphicsItem* previously_selected_event_;
     QPointF previous_view_position_;
 
 

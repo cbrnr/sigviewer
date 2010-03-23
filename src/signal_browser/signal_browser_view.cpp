@@ -149,24 +149,24 @@ void SignalBrowserView::removeSignalGraphicsItem (int32 channel_nr, SignalGraphi
 
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::addEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item)
+void SignalBrowserView::addEventGraphicsItem (EventGraphicsItem* event_graphics_item)
 {
     // TODO: really remove before add????
-    graphics_scene_->removeItem(event_graphics_item.data());
-    graphics_scene_->addItem(event_graphics_item.data());
+    graphics_scene_->removeItem(event_graphics_item);
+    graphics_scene_->addItem(event_graphics_item);
 
     graphics_view_->update();
-    connect (event_graphics_item.data(), SIGNAL(hoverEnterSignalEvent (QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(addHoveredEvent(QSharedPointer<SignalEvent const>)));
-    connect (event_graphics_item.data(), SIGNAL(hoverLeaveSignalEvent(QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(removeHoveredEvent(QSharedPointer<SignalEvent const>)));
-    connect (event_graphics_item.data(), SIGNAL(mouseAtSecond(float64)), x_axis_widget_, SLOT(changeHighlightTime(float64)));
-    connect (event_graphics_item.data(), SIGNAL(mouseMoving(bool)), x_axis_widget_, SLOT(enableHighlightTime(bool)));
+    connect (event_graphics_item, SIGNAL(hoverEnterSignalEvent (QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(addHoveredEvent(QSharedPointer<SignalEvent const>)));
+    connect (event_graphics_item, SIGNAL(hoverLeaveSignalEvent(QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(removeHoveredEvent(QSharedPointer<SignalEvent const>)));
+    connect (event_graphics_item, SIGNAL(mouseAtSecond(float64)), x_axis_widget_, SLOT(changeHighlightTime(float64)));
+    connect (event_graphics_item, SIGNAL(mouseMoving(bool)), x_axis_widget_, SLOT(enableHighlightTime(bool)));
 }
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::removeEventGraphicsItem (QSharedPointer<EventGraphicsItem> event_graphics_item,
+void SignalBrowserView::removeEventGraphicsItem (EventGraphicsItem* event_graphics_item,
                                                  bool update_view)
 {
-    graphics_scene_->removeItem(event_graphics_item.data());
+    graphics_scene_->removeItem(event_graphics_item);
     if (update_view)
         graphics_view_->update();
 }

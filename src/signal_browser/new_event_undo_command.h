@@ -32,7 +32,6 @@ public:
 
 private:
     SignalBrowserModel& signal_browser_model_;
-    //QSharedPointer<EventGraphicsItem> event_item_;
     QSharedPointer<SignalEvent> signal_event_;
 
     //-------------------------------------------------------------------------
