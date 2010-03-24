@@ -326,11 +326,11 @@ void EventTableDialog::buildEventTable()
 
         event_table_model_->setData(event_table_model_->index(event_nr, 1),
                                     QString("%1").arg(it->getPosition() /
-                                                      sample_rate, 0, 'f', 1));
+                                                      sample_rate, 0, 'f', 2));
 
         event_table_model_->setData(event_table_model_->index(event_nr, 2),
                                     QString("%1").arg(it->getDuration() /
-                                                      sample_rate, 0, 'f', 1));
+                                                      sample_rate, 0, 'f', 2));
 
         QString tmp;
 
