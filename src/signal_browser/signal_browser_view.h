@@ -78,9 +78,12 @@ private slots:
     void scroll ();
 
 private:
+    //-------------------------------------------------------------------------
+    virtual void contextMenuEvent (QContextMenuEvent * event);
+
     void createLayout ();
     void loadSettings ();
-    void saveSettings () const;
+    void saveSettings ();
 
     QTimer* scroll_timer_;
     QGraphicsScene* graphics_scene_;
@@ -99,7 +102,6 @@ private:
     int32 scroll_x_step_;
     bool scroll_x_left_;
     std::map<std::string, QWidget*> hideable_widgets_;
-    std::map<std::string, bool> hideable_widgets_visibilities_;
 };
 
 } // namespace BioSig_

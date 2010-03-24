@@ -499,15 +499,17 @@ void SignalGraphicsItem::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event)
 {
-    event->accept();
     if (!EventGraphicsItem::displayContextMenu(event))
     {
+        event->ignore();
         return; // TODO: implement!!!!
         QMenu context_menu;
         context_menu.addAction("Set Scaling");
         context_menu.addSeparator();
         context_menu.exec(event->screenPos());
     }
+    else
+        event->accept();
 }
 
 //-----------------------------------------------------------------------------

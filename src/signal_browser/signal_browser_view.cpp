@@ -16,6 +16,7 @@
 #include <QTimer>
 #include <QSettings>
 #include <QToolBox>
+#include <QMenu>
 
 namespace BioSig_
 {
@@ -30,7 +31,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     resize(parent->contentsRect().width(), parent->contentsRect().height());
     graphics_scene_ = new QGraphicsScene (0,0,parent->contentsRect().width(), parent->contentsRect().height(), this);
     graphics_view_ = new QGraphicsView(graphics_scene_, this);
-    graphics_view_->setAcceptDrops(false);
+    graphics_view_->setAcceptDrops (false);
     graphics_view_->scroll(0,0);
     graphics_view_->horizontalScrollBar()->hide();
     graphics_view_->verticalScrollBar()->hide();
@@ -97,12 +98,12 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
 //-----------------------------------------------------------------------------
 SignalBrowserView::~SignalBrowserView ()
 {
-    saveSettings();
-    QList<QGraphicsItem*> items = graphics_scene_->items();
-    for (QList<QGraphicsItem*>::iterator it = items.begin();
-         it != items.end();
-         ++it)
-        graphics_scene_->removeItem(*it);
+    saveSettings ();
+//    QList<QGraphicsItem*> items = graphics_scene_->items();
+//    for (QList<QGraphicsItem*>::iterator it = items.begin();
+//         it != items.end();
+//         ++it)
+//        graphics_scene_->removeItem(*it);
 }
 
 //-----------------------------------------------------------------------------
@@ -200,7 +201,20 @@ int32 SignalBrowserView::getVisibleY () const
 //-----------------------------------------------------------------------------
 std::map<std::string, bool> SignalBrowserView::getWidgetVisibilities () const
 {
-    return hideable_widgets_visibilities_;
+    std::map<std::string, bool> hideable_widgets_visibilities;
+
+    for (std::map<std::string, QWidget*>::const_iterator widget_iterator =
+         hideable_widgets_.begin();
+         widget_iterator != hideable_widgets_.end();
+         ++widget_iterator)
+    {
+        QWidget const* blub = this;
+        QWidget* bla = const_cast<QWidget*>(blub);
+        hideable_widgets_visibilities[widget_iterator->first] =
+                widget_iterator->second->isVisibleTo (bla);
+    }
+
+    return hideable_widgets_visibilities;
 }
 
 
@@ -211,10 +225,7 @@ void SignalBrowserView::setWidgetVisibility (std::string const &widget_name, boo
     if (widget_iterator == hideable_widgets_.end())
         return;
     else
-    {
         widget_iterator->second->setVisible (visibility);
-        hideable_widgets_visibilities_[widget_iterator->first] = visibility;
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -332,6 +343,24 @@ void SignalBrowserView::scroll ()
         scroll_timer_->stop();
 }
 
+//-------------------------------------------------------------------------
+void SignalBrowserView::contextMenuEvent (QContextMenuEvent * event)
+{
+    QMenu* menu = new QMenu (this);
+    for (std::map<std::string, QWidget*>::iterator widget_iter =
+         hideable_widgets_.begin();
+         widget_iter != hideable_widgets_.end();
+         ++widget_iter)
+    {
+        QAction* action = new QAction (tr(widget_iter->first.c_str()), menu);
+        action->setCheckable (true);
+        action->setChecked (widget_iter->second->isVisibleTo(this));
+        widget_iter->second->connect (action, SIGNAL(toggled(bool)), SLOT(setVisible (bool)));
+        menu->addAction (action);
+    }
+    menu->exec(event->globalPos());
+}
+
 
 //-----------------------------------------------------------------------------
 void SignalBrowserView::createLayout()
@@ -350,7 +379,6 @@ void SignalBrowserView::createLayout()
     layout_->addWidget(horizontal_scrollbar_, 4, 2);
     layout_->addWidget(label_widget_, 2, 3);
     layout_->addWidget(vertical_scrollbar_, 2, 4);
-    //event_info_widget_->setMaximumWidth(250);
 }
 
 //-----------------------------------------------------------------------------
@@ -365,25 +393,24 @@ void SignalBrowserView::loadSettings ()
          ++widget_iterator)
     {
         widget_iterator->second->setVisible (settings.value(widget_iterator->first.c_str()).toBool());
-        hideable_widgets_visibilities_[widget_iterator->first] = settings.value(widget_iterator->first.c_str()).toBool();
     }
 
     settings.endGroup();
 }
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::saveSettings () const
+void SignalBrowserView::saveSettings ()
 {
     QSettings settings("SigViewer");
     settings.beginGroup("SignalBrowserView");
 
-    for (std::map<std::string, bool>::const_iterator widget_iterator =
-         hideable_widgets_visibilities_.begin();
-         widget_iterator != hideable_widgets_visibilities_.end();
+    for (std::map<std::string, QWidget*>::const_iterator widget_iterator =
+         hideable_widgets_.begin();
+         widget_iterator != hideable_widgets_.end();
          ++widget_iterator)
     {
         settings.setValue(widget_iterator->first.c_str(),
-                          widget_iterator->second);
+                          widget_iterator->second->isVisibleTo (this));
     }
 
     settings.endGroup();

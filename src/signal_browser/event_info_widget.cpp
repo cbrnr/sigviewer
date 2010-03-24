@@ -63,6 +63,7 @@ EventInfoWidget::EventInfoWidget(QWidget* parent,
     connect (duration_spinbox_, SIGNAL(valueChanged(double)), this, SLOT(selfChangedDuration(double)));
     disabled_widgets_if_nothing_selected_.push_back(duration_spinbox_);
     start_label_ = new QLabel (this);
+    disabled_widgets_if_nothing_selected_.push_back(start_label_);
 
     QLabel* type_label = new QLabel (tr("Type"), this);
     type_label->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
