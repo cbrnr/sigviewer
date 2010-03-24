@@ -15,6 +15,7 @@
 #include <QPointF>
 #include <QTimer>
 #include <QSettings>
+#include <QToolBox>
 
 namespace BioSig_
 {
@@ -54,7 +55,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     hideable_widgets_["Channel Labels"] = label_widget_;
 
     event_info_widget_ = new EventInfoWidget (this, signal_browser_model);
-    hideable_widgets_["Event Info Widget"] = event_info_widget_;
+    hideable_widgets_["Event Toolbar"] = event_info_widget_;
 
     connect(horizontal_scrollbar_, SIGNAL(valueChanged(int)),
             graphics_view_->horizontalScrollBar(), SLOT(setValue(int)));
@@ -342,14 +343,14 @@ void SignalBrowserView::createLayout()
     layout_->setVerticalSpacing(0);
     layout_->setHorizontalSpacing(0);
 
-    layout_->addWidget(y_axis_widget_, 1, 1);
-    layout_->addWidget(graphics_view_, 1, 2);
-    layout_->addWidget(x_axis_widget_, 2, 2);
-    layout_->addWidget(horizontal_scrollbar_, 3, 2);
-    layout_->addWidget(label_widget_, 1, 3);
-    layout_->addWidget(vertical_scrollbar_, 1, 4);
-    event_info_widget_->setMaximumWidth(250);
-    layout_->addWidget(event_info_widget_, 1, 5, 3, Qt::AlignCenter);
+    layout_->addWidget(event_info_widget_, 1, 2);
+    layout_->addWidget(y_axis_widget_, 2, 1);
+    layout_->addWidget(graphics_view_, 2, 2);
+    layout_->addWidget(x_axis_widget_, 3, 2);
+    layout_->addWidget(horizontal_scrollbar_, 4, 2);
+    layout_->addWidget(label_widget_, 2, 3);
+    layout_->addWidget(vertical_scrollbar_, 2, 4);
+    //event_info_widget_->setMaximumWidth(250);
 }
 
 //-----------------------------------------------------------------------------

@@ -8,7 +8,7 @@
 #include <QSharedPointer>
 #include <QLabel>
 #include <QObject>
-#include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QComboBox>
 #include <QPushButton>
 #include <QDoubleSpinBox>
@@ -57,7 +57,7 @@ private:
 
 
     QSharedPointer<SignalBrowserModel> signal_browser_model_;
-    uint16 event_creation_type_;
+//    uint16 event_creation_type_;
     std::map<uint16, QString> shown_event_types_;
 
     QSharedPointer<SignalEvent> selected_signal_event_;
@@ -65,13 +65,13 @@ private:
     QList<QWidget*> disabled_widgets_if_nothing_selected_;
     QMap<int32, QSharedPointer<SignalEvent const> > hovered_events_;
 
-    QLabel* id_label_;
+//    QLabel* id_label_;
     QDoubleSpinBox* duration_spinbox_;
     QLabel* start_label_;
-    QComboBox* event_creation_type_combobox_;
+//    QComboBox* event_creation_type_combobox_;
     QComboBox* event_type_combobox_;
-    QPushButton* insert_event_button_;
-    QVBoxLayout* layout_;
+//    QPushButton* insert_event_button_;
+    QHBoxLayout* layout_;
     QLabel* hovered_info_label_;
 
     QMutex self_updating_mutex_;
