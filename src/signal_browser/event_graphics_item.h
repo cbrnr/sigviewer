@@ -26,9 +26,7 @@ class ApplicationContext;
 class EventGraphicsItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
-#if QT_VERSION >= 0x040600
     Q_INTERFACES(QGraphicsItem)
-#endif
 public:
     EventGraphicsItem(SignalBuffer& buffer, SignalBrowserModel& model,
                       QSharedPointer<SignalEvent> signal_event,

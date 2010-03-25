@@ -36,19 +36,19 @@ void BlockVisualisationItemView::setDataBlock (QSharedPointer<DataBlock const> d
 //-------------------------------------------------------------------
 void BlockVisualisationItemView::setYPos (int y_pos)
 {
-#if QT_VERSION >= 0x040600
-    item_group_->setY (y_pos);
-#endif
+    item_group_->setPos (item_group_->x(), y_pos);
+    // FIXXME: for Qt4.6 use item_group_->setY (y_pos);
 }
 
 //-------------------------------------------------------------------
 void BlockVisualisationItemView::setPixelPerSample (float32 pixel_per_sample)
 {
     data_item_->setPixelPerSample (pixel_per_sample);
-#if QT_VERSION >= 0x040600
-    label_item_->setX (data_item_->boundingRect().width() + 1);
-    x_unit_label_item_->setX (data_item_->boundingRect().width() + 1);
-#endif
+    label_item_->setPos (data_item_->boundingRect().width() + 1, label_item_->y());
+    x_unit_label_item_->setPos (data_item_->boundingRect().width() + 1, x_unit_label_item_->y());
+    // FIXXME: for Qt4.6 use
+    // label_item_->setX (data_item_->boundingRect().width() + 1);
+    // x_unit_label_item_->setX (data_item_->boundingRect().width() + 1);
     item_group_->update ();
 }
 
@@ -57,11 +57,13 @@ void BlockVisualisationItemView::setHeight (int32 height)
 {
     height_ = height;
     data_item_->setHeight (height_ - x_unit_label_item_->boundingRect().height());
-#if QT_VERSION >= 0x040600
-    label_item_->setY ((data_item_->boundingRect().height() -
-                        label_item_->boundingRect().height()) / 2);
-    x_unit_label_item_->setY (data_item_->boundingRect().height() + 1);
-#endif
+    label_item_->setPos (label_item_->x(),(data_item_->boundingRect().height() -
+                                           label_item_->boundingRect().height()) / 2);
+    x_unit_label_item_->setPos (x_unit_label_item_->x(), data_item_->boundingRect().height() + 1);
+    // FIXXME: for Qt4.6 use
+    // label_item_->setY ((data_item_->boundingRect().height() -
+    //                     label_item_->boundingRect().height()) / 2);
+    // x_unit_label_item_->setY (data_item_->boundingRect().height() + 1);
     item_group_->update ();
 }
 
