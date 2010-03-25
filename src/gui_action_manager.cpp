@@ -277,7 +277,7 @@ void GUIActionManager::initViewActions ()
     createAction (ACTION_VIEW_ZOOM_IN, tr("Zoom &In"),
                   SLOT(viewZoomInAction()),
                   tr("Zoom in all channels"),
-                  QIcon(":/images/zoom_in_vertical_22x22.png"));
+                  QIcon(":/images/zoom_in_22x22.png"));
 
     createAction (ACTION_VIEW_ZOOM_OUT, tr("Zoom &Out"),
                   SLOT(viewZoomOutAction()),
