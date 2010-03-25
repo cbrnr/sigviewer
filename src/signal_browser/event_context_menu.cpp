@@ -117,7 +117,9 @@ void EventContextMenu::finaliseAndShowSelectionMenu (QGraphicsSceneMouseEvent* e
         exec (event->screenPos());
     }
     else if (event_ids_.size() == 1)
+    {
         signal_browser_model_.selectEvent (*it);
+    }
 
     event_ids_.clear();
     event_item_type_names_.clear();

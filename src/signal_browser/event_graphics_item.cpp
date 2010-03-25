@@ -70,7 +70,7 @@ void EventGraphicsItem::setSelected (bool selected)
 {
     state_ = STATE_NONE;
     is_selected_ = selected;
-    scene()->update(pos().x(), pos().y(), width_, height_);
+    scene()->update(pos().x() - 5, pos().y() - 5, width_ + 10, height_ + 10);
 }
 
 //-----------------------------------------------------------------------------

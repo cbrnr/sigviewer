@@ -32,6 +32,6 @@ void NewEventUndoCommand::redo ()
 {
     EventGraphicsItem* event_item
         = signal_browser_model_.addEvent(signal_event_);
-    signal_browser_model_.unsetSelectedEventItem();
+    //signal_browser_model_.unsetSelectedEventItem();
 }
 }
