@@ -101,12 +101,6 @@ void MainWindow::initIconSets()
 // init actions
 void MainWindow::initActions()
 {
-    calculate_mean_action_ = new QAction(tr("Calculate Mean (alpha)"), this);
-    calculate_mean_action_->setStatusTip(tr("Calculates mean of selected event type"));
-    calculate_mean_action_->setEnabled(true);
-    connect(calculate_mean_action_, SIGNAL(triggered()),
-            &model_, SLOT(calculateMeanAction()));
-
     calculate_frequency_spectrum_action_ = new QAction(tr("Calculate Power Spectrum"), this);
     calculate_frequency_spectrum_action_->setStatusTip(tr("Calculates power spectrum of selected event type"));
     calculate_frequency_spectrum_action_->setEnabled(false);
@@ -118,14 +112,6 @@ void MainWindow::initActions()
     calculate_erd_ers_map_action_->setEnabled(false);
     connect(calculate_erd_ers_map_action_, SIGNAL(triggered()),
             &model_, SLOT(calculateERDERSMap()));
-
-    options_show_settings_action_= new QAction(options_show_settings_icon_,
-                                    tr("&Preferences..."), this);
-    options_show_settings_action_->setObjectName("options_show_settings_action_");
-    options_show_settings_action_->setShortcut(tr("Ctrl+P"));
-    options_show_settings_action_->setStatusTip(tr("Show the preferences dialog"));
-    connect(options_show_settings_action_, SIGNAL(triggered()),
-            &model_, SLOT(optionsShowSettingsAction()));
 
     help_log_action_= new QAction(tr("&Log..."), this);
     help_log_action_->setObjectName("help_log_action_");
@@ -268,12 +254,9 @@ void MainWindow::initMenus()
     view_menu_->addActions (action_manager_.getActionsOfGroup(GUIActionManager::VIEW_MENU_ACTIONS));
 
     tools_menu_ = menuBar()->addMenu(tr("&Tools"));
-    tools_menu_->addAction(calculate_mean_action_);
-    tools_menu_->addAction(calculate_frequency_spectrum_action_);
-    tools_menu_->addAction(calculate_erd_ers_map_action_);
+    tools_menu_->addActions(action_manager_.getActionsOfGroup(GUIActionManager::TOOLS_MENU_ACTIONS));
 
     options_menu_ = menuBar()->addMenu(tr("&Options"));
-    options_menu_->addAction(options_show_settings_action_);
     options_menu_->addActions (action_manager_.getActionsOfGroup(GUIActionManager::OPTIONS_MENU_ACTIONS));
 
     help_menu_ = menuBar()->addMenu(tr("&Help"));

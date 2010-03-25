@@ -48,7 +48,8 @@ public:
         MODE_ACTIONS,
         VIEW_MENU_ACTIONS,
         VIEW_TOOLBAR_ACTIONS,
-        OPTIONS_MENU_ACTIONS
+        OPTIONS_MENU_ACTIONS,
+        TOOLS_MENU_ACTIONS
     };
 
 
@@ -123,7 +124,9 @@ private:
         ACTION_VIEW_FIT_TO_EVENT,
         ACTION_VIEW_CHANNELS,
         ACTION_VIEW_EVENTS,
-        ACTION_OPTIONS_CHANGE_EVENT_CREATION_TYPE
+        ACTION_OPTIONS_CHANGE_EVENT_CREATION_TYPE,
+        ACTION_SHOW_SETTINGS,
+        ACTION_CALCULATE_MEANS
     };
 
     //-------------------------------------------------------------------------
@@ -145,6 +148,9 @@ private:
 
     //-------------------------------------------------------------------------
     void initOptionsActions ();
+
+    //-------------------------------------------------------------------------
+    void initToolsActions ();
 
     //-------------------------------------------------------------------------
     void initShortcuts ();

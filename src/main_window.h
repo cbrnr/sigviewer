@@ -101,16 +101,12 @@ private:
     QToolBar* view_toolbar_;
     QToolBar* navigation_toolbar_;
 
-
-    QAction* calculate_mean_action_;
     QAction* calculate_frequency_spectrum_action_;
     QAction* calculate_erd_ers_map_action_;
     QAction* help_log_action_;
     QAction* help_about_action_;
-    QAction* options_show_settings_action_;
 
     QIcon help_about_icon_;
-    QIcon options_show_settings_icon_;
 
     QComboBox* secs_per_page_combobox_;
     QComboBox* signals_per_page_combobox_;

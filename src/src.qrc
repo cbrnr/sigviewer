@@ -40,5 +40,6 @@
         <file>images/icons/undo.png</file>
         <file>images/icons/editdelete.png</file>
         <file>images/icons/add.png</file>
+        <file>images/icons/configure.png</file>
     </qresource>
 </RCC>

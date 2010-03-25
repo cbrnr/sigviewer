@@ -169,7 +169,10 @@ void MainWindowModel::tabChanged (int)
 void MainWindowModel::closeTab (int tab_index)
 {
     if (tab_index == 0)
+    {
+        fileCloseAction();
         return;
+    }
     QWidget* widget = tab_widget_->widget (tab_index);
     browser_models_.erase (tab_index);
     tab_widget_->removeTab (tab_index);

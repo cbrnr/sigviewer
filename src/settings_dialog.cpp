@@ -49,9 +49,6 @@ SettingsDialog::SettingsDialog (QSharedPointer<SignalBrowserModel const> signal_
 {
     setWindowTitle(tr("Preferences"));
 
-    QGroupBox* type_box = new QGroupBox(tr("Event Creation Type"), this);
-
-
     QGroupBox* box = new QGroupBox(tr(DEFAULT_AUTO_ZOOM_BEHAVIOUR_GROUP_BOX_TITLE_), this);
 
     QVBoxLayout* boxLayout = new QVBoxLayout();

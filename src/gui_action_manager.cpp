@@ -35,6 +35,7 @@ void GUIActionManager::init (MainWindowModel* main_window_model,
     initMouseModeActions();
     initViewActions();
     initOptionsActions();
+    initToolsActions();
     initShortcuts ();
     initGroups ();
     initDisabledStates ();
@@ -322,6 +323,21 @@ void GUIActionManager::initOptionsActions ()
                   tr("Set Event Creation Type"),
                   SLOT(optionsChangeCreationType()),
                   tr("Change the type of newly created or inserted events"));
+
+    createAction (ACTION_SHOW_SETTINGS,
+                  tr("Settings"),
+                  SLOT(optionsShowSettingsAction()),
+                  tr("Shows the settings dialog/"),
+                  QIcon(":/images/icons/configure.png"));
+}
+
+//-------------------------------------------------------------------------
+void GUIActionManager::initToolsActions ()
+{
+    createAction (ACTION_CALCULATE_MEANS,
+                  tr("Calculate Mean (strongly under development!)"),
+                  SLOT(calculateMeanAction()),
+                  tr("Calculates mean of selected event type"));
 }
 
 //-----------------------------------------------------------------------------
@@ -443,7 +459,11 @@ void GUIActionManager::initGroups ()
     action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_AUTO_SCALE);
 
     // OPTIONS_MENU_ACTIONS
+    action_group_map_[OPTIONS_MENU_ACTIONS].push_back (ACTION_SHOW_SETTINGS);
     action_group_map_[OPTIONS_MENU_ACTIONS].push_back (ACTION_OPTIONS_CHANGE_EVENT_CREATION_TYPE);
+
+    // TOOLS_MENU_ACTIONS
+    action_group_map_[TOOLS_MENU_ACTIONS].push_back (ACTION_CALCULATE_MEANS);
 }
 
 //-----------------------------------------------------------------------------
@@ -479,6 +499,8 @@ void GUIActionManager::initDisabledStates ()
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_EVENTS);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_INSERT_OVER);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_OPTIONS_CHANGE_EVENT_CREATION_TYPE);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_SHOW_SETTINGS);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_CALCULATE_MEANS);
 
     file_state_action_map_[FILE_STATE_UNCHANGED].push_back (ACTION_FILE_SAVE);
 
