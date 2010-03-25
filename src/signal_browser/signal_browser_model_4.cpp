@@ -1090,61 +1090,22 @@ void SignalBrowserModel::copySelectedEventToChannels()
 
 //-----------------------------------------------------------------------------
 // change selected event type
-void SignalBrowserModel::changeSelectedEventType()
+void SignalBrowserModel::changeSelectedEventType (uint16 new_type)
 {
     QSharedPointer<SignalEvent> event (0);
 
     if (selected_event_item_)
-        event = signal_buffer_.getEvent(selected_event_item_->getId());
+        event = selected_event_item_->getSignalEvent();
 
-    // generate list show all shown types
-    QStringList event_type_list;
-    int32 current_item = 0;
-
-    for (std::set<uint16>::const_iterator it = shown_event_types_.begin();
-         it != shown_event_types_.end();
-         it++)
+    if (!event.isNull())
     {
-        if (event)
-        {
-            if (event->getType() == *it)
-                current_item = event_type_list.size();
-        }
-        else
-            if (actual_event_creation_type_ == *it)
-                current_item = event_type_list.size();
-
-        QString event_name
-             = main_window_model_.getEventTableFileReader()->getEventName(*it);
-
-            event_type_list.append(event_name + " " + QString("(%1)")
-                                                        .arg(*it,4, 16)
-                                                        .replace(' ', '0'));
-    }
-
-    // dialog
-    bool ok = false;
-
-    QString res = QInputDialog::getItem(signal_browser_view_, tr("Change Type"),
-                                        tr("Select new Type:"),
-                                        event_type_list, current_item,
-                                        false, &ok);
-
-    uint16 new_type = res.right(5).left(4).toUShort(0, 16);
-
-    if (event)
-    {
-        if (ok && new_type != event->getType())
+        if (new_type != event->getType())
         {
             ChangeTypeUndoCommand* change_type_command = new ChangeTypeUndoCommand (event, new_type);
             connect (change_type_command, SIGNAL(eventChanged(int32)), this, SLOT(setEventChanged(int32)));
             CommandStack::instance().executeEditCommand(change_type_command);
         }
     }
-
-    else
-        if (ok)
-            actual_event_creation_type_ = new_type;
 }
 
 //-----------------------------------------------------------------------------

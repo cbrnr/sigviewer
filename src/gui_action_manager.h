@@ -47,7 +47,8 @@ public:
         FILE_TOOLBAR_ACTIONS,
         MODE_ACTIONS,
         VIEW_MENU_ACTIONS,
-        VIEW_TOOLBAR_ACTIONS
+        VIEW_TOOLBAR_ACTIONS,
+        OPTIONS_MENU_ACTIONS
     };
 
 
@@ -121,7 +122,8 @@ private:
         ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE,
         ACTION_VIEW_FIT_TO_EVENT,
         ACTION_VIEW_CHANNELS,
-        ACTION_VIEW_EVENTS
+        ACTION_VIEW_EVENTS,
+        ACTION_OPTIONS_CHANGE_EVENT_CREATION_TYPE
     };
 
     //-------------------------------------------------------------------------
@@ -140,6 +142,9 @@ private:
 
     //-------------------------------------------------------------------------
     void initViewActions ();
+
+    //-------------------------------------------------------------------------
+    void initOptionsActions ();
 
     //-------------------------------------------------------------------------
     void initShortcuts ();

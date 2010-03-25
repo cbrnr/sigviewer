@@ -34,6 +34,7 @@ void GUIActionManager::init (MainWindowModel* main_window_model,
     initEditActions ();
     initMouseModeActions();
     initViewActions();
+    initOptionsActions();
     initShortcuts ();
     initGroups ();
     initDisabledStates ();
@@ -314,6 +315,15 @@ void GUIActionManager::initViewActions ()
                   tr("Only shows events which are of the same type as the selected one"));
 }
 
+//-------------------------------------------------------------------------
+void GUIActionManager::initOptionsActions ()
+{
+    createAction (ACTION_OPTIONS_CHANGE_EVENT_CREATION_TYPE,
+                  tr("Set Event Creation Type"),
+                  SLOT(optionsChangeCreationType()),
+                  tr("Change the type of newly created or inserted events"));
+}
+
 //-----------------------------------------------------------------------------
 void GUIActionManager::initShortcuts ()
 {
@@ -431,6 +441,9 @@ void GUIActionManager::initGroups ()
     action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_ZOOM_IN);
     action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_ZOOM_OUT);
     action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_AUTO_SCALE);
+
+    // OPTIONS_MENU_ACTIONS
+    action_group_map_[OPTIONS_MENU_ACTIONS].push_back (ACTION_OPTIONS_CHANGE_EVENT_CREATION_TYPE);
 }
 
 //-----------------------------------------------------------------------------
@@ -465,6 +478,7 @@ void GUIActionManager::initDisabledStates ()
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_CHANNELS);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_EVENTS);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_INSERT_OVER);
+    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_OPTIONS_CHANGE_EVENT_CREATION_TYPE);
 
     file_state_action_map_[FILE_STATE_UNCHANGED].push_back (ACTION_FILE_SAVE);
 

@@ -274,6 +274,7 @@ void MainWindow::initMenus()
 
     options_menu_ = menuBar()->addMenu(tr("&Options"));
     options_menu_->addAction(options_show_settings_action_);
+    options_menu_->addActions (action_manager_.getActionsOfGroup(GUIActionManager::OPTIONS_MENU_ACTIONS));
 
     help_menu_ = menuBar()->addMenu(tr("&Help"));
     help_menu_->addAction(help_log_action_);

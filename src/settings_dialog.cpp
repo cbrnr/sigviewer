@@ -49,6 +49,9 @@ SettingsDialog::SettingsDialog (QSharedPointer<SignalBrowserModel const> signal_
 {
     setWindowTitle(tr("Preferences"));
 
+    QGroupBox* type_box = new QGroupBox(tr("Event Creation Type"), this);
+
+
     QGroupBox* box = new QGroupBox(tr(DEFAULT_AUTO_ZOOM_BEHAVIOUR_GROUP_BOX_TITLE_), this);
 
     QVBoxLayout* boxLayout = new QVBoxLayout();
@@ -66,10 +69,6 @@ SettingsDialog::SettingsDialog (QSharedPointer<SignalBrowserModel const> signal_
     box->setLayout(boxLayout);
 
     overflow_detection_button_ = new QCheckBox(tr(OVERFLOW_DETECTION_BUTTON_TEXT_));
-    //show_channel_scales_button_ = new QCheckBox(tr(SHOW_CHANNEL_SCALES_BUTTON_TEXT_));
-    //show_channel_scales_button_->setChecked (signal_browser_model_->getShowXScales());
-    //show_channel_labels_button_ = new QCheckBox(tr(SHOW_CHANNEL_LABELS_BUTTON_TEXT_));
-    //show_channel_labels_button_->setChecked (signal_browser_model_->getShowChannelLabels());
 
     show_grid_button_ = new QCheckBox(tr(SHOW_GRID_BUTTON_TEXT_));
     show_grid_button_->setChecked (signal_browser_model_->getGridVisible());

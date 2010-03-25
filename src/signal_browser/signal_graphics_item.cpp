@@ -456,15 +456,12 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
                 break; // no events shown
             }
 
-
-            if (signal_browser_model_.getActualEventCreationType() == static_cast<uint16>(-1))
-            {
-                signal_browser_model_.changeSelectedEventType();
-                break;
-            }
-
             new_event_ = true;
-            new_signal_event_ = QSharedPointer<SignalEvent>(new SignalEvent(event->scenePos().x(), signal_browser_model_.getActualEventCreationType(), signal_buffer_.getEventSamplerate(),                                                                            signal_channel_.getNumber(), 0));
+            new_signal_event_ = QSharedPointer<SignalEvent>(new SignalEvent(event->scenePos().x(),
+                                                                            signal_browser_model_.getActualEventCreationType(),
+                                                                            signal_buffer_.getEventSamplerate(),
+                                                                            signal_channel_.getNumber(),
+                                                                            0));
             new_event_color_ = signal_browser_model_.getEventColor(signal_browser_model_.getActualEventCreationType());
             emit mouseMoving (true);
             break;

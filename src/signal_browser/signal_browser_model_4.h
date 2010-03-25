@@ -147,7 +147,7 @@ public:
     void setSelectedEventToAllChannels();
     void changeSelectedEventChannel();
     void copySelectedEventToChannels();
-    void changeSelectedEventType();
+    void changeSelectedEventType (uint16 new_type);
     void removeSelectedEvent();
 
     void getEvents(SignalEventVector& event_vector);

@@ -37,7 +37,7 @@
 #include "block_visualisation/blocks_visualisation_view.h"
 #include "block_visualisation/blocks_visualisation_model.h"
 
-
+#include <QInputDialog>
 #include <QString>
 #include <QApplication>
 #include <QFile>
@@ -951,7 +951,14 @@ void MainWindowModel::editChangeTypeAction()
         return;
     }
 
-    signal_browser_model_->changeSelectedEventType();
+    uint16 current_type = 0;
+    if (signal_browser_model_->getSelectedEventItem())
+        current_type = signal_browser_model_->getSelectedSignalEvent()->getType();
+
+    uint16 new_type = selectEventTypeDialog (current_type);
+
+    if (new_type != static_cast<uint16>(-1))
+        signal_browser_model_->changeSelectedEventType (new_type);
 }
 
 // edit event table action
@@ -1235,6 +1242,23 @@ void MainWindowModel::optionsChannelsAction()
 
 }
 
+//-----------------------------------------------------------------------------
+void MainWindowModel::optionsChangeCreationType ()
+{
+    if (!checkMainWindowPtr("optionsChangeCreationType") ||
+        !file_context_)
+    {
+        return;
+    }
+
+    uint16 current_type = signal_browser_model_->getActualEventCreationType();
+    uint16 new_type = selectEventTypeDialog (current_type);
+
+    if (new_type != static_cast<uint16>(-1))
+        signal_browser_model_->setActualEventCreationType (new_type);
+}
+
+//-----------------------------------------------------------------------------
 bool MainWindowModel::channelSelection ()
 {
     if (!checkMainWindowPtr("optionsChannelsAction") ||
@@ -1290,6 +1314,45 @@ bool MainWindowModel::channelSelection ()
     return true;
 }
 
+//-----------------------------------------------------------------------------
+uint16 MainWindowModel::selectEventTypeDialog (uint16 preselected_type) const
+{
+    uint16 new_type = -1;
+
+    std::set<uint16> types = signal_browser_model_->getShownEventTypes();
+    QStringList event_type_list;
+    int32 current_item = 0;
+
+    for (std::set<uint16>::const_iterator it = types.begin();
+         it != types.end();
+         it++)
+    {
+        if (preselected_type == *it)
+            current_item = event_type_list.size();
+
+        QString event_name
+             = event_table_file_reader_->getEventName(*it);
+
+            event_type_list.append(event_name + " " + QString("(%1)")
+                                                        .arg(*it,4, 16)
+                                                        .replace(' ', '0'));
+    }
+
+    // dialog
+    bool ok = false;
+
+    QString res = QInputDialog::getItem(main_window_, tr("Change Type"),
+                                        tr("Select new Type:"),
+                                        event_type_list, current_item,
+                                        false, &ok);
+
+    if (ok)
+        new_type = res.right(5).left(4).toUShort(0, 16);
+
+    return new_type;
+}
+
+//-----------------------------------------------------------------------------
 // options show events action
 void MainWindowModel::optionsShowEventsAction()
 {

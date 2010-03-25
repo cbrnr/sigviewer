@@ -97,6 +97,7 @@ public slots:
     void secsPerPageChanged(const QString& secs_per_page);
     void signalsPerPageChanged(const QString& signals_per_page);
     void optionsChannelsAction();
+    void optionsChangeCreationType();
     void optionsShowEventsAction();
     void optionsShowSettingsAction();
     void helpLogAction();
@@ -117,6 +118,7 @@ private:
 
     bool checkMainWindowPtr(const QString function);
     bool channelSelection ();
+    uint16 selectEventTypeDialog (uint16 preselected_type) const;
 
     MainWindow* main_window_;
     ApplicationContext& application_context_;
