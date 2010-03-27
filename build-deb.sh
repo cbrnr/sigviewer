@@ -1,8 +1,4 @@
 #!/bin/sh
-if [ $# != 1 ]
-  then echo 'architecture missing... please run again with i386 or x86_64 or ...'
-else
-
 dir=.deb-build
 
 mkdir $dir
@@ -13,7 +9,7 @@ mkdir $dir/sigviewer/DEBIAN
 
 cp ./bin/sigviewer ./$dir/sigviewer/usr/bin/
 
-architecture=$1
+architecture=`dpkg-architecture -l | grep DEB_BUILD_ARCH= | sed -e '/DEB_BUILD_ARCH=/s/DEB_BUILD_ARCH=//'`
 
 sed -e '/Architecture: /s/<architecture-via-script>/'$architecture'/' ./deb_control_template >./$dir/sigviewer/DEBIAN/control
 
@@ -26,5 +22,3 @@ rmdir $dir/sigviewer/usr
 rmdir $dir/sigviewer/DEBIAN
 rmdir $dir/sigviewer
 rmdir $dir
-
-fi
