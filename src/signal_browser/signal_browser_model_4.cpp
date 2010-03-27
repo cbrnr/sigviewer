@@ -1,6 +1,8 @@
 // signal_browser_model.cpp
 
 #include "signal_browser_model_4.h"
+#include "event_manager_interface.h"
+#include "channel_manager_interface.h"
 #include "signal_browser_view.h"
 #include "signal_graphics_item.h"
 #include "event_graphics_item.h"
