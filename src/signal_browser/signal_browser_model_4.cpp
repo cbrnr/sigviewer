@@ -381,9 +381,9 @@ void SignalBrowserModel::initBuffer()
     // gernerate event items
     uint32 number_events = signal_buffer_.getNumberEvents();
 
-    id2event_item_.clear();
-//    if (id2event_item_.size() == 0)
-//    {
+    //id2event_item_.clear();
+    if (id2event_item_.size() == 0)
+    {
         for (uint32 event_nr = 0; event_nr < number_events; event_nr++)
         {
             int32 event_id = signal_buffer_.eventNumber2ID(event_nr);
@@ -392,7 +392,7 @@ void SignalBrowserModel::initBuffer()
                                                            signal_buffer_.getEvent(event_nr),
                                                            app_context_);
         }
-//    }
+    }
 }
 
 
