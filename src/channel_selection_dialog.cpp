@@ -1,7 +1,7 @@
 // channel_selection_dialog.cpp
 
 #include "channel_selection_dialog.h"
-#include "base/basic_header.h"
+#include "file_handling/basic_header.h"
 
 #include <QListWidget>
 #include <QPushButton>

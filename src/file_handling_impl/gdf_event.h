@@ -3,7 +3,7 @@
 #ifndef GDF_EVENT_H
 #define GDF_EVENT_H
 
-#include "user_types.h"
+#include "../base/user_types.h"
 
 namespace BioSig_
 {

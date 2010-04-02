@@ -1,7 +1,7 @@
 // signal_browser_model.cpp
 
 #include "signal_browser_model_4.h"
-#include "event_manager_interface.h"
+#include "../file_handling/event_manager.h"
 #include "channel_manager_interface.h"
 #include "signal_browser_view.h"
 #include "signal_graphics_item.h"
@@ -13,10 +13,10 @@
 #include "../main_window_model.h"
 #include "../event_color_manager.h"
 #include "../file_context.h"
-#include "../base/file_signal_reader.h"
+#include "../file_handling/file_signal_reader.h"
 #include "../base/math_utils.h"
 #include "../base/signal_event.h"
-#include "../base/event_table_file_reader.h"
+#include "../file_handling_impl/event_table_file_reader.h"
 #include "../copy_event_dialog.h"
 
 #include <QTextStream>

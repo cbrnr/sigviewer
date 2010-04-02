@@ -17,7 +17,7 @@ namespace BioSig_
 {
 
 class BasicHeader;
-class EventManagerInterface;
+class EventManager;
 class CommandExecuter;
 
 // event table dialog
@@ -25,7 +25,7 @@ class EventTableDialog : public QDialog
 {
     Q_OBJECT
 public:
-    EventTableDialog (EventManagerInterface& event_manager,
+    EventTableDialog (EventManager& event_manager,
                       CommandExecuter& command_executer,
                       QPointer<BasicHeader> basic_header, QWidget* parent = 0);
 
@@ -89,7 +89,7 @@ private:
 
     void buildEventTable();
 
-    EventManagerInterface& event_manager_;
+    EventManager& event_manager_;
     CommandExecuter& command_executer_;
     QPointer<BasicHeader> basic_header_;
     QTableView *event_table_view_;

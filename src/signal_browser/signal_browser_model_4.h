@@ -2,7 +2,7 @@
 #ifndef SIGNAL_BROWSER_MODEL_H_q4
 #define SIGNAL_BROWSER_MODEL_H_q4
 
-#include "../base/file_signal_reader.h"
+#include "../file_handling/file_signal_reader.h"
 #include "../gui_signal_buffer.h"
 #include "../abstract_browser_model.h"
 #include "../tab_context.h"

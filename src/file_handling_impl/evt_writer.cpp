@@ -1,5 +1,4 @@
 /*
-
     $Id: evt_writer.cpp,v 1.6 2009/02/22 12:36:46 cle1109 Exp $
     Copyright (C) Thomas Brunner  2006,2007 
               Christoph Eibel 2007,2008, 
@@ -23,30 +22,38 @@
     
 */
 
-
-// evt_writer.cpp
-
 #include "evt_writer.h"
-#include "signal_data_block.h"
+#include "../file_handling/file_signal_writer_factory.h"
+#include "../base/signal_data_block.h"
+
 #include <biosig.h>
 #include <iostream>
 
 namespace BioSig_
 {
 
-// constructor
+//-----------------------------------------------------------------------------
+EVTWriter EVTWriter::prototype_instance_ (true);
+
+//-----------------------------------------------------------------------------
 EVTWriter::EVTWriter()
 {
-  // nothing
+    // nothing to do here
 }
 
-// destructor
+//-----------------------------------------------------------------------------
+EVTWriter::EVTWriter (bool)
+{
+    FileSignalWriterFactory::getInstance()->addPrototype(".evt", new EVTWriter);
+}
+
+//-----------------------------------------------------------------------------
 EVTWriter::~EVTWriter()
 {
-    // nothing
+    // nothing to do here
 }
 
-// clone
+//-----------------------------------------------------------------------------
 FileSignalWriter* EVTWriter::clone()
 {
   FileSignalWriter* new_instance = new EVTWriter;
@@ -54,16 +61,16 @@ FileSignalWriter* EVTWriter::clone()
   return new_instance;
 }
 
-// save
-  QString EVTWriter::save(FileSignalReader& file_signal_reader,
-                          SignalEventVector& event_vector,
-                          const QString& file_name, bool)
-                          {
-                            if (file_name == file_signal_reader.getBasicHeader()->getFullFileName())
-                                return "cannot remove signal data from open file";
+//-----------------------------------------------------------------------------
+QString EVTWriter::save(FileSignalReader& file_signal_reader,
+                        SignalEventVector& event_vector,
+                        const QString& file_name, bool)
+{
+    if (file_name == file_signal_reader.getBasicHeader()->getFullFileName())
+        return "cannot remove signal data from open file";
 
-                            HDRTYPE *header = constructHDR(0, event_vector.size ());
-                            header->TYPE = GDF;
+    HDRTYPE *header = constructHDR(0, event_vector.size ());
+    header->TYPE = GDF;
                             header->VERSION = 2.0;
 
                             header->EVENT.SampleRate = file_signal_reader.getBasicHeader()->getEventSamplerate();
@@ -149,7 +156,7 @@ FileSignalWriter* EVTWriter::clone()
 //                             if (sflush_gdf_event_table(new_header))
 //                               return "save event table failed";
 
-                            return "";
+    return "";
 }
 
 

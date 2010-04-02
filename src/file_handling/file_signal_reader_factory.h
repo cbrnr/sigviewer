@@ -3,7 +3,7 @@
 #ifndef FILE_SIGNAL_READER_FACTORY_H
 #define FILE_SIGNAL_READER_FACTORY_H
 
-#include "prototype_factory.h"
+#include "../base/prototype_factory.h"
 #include "file_signal_reader.h"
 
 #include <memory>

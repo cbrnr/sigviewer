@@ -20,7 +20,7 @@ class SignalEvent;
 class SignalBrowserModel;
 class EventContextMenu;
 class ApplicationContext;
-class EventManagerInterface;
+class EventManager;
 class CommandExecuter;
 
 class EventGraphicsItem : public QObject, public QGraphicsItem
@@ -31,7 +31,7 @@ public:
     EventGraphicsItem(SignalBrowserModel& model,
                       QSharedPointer<SignalEvent const> signal_event,
                       ApplicationContext& app_context,
-                      EventManagerInterface& event_manager,
+                      EventManager& event_manager,
                       CommandExecuter& command_executer);
 
     virtual ~EventGraphicsItem ();
@@ -94,7 +94,7 @@ private:
 
     SignalBrowserModel& signal_browser_model_;
     ApplicationContext& app_context_;
-    EventManagerInterface& event_manager_;
+    EventManager& event_manager_;
     CommandExecuter& command_executer_;
     QColor color_;
     State state_;

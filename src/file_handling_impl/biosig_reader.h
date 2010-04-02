@@ -1,8 +1,7 @@
 #ifndef CNT_READER_H_
 #define CNT_READER_H_
-#include "file_signal_reader.h"
 
-// #include <biosig.h>
+#include "../file_handling/file_signal_reader.h"
 
 #include <QFile>
 #include <QMutex>
@@ -10,11 +9,11 @@
 namespace BioSig_
 {
 
-// CNT reader
 class BioSigReader : public FileSignalReader
 {
 public:
-    BioSigReader();
+    BioSigReader ();
+    BioSigReader (bool prototype_instance);
     virtual ~BioSigReader();
     virtual FileSignalReader* clone();
 
@@ -40,6 +39,8 @@ public:
     virtual HDRTYPE* getRawHeader ();
 
 private:
+    static BioSigReader prototype_instance_;
+
     // not allowed
     BioSigReader(const BioSigReader& src);
     const BioSigReader& operator=(const BioSigReader& src);

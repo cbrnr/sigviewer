@@ -30,7 +30,7 @@
 #include "main_window_model.h"
 #include "gui_action_manager.h"
 #include "application_context.h"
-#include "base/event_table_file_reader.h"
+#include "file_handling_impl/event_table_file_reader.h"
 
 #include <stdlib.h>
 

@@ -7,10 +7,10 @@
 #include "application_context.h"
 #include "gui_action_manager.h"
 
-#include "base/file_signal_reader_factory.h"
-#include "base/file_signal_writer_factory.h"
-#include "base/event_table_file_reader.h"
-#include "base/event_manager.h"
+#include "file_handling/file_signal_reader_factory.h"
+#include "file_handling/file_signal_writer_factory.h"
+#include "file_handling_impl/event_table_file_reader.h"
+#include "file_handling_impl/event_manager_impl.h"
 #include "base/signal_event.h"
 #include "basic_header_info_dialog.h"
 #include "log_dialog.h"
@@ -731,7 +731,7 @@ void MainWindowModel::openFile(const QString& file_name)
     file_signal_reader_.reset(signal_reader);
 
     TabContext* tab_context = new TabContext ();
-    event_manager_ = new EventManager (*file_signal_reader_, *event_table_file_reader_);
+    event_manager_ = new EventManagerImpl (*file_signal_reader_, *event_table_file_reader_);
     file_context_ = new FileContext (*event_manager_, *tab_context);
     application_context_.getGUIActionManager().connect(file_context_, SIGNAL(stateChanged(FileState)), SLOT(setFileState(FileState)));
 

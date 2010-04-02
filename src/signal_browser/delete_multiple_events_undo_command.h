@@ -9,7 +9,7 @@
 namespace BioSig_
 {
 
-class EventManagerInterface;
+class EventManager;
 
 //-----------------------------------------------------------------------------
 /// DeleteMultipleEventsUndoCommand
@@ -20,7 +20,7 @@ class DeleteMultipleEventsUndoCommand : public QUndoCommand
 public:
     //-------------------------------------------------------------------------
     /// constructor
-    DeleteMultipleEventsUndoCommand (EventManagerInterface& event_manager,
+    DeleteMultipleEventsUndoCommand (EventManager& event_manager,
                                      QList<EventID> const& event_ids);
 
     //-------------------------------------------------------------------------
@@ -37,7 +37,7 @@ public:
 
 
 private:
-    EventManagerInterface& event_manager_;
+    EventManager& event_manager_;
     QList<QSharedPointer<SignalEvent const> > deleted_events_;
 
 

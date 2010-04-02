@@ -2,10 +2,6 @@
 
 #include "file_signal_writer_factory.h"
 
-// all suported writers
-#include "evt_writer.h"
-#include "biosig_writer.h"
-
 #include <biosig.h>
 
 namespace BioSig_
@@ -20,10 +16,6 @@ FileSignalWriterFactory* FileSignalWriterFactory::getInstance()
     if (!instance_.get())
     {
         instance_.reset(new FileSignalWriterFactory);
-
-        // register all writers
-        instance_->addPrototype(".evt", new EVTWriter);
-        instance_->addPrototype(".gdf", new BioSigWriter (GDF));
     }
     return instance_.get();
 }

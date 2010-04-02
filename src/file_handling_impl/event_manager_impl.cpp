@@ -1,5 +1,5 @@
-#include "event_manager.h"
-#include "file_signal_reader.h"
+#include "event_manager_impl.h"
+#include "../file_handling/file_signal_reader.h"
 #include "event_table_file_reader.h"
 
 #include <cassert>
@@ -8,7 +8,7 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-EventManager::EventManager (FileSignalReader& reader,
+EventManagerImpl::EventManagerImpl (FileSignalReader& reader,
                             EventTableFileReader const& event_table_reader)
     : reader_ (reader),
       event_table_reader_ (event_table_reader)
@@ -29,13 +29,13 @@ EventManager::EventManager (FileSignalReader& reader,
 }
 
 //-----------------------------------------------------------------------------
-EventManager::~EventManager ()
+EventManagerImpl::~EventManagerImpl ()
 {
     // nothing to do here
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<SignalEvent const> EventManager::getEvent (EventID id) const
+QSharedPointer<SignalEvent const> EventManagerImpl::getEvent (EventID id) const
 {
     EventMap::ConstIterator event_it = event_map_.find (id);
     if (event_it == event_map_.end())
@@ -45,7 +45,7 @@ QSharedPointer<SignalEvent const> EventManager::getEvent (EventID id) const
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<SignalEvent> EventManager::getEventForEditing (EventID id)
+QSharedPointer<SignalEvent> EventManagerImpl::getEventForEditing (EventID id)
 {
     EventMap::Iterator event_it = event_map_.find (id);
     if (event_it == event_map_.end())
@@ -55,13 +55,13 @@ QSharedPointer<SignalEvent> EventManager::getEventForEditing (EventID id)
 }
 
 //-----------------------------------------------------------------------------
-void EventManager::updateEvent (EventID id)
+void EventManagerImpl::updateEvent (EventID id)
 {
     emit eventChanged (id);
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<SignalEvent const> EventManager::createEvent (
+QSharedPointer<SignalEvent const> EventManagerImpl::createEvent (
         ChannelID channel_id, unsigned pos, unsigned duration, EventType type,
         EventID id)
 {
@@ -83,7 +83,7 @@ QSharedPointer<SignalEvent const> EventManager::createEvent (
 }
 
 //-----------------------------------------------------------------------------
-void EventManager::removeEvent (EventID id)
+void EventManagerImpl::removeEvent (EventID id)
 {
     EventMap::iterator event_iter = event_map_.find (id);
     if (event_iter == event_map_.end())
@@ -94,7 +94,7 @@ void EventManager::removeEvent (EventID id)
 }
 
 //-----------------------------------------------------------------------------
-std::set<EventID> EventManager::getEventsAt (unsigned pos,
+std::set<EventID> EventManagerImpl::getEventsAt (unsigned pos,
                                              unsigned channel_id) const
 {
     std::set<EventID> bla;
@@ -104,26 +104,26 @@ std::set<EventID> EventManager::getEventsAt (unsigned pos,
 }
 
 //-----------------------------------------------------------------------------
-double EventManager::getSampleRate () const
+double EventManagerImpl::getSampleRate () const
 {
     return sample_rate_;
 }
 
 //-----------------------------------------------------------------------------
-QString EventManager::getNameOfEventType (EventType type) const
+QString EventManagerImpl::getNameOfEventType (EventType type) const
 {
     return event_table_reader_.getEventName (type);
 }
 
 //-----------------------------------------------------------------------------
-QList<EventID> EventManager::getAllEvents () const
+QList<EventID> EventManagerImpl::getAllEvents () const
 {
     return event_map_.keys ();
 }
 
 
 //-----------------------------------------------------------------------------
-QList<EventID> EventManager::getEventsOfType (EventType type) const
+QList<EventID> EventManagerImpl::getEventsOfType (EventType type) const
 {
     QList<EventID> event_ids;
     for (EventMap::ConstIterator event_iter = event_map_.begin ();
@@ -136,7 +136,7 @@ QList<EventID> EventManager::getEventsOfType (EventType type) const
 }
 
 //-----------------------------------------------------------------------------
-void EventManager::getAllEvents (FileSignalReader::SignalEventVector&
+void EventManagerImpl::getAllEvents (FileSignalReader::SignalEventVector&
                                  event_vector) const
 {
     for (EventMap::ConstIterator event_iter = event_map_.begin ();

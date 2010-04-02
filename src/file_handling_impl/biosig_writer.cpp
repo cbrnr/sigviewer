@@ -25,6 +25,7 @@
 
 
 #include "biosig_writer.h"
+#include "../file_handling/file_signal_writer_factory.h"
 
 #include <QFile>
 #include <QMutexLocker>
@@ -32,13 +33,21 @@
 namespace BioSig_
 {
 
+BioSigWriter BioSigWriter::prototype_instance_ (true);
+
+
 BioSigWriter::BioSigWriter(FileFormat target_type)
  : target_type_ (target_type)
 {
     file_formats_support_event_saving_.insert(GDF1);
     file_formats_support_event_saving_.insert(GDF);
-
 }
+
+BioSigWriter::BioSigWriter (bool)
+{
+    FileSignalWriterFactory::getInstance()->addPrototype(".gdf", new BioSigWriter (GDF));
+}
+
 
 BioSigWriter::~BioSigWriter()
 {

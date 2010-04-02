@@ -4,7 +4,7 @@
 #define FILE_SIGNAL_WRITER_FACTORY_H
 
 #include "file_signal_writer.h"
-#include "prototype_factory.h"
+#include "../base/prototype_factory.h"
 
 #include <memory>
 

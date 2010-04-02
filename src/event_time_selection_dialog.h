@@ -1,7 +1,7 @@
 #ifndef EVENT_TIME_SELECTION_DIALOG_H
 #define EVENT_TIME_SELECTION_DIALOG_H
 
-#include "base/event_table_file_reader.h"
+#include "file_handling_impl/event_table_file_reader.h"
 #include "base/user_types.h"
 
 #include <QDialog>
@@ -18,7 +18,7 @@ class QLabel;
 namespace BioSig_
 {
 
-class EventManagerInterface;
+class EventManager;
 
 class EventTimeSelectionDialog : public QDialog
 {
@@ -27,7 +27,7 @@ public:
     //-------------------------------------------------------------------------
     EventTimeSelectionDialog (std::map<uint16, QString> const& shown_event_types,
                               std::map<uint32, QString> const& shown_channels,
-                              EventManagerInterface const& event_manager);
+                              EventManager const& event_manager);
 
     //-------------------------------------------------------------------------
     std::vector<uint32> getSelectedChannels () const;
@@ -48,7 +48,7 @@ protected slots:
 private:
     std::map<uint16, QString> shown_event_types_;
     std::map<uint32, QString> shown_channels_;
-    EventManagerInterface const& event_manager_;
+    EventManager const& event_manager_;
 
     QListWidget* channel_list_widget_;
     QComboBox* event_type_combobox_;

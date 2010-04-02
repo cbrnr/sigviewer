@@ -1,7 +1,7 @@
 #ifndef BIOIGWRITER_H_
 #define BIOIGWRITER_H_
 
-#include "file_signal_writer.h"
+#include "../file_handling/file_signal_writer.h"
 
 #include <biosig.h>
 
@@ -15,7 +15,8 @@ namespace BioSig_
 class BioSigWriter : public FileSignalWriter
 {
 public:
-    BioSigWriter(FileFormat target_type);
+    BioSigWriter (FileFormat target_type);
+    BioSigWriter (bool prototype_instance);
     virtual ~BioSigWriter();
 
     virtual FileSignalWriter* clone();
@@ -26,6 +27,7 @@ public:
                       bool save_signals = true);
     
 private:
+    static BioSigWriter prototype_instance_;
     void updateEventTable (HDRTYPE* header, SignalEventVector& event_vector, double event_sample_rate);
     
     FileFormat target_type_;

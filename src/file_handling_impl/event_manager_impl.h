@@ -1,8 +1,8 @@
-#ifndef EVENT_MANAGER_H
-#define EVENT_MANAGER_H
+#ifndef EVENT_MANAGER_IMPL_H
+#define EVENT_MANAGER_IMPL_H
 
-#include "../signal_browser/event_manager_interface.h"
-#include "file_signal_reader.h"
+#include "../file_handling/event_manager.h"
+#include "../file_handling/file_signal_reader.h"
 
 #include <QMap>
 
@@ -11,12 +11,12 @@ namespace BioSig_
 
 class EventTableFileReader;
 
-class EventManager : public EventManagerInterface
+class EventManagerImpl : public EventManager
 {
 public:
-    EventManager (FileSignalReader& reader,
+    EventManagerImpl (FileSignalReader& reader,
                   EventTableFileReader const& event_table_reader);
-    virtual ~EventManager ();
+    virtual ~EventManagerImpl ();
 
     //-------------------------------------------------------------------------
     /// see base class
@@ -78,4 +78,4 @@ private:
 
 }
 
-#endif // EVENT_MANAGER_H
+#endif // EVENT_MANAGER_IMPL_H

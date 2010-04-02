@@ -30,7 +30,7 @@ float64 SignalGraphicsItem::prefered_pixel_per_sample_ = 1.0;
 
 
 //-----------------------------------------------------------------------------
-SignalGraphicsItem::SignalGraphicsItem(EventManagerInterface& event_manager,
+SignalGraphicsItem::SignalGraphicsItem(EventManager& event_manager,
                                        CommandExecuter& command_executor,
                                        SignalBuffer& buffer,
                                        const SignalChannel& channel,

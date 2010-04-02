@@ -10,13 +10,13 @@
 namespace BioSig_
 {
 
-class EventManagerInterface;
+class EventManager;
 
 class ChangeTypeUndoCommand : public QUndoCommand
 {
 public:
     //-------------------------------------------------------------------------
-    ChangeTypeUndoCommand (EventManagerInterface& event_manager,
+    ChangeTypeUndoCommand (EventManager& event_manager,
                            EventID event_id,
                            EventType new_type);
 
@@ -40,7 +40,7 @@ private:
     /// assignment-operator disabled
     ChangeTypeUndoCommand& operator= (ChangeTypeUndoCommand const &);
 
-    EventManagerInterface& event_manager_;
+    EventManager& event_manager_;
     EventType new_type_;
     EventType old_type_;
     QSharedPointer<SignalEvent> signal_event_;

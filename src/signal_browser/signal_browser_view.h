@@ -27,7 +27,7 @@ class SignalBrowserModel;
 class SignalGraphicsItem;
 class EventGraphicsItem;
 class EventInfoWidget;
-class EventManagerInterface;
+class EventManager;
 class CommandExecuter;
 
 // signal browser view
@@ -37,7 +37,7 @@ class SignalBrowserView : public QFrame
 
 public:
     SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_browser_model,
-                       EventManagerInterface& event_manager,
+                       EventManager& event_manager,
                        CommandExecuter& command_executer,
                        QWidget* parent = 0);
     virtual ~SignalBrowserView ();

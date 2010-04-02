@@ -1,11 +1,11 @@
 #include "resize_event_undo_command.h"
-#include "event_manager_interface.h"
+#include "../file_handling/event_manager.h"
 
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-ResizeEventUndoCommand::ResizeEventUndoCommand (EventManagerInterface& event_manager,
+ResizeEventUndoCommand::ResizeEventUndoCommand (EventManager& event_manager,
                                                 EventID id,
                                                 uint32 new_start_position,
                                                 uint32 new_duration)

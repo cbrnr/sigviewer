@@ -20,7 +20,7 @@ namespace BioSig_
 
 //-------------------------------------------------------------------
 EventInfoWidget::EventInfoWidget(QWidget* parent,
-                                 EventManagerInterface& event_manager,
+                                 EventManager& event_manager,
                                  CommandExecuter& command_executer,
                                  QSharedPointer<SignalBrowserModel> signal_browser_model)
     : QWidget (parent),

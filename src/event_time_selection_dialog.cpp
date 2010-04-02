@@ -1,5 +1,5 @@
 #include "event_time_selection_dialog.h"
-#include "signal_browser/event_manager_interface.h"
+#include "file_handling/event_manager.h"
 
 #include <QListWidget>
 #include <QComboBox>
@@ -19,7 +19,7 @@ EventTimeSelectionDialog::EventTimeSelectionDialog (std::map<uint16, QString>
                                                     const& shown_event_types,
                                                     std::map<uint32, QString>
                                                     const& shown_channels,
-                                                    EventManagerInterface const& event_manager)
+                                                    EventManager const& event_manager)
     : shown_event_types_ (shown_event_types),
       shown_channels_ (shown_channels),
       event_manager_ (event_manager)

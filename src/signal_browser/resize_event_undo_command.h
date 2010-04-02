@@ -9,14 +9,14 @@
 namespace BioSig_
 {
 
-class EventManagerInterface;
+class EventManager;
 
 class ResizeEventUndoCommand : public QUndoCommand
 {
 public:
     //-------------------------------------------------------------------------
     /// constructor
-    ResizeEventUndoCommand (EventManagerInterface& event_manager,
+    ResizeEventUndoCommand (EventManager& event_manager,
                             EventID id,
                             uint32 new_start_position, uint32 new_duration);
 
@@ -33,7 +33,7 @@ public:
     virtual void redo ();
 
 private:
-    EventManagerInterface& event_manager_;
+    EventManager& event_manager_;
     QSharedPointer<SignalEvent> event_;
 
     uint32 new_start_position_;

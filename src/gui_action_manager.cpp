@@ -346,7 +346,7 @@ void GUIActionManager::initShortcuts ()
 {
     setShortCut (ACTION_FILE_OPEN, QKeySequence::Open);
     setShortCut (ACTION_FILE_SAVE, QKeySequence::Save);
-    setShortCut (ACTION_FILE_SAVE, QKeySequence::SaveAs);
+    setShortCut (ACTION_FILE_SAVE_AS, QKeySequence::SaveAs);
     setShortCut (ACTION_UNDO, QKeySequence::Undo);
     setShortCut (ACTION_REDO, QKeySequence::Redo);
     setShortCut (ACTION_DELETE, QKeySequence::Delete);

@@ -1,11 +1,11 @@
 #include "delete_event_undo_command.h"
-#include "event_manager_interface.h"
+#include "../file_handling/event_manager.h"
 
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-DeleteEventUndoCommand::DeleteEventUndoCommand(EventManagerInterface& event_manager,
+DeleteEventUndoCommand::DeleteEventUndoCommand(EventManager& event_manager,
                                                EventID event_id)
     : event_manager_ (event_manager),
       deleted_event_ (event_manager.getEvent (event_id))

@@ -4,7 +4,7 @@
 #define FILE_SIGNAL_WRITER_H
 
 #include "file_signal_reader.h"
-#include "signal_event.h"
+#include "../base/signal_event.h"
 
 class QTextStream;
 

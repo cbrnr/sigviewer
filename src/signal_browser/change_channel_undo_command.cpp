@@ -1,11 +1,11 @@
 #include "change_channel_undo_command.h"
-#include "event_manager_interface.h"
+#include "../file_handling/event_manager.h"
 
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-ChangeChannelUndoCommand::ChangeChannelUndoCommand (EventManagerInterface& event_manager,
+ChangeChannelUndoCommand::ChangeChannelUndoCommand (EventManager& event_manager,
                                                     EventID event_id,
                                                     ChannelID new_channel)
  : event_manager_ (event_manager),

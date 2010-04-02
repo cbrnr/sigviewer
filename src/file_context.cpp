@@ -4,7 +4,7 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-FileContext::FileContext (EventManagerInterface& event_manager,
+FileContext::FileContext (EventManager& event_manager,
                           TabContext& tab_context)
     : state_ (FILE_STATE_UNCHANGED),
       event_manager_ (event_manager),
@@ -20,7 +20,7 @@ FileContext::~FileContext ()
 }
 
 //-----------------------------------------------------------------------------
-EventManagerInterface& FileContext::getEventManager ()
+EventManager& FileContext::getEventManager ()
 {
     return event_manager_;
 }

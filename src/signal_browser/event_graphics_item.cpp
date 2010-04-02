@@ -3,12 +3,11 @@
 #include "signal_browser_model_4.h"
 #include "resize_event_undo_command.h"
 #include "event_context_menu.h"
-#include "event_manager_interface.h"
+#include "../file_handling/event_manager.h"
 #include "../base/signal_event.h"
 
 #include "../signal_browser_mouse_handling.h"
 #include "../command_executer.h"
-#include "../base/event_table_file_reader.h"
 
 #include <QRectF>
 #include <QStyleOptionGraphicsItem>
@@ -34,7 +33,7 @@ QSharedPointer<EventContextMenu> EventGraphicsItem::context_menu_ (0);
 EventGraphicsItem::EventGraphicsItem (SignalBrowserModel& model,
                                       QSharedPointer<SignalEvent const> signal_event,
                                       ApplicationContext& app_context,
-                                      EventManagerInterface& event_manager,
+                                      EventManager& event_manager,
                                       CommandExecuter& command_executer)
 : signal_browser_model_ (model),
   app_context_ (app_context),

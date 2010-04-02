@@ -1,11 +1,11 @@
 #include "delete_multiple_events_undo_command.h"
-#include "event_manager_interface.h"
+#include "../file_handling/event_manager.h"
 
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-DeleteMultipleEventsUndoCommand::DeleteMultipleEventsUndoCommand (EventManagerInterface& event_manager,
+DeleteMultipleEventsUndoCommand::DeleteMultipleEventsUndoCommand (EventManager& event_manager,
                                                QList<EventID> const& event_ids)
     : event_manager_ (event_manager)
 {

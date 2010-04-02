@@ -3,8 +3,8 @@
 #include "event_table_dialog.h"
 
 #include "command_executer.h"
-#include "base/basic_header.h"
-#include "signal_browser/event_manager_interface.h"
+#include "file_handling/basic_header.h"
+#include "file_handling/event_manager.h"
 #include "signal_browser/delete_multiple_events_undo_command.h"
 
 #include <QHeaderView>
@@ -220,7 +220,7 @@ void EventTableDialog::TableModel::sort(int column, Qt::SortOrder order)
 }
 
 // constructor
-EventTableDialog::EventTableDialog (EventManagerInterface& event_manager,
+EventTableDialog::EventTableDialog (EventManager& event_manager,
                                     CommandExecuter& command_executer,
                                     QPointer<BasicHeader> basic_header, QWidget* parent)
  : QDialog(parent),

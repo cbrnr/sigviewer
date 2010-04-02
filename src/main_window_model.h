@@ -34,7 +34,7 @@ class BlocksVisualisationModel;
 class ApplicationContext;
 class FileContext;
 class TabContext;
-class EventManager;
+class EventManagerImpl;
 
 // main window model
 class MainWindowModel : public QObject
@@ -139,7 +139,7 @@ private:
     std::map<int, QSharedPointer<AbstractBrowserModel> > browser_models_;
     std::list<QSharedPointer<BlocksVisualisationModel> > blocks_visualisation_models_;
     std::map<int, TabContext*> tab_contexts_;
-    EventManager* event_manager_;
+    EventManagerImpl* event_manager_;
 
     //-------------------------------------------------------------------------
     // not allowed

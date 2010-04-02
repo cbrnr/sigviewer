@@ -3,7 +3,7 @@
 #ifndef BASIC_HEADER_H
 #define BASIC_HEADER_H
 
-#include "signal_channel.h"
+#include "../base/signal_channel.h"
 
 #include <QVector>
 #include <QString>

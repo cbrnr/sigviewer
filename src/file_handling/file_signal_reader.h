@@ -4,7 +4,7 @@
 #define FILE_SIGNAL_READER_H
 
 #include "basic_header.h"
-#include "signal_event.h"
+#include "../base/signal_event.h"
 
 #include <biosig.h>
 

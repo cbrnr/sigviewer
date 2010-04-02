@@ -1,7 +1,7 @@
 // event_type_dialog.cpp
 
 #include "event_type_dialog.h"
-#include "base/event_table_file_reader.h"
+#include "file_handling_impl/event_table_file_reader.h"
 #include "event_color_manager.h"
 
 #include <QPushButton>

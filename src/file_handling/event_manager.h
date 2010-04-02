@@ -1,9 +1,9 @@
-#ifndef EVENT_MANAGER_INTERFACE_H
-#define EVENT_MANAGER_INTERFACE_H
+#ifndef EVENT_MANAGER_H
+#define EVENT_MANAGER_H
 
 #include "../base/user_types.h"
 #include "../base/signal_event.h"
-#include "channel_manager_interface.h"
+#include "../signal_browser/channel_manager_interface.h"
 
 #include <QString>
 #include <QObject>
@@ -16,19 +16,18 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-/// TODO: IN DEVELOPMENT
-/// EventManagerInterface
+/// EventManager
 ///
 /// interface (abstract base class) for the the central
 /// access point for any event manipulation
-class EventManagerInterface : public QObject
+class EventManager : public QObject
 {
     Q_OBJECT
 
 public:
     //-------------------------------------------------------------------------
     /// virtual destructor
-    virtual ~EventManagerInterface () {}
+    virtual ~EventManager () {}
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<SignalEvent const> getEvent (EventID id) const = 0;

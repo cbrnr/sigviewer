@@ -1,11 +1,11 @@
 #include "new_event_undo_command.h"
-#include "event_manager_interface.h"
+#include "../file_handling/event_manager.h"
 
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-NewEventUndoCommand::NewEventUndoCommand (EventManagerInterface& event_manager,
+NewEventUndoCommand::NewEventUndoCommand (EventManager& event_manager,
                                           QSharedPointer<SignalEvent> signal_event,
                                           float scene_to_signal_factor)
  : event_manager_ (event_manager),

@@ -25,8 +25,9 @@
 */
 
 #include "biosig_reader.h"
-#include "signal_data_block.h"
 #include "gdf_event.h"
+#include "../file_handling/file_signal_reader_factory.h"
+#include "../base/signal_data_block.h"
 
 #include "../../extern/biosig.h"
 
@@ -43,6 +44,7 @@ namespace BioSig_
 
 
 // double const BioSigReader::SAMPLE_RATE_TOLERANCE_ = 1E-4;	// OBSOLETE (AS)
+BioSigReader BioSigReader::prototype_instance_ (true);
 
 //-----------------------------------------------------------------------------
 BioSigReader::BioSigReader() :
@@ -53,6 +55,30 @@ BioSigReader::BioSigReader() :
 {
     // nothing to do here
 }
+
+//-----------------------------------------------------------------------------
+BioSigReader::BioSigReader (bool) :
+       basic_header_ (new BasicHeader ()),
+       biosig_header_ (0),
+       read_data_(0),
+       read_data_size_(0)
+{
+    FileSignalReaderFactory::getInstance()->addPrototype(".gdf", new BioSigReader ());
+    FileSignalReaderFactory::getInstance()->addPrototype(".evt", new BioSigReader ());
+    FileSignalReaderFactory::getInstance()->addPrototype(".bdf", new BioSigReader ());
+    FileSignalReaderFactory::getInstance()->addPrototype(".bkr", new BioSigReader ());
+    FileSignalReaderFactory::getInstance()->addPrototype(".cnt", new BioSigReader ());
+    FileSignalReaderFactory::getInstance()->addPrototype(".edf", new BioSigReader ());
+    FileSignalReaderFactory::getInstance()->addPrototype(".eeg", new BioSigReader ());
+
+    FileSignalReaderFactory::getInstance()->addPrototype(".acq", new BioSigReader ());	// Biopac
+    FileSignalReaderFactory::getInstance()->addPrototype(".ahdr", new BioSigReader ());	// BrainVision file format
+    FileSignalReaderFactory::getInstance()->addPrototype(".vhdr", new BioSigReader ());	// BrainVision file format
+    FileSignalReaderFactory::getInstance()->addPrototype(".scp", new BioSigReader ());	// SCP-ECG: EN1064, ISO 11073-91064
+
+    FileSignalReaderFactory::getInstance()->setDefaultPrototype (new BioSigReader ());
+}
+
 
 //-----------------------------------------------------------------------------
 BioSigReader::~BioSigReader()

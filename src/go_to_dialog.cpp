@@ -1,7 +1,7 @@
 // go_to_dialog.cpp
 
 #include "go_to_dialog.h"
-#include "base/basic_header.h"
+#include "file_handling/basic_header.h"
 
 #include <QPushButton>
 #include <QSpinBox>

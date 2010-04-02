@@ -16,7 +16,6 @@ HEADERS += signal_browser/signal_browser_view.h \
     signal_browser/choose_event_type_dialog.h \
     signal_browser/calculate_erd_ers_map_command.h \
     signal_browser/signal_browser_modes.h \
-    signal_browser/event_manager_interface.h \
     signal_browser/channel_manager_interface.h \
     signal_browser/delete_multiple_events_undo_command.h
 SOURCES += signal_browser/signal_browser_view.cpp \

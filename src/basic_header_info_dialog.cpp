@@ -1,7 +1,7 @@
 // basic_header_info_dialog.cpp
 
 #include "basic_header_info_dialog.h"
-#include "base/basic_header.h"
+#include "file_handling/basic_header.h"
 
 #include <math.h>
 #include <QTreeWidget>

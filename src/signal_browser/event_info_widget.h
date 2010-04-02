@@ -24,7 +24,7 @@ namespace BioSig_
 
 class SignalBrowserModel;
 class SignalEvent;
-class EventManagerInterface;
+class EventManager;
 class CommandExecuter;
 
 class EventInfoWidget : public QWidget
@@ -33,7 +33,7 @@ class EventInfoWidget : public QWidget
 
 public:
     EventInfoWidget(QWidget* parent,
-                    EventManagerInterface& event_manager,
+                    EventManager& event_manager,
                     CommandExecuter& command_executer,
                     QSharedPointer<SignalBrowserModel> signal_browser_model);
     virtual ~EventInfoWidget ();
@@ -53,7 +53,7 @@ private:
 
 
     QSharedPointer<SignalBrowserModel> signal_browser_model_;
-    EventManagerInterface& event_manager_;
+    EventManager& event_manager_;
     CommandExecuter& command_executer_;
     std::map<uint16, QString> shown_event_types_;
 

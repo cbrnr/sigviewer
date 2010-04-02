@@ -1,11 +1,11 @@
 #include "change_type_undo_command.h"
-#include "event_manager_interface.h"
+#include "../file_handling/event_manager.h"
 
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-ChangeTypeUndoCommand::ChangeTypeUndoCommand (EventManagerInterface& event_manager,
+ChangeTypeUndoCommand::ChangeTypeUndoCommand (EventManager& event_manager,
                                               EventID event_id,
                                               EventType new_type)
  : event_manager_ (event_manager),
