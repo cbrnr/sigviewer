@@ -35,6 +35,7 @@ include(base/base.pri)
 include(signal_browser/signal_browser.pri)
 include(block_visualisation/block_visualisation.pri)
 include(signal_processing/signal_processing.pri)
+include(file_handling_impl/file_handling_impl.pri)
 HEADERS += basic_header_info_dialog.h \
     channel_selection_dialog.h \
     copy_event_dialog.h \

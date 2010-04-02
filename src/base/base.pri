@@ -16,8 +16,7 @@ HEADERS += base/basic_header.h \
     base/signal_data_block_queue.h \
     base/signal_event.h \
     base/user_types.h \
-    base/data_block.h \
-    base/event_manager.h
+    base/data_block.h
 SOURCES += base/basic_header.cpp \
     base/biosig_reader.cpp \
     base/biosig_writer.cpp \
@@ -35,5 +34,4 @@ SOURCES += base/basic_header.cpp \
     base/signal_data_block_queue.cpp \
     base/signal_event.cpp \
     base/user_types.cpp \
-    base/data_block.cpp \
-    base/event_manager.cpp
+    base/data_block.cpp
