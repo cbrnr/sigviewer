@@ -1,7 +1,11 @@
 #ifndef TAB_CONTEXT_H
 #define TAB_CONTEXT_H
 
+#include "command_executer.h"
+
 #include <QObject>
+#include <QUndoStack>
+#include <QUndoCommand>
 
 namespace BioSig_
 {
@@ -15,11 +19,13 @@ enum TabSelectionState
 
 enum TabEditState
 {
-    TAB_STATE_READONLY,
-    TAB_STATE_EDITABLE
+    TAB_STATE_NO_REDO,
+    TAB_STATE_NO_UNDO,
+    TAB_STATE_NO_REDO_NO_UNDO,
+    TAB_STATE_CAN_REDO_UNDO
 };
 
-class TabContext : public QObject
+class TabContext : public QObject, public CommandExecuter
 {
     Q_OBJECT
 public:
@@ -28,6 +34,18 @@ public:
 
     //-------------------------------------------------------------------------
     ~TabContext ();
+
+    //-------------------------------------------------------------------------
+    void gotActive ();
+
+    //-------------------------------------------------------------------------
+    virtual void executeCommand (QUndoCommand* command);
+
+    //-------------------------------------------------------------------------
+    virtual void undo ();
+
+    //-------------------------------------------------------------------------
+    virtual void redo ();
 
 signals:
     //-------------------------------------------------------------------------
@@ -49,8 +67,14 @@ private:
     TabContext (TabContext const&);
     TabContext& operator= (TabContext const&);
 
+    //-------------------------------------------------------------------------
+    void updateUndoRedoEditState ();
+
+
     TabSelectionState selection_state_;
     TabEditState edit_state_;
+
+    QUndoStack edit_undo_stack_;
 };
 
 }

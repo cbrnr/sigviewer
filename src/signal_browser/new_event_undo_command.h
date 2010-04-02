@@ -10,11 +10,13 @@
 namespace BioSig_
 {
 
+class EventManagerInterface;
+
 class NewEventUndoCommand : public QUndoCommand
 {
 public:
     //-------------------------------------------------------------------------
-    NewEventUndoCommand (SignalBrowserModel& signal_browser_model,
+    NewEventUndoCommand (EventManagerInterface& event_manager,
                          QSharedPointer<SignalEvent> signal_event,
                          float scene_to_signal_factor = 1);
 
@@ -31,8 +33,9 @@ public:
 
 
 private:
-    SignalBrowserModel& signal_browser_model_;
-    QSharedPointer<SignalEvent> signal_event_;
+    EventManagerInterface& event_manager_;
+    QSharedPointer<SignalEvent> raw_signal_event_;
+    QSharedPointer<SignalEvent const> created_signal_event_;
 
     //-------------------------------------------------------------------------
     /// copy-constructor disabled

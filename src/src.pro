@@ -58,7 +58,8 @@ HEADERS += basic_header_info_dialog.h \
     gui_action_manager.h \
     application_context.h \
     file_context.h \
-    tab_context.h
+    tab_context.h \
+    command_executer.h
 SOURCES += basic_header_info_dialog.cpp \
     channel_selection_dialog.cpp \
     copy_event_dialog.cpp \

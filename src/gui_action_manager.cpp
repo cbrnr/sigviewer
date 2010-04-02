@@ -11,7 +11,8 @@ namespace BioSig_
 GUIActionManager::GUIActionManager ()
     : main_window_model_ (0),
       application_state_ (APP_STATE_NO_FILE_OPEN),
-      file_state_ (FILE_STATE_UNCHANGED)
+      file_state_ (FILE_STATE_UNCHANGED),
+      tab_edit_state_ (TAB_STATE_NO_REDO_NO_UNDO)
 {
     action_map_[ACTION_SEPARATOR] = new QAction (this);
     action_map_[ACTION_SEPARATOR]->setSeparator (true);
@@ -504,26 +505,20 @@ void GUIActionManager::initDisabledStates ()
 
     file_state_action_map_[FILE_STATE_UNCHANGED].push_back (ACTION_FILE_SAVE);
 
-//    tab_selection_state_action_map_[TAB_STATE_READONLY].push_back (ACTION_TO_ALL_CHANNELS);
-    tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_TO_ALL_CHANNELS);
+    tab_edit_state_action_map_[TAB_STATE_NO_REDO].push_back (ACTION_REDO);
+    tab_edit_state_action_map_[TAB_STATE_NO_UNDO].push_back (ACTION_UNDO);
+    tab_edit_state_action_map_[TAB_STATE_NO_REDO_NO_UNDO].push_back (ACTION_REDO);
+    tab_edit_state_action_map_[TAB_STATE_NO_REDO_NO_UNDO].push_back (ACTION_UNDO);
+
     tab_selection_state_action_map_[TAB_STATE_EVENT_SELECTED_ALL_CHANNELS].push_back (ACTION_TO_ALL_CHANNELS);
-//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_COPY_TO_CHANNELS);
+    tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_TO_ALL_CHANNELS);
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_COPY_TO_CHANNELS);
-//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_DELETE);
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_DELETE);
-//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_CHANGE_CHANNEL);
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_CHANGE_CHANNEL);
-//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_CHANGE_TYPE);
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_CHANGE_TYPE);
-//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_MODE_NEW);
-//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_MODE_POINTER);
-//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
-//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
-//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
-//    tab_selection_state_action_map_[TabContext::NO_EVENTS_POSSIBLE].push_back (ACTION_VIEW_FIT_TO_EVENT);
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_VIEW_FIT_TO_EVENT);
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_INSERT_OVER);
 }

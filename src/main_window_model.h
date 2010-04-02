@@ -34,6 +34,7 @@ class BlocksVisualisationModel;
 class ApplicationContext;
 class FileContext;
 class TabContext;
+class EventManager;
 
 // main window model
 class MainWindowModel : public QObject
@@ -111,11 +112,10 @@ public slots:
 
 
 private:
+    //-------------------------------------------------------------------------
+    void storeAndInitTabContext (TabContext* context, int tab_index);
 
-    // not allowed
-    MainWindowModel(const MainWindowModel&);
-    const MainWindowModel& operator=(const MainWindowModel&);
-
+    //-------------------------------------------------------------------------
     bool checkMainWindowPtr(const QString function);
     bool channelSelection ();
     uint16 selectEventTypeDialog (uint16 preselected_type) const;
@@ -139,6 +139,12 @@ private:
     std::map<int, QSharedPointer<AbstractBrowserModel> > browser_models_;
     std::list<QSharedPointer<BlocksVisualisationModel> > blocks_visualisation_models_;
     std::map<int, TabContext*> tab_contexts_;
+    EventManager* event_manager_;
+
+    //-------------------------------------------------------------------------
+    // not allowed
+    MainWindowModel(const MainWindowModel&);
+    const MainWindowModel& operator=(const MainWindowModel&);
 
 };
 

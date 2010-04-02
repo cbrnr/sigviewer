@@ -18,14 +18,18 @@ class SignalEvent;
 class SignalBrowserModel;
 class SignalBrowserView;
 class EventGraphicsItem;
+class EventManagerInterface;
+class CommandExecuter;
 
 class SignalGraphicsItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
 public:
-    SignalGraphicsItem(SignalBuffer& buffer, const SignalChannel& channel,
-                     SignalBrowserModel& model, SignalBrowserView* browser);
+    SignalGraphicsItem(EventManagerInterface& event_manager,
+                       CommandExecuter& command_executor,
+                       SignalBuffer& buffer, const SignalChannel& channel,
+                       SignalBrowserModel& model, SignalBrowserView* browser);
 
     virtual ~SignalGraphicsItem ();
 
@@ -63,6 +67,8 @@ private:
 
     void drawYAxis (QPainter * painter, const QStyleOptionGraphicsItem * option);
 
+    EventManagerInterface& event_manager_;
+    CommandExecuter& command_executor_;
     SignalBuffer& signal_buffer_;
     const SignalChannel& signal_channel_;
     SignalBrowserModel& signal_browser_model_;

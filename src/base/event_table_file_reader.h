@@ -16,7 +16,12 @@ class QTextStream;
 namespace BioSig_
 {
 
-// event table file reader
+
+//-----------------------------------------------------------------------------
+///
+/// EventTableFileReader
+///
+/// responsible for mapping of EventType to String (name of event)
 class EventTableFileReader
 {
 public:
@@ -36,8 +41,8 @@ public:
 
     IntIterator eventTypesBegin();
     IntIterator eventTypesEnd();
-    QString getEventName(uint16 event_type_id) const;
-    QString getEventGroupId(uint16 event_type_id);
+    QString getEventName (EventType event_type_id) const;
+    QString getEventGroupId (EventType event_type_id) const;
 
     std::set<uint16> getAllEventTypes () const;
 private:

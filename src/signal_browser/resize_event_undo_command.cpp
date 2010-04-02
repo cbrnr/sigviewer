@@ -1,17 +1,21 @@
 #include "resize_event_undo_command.h"
+#include "event_manager_interface.h"
 
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-ResizeEventUndoCommand::ResizeEventUndoCommand (SignalBrowserModel& signal_browser_model, QSharedPointer<SignalEvent> event, uint32 new_start_position, uint32 new_duration)
-: signal_browser_model_ (signal_browser_model),
-  event_ (event),
+ResizeEventUndoCommand::ResizeEventUndoCommand (EventManagerInterface& event_manager,
+                                                EventID id,
+                                                uint32 new_start_position,
+                                                uint32 new_duration)
+: event_manager_ (event_manager),
+  event_ (event_manager.getEventForEditing (id)),
   new_start_position_ (new_start_position),
   new_duration_ (new_duration)
 {
-    old_duration_ = event->getDuration();
-    old_start_position_ = event->getPosition();
+    old_duration_ = event_->getDuration();
+    old_start_position_ = event_->getPosition();
 }
 
 //-----------------------------------------------------------------------------
@@ -23,17 +27,17 @@ ResizeEventUndoCommand::~ResizeEventUndoCommand ()
 //-----------------------------------------------------------------------------
 void ResizeEventUndoCommand::undo ()
 {
-    event_->setDuration(old_duration_);
-    event_->setPosition(old_start_position_);
-    signal_browser_model_.setEventChanged(event_->getId());
+    event_->setDuration (old_duration_);
+    event_->setPosition (old_start_position_);
+    event_manager_.updateEvent (event_->getId());
 }
 
 //-----------------------------------------------------------------------------
 void ResizeEventUndoCommand::redo ()
 {
-    event_->setDuration(new_duration_);
-    event_->setPosition(new_start_position_);
-    signal_browser_model_.setEventChanged(event_->getId());
+    event_->setDuration (new_duration_);
+    event_->setPosition (new_start_position_);
+    event_manager_.updateEvent (event_->getId());
 }
 
 

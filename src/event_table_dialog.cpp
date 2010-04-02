@@ -2,10 +2,10 @@
 
 #include "event_table_dialog.h"
 
-#include "gui_signal_buffer.h"
+#include "command_executer.h"
 #include "base/basic_header.h"
-#include "base/event_table_file_reader.h"
-#include "main_window_model.h"
+#include "signal_browser/event_manager_interface.h"
+#include "signal_browser/delete_multiple_events_undo_command.h"
 
 #include <QHeaderView>
 #include <QTableView>
@@ -220,11 +220,13 @@ void EventTableDialog::TableModel::sort(int column, Qt::SortOrder order)
 }
 
 // constructor
-EventTableDialog::EventTableDialog(QSharedPointer<SignalBrowserModel> browser_model,
-                                   QPointer<BasicHeader> basic_header, QWidget* parent)
+EventTableDialog::EventTableDialog (EventManagerInterface& event_manager,
+                                    CommandExecuter& command_executer,
+                                    QPointer<BasicHeader> basic_header, QWidget* parent)
  : QDialog(parent),
-   signal_browser_model_(browser_model),
-   basic_header_(basic_header)
+   event_manager_ (event_manager),
+   command_executer_ (command_executer),
+   basic_header_ (basic_header)
 {
     setWindowTitle(tr("Events"));
     QHBoxLayout* top_layout = new QHBoxLayout(this);
@@ -303,47 +305,46 @@ void EventTableDialog::buildEventTable()
     event_table_view_->horizontalHeader()->setClickable(false);
     event_table_view_->horizontalHeader()->setSortIndicatorShown(true);
 
-    QSharedPointer<EventTableFileReader> event_table_reader
-        = signal_browser_model_->getMainWindowModel().getEventTableFileReader();
+    QList<EventID> event_ids = event_manager_.getAllEvents ();
 
-    FileSignalReader::SignalEventVector event_vector;
-    signal_browser_model_->getEvents(event_vector);
     int32 number_channels = (int32)basic_header_->getNumberChannels();
     float64 sample_rate = basic_header_->getEventSamplerate();
-    event_table_model_->insertRows(0, event_vector.size());
+    event_table_model_->insertRows(0, event_ids.size());
     int32 row_height = event_table_view_->verticalHeader()->sizeHint().height();
 
-    FileSignalReader::SignalEventVector::iterator it;
-    int32 event_nr = 0;
-
-    for (it = event_vector.begin(); it != event_vector.end(); it++, event_nr++)
+    for (QList<EventID>::Iterator id_iter = event_ids.begin ();
+         id_iter != event_ids.end ();
+         ++id_iter)
     {
-        event_table_view_->verticalHeader()->resizeSection(event_nr,
+        QSharedPointer<SignalEvent const> event =
+                event_manager_.getEvent (*id_iter);
+
+        event_table_view_->verticalHeader()->resizeSection(*id_iter,
                                                            row_height);
 
-        event_table_model_->setData(event_table_model_->index(event_nr, 0),
-                                    it->getId());
+        event_table_model_->setData(event_table_model_->index(*id_iter, 0),
+                                    event->getId());
 
-        event_table_model_->setData(event_table_model_->index(event_nr, 1),
-                                    QString("%1").arg(it->getPosition() /
+        event_table_model_->setData(event_table_model_->index(*id_iter, 1),
+                                    QString("%1").arg(event->getPosition() /
                                                       sample_rate, 0, 'f', 2));
 
-        event_table_model_->setData(event_table_model_->index(event_nr, 2),
-                                    QString("%1").arg(it->getDuration() /
+        event_table_model_->setData(event_table_model_->index(*id_iter, 2),
+                                    QString("%1").arg(event->getDuration() /
                                                       sample_rate, 0, 'f', 2));
 
         QString tmp;
 
-        if (it->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
+        if (event->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
         {
             tmp += tr("All Channels");
         }
         else
         {
-            tmp = QString("(%1)").arg(it->getChannel() + 1) + " ";
-            if (it->getChannel() < number_channels)
+            tmp = QString("(%1)").arg(event->getChannel() + 1) + " ";
+            if (event->getChannel() < number_channels)
             {
-                tmp += basic_header_->getChannel(it->getChannel()).getLabel();
+                tmp += basic_header_->getChannel(event->getChannel()).getLabel();
             }
             else
             {
@@ -351,35 +352,35 @@ void EventTableDialog::buildEventTable()
             }
         }
 
-        event_table_model_->setData(event_table_model_->index(event_nr, 3),
+        event_table_model_->setData(event_table_model_->index(*id_iter, 3),
                                     QVariant(tmp));
 
-        tmp = event_table_reader->getEventName(it->getType()) +
-              QString(" ") + QString("(0x%1)").arg(it->getType(), 4, 16)
+        tmp = event_manager_.getNameOfEventType(event->getType()) +
+              QString(" ") + QString("(0x%1)").arg(event->getType(), 4, 16)
                                               .replace(' ', '0');
 
-        event_table_model_->setData(event_table_model_->index(event_nr, 4),
+        event_table_model_->setData(event_table_model_->index(*id_iter, 4),
                                     QVariant(tmp));
 
         // hidden columns for sorting
-        event_table_model_->setData(event_table_model_->index(event_nr, 5),
-                                    QString("%1").arg(it->getId(), 8, 16)
+        event_table_model_->setData(event_table_model_->index(*id_iter, 5),
+                                    QString("%1").arg(event->getId(), 8, 16)
                                                     .replace(' ', '0'));
 
-        event_table_model_->setData(event_table_model_->index(event_nr, 6),
-                                    QString("%1").arg(it->getPosition(), 8, 16)
+        event_table_model_->setData(event_table_model_->index(*id_iter, 6),
+                                    QString("%1").arg(event->getPosition(), 8, 16)
                                                  .replace(' ', '0'));
 
-        event_table_model_->setData(event_table_model_->index(event_nr, 7),
-                                    QString("%1").arg(it->getDuration(), 8, 16)
+        event_table_model_->setData(event_table_model_->index(*id_iter, 7),
+                                    QString("%1").arg(event->getDuration(), 8, 16)
                                                  .replace(' ', '0'));
 
-        event_table_model_->setData(event_table_model_->index(event_nr, 8),
-                                    QString("%1").arg(it->getChannel()+1, 8, 16)
+        event_table_model_->setData(event_table_model_->index(*id_iter, 8),
+                                    QString("%1").arg(event->getChannel()+1, 8, 16)
                                                  .replace(' ', '0'));
 
-        event_table_model_->setData(event_table_model_->index(event_nr, 9),
-                                    QString("%1").arg(it->getType(),4,16)
+        event_table_model_->setData(event_table_model_->index(*id_iter, 9),
+                                    QString("%1").arg(event->getType(),4,16)
                                                     .replace(' ', '0'));
     }
 }
@@ -402,20 +403,20 @@ void EventTableDialog::removeSelectedRows()
     {
         qSort(selected_row_list);
         QList<int32>::iterator it = selected_row_list.end();
+        QList<EventID> event_ids;
 
         do
         {
             int32 row = *(--it);
-            int32 event_id = event_table_model_
-                            ->data(event_table_model_->index(row, 0)).toInt();
-
-            signal_browser_model_->removeEvent(event_id, false);
-            event_table_model_->removeRows(*it, 1);
+            event_ids.append (event_table_model_
+                              ->data(event_table_model_->index(row, 0)).toInt());
+            event_table_model_->removeRows (*it, 1);
         }
-
         while (it != selected_row_list.begin());
 
-        signal_browser_model_->updateLayout();
+        DeleteMultipleEventsUndoCommand* delete_command =
+                new DeleteMultipleEventsUndoCommand (event_manager_, event_ids);
+        command_executer_.executeCommand (delete_command);
     }
 
     // update row heights

@@ -32,7 +32,7 @@ public:
 
 private:
     SignalBrowserModel& signal_browser_model_;
-    QSharedPointer<SignalEvent> selected_event_;
+    QSharedPointer<SignalEvent const> selected_event_;
     float64 previous_pixel_per_sec_;
     QPointF previous_view_position_;
     static float32 const MARGIN_LEFT_RIGHT_;

@@ -1,14 +1,15 @@
 #include "change_channel_undo_command.h"
+#include "event_manager_interface.h"
 
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-ChangeChannelUndoCommand::ChangeChannelUndoCommand (SignalBrowserModel& signal_browser_model,
-                                          QSharedPointer<SignalEvent> signal_event,
-                                          int32 new_channel)
- : signal_browser_model_ (signal_browser_model),
-   signal_event_ (signal_event),
+ChangeChannelUndoCommand::ChangeChannelUndoCommand (EventManagerInterface& event_manager,
+                                                    EventID event_id,
+                                                    ChannelID new_channel)
+ : event_manager_ (event_manager),
+   signal_event_ (event_manager.getEventForEditing (event_id)),
    new_channel_ (new_channel)
 {
     // nothing to do here
@@ -24,15 +25,15 @@ ChangeChannelUndoCommand::~ChangeChannelUndoCommand ()
 void ChangeChannelUndoCommand::undo ()
 {
     signal_event_->setChannel(old_channel_);
-    signal_browser_model_.setEventChanged(signal_event_->getId());
+    event_manager_.updateEvent (signal_event_->getId());
 }
 
 //-----------------------------------------------------------------------------
 void ChangeChannelUndoCommand::redo ()
 {
     old_channel_ = signal_event_->getChannel();
-    signal_event_->setChannel(new_channel_);
-    signal_browser_model_.setEventChanged(signal_event_->getId());
+    signal_event_->setChannel (new_channel_);
+    event_manager_.updateEvent (signal_event_->getId());
 }
 
 }

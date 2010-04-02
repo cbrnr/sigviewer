@@ -10,13 +10,15 @@
 namespace BioSig_
 {
 
-class ChangeTypeUndoCommand : public QObject, public QUndoCommand
+class EventManagerInterface;
+
+class ChangeTypeUndoCommand : public QUndoCommand
 {
-    Q_OBJECT
 public:
     //-------------------------------------------------------------------------
-    ChangeTypeUndoCommand (QSharedPointer<SignalEvent> signal_event,
-                           uint16 new_type);
+    ChangeTypeUndoCommand (EventManagerInterface& event_manager,
+                           EventID event_id,
+                           EventType new_type);
 
     //-------------------------------------------------------------------------
     virtual ~ChangeTypeUndoCommand();
@@ -29,9 +31,6 @@ public:
     /// deletes the event
     virtual void redo ();
 
-signals:
-    void eventChanged (int32 event_id);
-
 private:
     //-------------------------------------------------------------------------
     /// copy-constructor disabled
@@ -41,9 +40,10 @@ private:
     /// assignment-operator disabled
     ChangeTypeUndoCommand& operator= (ChangeTypeUndoCommand const &);
 
+    EventManagerInterface& event_manager_;
+    EventType new_type_;
+    EventType old_type_;
     QSharedPointer<SignalEvent> signal_event_;
-    uint16 new_type_;
-    uint16 old_type_;
 };
 
 }

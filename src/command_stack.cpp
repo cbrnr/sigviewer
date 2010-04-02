@@ -20,7 +20,7 @@ void CommandStack::clearStacks ()
 }
 
 //-----------------------------------------------------------------------------
-void CommandStack::executeEditCommand (QUndoCommand* command)
+void CommandStack::executeEditCommant (QUndoCommand* command)
 {
     edit_command_undo_stack_.push (command);
 }

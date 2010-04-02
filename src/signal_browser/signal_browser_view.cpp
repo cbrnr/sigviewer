@@ -23,7 +23,10 @@ namespace BioSig_
 
 //-----------------------------------------------------------------------------
 // constructor
-SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_browser_model, QWidget* parent)
+SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_browser_model,
+                                      EventManagerInterface& event_manager,
+                                      CommandExecuter& command_executer,
+                                      QWidget* parent)
 : QFrame(parent)
 {
     scroll_timer_ = new QTimer (this);
@@ -55,7 +58,8 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     label_widget_ = new LabelWidget (*signal_browser_model, this);
     hideable_widgets_["Channel Labels"] = label_widget_;
 
-    event_info_widget_ = new EventInfoWidget (this, signal_browser_model);
+    event_info_widget_ = new EventInfoWidget (this, event_manager,
+                                              command_executer, signal_browser_model);
     hideable_widgets_["Event Toolbar"] = event_info_widget_;
 
     connect(horizontal_scrollbar_, SIGNAL(valueChanged(int)),
@@ -80,7 +84,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
     connect(signal_browser_model.data(), SIGNAL(signalHeightChanged(unsigned)), y_axis_widget_, SLOT(changeSignalHeight(unsigned)));
     connect(event_info_widget_, SIGNAL(eventCreationTypeChanged(uint16)), signal_browser_model.data(), SLOT(setActualEventCreationType(uint16)));
-    connect(signal_browser_model.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent>)), event_info_widget_, SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent>)));
+    connect(signal_browser_model.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent const>)));
     connect(signal_browser_model.data(), SIGNAL(shownEventTypesChanged(std::set<uint16>)), event_info_widget_, SLOT(updateShownEventTypes(std::set<uint16>)));
 
     graphics_view_->resize(width() - label_widget_->width() - y_axis_widget_->width() + (vertical_scrollbar_->width()*2), height() - x_axis_widget_->height() + horizontal_scrollbar_->height());
@@ -415,72 +419,5 @@ void SignalBrowserView::saveSettings ()
 
     settings.endGroup();
 }
-
-
-/*
-// get canvas
-SmartCanvas* SignalBrowserView::getCanvas()
-{
-    return canvas_;
-}
-
-// get canvas view
-SmartCanvasView* SignalBrowserView::getCanvasView()
-{
-    return canvas_view_;
-}
-
-// get x axis widget
-XAxisWidget* SignalBrowserView::getXAxisWidget()
-{
-    return x_axis_widget_;
-}
-
-// get y axis widget
-YAxisWidget* SignalBrowserView::getYAxisWidget()
-{
-    return y_axis_widget_;
-}
-
-// get label widget
-LabelWidget* SignalBrowserView::getLabelWidget()
-{
-    return label_widget_;
-}
-
-// resize event
-void SignalBrowserView::resizeEvent(QResizeEvent* e)
-{
-    updateScrollBarRange();
-}
-
-// update scrollbar range
-void SignalBrowserView::updateScrollBarRange()
-{
-    int32 visible_width = canvas_view_->visibleWidth();
-    int32 visible_height = canvas_view_->visibleHeight();
-    int32 h_max = canvas_->width() - visible_width;
-    int32 v_max = canvas_->height() - visible_height;
-
-    h_scrollbar_->setRange(0, h_max > 0 ? h_max : 0);
-    h_scrollbar_->setSteps(10, visible_width);
-    v_scrollbar_->setRange(0, v_max > 0 ? v_max : 0);
-    v_scrollbar_->setSteps(10, visible_height);
-    x_axis_widget_->update();
-}
-
-// horizontal scrollbar moved
-void SignalBrowserView::horizontalSrollbarMoved(int)
-{
-    x_axis_widget_->repaint();
-}
-
-// vertical scrollbar moved
-void SignalBrowserView::verticalSrollbarMoved(int)
-{
-    label_widget_->repaint();
-    y_axis_widget_->repaint();
-}
-*/
 
 } // namespace BioSig_

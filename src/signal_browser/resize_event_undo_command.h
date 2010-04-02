@@ -2,7 +2,6 @@
 #define RESIZE_EVENT_UNDO_COMMAND_H
 
 #include "../base/signal_event.h"
-#include "signal_browser_model_4.h"
 
 #include <QSharedPointer>
 #include <QUndoCommand>
@@ -10,12 +9,16 @@
 namespace BioSig_
 {
 
+class EventManagerInterface;
+
 class ResizeEventUndoCommand : public QUndoCommand
 {
 public:
     //-------------------------------------------------------------------------
     /// constructor
-    ResizeEventUndoCommand (SignalBrowserModel& signal_browser_model, QSharedPointer<SignalEvent> event, uint32 new_start_position, uint32 new_duration);
+    ResizeEventUndoCommand (EventManagerInterface& event_manager,
+                            EventID id,
+                            uint32 new_start_position, uint32 new_duration);
 
     //-------------------------------------------------------------------------
     /// destructor
@@ -30,7 +33,7 @@ public:
     virtual void redo ();
 
 private:
-    SignalBrowserModel& signal_browser_model_;
+    EventManagerInterface& event_manager_;
     QSharedPointer<SignalEvent> event_;
 
     uint32 new_start_position_;

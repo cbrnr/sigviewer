@@ -7,8 +7,8 @@
 namespace BioSig_
 {
 
-typedef int32 ChannelID;
-const int32 UNDEFINDED_CHANNEL = -1;
+
+const ChannelID UNDEFINDED_CHANNEL = -1;
 
 //-----------------------------------------------------------------------------
 /// ChannelManager
@@ -17,6 +17,9 @@ const int32 UNDEFINDED_CHANNEL = -1;
 class ChannelManager
 {
 public:
+    //-------------------------------------------------------------------------
+    /// destructor
+    virtual ~ChannelManager () {}
 
     //-------------------------------------------------------------------------
     /// @param channel_id the id of the channel

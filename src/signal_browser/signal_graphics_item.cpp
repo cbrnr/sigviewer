@@ -4,7 +4,7 @@
 #include "signal_browser_model_4.h"
 #include "new_event_undo_command.h"
 #include "y_axis_widget_4.h"
-#include "../command_stack.h"
+#include "../command_executer.h"
 #include "../base/signal_data_block.h"
 #include "../base/signal_buffer.h"
 #include "../base/signal_event.h"
@@ -30,9 +30,15 @@ float64 SignalGraphicsItem::prefered_pixel_per_sample_ = 1.0;
 
 
 //-----------------------------------------------------------------------------
-SignalGraphicsItem::SignalGraphicsItem(SignalBuffer& buffer, const SignalChannel& channel,
-                     SignalBrowserModel& model, SignalBrowserView* browser)
-: signal_buffer_(buffer),
+SignalGraphicsItem::SignalGraphicsItem(EventManagerInterface& event_manager,
+                                       CommandExecuter& command_executor,
+                                       SignalBuffer& buffer,
+                                       const SignalChannel& channel,
+                                       SignalBrowserModel& model,
+                                       SignalBrowserView* browser)
+: event_manager_ (event_manager),
+  command_executor_ (command_executor),
+  signal_buffer_(buffer),
   signal_channel_(channel),
   signal_browser_model_(model),
   signal_browser_(browser),
@@ -483,8 +489,8 @@ void SignalGraphicsItem::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
     if (new_event_)
     {
         emit mouseMoving (false);
-        NewEventUndoCommand* new_event_command = new NewEventUndoCommand(signal_browser_model_, new_signal_event_, signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit());
-        CommandStack::instance().executeEditCommand (new_event_command);
+        NewEventUndoCommand* new_event_command = new NewEventUndoCommand(event_manager_, new_signal_event_, signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit());
+        command_executor_.executeCommand (new_event_command);
     }
 
     shifting_ = false;

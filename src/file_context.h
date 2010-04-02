@@ -6,6 +6,9 @@
 namespace BioSig_
 {
 
+class EventManagerInterface;
+class TabContext;
+
 enum FileState
 {
     FILE_STATE_UNCHANGED,
@@ -22,16 +25,21 @@ class FileContext : public QObject
 {
     Q_OBJECT
 public:
-
-
     //-------------------------------------------------------------------------
-    FileContext ();
+    FileContext (EventManagerInterface& event_manager,
+                 TabContext& tab_context);
 
     //-------------------------------------------------------------------------
     ~FileContext ();
 
     //-------------------------------------------------------------------------
+    EventManagerInterface& getEventManager ();
+
+    //-------------------------------------------------------------------------
     FileState getState () const;
+
+    //-------------------------------------------------------------------------
+    TabContext& getMainTabContext ();
 
 signals:
     //-------------------------------------------------------------------------
@@ -48,6 +56,8 @@ private:
     FileContext& operator= (FileContext const&);
 
     FileState state_;
+    EventManagerInterface& event_manager_;
+    TabContext& tab_context_;
 };
 
 } // namespace BioSig_

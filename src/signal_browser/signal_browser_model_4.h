@@ -29,6 +29,7 @@ class SignalBrowserView;
 class SignalGraphicsItem;
 class EventTableFileReader;
 class ApplicationContext;
+class FileContext;
 
 // signal browser model
 class SignalBrowserModel : public QObject, public AbstractBrowserModel
@@ -44,6 +45,7 @@ public:
                        MainWindowModel& main_window_model,
                        QSharedPointer<EventTableFileReader const> event_table_file_reader,
                        ApplicationContext& app_context,
+                       FileContext& file_context,
                        TabContext& tab_context);
     virtual ~SignalBrowserModel();
 
@@ -136,33 +138,35 @@ public:
     std::set<uint16> getShownEventTypes () const;
     std::set<uint16> getDisplayedEventTypes () const;
     void setShownEventTypes(const IntList& event_type, const bool all = false);
-    void removeEvent(uint32 id, bool update = true);
 
-    EventGraphicsItem* addEvent(QSharedPointer<SignalEvent> event, bool update = true);
-    void addEvent(EventGraphicsItem* event);
-    void unsetSelectedEventItem();
     EventGraphicsItem* getSelectedEventItem();
-    QSharedPointer<SignalEvent> getSelectedSignalEvent();
-    EventGraphicsItem* getEventItem(int32 id);
+    QSharedPointer<SignalEvent const> getSelectedSignalEvent();
     void setSelectedEventToAllChannels();
     void changeSelectedEventChannel();
     void copySelectedEventToChannels();
     void changeSelectedEventType (uint16 new_type);
-    void removeSelectedEvent();
 
-    void getEvents(SignalEventVector& event_vector);
     uint16 getActualEventCreationType () const;
 
     void updateEventItems ();
 
 public slots:
-    void setEventChanged(int32 id);
+    //-------------------------------------------------------------------------
+    /// adds the given event
+    void addEventItem (QSharedPointer<SignalEvent const> event);
+
+    //-------------------------------------------------------------------------
+    /// removes the given event
+    void removeEventItem (EventID id);
+
+
+    void setEventChanged (EventID id);
     void setActualEventCreationType (uint16 new_type);
     void selectEvent (int32 id);
     void unselectEvent ();
 
 signals:
-    void eventSelected (QSharedPointer<SignalEvent> selected_event);
+    void eventSelected (QSharedPointer<SignalEvent const> selected_event);
     void signalHeightChanged (unsigned signal_height);
     void signalSpacingChanged (unsigned signal_spacing);
     void shownEventTypesChanged (std::set<uint16> shown_event_types);
@@ -181,6 +185,7 @@ private:
     };
 
     ApplicationContext& app_context_;
+    FileContext& file_context_;
     TabContext& tab_context_;
     SignalBrowserView* signal_browser_view_;
     QTextStream* log_stream_; // no auto_ptr

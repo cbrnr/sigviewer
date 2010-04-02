@@ -2,7 +2,7 @@
 #define CHANGE_CHANNEL_UNDO_COMMAND_H
 
 #include "../base/signal_event.h"
-#include "signal_browser_model_4.h"
+#include "channel_manager_interface.h"
 
 #include <QUndoCommand>
 #include <QSharedPointer>
@@ -10,13 +10,15 @@
 namespace BioSig_
 {
 
+class EventManagerInterface;
+
 class ChangeChannelUndoCommand : public QUndoCommand
 {
 public:
     //-------------------------------------------------------------------------
-    ChangeChannelUndoCommand(SignalBrowserModel& signal_browser_model,
-                                          QSharedPointer<SignalEvent> signal_event,
-                                          int32 new_channel);
+    ChangeChannelUndoCommand (EventManagerInterface& event_manager,
+                              EventID event_id,
+                              ChannelID new_channel);
 
     //-------------------------------------------------------------------------
     virtual ~ChangeChannelUndoCommand();
@@ -41,10 +43,10 @@ private:
     /// assignment-operator disabled
     ChangeChannelUndoCommand& operator= (ChangeChannelUndoCommand const &);
 
-    SignalBrowserModel& signal_browser_model_;
+    EventManagerInterface& event_manager_;
     QSharedPointer<SignalEvent> signal_event_;
-    int32 new_channel_;
-    int32 old_channel_;
+    ChannelID new_channel_;
+    ChannelID old_channel_;
 
 };
 

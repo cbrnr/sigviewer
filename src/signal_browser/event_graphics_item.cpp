@@ -3,11 +3,11 @@
 #include "signal_browser_model_4.h"
 #include "resize_event_undo_command.h"
 #include "event_context_menu.h"
-#include "../base/signal_buffer.h"
+#include "event_manager_interface.h"
 #include "../base/signal_event.h"
 
-#include "../command_stack.h"
 #include "../signal_browser_mouse_handling.h"
+#include "../command_executer.h"
 #include "../base/event_table_file_reader.h"
 
 #include <QRectF>
@@ -31,12 +31,15 @@ QMutex EventGraphicsItem::context_menu_mutex_;
 QSharedPointer<EventContextMenu> EventGraphicsItem::context_menu_ (0);
 
 //-----------------------------------------------------------------------------
-EventGraphicsItem::EventGraphicsItem(SignalBuffer& buffer, SignalBrowserModel& model,
-                                     QSharedPointer<SignalEvent> signal_event,
-                                     ApplicationContext& app_context)
+EventGraphicsItem::EventGraphicsItem (SignalBrowserModel& model,
+                                      QSharedPointer<SignalEvent const> signal_event,
+                                      ApplicationContext& app_context,
+                                      EventManagerInterface& event_manager,
+                                      CommandExecuter& command_executer)
 : signal_browser_model_ (model),
   app_context_ (app_context),
-  signal_buffer_ (buffer),
+  event_manager_ (event_manager),
+  command_executer_ (command_executer),
   state_ (STATE_NONE),
   is_selected_ (false),
   signal_event_ (signal_event)
@@ -47,7 +50,7 @@ EventGraphicsItem::EventGraphicsItem(SignalBuffer& buffer, SignalBrowserModel& m
 //-----------------------------------------------------------------------------
 EventGraphicsItem::~EventGraphicsItem ()
 {
-
+    // nothing to do here
 }
 
 //-----------------------------------------------------------------------------
@@ -56,27 +59,13 @@ int32 EventGraphicsItem                                                         
     return signal_event_->getId();
 }
 
-
-//-----------------------------------------------------------------------------
-//void EventGraphicsItem::setSize (int32 width, int32 height)
-//{
-//    width_ = width;
-//    height_ = height;
-//}
-
-
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::setSelected (bool selected)
 {
     state_ = STATE_NONE;
     is_selected_ = selected;
-    scene()->update(pos().x() - 5, pos().y() - 5, width_ + 10, height_ + 10);
-}
-
-//-----------------------------------------------------------------------------
-QSharedPointer<SignalEvent> EventGraphicsItem::getSignalEvent ()
-{
-    return signal_event_;
+    if (scene ())
+        scene()->update(pos().x() - 5, pos().y() - 5, width_ + 10, height_ + 10);
 }
 
 //-----------------------------------------------------------------------------
@@ -84,13 +73,6 @@ QSharedPointer<SignalEvent const> EventGraphicsItem::getSignalEvent () const
 {
     return signal_event_;
 }
-
-
-//-----------------------------------------------------------------------------
-//void EventGraphicsItem::updateColor()
-//{
-//    color_ = signal_browser_model_.getEventColor(signal_event_->getType());
-//}
 
 //-----------------------------------------------------------------------------
 bool EventGraphicsItem::displayContextMenu (QGraphicsSceneContextMenuEvent * event)
@@ -129,7 +111,10 @@ bool EventGraphicsItem::displaySelectionMenu (QGraphicsSceneMouseEvent* event)
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::updateToSignalEvent ()
 {
-    float64 factor = signal_browser_model_.getPixelPerXUnit() / signal_buffer_.getEventSamplerate();
+    float64 factor = signal_browser_model_.getPixelPerXUnit() / event_manager_.getSampleRate();
+    QRectF old_rect;
+    if (scene ())
+        old_rect = this->sceneBoundingRect();
     width_ = factor * signal_event_->getDuration() + 0.5;
     int32 x_pos = factor * signal_event_->getPosition() + 0.5;
     int32 y_pos = 0;
@@ -148,8 +133,11 @@ void EventGraphicsItem::updateToSignalEvent ()
     /// FIXXME: REMOVE MAGIC NUMBER
     setZValue (5 + signal_event_->getType() / 100000.0);
 
-
     setPos (x_pos, y_pos);
+
+    if (scene())
+        scene()->update(old_rect);
+    update ();
 }
 
 
@@ -265,7 +253,7 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
             break;
         case STATE_MOVE_BEGIN:
             {
-                float64 factor = signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit();
+                float64 factor = event_manager_.getSampleRate() / signal_browser_model_.getPixelPerXUnit();
                 int32 diff = (mouse_event->scenePos().x() - mouse_event->lastScenePos().x());
                 int32 old_pos = pos().x();
                 int32 new_pos = (((old_pos + diff) * factor) / factor) + 0.5;
@@ -277,7 +265,7 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
         case STATE_MOVE_END:
             {
                 int32 diff = (mouse_event->scenePos().x() - mouse_event->lastScenePos().x());
-                float64 factor = signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit();
+                float64 factor = event_manager_.getSampleRate() / signal_browser_model_.getPixelPerXUnit();
                 width_ = (((width_ + diff) * factor) / factor) + 0.5;
                 if (diff > 0)
                     scene()->update (mouse_pos.x() - diff - 20, pos().y(), diff + 40, height_);
@@ -317,7 +305,7 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
 //            int32 dur = width_ * (signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit());
 //            uint32 pos = factor * x();
 
-            float64 factor = signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit();
+            float64 factor = event_manager_.getSampleRate() / signal_browser_model_.getPixelPerXUnit();
             int32 diff = 0; //(event->scenePos().x() - event->lastScenePos().x());
             int32 old_pos = pos().x();
             int32 new_pos = (((old_pos + diff) * factor) / factor) + 0.5;
@@ -325,18 +313,18 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
             setPos (new_pos, pos().y());
             int32 dur = (factor * width_) + 0.5;
 
-            ResizeEventUndoCommand* command = new ResizeEventUndoCommand (signal_browser_model_, signal_event_, (new_pos * factor) + 0.5, dur);
-            CommandStack::instance().executeEditCommand (command);
+            ResizeEventUndoCommand* command = new ResizeEventUndoCommand (event_manager_, signal_event_->getId(), (new_pos * factor) + 0.5, dur);
+            command_executer_.executeCommand (command);
         }
         break;
         case STATE_MOVE_END:
         {
             int32 diff = (event->pos().x() - event->lastPos().x());
-            float64 factor = signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit();
+            float64 factor = event_manager_.getSampleRate() / signal_browser_model_.getPixelPerXUnit();
             width_ = (((width_ + diff) * factor) / factor) + 0.5;
             int32 dur = (factor * width_) + 0.5;
-            ResizeEventUndoCommand* command = new ResizeEventUndoCommand (signal_browser_model_, signal_event_, signal_event_->getPosition(), dur);
-            CommandStack::instance().executeEditCommand (command);
+            ResizeEventUndoCommand* command = new ResizeEventUndoCommand (event_manager_, signal_event_->getId(), signal_event_->getPosition(), dur);
+            command_executer_.executeCommand (command);
         }
         break;
     default:

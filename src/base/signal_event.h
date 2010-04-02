@@ -12,6 +12,7 @@ namespace BioSig_
 class SignalEvent
 {
 public:
+    static const EventID UNDEFINED_ID = -1;
     enum
     {
         UNDEFINED_CHANNEL = -1
@@ -26,11 +27,6 @@ public:
     {
         // add 0x8000 to type to indicate end of event
         EVENT_END = 0x8000,
-    };
-
-    enum
-    {
-        UNDEFINED_ID = -1   
     };
 
 

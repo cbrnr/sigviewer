@@ -23,7 +23,7 @@ public:
 
     //-------------------------------------------------------------------------
     /// cares for destruction of the given command
-    void executeEditCommand (QUndoCommand* command);
+    void executeEditCommant (QUndoCommand* command);
 
     //-------------------------------------------------------------------------
     void undoLastEditCommand ();

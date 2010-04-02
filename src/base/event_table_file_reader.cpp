@@ -128,7 +128,7 @@ QString EventTableFileReader::getEventName(uint16 event_type_id) const
 }
 
 // get event group id
-QString EventTableFileReader::getEventGroupId(uint16 event_type_id)
+QString EventTableFileReader::getEventGroupId(uint16 event_type_id) const
 {
     Int2EventItemMap::const_iterator it = event_type2name_.find(event_type_id);
     return it != event_type2name_.end() ? it.value().group_id

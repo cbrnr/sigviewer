@@ -3,7 +3,6 @@
 
 #include "base/event_table_file_reader.h"
 #include "base/user_types.h"
-#include "base/signal_buffer.h"
 
 #include <QDialog>
 #include <QString>
@@ -19,6 +18,8 @@ class QLabel;
 namespace BioSig_
 {
 
+class EventManagerInterface;
+
 class EventTimeSelectionDialog : public QDialog
 {
     Q_OBJECT
@@ -26,7 +27,7 @@ public:
     //-------------------------------------------------------------------------
     EventTimeSelectionDialog (std::map<uint16, QString> const& shown_event_types,
                               std::map<uint32, QString> const& shown_channels,
-                              SignalBuffer const& signal_buffer);
+                              EventManagerInterface const& event_manager);
 
     //-------------------------------------------------------------------------
     std::vector<uint32> getSelectedChannels () const;
@@ -47,7 +48,7 @@ protected slots:
 private:
     std::map<uint16, QString> shown_event_types_;
     std::map<uint32, QString> shown_channels_;
-    SignalBuffer const& signal_buffer_;
+    EventManagerInterface const& event_manager_;
 
     QListWidget* channel_list_widget_;
     QComboBox* event_type_combobox_;

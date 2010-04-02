@@ -1,18 +1,18 @@
 #include "new_event_undo_command.h"
-
+#include "event_manager_interface.h"
 
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-NewEventUndoCommand::NewEventUndoCommand (SignalBrowserModel& signal_browser_model,
+NewEventUndoCommand::NewEventUndoCommand (EventManagerInterface& event_manager,
                                           QSharedPointer<SignalEvent> signal_event,
                                           float scene_to_signal_factor)
- : signal_browser_model_ (signal_browser_model),
-   signal_event_ (signal_event)
+ : event_manager_ (event_manager),
+   raw_signal_event_ (signal_event)
 {
-    signal_event_->setPosition (scene_to_signal_factor * signal_event_->getPosition());
-    signal_event_->setDuration (scene_to_signal_factor * signal_event_->getDuration());
+    raw_signal_event_->setPosition (scene_to_signal_factor * raw_signal_event_->getPosition());
+    raw_signal_event_->setDuration (scene_to_signal_factor * raw_signal_event_->getDuration());
 }
 
 //-----------------------------------------------------------------------------
@@ -24,14 +24,22 @@ NewEventUndoCommand::~NewEventUndoCommand ()
 //-----------------------------------------------------------------------------
 void NewEventUndoCommand::undo ()
 {
-    signal_browser_model_.removeEvent(signal_event_->getId());
+    event_manager_.removeEvent (created_signal_event_->getId ());
 }
 
 //-----------------------------------------------------------------------------
 void NewEventUndoCommand::redo ()
 {
-    EventGraphicsItem* event_item
-        = signal_browser_model_.addEvent(signal_event_);
-    //signal_browser_model_.unsetSelectedEventItem();
+    EventID id = SignalEvent::UNDEFINED_ID;
+    if (!created_signal_event_.isNull())
+        id = created_signal_event_->getId ();
+
+    created_signal_event_ = event_manager_.createEvent (
+            raw_signal_event_->getChannel(),
+            raw_signal_event_->getPosition(),
+            raw_signal_event_->getDuration(),
+            raw_signal_event_->getType(),
+            id);
 }
+
 }

@@ -16,31 +16,30 @@ class QMutex;
 namespace BioSig_
 {
 
-class SignalBuffer;
 class SignalEvent;
 class SignalBrowserModel;
 class EventContextMenu;
 class ApplicationContext;
-
+class EventManagerInterface;
+class CommandExecuter;
 
 class EventGraphicsItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
 public:
-    EventGraphicsItem(SignalBuffer& buffer, SignalBrowserModel& model,
-                      QSharedPointer<SignalEvent> signal_event,
-                      ApplicationContext& app_context);
+    EventGraphicsItem(SignalBrowserModel& model,
+                      QSharedPointer<SignalEvent const> signal_event,
+                      ApplicationContext& app_context,
+                      EventManagerInterface& event_manager,
+                      CommandExecuter& command_executer);
 
     virtual ~EventGraphicsItem ();
 
     int32 getId() const;
 
-    //void setSize (int32 width, int32 height);
     void setSelected (bool selected);
-    QSharedPointer<SignalEvent> getSignalEvent ();
     QSharedPointer<SignalEvent const> getSignalEvent () const;
-    //void updateColor ();
 
     static bool displayContextMenu (QGraphicsSceneContextMenuEvent * event);
     static bool displaySelectionMenu (QGraphicsSceneMouseEvent* event);
@@ -57,8 +56,6 @@ public slots:
 signals:
     void mouseAtSecond (float64 sec);
     void mouseMoving (bool mouse_is_moving);
-    void hoverEnterSignalEvent (QSharedPointer<SignalEvent const>);
-    void hoverLeaveSignalEvent (QSharedPointer<SignalEvent const>);
 
 private:
     virtual QRectF boundingRect () const;
@@ -97,14 +94,15 @@ private:
 
     SignalBrowserModel& signal_browser_model_;
     ApplicationContext& app_context_;
-    SignalBuffer& signal_buffer_;
+    EventManagerInterface& event_manager_;
+    CommandExecuter& command_executer_;
     QColor color_;
     State state_;
 
     int32 height_;
     int32 width_;
     bool is_selected_;
-    QSharedPointer<SignalEvent> signal_event_;
+    QSharedPointer<SignalEvent const> signal_event_;
 
     static int move_mouse_range_;
     static QMutex event_handling_mutex_;
