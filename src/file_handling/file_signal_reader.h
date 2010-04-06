@@ -19,15 +19,14 @@ class QString;
 namespace BioSig_
 {
 
-class SignalDataBlock;
-
-// abstract signal reader
+//-----------------------------------------------------------------------------
+/// FileSignalReader
+///
+/// abstract base class for reading signals from a file
 class FileSignalReader
 {
 public:
     typedef QVector<SignalEvent> SignalEventVector;
-    typedef QVector<SignalDataBlock*> SignalDataBlockPtrVector;
-    typedef SignalDataBlockPtrVector::iterator SignalDataBlockPtrIterator;
 
     virtual ~FileSignalReader();
     virtual FileSignalReader* clone() = 0;
@@ -42,9 +41,6 @@ public:
     virtual bool isOpen() = 0;
     virtual void close() = 0;
 
-    virtual void loadSignals(SignalDataBlockPtrIterator begin,
-                             SignalDataBlockPtrIterator end,
-                             uint32 start_record) = 0;
     virtual QSharedPointer<DataBlock const> getSignalData (ChannelID channel_id,
                                                            unsigned start_sample,
                                                            unsigned length) const = 0;

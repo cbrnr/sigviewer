@@ -24,7 +24,6 @@
 
 #include "evt_writer.h"
 #include "../file_handling/file_signal_writer_factory.h"
-#include "../base/signal_data_block.h"
 
 #include <biosig.h>
 #include <iostream>

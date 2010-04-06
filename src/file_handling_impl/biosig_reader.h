@@ -28,10 +28,6 @@ public:
     virtual bool isOpen() {return biosig_header_ ? true : false;}
     virtual void close();
 
-    virtual void loadSignals(SignalDataBlockPtrIterator begin,
-                             SignalDataBlockPtrIterator end,
-                             uint32 start_record);
-
     //-------------------------------------------------------------------------
     virtual QSharedPointer<DataBlock const> getSignalData (ChannelID channel_id,
                                                            unsigned start_sample,

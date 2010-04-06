@@ -28,7 +28,6 @@
 #include "gdf_event.h"
 #include "biosig_basic_header.h"
 #include "../file_handling/file_signal_reader_factory.h"
-#include "../base/signal_data_block.h"
 
 #include "../../extern/biosig.h"
 
@@ -389,93 +388,6 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
 #endif
 
     return "";
-}
-
-//-----------------------------------------------------------------------------
-void BioSigReader::loadSignals(SignalDataBlockPtrIterator begin,
-                            SignalDataBlockPtrIterator end, uint32 start_record)
-{
-    QMutexLocker lock (&mutex_);
-    if (!biosig_header_)
-    {
-        if (log_stream_)
-        {
-            *log_stream_ << "BioSigReader::loadChannels Error: not open\n";
-        }
-        return;
-    }
-
-    // calculate sample count
-    uint32 samples = 0;
-    for (FileSignalReader::SignalDataBlockPtrIterator data_block = begin;
-         data_block != end;
-         data_block++)
-    {
-        if ((*data_block)->sub_sampling > 1 ||
-            (*data_block)->channel_number >= basic_header_->getNumberChannels())
-        {
-        	return; // invalid data block
-        }
-    	samples = std::max<uint32>(samples, (*data_block)->number_samples);
-    }
-
-    // calculate record count
-    int32 record_count = samples / biosig_header_->SPR;
-    if (record_count * biosig_header_->SPR < samples)
-    	++record_count;
-    if (start_record + record_count > basic_header_->getNumberRecords())
-    	record_count = basic_header_->getNumberRecords() - start_record;
-    if (record_count < 0)
-    	record_count = 0;
-
-    // allocate buffer
-    uint32 samples_in_read_data = record_count * biosig_header_->SPR;
-    if (read_data_ == 0 || read_data_size_ < samples_in_read_data * biosig_header_->NS)
-    {
-        read_data_size_ = samples_in_read_data * biosig_header_->NS;
-        delete[] read_data_;
-        read_data_ = new double[read_data_size_];
-    }
-
-	// read data as block
-    memset(read_data_, 0, samples_in_read_data * biosig_header_->NS*sizeof(double));
-    sread(read_data_, start_record, record_count, biosig_header_);
-
-
-
-    // fill data blocks
-    for (FileSignalReader::SignalDataBlockPtrIterator data_block = begin;
-         data_block != end;
-         data_block++)
-    {
-        float32* data_block_buffer = (*data_block)->getBuffer();
-        float32* data_block_upper_buffer = (*data_block)->getUpperBuffer();
-        float32* data_block_lower_buffer = (*data_block)->getLowerBuffer();
-        bool* data_block_buffer_valid = (*data_block)->getBufferValid();
-
-        (*data_block)->setBufferOffset(start_record * biosig_header_->SPR);
-        for (uint32 samp = 0; samp < (*data_block)->number_samples; ++samp)
-        {
-        	if (samp < samples_in_read_data)
-        	{
-        		size_t ix;
-                        if (biosig_header_->FLAG.ROW_BASED_CHANNELS)
-                                ix = (*data_block)->channel_number + samp * biosig_header_->data.size[0];
-                        else
-        			ix = (*data_block)->channel_number * samples_in_read_data + samp;
-        			
-        		double val = read_data_[ix];
-        		data_block_buffer[samp]       = val;
-        		data_block_upper_buffer[samp] = val;
-        		data_block_lower_buffer[samp] = val;
-        		data_block_buffer_valid[samp] = (val==val);	// test for NaN
-        	}
-        	else
-        	{
-        		data_block_buffer_valid[samp] = false;
-        	}
-        }
-    }
 }
 
 //-----------------------------------------------------------------------------

@@ -6,7 +6,6 @@
 #include "../file_handling/channel_manager.h"
 #include "../file_handling/event_manager.h"
 #include "../command_executer.h"
-#include "../base/signal_data_block.h"
 #include "../base/signal_event.h"
 #include "../base/signal_channel.h"
 #include "../base/math_utils.h"
