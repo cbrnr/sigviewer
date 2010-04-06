@@ -60,7 +60,11 @@ public:
 
     //-------------------------------------------------------------------------
     /// see base class
-    virtual QList<EventID> getEventsOfType (EventType type) const;
+    virtual QList<EventID> getEvents (EventType type) const;
+
+    //-------------------------------------------------------------------------
+    /// see base class
+    virtual QMap<uint32, EventID> getEventPositions (EventType type) const;
 
     //-------------------------------------------------------------------------
     /// fills the given eventvector with all events

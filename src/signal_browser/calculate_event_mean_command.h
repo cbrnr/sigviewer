@@ -1,7 +1,6 @@
 #ifndef CALCULATE_EVENT_MEAN_COMMAND_H
 #define CALCULATE_EVENT_MEAN_COMMAND_H
 
-#include "signal_browser_model_4.h"
 #include "../main_window_model.h"
 
 #include <QObject>
@@ -12,12 +11,15 @@
 namespace BioSig_
 {
 
+class EventManager;
+
 class CalculateEventMeanCommand : public QObject
 {
     Q_OBJECT
 
 public:
-    CalculateEventMeanCommand (QSharedPointer<SignalBrowserModel const> signal_browser_model,
+    CalculateEventMeanCommand (EventManager const& event_manager,
+                               ChannelManager const& channel_manager,
                                MainWindowModel& main_window_model,
                                uint16 event_type,
                                std::vector<uint32> channels,
@@ -28,7 +30,8 @@ public slots:
     void execute ();
 
 private:
-    QSharedPointer<SignalBrowserModel const> signal_browser_model_;
+    EventManager const& event_manager_;
+    ChannelManager const& channel_manager_;
     MainWindowModel& main_window_model_;
     uint16 event_type_;
     std::vector<uint32> channels_;

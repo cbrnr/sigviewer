@@ -123,16 +123,32 @@ QList<EventID> EventManagerImpl::getAllEvents () const
 
 
 //-----------------------------------------------------------------------------
-QList<EventID> EventManagerImpl::getEventsOfType (EventType type) const
+QList<EventID> EventManagerImpl::getEvents (EventType type) const
 {
-    QList<EventID> event_ids;
+    QList<EventID> events;
     for (EventMap::ConstIterator event_iter = event_map_.begin ();
          event_iter != event_map_.end ();
          ++event_iter)
         if (event_iter.value ()->getType () == type)
-            event_ids.push_back (event_iter.key ());
+        {
+            events.push_back (event_iter.key ());
+        }
+    return events;
+}
 
-    return event_ids;
+//-----------------------------------------------------------------------------
+QMap<uint32, EventID> EventManagerImpl::getEventPositions (EventType type) const
+{
+    QMap<uint32, EventID> events;
+    for (EventMap::ConstIterator event_iter = event_map_.begin ();
+         event_iter != event_map_.end ();
+         ++event_iter)
+        if (event_iter.value ()->getType () == type)
+        {
+            events.insert (event_iter.value()->getPosition (), event_iter.key ());
+        }
+
+    return events;
 }
 
 //-----------------------------------------------------------------------------

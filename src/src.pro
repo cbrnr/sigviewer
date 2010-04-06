@@ -44,7 +44,6 @@ HEADERS += basic_header_info_dialog.h \
     event_table_dialog.h \
     event_type_dialog.h \
     go_to_dialog.h \
-    gui_signal_buffer.h \
     label_widget.h \
     log_dialog.h \
     main_window.h \
@@ -69,7 +68,6 @@ SOURCES += basic_header_info_dialog.cpp \
     event_table_dialog.cpp \
     event_type_dialog.cpp \
     go_to_dialog.cpp \
-    gui_signal_buffer.cpp \
     label_widget.cpp \
     log_dialog.cpp \
     main_window.cpp \

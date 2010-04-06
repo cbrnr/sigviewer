@@ -179,29 +179,6 @@ void YAxisWidget::repaintPixmap ()
         }
 
         painter.translate (0, -zero_y);
-
-//        float64 y_grid_intervall = y_grid_pixel_intervall / signal_height_ * value_range;
-//
-//        float64 value = static_cast<int>((upper_value / y_grid_intervall)) * y_grid_intervall;
-//        float64 y_float = (upper_value - (int32)(upper_value / y_grid_intervall) * y_grid_intervall) *
-//                                        signal_height_ / value_range;
-//        y_float += y_start;
-
-
-//        for (;
-//             y_float < y_start + signal_height_;
-//             y_float += y_grid_pixel_intervall)
-//        {
-//            int32 y = (int32)(y_float + 0.5);
-//            if (y > y_start && y < (y_start + intervall))
-//            {
-//                painter.drawLine(w - 5, y, w - 1, y);
-//                painter.drawText(0, (int32)(y - 20) , w - 10, 40,
-//                                 Qt::AlignRight | Qt::AlignVCenter, QString("%1")
-//                                                                .arg(qRound(value * 100) / 100.0));
-//            }
-//            value -= y_grid_intervall;
-//        }
     }
 
 }

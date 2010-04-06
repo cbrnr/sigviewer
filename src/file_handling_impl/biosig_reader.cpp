@@ -503,6 +503,8 @@ void BioSigReader::bufferAllChannels () const
         read_data_ = new biosig_data_type[read_data_size_];
     }
 
+    biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
+
     memset (read_data_, 0, read_data_size_ * sizeof(biosig_data_type));
     sread (read_data_, 0,
            length / biosig_header_->SPR,
@@ -514,11 +516,11 @@ void BioSigReader::bufferAllChannels () const
         std::vector<float32> raw_data (length);
         for (unsigned index = 0; index < length; index++)
         {
-            if (biosig_header_->FLAG.ROW_BASED_CHANNELS == 1)
-            {
-                raw_data[index] = read_data_[length + (index * channel_id)];
-            }
-            else
+//            if (biosig_header_->FLAG.ROW_BASED_CHANNELS == 1)
+//            {
+//                raw_data[index] = read_data_[length + (index * channel_id)];
+//            }
+//            else
                 raw_data[index] = read_data_[(length * channel_id) + index];
         }
         QSharedPointer<DataBlock> data_block (new DataBlock (raw_data,

@@ -12,7 +12,6 @@ class QPoint;
 namespace BioSig_
 {
 
-class SignalBuffer;
 class SignalChannel;
 class SignalEvent;
 class SignalBrowserModel;
@@ -30,7 +29,7 @@ public:
                        CommandExecuter& command_executor,
                        ChannelManager& channel_manager,
                        ChannelID id,
-                       SignalBuffer& buffer, const SignalChannel& channel,
+                       const SignalChannel& channel,
                        SignalBrowserModel& model);
 
     virtual ~SignalGraphicsItem ();
@@ -43,8 +42,6 @@ public:
     void enableXGrid(bool enabled);
     QString const &getLabel () const;
 
-    float64 getMaximum() const;
-    float64 getMinimum() const;
     float64 getYZoom() const;
     float64 getYOffset() const;
     float64 getYGridPixelIntervall() const;
@@ -72,7 +69,6 @@ private:
     CommandExecuter& command_executor_;
     ChannelManager& channel_manager_;
     ChannelID id_;
-    SignalBuffer& signal_buffer_;
     const SignalChannel& signal_channel_;
     SignalBrowserModel& signal_browser_model_;
 
@@ -83,8 +79,9 @@ private:
     float64 y_grid_pixel_intervall_;
     bool draw_y_grid_;
     bool draw_x_grid_;
-    float64 y_offset_; // middle
+    float64 y_offset_;
     int32 height_;
+    uint32 width_;
 
 
     bool shifting_;

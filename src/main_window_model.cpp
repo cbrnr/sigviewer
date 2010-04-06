@@ -19,7 +19,6 @@
 #include "event_time_selection_dialog.h"
 #include "go_to_dialog.h"
 #include "event_type_dialog.h"
-#include "gui_signal_buffer.h"
 #include "event_table_dialog.h"
 #include "event_color_manager.h"
 #include "settings_dialog.h"
@@ -203,7 +202,7 @@ void MainWindowModel::calculateMeanAction ()
         return;
     else
     {
-        CalculateEventMeanCommand command (signal_browser_model_, *this,
+        CalculateEventMeanCommand command (*event_manager_, *channel_manager_, *this,
                                            event_time_dialog.getSelectedEventType(),
                                            event_time_dialog.getSelectedChannels(),
                                            event_time_dialog.getSecondsBeforeEvent(),
@@ -814,13 +813,10 @@ void MainWindowModel::openFile(const QString& file_name)
     main_window_->setStatusBarNrChannels(file_signal_reader_->getBasicHeader()->getNumberChannels());
 
     // show signal_browser
-    signal_browser_model_->autoScaleAll(); // autoscale on startup
-
-
     secsPerPageChanged(secs_per_page_);
     main_window_->setSecsPerPage(secs_per_page_);
     signal_browser_model_->updateLayout();
-
+    signal_browser_model_->autoScaleAll();
 }
 
 // file close action
@@ -1608,8 +1604,7 @@ void MainWindowModel::setChanged()
 QSharedPointer<BlocksVisualisationModel> MainWindowModel::createBlocksVisualisationView (QString const& title)
 {
     BlocksVisualisationView* bv_view = new BlocksVisualisationView (tab_widget_);
-    SignalBuffer const& signal_buffer = signal_browser_model_->getSignalBuffer();
-    QSharedPointer<BlocksVisualisationModel> bv_model = QSharedPointer<BlocksVisualisationModel> (new BlocksVisualisationModel (bv_view, signal_browser_model_->getPixelPerXUnit (), static_cast<float64>(signal_buffer.getRecordsPerBlock()) / signal_buffer.getBlockDuration()));
+    QSharedPointer<BlocksVisualisationModel> bv_model = QSharedPointer<BlocksVisualisationModel> (new BlocksVisualisationModel (bv_view, signal_browser_model_->getPixelPerXUnit (), channel_manager_->getSampleRate()));
 
     blocks_visualisation_models_.push_back (bv_model);
     int tab_index = tab_widget_->addTab(bv_view, title);

@@ -48,7 +48,6 @@ SignalBrowserModel::SignalBrowserModel(FileSignalReader& reader,
   main_window_model_(main_window_model),
   state_(STATE_READY),
   mode_(MODE_POINTER),
-  signal_buffer_ (reader),
   basic_header_(reader.getBasicHeader()),
   selected_event_item_ (0),
   event_table_file_reader_ (event_table_file_reader),
@@ -63,7 +62,21 @@ SignalBrowserModel::SignalBrowserModel(FileSignalReader& reader,
   actual_event_creation_type_ (1),
   show_y_grid_(true)
 {
-    // nothing to do here
+    QList<EventID> event_ids = file_context_.getEventManager().getAllEvents();
+    if (id2event_item_.size() == 0)
+    {
+        for (QList<EventID>::const_iterator event_id_iter = event_ids.begin ();
+             event_id_iter != event_ids.end ();
+             ++event_id_iter)
+        {
+            id2event_item_[*event_id_iter] = new EventGraphicsItem (
+                    *this,
+                    file_context_.getEventManager().getEvent (*event_id_iter),
+                    app_context_,
+                    file_context_.getEventManager(),
+                    tab_context_);
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -209,13 +222,10 @@ void SignalBrowserModel::addChannel(uint32 channel_nr)
                                  tab_context_,
                                  file_context_.getChannelManager(),
                                  channel_nr,
-                                 signal_buffer_, basic_header_->getChannel(channel_nr), *this);
+                                 basic_header_->getChannel(channel_nr), *this);
 
     channel2signal_item_[channel_nr] = signal_item;
     signal_browser_view_->addSignalGraphicsItem(channel_nr, signal_item);
-
-    // add channel to buffer
-    signal_buffer_.addChannel(channel_nr);
 }
 
 // remove signal view
@@ -239,16 +249,6 @@ void SignalBrowserModel::removeChannel(uint32 channel_nr)
     signal_browser_view_->removeSignalGraphicsItem (channel_nr, sig_iter->second);
     channel2signal_item_.erase(sig_iter);
     delete sig_iter->second;
-
-    // remove channel from buffer
-    if (release_buffer_)
-    {
-        signal_buffer_.removeChannel(channel_nr);
-    }
-    else
-    {
-        signal_buffer_.setChannelActive(channel_nr, false);
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -290,18 +290,12 @@ int32 SignalBrowserModel::getYPosOfChannel (uint32 channel_nr) const
         return 0;
 }
 
-
-//-----------------------------------------------------------------------------
-SignalBuffer const& SignalBrowserModel::getSignalBuffer () const
-{
-    return signal_buffer_;
-}
-
-
 //-----------------------------------------------------------------------------
 // init buffer
 void SignalBrowserModel::initBuffer()
 {
+    // OBSOLETE!!!
+    return;
     if (!checkSignalBrowserPtr("initBuffer") ||
         !checkReadyState("initBuffer"))
     {
@@ -311,19 +305,8 @@ void SignalBrowserModel::initBuffer()
     // set all channel active
     Int2SignalGraphicsItemPtrMap::iterator iter;
 
-    for (iter = channel2signal_item_.begin();
-         iter != channel2signal_item_.end();
-         iter++)
-    {
-        signal_buffer_.setChannelActive(iter->first, true);
-    }
-
     // init buffer
     state_ = STATE_INIT_BUFFER;
-    signal_browser_view_->hide();
-    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-    //signal_buffer_.init();
-    QApplication::restoreOverrideCursor();
     state_ = STATE_READY;
 
 
@@ -415,7 +398,6 @@ void SignalBrowserModel::zoomOutAll()
 }
 
 //-----------------------------------------------------------------------------
-// auto scale all
 void SignalBrowserModel::autoScaleAll()
 {
     if (!checkSignalBrowserPtr("autoScaleAll") ||
@@ -436,7 +418,7 @@ void SignalBrowserModel::autoScaleAll()
     signal_browser_view_->updateWidgets();
 }
 
-// set pixel per sec
+//-----------------------------------------------------------------------------
 void SignalBrowserModel::setPixelPerXUnit(float64 pixel_per_sec)
 {
     if (!checkSignalBrowserPtr("setPixelPerSec") ||
@@ -472,8 +454,8 @@ int32 SignalBrowserModel::getSignalHeight()
 // update layout
 void SignalBrowserModel::updateLayout()
 {
-    int32 width = file_context_.getChannelManager().getDurationInSec()
-                  * pixel_per_sec_;
+    int32 width = (file_context_.getChannelManager().getDurationInSec()
+                  * pixel_per_sec_);
 
     int32 height = (signal_height_  + signal_spacing_) *
                    channel2signal_item_.size();
@@ -683,8 +665,8 @@ void SignalBrowserModel::goToAndSelectNextEvent (bool forward)
 {
     if (selected_event_item_)
     {
-        QMap<int32, QSharedPointer<SignalEvent> > events (signal_buffer_.getEvents(selected_event_item_->getSignalEvent()->getType()));
-        QMap<int32, QSharedPointer<SignalEvent> >::iterator current_event_iter = events.find(selected_event_item_->getSignalEvent()->getPosition());
+        QMap<uint32, EventID> events = file_context_.getEventManager().getEventPositions(selected_event_item_->getSignalEvent()->getType());
+        QMap<uint32, EventID>::iterator current_event_iter = events.find(selected_event_item_->getSignalEvent()->getPosition());
         if (forward)
             ++current_event_iter;
         else if (current_event_iter != events.begin())
@@ -694,10 +676,10 @@ void SignalBrowserModel::goToAndSelectNextEvent (bool forward)
 
         if (current_event_iter != events.end())
         {
-            float x = (float)current_event_iter.value()->getPosition() / signal_buffer_.getEventSamplerate();
+            float x = (float)current_event_iter.key() / file_context_.getEventManager().getSampleRate();
             //Int2EventGraphicsItemPtrMap::iterator event_graphics_item_it = id2event_item_.find(current_event_iter.value()->getId());
             //event_graphics_item_it.value()->setSelected (true);
-            selectEvent (current_event_iter.value()->getId());
+            selectEvent (current_event_iter.value());
 
             int32 y = 0;
             goTo (x, y);
@@ -941,7 +923,7 @@ void SignalBrowserModel::copySelectedEventToChannels()
     }
 
     uint32 id = selected_event_item_->getId();
-    QSharedPointer<SignalEvent> event = signal_buffer_.getEvent(id);
+    QSharedPointer<SignalEvent const> event = file_context_.getEventManager().getEvent(id);
     CopyEventDialog copy_event_dialog(basic_header_, signal_browser_view_);
 
     for (uint32 channel_nr = 0;

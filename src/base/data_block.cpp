@@ -19,6 +19,8 @@ DataBlock::DataBlock ()
 DataBlock::DataBlock (std::vector<float32> const &data,
                       float32 sample_rate_per_unit)
     : data_ (QSharedPointer<std::vector<float32> >(new std::vector<float32>(data))),
+      length_ (data.size()),
+      start_index_ (0),
       sample_rate_per_unit_ (sample_rate_per_unit)
 {
     // nothing to do here
@@ -192,66 +194,70 @@ DataBlock DataBlock::getBandpassFilteredBlock (float32 lower_hz_boundary, float3
 
 
 //-----------------------------------------------------------------------------
-DataBlock DataBlock::calculateMean (std::list<DataBlock> const &data_blocks)
+DataBlock DataBlock::calculateMean (std::list<QSharedPointer<DataBlock const> > const &data_blocks)
 {
     DataBlock mean_block;
     if (data_blocks.size() == 0)
         return mean_block;
 
-    std::list<DataBlock>::const_iterator it = data_blocks.begin();
-    mean_block.sample_rate_per_unit_ = it->sample_rate_per_unit_;
+    std::list<QSharedPointer<DataBlock const> >::const_iterator it = data_blocks.begin();
+    std::vector<float32> mean;
+    float32 sample_rate = (*it)->sample_rate_per_unit_;
     float32 tmp_mean = 0;
-    for (unsigned index = 0; index < (*(data_blocks.begin())).data_->size(); index++)
+    for (unsigned index = 0; index < (*(data_blocks.begin()))->size(); index++)
     {
         it = data_blocks.begin();
         tmp_mean = 0;
         while (it != data_blocks.end())
         {
-            tmp_mean += it->data_->at(index);
+            tmp_mean += (**it)[index];
             ++it;
         }
-        mean_block.data_->push_back(tmp_mean / data_blocks.size());
+        mean.push_back(tmp_mean / data_blocks.size());
     }
-    return mean_block;
+    return DataBlock (mean, sample_rate);
 }
 
 //-------------------------------------------------------------------------
-DataBlock DataBlock::calculateStandardDeviation (std::list<DataBlock> const &data_blocks)
+DataBlock DataBlock::calculateStandardDeviation (std::list<QSharedPointer<DataBlock const> > const &data_blocks)
 {
     return calculateStandardDeviationImpl (data_blocks, calculateMean(data_blocks));
 }
 
 //-------------------------------------------------------------------------
-DataBlock DataBlock::calculateStandardDeviation (std::list<DataBlock> const &data_blocks,
+DataBlock DataBlock::calculateStandardDeviation (std::list<QSharedPointer<DataBlock const> > const &data_blocks,
                                                  DataBlock const &means)
 {
     return calculateStandardDeviationImpl (data_blocks, means);
 }
 
 //-------------------------------------------------------------------------
-DataBlock DataBlock::calculateStandardDeviationImpl (std::list<DataBlock> const &data_blocks,
+DataBlock DataBlock::calculateStandardDeviationImpl (std::list<QSharedPointer<DataBlock const> > const &data_blocks,
                                                      DataBlock const &means)
 {
-    DataBlock stddev_block;
-    if (data_blocks.size() == 0)
-        return stddev_block;
+    // waldesel: not implemented yet!!!
+    return means;
 
-    std::list<DataBlock>::const_iterator it = data_blocks.begin();
-    stddev_block.sample_rate_per_unit_ = it->sample_rate_per_unit_;
-    float32 tmp_stddev = 0;
-    for (unsigned index = 0; index < (*(data_blocks.begin())).size(); index++)
-    {
-        it = data_blocks.begin();
-        tmp_stddev = 0;
-        float32 mean = means[index];
-        while (it != data_blocks.end())
-        {
-            tmp_stddev += pow(((*it)[index] - mean), 2);
-            ++it;
-        }
-        stddev_block.data_->push_back(sqrt(tmp_stddev / data_blocks.size()));
-    }
-    return stddev_block;
+//    DataBlock stddev_block;
+//    if (data_blocks.size() == 0)
+//        return stddev_block;
+//
+//    std::list<DataBlock>::const_iterator it = data_blocks.begin();
+//    stddev_block.sample_rate_per_unit_ = it->sample_rate_per_unit_;
+//    float32 tmp_stddev = 0;
+//    for (unsigned index = 0; index < (*(data_blocks.begin())).size(); index++)
+//    {
+//        it = data_blocks.begin();
+//        tmp_stddev = 0;
+//        float32 mean = means[index];
+//        while (it != data_blocks.end())
+//        {
+//            tmp_stddev += pow(((*it)[index] - mean), 2);
+//            ++it;
+//        }
+//        stddev_block.data_->push_back(sqrt(tmp_stddev / data_blocks.size()));
+//    }
+//    return stddev_block;
 }
 
 //-------------------------------------------------------------------------

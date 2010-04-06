@@ -145,7 +145,7 @@ void EventTimeSelectionDialog::selectedEventTypeChanged (int combo_box_index)
     for (int i = 0; i < combo_box_index; i++)
         ++event_type_it;
 
-    QList<EventID> event_ids = event_manager_.getEventsOfType(event_type_it->first);
+    QList<EventID> event_ids = event_manager_.getEvents(event_type_it->first);
 
     float32 shortest_duration = 100000.0; // FIXMEEE!!!!!!!!!!!!!!!!!! max float32!!
     float32 longest_duration = 0;

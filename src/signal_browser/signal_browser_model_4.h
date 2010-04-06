@@ -3,7 +3,6 @@
 #define SIGNAL_BROWSER_MODEL_H_q4
 
 #include "../file_handling/file_signal_reader.h"
-#include "../gui_signal_buffer.h"
 #include "../abstract_browser_model.h"
 #include "../tab_context.h"
 #include "signal_browser_modes.h"
@@ -80,7 +79,6 @@ public:
 
     // buffer
     void initBuffer();
-    SignalBuffer const& getSignalBuffer () const;
 /*
     void setReleaseBuffer(bool release);
     bool getReleaseBuffer();
@@ -197,9 +195,6 @@ private:
     bool checkReadyState(const QString& function);
     bool checkSignalBrowserPtr(const QString function);
     void updateEventItemsImpl ();
-
-    GUISignalBuffer signal_buffer_;
-
 
     QPointer<BasicHeader> basic_header_;
 

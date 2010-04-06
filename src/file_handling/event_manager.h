@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QSharedPointer>
 #include <QList>
+#include <QMap>
 
 #include <set>
 
@@ -73,8 +74,12 @@ public:
     virtual QList<EventID> getAllEvents () const = 0;
 
     //-------------------------------------------------------------------------
-    /// @return set of event_id of events of the given type
-    virtual QList<EventID> getEventsOfType (EventType type) const = 0;
+    /// @return set of event_ids of events of the given type
+    virtual QList<EventID> getEvents (EventType type) const = 0;
+
+    //-------------------------------------------------------------------------
+    /// @return map of positions and event_ids of events of the given type
+    virtual QMap<uint32, EventID> getEventPositions (EventType type) const = 0;
 
 signals:
     void eventChanged (EventID id);

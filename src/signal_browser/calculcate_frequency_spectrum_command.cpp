@@ -33,60 +33,63 @@ CalculcateFrequencySpectrumCommand::CalculcateFrequencySpectrumCommand(QSharedPo
 //-----------------------------------------------------------------------------
 void CalculcateFrequencySpectrumCommand::execute ()
 {
-    SignalBuffer const& signal_buffer = signal_browser_model_->getSignalBuffer();
-    QSharedPointer<BlocksVisualisationModel> bv_model = main_window_model_.createBlocksVisualisationView (tr("Power Spectrum"));
-
-    uint32 samples_before_event = seconds_before_event_ * signal_buffer.getEventSamplerate();
-    uint32 number_samples = length_in_seconds_ * signal_buffer.getEventSamplerate();
-
-    for (unsigned index = 0; index < channels_.size(); index++)
-    {
-        std::list<DataBlock> data;
-        std::list<DataBlock> lowpassed_data;
-
-        QMap<int32, QSharedPointer<SignalEvent> > events (signal_buffer.getEvents(event_type_));
-
-        for (QMap<int32, QSharedPointer<SignalEvent> >::const_iterator
-             event = events.begin();
-             event != events.end(); ++event)
-        {
-            DataBlock signal_data = signal_buffer.getSignalData(channels_[index],
-                                                        event.value()->getPosition() - samples_before_event,
-                                                        number_samples);
-
-            // calculate frequency spectrum
-            unsigned num_samples = signal_data.size();
-            double* data_in = new double[num_samples];
-            for (unsigned x = 0; x < num_samples; x++)
-                data_in[x] = signal_data[x];
-
-            Complex* data_out = FFTWComplex((num_samples / 2) + 1);
-
-            rcfft1d forward (num_samples, data_in, data_out);
-            forward.fft0Normalized (data_in, data_out);
-
-            std::vector<float32> spectrum_data;
-
-            for (unsigned x = 1; x < (num_samples / 2) + 1; x++)
-                spectrum_data.push_back(pow(data_out[x].real(),2) + pow(data_out[x].imag(), 2));
-
-            DataBlock frequency_data (spectrum_data, static_cast<float32>(num_samples) / signal_data.getSampleRatePerUnit());
-
-            delete[] data_in;
-            FFTWdelete(data_out);
-            // finished calculation
-
-            data.push_back (frequency_data);
-        }
-
-        QSharedPointer<DataBlock> mean = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateMean (data)));
-        mean->setLabel (signal_browser_model_->getShownChannels()[channels_[index]].toStdString());
-        mean->setXUnitLabel ("Hz");
-        //QSharedPointer<DataBlock> standard_deviation = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateStandardDeviation (data)));
-
-        bv_model->visualiseBlock (mean, QSharedPointer<DataBlock>(0));//standard_deviation);
-    }
-    bv_model->updateLayout();
+    // waldesel: not implemented yet!!! (has to be reimplemented to use Channel-
+    //                                   end EventManager
+    return;
+//    SignalBuffer const& signal_buffer = signal_browser_model_->getSignalBuffer();
+//    QSharedPointer<BlocksVisualisationModel> bv_model = main_window_model_.createBlocksVisualisationView (tr("Power Spectrum"));
+//
+//    uint32 samples_before_event = seconds_before_event_ * signal_buffer.getEventSamplerate();
+//    uint32 number_samples = length_in_seconds_ * signal_buffer.getEventSamplerate();
+//
+//    for (unsigned index = 0; index < channels_.size(); index++)
+//    {
+//        std::list<DataBlock> data;
+//        std::list<DataBlock> lowpassed_data;
+//
+//        QMap<int32, QSharedPointer<SignalEvent> > events (signal_buffer.getEvents(event_type_));
+//
+//        for (QMap<int32, QSharedPointer<SignalEvent> >::const_iterator
+//             event = events.begin();
+//             event != events.end(); ++event)
+//        {
+//            DataBlock signal_data = signal_buffer.getSignalData(channels_[index],
+//                                                        event.value()->getPosition() - samples_before_event,
+//                                                        number_samples);
+//
+//            // calculate frequency spectrum
+//            unsigned num_samples = signal_data.size();
+//            double* data_in = new double[num_samples];
+//            for (unsigned x = 0; x < num_samples; x++)
+//                data_in[x] = signal_data[x];
+//
+//            Complex* data_out = FFTWComplex((num_samples / 2) + 1);
+//
+//            rcfft1d forward (num_samples, data_in, data_out);
+//            forward.fft0Normalized (data_in, data_out);
+//
+//            std::vector<float32> spectrum_data;
+//
+//            for (unsigned x = 1; x < (num_samples / 2) + 1; x++)
+//                spectrum_data.push_back(pow(data_out[x].real(),2) + pow(data_out[x].imag(), 2));
+//
+//            DataBlock frequency_data (spectrum_data, static_cast<float32>(num_samples) / signal_data.getSampleRatePerUnit());
+//
+//            delete[] data_in;
+//            FFTWdelete(data_out);
+//            // finished calculation
+//
+//            data.push_back (frequency_data);
+//        }
+//
+//        QSharedPointer<DataBlock> mean = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateMean (data)));
+//        mean->setLabel (signal_browser_model_->getShownChannels()[channels_[index]].toStdString());
+//        mean->setXUnitLabel ("Hz");
+//        //QSharedPointer<DataBlock> standard_deviation = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateStandardDeviation (data)));
+//
+//        bv_model->visualiseBlock (mean, QSharedPointer<DataBlock>(0));//standard_deviation);
+//    }
+//    bv_model->updateLayout();
 /*    QSharedPointer<BlocksVisualisationModel> bv_model = main_window_model_.createBlocksVisualisationView ();
 
     QSharedPointer<DataBlock> data = QSharedPointer<DataBlock> (new DataBlock ());

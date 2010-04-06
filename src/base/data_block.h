@@ -74,20 +74,20 @@ public:
     DataBlock getBandpassFilteredBlock (float32 lower_hz_boundary, float32 upper_hz_boundary) const;
 
     //-------------------------------------------------------------------------
-    static DataBlock calculateMean (std::list<DataBlock> const &data_blocks);
+    static DataBlock calculateMean (std::list<QSharedPointer<DataBlock const> > const &data_blocks);
 
     //-------------------------------------------------------------------------
-    static DataBlock calculateStandardDeviation (std::list<DataBlock> const &data_blocks);
+    static DataBlock calculateStandardDeviation (std::list<QSharedPointer<DataBlock const> > const &data_blocks);
 
     //-------------------------------------------------------------------------
-    static DataBlock calculateStandardDeviation (std::list<DataBlock> const &data_blocks,
+    static DataBlock calculateStandardDeviation (std::list<QSharedPointer<DataBlock const> > const &data_blocks,
                                                  DataBlock const &means);
 
 
 private:
 
     //-------------------------------------------------------------------------
-    static DataBlock calculateStandardDeviationImpl (std::list<DataBlock> const &data_blocks,
+    static DataBlock calculateStandardDeviationImpl (std::list<QSharedPointer<DataBlock const> > const &data_blocks,
                                                      DataBlock const &means);
 
     //-------------------------------------------------------------------------
