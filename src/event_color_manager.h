@@ -12,7 +12,6 @@ namespace BioSig_
 {
 
 class EventTableFileReader;
-class SettingsManager;
 
 // event color manager
 class EventColorManager
@@ -23,11 +22,11 @@ public:
     void loadSettings();
     void saveSettings();
 
-    const QColor& getEventColor(int32 id) const;
-    void setEventColor(int32 id, const QColor& color);
+    const QColor& getEventColor (EventID id) const;
+    void setEventColor (EventID id, const QColor& color);
 
 private:
-    typedef QMap<int32, QColor> Int2ColorMap;
+    typedef QMap<EventID, QColor> Int2ColorMap;
 
     // not allowed
     EventColorManager(const EventColorManager& src);

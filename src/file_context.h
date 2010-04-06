@@ -8,6 +8,7 @@ namespace BioSig_
 
 class EventManager;
 class TabContext;
+class ChannelManager;
 
 enum FileState
 {
@@ -27,6 +28,7 @@ class FileContext : public QObject
 public:
     //-------------------------------------------------------------------------
     FileContext (EventManager& event_manager,
+                 ChannelManager& channel_manager,
                  TabContext& tab_context);
 
     //-------------------------------------------------------------------------
@@ -34,6 +36,9 @@ public:
 
     //-------------------------------------------------------------------------
     EventManager& getEventManager ();
+
+    //-------------------------------------------------------------------------
+    ChannelManager& getChannelManager ();
 
     //-------------------------------------------------------------------------
     FileState getState () const;
@@ -57,6 +62,7 @@ private:
 
     FileState state_;
     EventManager& event_manager_;
+    ChannelManager& channel_manager_;
     TabContext& tab_context_;
 };
 

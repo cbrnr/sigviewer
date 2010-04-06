@@ -3,7 +3,6 @@
 
 #include "../base/user_types.h"
 #include "../base/signal_event.h"
-#include "../signal_browser/channel_manager_interface.h"
 
 #include <QString>
 #include <QObject>

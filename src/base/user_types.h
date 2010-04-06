@@ -72,4 +72,7 @@ typedef int32 EventID;
 typedef uint16 EventType;
 typedef int32 ChannelID;
 
+const ChannelID UNDEFINED_CHANNEL = -1;
+
+
 #endif

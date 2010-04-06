@@ -2,7 +2,6 @@
 #define CHANGE_CHANNEL_UNDO_COMMAND_H
 
 #include "../base/signal_event.h"
-#include "channel_manager_interface.h"
 
 #include <QUndoCommand>
 #include <QSharedPointer>

@@ -55,10 +55,10 @@ void CalculcateFrequencySpectrumCommand::execute ()
                                                         number_samples);
 
             // calculate frequency spectrum
-            unsigned num_samples = signal_data.getData().size();
+            unsigned num_samples = signal_data.size();
             double* data_in = new double[num_samples];
             for (unsigned x = 0; x < num_samples; x++)
-                data_in[x] = signal_data.getData()[x];
+                data_in[x] = signal_data[x];
 
             Complex* data_out = FFTWComplex((num_samples / 2) + 1);
 

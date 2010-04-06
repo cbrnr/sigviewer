@@ -11,6 +11,7 @@
 #include "file_handling/file_signal_writer_factory.h"
 #include "file_handling_impl/event_table_file_reader.h"
 #include "file_handling_impl/event_manager_impl.h"
+#include "file_handling_impl/channel_manager_impl.h"
 #include "base/signal_event.h"
 #include "basic_header_info_dialog.h"
 #include "log_dialog.h"
@@ -688,11 +689,8 @@ void MainWindowModel::openFile(const QString& file_name)
     if (file_context_)
     {
         fileCloseAction();
-
         if (application_context_.getState() != APP_STATE_NO_FILE_OPEN)
-        {
             return; // user cancel
-        }
     }
 
 
@@ -732,7 +730,8 @@ void MainWindowModel::openFile(const QString& file_name)
 
     TabContext* tab_context = new TabContext ();
     event_manager_ = new EventManagerImpl (*file_signal_reader_, *event_table_file_reader_);
-    file_context_ = new FileContext (*event_manager_, *tab_context);
+    channel_manager_ = new ChannelManagerImpl (*file_signal_reader_);
+    file_context_ = new FileContext (*event_manager_, *channel_manager_, *tab_context);
     application_context_.getGUIActionManager().connect(file_context_, SIGNAL(stateChanged(FileState)), SLOT(setFileState(FileState)));
 
 
@@ -1304,9 +1303,6 @@ bool MainWindowModel::channelSelection ()
     {
         return false; // user cancel
     }
-
-    //signal_browser_model_->enableInitMinMaxSearch(channel_dialog.isInitRangeSearch());
-    signal_browser_model_->enableInitMinMaxSearch (true);
 
     for (uint32 channel_nr = 0;
          channel_nr < file_signal_reader_->getBasicHeader()->getNumberChannels();

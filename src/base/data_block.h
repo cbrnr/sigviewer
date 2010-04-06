@@ -7,6 +7,8 @@
 #include <vector>
 #include <string>
 
+#include <QSharedPointer>
+
 namespace BioSig_ {
 
 class DataBlock
@@ -25,10 +27,17 @@ public:
     DataBlock (DataBlock const &src);
 
     //-------------------------------------------------------------------------
+    QSharedPointer<DataBlock> createSubBlock (uint32 start, uint32 length) const;
+
+    //-------------------------------------------------------------------------
     void setData (std::vector<float32> const &data, float32 sample_rate_per_unit);
 
     //-------------------------------------------------------------------------
-    std::vector<float32> const &getData () const;
+    //std::vector<float32> const &getData () const;
+    float32 const& operator[] (uint32 index) const;
+
+    //-------------------------------------------------------------------------
+    uint32 size () const;
 
     //-------------------------------------------------------------------------
     std::string getLabel () const;
@@ -84,7 +93,10 @@ private:
     //-------------------------------------------------------------------------
     // static unsigned getLengthOfSmallestBlock (std::list<DataBlock> const &data_blocks);
 
-    std::vector<float32> data_;
+    QSharedPointer<std::vector<float32> > data_;
+    uint32 length_;
+    uint32 start_index_;
+
     float32 sample_rate_per_unit_;
     std::string label_;
     std::string x_unit_label_;

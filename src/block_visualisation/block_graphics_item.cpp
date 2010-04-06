@@ -33,7 +33,7 @@ BlockGraphicsItem::BlockGraphicsItem (QSharedPointer<DataBlock const> data,
 //-----------------------------------------------------------------------------
 QRectF BlockGraphicsItem::boundingRect () const
 {
-    return QRectF(0, 0, data_->getData().size() * pixel_per_sample_, height_);
+    return QRectF(0, 0, data_->size() * pixel_per_sample_, height_);
 }
 
 //-----------------------------------------------------------------------------
@@ -77,8 +77,8 @@ void BlockGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsItem
 
     if (start_index < 0)
         start_index = 0;
-    if (end_index > data_->getData().size())
-        end_index = data_->getData().size();
+    if (end_index > data_->size())
+        end_index = data_->size();
 
     bool last_valid = false;
     float32 last_x = start_index * pixel_per_sample_;
@@ -91,9 +91,9 @@ void BlockGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsItem
          index < end_index;
          index++)
     {
-        new_y = data_->getData()[index];
+        new_y = (*data_)[index];
         if (!deviation_.isNull())
-            new_y_dev = deviation_->getData()[index];
+            new_y_dev = (*deviation_)[index];
         if (last_valid)
         {
             painter->setPen(Qt::darkBlue);

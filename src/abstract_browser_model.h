@@ -12,6 +12,7 @@ class AbstractBrowserModel
 public:
     virtual ~AbstractBrowserModel () {};
 
+    //-------------------------------------------------------------------------
     virtual void setPixelPerXUnit (float64) = 0;
     virtual float64 getPixelPerXUnit () const = 0;
 

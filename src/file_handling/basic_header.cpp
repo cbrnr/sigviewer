@@ -234,6 +234,21 @@ void BasicHeader::setRecordsPosition (uint32 records_position)
     records_position_ = records_position;
 }
 
+
+//-----------------------------------------------------------------------------
+void BasicHeader::setSampleRate (float32 sample_rate)
+{
+    sample_rate_ = sample_rate;
+}
+
+//-----------------------------------------------------------------------------
+float32 BasicHeader::getSampleRate () const
+{
+    return sample_rate_;
+}
+
+
+//-----------------------------------------------------------------------------
 // get channel
 const SignalChannel& BasicHeader::getChannel(uint32 channel_nr) const
 {

@@ -1,7 +1,6 @@
 #ifndef EVENT_TIME_SELECTION_DIALOG_H
 #define EVENT_TIME_SELECTION_DIALOG_H
 
-#include "file_handling_impl/event_table_file_reader.h"
 #include "base/user_types.h"
 
 #include <QDialog>

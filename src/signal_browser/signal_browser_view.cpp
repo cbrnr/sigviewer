@@ -132,8 +132,7 @@ void SignalBrowserView::resizeScene (int32 width, int32 height)
 void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item)
 {
     // TODO: really remove before add????
-
-    graphics_scene_->removeItem(graphics_item);
+    //graphics_scene_->removeItem(graphics_item);
     graphics_scene_->addItem(graphics_item);
     y_axis_widget_->addChannel(channel_nr, graphics_item);
     label_widget_->addChannel(channel_nr, graphics_item->getLabel());

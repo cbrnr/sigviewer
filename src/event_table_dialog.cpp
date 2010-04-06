@@ -335,7 +335,7 @@ void EventTableDialog::buildEventTable()
 
         QString tmp;
 
-        if (event->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
+        if (event->getChannel() == UNDEFINED_CHANNEL)
         {
             tmp += tr("All Channels");
         }

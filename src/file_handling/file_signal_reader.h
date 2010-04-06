@@ -5,6 +5,7 @@
 
 #include "basic_header.h"
 #include "../base/signal_event.h"
+#include "../base/data_block.h"
 
 #include <biosig.h>
 
@@ -44,6 +45,10 @@ public:
     virtual void loadSignals(SignalDataBlockPtrIterator begin,
                              SignalDataBlockPtrIterator end,
                              uint32 start_record) = 0;
+    virtual QSharedPointer<DataBlock const> getSignalData (ChannelID channel_id,
+                                                           unsigned start_sample,
+                                                           unsigned length) const = 0;
+
     virtual void loadEvents(SignalEventVector& event_vector) = 0;
 
     virtual QPointer<BasicHeader> getBasicHeader () = 0;

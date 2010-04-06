@@ -5,6 +5,7 @@
 
 #include <QFile>
 #include <QMutex>
+#include <QMap>
 
 namespace BioSig_
 {
@@ -17,7 +18,7 @@ public:
     virtual ~BioSigReader();
     virtual FileSignalReader* clone();
 
-//-----------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     virtual void setFlagOverflow(const bool overflow_detection);
     virtual QString open(const QString& file_name);
     virtual QString open(const QString& file_name, const bool overflow_detection);
@@ -32,13 +33,24 @@ public:
                              uint32 start_record);
 
     //-------------------------------------------------------------------------
-    virtual void loadEvents(SignalEventVector& event_vector);
+    virtual QSharedPointer<DataBlock const> getSignalData (ChannelID channel_id,
+                                                           unsigned start_sample,
+                                                           unsigned length) const;
 
+    //-------------------------------------------------------------------------
+    virtual void loadEvents (SignalEventVector& event_vector);
+
+    //-------------------------------------------------------------------------
     virtual QPointer<BasicHeader> getBasicHeader ();
 
+    //-------------------------------------------------------------------------
     virtual HDRTYPE* getRawHeader ();
 
 private:
+    //-------------------------------------------------------------------------
+    void bufferAllChannels () const;
+
+    //-------------------------------------------------------------------------
     static BioSigReader prototype_instance_;
 
     // not allowed
@@ -54,8 +66,10 @@ private:
     mutable QMutex biosig_access_lock_;
     HDRTYPE* biosig_header_;
     static double const SAMPLE_RATE_TOLERANCE_;
-    double* read_data_;
-    uint32 read_data_size_;
+    mutable biosig_data_type* read_data_;
+    mutable uint32 read_data_size_;
+    mutable bool buffered_all_channels_;
+    mutable QMap<ChannelID, QSharedPointer<DataBlock const> > channel_map_;
 };
 
 } // namespace BioSig_

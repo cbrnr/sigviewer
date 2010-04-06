@@ -129,45 +129,79 @@ void YAxisWidget::repaintPixmap ()
 
     QPainter painter (pixmap_);
     painter.setPen(Qt::black);
+    painter.setClipping (true);
 
     QMap<int32, SignalGraphicsItem const*>::const_iterator iter = channel_nr2signal_graphics_item_.begin();
     for (float y_start = 0;
          iter != channel_nr2signal_graphics_item_.end();
          y_start += intervall, ++iter)
     {
-        float64 value_range = (fabs(iter.value()->getMaximum()) + fabs(iter.value()->getMinimum())) /
-                               iter.value()->getYZoom();
-        float64 upper_value = iter.value()->getYOffset() + value_range / 2.0;
-
+        painter.setClipRect (0, y_start, w, signal_height_+1);
         painter.drawLine (0, y_start,
                           w - 1, y_start);
         painter.drawLine (0, y_start + signal_height_,
                           w - 1, y_start + signal_height_);
 
+
+        float64 zero_y = y_start + (static_cast<float32>(signal_height_) / 2.0f);
+        painter.translate (0, zero_y);
         float64 y_grid_pixel_intervall = iter.value()->getYGridPixelIntervall();
         if (!y_grid_pixel_intervall)
             y_grid_pixel_intervall = 10;
-        float64 y_grid_intervall = y_grid_pixel_intervall / signal_height_ * value_range;
 
-        float64 value = static_cast<int>((upper_value / y_grid_intervall)) * y_grid_intervall;
-        float64 y_float = (upper_value - (int32)(upper_value / y_grid_intervall) * y_grid_intervall) *
-                                        signal_height_ / value_range;
-        y_float += y_start;
+        float64 offset = iter.value()->getYOffset();
 
-        for (;
-             y_float < y_start + signal_height_;
-             y_float += y_grid_pixel_intervall)
+        for (float64 value_y = offset;
+             value_y < signal_height_ / 2;
+             value_y += y_grid_pixel_intervall)
         {
-            int32 y = (int32)(y_float + 0.5);
-            if (y > y_start && y < (y_start + intervall))
+            if (value_y > -static_cast<int>(signal_height_ / 2))
             {
-                painter.drawLine(w - 5, y, w - 1, y);
-                painter.drawText(0, (int32)(y - 20) , w - 10, 40,
-                                 Qt::AlignRight | Qt::AlignVCenter, QString("%1")
-                                                                .arg(qRound(value * 100) / 100.0));
+                painter.drawLine (w - 5, value_y, w - 1, value_y);
+                painter.drawText(0, value_y - 20, w - 10, 40,
+                                 Qt::AlignRight | Qt::AlignVCenter,
+                                 QString::number (qRound((offset-value_y) / iter.value()->getYZoom()
+                                            * 100) / 100.0));
             }
-            value -= y_grid_intervall;
         }
+        for (float64 value_y = offset - y_grid_pixel_intervall;
+             value_y > -static_cast<int>(signal_height_ / 2);
+             value_y -= y_grid_pixel_intervall)
+        {
+            if (value_y < signal_height_ / 2)
+            {
+                painter.drawLine (w - 5, value_y, w - 1, value_y);
+                painter.drawText(0, value_y - 20, w - 10, 40,
+                                 Qt::AlignRight | Qt::AlignVCenter,
+                                 QString::number (qRound((offset-value_y) / iter.value()->getYZoom()
+                                            * 100) / 100.0));
+            }
+        }
+
+        painter.translate (0, -zero_y);
+
+//        float64 y_grid_intervall = y_grid_pixel_intervall / signal_height_ * value_range;
+//
+//        float64 value = static_cast<int>((upper_value / y_grid_intervall)) * y_grid_intervall;
+//        float64 y_float = (upper_value - (int32)(upper_value / y_grid_intervall) * y_grid_intervall) *
+//                                        signal_height_ / value_range;
+//        y_float += y_start;
+
+
+//        for (;
+//             y_float < y_start + signal_height_;
+//             y_float += y_grid_pixel_intervall)
+//        {
+//            int32 y = (int32)(y_float + 0.5);
+//            if (y > y_start && y < (y_start + intervall))
+//            {
+//                painter.drawLine(w - 5, y, w - 1, y);
+//                painter.drawText(0, (int32)(y - 20) , w - 10, 40,
+//                                 Qt::AlignRight | Qt::AlignVCenter, QString("%1")
+//                                                                .arg(qRound(value * 100) / 100.0));
+//            }
+//            value -= y_grid_intervall;
+//        }
     }
 
 }

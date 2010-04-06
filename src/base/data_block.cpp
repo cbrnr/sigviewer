@@ -8,7 +8,9 @@
 namespace BioSig_ {
 
 //-----------------------------------------------------------------------------
-DataBlock::DataBlock()
+DataBlock::DataBlock ()
+    : length_ (0),
+      start_index_ (0)
 {
     // nothing to do here
 }
@@ -16,7 +18,7 @@ DataBlock::DataBlock()
 //-----------------------------------------------------------------------------
 DataBlock::DataBlock (std::vector<float32> const &data,
                       float32 sample_rate_per_unit)
-    : data_ (data),
+    : data_ (QSharedPointer<std::vector<float32> >(new std::vector<float32>(data))),
       sample_rate_per_unit_ (sample_rate_per_unit)
 {
     // nothing to do here
@@ -25,6 +27,8 @@ DataBlock::DataBlock (std::vector<float32> const &data,
 //-----------------------------------------------------------------------------
 DataBlock::DataBlock (DataBlock const &src)
     : data_ (src.data_),
+      length_ (src.length_),
+      start_index_ (src.start_index_),
       label_ (src.label_),
       x_unit_label_ (src.x_unit_label_),
       y_unit_label_ (src.y_unit_label_)
@@ -33,18 +37,41 @@ DataBlock::DataBlock (DataBlock const &src)
 }
 
 
+//-------------------------------------------------------------------------
+QSharedPointer<DataBlock> DataBlock::createSubBlock (uint32 start,
+                                                     uint32 length) const
+{
+    QSharedPointer<DataBlock> sub_block (new DataBlock (*this));
+    sub_block->start_index_ = start;
+    sub_block->length_ = length;
+    return sub_block;
+}
+
+
 //-----------------------------------------------------------------------------
 void DataBlock::setData (std::vector<float32> const &data,
                          float32 sample_rate_per_unit)
 {
-    data_ = data;
+    data_ = QSharedPointer<std::vector<float32> >(new std::vector<float32>(data));
+    start_index_ = 0;
+    length_ = data.size ();
     sample_rate_per_unit_ = sample_rate_per_unit;
 }
 
 //-----------------------------------------------------------------------------
-std::vector<float32> const &DataBlock::getData () const
+//std::vector<float32> const &DataBlock::getData () const
+//{
+//    return data_;
+//}
+float32 const& DataBlock::operator[] (uint32 index) const
 {
-    return data_;
+    return data_->at(start_index_ + index);
+}
+
+//-----------------------------------------------------------------------------
+uint32 DataBlock::size () const
+{
+    return length_;
 }
 
 //-------------------------------------------------------------------------
@@ -93,8 +120,12 @@ float32 DataBlock::getSampleRatePerUnit () const
 //-----------------------------------------------------------------------------
 float32 DataBlock::getMin () const
 {
-    std::vector<float32>::const_iterator min_element = std::min_element (data_.begin(), data_.end());
-    if (min_element != data_.end())
+    std::vector<float32>::const_iterator start = data_->begin() + start_index_;
+    std::vector<float32>::const_iterator end = data_->begin() + start_index_ + length_;
+
+    std::vector<float32>::const_iterator min_element = std::min_element (start,
+                                                                         end);
+    if (min_element != end)
         return *min_element;
     else
         return 0;
@@ -103,8 +134,12 @@ float32 DataBlock::getMin () const
 //-----------------------------------------------------------------------------
 float32 DataBlock::getMax () const
 {
-    std::vector<float32>::const_iterator max_element = std::max_element (data_.begin(), data_.end());
-    if (max_element != data_.end())
+    std::vector<float32>::const_iterator start = data_->begin() + start_index_;
+    std::vector<float32>::const_iterator end = data_->begin() + start_index_ + length_;
+
+    std::vector<float32>::const_iterator max_element = std::max_element (start,
+                                                                         end);
+    if (max_element != end)
         return *max_element;
     else
         return 0;
@@ -114,10 +149,10 @@ float32 DataBlock::getMax () const
 DataBlock DataBlock::getBandpassFilteredBlock (float32 lower_hz_boundary, float32 upper_hz_boundary) const
 {
     // calculate frequency spectrum
-    unsigned num_samples = data_.size();
+    unsigned num_samples = length_;
     double* data_in = new double[num_samples];
     for (unsigned x = 0; x < num_samples; x++)
-        data_in[x] = data_[x];
+        data_in[x] = data_->at(start_index_ + x);
 
     Complex* data_out = FFTWComplex((num_samples / 2) + 1);
 
@@ -166,16 +201,16 @@ DataBlock DataBlock::calculateMean (std::list<DataBlock> const &data_blocks)
     std::list<DataBlock>::const_iterator it = data_blocks.begin();
     mean_block.sample_rate_per_unit_ = it->sample_rate_per_unit_;
     float32 tmp_mean = 0;
-    for (unsigned index = 0; index < (*(data_blocks.begin())).data_.size(); index++)
+    for (unsigned index = 0; index < (*(data_blocks.begin())).data_->size(); index++)
     {
         it = data_blocks.begin();
         tmp_mean = 0;
         while (it != data_blocks.end())
         {
-            tmp_mean += it->data_[index];
+            tmp_mean += it->data_->at(index);
             ++it;
         }
-        mean_block.data_.push_back(tmp_mean / data_blocks.size());
+        mean_block.data_->push_back(tmp_mean / data_blocks.size());
     }
     return mean_block;
 }
@@ -204,17 +239,17 @@ DataBlock DataBlock::calculateStandardDeviationImpl (std::list<DataBlock> const 
     std::list<DataBlock>::const_iterator it = data_blocks.begin();
     stddev_block.sample_rate_per_unit_ = it->sample_rate_per_unit_;
     float32 tmp_stddev = 0;
-    for (unsigned index = 0; index < (*(data_blocks.begin())).data_.size(); index++)
+    for (unsigned index = 0; index < (*(data_blocks.begin())).size(); index++)
     {
         it = data_blocks.begin();
         tmp_stddev = 0;
-        float32 mean = means.getData()[index];
+        float32 mean = means[index];
         while (it != data_blocks.end())
         {
-            tmp_stddev += pow((it->data_[index] - mean), 2);
+            tmp_stddev += pow(((*it)[index] - mean), 2);
             ++it;
         }
-        stddev_block.data_.push_back(sqrt(tmp_stddev / data_blocks.size()));
+        stddev_block.data_->push_back(sqrt(tmp_stddev / data_blocks.size()));
     }
     return stddev_block;
 }

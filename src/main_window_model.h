@@ -35,6 +35,7 @@ class ApplicationContext;
 class FileContext;
 class TabContext;
 class EventManagerImpl;
+class ChannelManager;
 
 // main window model
 class MainWindowModel : public QObject
@@ -140,6 +141,7 @@ private:
     std::list<QSharedPointer<BlocksVisualisationModel> > blocks_visualisation_models_;
     std::map<int, TabContext*> tab_contexts_;
     EventManagerImpl* event_manager_;
+    ChannelManager* channel_manager_;
 
     //-------------------------------------------------------------------------
     // not allowed

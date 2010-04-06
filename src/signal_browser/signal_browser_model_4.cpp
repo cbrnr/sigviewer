@@ -2,7 +2,7 @@
 
 #include "signal_browser_model_4.h"
 #include "../file_handling/event_manager.h"
-#include "channel_manager_interface.h"
+#include "../file_handling/channel_manager.h"
 #include "signal_browser_view.h"
 #include "signal_graphics_item.h"
 #include "event_graphics_item.h"
@@ -93,7 +93,6 @@ void SignalBrowserModel::setSignalBrowserView(SignalBrowserView* signal_browser_
 void SignalBrowserModel::setLogStream(QTextStream* log_stream)
 {
     log_stream_ = log_stream;
-    // signal_buffer_.setLogStream(log_stream);
 }
 
 //-----------------------------------------------------------------------------
@@ -171,32 +170,6 @@ SignalBrowserMode SignalBrowserModel::getMode()
     return mode_;
 }
 
-//-----------------------------------------------------------------------------
-void SignalBrowserModel::setWholeDataBuffer(SignalBuffer::WHOLE_BUFFER
-                                                whole_buffer)
-{
-    signal_buffer_.setWholeDataBuffer(whole_buffer);
-}
-
-//-----------------------------------------------------------------------------
-void SignalBrowserModel::enableInitDownsampling(bool enabled)
-{
-    signal_buffer_.enableInitDownsampling(enabled);
-}
-
-//-----------------------------------------------------------------------------
-void SignalBrowserModel::enableInitMinMaxSearch(bool enabled)
-{
-    signal_buffer_.enableInitMinMaxSearch(enabled);
-}
-
-//-----------------------------------------------------------------------------
-void SignalBrowserModel::setDefaultRange(float32 min, float32 max)
-{
-    signal_buffer_.setDefaultRange(min, max);
-}
-
-
 
 /*
 // set release buffer
@@ -234,10 +207,12 @@ void SignalBrowserModel::addChannel(uint32 channel_nr)
     SignalGraphicsItem* signal_item
         = new SignalGraphicsItem(file_context_.getEventManager(),
                                  tab_context_,
-                                 signal_buffer_, basic_header_->getChannel(channel_nr), *this,
-                                 signal_browser_view_);
+                                 file_context_.getChannelManager(),
+                                 channel_nr,
+                                 signal_buffer_, basic_header_->getChannel(channel_nr), *this);
 
     channel2signal_item_[channel_nr] = signal_item;
+    signal_browser_view_->addSignalGraphicsItem(channel_nr, signal_item);
 
     // add channel to buffer
     signal_buffer_.addChannel(channel_nr);
@@ -347,18 +322,18 @@ void SignalBrowserModel::initBuffer()
     state_ = STATE_INIT_BUFFER;
     signal_browser_view_->hide();
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-    signal_buffer_.init();
+    //signal_buffer_.init();
     QApplication::restoreOverrideCursor();
     state_ = STATE_READY;
 
 
     // get range from buffer
-    for (iter = channel2signal_item_.begin();
-         iter != channel2signal_item_.end();
-         iter++)
-    {
-        iter->second->getRangeFromBuffer(2.0);
-    }
+//    for (iter = channel2signal_item_.begin();
+//         iter != channel2signal_item_.end();
+//         iter++)
+//    {
+//        iter->second->getRangeFromBuffer(2.0);
+//    }
 
 
     // gernerate event items
@@ -497,25 +472,26 @@ int32 SignalBrowserModel::getSignalHeight()
 // update layout
 void SignalBrowserModel::updateLayout()
 {
-    int32 width = (int32)(signal_buffer_.getBlockDuration() *
-                          signal_buffer_.getNumberBlocks() * pixel_per_sec_);
+    int32 width = file_context_.getChannelManager().getDurationInSec()
+                  * pixel_per_sec_;
 
     int32 height = (signal_height_  + signal_spacing_) *
                    channel2signal_item_.size();
 
-    QDialog* dialog = new QDialog;
-    dialog->setWindowTitle("Initialize Chunk Matrix");
-    dialog->resize(250, 50);
-    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-    dialog->show();
+//    QDialog* dialog = new QDialog;
+//    dialog->setWindowTitle("Initialize Chunk Matrix");
+//    dialog->resize(250, 50);
+//    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+//    dialog->show();
+
     signal_browser_view_->resizeScene(width, height);
-    QApplication::restoreOverrideCursor();
-    dialog->hide();
-    delete dialog;
+//    QApplication::restoreOverrideCursor();
+//    dialog->hide();
+//    delete dialog;
 
     // singanls position
     channel2y_pos_.clear();
-    channel2y_pos_[SignalEvent::UNDEFINED_CHANNEL] = 0;
+    channel2y_pos_[UNDEFINED_CHANNEL] = 0;
     int32 y_pos = 0;
     Int2SignalGraphicsItemPtrMap::iterator signal_iter;
 
@@ -525,13 +501,12 @@ void SignalBrowserModel::updateLayout()
     {
         channel2y_pos_[signal_iter->first] = y_pos;
         signal_iter->second->setHeight (signal_height_);
-        signal_iter->second->setPos (0, y_pos); // FIXME: why "/2" ????
+        signal_iter->second->setPos (0, y_pos);
         signal_iter->second->setZValue(SIGNAL_Z);
         signal_iter->second->updateYGridIntervall();
 
         signal_iter->second->enableYGrid(show_y_grid_);
         signal_iter->second->enableXGrid(show_x_grid_);
-        signal_browser_view_->addSignalGraphicsItem(signal_iter->first, signal_iter->second);
         signal_iter->second->show();
     }
 
@@ -574,7 +549,7 @@ void SignalBrowserModel::selectEvent (int32 id)
     EventGraphicsItem* item = event_iter->second;
 
     if (file_context_.getEventManager().getEvent(id)->getChannel() ==
-        SignalEvent::UNDEFINED_CHANNEL)
+        UNDEFINED_CHANNEL)
         tab_context_.setSelectionState(TAB_STATE_EVENT_SELECTED_ALL_CHANNELS);
     else
         tab_context_.setSelectionState (TAB_STATE_EVENT_SELECTED_ONE_CHANNEL);
@@ -864,7 +839,7 @@ void SignalBrowserModel::setEventChanged (EventID id)
         if (selected_event_item_->getId() == id)
         {
             if (selected_event_item_->getSignalEvent()->getChannel() ==
-                SignalEvent::UNDEFINED_CHANNEL)
+                UNDEFINED_CHANNEL)
                 tab_context_.setSelectionState (TAB_STATE_EVENT_SELECTED_ALL_CHANNELS);
             else
                 tab_context_.setSelectionState (TAB_STATE_EVENT_SELECTED_ONE_CHANNEL);
@@ -897,7 +872,7 @@ void SignalBrowserModel::setSelectedEventToAllChannels()
 
     EventID id = selected_event_item_->getId();
     QUndoCommand* changeChannelCommand = new ChangeChannelUndoCommand (file_context_.getEventManager(),
-                                                                       id, SignalEvent::UNDEFINED_CHANNEL);
+                                                                       id, UNDEFINED_CHANNEL);
     tab_context_.executeCommand (changeChannelCommand);
 }
 

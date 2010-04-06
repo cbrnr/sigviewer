@@ -16,10 +16,10 @@ class SignalBuffer;
 class SignalChannel;
 class SignalEvent;
 class SignalBrowserModel;
-class SignalBrowserView;
 class EventGraphicsItem;
 class EventManager;
 class CommandExecuter;
+class ChannelManager;
 
 class SignalGraphicsItem : public QObject, public QGraphicsItem
 {
@@ -28,15 +28,16 @@ class SignalGraphicsItem : public QObject, public QGraphicsItem
 public:
     SignalGraphicsItem(EventManager& event_manager,
                        CommandExecuter& command_executor,
+                       ChannelManager& channel_manager,
+                       ChannelID id,
                        SignalBuffer& buffer, const SignalChannel& channel,
-                       SignalBrowserModel& model, SignalBrowserView* browser);
+                       SignalBrowserModel& model);
 
     virtual ~SignalGraphicsItem ();
 
     void setHeight (int32 height);
     virtual QRectF boundingRect () const;
 
-    void getRangeFromBuffer(float64 factor);
     void updateYGridIntervall();
     void enableYGrid(bool enabled);
     void enableXGrid(bool enabled);
@@ -65,14 +66,15 @@ private:
     virtual void contextMenuEvent (QGraphicsSceneContextMenuEvent * event);
     virtual void wheelEvent (QGraphicsSceneWheelEvent * event);
 
-    void drawYAxis (QPainter * painter, const QStyleOptionGraphicsItem * option);
+    void drawYGrid (QPainter* painter, QStyleOptionGraphicsItem const* option);
 
     EventManager& event_manager_;
     CommandExecuter& command_executor_;
+    ChannelManager& channel_manager_;
+    ChannelID id_;
     SignalBuffer& signal_buffer_;
     const SignalChannel& signal_channel_;
     SignalBrowserModel& signal_browser_model_;
-    SignalBrowserView* signal_browser_;
 
     float64 minimum_;
     float64 maximum_;

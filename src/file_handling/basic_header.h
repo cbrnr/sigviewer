@@ -14,7 +14,11 @@
 namespace BioSig_
 {
 
-// Basic header definition (common for all file formats)
+//-----------------------------------------------------------------------------
+/// BasicHeader definition (common for all file formats)
+///
+/// waldesel: remove all setter methods and move them into the implementations
+///           of BasicHeader
 class BasicHeader : public QObject
 {
 public:
@@ -30,7 +34,7 @@ public:
         UNDEFINED_AGE = -1
     };
 
-    BasicHeader();
+    BasicHeader ();
     virtual ~BasicHeader();
 
     // basic
@@ -75,7 +79,12 @@ public:
     void addChannel (SignalChannel *channel);
     uint32 getRecordsPosition() const;
     void setRecordsPosition (uint32 records_position);
-    
+    void setSampleRate (float32 sample_rate);
+    float32 getSampleRate () const;
+
+    //-------------------------------------------------------------------------
+    virtual uint32 getNumberOfSamples () const = 0;
+
     // events
     uint32 getNumberEvents() const;
     void setNumberEvents (uint32 number_events);
@@ -116,6 +125,7 @@ protected:
     uint32 number_channels_;
     SignalChannelPtrVector channel_vector_;
     uint32 records_position_;
+    float32 sample_rate_;
 
     // events
     uint32 number_events_;

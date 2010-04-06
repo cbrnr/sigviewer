@@ -13,10 +13,6 @@ class SignalEvent
 {
 public:
     static const EventID UNDEFINED_ID = -1;
-    enum
-    {
-        UNDEFINED_CHANNEL = -1
-    };
 
     enum
     {

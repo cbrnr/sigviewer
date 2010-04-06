@@ -43,7 +43,7 @@ EventGraphicsItem::EventGraphicsItem (SignalBrowserModel& model,
   is_selected_ (false),
   signal_event_ (signal_event)
 {
-    setAcceptHoverEvents (true);
+    // setAcceptHoverEvents (true);
 }
 
 //-----------------------------------------------------------------------------
@@ -118,7 +118,7 @@ void EventGraphicsItem::updateToSignalEvent ()
     int32 x_pos = factor * signal_event_->getPosition() + 0.5;
     int32 y_pos = 0;
 
-    if (signal_event_->getChannel() == SignalEvent::UNDEFINED_CHANNEL)
+    if (signal_event_->getChannel() == UNDEFINED_CHANNEL)
         height_ = (signal_browser_model_.getSignalHeight() + signal_browser_model_.getSignalSpacing()) * signal_browser_model_.getNumberShownChannels();
     else
     {
@@ -420,7 +420,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
         case SignalBrowserMouseHandling::SHIFT_EVENT_TO_CHANNEL_ACTION:
             if (this == old_selected_item &&
                 old_selected_item->boundingRect().contains(mouse_pos) &&
-                signal_event_->getChannel() != SignalEvent::UNDEFINED_CHANNEL)
+                signal_event_->getChannel() != UNDEFINED_CHANNEL)
             {
                 return ACTION_SHIFT_TO_CHANNEL;
             }
@@ -428,7 +428,7 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
         case SignalBrowserMouseHandling::COPY_EVENT_TO_CHANNEL_ACTION:
             if (this == old_selected_item &&
                 old_selected_item->boundingRect().contains(mouse_pos) &&
-                signal_event_->getChannel() != SignalEvent::UNDEFINED_CHANNEL)
+                signal_event_->getChannel() != UNDEFINED_CHANNEL)
             {
                 return ACTION_COPY_SHIFT_TO_CHANNEL;
             }

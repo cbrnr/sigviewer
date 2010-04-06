@@ -16,7 +16,7 @@ EventColorManager::EventColorManager(EventTableFileReader& event_table_reader)
 }
 
 // get event color
-const QColor& EventColorManager::getEventColor(int32 id) const
+const QColor& EventColorManager::getEventColor (EventID id) const
 {
     Int2ColorMap::const_iterator it = event_type2color_.find(id);
     if (it == event_type2color_.end())
@@ -27,7 +27,7 @@ const QColor& EventColorManager::getEventColor(int32 id) const
 }
 
 // set event color
-void EventColorManager::setEventColor(int32 id, const QColor& color)
+void EventColorManager::setEventColor (EventID id, const QColor& color)
 {
     event_type2color_[id] = color; 
 }

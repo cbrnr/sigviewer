@@ -1,9 +1,10 @@
 #include "signal_graphics_item.h"
 #include "event_graphics_item.h"
-#include "signal_browser_view.h"
 #include "signal_browser_model_4.h"
 #include "new_event_undo_command.h"
 #include "y_axis_widget_4.h"
+#include "../file_handling/channel_manager.h"
+#include "../file_handling/event_manager.h"
 #include "../command_executer.h"
 #include "../base/signal_data_block.h"
 #include "../base/signal_buffer.h"
@@ -18,6 +19,7 @@
 #include <QTime>
 #include <QObject>
 #include <QMenu>
+#include <QPainter>
 
 #include <cmath>
 #include <iostream>
@@ -32,18 +34,20 @@ float64 SignalGraphicsItem::prefered_pixel_per_sample_ = 1.0;
 //-----------------------------------------------------------------------------
 SignalGraphicsItem::SignalGraphicsItem(EventManager& event_manager,
                                        CommandExecuter& command_executor,
+                                       ChannelManager& channel_manager,
+                                       ChannelID id,
                                        SignalBuffer& buffer,
                                        const SignalChannel& channel,
-                                       SignalBrowserModel& model,
-                                       SignalBrowserView* browser)
+                                       SignalBrowserModel& model)
 : event_manager_ (event_manager),
   command_executor_ (command_executor),
+  channel_manager_ (channel_manager),
+  id_ (id),
   signal_buffer_(buffer),
   signal_channel_(channel),
   signal_browser_model_(model),
-  signal_browser_(browser),
-  minimum_(channel.getPhysicalMinimum()),
-  maximum_(channel.getPhysicalMaximum()),
+  minimum_ (channel_manager_.getMinValue (id_)),
+  maximum_ (channel_manager_.getMaxValue (id_)),
   y_zoom_(1),
   y_grid_pixel_intervall_(1),
   draw_y_grid_ (true),
@@ -80,11 +84,7 @@ void SignalGraphicsItem::setHeight (int32 height)
 QRectF SignalGraphicsItem::boundingRect () const
 {
     // TODO: implement!
-        int32 width = (int32)(signal_buffer_.getBlockDuration() *
-                          signal_buffer_.getNumberBlocks() * signal_browser_model_.getPixelPerXUnit());
-
-    // std::cout << "SignalGraphicsItem::boundingRect width = " << width << std::endl;
-    // std::cout << "SignalGraphicsItem::boundingRect top_margin_ = " << top_margin_ << std::endl;
+    int32 width = channel_manager_.getDurationInSec() * signal_browser_model_.getPixelPerXUnit();
 
     return QRectF (0, 0, width, height_);
 }
@@ -122,44 +122,36 @@ float64 SignalGraphicsItem::getYGridPixelIntervall() const
 }
 
 //-----------------------------------------------------------------------------
-// zoom in
 void SignalGraphicsItem::zoomIn()
 {
     y_zoom_ *= 2.0;
 }
 
 //-----------------------------------------------------------------------------
-// zoom out
 void SignalGraphicsItem::zoomOut()
 {
     y_zoom_ /= 2.0;
 }
 
 //-----------------------------------------------------------------------------
-// auto scale
-void SignalGraphicsItem::autoScale(ScaleMode auto_zoom_type)
+void SignalGraphicsItem::autoScale (ScaleMode auto_zoom_type)
 {
-    float64 min = signal_buffer_.getMinValue(signal_channel_.getNumber());
-    float64 max = signal_buffer_.getMaxValue(signal_channel_.getNumber());
+    float64 min = minimum_;
+    float64 max = maximum_;
+    float64 abs_max = ((max < 0) ? (-max) : (max));
+    float64 abs_min = ((min < 0) ? (-min) : (min));
 
     if (auto_zoom_type == MAX_TO_MAX)
     {
-        if (max > -min)
-            min = -max;
+        if (abs_max > abs_min)
+            abs_min = abs_max;
         else
-            max = -min;
-
-        y_zoom_ = ((maximum_ - minimum_) / (max - min));
-        y_offset_ = 0; // zero line in the middle
+            abs_max = abs_min;
     }
-    else
-    {
-        float64 abs_max = ((max < 0) ? (-max) : (max));
-        float64 abs_min = ((min < 0) ? (-min) : (min));
 
-        y_zoom_ = ((maximum_ - minimum_) / (abs_max + abs_min));
-        y_offset_ = ((max + min) / 2.0);
-    }
+    y_zoom_ = height_ / (abs_max + abs_min);
+    y_offset_ = ((abs_max - abs_min) / 2) * y_zoom_;
+    updateYGridIntervall ();
 }
 
 
@@ -172,10 +164,50 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
         painter->fillRect(new_signal_event_->getPosition(), 0, new_signal_event_->getDuration(), height_, new_event_color_);
     }
     QRectF clip (option->exposedRect);
+
     painter->setClipping(true);
     painter->setClipRect(clip);
-    // clip.setWidth(clip.width()*2);
-    //signal_buffer_.setChannelActive(signal_channel_.getNumber(), true);
+
+    float64 pixel_per_sec = signal_browser_model_.getPixelPerXUnit();
+    float32 pixel_per_sample = pixel_per_sec / channel_manager_.getSampleRate();
+
+    // waldesel: better would be
+    // pixel_per_sample = 1; (or some power of 2)
+
+    float32 last_x = clip.x () - 10.0f;
+    if (last_x < 0)
+        last_x = 0;
+    unsigned start_sample = last_x / pixel_per_sample;
+    unsigned length = (clip.width() + 20.0f) / pixel_per_sample;
+
+    QSharedPointer<DataBlock const> data_block = channel_manager_.getData (id_, start_sample, length);
+
+    bool last_valid = false;
+    float32 last_y = 0;
+    float32 new_y = 0;
+
+    painter->translate (0, height_ / 2.0f);  
+    drawYGrid (painter, option);
+    painter->setPen(Qt::darkBlue);
+
+    for (unsigned index = 0;
+         index < data_block->size();
+         index++)
+    {
+        new_y = (*data_block)[index];
+        if (last_valid)
+            painter->drawLine(last_x, y_offset_ - (y_zoom_ * last_y), last_x + pixel_per_sample, y_offset_ - (y_zoom_ * new_y));
+        else
+            last_valid = true;
+
+        last_x += pixel_per_sample;
+        last_y = new_y;
+    }
+    return;
+
+    /// OLD IMPLEMENTATION:
+    /*
+    {
 
     int32 draw_start_x = clip.x() - 4; // some pixels before
     int32 draw_end_x = draw_start_x + clip.width() + 4;
@@ -183,7 +215,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
         draw_start_x = 0;
 
     int32 item_height = height_;
-//    float64 item_y = y();
+
 
     float64 block_duration = signal_buffer_.getBlockDuration();
     float64 pixel_per_sec = signal_browser_model_.getPixelPerXUnit();
@@ -194,14 +226,6 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
                                block_duration;
 
     uint32 sub_sampling_type = SignalBuffer::NO_SUBSAMPLING;
-
-   /*while (samples_per_sec / 2.0 * prefered_pixel_per_sample_ >= pixel_per_sec
-           && sub_sampling_type < signal_buffer_.getMaxSubsampling())
-    {
-        block_duration *= 2.0;
-        samples_per_sec /= 2.0;
-        sub_sampling_type++;
-    }*/
 
     // block range
     float64 tmp = draw_start_x / (block_duration * pixel_per_sec);
@@ -218,11 +242,6 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     // y range
     float64 value_range = (fabs(maximum_) + fabs(minimum_)) / y_zoom_;
     float64 upper_value = y_offset_ + value_range / 2.0;
-
-
-    //painter->setClipping(true);
-    //painter->setClipRect(draw_start_x, draw_start_y, clip.width(),
-    //              clip.height()); //, QPainter::CoordPainter);
 
     // draw y grid - begin
     if (draw_y_grid_)
@@ -351,30 +370,16 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     //    std::cout << "channel " << signal_channel_.getNumber() << "; clip.width() = " << clip.width() << "; clip.height() = " << clip.height() << std::endl;
     //    std::cout << "time passed: " << time.elapsed() << std::endl;
     //}
-}
-
-
-
-//-----------------------------------------------------------------------------
-// get range from buffer
-void SignalGraphicsItem::getRangeFromBuffer(float64 factor)
-{
-//    std::cout << signal_channel_.getNumber() << " minimum_ = " << minimum_;
-//    std::cout << "; maximum_ = " << maximum_ << std::endl;
-
-    minimum_ = round125(signal_buffer_.getMinValue(signal_channel_.getNumber()) * factor);
-    maximum_ = round125(signal_buffer_.getMaxValue(signal_channel_.getNumber()) * factor);
+}*/
 }
 
 //-----------------------------------------------------------------------------
-void SignalGraphicsItem::updateYGridIntervall()
+void SignalGraphicsItem::updateYGridIntervall ()
 {
-    float64 value_range = (maximum_ - minimum_) / y_zoom_;
-    float64 item_height = height_;//this->boundingRect().height();
+    float64 value_range = (fabs(maximum_) + fabs(minimum_));
     float64 y_grid_intervall
-        = round125(value_range / item_height *
-                   signal_browser_model_.getPreferedYGirdPixelIntervall());
-    y_grid_pixel_intervall_ = item_height * y_grid_intervall / value_range;
+        = round125(value_range / height_ * signal_browser_model_.getPreferedYGirdPixelIntervall());
+    y_grid_pixel_intervall_ = y_zoom_ * y_grid_intervall;
 }
 
 //-----------------------------------------------------------------------------
@@ -396,7 +401,7 @@ QString const &SignalGraphicsItem::getLabel () const
 }
 
 //-----------------------------------------------------------------------------
-void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
+void SignalGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* event)
 {
     QPoint p = event->screenPos();
     if (shifting_)
@@ -404,10 +409,9 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
         int32 dy = p.y() - move_start_point_.y();
         move_start_point_ = p;
         move_start_point_ = p;
-        float64 range = (maximum_ - minimum_) / y_zoom_;
-        y_offset_ = y_offset_ + dy * range / height_;
+        y_offset_ = y_offset_ + dy;
         update();
-        emit shifting (signal_channel_.getNumber());
+        emit shifting (id_);
     }
     else if (new_event_)
     {
@@ -424,9 +428,7 @@ void SignalGraphicsItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
         else
             update (new_signal_event_->getPosition() + new_event_width, 0,
                     old_width - new_event_width, height_);
-//        update(new_signal_event_->getPosition(), 0,
-//                     new_event_width > old_width ? new_event_width - old_width : old_width,
-//                     height_);
+
         new_signal_event_->setDuration(new_event_width);
         emit mouseAtSecond (pos / signal_browser_model_.getPixelPerXUnit());
     }
@@ -465,8 +467,8 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
             new_event_ = true;
             new_signal_event_ = QSharedPointer<SignalEvent>(new SignalEvent(event->scenePos().x(),
                                                                             signal_browser_model_.getActualEventCreationType(),
-                                                                            signal_buffer_.getEventSamplerate(),
-                                                                            signal_channel_.getNumber(),
+                                                                            event_manager_.getSampleRate(),
+                                                                            id_,
                                                                             0));
             new_event_color_ = signal_browser_model_.getEventColor(signal_browser_model_.getActualEventCreationType());
             emit mouseMoving (true);
@@ -481,7 +483,7 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
 }
 
 //-----------------------------------------------------------------------------
-void SignalGraphicsItem::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
+void SignalGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent* event)
 {
     if (hand_tool_on_)
         event->ignore();
@@ -489,7 +491,7 @@ void SignalGraphicsItem::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
     if (new_event_)
     {
         emit mouseMoving (false);
-        NewEventUndoCommand* new_event_command = new NewEventUndoCommand(event_manager_, new_signal_event_, signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit());
+        NewEventUndoCommand* new_event_command = new NewEventUndoCommand (event_manager_, new_signal_event_, event_manager_.getSampleRate() / signal_browser_model_.getPixelPerXUnit());
         command_executor_.executeCommand (new_event_command);
     }
 
@@ -525,7 +527,7 @@ void SignalGraphicsItem::wheelEvent (QGraphicsSceneWheelEvent* event)
         else if (event->delta() < 0)
             y_zoom_ /= -(event->delta()) / 60;
         update ();
-        emit shifting (signal_channel_.getNumber());
+        emit shifting (id_);
     }
     else if (event->modifiers().testFlag(Qt::ShiftModifier))
     {
@@ -540,57 +542,32 @@ void SignalGraphicsItem::wheelEvent (QGraphicsSceneWheelEvent* event)
 
 
 //-----------------------------------------------------------------------------
-void SignalGraphicsItem::drawYAxis (QPainter * painter, const QStyleOptionGraphicsItem * option)
+void SignalGraphicsItem::drawYGrid (QPainter* painter,
+                                    QStyleOptionGraphicsItem const* option)
 {
     QRectF clip (option->exposedRect);
-    int32 y_start = clip.y();
-    int32 y_end = y_start + clip.height();
-    int32 w = 100;
-    int32 x_end = clip.x() + w;
+    painter->setPen (Qt::lightGray);
 
-    painter->setPen(Qt::black);
-    painter->drawLine(x_end - 1, y_start, x_end -1, y_end);
-/*
-    p.setPen(Qt::black);
-    float64 float_y_start = floor(y_start / intervall) * intervall;
-    float64 float_y_end = ceil(y_end / intervall) * intervall;
-    QMap<int32, SignalCanvasItem*>::iterator iter = channel_nr2signal_canvas_item_.begin();
-
-    for (float32 float_item_y = 0;
-         float_item_y < float_y_end && iter != channel_nr2signal_canvas_item_.end();
-         float_item_y += intervall, iter++)
+    for (float64 y = y_offset_;
+         y < height_ / 2;
+         y += y_grid_pixel_intervall_)
     {
-        if (float_item_y > float_y_start - intervall)
+        if (y > -static_cast<int>(height_ / 2))
         {
-            float64 value_range = (iter.data()->getMaximum() - iter.data()->getMinimum()) /
-                                  iter.data()->getYZoom();
-
-            float64 upper_value = iter.data()->getYOffset() + value_range / 2.0;
-
-            p.setClipRect(0, (int32)float_item_y, w, intervall);
-//            p.setPen(Qt::black);
-            p.drawLine(0, (int32)float_item_y + signal_height,
-                       w - 1, (int32)float_item_y + signal_height);
-
-            // draw y markers and values
-            float64 y_grid_pixel_intervall = iter.data()->getYGridPixelIntervall();
-            float64 y_grid_intervall = y_grid_pixel_intervall / signal_height * value_range;
-
-            float64 value = (int32)((upper_value + y_grid_intervall) / y_grid_intervall) * y_grid_intervall;
-            float64 y_float = (upper_value - value) * signal_height / value_range + float_item_y;
-
-            for (;
-                 value > upper_value - value_range - y_grid_intervall;
-                 value -= y_grid_intervall, y_float += y_grid_pixel_intervall)
-            {
-                int32 y = (int32)(y_float + 0.5);
-                p.drawLine(w - 5, y, w - 1, y);
-                p.drawText(0, (int32)(y - 20) , w - 10, 40,
-                       Qt::AlignRight | Qt::AlignVCenter, QString("%1")
-                                                                .arg(qRound(value * 100) / 100.0));
-            }
+            painter->drawLine (clip.x(), y, clip.x() + clip.width(), y);
         }
-    }*/
+    }
+
+    for (float64 y = y_offset_;
+         y > -static_cast<int>(height_ / 2);
+         y -= y_grid_pixel_intervall_)
+    {
+        if (y < height_ / 2)
+        {
+            painter->drawLine (clip.x(), y, clip.x() + clip.width(), y);
+        }
+    }
+
 }
 
 
