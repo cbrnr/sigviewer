@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=SigViewer
+Comment=Hello World Skript from http://biosig.sourceforge.net
+Comment[­de­]=Hallo Welt Skript von http://biosig.sourceforge.net
+Exec=/usr/bin/sigviewer
+Icon=sigviewer128.png
+Type=Application
+Categories=Science;
