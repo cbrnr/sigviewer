@@ -18,6 +18,8 @@
 #include <QToolBox>
 #include <QMenu>
 
+#include <iostream>
+
 namespace BioSig_
 {
 
@@ -82,7 +84,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
 
     connect(this, SIGNAL(visibleXChanged(int32)), x_axis_widget_, SLOT(changeXStart(int32)));
     connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
-    connect(signal_browser_model.data(), SIGNAL(signalHeightChanged(unsigned)), y_axis_widget_, SLOT(changeSignalHeight(unsigned)));
+    connect(signal_browser_model.data(), SIGNAL(signalHeightChanged(uint32)), y_axis_widget_, SLOT(changeSignalHeight(uint32)));
     connect(event_info_widget_, SIGNAL(eventCreationTypeChanged(uint16)), signal_browser_model.data(), SLOT(setActualEventCreationType(uint16)));
     connect(signal_browser_model.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent const>)));
     connect(signal_browser_model.data(), SIGNAL(shownEventTypesChanged(std::set<uint16>)), event_info_widget_, SLOT(updateShownEventTypes(std::set<uint16>)));
@@ -123,22 +125,22 @@ void SignalBrowserView::setScrollMode (bool activated)
 //-----------------------------------------------------------------------------
 void SignalBrowserView::resizeScene (int32 width, int32 height)
 {
-    graphics_scene_->setSceneRect(0, 0, width, height);
-    graphics_view_->centerOn(0,0);
-    //graphics_view_->viewport()->set
+    graphics_scene_->setSceneRect (0, 0, width, height);
+    graphics_view_->centerOn (0,0);
+    y_axis_widget_->changeYStart (0);
 }
 
 //-----------------------------------------------------------------------------
 void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item)
 {
-    // TODO: really remove before add????
-    //graphics_scene_->removeItem(graphics_item);
-    graphics_scene_->addItem(graphics_item);
-    y_axis_widget_->addChannel(channel_nr, graphics_item);
-    label_widget_->addChannel(channel_nr, graphics_item->getLabel());
+    graphics_scene_->addItem (graphics_item);
+    y_axis_widget_->addChannel (channel_nr, graphics_item);
+    label_widget_->addChannel (channel_nr, graphics_item->getLabel());
 
     graphics_view_->update();
 
+    connect (graphics_item, SIGNAL(updatedYGrid(ChannelID)), y_axis_widget_, SLOT(updateChannel(ChannelID)));
+    connect (graphics_item, SIGNAL(shifting(ChannelID)), y_axis_widget_, SLOT(updateChannel(ChannelID)));
     connect (graphics_item, SIGNAL(mouseAtSecond(float64)), x_axis_widget_, SLOT(changeHighlightTime(float64)));
     connect (graphics_item, SIGNAL(mouseMoving(bool)), x_axis_widget_, SLOT(enableHighlightTime(bool)));
 }
@@ -146,6 +148,9 @@ void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsI
 //-----------------------------------------------------------------------------
 void SignalBrowserView::removeSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item)
 {
+    disconnect (graphics_item, 0, x_axis_widget_, 0);
+    disconnect (graphics_item, 0, y_axis_widget_, 0);
+
     y_axis_widget_->removeChannel(channel_nr);
     label_widget_->removeChannel(channel_nr);
     graphics_scene_->removeItem (graphics_item);
@@ -270,6 +275,9 @@ void SignalBrowserView::updateWidgets (bool update_view)
     y_axis_widget_->updateAllChannels();
     x_axis_widget_->update();
     label_widget_->update();
+
+    emit visibleYChanged (graphics_view_->mapToScene(0,0).y());
+    y_axis_widget_->changeYStart (0);
 }
 
 //-----------------------------------------------------------------------------
@@ -287,7 +295,6 @@ void SignalBrowserView::setPixelPerSec (float64 pixel_per_sec)
 //-----------------------------------------------------------------------------
 void SignalBrowserView::verticalSrollbarMoved(int)
 {
-    //y_axis_widget_->update();//repaint();
     label_widget_->update();//repaint();
     emit visibleYChanged (graphics_view_->mapToScene(0,0).y());
 }

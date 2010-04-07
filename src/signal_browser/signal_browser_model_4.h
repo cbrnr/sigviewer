@@ -26,7 +26,6 @@ class BasicHeader;
 class FileSignalReader;
 class SignalBrowserView;
 class SignalGraphicsItem;
-class EventTableFileReader;
 class ApplicationContext;
 class FileContext;
 
@@ -42,7 +41,6 @@ public:
 
     SignalBrowserModel(FileSignalReader& reader,
                        MainWindowModel& main_window_model,
-                       QSharedPointer<EventTableFileReader const> event_table_file_reader,
                        ApplicationContext& app_context,
                        FileContext& file_context,
                        TabContext& tab_context);
@@ -73,27 +71,15 @@ public:
     void setXGridVisible(bool visible);
     bool getGridVisible () const;
     void setYGridVisible(bool visible);
-    bool isShowAllEventTypes() const;
     void setAutoZoomBehaviour (ScaleMode auto_zoom_type);
     ScaleMode getAutoZoomBehaviour () const;
 
-    // buffer
-    void initBuffer();
-/*
-    void setReleaseBuffer(bool release);
-    bool getReleaseBuffer();
-*/
-
     // channels
-    void addChannel(uint32 channel_nr);
-    void removeChannel(uint32 channel_nr);
+    void setShownChannels (std::set<ChannelID> const& shown_channels);
     bool isChannelShown(uint32 channel_nr) const;
     std::map<uint32, QString> getShownChannels () const;
     uint32 getNumberShownChannels() const;
     int32 getYPosOfChannel (uint32 channel_nr) const;
-/*
-    int32 getChannelNr(uint32 shown_nr);
-*/
 
     QPointF getViewingPosition ();
     void setViewingPosition (QPointF topleft);
@@ -124,12 +110,11 @@ public:
     float64 getXGridPixelIntervall();
 
     // events
-    QString getEventName (uint16 event_type_id) const;
     QColor getEventColor (uint16 event_type_id) const;
     void getShownEventTypes(IntList& event_type);
     std::set<uint16> getShownEventTypes () const;
     std::set<uint16> getDisplayedEventTypes () const;
-    void setShownEventTypes(const IntList& event_type, const bool all = false);
+    void setShownEventTypes(const IntList& event_type);
 
     EventGraphicsItem* getSelectedEventItem();
     QSharedPointer<SignalEvent const> getSelectedSignalEvent();
@@ -138,7 +123,7 @@ public:
     void copySelectedEventToChannels();
     void changeSelectedEventType (uint16 new_type);
 
-    uint16 getActualEventCreationType () const;
+    EventType getActualEventCreationType () const;
 
     void updateEventItems ();
 
@@ -159,11 +144,18 @@ public slots:
 
 signals:
     void eventSelected (QSharedPointer<SignalEvent const> selected_event);
-    void signalHeightChanged (unsigned signal_height);
+    void signalHeightChanged (uint32 signal_height);
     void signalSpacingChanged (unsigned signal_spacing);
     void shownEventTypesChanged (std::set<uint16> shown_event_types);
 
 private:
+    //-------------------------------------------------------------------------
+    void addChannel (ChannelID channel_nr);
+
+    //-------------------------------------------------------------------------
+    void removeChannel (ChannelID channel_nr);
+
+    //-------------------------------------------------------------------------
     static uint8 const NAVIGATION_Z = 1;
     static uint8 const X_GRID_Z = 2;
     static uint8 const CHANNEL_SEPARATOR_Z = 3;
@@ -192,6 +184,7 @@ private:
 
     typedef std::map<int32, int32> Int2IntMap;
 
+
     bool checkReadyState(const QString& function);
     bool checkSignalBrowserPtr(const QString function);
     void updateEventItemsImpl ();
@@ -204,24 +197,20 @@ private:
 
     Int2IntMap channel2y_pos_;
     EventGraphicsItem* selected_event_item_;
-    QSharedPointer<EventTableFileReader const> event_table_file_reader_;
 
     // parameters
-    bool release_buffer_;
     float64 pixel_per_sec_;
     int32 signal_height_;
     int32 signal_spacing_;
     int32 prefered_x_grid_pixel_intervall_;
     int32 prefered_y_grid_pixel_intervall_;
     float64 x_grid_pixel_intervall_;
-    std::set<uint16> shown_event_types_;
+    std::set<EventType> shown_event_types_;
     uint16 actual_event_creation_type_;
 
     bool show_y_grid_;
     bool show_x_grid_;
     ScaleMode auto_zoom_type_;
-    bool all_event_types_selected_;
-
 };
 
 } // namespace PortingToQT4_

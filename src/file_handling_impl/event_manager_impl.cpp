@@ -8,14 +8,14 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-EventManagerImpl::EventManagerImpl (FileSignalReader& reader,
-                            EventTableFileReader const& event_table_reader)
+EventManagerImpl::EventManagerImpl (QSharedPointer<FileSignalReader> reader,
+                                    EventTableFileReader const& event_table_reader)
     : reader_ (reader),
       event_table_reader_ (event_table_reader)
 {
-    assert (reader_.isOpen());
+    assert (reader_->isOpen());
     FileSignalReader::SignalEventVector signal_events;
-    reader_.loadEvents (signal_events);
+    reader_->loadEvents (signal_events);
     next_free_id_ = 0;
     for (int index = 0; index < signal_events.size(); index++)
     {
@@ -25,7 +25,7 @@ EventManagerImpl::EventManagerImpl (FileSignalReader& reader,
                                                    next_free_id_)));
         next_free_id_++;
     }
-    sample_rate_ = reader_.getBasicHeader()->getEventSamplerate();
+    sample_rate_ = reader_->getBasicHeader()->getEventSamplerate();
 }
 
 //-----------------------------------------------------------------------------
@@ -121,6 +121,11 @@ QList<EventID> EventManagerImpl::getAllEvents () const
     return event_map_.keys ();
 }
 
+//-----------------------------------------------------------------------------
+std::set<EventType> EventManagerImpl::getAllPossibleEventTypes () const
+{
+    return event_table_reader_.getAllEventTypes ();
+}
 
 //-----------------------------------------------------------------------------
 QList<EventID> EventManagerImpl::getEvents (EventType type) const
@@ -147,7 +152,6 @@ QMap<uint32, EventID> EventManagerImpl::getEventPositions (EventType type) const
         {
             events.insert (event_iter.value()->getPosition (), event_iter.key ());
         }
-
     return events;
 }
 

@@ -47,6 +47,8 @@
 #include <QSettings>
 #include <QSharedPointer>
 #include <QObject>
+#include <QTime>
+#include <QProgressDialog>
 
 #include <cmath>
 #include <iostream>
@@ -67,7 +69,6 @@ MainWindowModel::MainWindowModel (ApplicationContext& application_context)
   file_context_ (0)
 {
     log_stream_.reset(new QTextStream(&log_string_));
-    file_signal_reader_.reset(0);
 
     event_table_file_reader_ = QSharedPointer<EventTableFileReader>(new EventTableFileReader);
     event_table_file_reader_->setLogStream(log_stream_.get());
@@ -336,7 +337,7 @@ void MainWindowModel::fileSaveAction()
 
     // save
     file_signal_writer->setLogStream(log_stream_.get());
-    QString save_error = file_signal_writer->save(*file_signal_reader_.get(), event_vector,
+    QString save_error = file_signal_writer->save(*file_signal_reader_, event_vector,
                                                   file_name, true);
 
     if (save_error.size() == 0)
@@ -404,7 +405,7 @@ void MainWindowModel::fileSaveAsAction()
     // save
     file_signal_writer->setLogStream(log_stream_.get());
 
-    QString save_error = file_signal_writer->save(*file_signal_reader_.get(), event_vector,
+    QString save_error = file_signal_writer->save(*file_signal_reader_, event_vector,
                                                   file_name, true);
 
     if (save_error.size () == 0)
@@ -456,7 +457,7 @@ void MainWindowModel::fileExportEventsAction()
                                       *event_table_file_reader_.data(),
                                       main_window_);
 
-    event_type_dialog.setShownTypes(event_types); //, signal_browser_model_->isShowAllEventTypes());
+    event_type_dialog.setShownTypes(event_types);
     event_type_dialog.loadSettings();
     event_type_dialog.exec();
     event_type_dialog.saveSettings();
@@ -521,7 +522,7 @@ void MainWindowModel::fileExportEventsAction()
     // export
     file_signal_writer->setLogStream(log_stream_.get());
 
-    QString save_error = file_signal_writer->save(*file_signal_reader_.get(), event_vector,
+    QString save_error = file_signal_writer->save(*file_signal_reader_, event_vector,
                                                   file_name, false);
 
     if (save_error.size () == 0)
@@ -617,7 +618,7 @@ void MainWindowModel::fileImportEventsAction()
                                       *event_table_file_reader_.data(),
                                       main_window_);
 
-    event_type_dialog.setShownTypes(event_types); //, signal_browser_model_->isShowAllEventTypes());
+    event_type_dialog.setShownTypes(event_types);
     event_type_dialog.loadSettings();
     event_type_dialog.exec();
     event_type_dialog.saveSettings();
@@ -681,7 +682,7 @@ void MainWindowModel::recentFileActivated(QAction* recent_file_action)
     openFile(recent_file_action->text());
 }
 
-// file open
+//-----------------------------------------------------------------------------
 void MainWindowModel::openFile(const QString& file_name)
 {
     // close
@@ -692,16 +693,14 @@ void MainWindowModel::openFile(const QString& file_name)
             return; // user cancel
     }
 
-
-    // open siganl reader
-    FileSignalReader* signal_reader = 0;
+    // open signal reader
+    QSharedPointer<FileSignalReader> signal_reader;
     QString load;
 
     if (file_name.lastIndexOf('.') != -1)
     {
-        signal_reader = FileSignalReaderFactory::getInstance()->
-                    getElement(file_name.mid(file_name.lastIndexOf('.')));
-
+        signal_reader = QSharedPointer<FileSignalReader>(FileSignalReaderFactory::getInstance()->
+                    getElement(file_name.mid(file_name.lastIndexOf('.'))));
         if (signal_reader)
         {
             signal_reader->setLogStream(log_stream_.get());
@@ -709,26 +708,17 @@ void MainWindowModel::openFile(const QString& file_name)
 
             if (load.size ())
             {
-                delete signal_reader;
+                main_window_->showErrorReadDialog(file_name + " \"" + load + "\"");
+                return;
             }
         }
     }
 
-    if (load.size ())
-    {
-        *log_stream_ << "MainWindowModel::openFile Error: "
-                     << "file format: '" << file_name
-                     << "'\n";
-
-        main_window_->showErrorReadDialog(file_name + " \"" + load + "\"");
-        return;
-    }
-
     // loading successfull
-    file_signal_reader_.reset(signal_reader);
+    file_signal_reader_ = signal_reader;
 
     TabContext* tab_context = new TabContext ();
-    event_manager_ = new EventManagerImpl (*file_signal_reader_, *event_table_file_reader_);
+    event_manager_ = new EventManagerImpl (file_signal_reader_, *event_table_file_reader_);
     channel_manager_ = new ChannelManagerImpl (*file_signal_reader_);
     file_context_ = new FileContext (*event_manager_, *channel_manager_, *tab_context);
     application_context_.getGUIActionManager().connect(file_context_, SIGNAL(stateChanged(FileState)), SLOT(setFileState(FileState)));
@@ -741,7 +731,7 @@ void MainWindowModel::openFile(const QString& file_name)
 
 
     // initialize signal browser
-    signal_browser_model_ = QSharedPointer<SignalBrowserModel>(new SignalBrowserModel(*signal_reader, *this, event_table_file_reader_, application_context_, *file_context_, *tab_context));
+    signal_browser_model_ = QSharedPointer<SignalBrowserModel>(new SignalBrowserModel(*signal_reader, *this, application_context_, *file_context_, *tab_context));
     signal_browser_model_->setLogStream(log_stream_.get());
 
     connect (event_manager_, SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)),
@@ -786,7 +776,8 @@ void MainWindowModel::openFile(const QString& file_name)
     recent_file_list_.push_front(file_name);
 
     // select channels
-    if (!channelSelection ())
+    std::set<ChannelID> shown_channels = channelSelection();
+    if (!shown_channels.size ())
     {
         fileCloseAction ();
         return;
@@ -795,15 +786,7 @@ void MainWindowModel::openFile(const QString& file_name)
     tab_widget_->show();
     signal_browser_->show();
 
-    // set signals per page to all
-    int32 nr_shown_channels = signal_browser_model_->getNumberShownChannels();
-    nr_shown_channels = nr_shown_channels == 0 ? 1 : nr_shown_channels;
-
-    int32 signal_height = (int32)(signal_browser_->getVisibleHeight() /
-                                  nr_shown_channels) -
-                          (signal_browser_model_->getSignalSpacing() * 2);
-
-    signal_browser_model_->setItemsHeight(signal_height);
+    signal_browser_model_->setShownChannels (shown_channels);
     main_window_->setSignalsPerPage(-1); // all
 
     // set status bar
@@ -816,7 +799,6 @@ void MainWindowModel::openFile(const QString& file_name)
     secsPerPageChanged(secs_per_page_);
     main_window_->setSecsPerPage(secs_per_page_);
     signal_browser_model_->updateLayout();
-    signal_browser_model_->autoScaleAll();
 }
 
 // file close action
@@ -847,7 +829,7 @@ void MainWindowModel::fileCloseAction()
     signal_browser_ = 0;
     signal_browser_tab_ = 0;
     file_signal_reader_->close();
-    file_signal_reader_.reset(0);
+    file_signal_reader_.clear();
 
 
     // reset status bar
@@ -1195,58 +1177,11 @@ void MainWindowModel::viewFitToEventAction()
     CommandStack::instance().executeViewCommand(eventCommand);
 }
 
-// options channels action
+//-----------------------------------------------------------------------------
 void MainWindowModel::optionsChannelsAction()
 {
-    channelSelection ();
-
-    // mouse mode
-
-    //main_window_->setMouseMode(signal_browser_model_->getMode());
-
-
-
-    // set signals per page to all
-
-    //int32 nr_shown_channels = signal_browser_model_->getNumberShownChannels();
-
-    //nr_shown_channels = nr_shown_channels == 0 ? 1 : nr_shown_channels;
-
-    //int32 signal_height = (int32)(signal_browser_ ->getCanvasView()->visibleHeight() /
-
-    //                              nr_shown_channels) -
-
-    //                      signal_browser_model_->getSignalSpacing();
-
-    //signal_browser_model_->setSignalHeight(signal_height);
-
-    //main_window_->setSignalsPerPage(-1); // all
-
-
-
-    // set secs per page 10
-
-    //signal_browser_model_->setPixelPerSec(signal_browser_->getCanvasView()->visibleWidth() / 10.0);
-
-    //main_window_->setSecsPerPage(10.0);
-
-
-
-    // set status bar
-
-    //main_window_->setStatusBarSignalLength(file_signal_reader_->getBasicHeader()->getNumberRecords() *
-
-    //                                       file_signal_reader_->getBasicHeader()->getRecordDuration());
-
-    //main_window_->setStatusBarNrChannels(file_signal_reader_->getBasicHeader()->getNumberChannels());
-
-
-
-    // show signal_browser
-
-    //signal_browser_model_->autoScaleAll(); // autoscal on startup
-    signal_browser_->show();
-
+    signal_browser_model_->setShownChannels (channelSelection ());
+    signal_browser_model_->updateLayout();
 }
 
 //-----------------------------------------------------------------------------
@@ -1266,20 +1201,13 @@ void MainWindowModel::optionsChangeCreationType ()
 }
 
 //-----------------------------------------------------------------------------
-bool MainWindowModel::channelSelection ()
+std::set<ChannelID> MainWindowModel::channelSelection () const
 {
-    if (!checkMainWindowPtr("optionsChannelsAction") ||
-        !file_context_)
-    {
-        return false;
-    }
-
     ChannelSelectionDialog channel_dialog(file_signal_reader_->getBasicHeader(),
                                           main_window_);
 
-    // current selected channels
-
     bool empty_selection = signal_browser_model_->getNumberShownChannels() == 0;
+    std::set<ChannelID> pre_selected_channels;
 
     for (uint32 channel_nr = 0;
          channel_nr < file_signal_reader_->getBasicHeader()->getNumberChannels();
@@ -1288,7 +1216,10 @@ bool MainWindowModel::channelSelection ()
         bool show_channel = empty_selection ||
                             signal_browser_model_->isChannelShown(channel_nr);
 
-        channel_dialog.setSelected(channel_nr, show_channel);
+        if (!empty_selection)
+            pre_selected_channels.insert (channel_nr);
+
+        channel_dialog.setSelected (channel_nr, show_channel);
     }
 
     channel_dialog.loadSettings();
@@ -1296,26 +1227,17 @@ bool MainWindowModel::channelSelection ()
     channel_dialog.saveSettings();
 
     if (channel_dialog.result() == QDialog::Rejected)
-    {
-        return false; // user cancel
-    }
+        return pre_selected_channels;
 
+    std::set<ChannelID> selected_channels;
     for (uint32 channel_nr = 0;
          channel_nr < file_signal_reader_->getBasicHeader()->getNumberChannels();
          channel_nr++)
     {
-        if (channel_dialog.isSelected(channel_nr))
-        {
-            signal_browser_model_->addChannel(channel_nr);
-        }
-        else
-        {
-            signal_browser_model_->removeChannel(channel_nr);
-        }
+        if (channel_dialog.isSelected (channel_nr))
+            selected_channels.insert (channel_nr);
     }
-    signal_browser_model_->initBuffer();
-    signal_browser_model_->updateLayout();
-    return true;
+    return selected_channels;
 }
 
 //-----------------------------------------------------------------------------
@@ -1376,7 +1298,7 @@ void MainWindowModel::optionsShowEventsAction()
                                       *event_table_file_reader_.data(),
                                       main_window_);
 
-    event_type_dialog.setShownTypes(shown_event_types, signal_browser_model_->isShowAllEventTypes());
+    event_type_dialog.setShownTypes(shown_event_types);
     event_type_dialog.loadSettings();
     event_type_dialog.exec();
     event_type_dialog.saveSettings();
@@ -1564,7 +1486,7 @@ void MainWindowModel::pixelPerSecChanged(float64 pixel_per_sec)
     main_window_->setSecsPerPage(secs_per_page);
 }
 
-// signal height changed
+//-----------------------------------------------------------------------------
 void MainWindowModel::signalHeightChanged(int32 signal_height)
 {
     if (!checkMainWindowPtr("signalHeightChanged") ||

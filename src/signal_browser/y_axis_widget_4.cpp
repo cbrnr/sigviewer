@@ -5,6 +5,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPixmap>
+#include <QProgressDialog>
 
 #include <cmath>
 
@@ -41,8 +42,6 @@ void YAxisWidget::addChannel(int32 channel_nr, SignalGraphicsItem const* const s
     if (signal_item)
     {
         channel_nr2signal_graphics_item_[channel_nr] = signal_item;
-        connect (signal_item, SIGNAL(shifting(int32)), this, SLOT(updateChannel(int32)));
-        repaintPixmap ();
         update ();
     }
 }
@@ -55,13 +54,12 @@ void YAxisWidget::removeChannel(int32 channel_nr)
     if (it != channel_nr2signal_graphics_item_.end())
     {
         channel_nr2signal_graphics_item_.erase(it);
-        repaintPixmap ();
         update ();
     }
 }
 
 //-----------------------------------------------------------------------------
-void YAxisWidget::changeSignalHeight (unsigned signal_height)
+void YAxisWidget::changeSignalHeight (uint32 signal_height)
 {
     signal_height_ = signal_height;
     repaintPixmap ();
@@ -84,10 +82,10 @@ void YAxisWidget::changeYStart (int y_start)
 }
 
 //-----------------------------------------------------------------------------
-void YAxisWidget::updateChannel (int32)
+void YAxisWidget::updateChannel (ChannelID channel)
 {
     // TODO: repaint selective and not all!!
-    repaintPixmap ();
+    repaintPixmap (channel);
     update ();
 }
 
@@ -113,8 +111,11 @@ void YAxisWidget::paintEvent(QPaintEvent*)
 }
 
 //-------------------------------------------------------------------
-void YAxisWidget::repaintPixmap ()
+void YAxisWidget::repaintPixmap (int32 channel)
 {
+    return;
+    if (!isVisible())
+        return;
     if (channel_nr2signal_graphics_item_.size() == 0)
         return;
 
@@ -123,20 +124,56 @@ void YAxisWidget::repaintPixmap ()
     unsigned w = width ();
 
     if (pixmap_)
-        delete pixmap_;
-    pixmap_ = new QPixmap (w, height);
-    pixmap_->fill (palette().background().color());
+    {
+        if (pixmap_->height() < height ||
+            pixmap_->width() < w)
+        {
+            pixmap_ = new QPixmap (w, height);
+            delete pixmap_;
+            pixmap_ = new QPixmap (w, height);
+        }
+    }
+    else
+        pixmap_ = new QPixmap (w, height);
 
     QPainter painter (pixmap_);
     painter.setPen(Qt::black);
     painter.setClipping (true);
 
     QMap<int32, SignalGraphicsItem const*>::const_iterator iter = channel_nr2signal_graphics_item_.begin();
-    for (float y_start = 0;
-         iter != channel_nr2signal_graphics_item_.end();
+    QMap<int32, SignalGraphicsItem const*>::const_iterator end_iter = channel_nr2signal_graphics_item_.end();
+    float y_start = 0;
+
+    if (channel >= 0)
+    {
+        iter = channel_nr2signal_graphics_item_.find (channel);
+        end_iter = iter;
+        ++end_iter;
+        QMap<int32, SignalGraphicsItem const*>::const_iterator y_calc_iter = iter;
+        while (y_calc_iter != channel_nr2signal_graphics_item_.begin())
+        {
+            --y_calc_iter;
+            y_start += intervall;
+        }
+    }
+
+    // waldesel: this dialog is needed because drawing of strings
+    //           is very slow... I hope with qt4.7 this is not longer needed!
+//    QProgressDialog progress;
+//    progress.setMaximum (channel_nr2signal_graphics_item_.size());
+//    progress.setMinimum (0);
+//    progress.setModal (true);
+//    progress.setLabelText (tr("Drawing Y Axis "));
+//    progress.show ();
+
+    for (;
+         iter != end_iter;
          y_start += intervall, ++iter)
     {
+//        progress.setValue (iter.key ());
         painter.setClipRect (0, y_start, w, signal_height_+1);
+        painter.fillRect (0, y_start, w, signal_height_+1, palette().background().color());
+
         painter.drawLine (0, y_start,
                           w - 1, y_start);
         painter.drawLine (0, y_start + signal_height_,
@@ -146,8 +183,6 @@ void YAxisWidget::repaintPixmap ()
         float64 zero_y = y_start + (static_cast<float32>(signal_height_) / 2.0f);
         painter.translate (0, zero_y);
         float64 y_grid_pixel_intervall = iter.value()->getYGridPixelIntervall();
-        if (!y_grid_pixel_intervall)
-            y_grid_pixel_intervall = 10;
 
         float64 offset = iter.value()->getYOffset();
 
@@ -180,7 +215,7 @@ void YAxisWidget::repaintPixmap ()
 
         painter.translate (0, -zero_y);
     }
-
+//    progress.setValue (progress.maximum ());
 }
 
 

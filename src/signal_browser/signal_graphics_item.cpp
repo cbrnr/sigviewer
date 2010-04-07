@@ -30,12 +30,12 @@ float64 SignalGraphicsItem::prefered_pixel_per_sample_ = 1.0;
 
 
 //-----------------------------------------------------------------------------
-SignalGraphicsItem::SignalGraphicsItem(EventManager& event_manager,
-                                       CommandExecuter& command_executor,
-                                       ChannelManager& channel_manager,
-                                       ChannelID id,
-                                       const SignalChannel& channel,
-                                       SignalBrowserModel& model)
+SignalGraphicsItem::SignalGraphicsItem (EventManager& event_manager,
+                                        CommandExecuter& command_executor,
+                                        ChannelManager& channel_manager,
+                                        ChannelID id,
+                                        const SignalChannel& channel,
+                                        SignalBrowserModel& model)
 : event_manager_ (event_manager),
   command_executor_ (command_executor),
   channel_manager_ (channel_manager),
@@ -45,11 +45,9 @@ SignalGraphicsItem::SignalGraphicsItem(EventManager& event_manager,
   minimum_ (channel_manager_.getMinValue (id_)),
   maximum_ (channel_manager_.getMaxValue (id_)),
   y_zoom_ (1),
-  y_grid_pixel_intervall_(1),
   draw_y_grid_ (true),
-  y_offset_((channel.getPhysicalMinimum() +
-             channel.getPhysicalMaximum()) / 2.0),
-  height_ (1), // FIXME: arbitrary number!!
+  y_offset_ (0),
+  height_ (model.getSignalHeight()),
   width_ (0),
   shifting_ (false),
   new_event_ (false),
@@ -59,6 +57,10 @@ SignalGraphicsItem::SignalGraphicsItem(EventManager& event_manager,
 #if QT_VERSION >= 0x040600
     setFlag (QGraphicsItem::ItemUsesExtendedStyleOption, true);
 #endif    
+    float64 value_range = (fabs(maximum_) + fabs(minimum_));
+    float64 y_grid_intervall
+        = round125(value_range / height_ * signal_browser_model_.getPreferedYGirdPixelIntervall());
+    y_grid_pixel_intervall_ = y_zoom_ * y_grid_intervall;
 }
 
 //-----------------------------------------------------------------------------
@@ -69,11 +71,14 @@ SignalGraphicsItem::~SignalGraphicsItem ()
 
 
 //-----------------------------------------------------------------------------
-void SignalGraphicsItem::setHeight (int32 height)
+void SignalGraphicsItem::setHeight (uint32 height)
 {
    this->prepareGeometryChange();
+   y_zoom_ = y_zoom_ * height / height_;
+   y_offset_ = y_offset_* height / height_;
    height_ = height;
    width_ = channel_manager_.getDurationInSec() * signal_browser_model_.getPixelPerXUnit();
+   updateYGridIntervall ();
 }
 
 
@@ -173,7 +178,8 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     float32 new_y = 0;
 
     painter->translate (0, height_ / 2.0f);  
-    drawYGrid (painter, option);
+    if (draw_y_grid_)
+        drawYGrid (painter, option);
     painter->setPen(Qt::darkBlue);
 
     for (unsigned index = 0;
@@ -199,6 +205,8 @@ void SignalGraphicsItem::updateYGridIntervall ()
     float64 y_grid_intervall
         = round125(value_range / height_ * signal_browser_model_.getPreferedYGirdPixelIntervall());
     y_grid_pixel_intervall_ = y_zoom_ * y_grid_intervall;
+
+    emit updatedYGrid (id_);
 }
 
 //-----------------------------------------------------------------------------

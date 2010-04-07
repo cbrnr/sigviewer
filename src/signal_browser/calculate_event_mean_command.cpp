@@ -38,8 +38,8 @@ void CalculateEventMeanCommand::execute ()
 {
     QSharedPointer<BlocksVisualisationModel> bv_model = main_window_model_.createBlocksVisualisationView (tr("Mean"));
 
-    uint32 samples_before_event = seconds_before_event_ * event_manager_.getSampleRate();
-    uint32 number_samples = length_in_seconds_ * event_manager_.getSampleRate();
+    //uint32 samples_before_event = seconds_before_event_ * event_manager_.getSampleRate();
+    //uint32 number_samples = length_in_seconds_ * event_manager_.getSampleRate();
 
     for (unsigned index = 0; index < channels_.size(); index++)
     {

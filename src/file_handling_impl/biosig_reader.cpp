@@ -129,7 +129,11 @@ QSharedPointer<DataBlock const> BioSigReader::getSignalData (ChannelID channel_i
     if (!channel_map_.contains(channel_id))
         return QSharedPointer<DataBlock const> (0);
 
-    return channel_map_[channel_id]->createSubBlock (start_sample, length);
+    if (length == basic_header_->getNumberOfSamples() &&
+        start_sample == 0)
+        return channel_map_[channel_id];
+    else
+        return channel_map_[channel_id]->createSubBlock (start_sample, length);
     /*
     start_sample = floor (static_cast<float32>(start_sample) / biosig_header_->SPR);
     start_sample *= biosig_header_->SPR;

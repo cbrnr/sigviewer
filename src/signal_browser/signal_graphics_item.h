@@ -34,7 +34,6 @@ public:
 
     virtual ~SignalGraphicsItem ();
 
-    void setHeight (int32 height);
     virtual QRectF boundingRect () const;
 
     void updateYGridIntervall();
@@ -48,12 +47,16 @@ public:
 
     void zoomIn();
     void zoomOut();
-    void autoScale(ScaleMode auto_zoom_type = MAX_TO_MAX);
+    void autoScale (ScaleMode auto_zoom_type);
+
+public slots:
+    void setHeight (uint32 height);
 
 signals:
     void mouseAtSecond (float64 sec);
     void mouseMoving (bool mouse_is_moving);
-    void shifting (int32 channel_nr);
+    void shifting (ChannelID channel_id);
+    void updatedYGrid (ChannelID channel_id);
 
 private:
     virtual void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );

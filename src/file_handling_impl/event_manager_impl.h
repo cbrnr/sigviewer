@@ -4,6 +4,7 @@
 #include "../file_handling/event_manager.h"
 #include "../file_handling/file_signal_reader.h"
 
+#include <QSharedPointer>
 #include <QMap>
 
 namespace BioSig_
@@ -14,7 +15,7 @@ class EventTableFileReader;
 class EventManagerImpl : public EventManager
 {
 public:
-    EventManagerImpl (FileSignalReader& reader,
+    EventManagerImpl (QSharedPointer<FileSignalReader> reader,
                   EventTableFileReader const& event_table_reader);
     virtual ~EventManagerImpl ();
 
@@ -60,6 +61,10 @@ public:
 
     //-------------------------------------------------------------------------
     /// see base class
+    virtual std::set<EventType> getAllPossibleEventTypes () const;
+
+    //-------------------------------------------------------------------------
+    /// see base class
     virtual QList<EventID> getEvents (EventType type) const;
 
     //-------------------------------------------------------------------------
@@ -71,7 +76,7 @@ public:
     void getAllEvents (FileSignalReader::SignalEventVector& event_vector) const;
 
 private:
-    FileSignalReader& reader_;
+    QSharedPointer<FileSignalReader> reader_;
     EventTableFileReader const& event_table_reader_;
 
     double sample_rate_;

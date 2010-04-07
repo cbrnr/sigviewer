@@ -454,7 +454,7 @@ void EventGraphicsItem::addContextMenuEntry ()
         }
     }
 
-    QString event_name = signal_browser_model_.getEventName(signal_event_->getType());
+    QString event_name = event_manager_.getNameOfEventType (signal_event_->getType());
 
     context_menu_->addEvent(signal_event_->getId(), event_name);
     context_menu_mutex_.unlock();

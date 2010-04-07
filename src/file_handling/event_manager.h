@@ -74,6 +74,11 @@ public:
     virtual QList<EventID> getAllEvents () const = 0;
 
     //-------------------------------------------------------------------------
+    /// @return set of event_id of all possible event types (even those of
+    ///         which no event exists at the moment
+    virtual std::set<EventType> getAllPossibleEventTypes () const = 0;
+
+    //-------------------------------------------------------------------------
     /// @return set of event_ids of events of the given type
     virtual QList<EventID> getEvents (EventType type) const = 0;
 

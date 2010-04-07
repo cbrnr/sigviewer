@@ -26,15 +26,15 @@ public:
     void removeChannel(int32 channel_nr);
 
 public slots:
-    void changeSignalHeight (unsigned signal_height);
+    void changeSignalHeight (uint32 signal_height);
     void changeSignalSpacing (unsigned signal_spacing);
     void changeYStart (int32 y_start);
-    void updateChannel (int32 channel_nr);
+    void updateChannel (ChannelID channel_nr);
     void updateAllChannels ();
 
 private:
     virtual void paintEvent(QPaintEvent* event = 0);
-    void repaintPixmap ();
+    void repaintPixmap (int32 channel = -1);
 
     QPixmap* pixmap_;
     unsigned signal_height_;

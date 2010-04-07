@@ -15,6 +15,7 @@
 
 #include <list>
 #include <map>
+#include <set>
 
 class QAction;
 class QTextStream;
@@ -118,12 +119,12 @@ private:
 
     //-------------------------------------------------------------------------
     bool checkMainWindowPtr(const QString function);
-    bool channelSelection ();
+    std::set<ChannelID> channelSelection () const;
     uint16 selectEventTypeDialog (uint16 preselected_type) const;
 
     MainWindow* main_window_;
     ApplicationContext& application_context_;
-    std::auto_ptr<FileSignalReader> file_signal_reader_;
+    QSharedPointer<FileSignalReader> file_signal_reader_;
     QSharedPointer<SignalBrowserModel> signal_browser_model_;
     SignalBrowserView* signal_browser_; // main_window cares for destruction!!
     QTabWidget* tab_widget_;

@@ -5,6 +5,7 @@
 #include "new_event_undo_command.h"
 #include "resize_event_undo_command.h"
 #include "../command_executer.h"
+#include "../file_handling/event_manager.h"
 
 
 #include <QPushButton>
@@ -101,7 +102,7 @@ void EventInfoWidget::updateShownEventTypes (std::set<uint16> shown_event_types)
          it != shown_event_types.end();
          ++it)
     {
-        QString event_name = signal_browser_model_->getEventName(*it);
+        QString event_name = event_manager_.getNameOfEventType (*it);
         shown_event_types_[*it] = event_name;
         event_type_combobox_->addItem (event_name, QVariant(*it));
     }
