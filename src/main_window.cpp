@@ -59,6 +59,7 @@ MainWindow::MainWindow (ApplicationContext& application_context,
    model_(model),
    action_manager_ (application_context.getGUIActionManager())
 {
+    setWindowTitle (tr("SigViewer"));
     setAcceptDrops (true);
     setWindowIcon(QIcon(":images/sigviewer16.png"));
     initStatusBar();

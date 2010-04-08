@@ -179,9 +179,28 @@ SignalBrowserMode SignalBrowserModel::getMode()
 
 
 //-----------------------------------------------------------------------------
-void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
+bool SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
                                            new_shown_channels)
 {
+    bool new_channels = true;
+    if (new_shown_channels.size() == channel2signal_item_.size())
+    {
+        new_channels = false;
+        for (std::set<ChannelID>::const_iterator channel = new_shown_channels.begin();
+             channel != new_shown_channels.end();
+             ++channel)
+        {
+            if (channel2signal_item_.count (*channel) == 0)
+            {
+                channel = new_shown_channels.end ();
+                new_channels = true;
+            }
+
+        }
+    }
+    if (!new_channels)
+        return new_channels;
+
     signal_height_ = signal_browser_view_->getVisibleHeight() /
                      new_shown_channels.size();
     signal_height_ -= signal_spacing_;
@@ -217,6 +236,8 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
          channel != new_shown_channels.end();
          ++channel)
         channel2signal_item_[*channel]->autoScale (auto_zoom_type_);
+
+    return new_channels;
 }
 
 //-----------------------------------------------------------------------------

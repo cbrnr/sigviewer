@@ -799,6 +799,7 @@ void MainWindowModel::openFile(const QString& file_name)
     secsPerPageChanged(secs_per_page_);
     main_window_->setSecsPerPage(secs_per_page_);
     signal_browser_model_->updateLayout();
+    main_window_->setWindowTitle (tr("SigViewer - ") + file_name);
 }
 
 // file close action
@@ -840,6 +841,7 @@ void MainWindowModel::fileCloseAction()
     file_context_ = 0;
 
     application_context_.setState(APP_STATE_NO_FILE_OPEN);
+    main_window_->setWindowTitle (tr("SigViewer"));
 }
 
 // file info action
@@ -1180,8 +1182,8 @@ void MainWindowModel::viewFitToEventAction()
 //-----------------------------------------------------------------------------
 void MainWindowModel::optionsChannelsAction()
 {
-    signal_browser_model_->setShownChannels (channelSelection ());
-    signal_browser_model_->updateLayout();
+    if (signal_browser_model_->setShownChannels (channelSelection ()))
+        signal_browser_model_->updateLayout();
 }
 
 //-----------------------------------------------------------------------------
