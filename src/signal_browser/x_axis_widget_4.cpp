@@ -57,7 +57,6 @@ QSize XAxisWidget::sizeHint () const
 void XAxisWidget::changeIntervall (float64 intervall)
 {
     intervall_ = intervall;
-//    redrawScene ();
     update ();
 }
 
@@ -72,7 +71,6 @@ void XAxisWidget::changeXStart(int32 x_start)
 void XAxisWidget::changePixelPerSec(float64 pixel_per_sec)
 {
     pixel_per_sec_ = pixel_per_sec;
-//    redrawScene ();
     update ();
 }
 

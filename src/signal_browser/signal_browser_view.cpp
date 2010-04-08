@@ -43,8 +43,9 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     graphics_view_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphics_view_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphics_view_->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
+    graphics_view_->setDragMode(QGraphicsView::ScrollHandDrag);
 
-    y_axis_widget_ = new YAxisWidget (this);//, *signal_browser_model, this);
+    y_axis_widget_ = new YAxisWidget (this);
     hideable_widgets_["Y Axis"] = y_axis_widget_;
     y_axis_widget_->resize(70, height());
     y_axis_widget_->setMinimumSize(70, 0);
@@ -128,6 +129,7 @@ void SignalBrowserView::resizeScene (int32 width, int32 height)
     graphics_scene_->setSceneRect (0, 0, width, height);
     graphics_view_->centerOn (0,0);
     y_axis_widget_->changeYStart (0);
+    x_axis_widget_->changeXStart (0);
 }
 
 //-----------------------------------------------------------------------------
@@ -275,9 +277,10 @@ void SignalBrowserView::updateWidgets (bool update_view)
     y_axis_widget_->updateAllChannels();
     x_axis_widget_->update();
     label_widget_->update();
-
-    emit visibleYChanged (graphics_view_->mapToScene(0,0).y());
-    y_axis_widget_->changeYStart (0);
+    qreal y = graphics_view_->mapToScene(0,0).y();
+    if (y < 0)
+        y = 0;
+    emit visibleYChanged (y);
 }
 
 //-----------------------------------------------------------------------------
@@ -296,7 +299,10 @@ void SignalBrowserView::setPixelPerSec (float64 pixel_per_sec)
 void SignalBrowserView::verticalSrollbarMoved(int)
 {
     label_widget_->update();//repaint();
-    emit visibleYChanged (graphics_view_->mapToScene(0,0).y());
+    qreal y = graphics_view_->mapToScene(0,0).y();
+    if (y < 0)
+        y = 0;
+    emit visibleYChanged (y);
 }
 
 //-----------------------------------------------------------------------------
@@ -320,7 +326,10 @@ void SignalBrowserView::verticalScrollBarRangeChaned (int min, int max)
     label_widget_->update ();//repaint();
     vertical_scrollbar_->setRange(min, max);
     vertical_scrollbar_->setPageStep(graphics_view_->verticalScrollBar()->pageStep());
-    emit visibleYChanged (graphics_view_->mapToScene(0,0).y());
+    qreal y = graphics_view_->mapToScene(0,0).y();
+    if (y < 0)
+        y = 0;
+    emit visibleYChanged (y);
 }
 
 //-----------------------------------------------------------------------------
