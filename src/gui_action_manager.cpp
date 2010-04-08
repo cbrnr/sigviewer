@@ -336,7 +336,7 @@ void GUIActionManager::initOptionsActions ()
 void GUIActionManager::initToolsActions ()
 {
     createAction (ACTION_CALCULATE_MEANS,
-                  tr("Calculate Mean (strongly under development!)"),
+                  tr("Calculate Mean (alpha version)"),
                   SLOT(calculateMeanAction()),
                   tr("Calculates mean of selected event type"));
 }

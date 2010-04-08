@@ -2,15 +2,16 @@ Version 0.3.0
 (*) removed all Qt3 stuff, now complete ported to Qt4
 (+) dropping of files into SigViewer opens the file
 (+) opening files via commandline parameter
-(+) EventInfoWidget auf der rechten Seite zum einfacheren Editieren von Events (wird laufend ausgebaut)
+(+) Event Toolbar (for editing selected events)
 (+) Calculate Mean (alpha version.. :) )
-(+) Undo/Redo for editing of events
+(+) Undo/Redo for any editing of events
 (+) insert event (Shortcut CTRL+I ... creates new event at the same place of the selected event)
 (+) event browsing (Ctrl+Right, Ctrl+Left: goto the next/previous event of same type of selected event)
-(+) fit view (das X-Scaling so einstellen, dass es genau auf das selektierte Event passt)
+(+) fit view to selected event (x-
 (+) hide events of other Type (events vom typ, die ungleich dem typ des gerade ausgewählten events sind, werden ausgeblendet)
-(+) x-highlighting on x-axis when editing or creating of event
+(+) x-highlighting on x-axis when editing or creating an event
 (+) new context menu for events
+(+) simple hiding/revealing of label and axis widgets
 (-) scrolling during creation of events is now possible (will be readded as soon as possible)
 (B) fixed many bugs
 (*) refactoring and many code clean-ups... :) (especially decoupling of classes)
