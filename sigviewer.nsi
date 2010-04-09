@@ -42,6 +42,9 @@ Section "SigViewer" SecSigViewer
   
   File "bin\sigviewer.exe"
   File "bin\mingwm10.dll"
+  File "bin\libgcc_s_dw2-1.dll"
+  File "bin\QtCore4.dll"
+  File "bin\QtGui4.dll"
   
   ;Store installation folder
   WriteRegStr HKCU "Software\SigViewer" "" $INSTDIR
@@ -86,6 +89,9 @@ Section "Uninstall"
   Delete "$INSTDIR\Uninstall.exe"
   Delete "$INSTDIR\sigviewer.exe"
   Delete "$INSTDIR\mingwm10.dll"
+  Delete "$INSTDIR\libgcc_s_dw2-1.dll"
+  Delete "$INSTDIR\QtCore4.dll"
+  Delete "$INSTDIR\QtGui4.dll"
   RMDir "$INSTDIR"
   
   RMDir /r $SMPROGRAMS\SigViewer
