@@ -6,7 +6,7 @@
 
   ;Name and file
   Name "SigViewer"
-  OutFile "sigviewer-0.2.5-win32.exe"
+  OutFile "sigviewer-0.3.0-win32.exe"
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\SigViewer"
@@ -41,7 +41,6 @@ Section "SigViewer" SecSigViewer
   SetOutPath "$INSTDIR"
   
   File "bin\sigviewer.exe"
-  File "bin\eventcodes.txt"
   File "bin\mingwm10.dll"
   
   ;Store installation folder
@@ -86,7 +85,6 @@ Section "Uninstall"
   
   Delete "$INSTDIR\Uninstall.exe"
   Delete "$INSTDIR\sigviewer.exe"
-  Delete "$INSTDIR\eventcodes.txt"
   Delete "$INSTDIR\mingwm10.dll"
   RMDir "$INSTDIR"
   
