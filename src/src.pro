@@ -21,7 +21,6 @@ INCLUDEPATH += ../extern
 LIBS += -L../extern \
     -lbiosig \
     -lfftw3
-win32:QMAKE_LFLAGS+=-static-libgcc
 win32:LIBS += -lws2_32
 macx:LIBS += -lz
 RESOURCES = src.qrc
