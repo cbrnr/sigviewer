@@ -3,7 +3,7 @@ Version: 0.3.0
 Section: science
 Priority: extra
 Architecture: <architecture-via-script>
-Depends: libqt4-core (>=4.5), libqt4-gui (>=4.5)
+Depends: libqtcore4 (>=4.5), libqtgui4 (>=4.5)
 Installed-Size: 2355
 Maintainer: Christoph Eibel <christoph.eibel@student.tugraz.at>
 Homepage: http://biosig.sourceforge.net
