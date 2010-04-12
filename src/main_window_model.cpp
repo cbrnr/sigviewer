@@ -1218,7 +1218,7 @@ std::set<ChannelID> MainWindowModel::channelSelection () const
         bool show_channel = empty_selection ||
                             signal_browser_model_->isChannelShown(channel_nr);
 
-        if (!empty_selection)
+        if (!empty_selection && signal_browser_model_->isChannelShown(channel_nr))
             pre_selected_channels.insert (channel_nr);
 
         channel_dialog.setSelected (channel_nr, show_channel);
