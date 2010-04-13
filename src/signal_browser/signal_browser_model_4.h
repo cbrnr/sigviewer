@@ -26,7 +26,6 @@ class BasicHeader;
 class FileSignalReader;
 class SignalBrowserView;
 class SignalGraphicsItem;
-class ApplicationContext;
 class FileContext;
 
 // signal browser model
@@ -41,8 +40,7 @@ public:
 
     SignalBrowserModel(FileSignalReader& reader,
                        MainWindowModel& main_window_model,
-                       ApplicationContext& app_context,
-                       FileContext& file_context,
+                       QSharedPointer<FileContext> file_context,
                        TabContext& tab_context);
     virtual ~SignalBrowserModel();
 
@@ -56,7 +54,6 @@ public:
 
 
 
-    MainWindowModel& getMainWindowModel();
     void setSignalBrowserView(SignalBrowserView* signal_browser_view);
     void setLogStream(QTextStream* log_stream);
     QTextStream& getLogStream();
@@ -168,8 +165,7 @@ private:
         STATE_INIT_BUFFER
     };
 
-    ApplicationContext& app_context_;
-    FileContext& file_context_;
+    QSharedPointer<FileContext> file_context_;
     TabContext& tab_context_;
     SignalBrowserView* signal_browser_view_;
     QTextStream* log_stream_; // no auto_ptr

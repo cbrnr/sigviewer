@@ -13,7 +13,6 @@ namespace BioSig_
 {
 
 class SignalBrowserModel;
-class ApplicationContext;
 
 //-----------------------------------------------------------------------------
 ///
@@ -28,8 +27,7 @@ class EventContextMenu : public QMenu
 
 public:
     //-------------------------------------------------------------------------
-    EventContextMenu (SignalBrowserModel& model,
-                      ApplicationContext& app_context);
+    EventContextMenu (SignalBrowserModel& model);
 
     //-------------------------------------------------------------------------
     virtual ~EventContextMenu ();
@@ -56,7 +54,6 @@ private:
     QVector<QString> event_item_type_names_;
     QVector<QMenu*> sub_menus_;
     SignalBrowserModel& signal_browser_model_;
-    ApplicationContext& app_context_;
 
     //-------------------------------------------------------------------------
     /// copy-constructor disabled

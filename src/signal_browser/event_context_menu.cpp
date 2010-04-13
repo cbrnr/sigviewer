@@ -11,10 +11,8 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-EventContextMenu::EventContextMenu (SignalBrowserModel& model,
-                                    ApplicationContext& app_context)
- : signal_browser_model_ (model),
-   app_context_ (app_context)
+EventContextMenu::EventContextMenu (SignalBrowserModel& model)
+ : signal_browser_model_ (model)
 {
     // nothing to do here
 }
@@ -138,7 +136,7 @@ void EventContextMenu::selectEvent (QAction* q)
 //-------------------------------------------------------------------------
 void EventContextMenu::addActionsToMenu (QMenu& menu)
 {
-    menu.addActions (app_context_.getGUIActionManager().getActionsOfGroup(GUIActionManager::EVENT_CONTEXT_ACTIONS));
+    menu.addActions (ApplicationContext::getInstance()->getGUIActionManager()->getActionsOfGroup(GUIActionManager::EVENT_CONTEXT_ACTIONS));
 }
 
 

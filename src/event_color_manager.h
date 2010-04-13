@@ -17,7 +17,7 @@ class EventTableFileReader;
 class EventColorManager
 {
 public:
-    EventColorManager(EventTableFileReader& event_table_reader);
+    EventColorManager ();
 
     void loadSettings();
     void saveSettings();
@@ -33,7 +33,6 @@ private:
     const EventColorManager& operator=(const EventColorManager& src);
 
     Int2ColorMap event_type2color_;
-    EventTableFileReader& event_table_file_reader_;
 };
 
 } // namespace BioSig_

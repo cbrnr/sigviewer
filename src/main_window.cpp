@@ -30,6 +30,7 @@
 #include "main_window_model.h"
 #include "gui_action_manager.h"
 #include "application_context.h"
+#include "gui/gui_action_factory.h"
 
 #include <QAction>
 #include <QMessageBox>
@@ -53,11 +54,10 @@ namespace BioSig_
 {
 
 // constructor
-MainWindow::MainWindow (ApplicationContext& application_context,
-                        MainWindowModel& model)
+MainWindow::MainWindow ()
  : QMainWindow(0),
-   model_(model),
-   action_manager_ (application_context.getGUIActionManager())
+   model_ (ApplicationContext::getInstance()->getMainWindowModel()),
+   action_manager_ (ApplicationContext::getInstance()->getGUIActionManager())
 {
     setWindowTitle (tr("SigViewer"));
     setAcceptDrops (true);
@@ -106,26 +106,26 @@ void MainWindow::initActions()
     calculate_frequency_spectrum_action_->setStatusTip(tr("Calculates power spectrum of selected event type"));
     calculate_frequency_spectrum_action_->setEnabled(false);
     connect(calculate_frequency_spectrum_action_, SIGNAL(triggered()),
-            &model_, SLOT(calculateFrequencySpectrumAction()));
+            model_.data(), SLOT(calculateFrequencySpectrumAction()));
 
     calculate_erd_ers_map_action_ = new QAction(tr("Generate ERD/ERS Map"), this);
     calculate_erd_ers_map_action_->setStatusTip(tr("Calculates ERD/ERS map of selected event type"));
     calculate_erd_ers_map_action_->setEnabled(false);
     connect(calculate_erd_ers_map_action_, SIGNAL(triggered()),
-            &model_, SLOT(calculateERDERSMap()));
+            model_.data(), SLOT(calculateERDERSMap()));
 
     help_log_action_= new QAction(tr("&Log..."), this);
     help_log_action_->setObjectName("help_log_action_");
     help_log_action_->setStatusTip(tr("Log"));
     connect(help_log_action_, SIGNAL(triggered()),
-            &model_, SLOT(helpLogAction()));
+            model_.data(), SLOT(helpLogAction()));
 
     help_about_action_= new QAction(help_about_icon_,
                                     tr("&About SigViewer..."), this);
     help_about_action_->setObjectName("help_about_action_");
     help_about_action_->setStatusTip(tr("About SigViewer"));
     connect(help_about_action_, SIGNAL(triggered()),
-            &model_, SLOT(helpAboutAction()));
+            model_.data(), SLOT(helpAboutAction()));
 }
 
 // init tool bars
@@ -135,20 +135,20 @@ void MainWindow::initToolBars()
 
     file_toolbar_ = addToolBar(tr("File"));
     view_toolbar_views_menu_->addAction (file_toolbar_->toggleViewAction());
-    file_toolbar_->addActions (action_manager_.getActionsOfGroup(GUIActionManager::FILE_TOOLBAR_ACTIONS));
+    file_toolbar_->addActions (action_manager_->getActionsOfGroup(GUIActionManager::FILE_TOOLBAR_ACTIONS));
 
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
     view_toolbar_views_menu_->addAction (mouse_mode_toolbar_->toggleViewAction());
-    mouse_mode_toolbar_->addActions (action_manager_.getActionsOfGroup(GUIActionManager::MODE_ACTIONS));
+    mouse_mode_toolbar_->addActions (action_manager_->getActionsOfGroup(GUIActionManager::MODE_ACTIONS));
 
     edit_toolbar_ = addToolBar(tr("Edit"));
     view_toolbar_views_menu_->addAction (edit_toolbar_->toggleViewAction());
-    edit_toolbar_->addActions (action_manager_.getActionsOfGroup(GUIActionManager::EDIT_TOOLBAR_ACTIONS));
+    edit_toolbar_->addActions (action_manager_->getActionsOfGroup(GUIActionManager::EDIT_TOOLBAR_ACTIONS));
 
     view_toolbar_ = addToolBar(tr("View"));
     view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
-    view_toolbar_->addActions(action_manager_.getActionsOfGroup(GUIActionManager::VIEW_TOOLBAR_ACTIONS));
+    view_toolbar_->addActions(action_manager_->getActionsOfGroup(GUIActionManager::VIEW_TOOLBAR_ACTIONS));
 
     secs_per_page_combobox_ = new QComboBox();
     secs_per_page_combobox_->setToolTip(tr("Seconds per Page"));
@@ -195,9 +195,9 @@ void MainWindow::initToolBars()
     navigation_toolbar_->addWidget(signals_per_page_combobox_);
 
     connect(secs_per_page_combobox_, SIGNAL(activated(const QString&)),
-            &model_, SLOT(secsPerPageChanged(const QString&)));
+            model_.data(), SLOT(secsPerPageChanged(const QString&)));
     connect(signals_per_page_combobox_, SIGNAL(activated(const QString&)),
-            &model_, SLOT(signalsPerPageChanged(const QString&)));
+            model_.data(), SLOT(signalsPerPageChanged(const QString&)));
     connect(secs_per_page_combobox_->lineEdit(), SIGNAL(returnPressed()),
             this, SLOT(secsPerPageReturnPressed()));
     connect(signals_per_page_combobox_->lineEdit(), SIGNAL(returnPressed()),
@@ -207,13 +207,13 @@ void MainWindow::initToolBars()
 // secs per page return pressed
 void MainWindow::secsPerPageReturnPressed()
 {
-    model_.secsPerPageChanged(secs_per_page_combobox_->currentText());
+    model_->secsPerPageChanged(secs_per_page_combobox_->currentText());
 }
 
 // signals per page return pressed
 void MainWindow::signalsPerPageReturnPressed()
 {
-    model_.signalsPerPageChanged(signals_per_page_combobox_->currentText());
+    model_->signalsPerPageChanged(signals_per_page_combobox_->currentText());
 }
 
 //-------------------------------------------------------------------
@@ -227,22 +227,23 @@ void MainWindow::toggleStatusBar (bool visible)
 void MainWindow::initMenus()
 {
     QList<QAction*> file_menu_actions =
-            action_manager_.getActionsOfGroup(GUIActionManager::FILE_MENU_ACTIONS);
+            action_manager_->getActionsOfGroup(GUIActionManager::FILE_MENU_ACTIONS);
     file_recent_files_menu_ = new QMenu(tr("Open &Recent"), this);
     connect(file_recent_files_menu_, SIGNAL(aboutToShow()),
-            &model_, SLOT(recentFileMenuAboutToShow()));
+            model_.data(), SLOT(recentFileMenuAboutToShow()));
     connect(file_recent_files_menu_, SIGNAL(triggered(QAction*)),
-            &model_, SLOT(recentFileActivated(QAction*)));
+            model_.data(), SLOT(recentFileActivated(QAction*)));
     file_menu_actions.insert (1, file_recent_files_menu_->menuAction());
     file_menu_ = new QMenu(tr("&File"), this);
+    //file_menu_->addAction (GuiActionFactory::getInstance()->getQAction("Open File"));
     file_menu_->addActions(file_menu_actions);
     menuBar()->addMenu(file_menu_);
 
     edit_menu_ = menuBar()->addMenu(tr("&Edit"));
-    edit_menu_->addActions (action_manager_.getActionsOfGroup (GUIActionManager::EDIT_MENU_ACTIONS));
+    edit_menu_->addActions (action_manager_->getActionsOfGroup (GUIActionManager::EDIT_MENU_ACTIONS));
 
     mouse_mode_menu_ = menuBar()->addMenu(tr("&Mode"));
-    mouse_mode_menu_->addActions (action_manager_.getActionsOfGroup(GUIActionManager::MODE_ACTIONS));
+    mouse_mode_menu_->addActions (action_manager_->getActionsOfGroup(GUIActionManager::MODE_ACTIONS));
 
     view_menu_ = menuBar()->addMenu(tr("&View"));
     view_menu_->addMenu(view_toolbar_views_menu_);
@@ -252,13 +253,13 @@ void MainWindow::initMenus()
     connect (toggle_status_bar, SIGNAL(toggled(bool)), this, SLOT(toggleStatusBar(bool)));
     view_menu_->addAction(toggle_status_bar);
     view_menu_->addSeparator();
-    view_menu_->addActions (action_manager_.getActionsOfGroup(GUIActionManager::VIEW_MENU_ACTIONS));
+    view_menu_->addActions (action_manager_->getActionsOfGroup(GUIActionManager::VIEW_MENU_ACTIONS));
 
     tools_menu_ = menuBar()->addMenu(tr("&Tools"));
-    tools_menu_->addActions(action_manager_.getActionsOfGroup(GUIActionManager::TOOLS_MENU_ACTIONS));
+    tools_menu_->addActions(action_manager_->getActionsOfGroup(GUIActionManager::TOOLS_MENU_ACTIONS));
 
     options_menu_ = menuBar()->addMenu(tr("&Options"));
-    options_menu_->addActions (action_manager_.getActionsOfGroup(GUIActionManager::OPTIONS_MENU_ACTIONS));
+    options_menu_->addActions (action_manager_->getActionsOfGroup(GUIActionManager::OPTIONS_MENU_ACTIONS));
 
     help_menu_ = menuBar()->addMenu(tr("&Help"));
     help_menu_->addAction(help_log_action_);
@@ -269,7 +270,7 @@ void MainWindow::initMenus()
 // close event
 void MainWindow::closeEvent(QCloseEvent*)
 {
-    model_.fileExitAction();
+    model_->fileExitAction();
 }
 
 void MainWindow::dropEvent (QDropEvent* event)
@@ -278,12 +279,12 @@ void MainWindow::dropEvent (QDropEvent* event)
     {
         QUrl url (event->mimeData()->text());
         event->acceptProposedAction();
-        model_.openFile(url.path());
+        model_->openFile(url.path());
     } else if (event->mimeData()->hasUrls())
     {
         QUrl url (event->mimeData()->urls().first().toLocalFile());
         event->acceptProposedAction();
-        model_.openFile(url.path());
+        model_->openFile(url.path());
     }
 }
 

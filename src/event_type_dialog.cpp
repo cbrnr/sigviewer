@@ -3,6 +3,7 @@
 #include "event_type_dialog.h"
 #include "file_handling_impl/event_table_file_reader.h"
 #include "event_color_manager.h"
+#include "application_context.h"
 
 #include <QPushButton>
 #include <QPainter>
@@ -35,11 +36,9 @@ inline bool isDark(const QColor& color)
 // constructor
 EventTypeDialog::EventTypeDialog(const QString& caption,
                                  EventColorManager& event_color_manager,
-                                 EventTableFileReader& event_table_file_reader,
                                  QWidget* parent)
  : QDialog(parent),
-   event_color_manager_(event_color_manager),
-   event_table_file_reader_(event_table_file_reader)
+   event_color_manager_(event_color_manager)
 {
     setWindowTitle(caption);
 
@@ -101,6 +100,7 @@ void EventTypeDialog::saveSettings()
 // build tree
 void EventTypeDialog::buildTree()
 {
+    QSharedPointer<EventTableFileReader> event_table_file_reader = ApplicationContext::getInstance()->getEventTableFileReader();
     event_tree_widget_->setRootIsDecorated(true);
     QStringList header_labels;
     header_labels << tr("Event Type") << tr("Color") << tr("Alpha");
@@ -119,12 +119,12 @@ void EventTypeDialog::buildTree()
     QMap<QString, QTreeWidgetItem*> group_id2list_item;
     EventTableFileReader::StringIterator group_it;
 
-    for (group_it = event_table_file_reader_.getGroupIdBegin();
-         group_it != event_table_file_reader_.getGroupIdEnd();
+    for (group_it = event_table_file_reader->getGroupIdBegin();
+         group_it != event_table_file_reader->getGroupIdEnd();
          group_it++)
     {
         QString group_name =
-            event_table_file_reader_.getEventGroupName(*group_it) +
+            event_table_file_reader->getEventGroupName(*group_it) +
             QString(" (%1)").arg(*group_it);
 
         QTreeWidgetItem * group_item = new QTreeWidgetItem(root_item);
@@ -138,15 +138,15 @@ void EventTypeDialog::buildTree()
     // build events
     EventTableFileReader::IntIterator event_type_it;
 
-    for (event_type_it = event_table_file_reader_.eventTypesBegin();
-         event_type_it != event_table_file_reader_.eventTypesEnd();
+    for (event_type_it = event_table_file_reader->eventTypesBegin();
+         event_type_it != event_table_file_reader->eventTypesEnd();
          event_type_it++)
     {
         QString group_name
-            = event_table_file_reader_.getEventGroupId(*event_type_it);
+            = event_table_file_reader->getEventGroupId(*event_type_it);
 
         QString event_name
-            = event_table_file_reader_.getEventName(*event_type_it);
+            = event_table_file_reader->getEventName(*event_type_it);
 
         QTreeWidgetItem * event_item
             = new QTreeWidgetItem(group_id2list_item[group_name]);

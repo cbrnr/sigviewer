@@ -29,7 +29,6 @@ public:
 
     EventTypeDialog(const QString& caption,
                     EventColorManager& event_color_manager,
-                    EventTableFileReader& event_table_file_reader,
                     QWidget* parent = 0);
 
     void loadSettings();
@@ -57,7 +56,6 @@ private:
     QPushButton* ok_button_;
     QPushButton* cancel_button_;
     EventColorManager& event_color_manager_;
-    EventTableFileReader& event_table_file_reader_;
 };
 
 } // namespace BioSig_

@@ -8,12 +8,11 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-EventManagerImpl::EventManagerImpl (QSharedPointer<FileSignalReader> reader,
-                                    EventTableFileReader const& event_table_reader)
-    : reader_ (reader),
-      event_table_reader_ (event_table_reader)
+EventManagerImpl::EventManagerImpl (QSharedPointer<FileSignalReader> reader)
+    : reader_ (reader)
 {
     assert (reader_->isOpen());
+    event_table_reader_.load (":/eventcodes.txt");
     FileSignalReader::SignalEventVector signal_events;
     reader_->loadEvents (signal_events);
     next_free_id_ = 0;

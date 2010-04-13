@@ -30,7 +30,9 @@
 #include "main_window_model.h"
 #include "gui_action_manager.h"
 #include "application_context.h"
+#include "application_context_impl.h"
 #include "file_handling_impl/event_table_file_reader.h"
+#include "gui/gui_action_factory.h"
 
 #include <stdlib.h>
 
@@ -43,10 +45,7 @@
 
 #include <iostream>
 
-using BioSig_::MainWindow;
-using BioSig_::MainWindowModel;
-using BioSig_::GUIActionManager;
-using BioSig_::ApplicationContext;
+using namespace BioSig_;
 
 void myMessageOutput( QtMsgType type, const char* msg )
 {
@@ -111,23 +110,30 @@ int main(int32 argc, char* argv[])
                               application.applicationDirPath());
     application.installTranslator(&sigviewer_translator);
 
-    GUIActionManager action_manager;
-    ApplicationContext application_context (action_manager);
-    MainWindowModel main_window_model (application_context);
-    action_manager.init (&main_window_model, &application_context);
-    MainWindow main_window (application_context, main_window_model);
-    main_window_model.setMainWindow(&main_window);
-    main_window_model.getEventTableFileReader()
-        ->load(":/eventcodes.txt");
-    main_window_model.loadSettings();
+    GuiActionFactory::getInstance()->initAllCommands ();
+
+    QSharedPointer<GUIActionManager> action_manager (new GUIActionManager);
+    QSharedPointer<MainWindowModel> main_window_model (new MainWindowModel);
+
+    QSharedPointer<ApplicationContextImpl> app_ctx_impl (new ApplicationContextImpl);
+    app_ctx_impl->setGUIActionManager (action_manager);
+    app_ctx_impl->setMainWindowModel (main_window_model);
+
+    ApplicationContext::getInstance()->setImpl (app_ctx_impl);
+
+    action_manager->init (main_window_model.data());
+
+    MainWindow main_window;
+    main_window_model->setMainWindow (&main_window);
+    main_window_model->loadSettings();
     main_window.setUnifiedTitleAndToolBarOnMac(true);
     main_window.show();
 
     if (application.arguments().count() > 1)
-        main_window_model.openFile (application.arguments().at(1));
+        main_window_model->openFile (application.arguments().at(1));
 
     int result = application.exec();
-    main_window_model.saveSettings();
+    main_window_model->saveSettings();
 
     return result;
 }

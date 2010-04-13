@@ -19,7 +19,6 @@ namespace BioSig_
 class SignalEvent;
 class SignalBrowserModel;
 class EventContextMenu;
-class ApplicationContext;
 class EventManager;
 class CommandExecuter;
 
@@ -32,7 +31,6 @@ class EventGraphicsItem : public QObject, public QGraphicsItem
 public:
     EventGraphicsItem(SignalBrowserModel& model,
                       QSharedPointer<SignalEvent const> signal_event,
-                      ApplicationContext& app_context,
                       EventManager& event_manager,
                       CommandExecuter& command_executer);
 
@@ -95,7 +93,6 @@ private:
     void addContextMenuEntry ();
 
     SignalBrowserModel& signal_browser_model_;
-    ApplicationContext& app_context_;
     EventManager& event_manager_;
     CommandExecuter& command_executer_;
     QColor color_;

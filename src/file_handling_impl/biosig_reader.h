@@ -14,7 +14,6 @@ class BioSigReader : public FileSignalReader
 {
 public:
     BioSigReader ();
-    BioSigReader (bool prototype_instance);
     virtual ~BioSigReader();
     virtual FileSignalReader* clone();
 
@@ -43,6 +42,9 @@ public:
     virtual HDRTYPE* getRawHeader ();
 
 private:
+    //-------------------------------------------------------------------------
+    BioSigReader (bool prototype_instance);
+
     //-------------------------------------------------------------------------
     void bufferAllChannels () const;
 

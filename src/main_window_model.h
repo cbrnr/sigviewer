@@ -44,11 +44,10 @@ class MainWindowModel : public QObject
     Q_OBJECT
 
 public:
-    MainWindowModel (ApplicationContext& application_context);
+    MainWindowModel ();
     ~MainWindowModel();
 
     QTextStream& getLogStream();
-    QSharedPointer<EventTableFileReader> getEventTableFileReader();
     EventColorManager& getEventColorManager();
     void setMainWindow(MainWindow* main_window);
     void loadSettings();
@@ -56,6 +55,10 @@ public:
     void setChanged();
 
     QSharedPointer<BlocksVisualisationModel> createBlocksVisualisationView (QString const& title);
+    QSharedPointer<SignalBrowserModel> createSignalBrowserView (FileSignalReader& reader,
+                                                                ApplicationContext& app_ctx,
+                                                                FileContext& file_ctx,
+                                                                TabContext& tab_ctx);
 
 public slots:
 
@@ -110,7 +113,8 @@ public slots:
     void signalHeightChanged(int32 signal_height);
     void recentFileMenuAboutToShow();
 
-    void openFile(const QString& file_name);
+    //-------------------------------------------------------------------------
+    void openFile (QString const& file_path);
 
 
 private:
@@ -118,9 +122,15 @@ private:
     void storeAndInitTabContext (TabContext* context, int tab_index);
 
     //-------------------------------------------------------------------------
+    QSharedPointer<FileSignalReader> createAndOpenFileSignalReader
+            (QString const& file_path) const;
+
+    //-------------------------------------------------------------------------
     bool checkMainWindowPtr(const QString function);
     std::set<ChannelID> channelSelection () const;
     uint16 selectEventTypeDialog (uint16 preselected_type) const;
+
+    static unsigned const NUMBER_RECENT_FILES_;
 
     MainWindow* main_window_;
     ApplicationContext& application_context_;
@@ -129,15 +139,12 @@ private:
     SignalBrowserView* signal_browser_; // main_window cares for destruction!!
     QTabWidget* tab_widget_;
     QWidget* signal_browser_tab_;
-    QSharedPointer<EventTableFileReader> event_table_file_reader_;
     std::auto_ptr<EventColorManager> event_color_manager_;
     QStringList recent_file_list_;
-    int32 number_recent_files_;
     std::auto_ptr<QTextStream> log_stream_;
     QString log_string_;
     QString secs_per_page_;
     bool overflow_detection_;
-    FileContext* file_context_;
     std::map<int, QSharedPointer<AbstractBrowserModel> > browser_models_;
     std::list<QSharedPointer<BlocksVisualisationModel> > blocks_visualisation_models_;
     std::map<int, TabContext*> tab_contexts_;

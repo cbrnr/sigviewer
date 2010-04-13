@@ -28,7 +28,7 @@ class MainWindow : public QMainWindow
 
 public:
 
-    MainWindow (ApplicationContext& application_context, MainWindowModel& model);
+    MainWindow ();
     ~MainWindow ();
 
     void loadSettings();
@@ -69,9 +69,6 @@ private slots:
     void toggleStatusBar (bool visible);
 
 private:
-
-    // not allowed
-    MainWindow();
     MainWindow(const MainWindow&);
 
     const MainWindow& operator=(const MainWindow&);
@@ -82,8 +79,8 @@ private:
     void initMenus();
     void initStatusBar();
 
-    MainWindowModel& model_;
-    GUIActionManager& action_manager_;
+    QSharedPointer<MainWindowModel> model_;
+    QSharedPointer<GUIActionManager> action_manager_;
 
     QMenu* file_menu_;
     QMenu* file_recent_files_menu_;

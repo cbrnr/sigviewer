@@ -3,6 +3,7 @@
 
 #include "../file_handling/event_manager.h"
 #include "../file_handling/file_signal_reader.h"
+#include "event_table_file_reader.h"
 
 #include <QSharedPointer>
 #include <QMap>
@@ -15,8 +16,8 @@ class EventTableFileReader;
 class EventManagerImpl : public EventManager
 {
 public:
-    EventManagerImpl (QSharedPointer<FileSignalReader> reader,
-                  EventTableFileReader const& event_table_reader);
+    EventManagerImpl (QSharedPointer<FileSignalReader> reader);
+
     virtual ~EventManagerImpl ();
 
     //-------------------------------------------------------------------------
@@ -77,7 +78,7 @@ public:
 
 private:
     QSharedPointer<FileSignalReader> reader_;
-    EventTableFileReader const& event_table_reader_;
+    EventTableFileReader event_table_reader_;
 
     double sample_rate_;
     typedef QMap<EventID, QSharedPointer<SignalEvent> > EventMap;

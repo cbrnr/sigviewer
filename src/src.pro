@@ -4,7 +4,8 @@ TARGET = sigviewer
 CONFIG += warn_on \
     link_prl \
     qt \
-    thread
+    thread \
+    debug
 debug { 
     OBJECTS_DIR = ../tmp/debug
     MOC_DIR = ../tmp/debug
@@ -36,6 +37,8 @@ include(block_visualisation/block_visualisation.pri)
 include(signal_processing/signal_processing.pri)
 include(file_handling_impl/file_handling_impl.pri)
 include(file_handling/file_handling.pri)
+include(gui/gui.pri)
+include(gui_impl/gui_impl.pri)
 HEADERS += basic_header_info_dialog.h \
     channel_selection_dialog.h \
     copy_event_dialog.h \
@@ -59,7 +62,8 @@ HEADERS += basic_header_info_dialog.h \
     application_context.h \
     file_context.h \
     tab_context.h \
-    command_executer.h
+    command_executer.h \
+    application_context_impl.h
 SOURCES += basic_header_info_dialog.cpp \
     channel_selection_dialog.cpp \
     copy_event_dialog.cpp \
@@ -82,4 +86,5 @@ SOURCES += basic_header_info_dialog.cpp \
     gui_action_manager.cpp \
     application_context.cpp \
     file_context.cpp \
-    tab_context.cpp
+    tab_context.cpp \
+    application_context_impl.cpp

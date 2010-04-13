@@ -60,8 +60,7 @@ public:
     //-------------------------------------------------------------------------
     /// @param main_window_model the given model will act as the receiver of
     ///                          all actions
-    void init (MainWindowModel* main_window_model, ApplicationContext*
-               app_context);
+    void init (MainWindowModel* main_window_model);
 
     //-------------------------------------------------------------------------
     /// creates a QMenu with all actions of the given group

@@ -2,6 +2,7 @@
 
 #include "event_color_manager.h"
 #include "file_handling_impl/event_table_file_reader.h"
+#include "application_context.h"
 
 #include <QSettings>
 
@@ -9,8 +10,7 @@ namespace BioSig_
 {
 
 // constructor
-EventColorManager::EventColorManager(EventTableFileReader& event_table_reader)
-: event_table_file_reader_(event_table_reader)
+EventColorManager::EventColorManager ()
 {
     // nothing
 }
@@ -39,8 +39,8 @@ void EventColorManager::loadSettings()
     QColor alpha_color(0, 0, 0, 50);
     event_type2color_[-1] = alpha_color;
     EventTableFileReader::IntIterator it;
-    for (it = event_table_file_reader_.eventTypesBegin();
-         it != event_table_file_reader_.eventTypesEnd();
+    for (it = ApplicationContext::getInstance()->getEventTableFileReader()->eventTypesBegin();
+         it != ApplicationContext::getInstance()->getEventTableFileReader()->eventTypesEnd();
          it++)
     {
         event_type2color_[*it] = QColor(0xff, 0, 0, 50);

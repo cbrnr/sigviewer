@@ -4,10 +4,12 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-FileContext::FileContext (EventManager& event_manager,
+FileContext::FileContext (QString const& file_name,
+                          EventManager& event_manager,
                           ChannelManager& channel_manager,
                           TabContext& tab_context)
     : state_ (FILE_STATE_UNCHANGED),
+      file_name_ (file_name),
       event_manager_ (event_manager),
       channel_manager_ (channel_manager),
       tab_context_ (tab_context)
@@ -19,6 +21,12 @@ FileContext::FileContext (EventManager& event_manager,
 FileContext::~FileContext ()
 {
     // nothing to do here
+}
+
+//-----------------------------------------------------------------------------
+QString const& FileContext::getFileName () const
+{
+    return file_name_;
 }
 
 //-----------------------------------------------------------------------------

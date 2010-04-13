@@ -2,6 +2,7 @@
 #define FILE_CONTEXT_H
 
 #include <QObject>
+#include <QString>
 
 namespace BioSig_
 {
@@ -27,12 +28,16 @@ class FileContext : public QObject
     Q_OBJECT
 public:
     //-------------------------------------------------------------------------
-    FileContext (EventManager& event_manager,
+    FileContext (QString const & file_name,
+                 EventManager& event_manager,
                  ChannelManager& channel_manager,
                  TabContext& tab_context);
 
     //-------------------------------------------------------------------------
     ~FileContext ();
+
+    //-------------------------------------------------------------------------
+    QString const& getFileName () const;
 
     //-------------------------------------------------------------------------
     EventManager& getEventManager ();
@@ -61,6 +66,7 @@ private:
     FileContext& operator= (FileContext const&);
 
     FileState state_;
+    QString file_name_;
     EventManager& event_manager_;
     ChannelManager& channel_manager_;
     TabContext& tab_context_;

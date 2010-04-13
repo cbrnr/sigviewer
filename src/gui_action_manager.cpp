@@ -1,5 +1,6 @@
 #include "gui_action_manager.h"
 #include "main_window_model.h"
+#include "gui/gui_action_factory.h"
 
 #include <QApplication>
 #include <QStyle>
@@ -26,10 +27,9 @@ GUIActionManager::~GUIActionManager ()
 }
 
 //-----------------------------------------------------------------------------
-void GUIActionManager::init (MainWindowModel* main_window_model,
-                             ApplicationContext* app_context)
+void GUIActionManager::init (MainWindowModel* main_window_model)
 {
-    connect (app_context, SIGNAL(stateChanged(ApplicationState)), SLOT(setApplicationState(ApplicationState)));
+    connect (ApplicationContext::getInstance(), SIGNAL(stateChanged(ApplicationState)), SLOT(setApplicationState(ApplicationState)));
     main_window_model_ = main_window_model;
     initFileActions ();
     initEditActions ();
