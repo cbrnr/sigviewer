@@ -19,6 +19,25 @@ ChannelManagerImpl::~ChannelManagerImpl ()
 }
 
 //-----------------------------------------------------------------------------
+uint32 ChannelManagerImpl::getNumberChannels () const
+{
+    return reader_.getBasicHeader()->getNumberChannels();
+}
+
+//-----------------------------------------------------------------------------
+SignalChannel const& ChannelManagerImpl::getSignalChannel (ChannelID id) const
+{
+    return reader_.getBasicHeader()->getChannel (id);
+}
+
+//-------------------------------------------------------------------------
+QString const& ChannelManagerImpl::getChannelLabel (ChannelID id) const
+{
+    return reader_.getBasicHeader()->getChannel (id).getLabel();
+}
+
+
+//-----------------------------------------------------------------------------
 QSharedPointer<DataBlock const> ChannelManagerImpl::getData (ChannelID id, unsigned start_pos, unsigned length) const
 {
     return reader_.getSignalData(id, start_pos, length);

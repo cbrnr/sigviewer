@@ -20,6 +20,17 @@ public:
     ChannelManagerImpl (FileSignalReader& file_signal_reader);
     virtual ~ChannelManagerImpl ();
 
+
+    //-------------------------------------------------------------------------
+    virtual uint32 getNumberChannels () const;
+
+    //-------------------------------------------------------------------------
+    virtual SignalChannel const& getSignalChannel (ChannelID id) const;
+
+    //-------------------------------------------------------------------------
+    virtual QString const& getChannelLabel (ChannelID id) const;
+
+
     //-------------------------------------------------------------------------
     virtual QSharedPointer<DataBlock const> getData (ChannelID id,
                                                      unsigned start_pos,

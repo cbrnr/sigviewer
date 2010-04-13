@@ -1,6 +1,7 @@
 #ifndef APPLICATION_CONTEXT_IMPL_H
 #define APPLICATION_CONTEXT_IMPL_H
 
+#include "event_color_manager.h"
 #include <QSharedPointer>
 
 namespace BioSig_
@@ -15,6 +16,9 @@ class ApplicationContextImpl
 public:
     //-------------------------------------------------------------------------
     ApplicationContextImpl ();
+
+    //-------------------------------------------------------------------------
+    ~ApplicationContextImpl ();
 
     //-----------------------------------------------------------------------------
     QSharedPointer<GUIActionManager> getGUIActionManager ();
@@ -31,7 +35,13 @@ public:
     //-------------------------------------------------------------------------
     QSharedPointer<EventTableFileReader> getEventTableFileReader () const;
 
+    //-------------------------------------------------------------------------
+    QSharedPointer<EventColorManager> getEventColorManager () const;
+
+    //-------------------------------------------------------------------------
+    void loadSettings ();
 private:
+    QSharedPointer<EventColorManager> event_color_manager_;
     QSharedPointer<EventTableFileReader> event_table_file_reader_;
     QSharedPointer<MainWindowModel> main_window_model_;
     QSharedPointer<GUIActionManager> gui_action_manager_;

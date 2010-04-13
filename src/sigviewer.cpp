@@ -120,6 +120,7 @@ int main(int32 argc, char* argv[])
     app_ctx_impl->setMainWindowModel (main_window_model);
 
     ApplicationContext::getInstance()->setImpl (app_ctx_impl);
+    app_ctx_impl->loadSettings();
 
     action_manager->init (main_window_model.data());
 

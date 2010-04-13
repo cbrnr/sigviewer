@@ -1,7 +1,6 @@
 // copy_event_dialog.cpp
 
 #include "copy_event_dialog.h"
-#include "file_handling/basic_header.h"
 
 #include <QListWidget>
 #include <QPushButton>
@@ -13,10 +12,8 @@ namespace BioSig_
 {
 
 // constructor
-CopyEventDialog::CopyEventDialog(QPointer<BasicHeader> header,
-                                 QWidget* parent)
- : QDialog(parent),
-   basic_header_(header)
+CopyEventDialog::CopyEventDialog (QWidget* parent)
+ : QDialog(parent)
 {
     setWindowTitle(tr("Copy Event to Channels"));
     QVBoxLayout* top_layout = new QVBoxLayout(this);
@@ -35,6 +32,7 @@ CopyEventDialog::CopyEventDialog(QPointer<BasicHeader> header,
     cancel_button_ = new QPushButton(tr("Cancel"), this);
     button_layout->addWidget(cancel_button_);
     button_layout->addStretch(1);
+    top_layout->addLayout(button_layout);
     top_layout->activate();
     connect(ok_button_, SIGNAL(clicked()), this, SLOT(accept()));
     connect(cancel_button_, SIGNAL(clicked()), this, SLOT(reject()));
@@ -72,11 +70,11 @@ bool CopyEventDialog::isSelected(uint32 channel_nr)
 }
 
 // add selectable channel
-void CopyEventDialog::addSelectableChannel(uint32 channel_nr)
+void CopyEventDialog::addSelectableChannel(uint32 channel_nr,
+                                           QString const& channel_label)
 {
-    const SignalChannel& channel = basic_header_->getChannel(channel_nr);
     channel_list_widget_->addItem(QString("(%1) %2").arg(channel_nr + 1)
-                                            .arg(channel.getLabel()));
+                                            .arg(channel_label));
 }
 
 } //namespace BioSig_

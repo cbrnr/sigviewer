@@ -2,13 +2,11 @@
 #ifndef SIGNAL_BROWSER_MODEL_H_q4
 #define SIGNAL_BROWSER_MODEL_H_q4
 
-#include "../file_handling/file_signal_reader.h"
 #include "../abstract_browser_model.h"
 #include "../tab_context.h"
 #include "signal_browser_modes.h"
 #include "event_graphics_item.h"
 
-#include <QPointer>
 #include <QObject>
 #include <QMap>
 #include <QSharedPointer>
@@ -22,8 +20,6 @@ namespace BioSig_
 {
 
 class MainWindowModel;
-class BasicHeader;
-class FileSignalReader;
 class SignalBrowserView;
 class SignalGraphicsItem;
 class FileContext;
@@ -35,12 +31,9 @@ class SignalBrowserModel : public QObject, public AbstractBrowserModel
 
 public:
 
-    typedef FileSignalReader::SignalEventVector SignalEventVector;
     typedef QList<uint16> IntList;
 
-    SignalBrowserModel(FileSignalReader& reader,
-                       MainWindowModel& main_window_model,
-                       QSharedPointer<FileContext> file_context,
+    SignalBrowserModel(QSharedPointer<FileContext> file_context,
                        TabContext& tab_context);
     virtual ~SignalBrowserModel();
 
@@ -55,8 +48,6 @@ public:
 
 
     void setSignalBrowserView(SignalBrowserView* signal_browser_view);
-    void setLogStream(QTextStream* log_stream);
-    QTextStream& getLogStream();
     void loadSettings();
     void saveSettings();
     void setMode(SignalBrowserMode mode);
@@ -107,7 +98,6 @@ public:
     float64 getXGridPixelIntervall();
 
     // events
-    QColor getEventColor (uint16 event_type_id) const;
     void getShownEventTypes(IntList& event_type);
     std::set<uint16> getShownEventTypes () const;
     std::set<uint16> getDisplayedEventTypes () const;
@@ -168,8 +158,6 @@ private:
     QSharedPointer<FileContext> file_context_;
     TabContext& tab_context_;
     SignalBrowserView* signal_browser_view_;
-    QTextStream* log_stream_; // no auto_ptr
-    MainWindowModel& main_window_model_;
     State state_;
     SignalBrowserMode mode_;
 
@@ -184,8 +172,6 @@ private:
     bool checkReadyState(const QString& function);
     bool checkSignalBrowserPtr(const QString function);
     void updateEventItemsImpl ();
-
-    QPointer<BasicHeader> basic_header_;
 
     // items
     Int2SignalGraphicsItemPtrMap channel2signal_item_;

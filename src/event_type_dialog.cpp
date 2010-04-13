@@ -35,10 +35,8 @@ inline bool isDark(const QColor& color)
 
 // constructor
 EventTypeDialog::EventTypeDialog(const QString& caption,
-                                 EventColorManager& event_color_manager,
                                  QWidget* parent)
- : QDialog(parent),
-   event_color_manager_(event_color_manager)
+ : QDialog(parent)
 {
     setWindowTitle(caption);
 
@@ -157,7 +155,7 @@ void EventTypeDialog::buildTree()
                             QString("(0x%1)").arg(*event_type_it, 4, 16)
                                              .replace(' ', '0'));
 
-        QColor color = event_color_manager_.getEventColor(*event_type_it);
+        QColor color = ApplicationContext::getInstance()->getEventColorManager()->getEventColor(*event_type_it);
         event_item->setBackgroundColor(2, color);
         event_item->setTextColor(2, isDark(color) ? Qt::white : Qt::black);
         event_item->setTextAlignment(2, Qt::AlignHCenter);
@@ -217,7 +215,7 @@ void EventTypeDialog::storeColors()
             int32 type_id = tmp.mid(tmp.lastIndexOf('(') + 1)
                                .remove(')').toInt(0, 16);
 
-            event_color_manager_.setEventColor(type_id,
+            ApplicationContext::getInstance()->getEventColorManager()->setEventColor(type_id,
                                                event_item->backgroundColor(2));
         }
     }

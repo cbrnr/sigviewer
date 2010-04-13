@@ -8,6 +8,9 @@
 
 #include "../signal_browser_mouse_handling.h"
 #include "../command_executer.h"
+#include "../application_context.h"
+#include "../event_color_manager.h"
+
 
 #include <QRectF>
 #include <QStyleOptionGraphicsItem>
@@ -125,7 +128,7 @@ void EventGraphicsItem::updateToSignalEvent ()
     }
 
 
-    color_ = signal_browser_model_.getEventColor(signal_event_->getType());
+    color_ = ApplicationContext::getInstance()->getEventColorManager()->getEventColor(signal_event_->getType());
 
     /// FIXXME: REMOVE MAGIC NUMBER
     setZValue (5 + signal_event_->getType() / 100000.0);

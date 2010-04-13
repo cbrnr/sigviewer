@@ -15,9 +15,6 @@ class QTreeWidgetItem;
 namespace BioSig_
 {
 
-class EventColorManager;
-class EventTableFileReader;
-
 // basic header info dialog
 class EventTypeDialog : public QDialog
 {
@@ -28,7 +25,6 @@ public:
     typedef QList<uint16> IntList;
 
     EventTypeDialog(const QString& caption,
-                    EventColorManager& event_color_manager,
                     QWidget* parent = 0);
 
     void loadSettings();
@@ -55,7 +51,6 @@ private:
     QTreeWidget* event_tree_widget_;
     QPushButton* ok_button_;
     QPushButton* cancel_button_;
-    EventColorManager& event_color_manager_;
 };
 
 } // namespace BioSig_

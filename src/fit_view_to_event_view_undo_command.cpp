@@ -1,6 +1,7 @@
 #include "fit_view_to_event_view_undo_command.h"
 #include "signal_browser/event_graphics_item.h"
 #include "signal_browser/signal_browser_model_4.h"
+#include "base/signal_event.h"
 
 #include <iostream>
 

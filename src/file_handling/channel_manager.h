@@ -3,13 +3,12 @@
 
 #include "../base/user_types.h"
 #include "../base/data_block.h"
+#include "../base/signal_channel.h"
 
 #include <QSharedPointer>
 
 namespace BioSig_
 {
-
-
 
 //-----------------------------------------------------------------------------
 /// ChannelManager
@@ -21,6 +20,15 @@ public:
     //-------------------------------------------------------------------------
     /// destructor
     virtual ~ChannelManager () {}
+
+    //-------------------------------------------------------------------------
+    virtual uint32 getNumberChannels () const = 0;
+
+    //-------------------------------------------------------------------------
+    virtual SignalChannel const& getSignalChannel (ChannelID id) const = 0;
+
+    //-------------------------------------------------------------------------
+    virtual QString const& getChannelLabel (ChannelID id) const = 0;
 
     //-------------------------------------------------------------------------
     /// @param channel_id the id of the channel

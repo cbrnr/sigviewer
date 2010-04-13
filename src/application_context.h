@@ -1,6 +1,8 @@
 #ifndef APPLICATION_CONTEXT_H
 #define APPLICATION_CONTEXT_H
 
+#include "event_color_manager.h"
+
 #include <QObject>
 #include <QSharedPointer>
 
@@ -29,7 +31,7 @@ class ApplicationContext : public QObject
     Q_OBJECT
 public:
     //-------------------------------------------------------------------------
-    static ApplicationContext* getInstance ();
+    static QSharedPointer<ApplicationContext> getInstance ();
 
     //-------------------------------------------------------------------------
     void setImpl (QSharedPointer<ApplicationContextImpl> impl);
@@ -57,6 +59,9 @@ public:
     //-------------------------------------------------------------------------
     QSharedPointer<EventTableFileReader> getEventTableFileReader () const;
 
+    //-------------------------------------------------------------------------
+    QSharedPointer<EventColorManager> getEventColorManager () const;
+
 public slots:
     void setState (ApplicationState state);
 
@@ -64,7 +69,7 @@ signals:
     void stateChanged (ApplicationState state);
 
 private:
-    static ApplicationContext* instance_;
+    static QSharedPointer<ApplicationContext> instance_;
     QSharedPointer<ApplicationContextImpl> impl_;
     QSharedPointer<FileContext> current_file_context_;
     ApplicationState state_;

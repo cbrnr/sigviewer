@@ -5,7 +5,6 @@
 #include "../file_handling/channel_manager.h"
 #include "signal_browser_view.h"
 #include "signal_graphics_item.h"
-#include "event_graphics_item.h"
 #include "change_channel_undo_command.h"
 #include "change_type_undo_command.h"
 #include "new_event_undo_command.h"
@@ -13,7 +12,6 @@
 #include "../main_window_model.h"
 #include "../event_color_manager.h"
 #include "../file_context.h"
-#include "../file_handling/file_signal_reader.h"
 #include "../base/math_utils.h"
 #include "../base/signal_event.h"
 #include "../copy_event_dialog.h"
@@ -33,18 +31,13 @@ namespace BioSig_
 
 //-----------------------------------------------------------------------------
 // TODO! constructor
-SignalBrowserModel::SignalBrowserModel(FileSignalReader& reader,
-                                       MainWindowModel& main_window_model,
-                                       QSharedPointer<FileContext> file_context,
+SignalBrowserModel::SignalBrowserModel(QSharedPointer<FileContext> file_context,
                                        TabContext& tab_context)
 : file_context_ (file_context),
   tab_context_ (tab_context),
   signal_browser_view_ (0),
-  log_stream_(0),
-  main_window_model_(main_window_model),
   state_(STATE_READY),
   mode_(MODE_HAND),
-  basic_header_(reader.getBasicHeader()),
   selected_event_item_ (0),
   pixel_per_sec_(100),
   signal_height_(75),
@@ -84,20 +77,6 @@ SignalBrowserModel::~SignalBrowserModel()
 void SignalBrowserModel::setSignalBrowserView(SignalBrowserView* signal_browser_view)
 {
     signal_browser_view_ = signal_browser_view;
-}
-
-//-----------------------------------------------------------------------------
-// TODO! set log stream
-void SignalBrowserModel::setLogStream(QTextStream* log_stream)
-{
-    log_stream_ = log_stream;
-}
-
-//-----------------------------------------------------------------------------
-// get log stream
-QTextStream& SignalBrowserModel::getLogStream()
-{
-    return *log_stream_;
 }
 
 //-----------------------------------------------------------------------------
@@ -232,7 +211,7 @@ bool SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
 //-----------------------------------------------------------------------------
 void SignalBrowserModel::addChannel (ChannelID channel_id)
 {
-    if (channel_id >= basic_header_->getNumberChannels())
+    if (channel_id >= file_context_->getChannelManager().getNumberChannels())
         return;
 
     SignalGraphicsItem* signal_item
@@ -240,7 +219,8 @@ void SignalBrowserModel::addChannel (ChannelID channel_id)
                                   tab_context_,
                                   file_context_->getChannelManager(),
                                   channel_id,
-                                  basic_header_->getChannel(channel_id), *this);
+                                  file_context_->getChannelManager().getSignalChannel(channel_id),
+                                  *this);
 
     signal_item->connect (this, SIGNAL(signalHeightChanged(uint32)), SLOT(setHeight(uint32)));
     channel2signal_item_[channel_id] = signal_item;
@@ -538,8 +518,6 @@ inline bool SignalBrowserModel::checkReadyState(const QString& function)
 {
     if (state_ != STATE_READY)
     {
-        *log_stream_ << "SignalBrowserModel::" << function << " "
-                     << "Error: illegal state\n";
         return false;
     }
 
@@ -551,8 +529,6 @@ bool SignalBrowserModel::checkSignalBrowserPtr(const QString function)
 {
     if (!signal_browser_view_)
     {
-        *log_stream_ << "SignalBrowserModel::" << function << " "
-                     << "Error: SignalBrowser not set\n";
         return false;
     }
 
@@ -571,8 +547,6 @@ void SignalBrowserModel::updateEventItemsImpl ()
                 file_context_->getEventManager().getEvent(event_iter->first);
         if (!event)
         {
-            *log_stream_ << "SignalBrowserModel::updateLayout Error: "
-                         << "inconsistant events\n";
             continue;
         }
 
@@ -641,13 +615,6 @@ void SignalBrowserModel::goToAndSelectNextEvent (bool forward)
         }
     }
 }
-
-//-----------------------------------------------------------------------------
-QColor SignalBrowserModel::getEventColor (uint16 event_type_id) const
-{
-    return main_window_model_.getEventColorManager().getEventColor (event_type_id);
-}
-
 
 //-----------------------------------------------------------------------------
 // get shown event types
@@ -791,7 +758,7 @@ void SignalBrowserModel::changeSelectedEventChannel()
     channel_list.append(tr("All Channels"));
 
     for (uint32 channel_nr = 0;
-         channel_nr < basic_header_->getNumberChannels();
+         channel_nr < file_context_->getChannelManager().getNumberChannels();
          channel_nr++)
     {
         if (isChannelShown(channel_nr))
@@ -803,7 +770,7 @@ void SignalBrowserModel::changeSelectedEventChannel()
 
             channel_list.append(
                 QString("(%1) ").arg(channel_nr + 1) +
-                basic_header_->getChannel(channel_nr).getLabel());
+                file_context_->getChannelManager().getChannelLabel(channel_nr));
         }
     }
 
@@ -836,16 +803,17 @@ void SignalBrowserModel::copySelectedEventToChannels()
 
     uint32 id = selected_event_item_->getId();
     QSharedPointer<SignalEvent const> event = file_context_->getEventManager().getEvent(id);
-    CopyEventDialog copy_event_dialog(basic_header_, signal_browser_view_);
+    CopyEventDialog copy_event_dialog (signal_browser_view_);
 
     for (uint32 channel_nr = 0;
-         channel_nr < basic_header_->getNumberChannels();
+         channel_nr < file_context_->getChannelManager().getNumberChannels();
          channel_nr++)
     {
         if ((int32)channel_nr != event->getChannel() &&
             isChannelShown(channel_nr))
         {
-            copy_event_dialog.addSelectableChannel(channel_nr);
+            copy_event_dialog.addSelectableChannel (channel_nr,
+                                                    file_context_->getChannelManager().getChannelLabel(channel_nr));
         }
     }
 
@@ -861,7 +829,7 @@ void SignalBrowserModel::copySelectedEventToChannels()
 
     // generate copies
     for (uint32 channel_nr = 0;
-         channel_nr < basic_header_->getNumberChannels();
+         channel_nr < file_context_->getChannelManager().getNumberChannels();
          channel_nr++)
     {
         if (copy_event_dialog.isSelected(channel_nr))

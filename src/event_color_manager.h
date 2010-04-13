@@ -11,13 +11,12 @@
 namespace BioSig_
 {
 
-class EventTableFileReader;
-
 // event color manager
 class EventColorManager
 {
 public:
     EventColorManager ();
+    ~EventColorManager ();
 
     void loadSettings();
     void saveSettings();

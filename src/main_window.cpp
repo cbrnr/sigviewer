@@ -235,7 +235,7 @@ void MainWindow::initMenus()
             model_.data(), SLOT(recentFileActivated(QAction*)));
     file_menu_actions.insert (1, file_recent_files_menu_->menuAction());
     file_menu_ = new QMenu(tr("&File"), this);
-    //file_menu_->addAction (GuiActionFactory::getInstance()->getQAction("Open File"));
+    file_menu_->addAction (GuiActionFactory::getInstance()->getQAction("Open File"));
     file_menu_->addActions(file_menu_actions);
     menuBar()->addMenu(file_menu_);
 

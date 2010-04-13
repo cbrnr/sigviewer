@@ -20,7 +20,6 @@
 #include "go_to_dialog.h"
 #include "event_type_dialog.h"
 #include "event_table_dialog.h"
-#include "event_color_manager.h"
 #include "settings_dialog.h"
 #include "command_stack.h"
 
@@ -63,7 +62,7 @@ unsigned const MainWindowModel::NUMBER_RECENT_FILES_ = 8;
 // constructor
 MainWindowModel::MainWindowModel ()
 : main_window_(0),
-  application_context_ (*(ApplicationContext::getInstance())),
+  application_context_ (ApplicationContext::getInstance()),
   signal_browser_model_ (0),
   signal_browser_ (0),
   tab_widget_ (0),
@@ -71,9 +70,6 @@ MainWindowModel::MainWindowModel ()
   overflow_detection_ (false)
 {
     log_stream_.reset(new QTextStream(&log_string_));
-
-    event_color_manager_
-        .reset(new EventColorManager);
 }
 
 // destructor
@@ -88,17 +84,11 @@ QTextStream& MainWindowModel::getLogStream()
     return *log_stream_.get();
 }
 
-// get event color manager
-EventColorManager& MainWindowModel::getEventColorManager()
-{
-    return *event_color_manager_.get();
-}
-
 // set main window
 void MainWindowModel::setMainWindow (MainWindow* main_window)
 {
     main_window_ = main_window;
-    application_context_.setState(APP_STATE_NO_FILE_OPEN);
+    application_context_->setState(APP_STATE_NO_FILE_OPEN);
 }
 
 // void load settings
@@ -108,8 +98,6 @@ void MainWindowModel::loadSettings()
     {
         main_window_->loadSettings();
     }
-
-    event_color_manager_->loadSettings();
 
     QSettings settings("SigViewer");
     settings.beginGroup("MainWindowModel");
@@ -136,8 +124,6 @@ void MainWindowModel::saveSettings()
     {
         main_window_->saveSettings();
     }
-
-    event_color_manager_->saveSettings();
 
     QSettings settings("SigViewer");
     settings.beginGroup("MainWindowModel");
@@ -444,7 +430,6 @@ void MainWindowModel::fileExportEventsAction()
 
     // event type dialog
     EventTypeDialog event_type_dialog(tr("Export Events"),
-                                      *event_color_manager_.get(),
                                       main_window_);
 
     event_type_dialog.setShownTypes(event_types);
@@ -603,7 +588,6 @@ void MainWindowModel::fileImportEventsAction()
 
     // event type dialog
     EventTypeDialog event_type_dialog(tr("Import Events"),
-                                      *event_color_manager_.get(),
                                       main_window_);
 
     event_type_dialog.setShownTypes(event_types);
@@ -677,7 +661,7 @@ void MainWindowModel::openFile (QString const& file_path)
     if (ApplicationContext::getInstance()->getState() == APP_STATE_FILE_OPEN)
     {
         fileCloseAction();
-        if (application_context_.getState() != APP_STATE_NO_FILE_OPEN)
+        if (application_context_->getState() != APP_STATE_NO_FILE_OPEN)
             return; // user cancel
     }
 
@@ -692,7 +676,7 @@ void MainWindowModel::openFile (QString const& file_path)
     channel_manager_ = new ChannelManagerImpl (*file_signal_reader_);
     QSharedPointer<FileContext> file_context (new FileContext (file_name, *event_manager_, *channel_manager_, *tab_context));
     ApplicationContext::getInstance()->addFileContext (file_context);
-    application_context_.getGUIActionManager()->connect (file_context.data (), SIGNAL(stateChanged(FileState)), SLOT(setFileState(FileState)));
+    application_context_->getGUIActionManager()->connect (file_context.data (), SIGNAL(stateChanged(FileState)), SLOT(setFileState(FileState)));
 
 
     int32 sep_pos = file_path.lastIndexOf(DIR_SEPARATOR);
@@ -702,8 +686,7 @@ void MainWindowModel::openFile (QString const& file_path)
 
 
     // initialize signal browser
-    signal_browser_model_ = QSharedPointer<SignalBrowserModel> (new SignalBrowserModel(*file_signal_reader_, *this, file_context, *tab_context));
-    signal_browser_model_->setLogStream(log_stream_.get());
+    signal_browser_model_ = QSharedPointer<SignalBrowserModel> (new SignalBrowserModel(file_context, *tab_context));
 
     connect (event_manager_, SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)),
              signal_browser_model_.data(), SLOT(addEventItem(QSharedPointer<SignalEvent const>)));
@@ -735,7 +718,7 @@ void MainWindowModel::openFile (QString const& file_path)
     main_window_->setCentralWidget(tab_widget_);
 
 
-    application_context_.setState(APP_STATE_FILE_OPEN);
+    application_context_->setState(APP_STATE_FILE_OPEN);
 
     // update recent files
     recent_file_list_.removeAll (file_path);
@@ -807,7 +790,7 @@ void MainWindowModel::fileCloseAction()
     main_window_->setStatusBarNrChannels(-1);
 
     ApplicationContext::getInstance()->addFileContext (QSharedPointer<FileContext>(0));
-    application_context_.setState(APP_STATE_NO_FILE_OPEN);
+    application_context_->setState(APP_STATE_NO_FILE_OPEN);
     main_window_->setWindowTitle (tr("SigViewer"));
 }
 
@@ -1168,7 +1151,6 @@ void MainWindowModel::optionsShowEventsAction()
     signal_browser_model_->getShownEventTypes(shown_event_types);
 
     EventTypeDialog event_type_dialog(tr("Show Events"),
-                                      *event_color_manager_.get(),
                                       main_window_);
 
     event_type_dialog.setShownTypes(shown_event_types);
@@ -1252,10 +1234,10 @@ void MainWindowModel::storeAndInitTabContext (TabContext* context, int tab_index
 {
     tab_contexts_[tab_index] = context;
 
-    application_context_.getGUIActionManager ()->connect (context,
+    application_context_->getGUIActionManager ()->connect (context,
                                                          SIGNAL(selectionStateChanged(TabSelectionState)),
                                                          SLOT(setTabSelectionState(TabSelectionState)));
-    application_context_.getGUIActionManager ()->connect (context,
+    application_context_->getGUIActionManager ()->connect (context,
                                                          SIGNAL(editStateChanged(TabEditState)),
                                                          SLOT(setTabEditState(TabEditState)));
 
@@ -1397,14 +1379,13 @@ QSharedPointer<BlocksVisualisationModel> MainWindowModel::createBlocksVisualisat
 
 //-----------------------------------------------------------------------------
 QSharedPointer<SignalBrowserModel> MainWindowModel::createSignalBrowserView (FileSignalReader& reader,
-                                                                             ApplicationContext& app_ctx,
                                                                              FileContext& file_ctx,
                                                                              TabContext& tab_ctx)
 {
 /*    QSharedPointer<SignalBrowserModel> model (new SignalBrowserModel (reader, *this, file_ctx, tab_ctx));
 
     signal_browser_model_ = model;
-
+/*
     if (!tab_widget_)
     {
         tab_widget_ = new QTabWidget (main_window_);
@@ -1426,8 +1407,8 @@ QSharedPointer<SignalBrowserModel> MainWindowModel::createSignalBrowserView (Fil
     main_window_->setCentralWidget(tab_widget_);
 
     tab_widget_->show();
-    signal_browser_->show();*/
-
+    signal_browser_->show();
+*/
     return signal_browser_model_;
 }
 

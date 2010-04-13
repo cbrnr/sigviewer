@@ -28,7 +28,6 @@ class MainWindow;
 class SignalBrowserModel;
 class SignalBrowserView;
 class EventTableFileReader;
-class EventColorManager;
 class BlocksVisualisationView;
 class AbstractBrowserModel;
 class BlocksVisualisationModel;
@@ -48,7 +47,6 @@ public:
     ~MainWindowModel();
 
     QTextStream& getLogStream();
-    EventColorManager& getEventColorManager();
     void setMainWindow(MainWindow* main_window);
     void loadSettings();
     void saveSettings();
@@ -56,7 +54,6 @@ public:
 
     QSharedPointer<BlocksVisualisationModel> createBlocksVisualisationView (QString const& title);
     QSharedPointer<SignalBrowserModel> createSignalBrowserView (FileSignalReader& reader,
-                                                                ApplicationContext& app_ctx,
                                                                 FileContext& file_ctx,
                                                                 TabContext& tab_ctx);
 
@@ -133,13 +130,12 @@ private:
     static unsigned const NUMBER_RECENT_FILES_;
 
     MainWindow* main_window_;
-    ApplicationContext& application_context_;
+    QSharedPointer<ApplicationContext> application_context_;
     QSharedPointer<FileSignalReader> file_signal_reader_;
     QSharedPointer<SignalBrowserModel> signal_browser_model_;
     SignalBrowserView* signal_browser_; // main_window cares for destruction!!
     QTabWidget* tab_widget_;
     QWidget* signal_browser_tab_;
-    std::auto_ptr<EventColorManager> event_color_manager_;
     QStringList recent_file_list_;
     std::auto_ptr<QTextStream> log_stream_;
     QString log_string_;

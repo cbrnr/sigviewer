@@ -4,13 +4,13 @@
 namespace BioSig_
 {
 
-ApplicationContext* ApplicationContext::instance_ = 0;
+QSharedPointer<ApplicationContext> ApplicationContext::instance_;
 
 //-----------------------------------------------------------------------------
-ApplicationContext* ApplicationContext::getInstance ()
+QSharedPointer<ApplicationContext> ApplicationContext::getInstance ()
 {
-    if (!instance_)
-        instance_ = new ApplicationContext ();
+    if (instance_.isNull())
+        instance_ = QSharedPointer<ApplicationContext> (new ApplicationContext ());
 
     return instance_;
 }
@@ -64,6 +64,13 @@ QSharedPointer<EventTableFileReader> ApplicationContext::getEventTableFileReader
 {
     return impl_->getEventTableFileReader ();
 }
+
+//-------------------------------------------------------------------------
+QSharedPointer<EventColorManager> ApplicationContext::getEventColorManager () const
+{
+    return impl_->getEventColorManager ();
+}
+
 
 
 //-----------------------------------------------------------------------------

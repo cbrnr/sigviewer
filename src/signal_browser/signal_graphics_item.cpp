@@ -10,6 +10,8 @@
 #include "../base/signal_channel.h"
 #include "../base/math_utils.h"
 #include "../signal_browser_mouse_handling.h"
+#include "../application_context.h"
+#include "../event_color_manager.h"
 
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
@@ -297,7 +299,7 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
                                                                             event_manager_.getSampleRate(),
                                                                             id_,
                                                                             0));
-            new_event_color_ = signal_browser_model_.getEventColor(signal_browser_model_.getActualEventCreationType());
+            new_event_color_ = ApplicationContext::getInstance()->getEventColorManager()->getEventColor(signal_browser_model_.getActualEventCreationType());
             emit mouseMoving (true);
             break;
         }
