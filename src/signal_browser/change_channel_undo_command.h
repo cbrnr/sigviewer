@@ -2,6 +2,7 @@
 #define CHANGE_CHANNEL_UNDO_COMMAND_H
 
 #include "../base/signal_event.h"
+#include "../file_handling/event_manager.h"
 
 #include <QUndoCommand>
 #include <QSharedPointer>
@@ -9,13 +10,11 @@
 namespace BioSig_
 {
 
-class EventManager;
-
 class ChangeChannelUndoCommand : public QUndoCommand
 {
 public:
     //-------------------------------------------------------------------------
-    ChangeChannelUndoCommand (EventManager& event_manager,
+    ChangeChannelUndoCommand (QSharedPointer<EventManager> event_manager,
                               EventID event_id,
                               ChannelID new_channel);
 
@@ -42,7 +41,7 @@ private:
     /// assignment-operator disabled
     ChangeChannelUndoCommand& operator= (ChangeChannelUndoCommand const &);
 
-    EventManager& event_manager_;
+    QSharedPointer<EventManager> event_manager_;
     QSharedPointer<SignalEvent> signal_event_;
     ChannelID new_channel_;
     ChannelID old_channel_;

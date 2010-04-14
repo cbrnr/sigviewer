@@ -1,18 +1,20 @@
 #include "file_context.h"
 
+#include <QDir>
+
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-FileContext::FileContext (QString const& file_name,
-                          EventManager& event_manager,
-                          ChannelManager& channel_manager,
-                          TabContext& tab_context)
+FileContext::FileContext (QString const& file_path_and_name,
+                          QSharedPointer<EventManager> event_manager,
+                          QSharedPointer<ChannelManager> channel_manager,
+                          QSharedPointer<FileSignalReader> file_signal_reader)
     : state_ (FILE_STATE_UNCHANGED),
-      file_name_ (file_name),
+      file_path_and_name_ (file_path_and_name),
       event_manager_ (event_manager),
       channel_manager_ (channel_manager),
-      tab_context_ (tab_context)
+      file_signal_reader_ (file_signal_reader)
 {
     // nothing to do here
 }
@@ -24,21 +26,33 @@ FileContext::~FileContext ()
 }
 
 //-----------------------------------------------------------------------------
-QString const& FileContext::getFileName () const
+QString const& FileContext::getFilePathAndName () const
 {
-    return file_name_;
+    return file_path_and_name_;
 }
 
 //-----------------------------------------------------------------------------
-EventManager& FileContext::getEventManager ()
+QString FileContext::getFileName () const
+{
+    return file_path_and_name_.section (QDir::separator(), -1);
+}
+
+//-----------------------------------------------------------------------------
+QSharedPointer<EventManager> FileContext::getEventManager ()
 {
     return event_manager_;
 }
 
 //-----------------------------------------------------------------------------
-ChannelManager& FileContext::getChannelManager ()
+QSharedPointer<ChannelManager> FileContext::getChannelManager ()
 {
     return channel_manager_;
+}
+
+//-----------------------------------------------------------------------------
+QSharedPointer<FileSignalReader> FileContext::getFileSignalReader ()
+{
+    return file_signal_reader_;
 }
 
 //-------------------------------------------------------------------------
@@ -48,9 +62,15 @@ FileState FileContext::getState () const
 }
 
 //-------------------------------------------------------------------------
-TabContext& FileContext::getMainTabContext ()
+QSharedPointer<TabContext> FileContext::getMainTabContext ()
 {
     return tab_context_;
+}
+
+//-------------------------------------------------------------------------
+void FileContext::setMainTabContext (QSharedPointer<TabContext> tab_context)
+{
+    tab_context_ = tab_context;
 }
 
 //-----------------------------------------------------------------------------

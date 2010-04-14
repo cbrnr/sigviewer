@@ -21,8 +21,8 @@ namespace BioSig_
 
 //-------------------------------------------------------------------
 EventInfoWidget::EventInfoWidget(QWidget* parent,
-                                 EventManager& event_manager,
-                                 CommandExecuter& command_executer,
+                                 QSharedPointer<EventManager> event_manager,
+                                 QSharedPointer<CommandExecuter> command_executer,
                                  QSharedPointer<SignalBrowserModel> signal_browser_model)
     : QWidget (parent),
       signal_browser_model_ (signal_browser_model),
@@ -102,7 +102,7 @@ void EventInfoWidget::updateShownEventTypes (std::set<uint16> shown_event_types)
          it != shown_event_types.end();
          ++it)
     {
-        QString event_name = event_manager_.getNameOfEventType (*it);
+        QString event_name = event_manager_->getNameOfEventType (*it);
         shown_event_types_[*it] = event_name;
         event_type_combobox_->addItem (event_name, QVariant(*it));
     }
@@ -120,7 +120,7 @@ void EventInfoWidget::selfChangedType (int combo_box_index)
     if (event_type != selected_signal_event_->getType())
     {
         ChangeTypeUndoCommand* change_type_command = new ChangeTypeUndoCommand (event_manager_, selected_signal_event_->getId(), event_type);
-        command_executer_.executeCommand (change_type_command);
+        command_executer_->executeCommand (change_type_command);
     }
 }
 
@@ -140,7 +140,7 @@ void EventInfoWidget::selfChangedDuration (double new_duration)
 
     int new_duration_in_samples = new_duration * selected_signal_event_->getSampleRate ();
     ResizeEventUndoCommand* resize_command = new ResizeEventUndoCommand (event_manager_, selected_signal_event_->getId(), selected_signal_event_->getPosition(), new_duration_in_samples);
-    command_executer_.executeCommand (resize_command);
+    command_executer_->executeCommand (resize_command);
 }
 
 //-------------------------------------------------------------------

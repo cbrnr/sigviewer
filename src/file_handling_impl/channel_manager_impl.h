@@ -17,7 +17,7 @@ namespace BioSig_
 class ChannelManagerImpl : public ChannelManager
 {
 public:
-    ChannelManagerImpl (FileSignalReader& file_signal_reader);
+    ChannelManagerImpl (QSharedPointer<FileSignalReader> file_signal_reader);
     virtual ~ChannelManagerImpl ();
 
 
@@ -53,7 +53,7 @@ public:
 
 
 private:
-    FileSignalReader& reader_;
+    QSharedPointer<FileSignalReader> reader_;
 };
 
 }

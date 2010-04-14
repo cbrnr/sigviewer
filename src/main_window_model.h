@@ -4,6 +4,9 @@
 #define MAIN_WINDOW_MODEL_H
 
 #include "base/user_types.h"
+#include "file_context.h"
+#include "file_handling/event_manager.h"
+#include "file_handling/channel_manager.h"
 
 #include <memory>
 
@@ -32,10 +35,7 @@ class BlocksVisualisationView;
 class AbstractBrowserModel;
 class BlocksVisualisationModel;
 class ApplicationContext;
-class FileContext;
 class TabContext;
-class EventManagerImpl;
-class ChannelManager;
 
 // main window model
 class MainWindowModel : public QObject
@@ -53,9 +53,7 @@ public:
     void setChanged();
 
     QSharedPointer<BlocksVisualisationModel> createBlocksVisualisationView (QString const& title);
-    QSharedPointer<SignalBrowserModel> createSignalBrowserView (FileSignalReader& reader,
-                                                                FileContext& file_ctx,
-                                                                TabContext& tab_ctx);
+    QSharedPointer<SignalBrowserModel> createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx);
 
 public slots:
 
@@ -116,7 +114,7 @@ public slots:
 
 private:
     //-------------------------------------------------------------------------
-    void storeAndInitTabContext (TabContext* context, int tab_index);
+    void storeAndInitTabContext (QSharedPointer<TabContext> context, int tab_index);
 
     //-------------------------------------------------------------------------
     QSharedPointer<FileSignalReader> createAndOpenFileSignalReader
@@ -132,6 +130,7 @@ private:
     MainWindow* main_window_;
     QSharedPointer<ApplicationContext> application_context_;
     QSharedPointer<FileSignalReader> file_signal_reader_;
+    QSharedPointer<FileContext> current_file_context_;
     QSharedPointer<SignalBrowserModel> signal_browser_model_;
     SignalBrowserView* signal_browser_; // main_window cares for destruction!!
     QTabWidget* tab_widget_;
@@ -143,9 +142,9 @@ private:
     bool overflow_detection_;
     std::map<int, QSharedPointer<AbstractBrowserModel> > browser_models_;
     std::list<QSharedPointer<BlocksVisualisationModel> > blocks_visualisation_models_;
-    std::map<int, TabContext*> tab_contexts_;
-    EventManagerImpl* event_manager_;
-    ChannelManager* channel_manager_;
+    std::map<int, QSharedPointer<TabContext> > tab_contexts_;
+    QSharedPointer<EventManager> event_manager_;
+    QSharedPointer<ChannelManager> channel_manager_;
 
     //-------------------------------------------------------------------------
     // not allowed

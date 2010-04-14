@@ -178,12 +178,14 @@ void MainWindowModel::calculateMeanAction ()
     }
 
     EventTimeSelectionDialog event_time_dialog (shown_event_types, shown_channels,
-                                                *event_manager_);
+                                                current_file_context_->getEventManager());
     if (event_time_dialog.exec () == QDialog::Rejected)
         return;
     else
     {
-        CalculateEventMeanCommand command (*event_manager_, *channel_manager_, *this,
+        CalculateEventMeanCommand command (current_file_context_->getEventManager(),
+                                           current_file_context_->getChannelManager(),
+                                           *this,
                                            event_time_dialog.getSelectedEventType(),
                                            event_time_dialog.getSelectedChannels(),
                                            event_time_dialog.getSecondsBeforeEvent(),
@@ -208,7 +210,7 @@ void MainWindowModel::calculateFrequencySpectrumAction ()
     }
 
     EventTimeSelectionDialog event_time_dialog (shown_event_types, shown_channels,
-                                                *event_manager_);
+                                                current_file_context_->getEventManager());
     if (event_time_dialog.exec () == QDialog::Rejected)
         return;
     else
@@ -291,7 +293,7 @@ void MainWindowModel::fileSaveAction()
     // get writer for file
     FileSignalWriter* file_signal_writer = 0;
 
-    QString file_name = file_signal_reader_->getBasicHeader()->getFullFileName();
+    QString file_name = current_file_context_->getFilePathAndName();
 
     if (file_name.lastIndexOf('.') != -1)
     {
@@ -312,7 +314,11 @@ void MainWindowModel::fileSaveAction()
 
     // get events from buffer
     FileSignalReader::SignalEventVector event_vector;
-    event_manager_->getAllEvents (event_vector);
+    QList<EventID> events = event_manager_->getAllEvents ();
+    for (QList<EventID>::iterator events_iter = events.begin();
+         events_iter != events.end();
+         ++events_iter)
+        event_vector.push_back (*event_manager_->getEvent (*events_iter));
 
     // save
     file_signal_writer->setLogStream(log_stream_.get());
@@ -378,7 +384,11 @@ void MainWindowModel::fileSaveAsAction()
 
     // get events from buffer
     FileSignalReader::SignalEventVector event_vector;
-    event_manager_->getAllEvents (event_vector);
+    QList<EventID> events = event_manager_->getAllEvents ();
+    for (QList<EventID>::iterator events_iter = events.begin();
+         events_iter != events.end();
+         ++events_iter)
+        event_vector.push_back (*event_manager_->getEvent (*events_iter));
 
     // save
     file_signal_writer->setLogStream(log_stream_.get());
@@ -414,8 +424,11 @@ void MainWindowModel::fileExportEventsAction()
 
     // get events
     FileSignalReader::SignalEventVector event_vector;
-
-    event_manager_->getAllEvents (event_vector);
+    QList<EventID> events = event_manager_->getAllEvents ();
+    for (QList<EventID>::iterator events_iter = events.begin();
+         events_iter != events.end();
+         ++events_iter)
+        event_vector.push_back (*event_manager_->getEvent (*events_iter));
 
     // get event types
     SignalBrowserModel::IntList event_types;
@@ -671,11 +684,12 @@ void MainWindowModel::openFile (QString const& file_path)
 
     QString file_name = file_path.section (QDir::separator(), -1);
 
-    TabContext* tab_context = new TabContext ();
-    event_manager_ = new EventManagerImpl (file_signal_reader_);
-    channel_manager_ = new ChannelManagerImpl (*file_signal_reader_);
-    QSharedPointer<FileContext> file_context (new FileContext (file_name, *event_manager_, *channel_manager_, *tab_context));
+    QSharedPointer<TabContext> tab_context (new TabContext ());
+    event_manager_ = QSharedPointer<EventManagerImpl>(new EventManagerImpl (file_signal_reader_));
+    channel_manager_ = QSharedPointer<ChannelManager>(new ChannelManagerImpl (file_signal_reader_));
+    QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager_, channel_manager_, file_signal_reader_));
     ApplicationContext::getInstance()->addFileContext (file_context);
+    current_file_context_ = file_context;
     application_context_->getGUIActionManager()->connect (file_context.data (), SIGNAL(stateChanged(FileState)), SLOT(setFileState(FileState)));
 
 
@@ -686,13 +700,13 @@ void MainWindowModel::openFile (QString const& file_path)
 
 
     // initialize signal browser
-    signal_browser_model_ = QSharedPointer<SignalBrowserModel> (new SignalBrowserModel(file_context, *tab_context));
+    signal_browser_model_ = QSharedPointer<SignalBrowserModel> (new SignalBrowserModel(file_context, tab_context));
 
-    connect (event_manager_, SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)),
+    connect (event_manager_.data(), SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)),
              signal_browser_model_.data(), SLOT(addEventItem(QSharedPointer<SignalEvent const>)));
-    connect (event_manager_, SIGNAL(eventRemoved(EventID)),
+    connect (event_manager_.data(), SIGNAL(eventRemoved(EventID)),
              signal_browser_model_.data(), SLOT(removeEventItem(EventID)));
-    connect (event_manager_, SIGNAL(eventChanged(EventID)),
+    connect (event_manager_.data(), SIGNAL(eventChanged(EventID)),
              signal_browser_model_.data(), SLOT(setEventChanged(EventID)));
 
 
@@ -705,7 +719,7 @@ void MainWindowModel::openFile (QString const& file_path)
         tab_widget_->setTabsClosable (true);
     }
 
-    signal_browser_ = new SignalBrowserView (signal_browser_model_, *event_manager_, *tab_context, tab_widget_);
+    signal_browser_ = new SignalBrowserView (signal_browser_model_, event_manager_, tab_context, tab_widget_);
     signal_browser_model_->setSignalBrowserView(signal_browser_);
     signal_browser_model_->loadSettings();
 
@@ -783,7 +797,7 @@ void MainWindowModel::fileCloseAction()
     signal_browser_tab_ = 0;
     file_signal_reader_->close();
     file_signal_reader_.clear();
-
+    tab_contexts_.clear ();
 
     // reset status bar
     main_window_->setStatusBarSignalLength(-1);
@@ -914,7 +928,7 @@ void MainWindowModel::editInsertOverAction ()
     uint16 event_type = signal_browser_model_->getActualEventCreationType();
     QSharedPointer<SignalEvent> new_event = QSharedPointer<SignalEvent>(new SignalEvent(*(signal_browser_model_->getSelectedSignalEvent().data())));
     new_event->setType (event_type);
-    NewEventUndoCommand* new_event_command = new NewEventUndoCommand (*event_manager_, new_event);
+    NewEventUndoCommand* new_event_command = new NewEventUndoCommand (event_manager_, new_event);
     tab_contexts_[tab_widget_->currentIndex()]->executeCommand (new_event_command);
 }
 
@@ -1066,14 +1080,14 @@ void MainWindowModel::optionsChangeCreationType ()
 //-----------------------------------------------------------------------------
 std::set<ChannelID> MainWindowModel::channelSelection () const
 {
-    ChannelSelectionDialog channel_dialog(file_signal_reader_->getBasicHeader(),
-                                          main_window_);
+    ChannelSelectionDialog channel_dialog (current_file_context_->getChannelManager(),
+             main_window_);
 
     bool empty_selection = signal_browser_model_->getNumberShownChannels() == 0;
     std::set<ChannelID> pre_selected_channels;
 
     for (uint32 channel_nr = 0;
-         channel_nr < file_signal_reader_->getBasicHeader()->getNumberChannels();
+         channel_nr < current_file_context_->getChannelManager()->getNumberChannels();
          channel_nr++)
     {
         bool show_channel = empty_selection ||
@@ -1094,7 +1108,7 @@ std::set<ChannelID> MainWindowModel::channelSelection () const
 
     std::set<ChannelID> selected_channels;
     for (uint32 channel_nr = 0;
-         channel_nr < file_signal_reader_->getBasicHeader()->getNumberChannels();
+         channel_nr < current_file_context_->getChannelManager()->getNumberChannels();
          channel_nr++)
     {
         if (channel_dialog.isSelected (channel_nr))
@@ -1230,14 +1244,14 @@ void MainWindowModel::helpAboutAction()
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::storeAndInitTabContext (TabContext* context, int tab_index)
+void MainWindowModel::storeAndInitTabContext (QSharedPointer<TabContext> context, int tab_index)
 {
     tab_contexts_[tab_index] = context;
 
-    application_context_->getGUIActionManager ()->connect (context,
+    application_context_->getGUIActionManager ()->connect (context.data(),
                                                          SIGNAL(selectionStateChanged(TabSelectionState)),
                                                          SLOT(setTabSelectionState(TabSelectionState)));
-    application_context_->getGUIActionManager ()->connect (context,
+    application_context_->getGUIActionManager ()->connect (context.data(),
                                                          SIGNAL(editStateChanged(TabEditState)),
                                                          SLOT(setTabEditState(TabEditState)));
 
@@ -1371,21 +1385,15 @@ QSharedPointer<BlocksVisualisationModel> MainWindowModel::createBlocksVisualisat
     int tab_index = tab_widget_->addTab(bv_view, title);
     browser_models_[tab_index] = bv_model;
     tab_widget_->setCurrentWidget(bv_view);
-    TabContext* tab_context = new TabContext ();
+    QSharedPointer<TabContext> tab_context (new TabContext ());
     storeAndInitTabContext (tab_context, tab_index);
 
     return bv_model;
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<SignalBrowserModel> MainWindowModel::createSignalBrowserView (FileSignalReader& reader,
-                                                                             FileContext& file_ctx,
-                                                                             TabContext& tab_ctx)
+QSharedPointer<SignalBrowserModel> MainWindowModel::createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx)
 {
-/*    QSharedPointer<SignalBrowserModel> model (new SignalBrowserModel (reader, *this, file_ctx, tab_ctx));
-
-    signal_browser_model_ = model;
-/*
     if (!tab_widget_)
     {
         tab_widget_ = new QTabWidget (main_window_);
@@ -1394,22 +1402,43 @@ QSharedPointer<SignalBrowserModel> MainWindowModel::createSignalBrowserView (Fil
         tab_widget_->setTabsClosable (true);
     }
 
-    signal_browser_ = new SignalBrowserView (signal_browser_model_, *event_manager_, tab_ctx, tab_widget_);
-    signal_browser_model_->setSignalBrowserView (signal_browser_);
-    signal_browser_model_->loadSettings();
+    QSharedPointer<TabContext> tab_context (new TabContext);
+    file_ctx->setMainTabContext (tab_context);
 
-    int tab_index = tab_widget_->addTab (signal_browser_, tr("Signal Data"));
-    storeAndInitTabContext (&tab_ctx, tab_index);
-    browser_models_[tab_index] = signal_browser_model_;
+    QSharedPointer<SignalBrowserModel> model (new SignalBrowserModel (file_ctx, tab_context));
+    SignalBrowserView* view = new SignalBrowserView (model, file_ctx->getEventManager(), tab_context, tab_widget_);
 
-    tab_widget_->hide();
+    int tab_index = tab_widget_->addTab (view, tr("Signal Data"));
+    storeAndInitTabContext (tab_context, tab_index);
+
+    model->setSignalBrowserView (view);
+    browser_models_[tab_index] = model;
+    model->loadSettings ();
 
     main_window_->setCentralWidget(tab_widget_);
-
     tab_widget_->show();
-    signal_browser_->show();
-*/
-    return signal_browser_model_;
+    view->show();
+
+    // waldesel:
+    // --begin
+    //   this is only to support old code here.. remove this line as soon
+    //   command pattern for gui commands is finalised
+    signal_browser_model_ = model;
+    signal_browser_ = view;
+    current_file_context_ = file_ctx;
+    event_manager_ = file_ctx->getEventManager();
+    channel_manager_ = file_ctx->getChannelManager();
+    file_signal_reader_ = file_ctx->getFileSignalReader();
+    // --end
+
+
+    recent_file_list_.removeAll (file_ctx->getFilePathAndName());
+    if (recent_file_list_.size() == NUMBER_RECENT_FILES_)
+        recent_file_list_.pop_back();
+    recent_file_list_.push_front (file_ctx->getFilePathAndName());
+
+    main_window_->setWindowTitle (file_ctx->getFileName() + " - SigViewer");
+    return model;
 }
 
 } // namespace BioSig_

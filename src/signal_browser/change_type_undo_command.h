@@ -2,6 +2,7 @@
 #define CHANGE_TYPE_UNDO_COMMAND_H
 
 #include "../base/signal_event.h"
+#include "../file_handling/event_manager.h"
 
 #include <QUndoCommand>
 #include <QSharedPointer>
@@ -10,13 +11,11 @@
 namespace BioSig_
 {
 
-class EventManager;
-
 class ChangeTypeUndoCommand : public QUndoCommand
 {
 public:
     //-------------------------------------------------------------------------
-    ChangeTypeUndoCommand (EventManager& event_manager,
+    ChangeTypeUndoCommand (QSharedPointer<EventManager> event_manager,
                            EventID event_id,
                            EventType new_type);
 
@@ -40,7 +39,7 @@ private:
     /// assignment-operator disabled
     ChangeTypeUndoCommand& operator= (ChangeTypeUndoCommand const &);
 
-    EventManager& event_manager_;
+    QSharedPointer<EventManager> event_manager_;
     EventType new_type_;
     EventType old_type_;
     QSharedPointer<SignalEvent> signal_event_;

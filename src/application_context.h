@@ -2,6 +2,7 @@
 #define APPLICATION_CONTEXT_H
 
 #include "event_color_manager.h"
+#include "file_context.h"
 
 #include <QObject>
 #include <QSharedPointer>
@@ -11,9 +12,8 @@ namespace BioSig_
 
 class GUIActionManager;
 class MainWindowModel;
-class ApplicationContextImpl;
 class EventTableFileReader;
-class FileContext;
+class ApplicationContextImpl;
 
 enum ApplicationState
 {

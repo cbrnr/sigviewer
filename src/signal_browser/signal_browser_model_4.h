@@ -3,6 +3,7 @@
 #define SIGNAL_BROWSER_MODEL_H_q4
 
 #include "../abstract_browser_model.h"
+#include "../file_context.h"
 #include "../tab_context.h"
 #include "signal_browser_modes.h"
 #include "event_graphics_item.h"
@@ -19,10 +20,8 @@
 namespace BioSig_
 {
 
-class MainWindowModel;
 class SignalBrowserView;
 class SignalGraphicsItem;
-class FileContext;
 
 // signal browser model
 class SignalBrowserModel : public QObject, public AbstractBrowserModel
@@ -34,7 +33,7 @@ public:
     typedef QList<uint16> IntList;
 
     SignalBrowserModel(QSharedPointer<FileContext> file_context,
-                       TabContext& tab_context);
+                       QSharedPointer<TabContext> tab_context);
     virtual ~SignalBrowserModel();
 
     virtual void setPixelPerXUnit (float64 pixel_per_sec);
@@ -80,14 +79,7 @@ public:
 
     void goTo(float32 sec, int32 channel_index);
     void goToAndSelectNextEvent (bool forward);
-/*
-    void zoomRect(const QRect& rect);
-*/
-/*
-    void setSignalSpacing(int32 spacing);
-    void setPreferedXGirdPixelIntervall(int32 pixel_intervall);
-    void setPreferedYGirdPixelIntervall(int32 pixel_intervall);
-*/
+
     // get parameters
     int32 getSignalHeight();
     int32 getSignalSpacing();
@@ -149,19 +141,10 @@ private:
     static uint8 const SIGNAL_Z = 4;
     static uint8 const EVENT_Z = 5;
 
-    enum State
-    {
-        STATE_READY,
-        STATE_INIT_BUFFER
-    };
-
     QSharedPointer<FileContext> file_context_;
-    TabContext& tab_context_;
+    QSharedPointer<TabContext> tab_context_;
     SignalBrowserView* signal_browser_view_;
-    State state_;
     SignalBrowserMode mode_;
-
-
 
     typedef std::map<int32, SignalGraphicsItem*> Int2SignalGraphicsItemPtrMap;
     typedef std::map<int32, EventGraphicsItem*> Int2EventGraphicsItemPtrMap;
@@ -169,7 +152,6 @@ private:
     typedef std::map<int32, int32> Int2IntMap;
 
 
-    bool checkReadyState(const QString& function);
     bool checkSignalBrowserPtr(const QString function);
     void updateEventItemsImpl ();
 

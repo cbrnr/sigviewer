@@ -3,6 +3,8 @@
 
 #include "../base/user_types.h"
 #include "../base/signal_event.h"
+#include "../command_executer.h"
+#include "../file_handling/event_manager.h"
 
 #include <QWidget>
 #include <QSharedPointer>
@@ -24,8 +26,6 @@ namespace BioSig_
 
 class SignalBrowserModel;
 class SignalEvent;
-class EventManager;
-class CommandExecuter;
 
 class EventInfoWidget : public QWidget
 {
@@ -33,8 +33,8 @@ class EventInfoWidget : public QWidget
 
 public:
     EventInfoWidget(QWidget* parent,
-                    EventManager& event_manager,
-                    CommandExecuter& command_executer,
+                    QSharedPointer<EventManager> event_manager,
+                    QSharedPointer<CommandExecuter> command_executer,
                     QSharedPointer<SignalBrowserModel> signal_browser_model);
     virtual ~EventInfoWidget ();
 
@@ -53,8 +53,8 @@ private:
 
 
     QSharedPointer<SignalBrowserModel> signal_browser_model_;
-    EventManager& event_manager_;
-    CommandExecuter& command_executer_;
+    QSharedPointer<EventManager> event_manager_;
+    QSharedPointer<CommandExecuter> command_executer_;
     std::map<uint16, QString> shown_event_types_;
 
     QSharedPointer<SignalEvent const> selected_signal_event_;

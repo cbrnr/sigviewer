@@ -3,6 +3,9 @@
 
 
 #include "../base/user_types.h"
+#include "../base/signal_event.h"
+#include "../command_executer.h"
+#include "../file_handling/event_manager.h"
 
 #include <QGraphicsItem>
 #include <QObject>
@@ -16,11 +19,8 @@ class QMutex;
 namespace BioSig_
 {
 
-class SignalEvent;
 class SignalBrowserModel;
 class EventContextMenu;
-class EventManager;
-class CommandExecuter;
 
 class EventGraphicsItem : public QObject, public QGraphicsItem
 {
@@ -31,8 +31,8 @@ class EventGraphicsItem : public QObject, public QGraphicsItem
 public:
     EventGraphicsItem(SignalBrowserModel& model,
                       QSharedPointer<SignalEvent const> signal_event,
-                      EventManager& event_manager,
-                      CommandExecuter& command_executer);
+                      QSharedPointer<EventManager> event_manager,
+                      QSharedPointer<CommandExecuter> command_executer);
 
     virtual ~EventGraphicsItem ();
 
@@ -93,8 +93,8 @@ private:
     void addContextMenuEntry ();
 
     SignalBrowserModel& signal_browser_model_;
-    EventManager& event_manager_;
-    CommandExecuter& command_executer_;
+    QSharedPointer<EventManager> event_manager_;
+    QSharedPointer<CommandExecuter> command_executer_;
     QColor color_;
     State state_;
 

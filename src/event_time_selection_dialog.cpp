@@ -19,7 +19,7 @@ EventTimeSelectionDialog::EventTimeSelectionDialog (std::map<uint16, QString>
                                                     const& shown_event_types,
                                                     std::map<uint32, QString>
                                                     const& shown_channels,
-                                                    EventManager const& event_manager)
+                                                    QSharedPointer<EventManager const> event_manager)
     : shown_event_types_ (shown_event_types),
       shown_channels_ (shown_channels),
       event_manager_ (event_manager)
@@ -145,7 +145,7 @@ void EventTimeSelectionDialog::selectedEventTypeChanged (int combo_box_index)
     for (int i = 0; i < combo_box_index; i++)
         ++event_type_it;
 
-    QList<EventID> event_ids = event_manager_.getEvents(event_type_it->first);
+    QList<EventID> event_ids = event_manager_->getEvents(event_type_it->first);
 
     float32 shortest_duration = 100000.0; // FIXMEEE!!!!!!!!!!!!!!!!!! max float32!!
     float32 longest_duration = 0;
@@ -155,7 +155,7 @@ void EventTimeSelectionDialog::selectedEventTypeChanged (int combo_box_index)
          id_iter != event_ids.end();
          ++id_iter)
     {
-        float32 dur = event_manager_.getEvent(*id_iter)->getDurationInSec();
+        float32 dur = event_manager_->getEvent(*id_iter)->getDurationInSec();
         if (dur > longest_duration)
             longest_duration = dur;
         if (dur < shortest_duration)

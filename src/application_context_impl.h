@@ -2,13 +2,14 @@
 #define APPLICATION_CONTEXT_IMPL_H
 
 #include "event_color_manager.h"
+#include "gui_action_manager.h"
+#include "main_window_model.h"
+
 #include <QSharedPointer>
 
 namespace BioSig_
 {
 
-class MainWindowModel;
-class GUIActionManager;
 class EventTableFileReader;
 
 class ApplicationContextImpl

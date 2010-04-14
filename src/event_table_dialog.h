@@ -4,6 +4,7 @@
 #define EVENT_TABLE_DIALOG_H
 
 #include "base/user_types.h"
+#include "command_executer.h"
 
 #include <qdialog.h>
 #include <QAbstractTableModel>
@@ -18,7 +19,6 @@ namespace BioSig_
 
 class BasicHeader;
 class EventManager;
-class CommandExecuter;
 
 // event table dialog
 class EventTableDialog : public QDialog
@@ -26,7 +26,7 @@ class EventTableDialog : public QDialog
     Q_OBJECT
 public:
     EventTableDialog (EventManager& event_manager,
-                      CommandExecuter& command_executer,
+                      QSharedPointer<CommandExecuter> command_executer,
                       QPointer<BasicHeader> basic_header, QWidget* parent = 0);
 
     void loadSettings();
@@ -90,7 +90,7 @@ private:
     void buildEventTable();
 
     EventManager& event_manager_;
-    CommandExecuter& command_executer_;
+    QSharedPointer<CommandExecuter> command_executer_;
     QPointer<BasicHeader> basic_header_;
     QTableView *event_table_view_;
     TableModel *event_table_model_;

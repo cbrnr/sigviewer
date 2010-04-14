@@ -5,7 +5,7 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-NewEventUndoCommand::NewEventUndoCommand (EventManager& event_manager,
+NewEventUndoCommand::NewEventUndoCommand (QSharedPointer<EventManager> event_manager,
                                           QSharedPointer<SignalEvent> signal_event,
                                           float scene_to_signal_factor)
  : event_manager_ (event_manager),
@@ -24,7 +24,7 @@ NewEventUndoCommand::~NewEventUndoCommand ()
 //-----------------------------------------------------------------------------
 void NewEventUndoCommand::undo ()
 {
-    event_manager_.removeEvent (created_signal_event_->getId ());
+    event_manager_->removeEvent (created_signal_event_->getId ());
 }
 
 //-----------------------------------------------------------------------------
@@ -34,7 +34,7 @@ void NewEventUndoCommand::redo ()
     if (!created_signal_event_.isNull())
         id = created_signal_event_->getId ();
 
-    created_signal_event_ = event_manager_.createEvent (
+    created_signal_event_ = event_manager_->createEvent (
             raw_signal_event_->getChannel(),
             raw_signal_event_->getPosition(),
             raw_signal_event_->getDuration(),

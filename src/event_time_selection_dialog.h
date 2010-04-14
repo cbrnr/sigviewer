@@ -2,9 +2,11 @@
 #define EVENT_TIME_SELECTION_DIALOG_H
 
 #include "base/user_types.h"
+#include "file_handling/event_manager.h"
 
 #include <QDialog>
 #include <QString>
+#include <QSharedPointer>
 
 #include <map>
 
@@ -17,8 +19,6 @@ class QLabel;
 namespace BioSig_
 {
 
-class EventManager;
-
 class EventTimeSelectionDialog : public QDialog
 {
     Q_OBJECT
@@ -26,7 +26,7 @@ public:
     //-------------------------------------------------------------------------
     EventTimeSelectionDialog (std::map<uint16, QString> const& shown_event_types,
                               std::map<uint32, QString> const& shown_channels,
-                              EventManager const& event_manager);
+                              QSharedPointer<EventManager const> event_manager);
 
     //-------------------------------------------------------------------------
     std::vector<uint32> getSelectedChannels () const;
@@ -47,7 +47,7 @@ protected slots:
 private:
     std::map<uint16, QString> shown_event_types_;
     std::map<uint32, QString> shown_channels_;
-    EventManager const& event_manager_;
+    QSharedPointer<EventManager const> event_manager_;
 
     QListWidget* channel_list_widget_;
     QComboBox* event_type_combobox_;

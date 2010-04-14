@@ -1,15 +1,17 @@
 #ifndef FILE_CONTEXT_H
 #define FILE_CONTEXT_H
 
+#include "tab_context.h"
+#include "file_handling/event_manager.h"
+#include "file_handling/file_signal_reader.h"
+#include "file_handling/channel_manager.h"
+
 #include <QObject>
 #include <QString>
+#include <QSharedPointer>
 
 namespace BioSig_
 {
-
-class EventManager;
-class TabContext;
-class ChannelManager;
 
 enum FileState
 {
@@ -28,28 +30,37 @@ class FileContext : public QObject
     Q_OBJECT
 public:
     //-------------------------------------------------------------------------
-    FileContext (QString const & file_name,
-                 EventManager& event_manager,
-                 ChannelManager& channel_manager,
-                 TabContext& tab_context);
+    FileContext (QString const & file_path_and_name,
+                 QSharedPointer<EventManager> event_manager,
+                 QSharedPointer<ChannelManager> channel_manager,
+                 QSharedPointer<FileSignalReader> file_signal_reader);
 
     //-------------------------------------------------------------------------
     ~FileContext ();
 
     //-------------------------------------------------------------------------
-    QString const& getFileName () const;
+    QString const& getFilePathAndName () const;
 
     //-------------------------------------------------------------------------
-    EventManager& getEventManager ();
+    QString getFileName () const;
 
     //-------------------------------------------------------------------------
-    ChannelManager& getChannelManager ();
+    QSharedPointer<EventManager> getEventManager ();
+
+    //-------------------------------------------------------------------------
+    QSharedPointer<ChannelManager> getChannelManager ();
+
+    //-------------------------------------------------------------------------
+    QSharedPointer<FileSignalReader> getFileSignalReader ();
 
     //-------------------------------------------------------------------------
     FileState getState () const;
 
     //-------------------------------------------------------------------------
-    TabContext& getMainTabContext ();
+    QSharedPointer<TabContext> getMainTabContext ();
+
+    //-------------------------------------------------------------------------
+    void setMainTabContext (QSharedPointer<TabContext> tab_context);
 
 signals:
     //-------------------------------------------------------------------------
@@ -66,10 +77,11 @@ private:
     FileContext& operator= (FileContext const&);
 
     FileState state_;
-    QString file_name_;
-    EventManager& event_manager_;
-    ChannelManager& channel_manager_;
-    TabContext& tab_context_;
+    QString file_path_and_name_;
+    QSharedPointer<EventManager> event_manager_;
+    QSharedPointer<ChannelManager> channel_manager_;
+    QSharedPointer<TabContext> tab_context_;
+    QSharedPointer<FileSignalReader> file_signal_reader_;
 };
 
 } // namespace BioSig_

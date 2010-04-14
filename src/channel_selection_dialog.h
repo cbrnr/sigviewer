@@ -4,9 +4,10 @@
 #define CHANNEL_SELECTION_DIALOG_H
 
 #include "base/user_types.h"
+#include "file_handling/channel_manager.h"
 
 #include <qdialog.h>
-#include <QPointer>
+#include <QSharedPointer>
 
 class QListWidget;
 class QPushButton;
@@ -17,14 +18,13 @@ class QDoubleSpinBox;
 namespace BioSig_
 {
 
-class BasicHeader;
-
 // channel selection dialog
 class ChannelSelectionDialog : public QDialog
 {
     Q_OBJECT
 public:
-    ChannelSelectionDialog(QPointer<BasicHeader> header, QWidget* parent = 0);
+    ChannelSelectionDialog (QSharedPointer<ChannelManager> channel_manager,
+                            QWidget* parent = 0);
 
     void loadSettings();
     void saveSettings();
@@ -44,7 +44,7 @@ private:
 
     void buildChannelList();
 
-    QPointer<BasicHeader> basic_header_;
+    QSharedPointer<ChannelManager> channel_manager_;
     QListWidget* channel_list_widget_;
     QPushButton* unselect_all_button_;
     QPushButton* select_all_button_;

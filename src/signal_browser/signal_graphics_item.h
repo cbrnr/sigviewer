@@ -2,6 +2,9 @@
 #define SIGNALGRAPHICSITEM_H
 
 #include "../base/user_types.h"
+#include "../command_executer.h"
+#include "../file_handling/event_manager.h"
+#include "../file_handling/channel_manager.h"
 
 #include <QGraphicsItem>
 #include <QSharedPointer>
@@ -16,9 +19,6 @@ class SignalChannel;
 class SignalEvent;
 class SignalBrowserModel;
 class EventGraphicsItem;
-class EventManager;
-class CommandExecuter;
-class ChannelManager;
 
 class SignalGraphicsItem : public QObject, public QGraphicsItem
 {
@@ -27,9 +27,9 @@ class SignalGraphicsItem : public QObject, public QGraphicsItem
     Q_INTERFACES(QGraphicsItem)
 #endif
 public:
-    SignalGraphicsItem(EventManager& event_manager,
-                       CommandExecuter& command_executor,
-                       ChannelManager& channel_manager,
+    SignalGraphicsItem(QSharedPointer<EventManager> event_manager,
+                       QSharedPointer<CommandExecuter> command_executor,
+                       QSharedPointer<ChannelManager> channel_manager,
                        ChannelID id,
                        const SignalChannel& channel,
                        SignalBrowserModel& model);
@@ -70,9 +70,9 @@ private:
 
     void drawYGrid (QPainter* painter, QStyleOptionGraphicsItem const* option);
 
-    EventManager& event_manager_;
-    CommandExecuter& command_executor_;
-    ChannelManager& channel_manager_;
+    QSharedPointer<EventManager> event_manager_;
+    QSharedPointer<CommandExecuter> command_executor_;
+    QSharedPointer<ChannelManager> channel_manager_;
     ChannelID id_;
     const SignalChannel& signal_channel_;
     SignalBrowserModel& signal_browser_model_;

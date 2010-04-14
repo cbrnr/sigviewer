@@ -4,7 +4,6 @@
 #include "new_event_undo_command.h"
 #include "y_axis_widget_4.h"
 #include "../file_handling/channel_manager.h"
-#include "../file_handling/event_manager.h"
 #include "../command_executer.h"
 #include "../base/signal_event.h"
 #include "../base/signal_channel.h"
@@ -32,9 +31,9 @@ float64 SignalGraphicsItem::prefered_pixel_per_sample_ = 1.0;
 
 
 //-----------------------------------------------------------------------------
-SignalGraphicsItem::SignalGraphicsItem (EventManager& event_manager,
-                                        CommandExecuter& command_executor,
-                                        ChannelManager& channel_manager,
+SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<EventManager> event_manager,
+                                        QSharedPointer<CommandExecuter> command_executor,
+                                        QSharedPointer<ChannelManager> channel_manager,
                                         ChannelID id,
                                         const SignalChannel& channel,
                                         SignalBrowserModel& model)
@@ -44,8 +43,8 @@ SignalGraphicsItem::SignalGraphicsItem (EventManager& event_manager,
   id_ (id),
   signal_channel_(channel),
   signal_browser_model_(model),
-  minimum_ (channel_manager_.getMinValue (id_)),
-  maximum_ (channel_manager_.getMaxValue (id_)),
+  minimum_ (channel_manager_->getMinValue (id_)),
+  maximum_ (channel_manager_->getMaxValue (id_)),
   y_zoom_ (1),
   draw_y_grid_ (true),
   y_offset_ (0),
@@ -79,7 +78,7 @@ void SignalGraphicsItem::setHeight (uint32 height)
    y_zoom_ = y_zoom_ * height / height_;
    y_offset_ = y_offset_* height / height_;
    height_ = height;
-   width_ = channel_manager_.getDurationInSec() * signal_browser_model_.getPixelPerXUnit();
+   width_ = channel_manager_->getDurationInSec() * signal_browser_model_.getPixelPerXUnit();
    updateYGridIntervall ();
 }
 
@@ -157,7 +156,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     painter->setClipRect(clip);
 
     float64 pixel_per_sec = signal_browser_model_.getPixelPerXUnit();
-    float32 pixel_per_sample = pixel_per_sec / channel_manager_.getSampleRate();
+    float32 pixel_per_sample = pixel_per_sec / channel_manager_->getSampleRate();
 
     // waldesel: better would be
     // pixel_per_sample = 1; (or some power of 2)
@@ -173,7 +172,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     length /= pixel_per_sample;
 
-    QSharedPointer<DataBlock const> data_block = channel_manager_.getData (id_, start_sample, length);
+    QSharedPointer<DataBlock const> data_block = channel_manager_->getData (id_, start_sample, length);
 
     bool last_valid = false;
     float32 last_y = 0;
@@ -296,7 +295,7 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
             new_event_ = true;
             new_signal_event_ = QSharedPointer<SignalEvent>(new SignalEvent(event->scenePos().x(),
                                                                             signal_browser_model_.getActualEventCreationType(),
-                                                                            event_manager_.getSampleRate(),
+                                                                            event_manager_->getSampleRate(),
                                                                             id_,
                                                                             0));
             new_event_color_ = ApplicationContext::getInstance()->getEventColorManager()->getEventColor(signal_browser_model_.getActualEventCreationType());
@@ -320,8 +319,8 @@ void SignalGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent* event)
     if (new_event_)
     {
         emit mouseMoving (false);
-        NewEventUndoCommand* new_event_command = new NewEventUndoCommand (event_manager_, new_signal_event_, event_manager_.getSampleRate() / signal_browser_model_.getPixelPerXUnit());
-        command_executor_.executeCommand (new_event_command);
+        NewEventUndoCommand* new_event_command = new NewEventUndoCommand (event_manager_, new_signal_event_, event_manager_->getSampleRate() / signal_browser_model_.getPixelPerXUnit());
+        command_executor_->executeCommand (new_event_command);
     }
 
     shifting_ = false;

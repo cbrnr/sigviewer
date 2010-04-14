@@ -3,6 +3,8 @@
 #define SIGNAL_BROWSER_VIEW_H
 
 #include "../base/user_types.h"
+#include "../command_executer.h"
+#include "../file_handling/event_manager.h"
 
 #include <QFrame>
 #include <QGraphicsScene>
@@ -27,8 +29,6 @@ class SignalBrowserModel;
 class SignalGraphicsItem;
 class EventGraphicsItem;
 class EventInfoWidget;
-class EventManager;
-class CommandExecuter;
 
 // signal browser view
 class SignalBrowserView : public QFrame
@@ -37,8 +37,8 @@ class SignalBrowserView : public QFrame
 
 public:
     SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_browser_model,
-                       EventManager& event_manager,
-                       CommandExecuter& command_executer,
+                       QSharedPointer<EventManager> event_manager,
+                       QSharedPointer<CommandExecuter> command_executer,
                        QWidget* parent = 0);
     virtual ~SignalBrowserView ();
 

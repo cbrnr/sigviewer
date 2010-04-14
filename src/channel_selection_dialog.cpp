@@ -1,7 +1,6 @@
 // channel_selection_dialog.cpp
 
 #include "channel_selection_dialog.h"
-#include "file_handling/basic_header.h"
 
 #include <QListWidget>
 #include <QPushButton>
@@ -17,10 +16,10 @@ namespace BioSig_
 {
 
 // constructor
-ChannelSelectionDialog::ChannelSelectionDialog(QPointer<BasicHeader> header,
-                                               QWidget* parent)
+ChannelSelectionDialog::ChannelSelectionDialog (QSharedPointer<ChannelManager> channel_manager,
+                                                QWidget* parent)
  : QDialog(parent),
-   basic_header_(header)
+   channel_manager_ (channel_manager)
 {
     setWindowTitle(tr("Channel Selection"));
     QVBoxLayout* top_layout = new QVBoxLayout(this);
@@ -137,12 +136,11 @@ void ChannelSelectionDialog::saveSettings()
 void ChannelSelectionDialog::buildChannelList()
 {
     for (uint32 channel_nr = 0;
-         channel_nr < basic_header_->getNumberChannels();
+         channel_nr < channel_manager_->getNumberChannels();
          channel_nr++)
     {
-        const SignalChannel& channel = basic_header_->getChannel(channel_nr);
         channel_list_widget_->addItem(QString("(%1) %2").arg(channel_nr + 1)
-                                            .arg(channel.getLabel()));
+                                            .arg(channel_manager_->getChannelLabel(channel_nr)));
     }
 }
 

@@ -26,8 +26,8 @@ namespace BioSig_
 //-----------------------------------------------------------------------------
 // constructor
 SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_browser_model,
-                                      EventManager& event_manager,
-                                      CommandExecuter& command_executer,
+                                      QSharedPointer<EventManager> event_manager,
+                                      QSharedPointer<CommandExecuter> command_executer,
                                       QWidget* parent)
 : QFrame(parent)
 {

@@ -1,5 +1,6 @@
 #include "open_file_gui_command.h"
 #include "../file_handling/file_signal_reader_factory.h"
+#include "../signal_browser/signal_browser_model_4.h"
 #include "../file_handling_impl/event_manager_impl.h"
 #include "../file_handling_impl/channel_manager_impl.h"
 #include "../tab_context.h"
@@ -42,7 +43,7 @@ void OpenFileGuiCommand::init ()
 }
 
 //-----------------------------------------------------------------------------
-void OpenFileGuiCommand::openFile (QString file_path)
+void OpenFileGuiCommand::openFile (QString const& file_path)
 {
     // close
     //if (file_context_)
@@ -52,73 +53,44 @@ void OpenFileGuiCommand::openFile (QString file_path)
     //        return; // user cancel
     //}
 
-    QSharedPointer<FileSignalReader> file_signal_reader_ =
+    QSharedPointer<FileSignalReader> file_signal_reader =
             createAndOpenFileSignalReader (file_path);
 
-    if (file_signal_reader_.isNull())
+    if (file_signal_reader.isNull())
         return;
 
     QString file_name = file_path.section (QDir::separator(), -1);
 
-    TabContext* tab_context = new TabContext ();
-    EventManager* event_manager = new EventManagerImpl (file_signal_reader_);
-    ChannelManager* channel_manager =
-            new ChannelManagerImpl (*file_signal_reader_);
-    FileContext* file_context = new FileContext (file_name, *event_manager,
-                                                 *channel_manager, *tab_context);
+    QSharedPointer<EventManager> event_manager (new EventManagerImpl (file_signal_reader));
+    QSharedPointer<ChannelManager> channel_manager (new ChannelManagerImpl (file_signal_reader));
+    QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
+                                                 channel_manager, file_signal_reader));
     ApplicationContext::getInstance()->getGUIActionManager()->
-            connect(file_context, SIGNAL(stateChanged(FileState)), SLOT(setFileState(FileState)));
+            connect(file_context.data(), SIGNAL(stateChanged(FileState)), SLOT(setFileState(FileState)));
 
     QSettings settings("SigViewer");
     settings.setValue("file_open_path", file_path.left (file_path.length() -
                                                         file_name.length()));
 
     // initialize signal browser
-/*    QSharedPointer<SignalBrowserModel> signal_browser_model_ =
-            ApplicationContext::getInstance()->getMainWindowModel()->createSignalBrowserView ();
+    QSharedPointer<SignalBrowserModel> signal_browser_model =
+            ApplicationContext::getInstance()->getMainWindowModel()->createSignalVisualisationOfFile (file_context);
 
-    connect (event_manager_, SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)),
-             signal_browser_model_.data(), SLOT(addEventItem(QSharedPointer<SignalEvent const>)));
-    connect (event_manager_, SIGNAL(eventRemoved(EventID)),
-             signal_browser_model_.data(), SLOT(removeEventItem(EventID)));
-    connect (event_manager_, SIGNAL(eventChanged(EventID)),
-             signal_browser_model_.data(), SLOT(setEventChanged(EventID)));
+    signal_browser_model->connect (event_manager.data(), SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)),
+                                   SLOT(addEventItem(QSharedPointer<SignalEvent const>)));
+    signal_browser_model->connect (event_manager.data(), SIGNAL(eventRemoved(EventID)),
+                                   SLOT(removeEventItem(EventID)));
+    signal_browser_model->connect (event_manager.data(), SIGNAL(eventChanged(EventID)),
+                                   SLOT(setEventChanged(EventID)));
 
-/*
+    ApplicationContext::getInstance()->setState (APP_STATE_FILE_OPEN);
 
-    if (!tab_widget_)
-    {
-        tab_widget_ = new QTabWidget (main_window_);
-        connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
-        connect (tab_widget_, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
-        tab_widget_->setTabsClosable (true);
-    }
-
-    signal_browser_ = new SignalBrowserView (signal_browser_model_, *event_manager_, *tab_context, tab_widget_);
-    signal_browser_model_->setSignalBrowserView(signal_browser_);
-    signal_browser_model_->loadSettings();
-
-    int tab_index = tab_widget_->addTab (signal_browser_, tr("Signal Data"));
-    storeAndInitTabContext (tab_context, tab_index);
-    browser_models_[tab_index] = signal_browser_model_;
-
-    tab_widget_->hide();
-
-    main_window_->setCentralWidget(tab_widget_);
-
-
-    application_context_.setState(APP_STATE_FILE_OPEN);
-
-    // update recent files
-    recent_file_list_.removeAll (file_path);
-    if (recent_file_list_.size() == NUMBER_RECENT_FILES_)
-    {
-        recent_file_list_.pop_back();
-    }
-
-    recent_file_list_.push_front (file_path);
-
-    // select channels
+    std::set<ChannelID> shown_channels;
+    shown_channels.insert (1);
+    signal_browser_model->setShownChannels (shown_channels);
+    signal_browser_model->updateLayout();
+    ApplicationContext::getInstance()->addFileContext (file_context);
+    /*  // select channels
     std::set<ChannelID> shown_channels = channelSelection();
     if (!shown_channels.size ())
     {
@@ -140,7 +112,6 @@ void OpenFileGuiCommand::openFile (QString file_path)
 
     secsPerPageChanged (secs_per_page_);
     main_window_->setSecsPerPage(secs_per_page_);
-    signal_browser_model_->updateLayout();
     main_window_->setWindowTitle (file_name + tr(" - SigViewer"));*/
 }
 

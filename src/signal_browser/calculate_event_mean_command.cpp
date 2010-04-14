@@ -1,6 +1,4 @@
 #include "calculate_event_mean_command.h"
-#include "../file_handling/event_manager.h"
-#include "../file_handling/channel_manager.h"
 #include "../base/data_block.h"
 #include "../base/signal_event.h"
 #include "../block_visualisation/blocks_visualisation_view.h"
@@ -12,9 +10,9 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-CalculateEventMeanCommand::CalculateEventMeanCommand (EventManager const&
+CalculateEventMeanCommand::CalculateEventMeanCommand (QSharedPointer<EventManager const>
                                                       event_manager,
-                                                      ChannelManager const&
+                                                      QSharedPointer<ChannelManager const>
                                                       channel_manager,
                                                       MainWindowModel&
                                                       main_window_model,
@@ -45,14 +43,14 @@ void CalculateEventMeanCommand::execute ()
     {
         std::list<QSharedPointer<DataBlock const> > data;
 
-        QList<EventID> events (event_manager_.getEvents(event_type_));
+        QList<EventID> events (event_manager_->getEvents(event_type_));
 
         for (QList<EventID>::const_iterator
              event_id = events.begin();
              event_id != events.end(); ++event_id)
         {
-            QSharedPointer<SignalEvent const> event = event_manager_.getEvent(*event_id);
-            data.push_back (channel_manager_.getData (channels_[index],
+            QSharedPointer<SignalEvent const> event = event_manager_->getEvent(*event_id);
+            data.push_back (channel_manager_->getData (channels_[index],
                                                       event->getPosition(),
                                                       event->getDuration()));
         }
