@@ -28,6 +28,8 @@ public:
 
     virtual void setItemsHeight (int32 block_height);
 
+    virtual std::set<ChannelID> getShownChannels () const {std::set<ChannelID> blub; return blub;}
+    virtual bool setShownChannels (std::set<ChannelID> const&) {return true;}
 
     virtual void updateLayout ();
 

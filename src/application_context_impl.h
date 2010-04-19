@@ -1,25 +1,19 @@
 #ifndef APPLICATION_CONTEXT_IMPL_H
 #define APPLICATION_CONTEXT_IMPL_H
 
-#include "event_color_manager.h"
-#include "gui_action_manager.h"
-#include "main_window_model.h"
-
-#include <QSharedPointer>
+#include "application_context_impl_interface.h"
 
 namespace BioSig_
 {
 
-class EventTableFileReader;
-
-class ApplicationContextImpl
+class ApplicationContextImpl : public ApplicationContextImplInterface
 {
 public:
     //-------------------------------------------------------------------------
     ApplicationContextImpl ();
 
     //-------------------------------------------------------------------------
-    ~ApplicationContextImpl ();
+    virtual ~ApplicationContextImpl ();
 
     //-----------------------------------------------------------------------------
     QSharedPointer<GUIActionManager> getGUIActionManager ();

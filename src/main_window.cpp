@@ -27,7 +27,6 @@
 // main_window.cpp
 
 #include "main_window.h"
-#include "main_window_model.h"
 #include "gui_action_manager.h"
 #include "application_context.h"
 #include "gui/gui_action_factory.h"
@@ -54,9 +53,9 @@ namespace BioSig_
 {
 
 // constructor
-MainWindow::MainWindow ()
+MainWindow::MainWindow (QSharedPointer<MainWindowModelImpl> model)
  : QMainWindow(0),
-   model_ (ApplicationContext::getInstance()->getMainWindowModel()),
+   model_ (model),
    action_manager_ (ApplicationContext::getInstance()->getGUIActionManager())
 {
     setWindowTitle (tr("SigViewer"));
@@ -236,6 +235,7 @@ void MainWindow::initMenus()
     file_menu_actions.insert (1, file_recent_files_menu_->menuAction());
     file_menu_ = new QMenu(tr("&File"), this);
     file_menu_->addAction (GuiActionFactory::getInstance()->getQAction("Open File"));
+    file_menu_->addAction (GuiActionFactory::getInstance()->getQAction("Close File"));
     file_menu_->addActions(file_menu_actions);
     menuBar()->addMenu(file_menu_);
 

@@ -1,8 +1,8 @@
-#include <QtCore/QCoreApplication>
+#include "base_tests/data_block_test.h"
+#include "file_handling_tests/event_manager_test.h"
 
-int main(int argc, char *argv[])
+int main ()
 {
-    QCoreApplication a(argc, argv);
-
-    return a.exec();
+    QTest::qExec(new EventManagerTest);
+    QTest::qExec(new DataBlockTest);
 }

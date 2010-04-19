@@ -6,7 +6,7 @@ namespace BioSig_
 //-----------------------------------------------------------------------------
 CalculateERDERSMapCommand::CalculateERDERSMapCommand(QSharedPointer<SignalBrowserModel const>
                                                      signal_browser_model,
-                                                     MainWindowModel&
+                                                     MainWindowModelImpl&
                                                      main_window_model,
                                                      uint16 event_type,
                                                      std::vector<uint32> channels,

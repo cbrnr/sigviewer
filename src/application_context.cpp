@@ -1,5 +1,4 @@
 #include "application_context.h"
-#include "application_context_impl.h"
 
 namespace BioSig_
 {
@@ -17,14 +16,14 @@ QSharedPointer<ApplicationContext> ApplicationContext::getInstance ()
 
 //-----------------------------------------------------------------------------
 ApplicationContext::ApplicationContext ()
-    : impl_ (QSharedPointer<ApplicationContextImpl> (0))
+    : impl_ (QSharedPointer<ApplicationContextImplInterface> (0))
 {
     // nothing to do here
 }
 
 
 //-------------------------------------------------------------------------
-void ApplicationContext::setImpl (QSharedPointer<ApplicationContextImpl> impl)
+void ApplicationContext::setImpl (QSharedPointer<ApplicationContextImplInterface> impl)
 {
     impl_ = impl;
 }
@@ -39,7 +38,17 @@ QSharedPointer<FileContext> ApplicationContext::getCurrentFileContext () const
 void ApplicationContext::addFileContext (QSharedPointer<FileContext>file_context)
 {
     current_file_context_ = file_context;
+    impl_->getGUIActionManager()->connect(current_file_context_.data(), SIGNAL(stateChanged(FileState)), SLOT(setFileState(FileState)));
 }
+
+//-------------------------------------------------------------------------
+void ApplicationContext::removeCurrentFileContext ()
+{
+    if (!current_file_context_.isNull())
+        current_file_context_->disconnect ();
+    current_file_context_ = QSharedPointer<FileContext> (0);
+}
+
 
 //-----------------------------------------------------------------------------
 QSharedPointer<GUIActionManager> ApplicationContext::getGUIActionManager ()

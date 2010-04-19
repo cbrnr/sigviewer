@@ -2,7 +2,7 @@
 #define CALCULCATE_FREQUENCY_SPECTRUM_COMMAND_H
 
 #include "signal_browser_model_4.h"
-#include "../main_window_model.h"
+#include "../main_window_model_impl.h"
 
 #include <QObject>
 #include <QSharedPointer>
@@ -15,7 +15,7 @@ class CalculcateFrequencySpectrumCommand : public QObject
 Q_OBJECT
 public:
     CalculcateFrequencySpectrumCommand (QSharedPointer<SignalBrowserModel const> signal_browser_model,
-                                        MainWindowModel& main_window_model,
+                                        MainWindowModelImpl& main_window_model,
                                         uint16 event_type,
                                         std::vector<uint32> channels,
                                         float seconds_before_event,
@@ -28,7 +28,7 @@ public slots:
 
 private:
     QSharedPointer<SignalBrowserModel const> signal_browser_model_;
-    MainWindowModel& main_window_model_;
+    MainWindowModelImpl& main_window_model_;
     uint16 event_type_;
     std::vector<uint32> channels_;
     float seconds_before_event_;

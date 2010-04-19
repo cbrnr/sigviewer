@@ -24,6 +24,7 @@ class ChannelSelectionDialog : public QDialog
     Q_OBJECT
 public:
     ChannelSelectionDialog (QSharedPointer<ChannelManager> channel_manager,
+                            QString const& file_name,
                             QWidget* parent = 0);
 
     void loadSettings();

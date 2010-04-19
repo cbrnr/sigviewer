@@ -1,5 +1,5 @@
-#ifndef OPEN_FILE_GUI_COMMAND_H
-#define OPEN_FILE_GUI_COMMAND_H
+#ifndef CLOSE_FILE_GUI_COMMAND_H
+#define CLOSE_FILE_GUI_COMMAND_H
 
 #include "../gui/gui_action_command.h"
 #include "../gui/gui_action_factory_registrator.h"
@@ -9,24 +9,24 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-/// OpenFileGuiCommand
+/// CloseFileGuiCommand
 ///
-/// command for opening a file
-class OpenFileGuiCommand : public GuiActionCommand
+/// command for closing a file
+class CloseFileGuiCommand : public GuiActionCommand
 {
     Q_OBJECT
 public:
     //-------------------------------------------------------------------------
-    OpenFileGuiCommand ();
+    CloseFileGuiCommand ();
 
     //-------------------------------------------------------------------------
-    virtual ~OpenFileGuiCommand ();
+    virtual ~CloseFileGuiCommand ();
 
     //-------------------------------------------------------------------------
     virtual void init ();
 
     //-------------------------------------------------------------------------
-    void openFile (QString const& file_path);
+    void CloseFile (QString const& file_path);
 
 public slots:
     //-------------------------------------------------------------------------
@@ -36,10 +36,10 @@ private:
     static GuiActionFactoryRegistrator registrator_;
 
     //-------------------------------------------------------------------------
-    QString showOpenDialog (QString const& path, QString const& extensions);
+    QString showCloseDialog (QString const& path, QString const& extensions);
 
     //-------------------------------------------------------------------------
-    QSharedPointer<FileSignalReader> createAndOpenFileSignalReader
+    QSharedPointer<FileSignalReader> createAndCloseFileSignalReader
             (QString const& file_path) const;
 
 
@@ -47,4 +47,5 @@ private:
 
 } // namespace BioSig_
 
-#endif // OPEN_FILE_GUI_COMMAND_H
+
+#endif // CLOSE_FILE_GUI_COMMAND_H

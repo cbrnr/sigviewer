@@ -1,12 +1,14 @@
 // main_window_model.h
 
-#ifndef MAIN_WINDOW_MODEL_H
-#define MAIN_WINDOW_MODEL_H
+#ifndef MAIN_WINDOW_MODEL_IMPL_H
+#define MAIN_WINDOW_MODEL_IMPL_H
 
 #include "base/user_types.h"
 #include "file_context.h"
 #include "file_handling/event_manager.h"
 #include "file_handling/channel_manager.h"
+#include "gui/signal_visualisation_model.h"
+#include "gui/main_window_model.h"
 
 #include <memory>
 
@@ -38,13 +40,13 @@ class ApplicationContext;
 class TabContext;
 
 // main window model
-class MainWindowModel : public QObject
+class MainWindowModelImpl : public QObject, public MainWindowModel
 {
     Q_OBJECT
 
 public:
-    MainWindowModel ();
-    ~MainWindowModel();
+    MainWindowModelImpl ();
+    ~MainWindowModelImpl();
 
     QTextStream& getLogStream();
     void setMainWindow(MainWindow* main_window);
@@ -53,7 +55,12 @@ public:
     void setChanged();
 
     QSharedPointer<BlocksVisualisationModel> createBlocksVisualisationView (QString const& title);
-    QSharedPointer<SignalBrowserModel> createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx);
+
+    //-------------------------------------------------------------------------
+    virtual QSharedPointer<SignalVisualisationModel> createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx);
+
+    //-------------------------------------------------------------------------
+    virtual void closeCurrentFileTabs ();
 
 public slots:
 
@@ -122,7 +129,6 @@ private:
 
     //-------------------------------------------------------------------------
     bool checkMainWindowPtr(const QString function);
-    std::set<ChannelID> channelSelection () const;
     uint16 selectEventTypeDialog (uint16 preselected_type) const;
 
     static unsigned const NUMBER_RECENT_FILES_;
@@ -148,8 +154,8 @@ private:
 
     //-------------------------------------------------------------------------
     // not allowed
-    MainWindowModel(const MainWindowModel&);
-    const MainWindowModel& operator=(const MainWindowModel&);
+    MainWindowModelImpl(const MainWindowModelImpl&);
+    const MainWindowModelImpl& operator=(const MainWindowModelImpl&);
 
 };
 

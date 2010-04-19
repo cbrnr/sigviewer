@@ -4,6 +4,7 @@
 #define MAIN_WINDOW_H
 
 #include "base/user_types.h"
+#include "main_window_model_impl.h"
 
 #include <QMainWindow>
 #include <QIcon>
@@ -18,7 +19,6 @@ namespace BioSig_
 {
 
 class ApplicationContext;
-class MainWindowModel;
 class GUIActionManager;
 
 // main window
@@ -28,7 +28,7 @@ class MainWindow : public QMainWindow
 
 public:
 
-    MainWindow ();
+    MainWindow (QSharedPointer<MainWindowModelImpl> model);
     ~MainWindow ();
 
     void loadSettings();
@@ -79,7 +79,7 @@ private:
     void initMenus();
     void initStatusBar();
 
-    QSharedPointer<MainWindowModel> model_;
+    QSharedPointer<MainWindowModelImpl> model_;
     QSharedPointer<GUIActionManager> action_manager_;
 
     QMenu* file_menu_;

@@ -1,7 +1,7 @@
 #ifndef GUI_ACTION_MANAGER_H
 #define GUI_ACTION_MANAGER_H
 
-#include "application_context.h"
+#include "base/application_states.h"
 #include "file_context.h"
 #include "tab_context.h"
 
@@ -16,7 +16,7 @@
 namespace BioSig_
 {
 
-class MainWindowModel;
+class MainWindowModelImpl;
 
 //-----------------------------------------------------------------------------
 ///
@@ -60,7 +60,7 @@ public:
     //-------------------------------------------------------------------------
     /// @param main_window_model the given model will act as the receiver of
     ///                          all actions
-    void init (MainWindowModel* main_window_model);
+    void init (MainWindowModelImpl* main_window_model);
 
     //-------------------------------------------------------------------------
     /// creates a QMenu with all actions of the given group
@@ -191,7 +191,7 @@ private:
     //-------------------------------------------------------------------------
     void setActionsEnabled (ActionList& action_list, bool enabled);
 
-    MainWindowModel* main_window_model_;
+    MainWindowModelImpl* main_window_model_;
 
     ApplicationState application_state_;
     FileState file_state_;

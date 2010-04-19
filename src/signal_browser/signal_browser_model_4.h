@@ -62,9 +62,10 @@ public:
     ScaleMode getAutoZoomBehaviour () const;
 
     // channels
-    bool setShownChannels (std::set<ChannelID> const& shown_channels);
+    virtual bool setShownChannels (std::set<ChannelID> const& shown_channels);
     bool isChannelShown(uint32 channel_nr) const;
-    std::map<uint32, QString> getShownChannels () const;
+    virtual std::set<ChannelID> getShownChannels () const;
+    std::map<uint32, QString> getShownChannelsWithLabels () const;
     uint32 getNumberShownChannels() const;
     int32 getYPosOfChannel (uint32 channel_nr) const;
 
@@ -109,11 +110,11 @@ public:
 public slots:
     //-------------------------------------------------------------------------
     /// adds the given event
-    void addEventItem (QSharedPointer<SignalEvent const> event);
+    virtual void addEventItem (QSharedPointer<SignalEvent const> event);
 
     //-------------------------------------------------------------------------
     /// removes the given event
-    void removeEventItem (EventID id);
+    virtual void removeEventItem (EventID id);
 
 
     void setEventChanged (EventID id);

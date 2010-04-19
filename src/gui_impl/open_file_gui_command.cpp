@@ -1,13 +1,15 @@
 #include "open_file_gui_command.h"
+#include "gui_helper_functions.h"
+
+#include "../gui/signal_visualisation_model.h"
 #include "../file_handling/file_signal_reader_factory.h"
-#include "../signal_browser/signal_browser_model_4.h"
 #include "../file_handling_impl/event_manager_impl.h"
 #include "../file_handling_impl/channel_manager_impl.h"
 #include "../tab_context.h"
 #include "../file_context.h"
 #include "../application_context.h"
 #include "../gui_action_manager.h"
-#include "../main_window_model.h"
+#include "../gui/main_window_model.h"
 
 #include <QFileDialog>
 #include <QSettings>
@@ -26,12 +28,13 @@ GuiActionFactoryRegistrator OpenFileGuiCommand::registrator_ ("Open File",
 OpenFileGuiCommand::OpenFileGuiCommand ()
     : GuiActionCommand ("Open... (new impl)")
 {
+    // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
-QSharedPointer<OpenFileGuiCommand> OpenFileGuiCommand::getInstance ()
+//-------------------------------------------------------------------------
+OpenFileGuiCommand::~OpenFileGuiCommand ()
 {
-    return QSharedPointer<OpenFileGuiCommand> (new OpenFileGuiCommand);
+    // nothing to do here
 }
 
 
@@ -45,14 +48,6 @@ void OpenFileGuiCommand::init ()
 //-----------------------------------------------------------------------------
 void OpenFileGuiCommand::openFile (QString const& file_path)
 {
-    // close
-    //if (file_context_)
-    //{
-    //    fileCloseAction();
-    //    if (application_context_.getState() != APP_STATE_NO_FILE_OPEN)
-    //        return; // user cancel
-    //}
-
     QSharedPointer<FileSignalReader> file_signal_reader =
             createAndOpenFileSignalReader (file_path);
 
@@ -61,58 +56,29 @@ void OpenFileGuiCommand::openFile (QString const& file_path)
 
     QString file_name = file_path.section (QDir::separator(), -1);
 
-    QSharedPointer<EventManager> event_manager (new EventManagerImpl (file_signal_reader));
     QSharedPointer<ChannelManager> channel_manager (new ChannelManagerImpl (file_signal_reader));
+
+    std::set<ChannelID> shown_channels = GuiHelper::selectChannels (channel_manager,
+                                                                    file_name);
+    if (shown_channels.size() == 0)
+        return;
+
+    QSharedPointer<EventManager> event_manager (new EventManagerImpl (file_signal_reader));
     QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
                                                  channel_manager, file_signal_reader));
-    ApplicationContext::getInstance()->getGUIActionManager()->
-            connect(file_context.data(), SIGNAL(stateChanged(FileState)), SLOT(setFileState(FileState)));
+
+    ApplicationContext::getInstance()->addFileContext (file_context);
 
     QSettings settings("SigViewer");
     settings.setValue("file_open_path", file_path.left (file_path.length() -
                                                         file_name.length()));
 
-    // initialize signal browser
-    QSharedPointer<SignalBrowserModel> signal_browser_model =
+    QSharedPointer<SignalVisualisationModel> signal_visualisation_model =
             ApplicationContext::getInstance()->getMainWindowModel()->createSignalVisualisationOfFile (file_context);
 
-    signal_browser_model->connect (event_manager.data(), SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)),
-                                   SLOT(addEventItem(QSharedPointer<SignalEvent const>)));
-    signal_browser_model->connect (event_manager.data(), SIGNAL(eventRemoved(EventID)),
-                                   SLOT(removeEventItem(EventID)));
-    signal_browser_model->connect (event_manager.data(), SIGNAL(eventChanged(EventID)),
-                                   SLOT(setEventChanged(EventID)));
-
+    signal_visualisation_model->setShownChannels (shown_channels);
+    signal_visualisation_model->updateLayout();
     ApplicationContext::getInstance()->setState (APP_STATE_FILE_OPEN);
-
-    std::set<ChannelID> shown_channels;
-    shown_channels.insert (1);
-    signal_browser_model->setShownChannels (shown_channels);
-    signal_browser_model->updateLayout();
-    ApplicationContext::getInstance()->addFileContext (file_context);
-    /*  // select channels
-    std::set<ChannelID> shown_channels = channelSelection();
-    if (!shown_channels.size ())
-    {
-        fileCloseAction ();
-        return;
-    }
-
-    tab_widget_->show();
-    signal_browser_->show();
-
-    signal_browser_model_->setShownChannels (shown_channels);
-    main_window_->setSignalsPerPage(-1); // all
-
-    // set status bar
-    main_window_->setStatusBarSignalLength(file_signal_reader_->getBasicHeader()->getNumberRecords() *
-                                           file_signal_reader_->getBasicHeader()->getRecordDuration());
-
-    main_window_->setStatusBarNrChannels(file_signal_reader_->getBasicHeader()->getNumberChannels());
-
-    secsPerPageChanged (secs_per_page_);
-    main_window_->setSecsPerPage(secs_per_page_);
-    main_window_->setWindowTitle (file_name + tr(" - SigViewer"));*/
 }
 
 //-----------------------------------------------------------------------------

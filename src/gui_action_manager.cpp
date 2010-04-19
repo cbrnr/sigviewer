@@ -1,5 +1,6 @@
 #include "gui_action_manager.h"
-#include "main_window_model.h"
+#include "application_context.h"
+#include "main_window_model_impl.h"
 #include "gui/gui_action_factory.h"
 
 #include <QApplication>
@@ -27,7 +28,7 @@ GUIActionManager::~GUIActionManager ()
 }
 
 //-----------------------------------------------------------------------------
-void GUIActionManager::init (MainWindowModel* main_window_model)
+void GUIActionManager::init (MainWindowModelImpl* main_window_model)
 {
     connect (ApplicationContext::getInstance().data(), SIGNAL(stateChanged(ApplicationState)), SLOT(setApplicationState(ApplicationState)));
     main_window_model_ = main_window_model;

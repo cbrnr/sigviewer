@@ -14,7 +14,7 @@ CalculateEventMeanCommand::CalculateEventMeanCommand (QSharedPointer<EventManage
                                                       event_manager,
                                                       QSharedPointer<ChannelManager const>
                                                       channel_manager,
-                                                      MainWindowModel&
+                                                      MainWindowModelImpl&
                                                       main_window_model,
                                                       uint16 event_type,
                                                       std::vector<uint32> channels,

@@ -40,7 +40,6 @@ include(file_handling/file_handling.pri)
 include(gui/gui.pri)
 include(gui_impl/gui_impl.pri)
 HEADERS += basic_header_info_dialog.h \
-    channel_selection_dialog.h \
     copy_event_dialog.h \
     event_color_manager.h \
     event_table_dialog.h \
@@ -49,7 +48,7 @@ HEADERS += basic_header_info_dialog.h \
     label_widget.h \
     log_dialog.h \
     main_window.h \
-    main_window_model.h \
+    main_window_model_impl.h \
     settings_dialog.h \
     signal_browser_mouse_handling.h \
     command_stack.h \
@@ -63,9 +62,9 @@ HEADERS += basic_header_info_dialog.h \
     file_context.h \
     tab_context.h \
     command_executer.h \
-    application_context_impl.h
+    application_context_impl.h \
+    application_context_impl_interface.h
 SOURCES += basic_header_info_dialog.cpp \
-    channel_selection_dialog.cpp \
     copy_event_dialog.cpp \
     event_color_manager.cpp \
     event_table_dialog.cpp \
@@ -74,7 +73,7 @@ SOURCES += basic_header_info_dialog.cpp \
     label_widget.cpp \
     log_dialog.cpp \
     main_window.cpp \
-    main_window_model.cpp \
+    main_window_model_impl.cpp \
     settings_dialog.cpp \
     signal_browser_mouse_handling.cpp \
     sigviewer.cpp \

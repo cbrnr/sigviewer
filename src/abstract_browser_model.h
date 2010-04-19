@@ -2,11 +2,12 @@
 #define ABSTRACT_BROWSER_MODEL_H
 
 #include "base/user_types.h"
+#include "gui/signal_visualisation_model.h"
 
 namespace BioSig_
 {
 
-class AbstractBrowserModel
+class AbstractBrowserModel : public SignalVisualisationModel
 {
 
 public:

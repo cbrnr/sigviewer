@@ -9,7 +9,7 @@
 #include "change_type_undo_command.h"
 #include "new_event_undo_command.h"
 
-#include "../main_window_model.h"
+#include "../main_window_model_impl.h"
 #include "../event_color_manager.h"
 #include "../file_context.h"
 #include "../base/math_utils.h"
@@ -248,7 +248,22 @@ bool SignalBrowserModel::isChannelShown(uint32 channel_nr) const
 }
 
 //-----------------------------------------------------------------------------
-std::map<uint32, QString> SignalBrowserModel::getShownChannels () const
+std::set<ChannelID> SignalBrowserModel::getShownChannels () const
+{
+    std::set<ChannelID> shown_channels;
+    for (Int2SignalGraphicsItemPtrMap::const_iterator sig_iter =
+         channel2signal_item_.begin();
+         sig_iter != channel2signal_item_.end();
+         ++sig_iter)
+    {
+        shown_channels.insert(sig_iter->first);
+    }
+    return shown_channels;
+}
+
+
+//-----------------------------------------------------------------------------
+std::map<uint32, QString> SignalBrowserModel::getShownChannelsWithLabels () const
 {
     std::map<uint32, QString> shown_channels;
     for (Int2SignalGraphicsItemPtrMap::const_iterator sig_iter =

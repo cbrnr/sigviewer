@@ -1,6 +1,6 @@
 // main_window_model.cpp
 
-#include "main_window_model.h"
+#include "main_window_model_impl.h"
 #include "main_window.h"
 #include "tab_context.h"
 #include "file_context.h"
@@ -12,10 +12,11 @@
 #include "file_handling_impl/event_table_file_reader.h"
 #include "file_handling_impl/event_manager_impl.h"
 #include "file_handling_impl/channel_manager_impl.h"
+#include "gui_impl/gui_helper_functions.h"
 #include "base/signal_event.h"
 #include "basic_header_info_dialog.h"
 #include "log_dialog.h"
-#include "channel_selection_dialog.h"
+#include "gui_impl/channel_selection_dialog.h"
 #include "event_time_selection_dialog.h"
 #include "go_to_dialog.h"
 #include "event_type_dialog.h"
@@ -56,11 +57,11 @@
 namespace BioSig_
 {
 
-unsigned const MainWindowModel::NUMBER_RECENT_FILES_ = 8;
+unsigned const MainWindowModelImpl::NUMBER_RECENT_FILES_ = 8;
 
 
 // constructor
-MainWindowModel::MainWindowModel ()
+MainWindowModelImpl::MainWindowModelImpl ()
 : main_window_(0),
   application_context_ (ApplicationContext::getInstance()),
   signal_browser_model_ (0),
@@ -73,26 +74,26 @@ MainWindowModel::MainWindowModel ()
 }
 
 // destructor
-MainWindowModel::~MainWindowModel()
+MainWindowModelImpl::~MainWindowModelImpl()
 {
     // nothing
 }
 
 // get log stream
-QTextStream& MainWindowModel::getLogStream()
+QTextStream& MainWindowModelImpl::getLogStream()
 {
     return *log_stream_.get();
 }
 
 // set main window
-void MainWindowModel::setMainWindow (MainWindow* main_window)
+void MainWindowModelImpl::setMainWindow (MainWindow* main_window)
 {
     main_window_ = main_window;
     application_context_->setState(APP_STATE_NO_FILE_OPEN);
 }
 
 // void load settings
-void MainWindowModel::loadSettings()
+void MainWindowModelImpl::loadSettings()
 {
     if (checkMainWindowPtr("loadSettings"))
     {
@@ -100,7 +101,7 @@ void MainWindowModel::loadSettings()
     }
 
     QSettings settings("SigViewer");
-    settings.beginGroup("MainWindowModel");
+    settings.beginGroup("MainWindowModelImpl");
 
     int size = settings.beginReadArray("recent_file");
     for (int i = 0; i < size; i++)
@@ -118,7 +119,7 @@ void MainWindowModel::loadSettings()
 }
 
 // void save settings
-void MainWindowModel::saveSettings()
+void MainWindowModelImpl::saveSettings()
 {
     if (checkMainWindowPtr("saveSettings"))
     {
@@ -126,7 +127,7 @@ void MainWindowModel::saveSettings()
     }
 
     QSettings settings("SigViewer");
-    settings.beginGroup("MainWindowModel");
+    settings.beginGroup("MainWindowModelImpl");
     settings.beginWriteArray("recent_file");
 
     for (int i = 0; i < recent_file_list_.size(); i++)
@@ -142,14 +143,14 @@ void MainWindowModel::saveSettings()
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::tabChanged (int tab_index)
+void MainWindowModelImpl::tabChanged (int tab_index)
 {
     if (tab_contexts_.find(tab_index) != tab_contexts_.end ())
         tab_contexts_[tab_index]->gotActive ();
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::closeTab (int tab_index)
+void MainWindowModelImpl::closeTab (int tab_index)
 {
     if (tab_index == 0)
     {
@@ -163,11 +164,11 @@ void MainWindowModel::closeTab (int tab_index)
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::calculateMeanAction ()
+void MainWindowModelImpl::calculateMeanAction ()
 {
     if (signal_browser_model_.isNull())
         return;
-    std::map<uint32, QString> shown_channels = signal_browser_model_->getShownChannels ();
+    std::map<uint32, QString> shown_channels = signal_browser_model_->getShownChannelsWithLabels ();
     std::set<uint16> displayed_event_types = signal_browser_model_->getDisplayedEventTypes ();
     std::map<uint16, QString> shown_event_types;
     for (std::set<uint16>::iterator event_type_it = displayed_event_types.begin();
@@ -195,11 +196,11 @@ void MainWindowModel::calculateMeanAction ()
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::calculateFrequencySpectrumAction ()
+void MainWindowModelImpl::calculateFrequencySpectrumAction ()
 {
     if (signal_browser_model_.isNull())
         return;
-    std::map<uint32, QString> shown_channels = signal_browser_model_->getShownChannels ();
+    std::map<uint32, QString> shown_channels = signal_browser_model_->getShownChannelsWithLabels ();
     std::set<uint16> displayed_event_types = signal_browser_model_->getDisplayedEventTypes ();
     std::map<uint16, QString> shown_event_types;
     for (std::set<uint16>::iterator event_type_it = displayed_event_types.begin();
@@ -225,7 +226,7 @@ void MainWindowModel::calculateFrequencySpectrumAction ()
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::calculateERDERSMap ()
+void MainWindowModelImpl::calculateERDERSMap ()
 {
     if (signal_browser_model_.isNull())
         return;
@@ -234,25 +235,25 @@ void MainWindowModel::calculateERDERSMap ()
 
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::undoViewAction()
+void MainWindowModelImpl::undoViewAction()
 {
     CommandStack::instance().undoLastViewCommand();
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::redoViewAction()
+void MainWindowModelImpl::redoViewAction()
 {
     CommandStack::instance().redoLastUndoneViewCommand();
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::undoAction()
+void MainWindowModelImpl::undoAction()
 {
     tab_contexts_[tab_widget_->currentIndex()]->undo ();
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::redoAction()
+void MainWindowModelImpl::redoAction()
 {
     tab_contexts_[tab_widget_->currentIndex()]->redo ();
 }
@@ -260,7 +261,7 @@ void MainWindowModel::redoAction()
 
 //-----------------------------------------------------------------------------
 // file open action
-void MainWindowModel::fileOpenAction()
+void MainWindowModelImpl::fileOpenAction()
 {
     if (!checkMainWindowPtr("fileOpenAction"))
     {
@@ -269,7 +270,7 @@ void MainWindowModel::fileOpenAction()
 
     // open dialog
     QSettings settings("SigViewer");
-    QString path = settings.value("MainWindowModel/file_open_path", ".").toString();
+    QString path = settings.value("MainWindowModelImpl/file_open_path", ".").toString();
     QString extensions = FileSignalReaderFactory::getInstance()->getExtensions();
     QString file_name;
     file_name = main_window_->showOpenDialog(path, extensions);
@@ -283,7 +284,7 @@ void MainWindowModel::fileOpenAction()
 }
 
 // file save action
-void MainWindowModel::fileSaveAction()
+void MainWindowModelImpl::fileSaveAction()
 {
     if (!checkMainWindowPtr("fileSaveAction"))
     {
@@ -303,7 +304,7 @@ void MainWindowModel::fileSaveAction()
 
     if (!file_signal_writer)
     {
-        *log_stream_ << "MainWindowModel::fileSaveAction Error: "
+        *log_stream_ << "MainWindowModelImpl::fileSaveAction Error: "
                      << "not suported file format: '"
                      << file_name.mid(file_name.lastIndexOf('.')) << "'\n";
 
@@ -329,7 +330,7 @@ void MainWindowModel::fileSaveAction()
         ApplicationContext::getInstance()->getCurrentFileContext()->setState (FILE_STATE_UNCHANGED);
     else
     {
-        *log_stream_ << "MainWindowModel::fileSaveAction Error: writing file :'"
+        *log_stream_ << "MainWindowModelImpl::fileSaveAction Error: writing file :'"
                      << file_name << "'\n";
 
         main_window_->showErrorWriteDialog(
@@ -341,7 +342,7 @@ void MainWindowModel::fileSaveAction()
 
 // file save as action
 
-void MainWindowModel::fileSaveAsAction()
+void MainWindowModelImpl::fileSaveAsAction()
 {
     if (!checkMainWindowPtr("fileSaveAsAction"))
     {
@@ -350,7 +351,7 @@ void MainWindowModel::fileSaveAsAction()
 
     // save as dialog
     QSettings settings("SigViewer");
-    QString path = settings.value("MainWindowModel/file_open_path", ".").toString();
+    QString path = settings.value("MainWindowModelImpl/file_open_path", ".").toString();
     QString extensions = FileSignalWriterFactory::getInstance()->getExtensions();
     QString file_name;
 
@@ -373,7 +374,7 @@ void MainWindowModel::fileSaveAsAction()
 
     if (!file_signal_writer)
     {
-        *log_stream_ << "MainWindowModel::fileSaveAsAction Error: "
+        *log_stream_ << "MainWindowModelImpl::fileSaveAsAction Error: "
                      << "not suported file format: '"
                      << file_name.mid(file_name.lastIndexOf('.')) << "'\n";
 
@@ -404,7 +405,7 @@ void MainWindowModel::fileSaveAsAction()
     }
     else
     {
-        *log_stream_ << "MainWindowModel::fileSaveAsAction "
+        *log_stream_ << "MainWindowModelImpl::fileSaveAsAction "
                      << "Error: writing file:'" << file_name << "'\n";
 
         main_window_->showErrorWriteDialog(
@@ -415,7 +416,7 @@ void MainWindowModel::fileSaveAsAction()
 }
 
 // file export events action
-void MainWindowModel::fileExportEventsAction()
+void MainWindowModelImpl::fileExportEventsAction()
 {
     if (!checkMainWindowPtr("fileExportEventsAction"))
     {
@@ -461,7 +462,7 @@ void MainWindowModel::fileExportEventsAction()
     QString file_name = file_signal_reader_->getBasicHeader()->getFileName();
     QSettings settings("SigViewer");
 
-    file_name = settings.value("MainWindowModel/file_open_path", ".").toString() + "/" +
+    file_name = settings.value("MainWindowModelImpl/file_open_path", ".").toString() + "/" +
                 file_name.left(file_name.lastIndexOf('.'));
 
     QString extensions = FileSignalWriterFactory::getInstance()->getExtensions();
@@ -484,7 +485,7 @@ void MainWindowModel::fileExportEventsAction()
 
     if (!file_signal_writer)
     {
-        *log_stream_ << "MainWindowModel::fileExportEventsAction Error: "
+        *log_stream_ << "MainWindowModelImpl::fileExportEventsAction Error: "
                      << "not suported file format: '"
                      << file_name.mid(file_name.lastIndexOf('.')) << "'\n";
 
@@ -519,7 +520,7 @@ void MainWindowModel::fileExportEventsAction()
     }
     else
     {
-        *log_stream_ << "MainWindowModel::fileExportEventsAction "
+        *log_stream_ << "MainWindowModelImpl::fileExportEventsAction "
                      << "Error: writing file:'" << file_name << "'\n";
 
         main_window_->showErrorWriteDialog(
@@ -530,7 +531,7 @@ void MainWindowModel::fileExportEventsAction()
 }
 
 // file import events action
-void MainWindowModel::fileImportEventsAction()
+void MainWindowModelImpl::fileImportEventsAction()
 {
     if (!checkMainWindowPtr("fileImportEventsAction"))
     {
@@ -539,7 +540,7 @@ void MainWindowModel::fileImportEventsAction()
 
     // import dialog
     QSettings settings("SigViewer");
-    QString path = settings.value("MainWindowModel/file_open_path", ".").toString();
+    QString path = settings.value("MainWindowModelImpl/file_open_path", ".").toString();
     QString extensions = FileSignalReaderFactory::getInstance()->getExtensions();
     QString file_name;
 
@@ -575,7 +576,7 @@ void MainWindowModel::fileImportEventsAction()
         signal_reader->getBasicHeader()->getEventSamplerate() !=
         file_signal_reader_->getBasicHeader()->getEventSamplerate())
     {
-        *log_stream_ << "MainWindowModel::fileImportEventsAction Error: "
+        *log_stream_ << "MainWindowModelImpl::fileImportEventsAction Error: "
                      << "file format: '" << file_name
                      << "'\n";
 
@@ -651,13 +652,13 @@ void MainWindowModel::fileImportEventsAction()
 }
 
 // recent file menu about to show
-void MainWindowModel::recentFileMenuAboutToShow()
+void MainWindowModelImpl::recentFileMenuAboutToShow()
 {
     main_window_->setRecentFiles(recent_file_list_);
 }
 
 // recent file activated
-void MainWindowModel::recentFileActivated(QAction* recent_file_action)
+void MainWindowModelImpl::recentFileActivated(QAction* recent_file_action)
 {
     if (!checkMainWindowPtr("recentFileActivated"))
     {
@@ -668,7 +669,7 @@ void MainWindowModel::recentFileActivated(QAction* recent_file_action)
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::openFile (QString const& file_path)
+void MainWindowModelImpl::openFile (QString const& file_path)
 {
     // close
     if (ApplicationContext::getInstance()->getState() == APP_STATE_FILE_OPEN)
@@ -696,7 +697,7 @@ void MainWindowModel::openFile (QString const& file_path)
     int32 sep_pos = file_path.lastIndexOf(DIR_SEPARATOR);
     QString path = sep_pos == -1 ? "." : file_path.mid(0, sep_pos);
     QSettings settings("SigViewer");
-    settings.setValue("MainWindowModel/file_open_path", path);
+    settings.setValue("MainWindowModelImpl/file_open_path", path);
 
 
     // initialize signal browser
@@ -744,7 +745,8 @@ void MainWindowModel::openFile (QString const& file_path)
     recent_file_list_.push_front (file_path);
 
     // select channels
-    std::set<ChannelID> shown_channels = channelSelection();
+    std::set<ChannelID> shown_channels = GuiHelper::selectChannels (
+            current_file_context_->getChannelManager(), file_name, signal_browser_model_);
     if (!shown_channels.size ())
     {
         fileCloseAction ();
@@ -770,19 +772,17 @@ void MainWindowModel::openFile (QString const& file_path)
 }
 
 // file close action
-void MainWindowModel::fileCloseAction()
+void MainWindowModelImpl::fileCloseAction()
 {
     if (!checkMainWindowPtr("fileCloseAction"))
     {
         return;
     }
 
-    if (ApplicationContext::getInstance()->getCurrentFileContext()->getState() == FILE_STATE_CHANGED &&
+    if (current_file_context_->getState() == FILE_STATE_CHANGED &&
         !main_window_
-        ->showFileCloseDialog(file_signal_reader_->getBasicHeader()->getFullFileName()))
-    {
+        ->showFileCloseDialog(current_file_context_->getFileName ()))
         return; // user cancel
-    }
 
     signal_browser_model_->disconnect (SIGNAL(eventSelected(QSharedPointer<SignalEvent>)));
 
@@ -796,7 +796,7 @@ void MainWindowModel::fileCloseAction()
     signal_browser_ = 0;
     signal_browser_tab_ = 0;
     file_signal_reader_->close();
-    file_signal_reader_.clear();
+    file_signal_reader_ = QSharedPointer<FileSignalReader>(0);
     tab_contexts_.clear ();
 
     // reset status bar
@@ -809,7 +809,7 @@ void MainWindowModel::fileCloseAction()
 }
 
 // file info action
-void MainWindowModel::fileInfoAction()
+void MainWindowModelImpl::fileInfoAction()
 {
     if (!checkMainWindowPtr("fileInfoAction"))
     {
@@ -826,7 +826,7 @@ void MainWindowModel::fileInfoAction()
 }
 
 // file exit action
-void MainWindowModel::fileExitAction()
+void MainWindowModelImpl::fileExitAction()
 {
     if (!checkMainWindowPtr("fileExitAction"))
     {
@@ -848,7 +848,7 @@ void MainWindowModel::fileExitAction()
 }
 
 // edit to all channels action
-void MainWindowModel::editToAllChannelsAction()
+void MainWindowModelImpl::editToAllChannelsAction()
 {
     if (!checkMainWindowPtr("editToAllChannelsAction"))
     {
@@ -859,7 +859,7 @@ void MainWindowModel::editToAllChannelsAction()
 }
 
 // edit copy to channles action
-void MainWindowModel::editCopyToChannelsAction()
+void MainWindowModelImpl::editCopyToChannelsAction()
 {
     if (!checkMainWindowPtr("editCopyToChannelsAction"))
     {
@@ -870,7 +870,7 @@ void MainWindowModel::editCopyToChannelsAction()
 }
 
 // edit delete action
-void MainWindowModel::editDeleteAction()
+void MainWindowModelImpl::editDeleteAction()
 {
     if (!checkMainWindowPtr("editDeleteAction"))
     {
@@ -882,7 +882,7 @@ void MainWindowModel::editDeleteAction()
 }
 
 // edit change channel action
-void MainWindowModel::editChangeChannelAction()
+void MainWindowModelImpl::editChangeChannelAction()
 {
     if (!checkMainWindowPtr("editChangeChannelAction"))
     {
@@ -893,7 +893,7 @@ void MainWindowModel::editChangeChannelAction()
 }
 
 // edit change type action
-void MainWindowModel::editChangeTypeAction()
+void MainWindowModelImpl::editChangeTypeAction()
 {
     if (!checkMainWindowPtr("editChangeTypeAction"))
     {
@@ -911,7 +911,7 @@ void MainWindowModel::editChangeTypeAction()
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::editEventTableAction ()
+void MainWindowModelImpl::editEventTableAction ()
 {
     EventTableDialog event_table_dialog (*event_manager_,
         ApplicationContext::getInstance()->getCurrentFileContext()->getMainTabContext(),
@@ -923,7 +923,7 @@ void MainWindowModel::editEventTableAction ()
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::editInsertOverAction ()
+void MainWindowModelImpl::editInsertOverAction ()
 {
     uint16 event_type = signal_browser_model_->getActualEventCreationType();
     QSharedPointer<SignalEvent> new_event = QSharedPointer<SignalEvent>(new SignalEvent(*(signal_browser_model_->getSelectedSignalEvent().data())));
@@ -934,13 +934,13 @@ void MainWindowModel::editInsertOverAction ()
 
 
 // view zoom in action
-void MainWindowModel::viewZoomInAction()
+void MainWindowModelImpl::viewZoomInAction()
 {
     signal_browser_model_->zoomInAll();
 }
 
 // mouse mode new action
-void MainWindowModel::mouseModeNewAction()
+void MainWindowModelImpl::mouseModeNewAction()
 {
     signal_browser_model_->unselectEvent();
     signal_browser_model_->setMode(MODE_NEW);
@@ -948,28 +948,28 @@ void MainWindowModel::mouseModeNewAction()
 }
 
 // mouse mode pointer action
-void MainWindowModel::mouseModePointerAction()
+void MainWindowModelImpl::mouseModePointerAction()
 {
     signal_browser_model_->setMode(MODE_POINTER);
     signal_browser_->setScrollMode(false);
 }
 
 // mouse mode hand action
-void MainWindowModel::mouseModeHandAction()
+void MainWindowModelImpl::mouseModeHandAction()
 {
     signal_browser_model_->setMode(MODE_HAND);
     signal_browser_->setScrollMode(true);
 }
 
 // mouse mode shift signal action
-void MainWindowModel::mouseModeShiftSignalAction()
+void MainWindowModelImpl::mouseModeShiftSignalAction()
 {
     signal_browser_model_->setMode(MODE_SHIFT_SIGNAL);
     signal_browser_->setScrollMode(false);
 }
 
 // mouse mode zoom action
-//void MainWindowModel::mouseModeZoomAction()
+//void MainWindowModelImpl::mouseModeZoomAction()
 //{
 //    if (!checkMainWindowPtr("mouseModeZoomAction") ||
 //        !checkNotClosedState("mouseModeZoomAction"))
@@ -982,19 +982,19 @@ void MainWindowModel::mouseModeShiftSignalAction()
 //}
 
 // view zoom out action
-void MainWindowModel::viewZoomOutAction()
+void MainWindowModelImpl::viewZoomOutAction()
 {
     signal_browser_model_->zoomOutAll();
 }
 
 // view auto scale action
-void MainWindowModel::viewAutoScaleAction()
+void MainWindowModelImpl::viewAutoScaleAction()
 {
     signal_browser_model_->autoScaleAll();
 }
 
 // view go to action
-void MainWindowModel::viewGoToAction()
+void MainWindowModelImpl::viewGoToAction()
 {
     GoToDialog go_to_dialog(file_signal_reader_->getBasicHeader(), main_window_);
 
@@ -1025,7 +1025,7 @@ void MainWindowModel::viewGoToAction()
 
 //-------------------------------------------------------------------
 // view select next event action
-void MainWindowModel::viewShowAndSelectNextEventAction()
+void MainWindowModelImpl::viewShowAndSelectNextEventAction()
 {
     QUndoCommand* eventCommand = new NextEventViewUndoCommand (*signal_browser_model_);
     CommandStack::instance().executeViewCommand(eventCommand);
@@ -1033,7 +1033,7 @@ void MainWindowModel::viewShowAndSelectNextEventAction()
 
 //-------------------------------------------------------------------
 // view select previous event action
-void MainWindowModel::viewShowAndSelectPreviousEventAction()
+void MainWindowModelImpl::viewShowAndSelectPreviousEventAction()
 {
     QUndoCommand* eventCommand = new NextEventViewUndoCommand (*signal_browser_model_, false);
     CommandStack::instance().executeViewCommand(eventCommand);
@@ -1041,7 +1041,7 @@ void MainWindowModel::viewShowAndSelectPreviousEventAction()
 
 //-------------------------------------------------------------------
 // view select next event action
-void MainWindowModel::viewShowEventsOfSelectedTypeAction()
+void MainWindowModelImpl::viewShowEventsOfSelectedTypeAction()
 {
     SignalBrowserModel::IntList shown_event_types;
     shown_event_types.append (signal_browser_model_->getSelectedSignalEvent()->getType());
@@ -1054,21 +1054,22 @@ void MainWindowModel::viewShowEventsOfSelectedTypeAction()
 
 //-------------------------------------------------------------------
 // fits the view to the selected event action
-void MainWindowModel::viewFitToEventAction()
+void MainWindowModelImpl::viewFitToEventAction()
 {
     QUndoCommand* eventCommand = new FitViewToEventViewUndoCommand (*signal_browser_model_);
     CommandStack::instance().executeViewCommand(eventCommand);
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::optionsChannelsAction()
+void MainWindowModelImpl::optionsChannelsAction()
 {
-    if (signal_browser_model_->setShownChannels (channelSelection ()))
+    if (signal_browser_model_->setShownChannels (GuiHelper::selectChannels (
+            current_file_context_->getChannelManager(), current_file_context_->getFileName(), signal_browser_model_)))
         signal_browser_model_->updateLayout();
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::optionsChangeCreationType ()
+void MainWindowModelImpl::optionsChangeCreationType ()
 {
     uint16 current_type = signal_browser_model_->getActualEventCreationType();
     uint16 new_type = selectEventTypeDialog (current_type);
@@ -1078,47 +1079,7 @@ void MainWindowModel::optionsChangeCreationType ()
 }
 
 //-----------------------------------------------------------------------------
-std::set<ChannelID> MainWindowModel::channelSelection () const
-{
-    ChannelSelectionDialog channel_dialog (current_file_context_->getChannelManager(),
-             main_window_);
-
-    bool empty_selection = signal_browser_model_->getNumberShownChannels() == 0;
-    std::set<ChannelID> pre_selected_channels;
-
-    for (uint32 channel_nr = 0;
-         channel_nr < current_file_context_->getChannelManager()->getNumberChannels();
-         channel_nr++)
-    {
-        bool show_channel = empty_selection ||
-                            signal_browser_model_->isChannelShown(channel_nr);
-
-        if (!empty_selection && signal_browser_model_->isChannelShown(channel_nr))
-            pre_selected_channels.insert (channel_nr);
-
-        channel_dialog.setSelected (channel_nr, show_channel);
-    }
-
-    channel_dialog.loadSettings();
-    channel_dialog.exec();
-    channel_dialog.saveSettings();
-
-    if (channel_dialog.result() == QDialog::Rejected)
-        return pre_selected_channels;
-
-    std::set<ChannelID> selected_channels;
-    for (uint32 channel_nr = 0;
-         channel_nr < current_file_context_->getChannelManager()->getNumberChannels();
-         channel_nr++)
-    {
-        if (channel_dialog.isSelected (channel_nr))
-            selected_channels.insert (channel_nr);
-    }
-    return selected_channels;
-}
-
-//-----------------------------------------------------------------------------
-uint16 MainWindowModel::selectEventTypeDialog (uint16 preselected_type) const
+uint16 MainWindowModelImpl::selectEventTypeDialog (uint16 preselected_type) const
 {
     uint16 new_type = -1;
 
@@ -1157,7 +1118,7 @@ uint16 MainWindowModel::selectEventTypeDialog (uint16 preselected_type) const
 
 //-----------------------------------------------------------------------------
 // options show events action
-void MainWindowModel::optionsShowEventsAction()
+void MainWindowModelImpl::optionsShowEventsAction()
 {
     // set curent shown event types
     EventTypeDialog::IntList shown_event_types;
@@ -1187,7 +1148,7 @@ void MainWindowModel::optionsShowEventsAction()
 }
 
 // options show events action
-void MainWindowModel::optionsShowSettingsAction()
+void MainWindowModelImpl::optionsShowSettingsAction()
 {
     SettingsDialog settings_dialog (signal_browser_model_,
                                     signal_browser_model_->getHideableWidgetsVisibilities(),
@@ -1218,7 +1179,7 @@ void MainWindowModel::optionsShowSettingsAction()
 }
 
 // help log action
-void MainWindowModel::helpLogAction()
+void MainWindowModelImpl::helpLogAction()
 {
     if (!checkMainWindowPtr("helpLogAction"))
     {
@@ -1233,7 +1194,7 @@ void MainWindowModel::helpLogAction()
 }
 
 // help about action
-void MainWindowModel::helpAboutAction()
+void MainWindowModelImpl::helpAboutAction()
 {
     if (!checkMainWindowPtr("helpAboutAction"))
     {
@@ -1244,7 +1205,7 @@ void MainWindowModel::helpAboutAction()
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::storeAndInitTabContext (QSharedPointer<TabContext> context, int tab_index)
+void MainWindowModelImpl::storeAndInitTabContext (QSharedPointer<TabContext> context, int tab_index)
 {
     tab_contexts_[tab_index] = context;
 
@@ -1260,7 +1221,7 @@ void MainWindowModel::storeAndInitTabContext (QSharedPointer<TabContext> context
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<FileSignalReader> MainWindowModel::createAndOpenFileSignalReader
+QSharedPointer<FileSignalReader> MainWindowModelImpl::createAndOpenFileSignalReader
         (QString const& file_path) const
 {
     QSharedPointer<FileSignalReader> signal_reader;
@@ -1288,11 +1249,11 @@ QSharedPointer<FileSignalReader> MainWindowModel::createAndOpenFileSignalReader
 
 //-----------------------------------------------------------------------------
 // check main window ptr
-inline bool MainWindowModel::checkMainWindowPtr(const QString function)
+inline bool MainWindowModelImpl::checkMainWindowPtr(const QString function)
 {
     if (!main_window_)
     {
-        *log_stream_ << "MainWindowModel::" << function
+        *log_stream_ << "MainWindowModelImpl::" << function
                      << " Error: MainWindow not set\n";
         return false;
     }
@@ -1301,7 +1262,7 @@ inline bool MainWindowModel::checkMainWindowPtr(const QString function)
 }
 
 // secs per page changed
-void MainWindowModel::secsPerPageChanged(const QString& secs_per_page)
+void MainWindowModelImpl::secsPerPageChanged(const QString& secs_per_page)
 {
     bool ok = false;
     float64 f_secs_per_page = secs_per_page.toFloat(&ok);
@@ -1327,7 +1288,7 @@ void MainWindowModel::secsPerPageChanged(const QString& secs_per_page)
 }
 
 // signals per page changed
-void MainWindowModel::signalsPerPageChanged(const QString& signals_per_page)
+void MainWindowModelImpl::signalsPerPageChanged(const QString& signals_per_page)
 {
     bool ok = false;
     float64 tmp = signals_per_page.toFloat(&ok);
@@ -1348,7 +1309,7 @@ void MainWindowModel::signalsPerPageChanged(const QString& signals_per_page)
 }
 
 // pixel per sec changed
-void MainWindowModel::pixelPerSecChanged(float64 pixel_per_sec)
+void MainWindowModelImpl::pixelPerSecChanged(float64 pixel_per_sec)
 {
     float64 secs_per_page = signal_browser_->getVisibleWidth() /
                             pixel_per_sec;
@@ -1358,7 +1319,7 @@ void MainWindowModel::pixelPerSecChanged(float64 pixel_per_sec)
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModel::signalHeightChanged(int32 signal_height)
+void MainWindowModelImpl::signalHeightChanged(int32 signal_height)
 {
     float64 signals_per_page;
     signals_per_page = signal_browser_->getVisibleHeight() /
@@ -1370,13 +1331,13 @@ void MainWindowModel::signalHeightChanged(int32 signal_height)
 }
 
 // set changed
-void MainWindowModel::setChanged()
+void MainWindowModelImpl::setChanged()
 {
     ApplicationContext::getInstance()->getCurrentFileContext()->setState (FILE_STATE_CHANGED);
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<BlocksVisualisationModel> MainWindowModel::createBlocksVisualisationView (QString const& title)
+QSharedPointer<BlocksVisualisationModel> MainWindowModelImpl::createBlocksVisualisationView (QString const& title)
 {
     BlocksVisualisationView* bv_view = new BlocksVisualisationView (tab_widget_);
     QSharedPointer<BlocksVisualisationModel> bv_model = QSharedPointer<BlocksVisualisationModel> (new BlocksVisualisationModel (bv_view, signal_browser_model_->getPixelPerXUnit (), channel_manager_->getSampleRate()));
@@ -1392,8 +1353,14 @@ QSharedPointer<BlocksVisualisationModel> MainWindowModel::createBlocksVisualisat
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<SignalBrowserModel> MainWindowModel::createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx)
+QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx)
 {
+    // waldesel:
+    // --begin
+    //   to be replaced as soon as multi file support is implemented
+    if (!current_file_context_.isNull())
+        fileCloseAction();
+    // --end
     if (!tab_widget_)
     {
         tab_widget_ = new QTabWidget (main_window_);
@@ -1437,9 +1404,59 @@ QSharedPointer<SignalBrowserModel> MainWindowModel::createSignalVisualisationOfF
         recent_file_list_.pop_back();
     recent_file_list_.push_front (file_ctx->getFilePathAndName());
 
-    main_window_->setWindowTitle (file_ctx->getFileName() + " - SigViewer");
+
+    // waldesel:
+    // --begin
+    //   to be replaced as soon as new zooming is implemented
+    main_window_->setStatusBarSignalLength (file_ctx->getChannelManager()->getDurationInSec());
+    secsPerPageChanged (secs_per_page_);
+    main_window_->setSecsPerPage (secs_per_page_);
+    // --end
+
+    main_window_->setStatusBarNrChannels (file_ctx->getChannelManager()->getNumberChannels());
+    main_window_->setWindowTitle (file_ctx->getFileName() + tr(" - SigViewer"));
+
+    model->connect (file_ctx->getEventManager().data(), SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)),
+                                   SLOT(addEventItem(QSharedPointer<SignalEvent const>)));
+    model->connect (file_ctx->getEventManager().data(), SIGNAL(eventRemoved(EventID)),
+                                   SLOT(removeEventItem(EventID)));
+    model->connect (file_ctx->getEventManager().data(), SIGNAL(eventChanged(EventID)),
+                                   SLOT(setEventChanged(EventID)));
+
+
     return model;
 }
+
+//-----------------------------------------------------------------------------
+void MainWindowModelImpl::closeCurrentFileTabs ()
+{
+    // waldesel:
+    // --begin
+    //   this is only to support old code here.. refactor these lines as soon
+    //   command pattern for gui commands is finalised
+    signal_browser_model_.clear ();
+    current_file_context_.clear ();
+    event_manager_.clear ();
+    channel_manager_.clear ();
+    file_signal_reader_.clear ();
+    CommandStack::instance().clearStacks();
+    // --end
+
+    // waldesel:
+    // --begin
+    //   to be refactored as soon as multi file support is implemented
+    main_window_->setCentralWidget (0);
+    tab_widget_ = 0;
+    signal_browser_ = 0;
+    signal_browser_tab_ = 0;
+    tab_contexts_.clear ();
+    // --end
+
+    main_window_->setStatusBarSignalLength(-1);
+    main_window_->setStatusBarNrChannels(-1);
+    main_window_->setWindowTitle (tr("SigViewer"));
+}
+
 
 } // namespace BioSig_
 

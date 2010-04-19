@@ -17,11 +17,12 @@ namespace BioSig_
 
 // constructor
 ChannelSelectionDialog::ChannelSelectionDialog (QSharedPointer<ChannelManager> channel_manager,
+                                                QString const& file_name,
                                                 QWidget* parent)
  : QDialog(parent),
    channel_manager_ (channel_manager)
 {
-    setWindowTitle(tr("Channel Selection"));
+    setWindowTitle(file_name + tr(" - Channel Selection"));
     QVBoxLayout* top_layout = new QVBoxLayout(this);
     top_layout->setMargin(10);
     top_layout->setSpacing(10);
