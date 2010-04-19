@@ -33,6 +33,7 @@
 #include "application_context_impl.h"
 #include "file_handling_impl/event_table_file_reader.h"
 #include "gui/gui_action_factory.h"
+#include "gui_impl/open_file_gui_command.h"
 
 #include <stdlib.h>
 
@@ -131,7 +132,7 @@ int main(int32 argc, char* argv[])
     main_window.show();
 
     if (application.arguments().count() > 1)
-        main_window_model->openFile (application.arguments().at(1));
+        OpenFileGuiCommand::openFile (application.arguments().at(1));
 
     int result = application.exec();
     main_window_model->saveSettings();

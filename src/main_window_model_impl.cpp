@@ -13,6 +13,7 @@
 #include "file_handling_impl/event_manager_impl.h"
 #include "file_handling_impl/channel_manager_impl.h"
 #include "gui_impl/gui_helper_functions.h"
+#include "gui_impl/open_file_gui_command.h"
 #include "base/signal_event.h"
 #include "basic_header_info_dialog.h"
 #include "log_dialog.h"
@@ -665,7 +666,7 @@ void MainWindowModelImpl::recentFileActivated(QAction* recent_file_action)
         return;
     }
 
-    openFile(recent_file_action->text());
+    OpenFileGuiCommand::openFile (recent_file_action->text());
 }
 
 //-----------------------------------------------------------------------------

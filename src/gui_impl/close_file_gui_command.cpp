@@ -1,6 +1,8 @@
 #include "close_file_gui_command.h"
 #include "../application_context.h"
 
+#include <QMessageBox>
+
 namespace BioSig_
 {
 
@@ -31,8 +33,36 @@ void CloseFileGuiCommand::init ()
 //-----------------------------------------------------------------------------
 void CloseFileGuiCommand::trigger ()
 {
-    ApplicationContext::getInstance()->getMainWindowModel()->closeCurrentFileTabs ();
+    QSharedPointer<FileContext> current_file_context =
+            ApplicationContext::getInstance()->getCurrentFileContext();
+
+    if (current_file_context.isNull())
+        return;
+
+    if (current_file_context->getState ()
+        == FILE_STATE_CHANGED)
+    {
+        QString file_name = current_file_context->getFileName ();
+        QMessageBox::StandardButton pressed_button =  QMessageBox::question (0, tr("Really close?"),
+            tr("Changes in '%1' are not saved!!").arg(file_name) + "\n" +
+            tr("Really close?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+
+        if (pressed_button == QMessageBox::No)
+            return;
+    }
+
+    ApplicationContext::getInstance()->getMainWindowModel ()->closeCurrentFileTabs ();
     ApplicationContext::getInstance()->removeCurrentFileContext ();
+    ApplicationContext::getInstance()->setState (APP_STATE_NO_FILE_OPEN);
+}
+
+//-----------------------------------------------------------------------------
+void CloseFileGuiCommand::applicationStateChanged (ApplicationState state)
+{
+    if (state == APP_STATE_NO_FILE_OPEN)
+        emit qActionEnabledChanged (false);
+    else
+        emit qActionEnabledChanged (true);
 }
 
 

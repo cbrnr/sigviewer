@@ -32,6 +32,9 @@ public slots:
     //-------------------------------------------------------------------------
     virtual void trigger ();
 
+    //-------------------------------------------------------------------------
+    virtual void applicationStateChanged (ApplicationState state);
+
 private:
     static GuiActionFactoryRegistrator registrator_;
 

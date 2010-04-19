@@ -26,7 +26,7 @@ public:
     virtual void init ();
 
     //-------------------------------------------------------------------------
-    void openFile (QString const& file_path);
+    static void openFile (QString const& file_path);
 
 public slots:
     //-------------------------------------------------------------------------
@@ -39,8 +39,8 @@ private:
     QString showOpenDialog (QString const& path, QString const& extensions);
 
     //-------------------------------------------------------------------------
-    QSharedPointer<FileSignalReader> createAndOpenFileSignalReader
-            (QString const& file_path) const;
+    static QSharedPointer<FileSignalReader> createAndOpenFileSignalReader
+            (QString const& file_path);
 
 
 };

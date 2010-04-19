@@ -67,8 +67,6 @@ void OpenFileGuiCommand::openFile (QString const& file_path)
     QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
                                                  channel_manager, file_signal_reader));
 
-    ApplicationContext::getInstance()->addFileContext (file_context);
-
     QSettings settings("SigViewer");
     settings.setValue("file_open_path", file_path.left (file_path.length() -
                                                         file_name.length()));
@@ -78,6 +76,7 @@ void OpenFileGuiCommand::openFile (QString const& file_path)
 
     signal_visualisation_model->setShownChannels (shown_channels);
     signal_visualisation_model->updateLayout();
+    ApplicationContext::getInstance()->addFileContext (file_context);
     ApplicationContext::getInstance()->setState (APP_STATE_FILE_OPEN);
 }
 
@@ -86,7 +85,7 @@ void OpenFileGuiCommand::trigger ()
 {
     QString extensions = FileSignalReaderFactory::getInstance()->getExtensions();
     QSettings settings ("SigViewer");
-    QString open_path = settings.value("file_open_path", ".").toString();
+    QString open_path = settings.value ("file_open_path").toString();
     if (!open_path.length())
         open_path = QDir::homePath ();
     QString file_path = showOpenDialog (open_path, extensions);
@@ -115,7 +114,7 @@ QString OpenFileGuiCommand::showOpenDialog (QString const& path, QString const& 
 
 //-----------------------------------------------------------------------------
 QSharedPointer<FileSignalReader> OpenFileGuiCommand::createAndOpenFileSignalReader
-        (QString const& file_path) const
+        (QString const& file_path)
 {
     QSharedPointer<FileSignalReader> signal_reader;
     QString load;

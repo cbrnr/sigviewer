@@ -1,6 +1,8 @@
 #ifndef GUI_ACTION_COMMAND_H
 #define GUI_ACTION_COMMAND_H
 
+#include "../base/application_states.h"
+
 #include <QObject>
 #include <QAction>
 
@@ -30,7 +32,8 @@ public slots:
     //-------------------------------------------------------------------------
     virtual void trigger () = 0;
 
-
+    //-------------------------------------------------------------------------
+    virtual void applicationStateChanged (ApplicationState state) {}
 
 signals:
     //-------------------------------------------------------------------------
@@ -39,7 +42,6 @@ signals:
 protected:
     //-------------------------------------------------------------------------
     GuiActionCommand (QString const& name);
-
 
 private:
     QAction* action_;
