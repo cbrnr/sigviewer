@@ -31,18 +31,8 @@ void CloseFileGuiCommand::init ()
 //-----------------------------------------------------------------------------
 void CloseFileGuiCommand::trigger ()
 {
+    ApplicationContext::getInstance()->getMainWindowModel()->closeCurrentFileTabs ();
     ApplicationContext::getInstance()->removeCurrentFileContext ();
-    //    QString extensions = FileSignalReaderFactory::getInstance()->getExtensions();
-//    QSettings settings ("SigViewer");
-//    QString open_path = settings.value("file_open_path", ".").toString();
-//    if (!open_path.length())
-//        open_path = QDir::homePath ();
-//    QString file_path = showOpenDialog (open_path, extensions);
-//
-//    if (file_path.isEmpty())
-//        return;
-//
-//    openFile (file_path);
 }
 
 

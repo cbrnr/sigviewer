@@ -779,11 +779,15 @@ void MainWindowModelImpl::fileCloseAction()
         return;
     }
 
+    if (current_file_context_.isNull())
+        return;
+
     if (current_file_context_->getState() == FILE_STATE_CHANGED &&
         !main_window_
         ->showFileCloseDialog(current_file_context_->getFileName ()))
         return; // user cancel
 
+    current_file_context_.clear ();
     signal_browser_model_->disconnect (SIGNAL(eventSelected(QSharedPointer<SignalEvent>)));
 
     // close

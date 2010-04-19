@@ -23,6 +23,7 @@ LIBS += -L../extern \
     -lbiosig \
     -lfftw3
 win32:LIBS += -lws2_32
+win32:LIBS += ../extern/fftw3.lib
 macx:LIBS += -lz
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc
