@@ -91,13 +91,11 @@ private:
     //-------------------------------------------------------------------------
     enum GUIAction
     {
-        ACTION_FILE_OPEN,
         ACTION_FILE_SAVE,
         ACTION_FILE_SAVE_AS,
         ACTION_EXPORT_EVENTS,
         ACTION_IMPORT_EVENTS,
         ACTION_FILE_INFO,
-        ACTION_FILE_CLOSE,
         ACTION_EXIT,
         ACTION_SEPARATOR,
         ACTION_UNDO,

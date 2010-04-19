@@ -75,7 +75,6 @@ public slots:
     void redoViewAction();
     void undoAction();
     void redoAction();
-    void fileOpenAction();
     void fileSaveAction();
     void fileSaveAsAction();
     void fileExportEventsAction();
@@ -114,9 +113,6 @@ public slots:
     void pixelPerSecChanged(float64 pixel_per_sec);
     void signalHeightChanged(int32 signal_height);
     void recentFileMenuAboutToShow();
-
-    //-------------------------------------------------------------------------
-    void openFile (QString const& file_path);
 
 
 private:

@@ -26,7 +26,7 @@ GuiActionFactoryRegistrator OpenFileGuiCommand::registrator_ ("Open File",
 
 //-----------------------------------------------------------------------------
 OpenFileGuiCommand::OpenFileGuiCommand ()
-    : GuiActionCommand ("Open... (new impl)")
+    : GuiActionCommand ("Open...")
 {
     // nothing to do here
 }

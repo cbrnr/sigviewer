@@ -30,6 +30,7 @@
 #include "gui_action_manager.h"
 #include "application_context.h"
 #include "gui/gui_action_factory.h"
+#include "gui_impl/open_file_gui_command.h"
 
 #include <QAction>
 #include <QMessageBox>
@@ -134,8 +135,10 @@ void MainWindow::initToolBars()
 
     file_toolbar_ = addToolBar(tr("File"));
     view_toolbar_views_menu_->addAction (file_toolbar_->toggleViewAction());
-    file_toolbar_->addActions (action_manager_->getActionsOfGroup(GUIActionManager::FILE_TOOLBAR_ACTIONS));
-
+    QList<QAction*> file_toolbar_actions = action_manager_->getActionsOfGroup(GUIActionManager::FILE_TOOLBAR_ACTIONS);
+    file_toolbar_actions.push_front (GuiActionFactory::getInstance()->getQAction("Open File"));
+    file_toolbar_actions.push_back (GuiActionFactory::getInstance()->getQAction("Close File"));
+    file_toolbar_->addActions (file_toolbar_actions);
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
     view_toolbar_views_menu_->addAction (mouse_mode_toolbar_->toggleViewAction());
@@ -232,11 +235,16 @@ void MainWindow::initMenus()
             model_.data(), SLOT(recentFileMenuAboutToShow()));
     connect(file_recent_files_menu_, SIGNAL(triggered(QAction*)),
             model_.data(), SLOT(recentFileActivated(QAction*)));
-    file_menu_actions.insert (1, file_recent_files_menu_->menuAction());
+    file_menu_actions.insert (0, file_recent_files_menu_->menuAction());
     file_menu_ = new QMenu(tr("&File"), this);
     file_menu_->addAction (GuiActionFactory::getInstance()->getQAction("Open File"));
-    file_menu_->addAction (GuiActionFactory::getInstance()->getQAction("Close File"));
+    QAction* separator = new QAction (this);
+    separator->setSeparator (true);
+    file_menu_actions.insert(file_menu_actions.size() - 2, separator);
+    file_menu_actions.insert(file_menu_actions.size() - 2,
+                             GuiActionFactory::getInstance()->getQAction("Close File"));
     file_menu_->addActions(file_menu_actions);
+
     menuBar()->addMenu(file_menu_);
 
     edit_menu_ = menuBar()->addMenu(tr("&Edit"));
@@ -279,12 +287,12 @@ void MainWindow::dropEvent (QDropEvent* event)
     {
         QUrl url (event->mimeData()->text());
         event->acceptProposedAction();
-        model_->openFile(url.path());
+        OpenFileGuiCommand::openFile (url.path());
     } else if (event->mimeData()->hasUrls())
     {
         QUrl url (event->mimeData()->urls().first().toLocalFile());
         event->acceptProposedAction();
-        model_->openFile(url.path());
+        OpenFileGuiCommand::openFile (url.path());
     }
 }
 
