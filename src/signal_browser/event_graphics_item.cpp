@@ -109,7 +109,7 @@ bool EventGraphicsItem::displaySelectionMenu (QGraphicsSceneMouseEvent* event)
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::updateToSignalEvent ()
 {
-    float64 factor = signal_browser_model_.getPixelPerXUnit() / event_manager_->getSampleRate();
+    float64 factor = signal_browser_model_.getPixelPerSample();
     QRectF old_rect;
     if (scene ())
         old_rect = this->sceneBoundingRect();
@@ -245,31 +245,31 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
 void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
 {
     QPoint mouse_pos (mouse_event->scenePos().x(), mouse_event->scenePos().y()); // event->canvas_view->inverseWorldMatrix().map(e->pos());
+    float64 factor = 1;
+    factor /= signal_browser_model_.getPixelPerSample();
     switch(state_)
     {
         case STATE_NONE:
             break;
         case STATE_MOVE_BEGIN:
             {
-                float64 factor = event_manager_->getSampleRate() / signal_browser_model_.getPixelPerXUnit();
                 int32 diff = (mouse_event->scenePos().x() - mouse_event->lastScenePos().x());
                 int32 old_pos = pos().x();
                 int32 new_pos = (((old_pos + diff) * factor) / factor) + 0.5;
                 width_ = (((width_ - (new_pos - old_pos)) * factor) / factor) + 0.5;
                 setPos (new_pos, pos().y());
-                emit mouseAtSecond (static_cast<float>(pos().x())  / signal_browser_model_.getPixelPerXUnit());
+                emit mouseAtSecond (static_cast<float>(pos().x())  / (signal_browser_model_.getPixelPerSample() * event_manager_->getSampleRate()));
             }
             break;
         case STATE_MOVE_END:
             {
                 int32 diff = (mouse_event->scenePos().x() - mouse_event->lastScenePos().x());
-                float64 factor = event_manager_->getSampleRate() / signal_browser_model_.getPixelPerXUnit();
                 width_ = (((width_ + diff) * factor) / factor) + 0.5;
                 if (diff > 0)
                     scene()->update (mouse_pos.x() - diff - 20, pos().y(), diff + 40, height_);
                 else
                     scene()->update (mouse_pos.x() - 20, pos().y(), (-diff) + 40, height_);
-                emit mouseAtSecond (static_cast<float>(pos().x() + width_)  / signal_browser_model_.getPixelPerXUnit());
+                emit mouseAtSecond (static_cast<float>(pos().x() + width_)  / (signal_browser_model_.getPixelPerSample() * event_manager_->getSampleRate()));
             }
             break;
         /*case STATE_SHIFT_TO_exportCHANNEL:
@@ -293,17 +293,12 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
 void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
 {
     QPoint mouse_pos (event->scenePos().x(), event->scenePos().y());
+    float64 factor = 1;
+    factor /= signal_browser_model_.getPixelPerSample();
     switch(state_)
     {
         case STATE_MOVE_BEGIN:
         {
-//            int32 diff = (event->pos().x() - event->lastPos().x());
-//            float64 factor = signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit();
-//            width_ = (((width_ + diff) * factor) / factor) + 0.5;
-//            int32 dur = width_ * (signal_buffer_.getEventSamplerate() / signal_browser_model_.getPixelPerXUnit());
-//            uint32 pos = factor * x();
-
-            float64 factor = event_manager_->getSampleRate() / signal_browser_model_.getPixelPerXUnit();
             int32 diff = 0; //(event->scenePos().x() - event->lastScenePos().x());
             int32 old_pos = pos().x();
             int32 new_pos = (((old_pos + diff) * factor) / factor) + 0.5;
@@ -318,7 +313,6 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
         case STATE_MOVE_END:
         {
             int32 diff = (event->pos().x() - event->lastPos().x());
-            float64 factor = event_manager_->getSampleRate() / signal_browser_model_.getPixelPerXUnit();
             width_ = (((width_ + diff) * factor) / factor) + 0.5;
             int32 dur = (factor * width_) + 0.5;
             ResizeEventUndoCommand* command = new ResizeEventUndoCommand (event_manager_, signal_event_->getId(), signal_event_->getPosition(), dur);

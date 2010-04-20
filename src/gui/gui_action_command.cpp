@@ -28,5 +28,19 @@ QList<QAction*> GuiActionCommand::getQActions ()
     return actions_;
 }
 
+//-----------------------------------------------------------------------------
+QAction* GuiActionCommand::getQAction (QString const& name)
+{
+    for (QList<QAction*>::iterator action_iter = actions_.begin();
+         action_iter != actions_.end ();
+         ++action_iter)
+    {
+        if ((*action_iter)->text () == name)
+            return *action_iter;
+    }
+    return 0;
+}
+
+
 
 }

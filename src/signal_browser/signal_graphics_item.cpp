@@ -78,7 +78,7 @@ void SignalGraphicsItem::setHeight (uint32 height)
    y_zoom_ = y_zoom_ * height / height_;
    y_offset_ = y_offset_* height / height_;
    height_ = height;
-   width_ = channel_manager_->getDurationInSec() * signal_browser_model_.getPixelPerXUnit();
+   width_ = channel_manager_->getNumberSamples() * signal_browser_model_.getPixelPerSample();
    updateYGridIntervall ();
 }
 
@@ -155,11 +155,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     painter->setClipping(true);
     painter->setClipRect(clip);
 
-    float64 pixel_per_sec = signal_browser_model_.getPixelPerXUnit();
-    float32 pixel_per_sample = pixel_per_sec / channel_manager_->getSampleRate();
-
-    // waldesel: better would be
-    // pixel_per_sample = 1; (or some power of 2)
+    float32 pixel_per_sample = signal_browser_model_.getPixelPerSample();
 
     float32 last_x = clip.x () - 10.0f;
     if (last_x < 0)
@@ -258,7 +254,8 @@ void SignalGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* event)
                     old_width - new_event_width, height_);
 
         new_signal_event_->setDuration(new_event_width);
-        emit mouseAtSecond (pos / signal_browser_model_.getPixelPerXUnit());
+        emit mouseAtSecond (pos / (signal_browser_model_.getPixelPerSample() *
+                                   channel_manager_->getSampleRate()));
     }
     else
         event->ignore();
@@ -319,7 +316,7 @@ void SignalGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent* event)
     if (new_event_)
     {
         emit mouseMoving (false);
-        NewEventUndoCommand* new_event_command = new NewEventUndoCommand (event_manager_, new_signal_event_, event_manager_->getSampleRate() / signal_browser_model_.getPixelPerXUnit());
+        NewEventUndoCommand* new_event_command = new NewEventUndoCommand (event_manager_, new_signal_event_, 1.0 / signal_browser_model_.getPixelPerSample());
         command_executor_->executeCommand (new_event_command);
     }
 

@@ -26,18 +26,7 @@ XAxisWidget::XAxisWidget (QWidget* parent)
     highlighting_enabled_ (false),
     time_to_highlight_ (0)
 {
-//    scene_ = new QGraphicsScene (this);
-//    view_ = new QGraphicsView (scene_, this);
-//    view_->horizontalScrollBar()->hide();
-//    view_->verticalScrollBar()->hide();
-//    view_->setMaximumHeight (30);
-//    setMaximumHeight(30);
-//
-//    QHBoxLayout* layout = new QHBoxLayout ();
-//    layout->setSpacing(0);
-//    layout->setMargin(0);
-//    layout->addWidget(view_);
-//    this->setLayout(layout);
+
 }
 
 //-----------------------------------------------------------------------------
@@ -68,19 +57,11 @@ void XAxisWidget::changeXStart(int32 x_start)
 }
 
 //-----------------------------------------------------------------------------
-void XAxisWidget::changePixelPerSec(float64 pixel_per_sec)
+void XAxisWidget::changePixelPerSample (float32 pixel_per_sample, float32 sample_rate)
 {
-    pixel_per_sec_ = pixel_per_sec;
+    pixel_per_sec_ = pixel_per_sample * sample_rate;
     update ();
 }
-
-//-----------------------------------------------------------------------------
-//void XAxisWidget::changeTotalLengthInSecs (float64 seconds)
-//{
-//    length_in_sec_ = seconds;
-//    redrawScene ();
-//    update ();
-//}
 
 
 //-----------------------------------------------------------------------------
@@ -101,8 +82,6 @@ void XAxisWidget::enableHighlightTime (bool highlighting_enabled)
 //-----------------------------------------------------------------------------
 void XAxisWidget::paintEvent(QPaintEvent*)
 {
-//    view_->centerOn (x_start_, 0);
-//    return;
     if (intervall_ < 1)
     {
         return; // invalid intervall
@@ -111,24 +90,9 @@ void XAxisWidget::paintEvent(QPaintEvent*)
     int32 x_end = x_start_ + width();
     int32 font_height = height() - 5;
 
-    //if (!scale_pixmap_)
-    //    redrawScalePixmap();
     QPainter p (this);
-    //p.setClipping(true);
-    //QPixmap bla(10, 10);
-    //bla.fill (Qt::blue);
-    //p.drawPixmap(0, 0, 10, 10, bla);
-    //if (scale_pixmap_->height() >= 10 &&
-    //    scale_pixmap_->width() >= 10)
-    //{
-    //    std::cout << "asdlfasödfkjaösfkdj" << std::endl;
-    //    p.drawPixmap(0, 0, 10, 10, *scale_pixmap_);
-    //}
-    p.setPen (Qt::black);
-    //p.drawLine (0, 4, width(), 4);
-    //std::cout << "draw pixmap " << width() << "x" << height() << std::endl;
-    //p.drawPixmap (0, 0, *scale_pixmap_, 0, 0, scale_pixmap_->width(), scale_pixmap_->height());
 
+    p.setPen (Qt::black);
     p.translate(-x_start_, 0);
     p.drawLine(x_start_, 0, x_end, 0);
     float64 float_x_start = floor((x_start_ + intervall_ / 2) / intervall_) *
@@ -147,7 +111,7 @@ void XAxisWidget::paintEvent(QPaintEvent*)
                    Qt::AlignHCenter | Qt::AlignVCenter,
                    QString::number(float_x / pixel_per_sec_));
     }
-    //p.translate(-x_start_, 0);
+
     if (highlighting_enabled_)
     {
         QFont font;
@@ -162,56 +126,5 @@ void XAxisWidget::paintEvent(QPaintEvent*)
         last_highlight_rect_ = bounding_rect;
     }
 }
-
-//-----------------------------------------------------------------------------
-//void XAxisWidget::redrawScene ()
-//{
-//    return;
-//    scene_->setSceneRect(0, 0, length_in_sec_ * pixel_per_sec_, 30);
-//    scene_->clear();
-//    scene_->addLine(0, 0, scene_->width(), 0);
-//    for (float64 float_x = 0;
-//         float_x < length_in_sec_ * pixel_per_sec_;
-//         float_x += intervall_)
-//    {
-//        QGraphicsTextItem* text = scene_->addText (QString::number(float_x / pixel_per_sec_));
-//        int32 x = float_x + 0.5;
-//        text->setPos (x, 5);
-//        scene_->addLine (x, 0, x, 5);
-////        painter.drawLine(x, 0, x, 5);
-////        painter.drawText((int32)(x - intervall_ / 2), 5, (int32)intervall_, font_height,
-////                   Qt::AlignHCenter | Qt::AlignVCenter,
-////                   QString::number(float_x / pixel_per_sec_));
-//    }
-//
-//    return;
-////    if (scale_pixmap_)
-////        delete scale_pixmap_;
-////    std::cout << "new pixmap " << length_in_sec_ * pixel_per_sec_ << "x" << height () << std::endl;
-//    //scale_pixmap_ = new QPixmap (length_in_sec_ * pixel_per_sec_, height ());
-////    scale_pixmap_ = new QPixmap (4000, 50);
-////    scale_pixmap_->fill (Qt::black);//palette().background().color());
-////
-////
-////    QPainter painter (scale_pixmap_);
-////    painter.setPen(Qt::black);
-////
-////    int32 font_height = height() - 5;
-////
-////    painter.drawLine(0, 0, scale_pixmap_->width(), 0);
-////
-////    for (float64 float_x = 0;
-////         float_x < length_in_sec_ * pixel_per_sec_;
-////         float_x += intervall_)
-////    {
-////        int32 x = float_x + 0.5;
-////        painter.drawLine(x, 0, x, 5);
-////        painter.drawText((int32)(x - intervall_ / 2), 5, (int32)intervall_, font_height,
-////                   Qt::AlignHCenter | Qt::AlignVCenter,
-////                   QString::number(float_x / pixel_per_sec_));
-////    }
-//
-//}
-
 
 }

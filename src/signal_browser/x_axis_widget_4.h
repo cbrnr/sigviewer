@@ -14,7 +14,6 @@ namespace BioSig_
 class XAxisWidget : public QWidget
 {
     Q_OBJECT
-
 public:
     XAxisWidget (QWidget* parent);
     virtual ~XAxisWidget();
@@ -23,14 +22,12 @@ public:
 public slots:
     void changeIntervall (float64 intervall);
     void changeXStart (int32 x_start);
-    void changePixelPerSec (float64 pixel_per_sec);
-//    void changeTotalLengthInSecs (float64 seconds);
+    void changePixelPerSample (float32 pixel_per_sample, float32 sample_rate);
     void changeHighlightTime (float64 time_to_highlight);
     void enableHighlightTime (bool highlighting_enabled);
 
 private:
     virtual void paintEvent(QPaintEvent*);
-//    void redrawScene ();
 
     float64 intervall_;
     int32 x_start_;
@@ -39,8 +36,7 @@ private:
     bool highlighting_enabled_;
     float64 time_to_highlight_;
     QRect last_highlight_rect_;
-    QGraphicsScene* scene_;
-    QGraphicsView* view_;
+
 };
 
 }

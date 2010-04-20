@@ -62,6 +62,8 @@ public:
     //-------------------------------------------------------------------------
     virtual void closeCurrentFileTabs ();
 
+    //-------------------------------------------------------------------------
+    virtual QSharedPointer<SignalVisualisationModel> getCurrentSignalVisualisationModel ();
 public slots:
 
     void tabChanged (int tab_index);

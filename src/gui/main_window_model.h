@@ -17,6 +17,9 @@ public:
     //-------------------------------------------------------------------------
     virtual QSharedPointer<SignalVisualisationModel> createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx) = 0;
 
+    //-------------------------------------------------------------------------
+    virtual QSharedPointer<SignalVisualisationModel> getCurrentSignalVisualisationModel () = 0;
+
 };
 
 }

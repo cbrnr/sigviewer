@@ -193,8 +193,9 @@ void MainWindow::initToolBars()
     navigation_toolbar_ = addToolBar(tr("Navigation"));
     view_toolbar_views_menu_->addAction (navigation_toolbar_->toggleViewAction());
     navigation_toolbar_->setIconSize(QSize(22, 22));
-    navigation_toolbar_->addWidget(secs_per_page_combobox_);
-    navigation_toolbar_->addWidget(signals_per_page_combobox_);
+    navigation_toolbar_->addActions (GuiActionFactory::getInstance()->getQActions("Zooming"));
+    //navigation_toolbar_->addWidget(secs_per_page_combobox_);
+    //navigation_toolbar_->addWidget(signals_per_page_combobox_);
 
     connect(secs_per_page_combobox_, SIGNAL(activated(const QString&)),
             model_.data(), SLOT(secsPerPageChanged(const QString&)));
@@ -262,6 +263,7 @@ void MainWindow::initMenus()
     view_menu_->addAction(toggle_status_bar);
     view_menu_->addSeparator();
     view_menu_->addActions (action_manager_->getActionsOfGroup(GUIActionManager::VIEW_MENU_ACTIONS));
+    view_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Zooming"));
 
     tools_menu_ = menuBar()->addMenu(tr("&Tools"));
     tools_menu_->addActions(action_manager_->getActionsOfGroup(GUIActionManager::TOOLS_MENU_ACTIONS));

@@ -54,6 +54,9 @@ public:
     int32 getVisibleX () const;
     int32 getVisibleY () const;
 
+    QPointF getCenter () const;
+    void setCenter (QPointF new_center);
+
     std::map<std::string, bool> getWidgetVisibilities () const;
     void setWidgetVisibility (std::string const &widget_name, bool visibility);
 
@@ -64,7 +67,6 @@ public:
 
 public slots:
     void setXAxisIntervall (float64 intervall);
-    void setPixelPerSec (float64 pixel_per_sec);
 
 signals:
     void visibleXChanged (int32 new_x);

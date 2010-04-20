@@ -5,6 +5,7 @@
 #include "../abstract_browser_model.h"
 #include "../file_context.h"
 #include "../tab_context.h"
+#include "../file_handling/channel_manager.h"
 #include "signal_browser_modes.h"
 #include "event_graphics_item.h"
 
@@ -24,7 +25,7 @@ class SignalBrowserView;
 class SignalGraphicsItem;
 
 // signal browser model
-class SignalBrowserModel : public QObject, public AbstractBrowserModel
+class SignalBrowserModel : public AbstractBrowserModel
 {
     Q_OBJECT
 
@@ -44,6 +45,7 @@ public:
 
     virtual void updateLayout ();
 
+    virtual void zoom (ZoomDimension dimension, float factor);
 
 
     void setSignalBrowserView(SignalBrowserView* signal_browser_view);
@@ -142,6 +144,7 @@ private:
     static uint8 const SIGNAL_Z = 4;
     static uint8 const EVENT_Z = 5;
 
+    QSharedPointer<ChannelManager> channel_manager_;
     QSharedPointer<FileContext> file_context_;
     QSharedPointer<TabContext> tab_context_;
     SignalBrowserView* signal_browser_view_;
@@ -165,6 +168,7 @@ private:
 
     // parameters
     float64 pixel_per_sec_;
+
     int32 signal_height_;
     int32 signal_spacing_;
     int32 prefered_x_grid_pixel_intervall_;

@@ -27,6 +27,7 @@ public:
     virtual float64 getPixelPerXUnit() const;
 
     virtual void setItemsHeight (int32 block_height);
+    virtual void zoom (ZoomDimension dimension, float factor) {}
 
     virtual std::set<ChannelID> getShownChannels () const {std::set<ChannelID> blub; return blub;}
     virtual bool setShownChannels (std::set<ChannelID> const&) {return true;}

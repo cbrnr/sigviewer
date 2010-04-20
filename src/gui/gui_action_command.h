@@ -46,6 +46,9 @@ protected:
     //-------------------------------------------------------------------------
     GuiActionCommand (QStringList const& action_titles);
 
+    //-------------------------------------------------------------------------
+    QAction* getQAction (QString const& name);
+
 private:
     QList<QAction*> actions_;
     QList<ActionConnector*> connectors_;

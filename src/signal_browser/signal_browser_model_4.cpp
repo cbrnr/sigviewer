@@ -33,12 +33,13 @@ namespace BioSig_
 // TODO! constructor
 SignalBrowserModel::SignalBrowserModel(QSharedPointer<FileContext> file_context,
                                        QSharedPointer<TabContext> tab_context)
-: file_context_ (file_context),
+: AbstractBrowserModel (file_context->getChannelManager()->getSampleRate()),
+  channel_manager_ (file_context->getChannelManager ()),
+  file_context_ (file_context),
   tab_context_ (tab_context),
   signal_browser_view_ (0),
   mode_(MODE_HAND),
   selected_event_item_ (0),
-  pixel_per_sec_(100),
   signal_height_(75),
   signal_spacing_(1),
   prefered_x_grid_pixel_intervall_(100),
@@ -86,7 +87,6 @@ void SignalBrowserModel::loadSettings()
 
     settings.beginGroup("SignalBrowserModel");
 
-    pixel_per_sec_ = settings.value("pixel_per_sec", pixel_per_sec_).toDouble();
     signal_height_ = settings.value("signal_height", signal_height_).toInt();
     signal_spacing_ = settings.value("signal_spacing", signal_spacing_).toInt();
     prefered_x_grid_pixel_intervall_ = settings.value("prefered_x_grid_pixel_intervall",
@@ -109,7 +109,6 @@ void SignalBrowserModel::saveSettings()
 
     settings.beginGroup("SignalBrowserModel");
 
-    settings.setValue("pixel_per_sec", pixel_per_sec_);
     settings.setValue("signal_height", signal_height_);
     settings.setValue("signal_spacing", signal_spacing_);
     settings.setValue("prefered_x_grid_pixel_intervall", prefered_x_grid_pixel_intervall_);
@@ -298,14 +297,14 @@ int32 SignalBrowserModel::getYPosOfChannel (uint32 channel_nr) const
 // get viewing position
 QPointF SignalBrowserModel::getViewingPosition ()
 {
-    return QPointF(static_cast<float>(signal_browser_view_->getVisibleX()) / pixel_per_sec_, signal_browser_view_->getVisibleY());
+    return QPointF(static_cast<float>(signal_browser_view_->getVisibleX()) / getPixelPerSample (), signal_browser_view_->getVisibleY());
 }
 
 //-----------------------------------------------------------------------------
 // set viewing position
 void SignalBrowserModel::setViewingPosition (QPointF topleft)
 {
-    signal_browser_view_->goTo(topleft.x() * pixel_per_sec_, topleft.y());
+    signal_browser_view_->goTo(topleft.x() * getPixelPerSample (), topleft.y());
 }
 
 
@@ -379,7 +378,6 @@ void SignalBrowserModel::setPixelPerXUnit(float64 pixel_per_sec)
         return;
     }
     pixel_per_sec_ = pixel_per_sec;
-    signal_browser_view_->setPixelPerSec (pixel_per_sec_);
 }
 
 // get pixel per sec
@@ -406,8 +404,8 @@ int32 SignalBrowserModel::getSignalHeight()
 // update layout
 void SignalBrowserModel::updateLayout()
 {
-    int32 width = (file_context_->getChannelManager()->getDurationInSec()
-                  * pixel_per_sec_);
+    int32 width = file_context_->getChannelManager()->getNumberSamples()
+                  * getPixelPerSample();
 
     int32 height = (signal_height_  + signal_spacing_) *
                    channel2signal_item_.size();
@@ -438,14 +436,36 @@ void SignalBrowserModel::updateLayout()
     updateEventItemsImpl ();
 
     // update x grid intervall
+    float64 pixel_per_sec = getPixelPerSample () * channel_manager_->getSampleRate();
     float64 x_grid_intervall = round125(prefered_x_grid_pixel_intervall_ /
-                                        pixel_per_sec_);
+                                        pixel_per_sec);
 
-    x_grid_pixel_intervall_ = pixel_per_sec_ * x_grid_intervall;
+    x_grid_pixel_intervall_ =  pixel_per_sec * x_grid_intervall;
     signal_browser_view_->setXAxisIntervall (x_grid_pixel_intervall_);
+    emit pixelPerSampleChanged (getPixelPerSample (), getSampleRate());
     signal_browser_view_->update();
     signal_browser_view_->updateWidgets();
 }
+
+//-------------------------------------------------------------------
+void SignalBrowserModel::zoom (ZoomDimension dimension, float factor)
+{
+    if (dimension == ZOOM_VERTICAL || dimension == ZOOM_BOTH)
+    {
+        if (factor > 0)
+        {
+            signal_height_ *= factor;
+        }
+        else
+        {
+            signal_height_ /= -factor;
+        }
+        emit signalHeightChanged (signal_height_);
+    }
+
+    updateLayout ();
+}
+
 
 //-------------------------------------------------------------------
 void SignalBrowserModel::updateEventItems ()
@@ -579,7 +599,7 @@ void SignalBrowserModel::updateEventItemsImpl ()
 // goTo
 void SignalBrowserModel::goTo(float32 sec, int32 channel_index)
 {
-    float32 x = sec * pixel_per_sec_;
+    float32 x = sec * getPixelPerSample() / file_context_->getChannelManager()->getSampleRate();
     float32 y = channel_index < 0 ? signal_browser_view_->getVisibleY()
                                 : channel_index *
                                   (signal_height_ + signal_spacing_);

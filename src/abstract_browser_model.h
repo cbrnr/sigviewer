@@ -11,6 +11,8 @@ class AbstractBrowserModel : public SignalVisualisationModel
 {
 
 public:
+    AbstractBrowserModel (float32 sample_rate = 256) : SignalVisualisationModel (sample_rate) {}
+
     virtual ~AbstractBrowserModel () {};
 
     //-------------------------------------------------------------------------

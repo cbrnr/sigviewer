@@ -84,6 +84,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
             this, SLOT(verticalSrollbarMoved(int)));
 
     connect(this, SIGNAL(visibleXChanged(int32)), x_axis_widget_, SLOT(changeXStart(int32)));
+    connect(signal_browser_model.data(), SIGNAL(pixelPerSampleChanged(float32,float32)), x_axis_widget_, SLOT(changePixelPerSample(float32,float32)));
     connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
     connect(signal_browser_model.data(), SIGNAL(signalHeightChanged(uint32)), y_axis_widget_, SLOT(changeSignalHeight(uint32)));
     connect(event_info_widget_, SIGNAL(eventCreationTypeChanged(uint16)), signal_browser_model.data(), SLOT(setActualEventCreationType(uint16)));
@@ -106,11 +107,6 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
 SignalBrowserView::~SignalBrowserView ()
 {
     saveSettings ();
-//    QList<QGraphicsItem*> items = graphics_scene_->items();
-//    for (QList<QGraphicsItem*>::iterator it = items.begin();
-//         it != items.end();
-//         ++it)
-//        graphics_scene_->removeItem(*it);
 }
 
 //-----------------------------------------------------------------------------
@@ -209,6 +205,19 @@ int32 SignalBrowserView::getVisibleY () const
 }
 
 //-----------------------------------------------------------------------------
+QPointF SignalBrowserView::getCenter () const
+{
+    return graphics_view_->mapToScene (graphics_view_->viewport()->width(),
+                                       graphics_view_->viewport()->height());
+}
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::setCenter (QPointF new_center)
+{
+    graphics_view_->centerOn (new_center);
+}
+
+//-----------------------------------------------------------------------------
 std::map<std::string, bool> SignalBrowserView::getWidgetVisibilities () const
 {
     std::map<std::string, bool> hideable_widgets_visibilities;
@@ -287,12 +296,6 @@ void SignalBrowserView::updateWidgets (bool update_view)
 void SignalBrowserView::setXAxisIntervall (float64 intervall)
 {
     x_axis_widget_->changeIntervall (intervall);
-}
-
-//-----------------------------------------------------------------------------
-void SignalBrowserView::setPixelPerSec (float64 pixel_per_sec)
-{
-    x_axis_widget_->changePixelPerSec (pixel_per_sec);
 }
 
 //-----------------------------------------------------------------------------

@@ -1308,6 +1308,15 @@ void MainWindowModelImpl::closeCurrentFileTabs ()
     main_window_->setWindowTitle (tr("SigViewer"));
 }
 
+//-----------------------------------------------------------------------------
+QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::getCurrentSignalVisualisationModel ()
+{
+    if (!tab_widget_)
+        return QSharedPointer<SignalVisualisationModel>(0);
+
+    return browser_models_[tab_widget_->currentIndex()];
+}
+
 
 } // namespace BioSig_
 
