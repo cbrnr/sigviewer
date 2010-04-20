@@ -135,9 +135,9 @@ void MainWindow::initToolBars()
 
     file_toolbar_ = addToolBar(tr("File"));
     view_toolbar_views_menu_->addAction (file_toolbar_->toggleViewAction());
-    QList<QAction*> file_toolbar_actions = action_manager_->getActionsOfGroup(GUIActionManager::FILE_TOOLBAR_ACTIONS);
-    file_toolbar_actions.push_front (GuiActionFactory::getInstance()->getQAction("Open File"));
-    file_toolbar_actions.push_back (GuiActionFactory::getInstance()->getQAction("Close File"));
+    QList<QAction*> file_toolbar_actions = GuiActionFactory::getInstance()->getQActions("Open File");
+    file_toolbar_actions.append (action_manager_->getActionsOfGroup(GUIActionManager::FILE_TOOLBAR_ACTIONS));
+    file_toolbar_actions.append (GuiActionFactory::getInstance()->getQActions("Close File"));
     file_toolbar_->addActions (file_toolbar_actions);
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
@@ -237,12 +237,12 @@ void MainWindow::initMenus()
             model_.data(), SLOT(recentFileActivated(QAction*)));
     file_menu_actions.insert (0, file_recent_files_menu_->menuAction());
     file_menu_ = new QMenu(tr("&File"), this);
-    file_menu_->addAction (GuiActionFactory::getInstance()->getQAction("Open File"));
+    file_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Open File"));
     QAction* separator = new QAction (this);
     separator->setSeparator (true);
     file_menu_actions.insert(file_menu_actions.size() - 2, separator);
     file_menu_actions.insert(file_menu_actions.size() - 2,
-                             GuiActionFactory::getInstance()->getQAction("Close File"));
+                             GuiActionFactory::getInstance()->getQActions("Close File").first());
     file_menu_->addActions(file_menu_actions);
 
     menuBar()->addMenu(file_menu_);

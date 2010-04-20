@@ -20,7 +20,7 @@ public:
 
     //-------------------------------------------------------------------------
     /// the caller must not delete
-    QAction* getQAction (QString const& name) const;
+    QList<QAction*> getQActions (QString const& command_name) const;
 
     //-------------------------------------------------------------------------
     void initAllCommands ();

@@ -25,12 +25,12 @@ void GuiActionFactory::registerCommand (QString const& name,
 
 
 //-----------------------------------------------------------------------------
-QAction* GuiActionFactory::getQAction (QString const& name) const
+QList<QAction*> GuiActionFactory::getQActions (QString const& command_name) const
 {
-    if (!command_map_.contains (name))
-        return 0;
+    if (!command_map_.contains (command_name))
+        return QList<QAction*>();
     else
-        return command_map_[name]->getQAction ();
+        return command_map_[command_name]->getQActions ();
 }
 
 //-----------------------------------------------------------------------------

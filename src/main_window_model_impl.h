@@ -120,10 +120,6 @@ private:
     void storeAndInitTabContext (QSharedPointer<TabContext> context, int tab_index);
 
     //-------------------------------------------------------------------------
-    QSharedPointer<FileSignalReader> createAndOpenFileSignalReader
-            (QString const& file_path) const;
-
-    //-------------------------------------------------------------------------
     bool checkMainWindowPtr(const QString function);
     uint16 selectEventTypeDialog (uint16 preselected_type) const;
 

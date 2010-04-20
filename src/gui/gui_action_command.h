@@ -5,9 +5,12 @@
 
 #include <QObject>
 #include <QAction>
+#include <QStringList>
 
 namespace BioSig_
 {
+
+class ActionConnector;
 
 class GuiActionCommand : public QObject
 {
@@ -17,7 +20,7 @@ public:
     virtual ~GuiActionCommand () {}
 
     //-------------------------------------------------------------------------
-    QAction* getQAction ();    
+    QList<QAction*> getQActions ();
 
     //-------------------------------------------------------------------------
     virtual void init () = 0;
@@ -30,7 +33,7 @@ public slots:
     }
 
     //-------------------------------------------------------------------------
-    virtual void trigger () = 0;
+    virtual void trigger (QString const& action_name) = 0;
 
     //-------------------------------------------------------------------------
     virtual void applicationStateChanged (ApplicationState state) {}
@@ -41,11 +44,27 @@ signals:
 
 protected:
     //-------------------------------------------------------------------------
-    GuiActionCommand (QString const& name);
+    GuiActionCommand (QStringList const& action_titles);
 
 private:
-    QAction* action_;
+    QList<QAction*> actions_;
+    QList<ActionConnector*> connectors_;
 };
+
+class ActionConnector : public QObject
+{
+    Q_OBJECT
+public:
+    ActionConnector (QObject* parent, QString const& name) : QObject (parent), name_ (name) {}
+public slots:
+    void trigger () {emit triggered (name_);}
+signals:
+    void triggered (QString const& name);
+private:
+    QString name_;
+};
+
+
 
 
 }

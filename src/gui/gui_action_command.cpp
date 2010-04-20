@@ -5,20 +5,28 @@
 namespace BioSig_
 {
 
-//-------------------------------------------------------------------------
-GuiActionCommand::GuiActionCommand (QString const& name)
-        : action_ (new QAction (name, this))
+//-----------------------------------------------------------------------------
+GuiActionCommand::GuiActionCommand (QStringList const& action_titles)
 {
-    Q_ASSERT(connect (action_, SIGNAL(triggered()), SLOT(trigger())));
-    Q_ASSERT(action_->connect (this, SIGNAL(qActionEnabledChanged(bool)), SLOT(setEnabled (bool))));
-    Q_ASSERT(connect (ApplicationContext::getInstance().data(), SIGNAL(stateChanged(ApplicationState)),
-                      SLOT(applicationStateChanged(ApplicationState))));
+    for (QStringList::const_iterator iter = action_titles.begin();
+         iter != action_titles.end();
+         ++iter)
+    {
+        actions_.push_back (new QAction (*iter, this));
+        connectors_.push_back (new ActionConnector (this, *iter));
+        Q_ASSERT(connectors_.last ()->connect (actions_.last(), SIGNAL(triggered()), SLOT(trigger())));
+        Q_ASSERT(connect (connectors_.last (), SIGNAL(triggered(QString const&)), SLOT(trigger(QString const&))));
+        Q_ASSERT(actions_.last()->connect (this, SIGNAL(qActionEnabledChanged(bool)), SLOT(setEnabled (bool))));
+        Q_ASSERT(connect (ApplicationContext::getInstance().data(), SIGNAL(stateChanged(ApplicationState)),
+                          SLOT(applicationStateChanged(ApplicationState))));
+    }
 }
 
-//-------------------------------------------------------------------------
-QAction* GuiActionCommand::getQAction ()
+//-----------------------------------------------------------------------------
+QList<QAction*> GuiActionCommand::getQActions ()
 {
-    return action_;
+    return actions_;
 }
+
 
 }

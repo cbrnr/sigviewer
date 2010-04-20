@@ -26,7 +26,7 @@ GuiActionFactoryRegistrator OpenFileGuiCommand::registrator_ ("Open File",
 
 //-----------------------------------------------------------------------------
 OpenFileGuiCommand::OpenFileGuiCommand ()
-    : GuiActionCommand ("Open...")
+    : GuiActionCommand (QStringList() << tr("Open..."))
 {
     // nothing to do here
 }
@@ -41,8 +41,8 @@ OpenFileGuiCommand::~OpenFileGuiCommand ()
 //-----------------------------------------------------------------------------
 void OpenFileGuiCommand::init ()
 {
-    //getQAction()->setShortcut (QKeySequence::Open);
-    getQAction()->setIcon (QIcon(":/images/icons/fileopen.png"));
+    getQActions().first()->setShortcut (QKeySequence::Open);
+    getQActions().first()->setIcon (QIcon(":/images/icons/fileopen.png"));
 }
 
 //-----------------------------------------------------------------------------
@@ -81,7 +81,7 @@ void OpenFileGuiCommand::openFile (QString const& file_path)
 }
 
 //-----------------------------------------------------------------------------
-void OpenFileGuiCommand::trigger ()
+void OpenFileGuiCommand::trigger (QString const&)
 {
     QString extensions = FileSignalReaderFactory::getInstance()->getExtensions();
     QSettings settings ("SigViewer");

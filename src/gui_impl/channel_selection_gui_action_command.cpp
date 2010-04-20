@@ -12,7 +12,7 @@ GuiActionFactoryRegistrator ChannelSelectionGUIActionCommand::registrator_ ("Cha
 
 //-----------------------------------------------------------------------------
 ChannelSelectionGUIActionCommand::ChannelSelectionGUIActionCommand ()
-    : GuiActionCommand ("ChannelSelection")
+    : GuiActionCommand (QStringList() << tr("ChannelSelection"))
 {
 
 }
@@ -30,7 +30,7 @@ void ChannelSelectionGUIActionCommand::init ()
 }
 
 //-----------------------------------------------------------------------------
-void ChannelSelectionGUIActionCommand::trigger ()
+void ChannelSelectionGUIActionCommand::trigger (QString const&)
 {
     std::cout << "triggered" << std::endl;
 }

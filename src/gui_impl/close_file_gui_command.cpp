@@ -11,7 +11,7 @@ GuiActionFactoryRegistrator CloseFileGuiCommand::registrator_ ("Close File",
                                                                QSharedPointer<CloseFileGuiCommand> (new CloseFileGuiCommand));
 //-----------------------------------------------------------------------------
 CloseFileGuiCommand::CloseFileGuiCommand ()
-    : GuiActionCommand ("Close")
+    : GuiActionCommand (QStringList() << tr("Close"))
 {
     // nothing to do here
 }
@@ -25,13 +25,13 @@ CloseFileGuiCommand::~CloseFileGuiCommand ()
 //-----------------------------------------------------------------------------
 void CloseFileGuiCommand::init ()
 {
-    //getQAction()->setShortcut (QKeySequence::Close);
-    getQAction()->setIcon (QIcon(":/images/icons/fileclose.png"));
+    getQActions().first()->setShortcut (QKeySequence::Close);
+    getQActions().first()->setIcon (QIcon(":/images/icons/fileclose.png"));
 }
 
 
 //-----------------------------------------------------------------------------
-void CloseFileGuiCommand::trigger ()
+void CloseFileGuiCommand::trigger (QString const&)
 {
     QSharedPointer<FileContext> current_file_context =
             ApplicationContext::getInstance()->getCurrentFileContext();

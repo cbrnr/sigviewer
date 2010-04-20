@@ -30,7 +30,7 @@ public:
 
 public slots:
     //-------------------------------------------------------------------------
-    virtual void trigger ();
+    virtual void trigger (QString const& action_name);
 
 private:
     static GuiActionFactoryRegistrator registrator_;

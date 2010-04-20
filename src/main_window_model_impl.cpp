@@ -1099,33 +1099,6 @@ void MainWindowModelImpl::storeAndInitTabContext (QSharedPointer<TabContext> con
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<FileSignalReader> MainWindowModelImpl::createAndOpenFileSignalReader
-        (QString const& file_path) const
-{
-    QSharedPointer<FileSignalReader> signal_reader;
-    QString load;
-
-    if (file_path.lastIndexOf('.') != -1)
-    {
-        signal_reader = QSharedPointer<FileSignalReader>(FileSignalReaderFactory::getInstance()->
-                    getElement (file_path.mid (file_path.lastIndexOf('.'))));
-        if (signal_reader)
-        {
-            signal_reader->setLogStream(log_stream_.get());
-            load = signal_reader->open (file_path, overflow_detection_);
-
-            if (load.size ())
-                main_window_->showErrorReadDialog (file_path + " \"" + load + "\"");
-            else
-                return signal_reader;
-        }
-    }
-    return QSharedPointer<FileSignalReader> (0);
-}
-
-
-
-//-----------------------------------------------------------------------------
 // check main window ptr
 inline bool MainWindowModelImpl::checkMainWindowPtr(const QString function)
 {
