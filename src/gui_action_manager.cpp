@@ -264,10 +264,6 @@ void GUIActionManager::initViewActions ()
                   tr("Jumps to the previous specified event and selects it"),
                   QIcon(":/images/icons/previous.png"));
 
-    createAction (ACTION_VIEW_FIT_TO_EVENT, tr("Fit View to Selected Event"),
-                  SLOT(viewFitToEventAction()),
-                  tr("Fits the view to the selected event"));
-
     createAction (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE,
                   tr("Hide Events of other Type"),
                   SLOT(viewShowEventsOfSelectedTypeAction()),
@@ -372,7 +368,6 @@ void GUIActionManager::initGroups ()
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
-    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_VIEW_FIT_TO_EVENT);
 
     // VIEW_MENU_ACTIONS
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_CHANNELS);
@@ -388,7 +383,6 @@ void GUIActionManager::initGroups ()
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
-    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_FIT_TO_EVENT);
 
 
     // VIEW_TOOLBAR_ACTIONS
@@ -429,7 +423,6 @@ void GUIActionManager::initDisabledStates ()
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_FIT_TO_EVENT);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_CHANNELS);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_EVENTS);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_INSERT_OVER);
@@ -453,7 +446,6 @@ void GUIActionManager::initDisabledStates ()
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
-    tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_VIEW_FIT_TO_EVENT);
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_INSERT_OVER);
 }
 

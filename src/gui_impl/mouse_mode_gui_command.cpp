@@ -7,10 +7,10 @@ namespace BioSig_
 
 
 //-----------------------------------------------------------------------------
-QString const MouseModeGuiCommand::NEW_MODE_TEXT_ = tr("New Event");
-QString const MouseModeGuiCommand::POINTER_MODE_TEXT_ = tr("Edit Event");
-QString const MouseModeGuiCommand::HAND_MODE_TEXT_ = tr("Scroll");
-QString const MouseModeGuiCommand::SHIFT_MODE_TEXT_ = tr("Shift Signal");
+QString const MouseModeGuiCommand::NEW_MODE_TEXT_ = "New Event";
+QString const MouseModeGuiCommand::POINTER_MODE_TEXT_ = "Edit Event";
+QString const MouseModeGuiCommand::HAND_MODE_TEXT_ = "Scroll";
+QString const MouseModeGuiCommand::SHIFT_MODE_TEXT_ = "Shift Signal";
 QStringList const MouseModeGuiCommand::MODE_TEXTS_ = QStringList() <<
                                                      MouseModeGuiCommand::NEW_MODE_TEXT_ <<
                                                      MouseModeGuiCommand::POINTER_MODE_TEXT_ <<

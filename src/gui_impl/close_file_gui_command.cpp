@@ -11,7 +11,7 @@ GuiActionFactoryRegistrator CloseFileGuiCommand::registrator_ ("Close File",
                                                                QSharedPointer<CloseFileGuiCommand> (new CloseFileGuiCommand));
 //-----------------------------------------------------------------------------
 CloseFileGuiCommand::CloseFileGuiCommand ()
-    : GuiActionCommand (QStringList() << tr("Close"))
+    : GuiActionCommand (QStringList() << "Close")
 {
     // nothing to do here
 }

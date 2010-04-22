@@ -12,7 +12,7 @@ GuiActionFactoryRegistrator ChannelSelectionGUIActionCommand::registrator_ ("Cha
 
 //-----------------------------------------------------------------------------
 ChannelSelectionGUIActionCommand::ChannelSelectionGUIActionCommand ()
-    : GuiActionCommand (QStringList() << tr("ChannelSelection"))
+    : GuiActionCommand (QStringList() << "ChannelSelection")
 {
 
 }

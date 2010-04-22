@@ -26,11 +26,11 @@ public slots:
 private:
     static float const ZOOM_FACTOR_ = 2;
 
-    static QString const ZOOM_IN_VERTICAL_TEXT_;
-    static QString const ZOOM_OUT_VERTICAL_TEXT_;
-    static QString const ZOOM_IN_HORIZONTAL_TEXT_;
-    static QString const ZOOM_OUT_HORIZONTAL_TEXT_;
-    static QStringList const TEXTS_;
+    static QString const ZOOM_IN_VERTICAL_;
+    static QString const ZOOM_OUT_VERTICAL_;
+    static QString const ZOOM_IN_HORIZONTAL_;
+    static QString const ZOOM_OUT_HORIZONTAL_;
+    static QStringList const ACTIONS_;
 
     static GuiActionFactoryRegistrator registrator_;
 };

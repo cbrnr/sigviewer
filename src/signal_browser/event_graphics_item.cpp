@@ -20,6 +20,7 @@
 #include <QPainter>
 
 #include <algorithm>
+#include <cmath>
 
 namespace BioSig_
 {
@@ -40,7 +41,8 @@ EventGraphicsItem::EventGraphicsItem (SignalBrowserModel& model,
   command_executer_ (command_executer),
   state_ (STATE_NONE),
   is_selected_ (false),
-  signal_event_ (signal_event)
+  signal_event_ (signal_event),
+  move_x_diff_ (0)
 {
     // setAcceptHoverEvents (true);
 }
@@ -163,6 +165,8 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
 {
     event_handling_mutex_.lock();
 
+    move_x_diff_ = 0;
+
     if (state_ != STATE_NONE)
     {
         event_handling_mutex_.unlock();
@@ -245,6 +249,23 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
 void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
 {
     QPoint mouse_pos (mouse_event->scenePos().x(), mouse_event->scenePos().y()); // event->canvas_view->inverseWorldMatrix().map(e->pos());
+    move_x_diff_ += (mouse_event->scenePos().x() - mouse_event->lastScenePos().x());
+    int32 diff = 0;
+    if (move_x_diff_ > 0)
+        while (move_x_diff_ > signal_browser_model_.getPixelPerSample())
+        {
+            diff += signal_browser_model_.getPixelPerSample ();
+            move_x_diff_ -= signal_browser_model_.getPixelPerSample ();
+        }
+    else
+    {
+        while (move_x_diff_ < -signal_browser_model_.getPixelPerSample())
+        {
+            diff -= signal_browser_model_.getPixelPerSample ();
+            move_x_diff_ += signal_browser_model_.getPixelPerSample ();
+        }
+    }
+
     float64 factor = 1;
     factor /= signal_browser_model_.getPixelPerSample();
     switch(state_)
@@ -253,7 +274,6 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
             break;
         case STATE_MOVE_BEGIN:
             {
-                int32 diff = (mouse_event->scenePos().x() - mouse_event->lastScenePos().x());
                 int32 old_pos = pos().x();
                 int32 new_pos = (((old_pos + diff) * factor) / factor) + 0.5;
                 width_ = (((width_ - (new_pos - old_pos)) * factor) / factor) + 0.5;
@@ -263,7 +283,6 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
             break;
         case STATE_MOVE_END:
             {
-                int32 diff = (mouse_event->scenePos().x() - mouse_event->lastScenePos().x());
                 width_ = (((width_ + diff) * factor) / factor) + 0.5;
                 if (diff > 0)
                     scene()->update (mouse_pos.x() - diff - 20, pos().y(), diff + 40, height_);

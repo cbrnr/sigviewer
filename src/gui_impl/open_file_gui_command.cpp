@@ -26,7 +26,7 @@ GuiActionFactoryRegistrator OpenFileGuiCommand::registrator_ ("Open File",
 
 //-----------------------------------------------------------------------------
 OpenFileGuiCommand::OpenFileGuiCommand ()
-    : GuiActionCommand (QStringList() << tr("Open..."))
+    : GuiActionCommand (QStringList() << "Open...")
 {
     // nothing to do here
 }

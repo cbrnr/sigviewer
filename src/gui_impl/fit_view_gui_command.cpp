@@ -6,7 +6,7 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-QString const FitViewGuiCommand::FIT_TO_EVENT_ = tr("Fit View to Selected Event");
+QString const FitViewGuiCommand::FIT_TO_EVENT_ = "Fit View to Selected Event";
 QStringList const FitViewGuiCommand::TEXTS_ = QStringList() <<
                                               FitViewGuiCommand::FIT_TO_EVENT_;
 

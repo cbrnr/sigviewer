@@ -98,7 +98,6 @@ public slots:
     void viewShowAndSelectNextEventAction();
     void viewShowAndSelectPreviousEventAction();
     void viewShowEventsOfSelectedTypeAction();
-    void viewFitToEventAction();
     void secsPerPageChanged(const QString& secs_per_page);
     void signalsPerPageChanged(const QString& signals_per_page);
     void optionsChannelsAction();

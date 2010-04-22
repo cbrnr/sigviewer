@@ -54,7 +54,6 @@ HEADERS += basic_header_info_dialog.h \
     command_stack.h \
     next_event_view_undo_command.h \
     set_shown_event_types_view_undo_command.h \
-    fit_view_to_event_view_undo_command.h \
     event_time_selection_dialog.h \
     abstract_browser_model.h \
     gui_action_manager.h \
@@ -80,7 +79,6 @@ SOURCES += basic_header_info_dialog.cpp \
     command_stack.cpp \
     next_event_view_undo_command.cpp \
     set_shown_event_types_view_undo_command.cpp \
-    fit_view_to_event_view_undo_command.cpp \
     event_time_selection_dialog.cpp \
     gui_action_manager.cpp \
     application_context.cpp \

@@ -125,11 +125,11 @@ int main(int32 argc, char* argv[])
 
     action_manager->init (main_window_model.data());
 
-    MainWindow main_window (main_window_model);
-    main_window_model->setMainWindow (&main_window);
+    MainWindow* main_window = new MainWindow (main_window_model);
+    main_window_model->setMainWindow (main_window);
     main_window_model->loadSettings();
-    main_window.setUnifiedTitleAndToolBarOnMac(true);
-    main_window.show();
+    main_window->setUnifiedTitleAndToolBarOnMac(true);
+    main_window->show();
 
     if (application.arguments().count() > 1)
         OpenFileGuiCommand::openFile (application.arguments().at(1));

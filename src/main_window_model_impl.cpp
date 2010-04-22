@@ -35,7 +35,6 @@
 #include "signal_browser/new_event_undo_command.h"
 #include "next_event_view_undo_command.h"
 #include "set_shown_event_types_view_undo_command.h"
-#include "fit_view_to_event_view_undo_command.h"
 #include "block_visualisation/blocks_visualisation_view.h"
 #include "block_visualisation/blocks_visualisation_model.h"
 
@@ -886,16 +885,6 @@ void MainWindowModelImpl::viewShowEventsOfSelectedTypeAction()
     shown_event_types.append (signal_browser_model_->getSelectedSignalEvent()->getType());
 
     QUndoCommand* eventCommand = new SetShownEventTypesViewUndoCommand (*signal_browser_model_, shown_event_types);
-    CommandStack::instance().executeViewCommand(eventCommand);
-}
-
-
-
-//-------------------------------------------------------------------
-// fits the view to the selected event action
-void MainWindowModelImpl::viewFitToEventAction()
-{
-    QUndoCommand* eventCommand = new FitViewToEventViewUndoCommand (*signal_browser_model_);
     CommandStack::instance().executeViewCommand(eventCommand);
 }
 

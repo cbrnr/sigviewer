@@ -24,6 +24,9 @@ public:
     QList<QAction*> getQActions ();
 
     //-------------------------------------------------------------------------
+    QList<QString> getActionIDs () const;
+
+    //-------------------------------------------------------------------------
     virtual void init () = 0;
 
 public slots:
@@ -42,19 +45,19 @@ public slots:
     //-------------------------------------------------------------------------
     virtual void tabSelectionStateChanged (TabSelectionState) {}
 
+    //-------------------------------------------------------------------------
+    QAction* getQAction (QString const& id);
+
 signals:
     //-------------------------------------------------------------------------
     void qActionEnabledChanged (bool enabled);
 
 protected:
     //-------------------------------------------------------------------------
-    GuiActionCommand (QStringList const& action_titles);
-
-    //-------------------------------------------------------------------------
-    QAction* getQAction (QString const& name);
+    GuiActionCommand (QStringList const& action_ids);
 
 private:
-    QList<QAction*> actions_;
+    QMap<QString, QAction*> action_map_;
     QList<ActionConnector*> connectors_;
 };
 
