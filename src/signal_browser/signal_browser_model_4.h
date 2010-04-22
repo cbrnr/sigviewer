@@ -6,7 +6,7 @@
 #include "../file_context.h"
 #include "../tab_context.h"
 #include "../file_handling/channel_manager.h"
-#include "signal_browser_modes.h"
+#include "../gui/signal_visualisation_modes.h"
 #include "event_graphics_item.h"
 
 #include <QObject>
@@ -47,12 +47,26 @@ public:
 
     virtual void zoom (ZoomDimension dimension, float factor);
 
+    //-------------------------------------------------------------------------
+    /// see base class
+    virtual unsigned getShownSignalWidth () const;
+
+    //-------------------------------------------------------------------------
+    /// see base class
+    virtual unsigned getShownPosition () const;
+
+    //-------------------------------------------------------------------------
+    /// see base class
+    virtual void goToSample (unsigned sample);
+
+    //-------------------------------------------------------------------------
+    /// see base class
+    virtual EventID getSelectedEvent () const;
+
 
     void setSignalBrowserView(SignalBrowserView* signal_browser_view);
     void loadSettings();
     void saveSettings();
-    void setMode(SignalBrowserMode mode);
-    SignalBrowserMode getMode();
 
     //settings
     std::map<std::string, bool> getHideableWidgetsVisibilities () const;
@@ -130,6 +144,9 @@ signals:
     void signalSpacingChanged (unsigned signal_spacing);
     void shownEventTypesChanged (std::set<uint16> shown_event_types);
 
+protected:
+    virtual void modeChanged (SignalVisualisationMode mode);
+
 private:
     //-------------------------------------------------------------------------
     void addChannel (ChannelID channel_nr);
@@ -148,7 +165,6 @@ private:
     QSharedPointer<FileContext> file_context_;
     QSharedPointer<TabContext> tab_context_;
     SignalBrowserView* signal_browser_view_;
-    SignalBrowserMode mode_;
 
     typedef std::map<int32, SignalGraphicsItem*> Int2SignalGraphicsItemPtrMap;
     typedef std::map<int32, EventGraphicsItem*> Int2EventGraphicsItemPtrMap;

@@ -9,7 +9,7 @@
 namespace BioSig_
 {
 
-SignalBrowserMouseHandling::Action SignalBrowserMouseHandling::getAction(QGraphicsSceneMouseEvent* e, SignalBrowserMode mode)
+SignalBrowserMouseHandling::Action SignalBrowserMouseHandling::getAction(QGraphicsSceneMouseEvent* e, SignalVisualisationMode mode)
 {
         // hand scroll
     if ((e->button() == Qt::MidButton  && e->modifiers() == Qt::NoModifier) ||

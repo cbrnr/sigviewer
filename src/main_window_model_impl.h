@@ -91,10 +91,6 @@ public slots:
     void editChangeTypeAction();
     void editEventTableAction();
     void editInsertOverAction();
-    void mouseModeNewAction();
-    void mouseModePointerAction();
-    void mouseModeHandAction();
-    void mouseModeShiftSignalAction();
     void viewZoomInAction();
     void viewZoomOutAction();
     void viewAutoScaleAction();

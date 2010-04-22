@@ -38,7 +38,6 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<FileContext> file_context,
   file_context_ (file_context),
   tab_context_ (tab_context),
   signal_browser_view_ (0),
-  mode_(MODE_HAND),
   selected_event_item_ (0),
   signal_height_(75),
   signal_spacing_(1),
@@ -119,29 +118,6 @@ void SignalBrowserModel::saveSettings()
 
     settings.endGroup();
 }
-
-//-----------------------------------------------------------------------------
-// TODO! set mode
-void SignalBrowserModel::setMode(SignalBrowserMode mode)
-{
-    if (!checkSignalBrowserPtr("setMode"))
-    {
-        return;
-    }
-
-    mode_ = mode;
-    //signal_browser_->getCanvasView()
-    //                    ->setToolTipsEnabled(mode == MODE_POINTER ||
-    //                                         mode == MODE_NEW);
-}
-
-//-----------------------------------------------------------------------------
-// get mode
-SignalBrowserMode SignalBrowserModel::getMode()
-{
-    return mode_;
-}
-
 
 //-----------------------------------------------------------------------------
 bool SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
@@ -466,6 +442,39 @@ void SignalBrowserModel::zoom (ZoomDimension dimension, float factor)
     updateLayout ();
 }
 
+//-------------------------------------------------------------------------
+unsigned SignalBrowserModel::getShownSignalWidth () const
+{
+    return signal_browser_view_->getVisibleWidth ();
+}
+
+//-------------------------------------------------------------------------
+unsigned SignalBrowserModel::getShownPosition () const
+{
+    return signal_browser_view_->getVisibleX ();
+}
+
+//-------------------------------------------------------------------------
+void SignalBrowserModel::goToSample (unsigned sample)
+{
+    float32 position = 0;
+    while (position < getPixelPerSample() * sample)
+        position += getPixelPerSample ();
+    position -= getPixelPerSample ();
+
+    signal_browser_view_->goTo (position, 0);
+}
+
+//-------------------------------------------------------------------------
+EventID SignalBrowserModel::getSelectedEvent () const
+{
+    if (selected_event_item_)
+        return selected_event_item_->getId ();
+    else
+        return UNDEFINED_EVENT_ID;
+}
+
+
 
 //-------------------------------------------------------------------
 void SignalBrowserModel::updateEventItems ()
@@ -517,6 +526,16 @@ void SignalBrowserModel::unselectEvent ()
     selected_event_item_ = 0;
     emit eventSelected (QSharedPointer<SignalEvent const>(0));
 }
+
+//-------------------------------------------------------------------
+void SignalBrowserModel::modeChanged (SignalVisualisationMode mode)
+{
+    if (mode == MODE_HAND)
+        signal_browser_view_->setScrollMode (true);
+    else
+        signal_browser_view_->setScrollMode (false);
+}
+
 
 // get signal spacing
 int32 SignalBrowserModel::getSignalSpacing()

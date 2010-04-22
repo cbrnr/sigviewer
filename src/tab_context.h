@@ -1,6 +1,7 @@
 #ifndef TAB_CONTEXT_H
 #define TAB_CONTEXT_H
 
+#include "base/tab_states.h"
 #include "command_executer.h"
 
 #include <QObject>
@@ -9,21 +10,6 @@
 
 namespace BioSig_
 {
-
-enum TabSelectionState
-{
-    TAB_STATE_NO_EVENT_SELECTED,
-    TAB_STATE_EVENT_SELECTED_ONE_CHANNEL,
-    TAB_STATE_EVENT_SELECTED_ALL_CHANNELS
-};
-
-enum TabEditState
-{
-    TAB_STATE_NO_REDO,
-    TAB_STATE_NO_UNDO,
-    TAB_STATE_NO_REDO_NO_UNDO,
-    TAB_STATE_CAN_REDO_UNDO
-};
 
 class TabContext : public QObject, public CommandExecuter
 {

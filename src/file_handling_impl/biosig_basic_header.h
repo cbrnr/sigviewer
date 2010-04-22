@@ -16,6 +16,8 @@ public:
     //-------------------------------------------------------------------------
     virtual uint32 getNumberOfSamples () const;
 
+    //-------------------------------------------------------------------------
+    virtual QMap<unsigned, QString> getNamesOfUserSpecificEvents () const;
 
 private:
     HDRTYPE* raw_header_;

@@ -142,7 +142,7 @@ void MainWindow::initToolBars()
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
     view_toolbar_views_menu_->addAction (mouse_mode_toolbar_->toggleViewAction());
-    mouse_mode_toolbar_->addActions (action_manager_->getActionsOfGroup(GUIActionManager::MODE_ACTIONS));
+    mouse_mode_toolbar_->addActions (GuiActionFactory::getInstance()->getQActions("Mouse Modes"));
 
     edit_toolbar_ = addToolBar(tr("Edit"));
     view_toolbar_views_menu_->addAction (edit_toolbar_->toggleViewAction());
@@ -252,7 +252,7 @@ void MainWindow::initMenus()
     edit_menu_->addActions (action_manager_->getActionsOfGroup (GUIActionManager::EDIT_MENU_ACTIONS));
 
     mouse_mode_menu_ = menuBar()->addMenu(tr("&Mode"));
-    mouse_mode_menu_->addActions (action_manager_->getActionsOfGroup(GUIActionManager::MODE_ACTIONS));
+    mouse_mode_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Mouse Modes"));
 
     view_menu_ = menuBar()->addMenu(tr("&View"));
     view_menu_->addMenu(view_toolbar_views_menu_);
@@ -264,6 +264,7 @@ void MainWindow::initMenus()
     view_menu_->addSeparator();
     view_menu_->addActions (action_manager_->getActionsOfGroup(GUIActionManager::VIEW_MENU_ACTIONS));
     view_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Zooming"));
+    view_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Fit View"));
 
     tools_menu_ = menuBar()->addMenu(tr("&Tools"));
     tools_menu_->addActions(action_manager_->getActionsOfGroup(GUIActionManager::TOOLS_MENU_ACTIONS));

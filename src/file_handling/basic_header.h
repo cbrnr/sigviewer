@@ -10,6 +10,7 @@
 #include <QDateTime>
 #include <QObject>
 #include <QMutex>
+#include <QMap>
 
 namespace BioSig_
 {
@@ -86,6 +87,9 @@ public:
     virtual uint32 getNumberOfSamples () const = 0;
 
     // events
+    //-------------------------------------------------------------------------
+    virtual QMap<unsigned, QString> getNamesOfUserSpecificEvents () const = 0;
+
     uint32 getNumberEvents() const;
     void setNumberEvents (uint32 number_events);
     double getEventSamplerate() const;

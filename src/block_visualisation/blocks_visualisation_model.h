@@ -27,17 +27,32 @@ public:
     virtual float64 getPixelPerXUnit() const;
 
     virtual void setItemsHeight (int32 block_height);
-    virtual void zoom (ZoomDimension dimension, float factor) {}
+    virtual void zoom (ZoomDimension, float) {}
 
     virtual std::set<ChannelID> getShownChannels () const {std::set<ChannelID> blub; return blub;}
     virtual bool setShownChannels (std::set<ChannelID> const&) {return true;}
 
     virtual void updateLayout ();
 
+    //-------------------------------------------------------------------------
+    /// see base class
+    virtual unsigned getShownSignalWidth () const {return 0;}
+
+    //-------------------------------------------------------------------------
+    /// see base class
+    virtual unsigned getShownPosition () const {return 0;}
+
+    //-------------------------------------------------------------------------
+    /// see base class
+    virtual void goToSample (unsigned) {}
+
     void visualiseBlock (QSharedPointer<DataBlock> data_block,
                          QSharedPointer<DataBlock> deviation);
 
     unsigned getBlockHeight () const;
+
+protected:
+    virtual void modeChanged (SignalVisualisationMode) {}
 
 private:
     BlocksVisualisationView* view_;

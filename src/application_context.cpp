@@ -35,6 +35,16 @@ QSharedPointer<FileContext> ApplicationContext::getCurrentFileContext () const
 }
 
 //-------------------------------------------------------------------------
+void ApplicationContext::setCurrentTabContext (QSharedPointer<TabContext> tab_context)
+{
+    if (!current_tab_context_.isNull())
+        current_tab_context_->disconnect (this);
+    current_tab_context_ = tab_context;
+    connect (current_tab_context_.data(), SIGNAL(selectionStateChanged(TabSelectionState)), SLOT(changeTabSelectionState(TabSelectionState)));
+}
+
+
+//-------------------------------------------------------------------------
 void ApplicationContext::addFileContext (QSharedPointer<FileContext>file_context)
 {
     current_file_context_ = file_context;
@@ -87,6 +97,12 @@ void ApplicationContext::setState (ApplicationState state)
 {
     state_ = state;
     emit stateChanged (state_);
+}
+
+//-----------------------------------------------------------------------------
+void ApplicationContext::changeTabSelectionState (TabSelectionState state)
+{
+    emit currentTabSelectionStateChanged (state);
 }
 
 

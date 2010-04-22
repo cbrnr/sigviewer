@@ -147,7 +147,10 @@ void MainWindowModelImpl::saveSettings()
 void MainWindowModelImpl::tabChanged (int tab_index)
 {
     if (tab_contexts_.find(tab_index) != tab_contexts_.end ())
+    {
+        ApplicationContext::getInstance()->setCurrentTabContext (tab_contexts_[tab_index]);
         tab_contexts_[tab_index]->gotActive ();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -817,48 +820,6 @@ void MainWindowModelImpl::viewZoomInAction()
     signal_browser_model_->zoomInAll();
 }
 
-// mouse mode new action
-void MainWindowModelImpl::mouseModeNewAction()
-{
-    signal_browser_model_->unselectEvent();
-    signal_browser_model_->setMode(MODE_NEW);
-    signal_browser_->setScrollMode(false);
-}
-
-// mouse mode pointer action
-void MainWindowModelImpl::mouseModePointerAction()
-{
-    signal_browser_model_->setMode(MODE_POINTER);
-    signal_browser_->setScrollMode(false);
-}
-
-// mouse mode hand action
-void MainWindowModelImpl::mouseModeHandAction()
-{
-    signal_browser_model_->setMode(MODE_HAND);
-    signal_browser_->setScrollMode(true);
-}
-
-// mouse mode shift signal action
-void MainWindowModelImpl::mouseModeShiftSignalAction()
-{
-    signal_browser_model_->setMode(MODE_SHIFT_SIGNAL);
-    signal_browser_->setScrollMode(false);
-}
-
-// mouse mode zoom action
-//void MainWindowModelImpl::mouseModeZoomAction()
-//{
-//    if (!checkMainWindowPtr("mouseModeZoomAction") ||
-//        !checkNotClosedState("mouseModeZoomAction"))
-//    {
-//        return;
-//    }
-//
-//    signal_browser_model_->setMode(SignalBrowserModel::MODE_ZOOM);
-//    signal_browser_->setScrollMode(false);
-//}
-
 // view zoom out action
 void MainWindowModelImpl::viewZoomOutAction()
 {
@@ -1087,12 +1048,15 @@ void MainWindowModelImpl::storeAndInitTabContext (QSharedPointer<TabContext> con
 {
     tab_contexts_[tab_index] = context;
 
+
     application_context_->getGUIActionManager ()->connect (context.data(),
                                                          SIGNAL(selectionStateChanged(TabSelectionState)),
                                                          SLOT(setTabSelectionState(TabSelectionState)));
     application_context_->getGUIActionManager ()->connect (context.data(),
                                                          SIGNAL(editStateChanged(TabEditState)),
                                                          SLOT(setTabEditState(TabEditState)));
+
+    ApplicationContext::getInstance()->setCurrentTabContext (context);
 
     context->setSelectionState (TAB_STATE_NO_EVENT_SELECTED);
     context->setEditState (TAB_STATE_NO_REDO_NO_UNDO);

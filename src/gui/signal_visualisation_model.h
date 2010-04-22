@@ -2,6 +2,8 @@
 #define SIGNAL_VISUALISATION_MODEL_H
 
 #include "../base/user_types.h"
+#include "../base/signal_event.h"
+#include "signal_visualisation_modes.h"
 
 #include <QObject>
 
@@ -30,18 +32,31 @@ public:
 
     virtual std::set<ChannelID> getShownChannels () const = 0;
     virtual bool setShownChannels (std::set<ChannelID> const& shown_channels) = 0;
-
     virtual void zoom (ZoomDimension dimension, float factor) = 0;
 
-    void setPixelPerSample (float32 pixel_per_sample)
-    {
-        pixel_per_sample_ = pixel_per_sample;
-        emit pixelPerSampleChanged (pixel_per_sample_, sample_rate_);
-    }
+    void setMode (SignalVisualisationMode mode);
+    SignalVisualisationMode getMode () const;
 
-    float32 getPixelPerSample () {return pixel_per_sample_;}
-    float32 getSampleRate () {return sample_rate_;}
+    void setPixelPerSample (float32 pixel_per_sample);
+    float32 getPixelPerSample ();
+    float32 getSampleRate ();
 
+
+    //-------------------------------------------------------------------------
+    /// @return the amount of pixels whon of the signal
+    virtual unsigned getShownSignalWidth () const = 0;
+
+    //-------------------------------------------------------------------------
+    /// @return the number of sample which is shown on the left side
+    virtual unsigned getShownPosition () const = 0;
+
+    //-------------------------------------------------------------------------
+    /// sets the view that the given sample is on the left side
+    virtual void goToSample (unsigned sample) = 0;
+
+    //-------------------------------------------------------------------------
+    /// @return the id of the currently selected signal event
+    virtual EventID getSelectedEvent () const;
 
     virtual void updateLayout () = 0;
 
@@ -49,14 +64,13 @@ signals:
     void pixelPerSampleChanged (float32 pixel_per_sample, float32 sample_rate);
 
 protected:
-    SignalVisualisationModel (float32 sample_rate)
-        : pixel_per_sample_ (1),
-          sample_rate_ (sample_rate)
-    {}
+    SignalVisualisationModel (float32 sample_rate);
+    virtual void modeChanged (SignalVisualisationMode mode) = 0;
 
 private:
     float32 pixel_per_sample_;
     float32 sample_rate_;
+    SignalVisualisationMode mode_;
 };
 
 

@@ -2,6 +2,7 @@
 #define GUI_ACTION_COMMAND_H
 
 #include "../base/application_states.h"
+#include "../base/tab_states.h"
 
 #include <QObject>
 #include <QAction>
@@ -36,7 +37,10 @@ public slots:
     virtual void trigger (QString const& action_name) = 0;
 
     //-------------------------------------------------------------------------
-    virtual void applicationStateChanged (ApplicationState state) {}
+    virtual void applicationStateChanged (ApplicationState) {}
+
+    //-------------------------------------------------------------------------
+    virtual void tabSelectionStateChanged (TabSelectionState) {}
 
 signals:
     //-------------------------------------------------------------------------

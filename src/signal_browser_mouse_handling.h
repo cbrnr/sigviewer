@@ -8,7 +8,7 @@
     class QMouseEvent;
     class QWheelEvent;
 
-    #include "signal_browser/signal_browser_modes.h"
+#include "gui/signal_visualisation_modes.h"
     class QGraphicsSceneMouseEvent;
 
 
@@ -34,7 +34,7 @@ public:
         COPY_EVENT_TO_CHANNEL_ACTION
     };
 
-    static Action getAction(QGraphicsSceneMouseEvent* e, SignalBrowserMode mode);
+    static Action getAction(QGraphicsSceneMouseEvent* e, SignalVisualisationMode mode);
 
 
 };

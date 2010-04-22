@@ -45,7 +45,6 @@ public:
         EVENT_CONTEXT_ACTIONS,
         FILE_MENU_ACTIONS,
         FILE_TOOLBAR_ACTIONS,
-        MODE_ACTIONS,
         VIEW_MENU_ACTIONS,
         VIEW_TOOLBAR_ACTIONS,
         OPTIONS_MENU_ACTIONS,
@@ -107,10 +106,6 @@ private:
         ACTION_CHANGE_CHANNEL,
         ACTION_CHANGE_TYPE,
         ACTION_SHOW_EVENT_TABLE,
-        ACTION_MODE_NEW,
-        ACTION_MODE_POINTER,
-        ACTION_MODE_HAND,
-        ACTION_MODE_SHIFT,
         ACTION_VIEW_ZOOM_IN,
         ACTION_VIEW_ZOOM_OUT,
         ACTION_VIEW_AUTO_SCALE,
@@ -136,9 +131,6 @@ private:
 
     //-------------------------------------------------------------------------
     void initEditActions ();
-
-    //-------------------------------------------------------------------------
-    void initMouseModeActions ();
 
     //-------------------------------------------------------------------------
     void initViewActions ();

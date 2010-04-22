@@ -4,7 +4,7 @@
 namespace BioSig_
 {
 
-enum SignalBrowserMode
+enum SignalVisualisationMode
 {
     MODE_NEW,
     MODE_POINTER,

@@ -264,7 +264,7 @@ void SignalGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* event)
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
 {
-    SignalBrowserMode mode = signal_browser_model_.getMode();
+    SignalVisualisationMode mode = signal_browser_model_.getMode();
 
     switch (SignalBrowserMouseHandling::getAction(event, mode))
     {

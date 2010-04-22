@@ -15,6 +15,12 @@ public:
     virtual uint32 getNumberOfSamples () const
     {return 500;}
 
+    //-------------------------------------------------------------------------
+    virtual QMap<unsigned, QString> getNamesOfUserSpecificEvents () const
+    {
+        return QMap<unsigned, QString>();
+    }
+
 };
 
 #endif // DUMMY_BASIC_HEADER_H

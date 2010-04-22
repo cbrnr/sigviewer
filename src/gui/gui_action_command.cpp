@@ -19,6 +19,8 @@ GuiActionCommand::GuiActionCommand (QStringList const& action_titles)
         Q_ASSERT(actions_.last()->connect (this, SIGNAL(qActionEnabledChanged(bool)), SLOT(setEnabled (bool))));
         Q_ASSERT(connect (ApplicationContext::getInstance().data(), SIGNAL(stateChanged(ApplicationState)),
                           SLOT(applicationStateChanged(ApplicationState))));
+        Q_ASSERT(connect (ApplicationContext::getInstance().data(), SIGNAL(currentTabSelectionStateChanged(TabSelectionState)),
+                          SLOT(tabSelectionStateChanged (TabSelectionState))));
     }
 }
 

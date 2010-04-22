@@ -30,7 +30,7 @@ void NewEventUndoCommand::undo ()
 //-----------------------------------------------------------------------------
 void NewEventUndoCommand::redo ()
 {
-    EventID id = SignalEvent::UNDEFINED_ID;
+    EventID id = UNDEFINED_EVENT_ID;
     if (!created_signal_event_.isNull())
         id = created_signal_event_->getId ();
 

@@ -34,7 +34,6 @@ void GUIActionManager::init (MainWindowModelImpl* main_window_model)
     main_window_model_ = main_window_model;
     initFileActions ();
     initEditActions ();
-    initMouseModeActions();
     initViewActions();
     initOptionsActions();
     initToolsActions();
@@ -223,41 +222,6 @@ void GUIActionManager::initEditActions ()
 }
 
 //-----------------------------------------------------------------------------
-void GUIActionManager::initMouseModeActions ()
-{
-    QActionGroup* mouse_mode_action_group = new QActionGroup (this);
-    mouse_mode_action_group->setExclusive(true);
-
-    QAction* action = createAction (ACTION_MODE_NEW, tr("&New Event"),
-                                    SLOT (mouseModeNewAction()),
-                                    tr("Create new events"),
-                                    QIcon (":/images/new_22x22.png"));
-    action->setCheckable (true);
-    mouse_mode_action_group->addAction(action);
-
-    action = createAction (ACTION_MODE_POINTER, tr("&Edit Events"),
-                           SLOT(mouseModePointerAction()),
-                           tr("Edit existing events"),
-                           QIcon (":/images/pointer_22x22.png"));
-    action->setCheckable (true);
-    mouse_mode_action_group->addAction(action);
-
-    action = createAction (ACTION_MODE_HAND, tr("&Scroll"),
-                           SLOT (mouseModeHandAction()),
-                           tr("Scroll area"),
-                           QIcon (":/images/hand_22x22.png"));
-    action->setCheckable (true);
-    mouse_mode_action_group->addAction(action);
-
-    action = createAction (ACTION_MODE_SHIFT, tr("&Shift Signal"),
-                           SLOT(mouseModeShiftSignalAction()),
-                           tr("Shift one channel in y-direction"),
-                           QIcon (":/images/shift_signal_22x22.png"));
-    action->setCheckable (true);
-    mouse_mode_action_group->addAction(action);
-}
-
-//-----------------------------------------------------------------------------
 void GUIActionManager::initViewActions ()
 {
     createAction (ACTION_VIEW_EVENTS, tr("&Events..."),
@@ -344,11 +308,6 @@ void GUIActionManager::initShortcuts ()
     setShortCut (ACTION_DELETE, QKeySequence::Delete);
     setShortCut (ACTION_INSERT_OVER, QKeySequence("Ctrl+I"));
 
-    setShortCut (ACTION_MODE_NEW, QString("Ctrl+1"));
-    setShortCut (ACTION_MODE_POINTER, QString("Ctrl+2"));
-    setShortCut (ACTION_MODE_HAND, QString("Ctrl+3"));
-    setShortCut (ACTION_MODE_SHIFT, QString("Ctrl+4"));
-
     setShortCut (ACTION_VIEW_ZOOM_IN, QKeySequence::ZoomIn);
     setShortCut (ACTION_VIEW_ZOOM_OUT, QKeySequence::ZoomOut);
     setShortCut (ACTION_VIEW_GOTO, QKeySequence("Ctrl+G"));
@@ -415,13 +374,6 @@ void GUIActionManager::initGroups ()
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_VIEW_FIT_TO_EVENT);
 
-
-    // MODE_ACTIONS
-    action_group_map_[MODE_ACTIONS].push_back (ACTION_MODE_NEW);
-    action_group_map_[MODE_ACTIONS].push_back (ACTION_MODE_POINTER);
-    action_group_map_[MODE_ACTIONS].push_back (ACTION_MODE_HAND);
-    action_group_map_[MODE_ACTIONS].push_back (ACTION_MODE_SHIFT);
-
     // VIEW_MENU_ACTIONS
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_CHANNELS);
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_EVENTS);
@@ -470,10 +422,6 @@ void GUIActionManager::initDisabledStates ()
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_CHANGE_CHANNEL);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_CHANGE_TYPE);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_SHOW_EVENT_TABLE);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_MODE_HAND);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_MODE_POINTER);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_MODE_NEW);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_MODE_SHIFT);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_ZOOM_IN);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_ZOOM_OUT);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_AUTO_SCALE);

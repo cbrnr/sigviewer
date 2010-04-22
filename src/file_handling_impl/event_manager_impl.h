@@ -11,8 +11,6 @@
 namespace BioSig_
 {
 
-class EventTableFileReader;
-
 class EventManagerImpl : public EventManager
 {
 public:
@@ -38,7 +36,7 @@ public:
                                                            unsigned pos,
                                                            unsigned length,
                                                            EventType type,
-                                                           EventID id = SignalEvent::UNDEFINED_ID);
+                                                           EventID id = UNDEFINED_EVENT_ID);
 
     //-------------------------------------------------------------------------
     /// see base class
@@ -78,7 +76,7 @@ public:
 
 private:
     QSharedPointer<FileSignalReader> reader_;
-    EventTableFileReader event_table_reader_;
+    QSharedPointer<EventTableFileReader> event_table_reader_;
 
     double sample_rate_;
     typedef QMap<EventID, QSharedPointer<SignalEvent> > EventMap;

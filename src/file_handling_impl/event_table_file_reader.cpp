@@ -32,6 +32,7 @@ void EventTableFileReader::setLogStream(QTextStream* log_stream)
 // load
 bool EventTableFileReader::load(const QString& file_name)
 {
+    event_file_path_ = file_name;
     QFile file(file_name);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
@@ -125,6 +126,19 @@ QString EventTableFileReader::getEventName(uint16 event_type_id) const
     Int2EventItemMap::const_iterator it = event_type2name_.find(event_type_id);
     return it != event_type2name_.end() ? it.value().name
                                         : "NO SUCH EVENT TYPE";
+}
+
+//-----------------------------------------------------------------------------
+void EventTableFileReader::setEventName (EventType event_type_id,
+                                            QString const& name)
+{
+    event_type2name_[event_type_id].name = name;
+}
+
+//-----------------------------------------------------------------------------
+void EventTableFileReader::restoreEventNames ()
+{
+    load (event_file_path_);
 }
 
 // get event group id

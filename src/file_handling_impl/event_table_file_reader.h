@@ -42,6 +42,8 @@ public:
     IntIterator eventTypesBegin();
     IntIterator eventTypesEnd();
     QString getEventName (EventType event_type_id) const;
+    void setEventName (EventType event_type_id, QString const& name);
+    void restoreEventNames ();
     QString getEventGroupId (EventType event_type_id) const;
 
     std::set<uint16> getAllEventTypes () const;
@@ -65,6 +67,7 @@ private:
     Int2EventItemMap event_type2name_;
     String2StringMap group_id2name_;
 
+    QString event_file_path_;
     QTextStream* log_stream_;
 };
 

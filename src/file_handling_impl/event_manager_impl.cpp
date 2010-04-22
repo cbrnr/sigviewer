@@ -1,6 +1,6 @@
 #include "event_manager_impl.h"
 #include "../file_handling/file_signal_reader.h"
-#include "event_table_file_reader.h"
+#include "../application_context.h"
 
 #include <cassert>
 
@@ -9,10 +9,10 @@ namespace BioSig_
 
 //-----------------------------------------------------------------------------
 EventManagerImpl::EventManagerImpl (QSharedPointer<FileSignalReader> reader)
-    : reader_ (reader)
+    : reader_ (reader),
+      event_table_reader_ (ApplicationContext::getInstance()->getEventTableFileReader())
 {
     assert (reader_->isOpen());
-    event_table_reader_.load (":/eventcodes.txt");
     FileSignalReader::SignalEventVector signal_events;
     reader_->loadEvents (signal_events);
     next_free_id_ = 0;
@@ -25,12 +25,17 @@ EventManagerImpl::EventManagerImpl (QSharedPointer<FileSignalReader> reader)
         next_free_id_++;
     }
     sample_rate_ = reader_->getBasicHeader()->getEventSamplerate();
+    QMap<unsigned, QString> event_names = reader_->getBasicHeader()->getNamesOfUserSpecificEvents();
+    for (QMap<unsigned, QString>::iterator name_iter = event_names.begin();
+         name_iter != event_names.end();
+         ++name_iter)
+        event_table_reader_->setEventName (name_iter.key(), name_iter.value());
 }
 
 //-----------------------------------------------------------------------------
 EventManagerImpl::~EventManagerImpl ()
 {
-    // nothing to do here
+    event_table_reader_->restoreEventNames ();
 }
 
 //-----------------------------------------------------------------------------
@@ -64,7 +69,7 @@ QSharedPointer<SignalEvent const> EventManagerImpl::createEvent (
         ChannelID channel_id, unsigned pos, unsigned duration, EventType type,
         EventID id)
 {
-    if (id == SignalEvent::UNDEFINED_ID)
+    if (id == UNDEFINED_EVENT_ID)
     {
         id = next_free_id_;
         next_free_id_++;
@@ -111,7 +116,7 @@ double EventManagerImpl::getSampleRate () const
 //-----------------------------------------------------------------------------
 QString EventManagerImpl::getNameOfEventType (EventType type) const
 {
-    return event_table_reader_.getEventName (type);
+    return event_table_reader_->getEventName (type);
 }
 
 //-----------------------------------------------------------------------------
@@ -123,7 +128,7 @@ QList<EventID> EventManagerImpl::getAllEvents () const
 //-----------------------------------------------------------------------------
 std::set<EventType> EventManagerImpl::getAllPossibleEventTypes () const
 {
-    return event_table_reader_.getAllEventTypes ();
+    return event_table_reader_->getAllEventTypes ();
 }
 
 //-----------------------------------------------------------------------------

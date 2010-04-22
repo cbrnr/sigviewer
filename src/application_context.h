@@ -4,6 +4,7 @@
 #include "base/application_states.h"
 #include "event_color_manager.h"
 #include "file_context.h"
+#include "tab_context.h"
 #include "application_context_impl_interface.h"
 
 #include <QObject>
@@ -38,6 +39,9 @@ public:
     QSharedPointer<FileContext> getCurrentFileContext () const;
 
     //-------------------------------------------------------------------------
+    void setCurrentTabContext (QSharedPointer<TabContext> tab_context);
+
+    //-------------------------------------------------------------------------
     /// NO MULTI-FILE SUPPORT IMPLEMENTED YET!!!
     /// THIS CALL WILL REPLACE ACTUAL FILE CONTEXT
     void addFileContext (QSharedPointer<FileContext> file_context);
@@ -65,11 +69,16 @@ public slots:
 
 signals:
     void stateChanged (ApplicationState state);
+    void currentTabSelectionStateChanged (TabSelectionState state);
+
+private slots:
+    void changeTabSelectionState (TabSelectionState state);
 
 private:
     static QSharedPointer<ApplicationContext> instance_;
     QSharedPointer<ApplicationContextImplInterface> impl_;
     QSharedPointer<FileContext> current_file_context_;
+    QSharedPointer<TabContext> current_tab_context_;
     ApplicationState state_;
 };
 

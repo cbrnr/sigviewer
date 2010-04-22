@@ -7,7 +7,7 @@ namespace BioSig_
 
 // constructor
 SignalEvent::SignalEvent()
-: id_(UNDEFINED_ID),
+: id_(UNDEFINED_EVENT_ID),
   position_(0xFFFFFFFF),
   sample_rate_ (1),
   type_(0xFFFF),
