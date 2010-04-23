@@ -33,7 +33,6 @@
 #include "signal_browser/calculate_event_mean_command.h"
 #include "signal_browser/calculcate_frequency_spectrum_command.h"
 #include "signal_browser/new_event_undo_command.h"
-#include "next_event_view_undo_command.h"
 #include "set_shown_event_types_view_undo_command.h"
 #include "block_visualisation/blocks_visualisation_view.h"
 #include "block_visualisation/blocks_visualisation_model.h"
@@ -67,7 +66,6 @@ MainWindowModelImpl::MainWindowModelImpl ()
   signal_browser_model_ (0),
   signal_browser_ (0),
   tab_widget_ (0),
-  secs_per_page_("10"),
   overflow_detection_ (false)
 {
     log_stream_.reset(new QTextStream(&log_string_));
@@ -112,7 +110,6 @@ void MainWindowModelImpl::loadSettings()
 
     settings.endArray();
 
-    secs_per_page_ = settings.value("secs_per_page", secs_per_page_).toString();
     overflow_detection_ = settings.value("overflow_detection", overflow_detection_).toBool();
 
     settings.endGroup();
@@ -137,7 +134,6 @@ void MainWindowModelImpl::saveSettings()
     }
 
     settings.endArray();
-    settings.setValue("secs_per_page", secs_per_page_);
     settings.setValue("overflow_detection", overflow_detection_);
     settings.endGroup();
 }
@@ -1049,75 +1045,6 @@ inline bool MainWindowModelImpl::checkMainWindowPtr(const QString function)
     return true;
 }
 
-// secs per page changed
-void MainWindowModelImpl::secsPerPageChanged(const QString& secs_per_page)
-{
-    bool ok = false;
-    float64 f_secs_per_page = secs_per_page.toFloat(&ok);
-    float64 pixel_per_sec;
-
-    if (ok)
-    {
-        f_secs_per_page = (int32)(f_secs_per_page * 10) / 10.0;
-        pixel_per_sec = signal_browser_->getVisibleWidth() /
-                        f_secs_per_page;
-    }
-    else
-    {
-        // whole
-        pixel_per_sec = signal_browser_->getVisibleWidth() /
-                        (file_signal_reader_->getBasicHeader()->getNumberRecords() *
-                         file_signal_reader_->getBasicHeader()->getRecordDuration());
-    }
-    browser_models_[tab_widget_->currentIndex()]->setPixelPerXUnit (pixel_per_sec);
-    browser_models_[tab_widget_->currentIndex()]->updateLayout ();
-
-    secs_per_page_ = secs_per_page;
-}
-
-// signals per page changed
-void MainWindowModelImpl::signalsPerPageChanged(const QString& signals_per_page)
-{
-    bool ok = false;
-    float64 tmp = signals_per_page.toFloat(&ok);
-    if (!ok)
-    {
-        // all channels
-        tmp = signal_browser_model_->getNumberShownChannels();
-
-        tmp = tmp == 0 ? 1 : tmp;
-    }
-
-    int32 signal_height;
-    // TODO: move this calculation into browser-model!!!
-    signal_height = (int32)(signal_browser_->getVisibleHeight() / tmp) -
-                    signal_browser_model_->getSignalSpacing();
-    browser_models_[tab_widget_->currentIndex()]->setItemsHeight (signal_height);
-    browser_models_[tab_widget_->currentIndex()]->updateLayout ();
-}
-
-// pixel per sec changed
-void MainWindowModelImpl::pixelPerSecChanged(float64 pixel_per_sec)
-{
-    float64 secs_per_page = signal_browser_->getVisibleWidth() /
-                            pixel_per_sec;
-
-    secs_per_page = (int32)(secs_per_page * 10) / 10.0;
-    main_window_->setSecsPerPage(secs_per_page);
-}
-
-//-----------------------------------------------------------------------------
-void MainWindowModelImpl::signalHeightChanged(int32 signal_height)
-{
-    float64 signals_per_page;
-    signals_per_page = signal_browser_->getVisibleHeight() /
-                       (float64)(signal_height +
-                                 signal_browser_model_->getSignalSpacing());
-
-    signals_per_page = (int32)(signals_per_page * 10) / 10.0;
-    main_window_->setSignalsPerPage(signals_per_page);
-}
-
 // set changed
 void MainWindowModelImpl::setChanged()
 {
@@ -1197,8 +1124,6 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
     // --begin
     //   to be replaced as soon as new zooming is implemented
     main_window_->setStatusBarSignalLength (file_ctx->getChannelManager()->getDurationInSec());
-    secsPerPageChanged (secs_per_page_);
-    main_window_->setSecsPerPage (secs_per_page_);
     // --end
 
     main_window_->setStatusBarNrChannels (file_ctx->getChannelManager()->getNumberChannels());

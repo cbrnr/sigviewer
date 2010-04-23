@@ -96,8 +96,6 @@ public slots:
     void viewAutoScaleAction();
     void viewGoToAction();
     void viewShowEventsOfSelectedTypeAction();
-    void secsPerPageChanged(const QString& secs_per_page);
-    void signalsPerPageChanged(const QString& signals_per_page);
     void optionsChannelsAction();
     void optionsChangeCreationType();
     void optionsShowEventsAction();
@@ -105,8 +103,6 @@ public slots:
     void helpLogAction();
     void helpAboutAction();
     void recentFileActivated(QAction* recent_file_action);
-    void pixelPerSecChanged(float64 pixel_per_sec);
-    void signalHeightChanged(int32 signal_height);
     void recentFileMenuAboutToShow();
 
 
@@ -131,7 +127,6 @@ private:
     QStringList recent_file_list_;
     std::auto_ptr<QTextStream> log_stream_;
     QString log_string_;
-    QString secs_per_page_;
     bool overflow_detection_;
     std::map<int, QSharedPointer<AbstractBrowserModel> > browser_models_;
     std::list<QSharedPointer<BlocksVisualisationModel> > blocks_visualisation_models_;

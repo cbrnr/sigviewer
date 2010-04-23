@@ -152,71 +152,10 @@ void MainWindow::initToolBars()
     view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
     view_toolbar_->addActions(action_manager_->getActionsOfGroup(GUIActionManager::VIEW_TOOLBAR_ACTIONS));
 
-    secs_per_page_combobox_ = new QComboBox();
-    secs_per_page_combobox_->setToolTip(tr("Seconds per Page"));
-    secs_per_page_combobox_->setEditable(true);
-    secs_per_page_combobox_->setInsertPolicy(QComboBox::NoInsert);
-    secs_per_page_combobox_->setValidator(new QDoubleValidator(1.0, 10000.0, 1,
-                                                               this));
-    secs_per_page_combobox_->insertItem(1, "1");
-    secs_per_page_combobox_->insertItem(2, "3");
-    secs_per_page_combobox_->insertItem(3, "5");
-    secs_per_page_combobox_->insertItem(4, "10");	// important for BCI
-    secs_per_page_combobox_->insertItem(5, "20");	// important for sleep staging
-    secs_per_page_combobox_->insertItem(6, "30");	// important for sleep staging
-    secs_per_page_combobox_->insertItem(7, "50");
-    secs_per_page_combobox_->insertItem(8, "100");
-    secs_per_page_combobox_->insertItem(9, "300");
-    secs_per_page_combobox_->insertItem(10, "500");
-    secs_per_page_combobox_->insertItem(11, "1000");
-    secs_per_page_combobox_->insertItem(12, tr("whole"));
-
-    signals_per_page_combobox_ = new QComboBox();
-    signals_per_page_combobox_->setToolTip("Signals per Page");
-    signals_per_page_combobox_->setStatusTip(tr("Number of shown signals per page"));
-    signals_per_page_combobox_->setEditable(true);
-    signals_per_page_combobox_->setInsertPolicy(QComboBox::NoInsert);
-    signals_per_page_combobox_->setValidator(new QDoubleValidator(1.0, 30.0, 1,
-                                                                  this));
-    signals_per_page_combobox_->insertItem(1, "1");
-    signals_per_page_combobox_->insertItem(2, "2");
-    signals_per_page_combobox_->insertItem(3, "3");
-    signals_per_page_combobox_->insertItem(4, "5");
-    signals_per_page_combobox_->insertItem(5, "7");
-    signals_per_page_combobox_->insertItem(6, "10");
-    signals_per_page_combobox_->insertItem(7, "15");
-    signals_per_page_combobox_->insertItem(8, "20");
-    signals_per_page_combobox_->insertItem(9, "25");
-    signals_per_page_combobox_->insertItem(10, "30");
-    signals_per_page_combobox_->insertItem(11, "all");
-
     navigation_toolbar_ = addToolBar(tr("Navigation"));
     view_toolbar_views_menu_->addAction (navigation_toolbar_->toggleViewAction());
     navigation_toolbar_->setIconSize(QSize(22, 22));
     navigation_toolbar_->addActions (GuiActionFactory::getInstance()->getQActions("Zooming"));
-    //navigation_toolbar_->addWidget(secs_per_page_combobox_);
-    //navigation_toolbar_->addWidget(signals_per_page_combobox_);
-
-    connect(secs_per_page_combobox_, SIGNAL(activated(const QString&)),
-            model_.data(), SLOT(secsPerPageChanged(const QString&)));
-    connect(signals_per_page_combobox_, SIGNAL(activated(const QString&)),
-            model_.data(), SLOT(signalsPerPageChanged(const QString&)));
-    connect(secs_per_page_combobox_->lineEdit(), SIGNAL(returnPressed()),
-            this, SLOT(secsPerPageReturnPressed()));
-    connect(signals_per_page_combobox_->lineEdit(), SIGNAL(returnPressed()),
-            this, SLOT(signalsPerPageReturnPressed()));
-}
-
-// secs per page return pressed
-void MainWindow::secsPerPageReturnPressed()
-{
-    model_->secsPerPageChanged(secs_per_page_combobox_->currentText());
-}
-
-// signals per page return pressed
-void MainWindow::signalsPerPageReturnPressed()
-{
-    model_->signalsPerPageChanged(signals_per_page_combobox_->currentText());
 }
 
 //-------------------------------------------------------------------
@@ -327,18 +266,6 @@ void MainWindow::saveSettings()
     settings.setValue("size", size());
     settings.setValue("pos", pos());
     settings.endGroup();
-}
-
-// set secs per page enabled
-void MainWindow::setSecsPerPageEnabled(bool enabled)
-{
-    secs_per_page_combobox_->setEnabled(enabled);
-}
-
-// set signals per page enabled
-void MainWindow::setSignalsPerPageEnabled(bool enabled)
-{
-    signals_per_page_combobox_->setEnabled(enabled);
 }
 
 // show file close dialog
@@ -503,43 +430,6 @@ void MainWindow::setRecentFiles(const QStringList& recent_file_list)
          it++)
     {
         file_recent_files_menu_->addAction(*it);
-    }
-}
-
-// set signals per page
-void MainWindow::setSignalsPerPage(float64 signals_per_page)
-{
-    if (signals_per_page < 0)
-    {
-        // all
-        signals_per_page_combobox_->setCurrentIndex(signals_per_page_combobox_->count() - 1);
-    }
-    else
-    {
-        // TODO : works not correctly
-        signals_per_page_combobox_->setEditText(QString::number(signals_per_page));
-    }
-}
-
-// set secs per page
-void MainWindow::setSecsPerPage(float64 secs_per_page)
-{
-    QString tmp = QString::number(secs_per_page);
-    setSecsPerPage(tmp);
-}
-
-void MainWindow::setSecsPerPage(const QString& secs_per_page)
-{
-    int32 index = secs_per_page_combobox_->findText(secs_per_page);
-    if (index != -1)
-    {
-        secs_per_page_combobox_->setCurrentIndex(index);
-    }
-    else
-    {
-        // TODO : works not correctly
-        signals_per_page_combobox_->clearFocus();
-        secs_per_page_combobox_->setEditText(secs_per_page);
     }
 }
 

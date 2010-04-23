@@ -34,12 +34,6 @@ public:
     void loadSettings();
     void saveSettings();
 
-    // enable,disable actions
-    void setSecsPerPageEnabled(bool enabled);
-    void setSignalsPerPageEnabled(bool enabled);
-    void setSignalsPerPage(float64 signals_per_page);
-    void setSecsPerPage(float64 secs_per_page);
-    void setSecsPerPage(const QString& secs_per_page);
     void setStatusBarSignalLength(float64 length);
     void setStatusBarNrChannels(int32 nr_channels);
 
@@ -57,15 +51,11 @@ public:
     void setRecentFiles(const QStringList& recent_file_list);
 
 protected:
-
     virtual void closeEvent(QCloseEvent* close_event);
     virtual void dropEvent (QDropEvent* event);
     virtual void dragEnterEvent(QDragEnterEvent *event);
 
 private slots:
-
-    void secsPerPageReturnPressed();
-    void signalsPerPageReturnPressed();
     void toggleStatusBar (bool visible);
 
 private:
@@ -104,9 +94,6 @@ private:
     QAction* help_about_action_;
 
     QIcon help_about_icon_;
-
-    QComboBox* secs_per_page_combobox_;
-    QComboBox* signals_per_page_combobox_;
 
     QLabel* status_bar_signal_length_label_;
     QLabel* status_bar_nr_channels_label_;
