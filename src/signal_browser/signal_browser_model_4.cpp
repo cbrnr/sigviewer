@@ -474,8 +474,6 @@ EventID SignalBrowserModel::getSelectedEvent () const
         return UNDEFINED_EVENT_ID;
 }
 
-
-
 //-------------------------------------------------------------------
 void SignalBrowserModel::updateEventItems ()
 {
@@ -490,7 +488,7 @@ void SignalBrowserModel::setActualEventCreationType (uint16 new_type)
 }
 
 //-------------------------------------------------------------------
-void SignalBrowserModel::selectEvent (int32 id)
+void SignalBrowserModel::selectEvent (EventID id)
 {
     Int2EventGraphicsItemPtrMap::iterator event_iter = id2event_item_.find (id);
     if (event_iter == id2event_item_.end())

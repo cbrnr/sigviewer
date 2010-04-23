@@ -63,7 +63,6 @@ public:
     /// see base class
     virtual EventID getSelectedEvent () const;
 
-
     void setSignalBrowserView(SignalBrowserView* signal_browser_view);
     void loadSettings();
     void saveSettings();
@@ -135,7 +134,7 @@ public slots:
 
     void setEventChanged (EventID id);
     void setActualEventCreationType (uint16 new_type);
-    void selectEvent (int32 id);
+    virtual void selectEvent (EventID id);
     void unselectEvent ();
 
 signals:

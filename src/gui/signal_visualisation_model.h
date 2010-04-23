@@ -8,6 +8,7 @@
 #include <QObject>
 
 #include <set>
+#include <cassert>
 
 namespace BioSig_
 {
@@ -57,6 +58,10 @@ public:
     //-------------------------------------------------------------------------
     /// @return the id of the currently selected signal event
     virtual EventID getSelectedEvent () const;
+
+    //-------------------------------------------------------------------------
+    virtual void selectEvent (EventID event_id) {assert (0);}
+
 
     virtual void updateLayout () = 0;
 

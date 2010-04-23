@@ -307,9 +307,6 @@ void GUIActionManager::initShortcuts ()
     setShortCut (ACTION_VIEW_ZOOM_IN, QKeySequence::ZoomIn);
     setShortCut (ACTION_VIEW_ZOOM_OUT, QKeySequence::ZoomOut);
     setShortCut (ACTION_VIEW_GOTO, QKeySequence("Ctrl+G"));
-    setShortCut (ACTION_VIEW_GOTO_NEXT_EVENT, QKeySequence("Ctrl+Right"));
-    setShortCut (ACTION_VIEW_GOTO_PREVIOUS_EVENT, QKeySequence("Ctrl+Left"));
-
 }
 
 //-----------------------------------------------------------------------------

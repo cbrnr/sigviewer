@@ -9,15 +9,15 @@
 namespace BioSig_
 {
 
-class FitViewGuiCommand : public GuiActionCommand
+class AdaptEventViewGuiCommand : public GuiActionCommand
 {
     Q_OBJECT
 public:
     //-------------------------------------------------------------------------
-    FitViewGuiCommand ();
+    AdaptEventViewGuiCommand ();
 
     //-------------------------------------------------------------------------
-    virtual ~FitViewGuiCommand ();
+    virtual ~AdaptEventViewGuiCommand ();
 
     //-------------------------------------------------------------------------
     virtual void init ();
@@ -36,12 +36,17 @@ private:
     void fitViewToEvent ();
 
     //-------------------------------------------------------------------------
+    void gotoAndSelectEvent (bool forward);
+
+    //-------------------------------------------------------------------------
     void updateEnabledness ();
 
     ApplicationState app_state_;
     TabSelectionState tab_sec_state_;
 
     static QString const FIT_TO_EVENT_;
+    static QString const GO_TO_NEXT_EVENT_;
+    static QString const GO_TO_PREVIOUS_EVENT_;
     static QStringList const TEXTS_;
 
     static GuiActionFactoryRegistrator registrator_;

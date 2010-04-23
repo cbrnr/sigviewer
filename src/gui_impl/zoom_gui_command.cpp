@@ -55,8 +55,8 @@ void ZoomGuiCommand::trigger (QString const& action_name)
     else if (action_name == ZOOM_IN_HORIZONTAL_)
     {
         pixel_per_sample *= ZOOM_FACTOR_;
-        if (pixel_per_sample > 4)
-            pixel_per_sample = 4;
+        if (pixel_per_sample > 8)
+            pixel_per_sample = 8;
         vis_model->setPixelPerSample (pixel_per_sample);
     }
     else if (action_name == ZOOM_OUT_HORIZONTAL_)

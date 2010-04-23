@@ -137,6 +137,7 @@ void EventContextMenu::selectEvent (QAction* q)
 void EventContextMenu::addActionsToMenu (QMenu& menu)
 {
     menu.addActions (ApplicationContext::getInstance()->getGUIActionManager()->getActionsOfGroup(GUIActionManager::EVENT_CONTEXT_ACTIONS));
+    menu.addAction (GuiActionFactory::getInstance()->getQAction("Goto and Select Next Event"));
     menu.addAction (GuiActionFactory::getInstance()->getQAction("Fit View to Selected Event"));
 }
 

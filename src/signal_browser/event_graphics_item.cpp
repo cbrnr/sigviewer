@@ -116,6 +116,8 @@ void EventGraphicsItem::updateToSignalEvent ()
     if (scene ())
         old_rect = this->sceneBoundingRect();
     width_ = factor * signal_event_->getDuration() + 0.5;
+    if (width_ < 2)
+        width_ = 2;
     int32 x_pos = factor * signal_event_->getPosition() + 0.5;
     int32 y_pos = 0;
 
@@ -224,7 +226,6 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
             {
                 addContextMenuEntry ();
                 event->ignore();
-//                signal_browser_model_.selectEvent (signal_event_->getId());
                 //setSelected(true);
                 /*state_ = STATE_NONE;
                 QSharedPointer<EventGraphicsItem> old_selected_item
@@ -277,6 +278,8 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
                 int32 old_pos = pos().x();
                 int32 new_pos = (((old_pos + diff) * factor) / factor) + 0.5;
                 width_ = (((width_ - (new_pos - old_pos)) * factor) / factor) + 0.5;
+                if (width_ < 2)
+                    width_ = 2;
                 setPos (new_pos, pos().y());
                 emit mouseAtSecond (static_cast<float>(pos().x())  / (signal_browser_model_.getPixelPerSample() * event_manager_->getSampleRate()));
             }
@@ -284,6 +287,8 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
         case STATE_MOVE_END:
             {
                 width_ = (((width_ + diff) * factor) / factor) + 0.5;
+                if (width_ < 2)
+                    width_ = 2;
                 if (diff > 0)
                     scene()->update (mouse_pos.x() - diff - 20, pos().y(), diff + 40, height_);
                 else
@@ -322,6 +327,8 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
             int32 old_pos = pos().x();
             int32 new_pos = (((old_pos + diff) * factor) / factor) + 0.5;
             width_ = (((width_ - (new_pos - old_pos)) * factor) / factor) + 0.5;
+            if (width_ < 2)
+                width_ = 2;
             setPos (new_pos, pos().y());
             int32 dur = (factor * width_) + 0.5;
 
@@ -333,6 +340,8 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
         {
             int32 diff = (event->pos().x() - event->lastPos().x());
             width_ = (((width_ + diff) * factor) / factor) + 0.5;
+            if (width_ < 2)
+                width_ = 2;
             int32 dur = (factor * width_) + 0.5;
             ResizeEventUndoCommand* command = new ResizeEventUndoCommand (event_manager_, signal_event_->getId(), signal_event_->getPosition(), dur);
             command_executer_->executeCommand (command);
