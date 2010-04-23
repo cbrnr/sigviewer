@@ -625,34 +625,6 @@ void SignalBrowserModel::goTo(float32 sec, int32 channel_index)
 }
 
 //-----------------------------------------------------------------------------
-// goToAndSelectNextEvent
-void SignalBrowserModel::goToAndSelectNextEvent (bool forward)
-{
-    if (selected_event_item_)
-    {
-        QMap<uint32, EventID> events = file_context_->getEventManager()->getEventPositions(selected_event_item_->getSignalEvent()->getType());
-        QMap<uint32, EventID>::iterator current_event_iter = events.find(selected_event_item_->getSignalEvent()->getPosition());
-        if (forward)
-            ++current_event_iter;
-        else if (current_event_iter != events.begin())
-            --current_event_iter;
-        else
-            return;
-
-        if (current_event_iter != events.end())
-        {
-            float x = (float)current_event_iter.key() / file_context_->getEventManager()->getSampleRate();
-            //Int2EventGraphicsItemPtrMap::iterator event_graphics_item_it = id2event_item_.find(current_event_iter.value()->getId());
-            //event_graphics_item_it.value()->setSelected (true);
-            selectEvent (current_event_iter.value());
-
-            int32 y = 0;
-            goTo (x, y);
-        }
-    }
-}
-
-//-----------------------------------------------------------------------------
 // get shown event types
 void SignalBrowserModel::getShownEventTypes(IntList& event_type)
 {

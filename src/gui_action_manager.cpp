@@ -254,16 +254,6 @@ void GUIActionManager::initViewActions ()
                   tr("Go to a specified point of the signal"),
                   QIcon(":/images/icons/goto.png"));
 
-    createAction (ACTION_VIEW_GOTO_NEXT_EVENT, tr("Select &Next Event"),
-                  SLOT(viewShowAndSelectNextEventAction()),
-                  tr("Jumps to the next specified event and selects it"),
-                  QIcon(":/images/icons/next.png"));
-
-    createAction (ACTION_VIEW_GOTO_PREVIOUS_EVENT, tr("Select &Previous Event"),
-                  SLOT(viewShowAndSelectPreviousEventAction()),
-                  tr("Jumps to the previous specified event and selects it"),
-                  QIcon(":/images/icons/previous.png"));
-
     createAction (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE,
                   tr("Hide Events of other Type"),
                   SLOT(viewShowEventsOfSelectedTypeAction()),
@@ -361,8 +351,6 @@ void GUIActionManager::initGroups ()
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_INSERT_OVER);
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_SEPARATOR);
-    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
-    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
 
@@ -375,9 +363,6 @@ void GUIActionManager::initGroups ()
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_AUTO_SCALE);
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_GOTO);
-    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
-    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
-    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
 
@@ -417,8 +402,6 @@ void GUIActionManager::initDisabledStates ()
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_ZOOM_OUT);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_AUTO_SCALE);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_GOTO);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_CHANNELS);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_EVENTS);
@@ -440,8 +423,6 @@ void GUIActionManager::initDisabledStates ()
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_DELETE);
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_CHANGE_CHANNEL);
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_CHANGE_TYPE);
-    tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_VIEW_GOTO_NEXT_EVENT);
-    tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_VIEW_GOTO_PREVIOUS_EVENT);
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_VIEW_HIDE_EVENTS_OF_OTHER_TYPE);
     tab_selection_state_action_map_[TAB_STATE_NO_EVENT_SELECTED].push_back (ACTION_INSERT_OVER);
 }

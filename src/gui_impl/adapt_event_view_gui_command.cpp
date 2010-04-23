@@ -1,4 +1,4 @@
-#include "fit_view_gui_command.h"
+#include "adapt_event_view_gui_command.h"
 #include "../application_context.h"
 #include "../gui/signal_visualisation_model.h"
 
@@ -37,6 +37,9 @@ void AdaptEventViewGuiCommand::init ()
 {
     getQAction (GO_TO_NEXT_EVENT_)->setShortcut (QKeySequence("Ctrl+Right"));
     getQAction (GO_TO_PREVIOUS_EVENT_)->setShortcut (QKeySequence("Ctrl+Left"));
+
+    getQAction (GO_TO_NEXT_EVENT_)->setIcon (QIcon(":/images/icons/next.png"));
+    getQAction (GO_TO_PREVIOUS_EVENT_)->setIcon (QIcon(":/images/icons/previous.png"));
 }
 
 //-----------------------------------------------------------------------------

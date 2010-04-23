@@ -52,7 +52,6 @@ HEADERS += basic_header_info_dialog.h \
     settings_dialog.h \
     signal_browser_mouse_handling.h \
     command_stack.h \
-    next_event_view_undo_command.h \
     set_shown_event_types_view_undo_command.h \
     event_time_selection_dialog.h \
     abstract_browser_model.h \
@@ -77,7 +76,6 @@ SOURCES += basic_header_info_dialog.cpp \
     signal_browser_mouse_handling.cpp \
     sigviewer.cpp \
     command_stack.cpp \
-    next_event_view_undo_command.cpp \
     set_shown_event_types_view_undo_command.cpp \
     event_time_selection_dialog.cpp \
     gui_action_manager.cpp \

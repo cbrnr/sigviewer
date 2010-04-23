@@ -863,22 +863,6 @@ void MainWindowModelImpl::viewGoToAction()
 
 //-------------------------------------------------------------------
 // view select next event action
-void MainWindowModelImpl::viewShowAndSelectNextEventAction()
-{
-    QUndoCommand* eventCommand = new NextEventViewUndoCommand (*signal_browser_model_);
-    CommandStack::instance().executeViewCommand(eventCommand);
-}
-
-//-------------------------------------------------------------------
-// view select previous event action
-void MainWindowModelImpl::viewShowAndSelectPreviousEventAction()
-{
-    QUndoCommand* eventCommand = new NextEventViewUndoCommand (*signal_browser_model_, false);
-    CommandStack::instance().executeViewCommand(eventCommand);
-}
-
-//-------------------------------------------------------------------
-// view select next event action
 void MainWindowModelImpl::viewShowEventsOfSelectedTypeAction()
 {
     SignalBrowserModel::IntList shown_event_types;

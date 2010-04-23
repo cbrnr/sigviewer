@@ -95,8 +95,6 @@ public slots:
     void viewZoomOutAction();
     void viewAutoScaleAction();
     void viewGoToAction();
-    void viewShowAndSelectNextEventAction();
-    void viewShowAndSelectPreviousEventAction();
     void viewShowEventsOfSelectedTypeAction();
     void secsPerPageChanged(const QString& secs_per_page);
     void signalsPerPageChanged(const QString& signals_per_page);

@@ -94,7 +94,6 @@ public:
     void autoScaleAll();
 
     void goTo(float32 sec, int32 channel_index);
-    void goToAndSelectNextEvent (bool forward);
 
     // get parameters
     int32 getSignalHeight();
