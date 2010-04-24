@@ -1,7 +1,7 @@
 #include "signal_graphics_item.h"
 #include "event_graphics_item.h"
 #include "signal_browser_model_4.h"
-#include "new_event_undo_command.h"
+#include "../editing_commands/new_event_undo_command.h"
 #include "y_axis_widget_4.h"
 #include "../file_handling/channel_manager.h"
 #include "../command_executer.h"
@@ -280,14 +280,8 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
             break;
         case SignalBrowserMouseHandling::NEW_EVENT_ACTION:
             {             
-            // get shown events
-            SignalBrowserModel::IntList shown_events;
-            signal_browser_model_.getShownEventTypes(shown_events);
-
-            if (shown_events.size() == 0)
-            {
-                break; // no events shown
-            }
+            if (signal_browser_model_.getShownEventTypes ().size() == 0)
+                break;
 
             new_event_ = true;
             new_signal_event_ = QSharedPointer<SignalEvent>(new SignalEvent(event->scenePos().x(),

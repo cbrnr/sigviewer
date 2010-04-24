@@ -48,6 +48,16 @@ QAction* GuiActionCommand::getQAction (QString const& id)
         return 0;
 }
 
+//-----------------------------------------------------------------------------
+void GuiActionCommand::resetActionTriggerSlot (QString const& action_id,
+                                              const char* slot)
+{
+    assert (action_map_.contains (action_id));
+    QAction* action = action_map_[action_id];
+    action->disconnect (SIGNAL(triggered()));
+    assert (connect (action, SIGNAL(triggered()), slot));
+}
+
 
 
 }

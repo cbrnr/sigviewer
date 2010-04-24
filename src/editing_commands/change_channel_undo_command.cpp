@@ -9,7 +9,7 @@ ChangeChannelUndoCommand::ChangeChannelUndoCommand (QSharedPointer<EventManager>
                                                     EventID event_id,
                                                     ChannelID new_channel)
  : event_manager_ (event_manager),
-   signal_event_ (event_manager->getEventForEditing (event_id)),
+   event_id_ (event_id),
    new_channel_ (new_channel)
 {
     // nothing to do here
@@ -24,16 +24,18 @@ ChangeChannelUndoCommand::~ChangeChannelUndoCommand ()
 //-----------------------------------------------------------------------------
 void ChangeChannelUndoCommand::undo ()
 {
-    signal_event_->setChannel(old_channel_);
-    event_manager_->updateEvent (signal_event_->getId());
+    QSharedPointer<SignalEvent> signal_event_ = event_manager_->getAndLockEventForEditing (event_id_);
+    signal_event_->setChannel (old_channel_);
+    event_manager_->updateAndUnlockEvent (signal_event_->getId());
 }
 
 //-----------------------------------------------------------------------------
 void ChangeChannelUndoCommand::redo ()
 {
+    QSharedPointer<SignalEvent> signal_event_ = event_manager_->getAndLockEventForEditing (event_id_);
     old_channel_ = signal_event_->getChannel();
     signal_event_->setChannel (new_channel_);
-    event_manager_->updateEvent (signal_event_->getId());
+    event_manager_->updateAndUnlockEvent (signal_event_->getId());
 }
 
 }

@@ -105,20 +105,11 @@ public:
     float64 getXGridPixelIntervall();
 
     // events
-    void getShownEventTypes(IntList& event_type);
-    std::set<uint16> getShownEventTypes () const;
     std::set<uint16> getDisplayedEventTypes () const;
     void setShownEventTypes(const IntList& event_type);
 
     EventGraphicsItem* getSelectedEventItem();
     QSharedPointer<SignalEvent const> getSelectedSignalEvent();
-    void setSelectedEventToAllChannels();
-    void changeSelectedEventChannel();
-    void copySelectedEventToChannels();
-    void changeSelectedEventType (uint16 new_type);
-
-    EventType getActualEventCreationType () const;
-
     void updateEventItems ();
 
 public slots:
@@ -132,7 +123,7 @@ public slots:
 
 
     void setEventChanged (EventID id);
-    void setActualEventCreationType (uint16 new_type);
+
     virtual void selectEvent (EventID id);
     void unselectEvent ();
 
@@ -140,10 +131,10 @@ signals:
     void eventSelected (QSharedPointer<SignalEvent const> selected_event);
     void signalHeightChanged (uint32 signal_height);
     void signalSpacingChanged (unsigned signal_spacing);
-    void shownEventTypesChanged (std::set<uint16> shown_event_types);
 
 protected:
     virtual void modeChanged (SignalVisualisationMode mode);
+    virtual void shownEventTypesChangedImpl ();
 
 private:
     //-------------------------------------------------------------------------
@@ -169,8 +160,6 @@ private:
 
     typedef std::map<int32, int32> Int2IntMap;
 
-
-    bool checkSignalBrowserPtr(const QString function);
     void updateEventItemsImpl ();
 
     // items
@@ -188,8 +177,6 @@ private:
     int32 prefered_x_grid_pixel_intervall_;
     int32 prefered_y_grid_pixel_intervall_;
     float64 x_grid_pixel_intervall_;
-    std::set<EventType> shown_event_types_;
-    uint16 actual_event_creation_type_;
 
     bool show_y_grid_;
     bool show_x_grid_;

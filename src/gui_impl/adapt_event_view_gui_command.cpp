@@ -1,4 +1,5 @@
 #include "adapt_event_view_gui_command.h"
+#include "gui_helper_functions.h"
 #include "../application_context.h"
 #include "../gui/signal_visualisation_model.h"
 
@@ -7,12 +8,16 @@ namespace BioSig_
 
 //-----------------------------------------------------------------------------
 QString const AdaptEventViewGuiCommand::FIT_TO_EVENT_ = "Fit View to Selected Event";
+QString const AdaptEventViewGuiCommand::HIDE_EVENTS_OF_OTHER_TYPE_ = "Hide Events of other Type";
+QString const AdaptEventViewGuiCommand::SHOW_ALL_EVENTS_ = "Show all Events";
 QString const AdaptEventViewGuiCommand::GO_TO_NEXT_EVENT_ = "Goto and Select Next Event";
 QString const AdaptEventViewGuiCommand::GO_TO_PREVIOUS_EVENT_ = "Goto and Select Previous Event";
 QStringList const AdaptEventViewGuiCommand::TEXTS_ = QStringList() <<
                                               AdaptEventViewGuiCommand::FIT_TO_EVENT_ <<
                                               AdaptEventViewGuiCommand::GO_TO_NEXT_EVENT_ <<
-                                              AdaptEventViewGuiCommand::GO_TO_PREVIOUS_EVENT_;
+                                              AdaptEventViewGuiCommand::GO_TO_PREVIOUS_EVENT_ <<
+                                              AdaptEventViewGuiCommand::HIDE_EVENTS_OF_OTHER_TYPE_ <<
+                                              AdaptEventViewGuiCommand::SHOW_ALL_EVENTS_;
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator AdaptEventViewGuiCommand::registrator_ ("Adapt Event View",
@@ -40,6 +45,9 @@ void AdaptEventViewGuiCommand::init ()
 
     getQAction (GO_TO_NEXT_EVENT_)->setIcon (QIcon(":/images/icons/next.png"));
     getQAction (GO_TO_PREVIOUS_EVENT_)->setIcon (QIcon(":/images/icons/previous.png"));
+
+    resetActionTriggerSlot (HIDE_EVENTS_OF_OTHER_TYPE_, SLOT(hideEventsOfOtherType()));
+    resetActionTriggerSlot (SHOW_ALL_EVENTS_, SLOT(showAllEvents()));
 }
 
 //-----------------------------------------------------------------------------
@@ -65,6 +73,29 @@ void AdaptEventViewGuiCommand::tabSelectionStateChanged (TabSelectionState state
 {
     tab_sec_state_ = state;
     updateEnabledness ();
+}
+
+//-------------------------------------------------------------------------
+void AdaptEventViewGuiCommand::hideEventsOfOtherType ()
+{
+    QSharedPointer<SignalEvent const> event = GuiHelper::getSelectedEvent ();
+
+    QSharedPointer<MainWindowModel> mw_model = ApplicationContext::getInstance()->getMainWindowModel ();
+    QSharedPointer<SignalVisualisationModel> sv_model = mw_model->getCurrentSignalVisualisationModel ();
+
+    std::set<EventType> shown_types;
+    shown_types.insert (event->getType ());
+    sv_model->setShownEventTypes (shown_types);
+}
+
+//-------------------------------------------------------------------------
+void AdaptEventViewGuiCommand::showAllEvents ()
+{
+    QSharedPointer<MainWindowModel> mw_model = ApplicationContext::getInstance()->getMainWindowModel ();
+    QSharedPointer<SignalVisualisationModel> sv_model = mw_model->getCurrentSignalVisualisationModel ();
+
+    std::set<EventType> shown_types = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager()->getAllPossibleEventTypes ();
+    sv_model->setShownEventTypes (shown_types);
 }
 
 //-------------------------------------------------------------------------

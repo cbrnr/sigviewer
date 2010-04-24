@@ -32,8 +32,6 @@ public:
     void storeColors();
     void setShownTypes(IntList& shown_type_set, const bool all = false);
     void getShownTypes(IntList& shown_type_set);
-    bool isAllSelected() const;
-    void selectAll();
 
 private slots:
 

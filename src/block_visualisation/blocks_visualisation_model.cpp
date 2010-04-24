@@ -9,7 +9,8 @@ namespace BioSig_ {
 BlocksVisualisationModel::BlocksVisualisationModel (BlocksVisualisationView* view,
                                                     float64 pixel_per_sec,
                                                     float64 sample_rate)
-    : view_ (view),
+    : AbstractBrowserModel (1, std::set<EventType> ()),
+      view_ (view),
       pixel_per_sec_ (pixel_per_sec),
       sample_rate_ (sample_rate),
       num_block_items_ (0),

@@ -7,6 +7,7 @@
 
 #include <QSharedPointer>
 #include <QMap>
+#include <QMutex>
 
 namespace BioSig_
 {
@@ -24,11 +25,11 @@ public:
 
     //-------------------------------------------------------------------------
     /// see base class
-    virtual QSharedPointer<SignalEvent> getEventForEditing (EventID id);
+    virtual QSharedPointer<SignalEvent> getAndLockEventForEditing (EventID id);
 
     //-------------------------------------------------------------------------
     /// see base class
-    virtual void updateEvent (EventID id);
+    virtual void updateAndUnlockEvent (EventID id);
 
     //-------------------------------------------------------------------------
     /// see base class
@@ -79,8 +80,13 @@ private:
     QSharedPointer<EventTableFileReader> event_table_reader_;
 
     double sample_rate_;
+    QMutex* caller_mutex_;
+
     typedef QMap<EventID, QSharedPointer<SignalEvent> > EventMap;
+    typedef QMap<EventID, QSharedPointer<QMutex> > MutexMap;
+
     EventMap event_map_;
+    MutexMap mutex_map_;
     EventID next_free_id_;
 };
 

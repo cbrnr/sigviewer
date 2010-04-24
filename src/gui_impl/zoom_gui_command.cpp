@@ -47,6 +47,8 @@ void ZoomGuiCommand::trigger (QString const& action_name)
     QSharedPointer<SignalVisualisationModel> vis_model =
             main_window_model->getCurrentSignalVisualisationModel();
 
+    unsigned shown_pos = vis_model->getShownPosition ();
+
     float32 pixel_per_sample = vis_model->getPixelPerSample ();
     if (action_name == ZOOM_IN_VERTICAL_)
         vis_model->zoom (ZOOM_VERTICAL, ZOOM_FACTOR_);
@@ -62,6 +64,7 @@ void ZoomGuiCommand::trigger (QString const& action_name)
     else if (action_name == ZOOM_OUT_HORIZONTAL_)
         vis_model->setPixelPerSample (pixel_per_sample / ZOOM_FACTOR_);
     vis_model->updateLayout ();
+    vis_model->goToSample (shown_pos);
 }
 
 //-----------------------------------------------------------------------------

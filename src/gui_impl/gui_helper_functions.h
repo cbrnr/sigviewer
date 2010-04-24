@@ -14,6 +14,21 @@ namespace GuiHelper
 {
 
 //-----------------------------------------------------------------------------
+QSharedPointer<SignalEvent const> getSelectedEvent ();
+
+//-----------------------------------------------------------------------------
+EventID getSelectedEventID ();
+
+//-----------------------------------------------------------------------------
+EventType selectEventType (EventType preselected_type);
+
+//-----------------------------------------------------------------------------
+ChannelID selectChannel (ChannelID preselected_channel);
+
+//-----------------------------------------------------------------------------
+std::set<ChannelID> selectShownChannels (ChannelID hide_channel);
+
+//-----------------------------------------------------------------------------
 std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager> channel_manager,
                                     QString const& file_name = "",
                                     QSharedPointer<SignalVisualisationModel> vis_model

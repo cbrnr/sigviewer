@@ -39,11 +39,10 @@ include(file_handling_impl/file_handling_impl.pri)
 include(file_handling/file_handling.pri)
 include(gui/gui.pri)
 include(gui_impl/gui_impl.pri)
+include(editing_commands/editing_commands.pri)
 HEADERS += basic_header_info_dialog.h \
-    copy_event_dialog.h \
     event_color_manager.h \
     event_table_dialog.h \
-    event_type_dialog.h \
     go_to_dialog.h \
     label_widget.h \
     log_dialog.h \
@@ -52,7 +51,6 @@ HEADERS += basic_header_info_dialog.h \
     settings_dialog.h \
     signal_browser_mouse_handling.h \
     command_stack.h \
-    set_shown_event_types_view_undo_command.h \
     event_time_selection_dialog.h \
     abstract_browser_model.h \
     gui_action_manager.h \
@@ -63,10 +61,8 @@ HEADERS += basic_header_info_dialog.h \
     application_context_impl.h \
     application_context_impl_interface.h
 SOURCES += basic_header_info_dialog.cpp \
-    copy_event_dialog.cpp \
     event_color_manager.cpp \
     event_table_dialog.cpp \
-    event_type_dialog.cpp \
     go_to_dialog.cpp \
     label_widget.cpp \
     log_dialog.cpp \
@@ -76,7 +72,6 @@ SOURCES += basic_header_info_dialog.cpp \
     signal_browser_mouse_handling.cpp \
     sigviewer.cpp \
     command_stack.cpp \
-    set_shown_event_types_view_undo_command.cpp \
     event_time_selection_dialog.cpp \
     gui_action_manager.cpp \
     application_context.cpp \

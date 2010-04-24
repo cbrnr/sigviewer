@@ -31,12 +31,6 @@ public:
 
 public slots:
     //-------------------------------------------------------------------------
-    void setQActionEnabled (bool enabled)
-    {
-        emit qActionEnabledChanged (enabled);
-    }
-
-    //-------------------------------------------------------------------------
     virtual void trigger (QString const& action_name) = 0;
 
     //-------------------------------------------------------------------------
@@ -55,6 +49,9 @@ signals:
 protected:
     //-------------------------------------------------------------------------
     GuiActionCommand (QStringList const& action_ids);
+
+    //-------------------------------------------------------------------------
+    void resetActionTriggerSlot (QString const& action_id, const char* slot);
 
 private:
     QMap<QString, QAction*> action_map_;

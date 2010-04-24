@@ -42,6 +42,9 @@ public:
     void setCurrentTabContext (QSharedPointer<TabContext> tab_context);
 
     //-------------------------------------------------------------------------
+    QSharedPointer<CommandExecuter> getCurrentCommandExecuter ();
+
+    //-------------------------------------------------------------------------
     /// NO MULTI-FILE SUPPORT IMPLEMENTED YET!!!
     /// THIS CALL WILL REPLACE ACTUAL FILE CONTEXT
     void addFileContext (QSharedPointer<FileContext> file_context);

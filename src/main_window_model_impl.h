@@ -84,18 +84,11 @@ public slots:
     void fileCloseAction();
     void fileInfoAction();
     void fileExitAction();
-    void editToAllChannelsAction();
-    void editCopyToChannelsAction();
-    void editDeleteAction();
-    void editChangeChannelAction();
-    void editChangeTypeAction();
     void editEventTableAction();
-    void editInsertOverAction();
     void viewZoomInAction();
     void viewZoomOutAction();
     void viewAutoScaleAction();
     void viewGoToAction();
-    void viewShowEventsOfSelectedTypeAction();
     void optionsChannelsAction();
     void optionsChangeCreationType();
     void optionsShowEventsAction();
@@ -112,7 +105,6 @@ private:
 
     //-------------------------------------------------------------------------
     bool checkMainWindowPtr(const QString function);
-    uint16 selectEventTypeDialog (uint16 preselected_type) const;
 
     static unsigned const NUMBER_RECENT_FILES_;
 

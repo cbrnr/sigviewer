@@ -189,6 +189,7 @@ void MainWindow::initMenus()
 
     edit_menu_ = menuBar()->addMenu(tr("&Edit"));
     edit_menu_->addActions (action_manager_->getActionsOfGroup (GUIActionManager::EDIT_MENU_ACTIONS));
+    edit_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Event Editing"));
 
     mouse_mode_menu_ = menuBar()->addMenu(tr("&Mode"));
     mouse_mode_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Mouse Modes"));

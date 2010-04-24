@@ -1,5 +1,5 @@
-#ifndef CHANGE_CHANNEL_UNDO_COMMAND_H
-#define CHANGE_CHANNEL_UNDO_COMMAND_H
+#ifndef NEW_EVENT_UNDO_COMMAND_H
+#define NEW_EVENT_UNDO_COMMAND_H
 
 #include "../base/signal_event.h"
 #include "../file_handling/event_manager.h"
@@ -10,16 +10,16 @@
 namespace BioSig_
 {
 
-class ChangeChannelUndoCommand : public QUndoCommand
+class NewEventUndoCommand : public QUndoCommand
 {
 public:
     //-------------------------------------------------------------------------
-    ChangeChannelUndoCommand (QSharedPointer<EventManager> event_manager,
-                              EventID event_id,
-                              ChannelID new_channel);
+    NewEventUndoCommand (QSharedPointer<EventManager> event_manager,
+                         QSharedPointer<SignalEvent const> signal_event,
+                         float scene_to_signal_factor = 1);
 
     //-------------------------------------------------------------------------
-    virtual ~ChangeChannelUndoCommand();
+    virtual ~NewEventUndoCommand ();
 
     //-------------------------------------------------------------------------
     /// recreates the deleted event
@@ -29,25 +29,22 @@ public:
     /// deletes the event
     virtual void redo ();
 
+
 private:
-    //-------------------------------------------------------------------------
-    void checkAndSetSelectChannelState ();
+    QSharedPointer<EventManager> event_manager_;
+    QSharedPointer<SignalEvent> raw_signal_event_;
+    QSharedPointer<SignalEvent const> created_signal_event_;
 
     //-------------------------------------------------------------------------
     /// copy-constructor disabled
-    ChangeChannelUndoCommand (ChangeChannelUndoCommand const &);
+    NewEventUndoCommand (NewEventUndoCommand const &);
 
     //-------------------------------------------------------------------------
     /// assignment-operator disabled
-    ChangeChannelUndoCommand& operator= (ChangeChannelUndoCommand const &);
-
-    QSharedPointer<EventManager> event_manager_;
-    QSharedPointer<SignalEvent> signal_event_;
-    ChannelID new_channel_;
-    ChannelID old_channel_;
+    NewEventUndoCommand& operator= (NewEventUndoCommand const &);
 
 };
 
 }
 
-#endif // CHANGE_CHANNEL_UNDO_COMMAND_H
+#endif // NEW_EVENT_UNDO_COMMAND_H

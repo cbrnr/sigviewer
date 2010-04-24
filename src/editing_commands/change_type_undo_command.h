@@ -39,6 +39,7 @@ private:
     /// assignment-operator disabled
     ChangeTypeUndoCommand& operator= (ChangeTypeUndoCommand const &);
 
+    EventID event_id_;
     QSharedPointer<EventManager> event_manager_;
     EventType new_type_;
     EventType old_type_;

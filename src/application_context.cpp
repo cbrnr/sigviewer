@@ -43,6 +43,11 @@ void ApplicationContext::setCurrentTabContext (QSharedPointer<TabContext> tab_co
     connect (current_tab_context_.data(), SIGNAL(selectionStateChanged(TabSelectionState)), SLOT(changeTabSelectionState(TabSelectionState)));
 }
 
+//-------------------------------------------------------------------------
+QSharedPointer<CommandExecuter> ApplicationContext::getCurrentCommandExecuter ()
+{
+    return current_tab_context_;
+}
 
 //-------------------------------------------------------------------------
 void ApplicationContext::addFileContext (QSharedPointer<FileContext>file_context)

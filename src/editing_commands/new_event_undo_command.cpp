@@ -1,15 +1,14 @@
 #include "new_event_undo_command.h"
-#include "../file_handling/event_manager.h"
 
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
 NewEventUndoCommand::NewEventUndoCommand (QSharedPointer<EventManager> event_manager,
-                                          QSharedPointer<SignalEvent> signal_event,
+                                          QSharedPointer<SignalEvent const> signal_event,
                                           float scene_to_signal_factor)
  : event_manager_ (event_manager),
-   raw_signal_event_ (signal_event)
+   raw_signal_event_ (new SignalEvent (*signal_event))
 {
     raw_signal_event_->setPosition (scene_to_signal_factor * raw_signal_event_->getPosition());
     raw_signal_event_->setDuration (scene_to_signal_factor * raw_signal_event_->getDuration());

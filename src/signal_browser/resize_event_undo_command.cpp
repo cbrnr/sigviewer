@@ -10,7 +10,7 @@ ResizeEventUndoCommand::ResizeEventUndoCommand (QSharedPointer<EventManager> eve
                                                 uint32 new_start_position,
                                                 uint32 new_duration)
 : event_manager_ (event_manager),
-  event_ (event_manager->getEventForEditing (id)),
+  event_ (event_manager->getAndLockEventForEditing (id)),
   new_start_position_ (new_start_position),
   new_duration_ (new_duration)
 {
@@ -29,7 +29,7 @@ void ResizeEventUndoCommand::undo ()
 {
     event_->setDuration (old_duration_);
     event_->setPosition (old_start_position_);
-    event_manager_->updateEvent (event_->getId());
+    event_manager_->updateAndUnlockEvent (event_->getId());
 }
 
 //-----------------------------------------------------------------------------
@@ -37,7 +37,7 @@ void ResizeEventUndoCommand::redo ()
 {
     event_->setDuration (new_duration_);
     event_->setPosition (new_start_position_);
-    event_manager_->updateEvent (event_->getId());
+    event_manager_->updateAndUnlockEvent (event_->getId());
 }
 
 

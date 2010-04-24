@@ -5,10 +5,10 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-DeleteEventUndoCommand::DeleteEventUndoCommand(EventManager& event_manager,
-                                               EventID event_id)
+DeleteEventUndoCommand::DeleteEventUndoCommand (QSharedPointer<EventManager> event_manager,
+                                                EventID event_id)
     : event_manager_ (event_manager),
-      deleted_event_ (event_manager.getEvent (event_id))
+      deleted_event_ (event_manager->getEvent (event_id))
 {
     // nothing to do here
 }
@@ -22,7 +22,7 @@ DeleteEventUndoCommand::~DeleteEventUndoCommand ()
 //-----------------------------------------------------------------------------
 void DeleteEventUndoCommand::undo ()
 {
-    event_manager_.createEvent (
+    event_manager_->createEvent (
             deleted_event_->getChannel (),
             deleted_event_->getPosition (),
             deleted_event_->getDuration (),
@@ -33,7 +33,7 @@ void DeleteEventUndoCommand::undo ()
 //-----------------------------------------------------------------------------
 void DeleteEventUndoCommand::redo ()
 {
-    event_manager_.removeEvent (deleted_event_->getId ());
+    event_manager_->removeEvent (deleted_event_->getId ());
 }
 
 }

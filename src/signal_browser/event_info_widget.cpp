@@ -1,8 +1,8 @@
 #include "event_info_widget.h"
 
 #include "signal_browser_model_4.h"
-#include "change_type_undo_command.h"
-#include "new_event_undo_command.h"
+#include "../editing_commands/change_type_undo_command.h"
+#include "../editing_commands/new_event_undo_command.h"
 #include "resize_event_undo_command.h"
 #include "../command_executer.h"
 #include "../file_handling/event_manager.h"

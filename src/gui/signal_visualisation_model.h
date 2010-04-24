@@ -39,8 +39,8 @@ public:
     SignalVisualisationMode getMode () const;
 
     void setPixelPerSample (float32 pixel_per_sample);
-    float32 getPixelPerSample ();
-    float32 getSampleRate ();
+    float32 getPixelPerSample () const;
+    float32 getSampleRate () const;
 
 
     //-------------------------------------------------------------------------
@@ -60,22 +60,37 @@ public:
     virtual EventID getSelectedEvent () const;
 
     //-------------------------------------------------------------------------
-    virtual void selectEvent (EventID event_id) {assert (0);}
+    std::set<EventType> getShownEventTypes () const;
 
+    //-------------------------------------------------------------------------
+    virtual void setShownEventTypes (std::set<EventType> const& event_types);
+
+    //-------------------------------------------------------------------------
+    virtual void selectEvent (EventID) {assert (0);}
+
+    //-------------------------------------------------------------------------
+    EventType getActualEventCreationType () const;
 
     virtual void updateLayout () = 0;
 
+public slots:
+    void setActualEventCreationType (EventType type);
+
 signals:
     void pixelPerSampleChanged (float32 pixel_per_sample, float32 sample_rate);
+    void shownEventTypesChanged (std::set<uint16> shown_event_types);
 
 protected:
-    SignalVisualisationModel (float32 sample_rate);
+    SignalVisualisationModel (float32 sample_rate, std::set<EventType> const& shown_types);
     virtual void modeChanged (SignalVisualisationMode mode) = 0;
+    virtual void shownEventTypesChangedImpl () {assert (0);}
 
 private:
     float32 pixel_per_sample_;
     float32 sample_rate_;
     SignalVisualisationMode mode_;
+    EventType event_creation_type_;
+    std::set<EventType> shown_event_types_;
 };
 
 

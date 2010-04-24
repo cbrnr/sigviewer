@@ -11,7 +11,8 @@ class AbstractBrowserModel : public SignalVisualisationModel
 {
 
 public:
-    AbstractBrowserModel (float32 sample_rate = 256) : SignalVisualisationModel (sample_rate) {}
+    AbstractBrowserModel (float32 sample_rate,
+                          std::set<EventType> const& shown_types) : SignalVisualisationModel (sample_rate, shown_types) {}
 
     virtual ~AbstractBrowserModel () {};
 

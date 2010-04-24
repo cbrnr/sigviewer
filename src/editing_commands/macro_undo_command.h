@@ -1,7 +1,5 @@
-#ifndef DELETE_EVENT_UNDO_COMMAND_H
-#define DELETE_EVENT_UNDO_COMMAND_H
-
-#include "../base/signal_event.h"
+#ifndef MACRO_UNDO_COMMAND_H
+#define MACRO_UNDO_COMMAND_H
 
 #include <QUndoCommand>
 #include <QSharedPointer>
@@ -9,45 +7,39 @@
 namespace BioSig_
 {
 
-class EventManager;
-
-class DeleteEventUndoCommand : public QUndoCommand
+class MacroUndoCommand : public QUndoCommand
 {
 public:
     //-------------------------------------------------------------------------
     /// constructor
-    DeleteEventUndoCommand (EventManager& event_manager,
-                            EventID event_id);
+    MacroUndoCommand (QList<QSharedPointer<QUndoCommand> > const& commands);
 
     //-------------------------------------------------------------------------
     /// destructor
-    virtual ~DeleteEventUndoCommand ();
+    virtual ~MacroUndoCommand () {}
 
     //-------------------------------------------------------------------------
-    /// recreates the deleted event
+    /// undos the all commands
     virtual void undo ();
 
     //-------------------------------------------------------------------------
-    /// deletes the event
+    /// executes the macro
     virtual void redo ();
 
 
 private:
-    EventManager& event_manager_;
-    EventID event_id_;
-    QSharedPointer<SignalEvent const> deleted_event_;
-
+    QList<QSharedPointer<QUndoCommand> > commands_;
 
     //-------------------------------------------------------------------------
     /// copy-constructor disabled
-    DeleteEventUndoCommand (DeleteEventUndoCommand const &);
+    MacroUndoCommand (MacroUndoCommand const &);
 
     //-------------------------------------------------------------------------
     /// assignment-operator disabled
-    DeleteEventUndoCommand& operator= (DeleteEventUndoCommand const &);
+    MacroUndoCommand& operator= (MacroUndoCommand const &);
 
 };
 
 }
 
-#endif // DELETE_EVENT_UNDO_COMMAND_H
+#endif // MACRO_UNDO_COMMAND_H

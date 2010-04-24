@@ -33,17 +33,13 @@ public:
     virtual QSharedPointer<SignalEvent const> getEvent (EventID id) const = 0;
 
     //-------------------------------------------------------------------------
-    /// returns the event for editing
-    ///
-    /// TODO: convert to lockEventForEditing (id)
-    virtual QSharedPointer<SignalEvent> getEventForEditing (EventID id) = 0;
+    /// returns the event for editing and locks the event
+    virtual QSharedPointer<SignalEvent> getAndLockEventForEditing (EventID id) = 0;
 
     //-------------------------------------------------------------------------
     /// changes the type of the event of the given type
     /// and emits the signal eventChanged (id)
-    ///
-    /// TODO: convert to releaseEventForEditing (id)
-    virtual void updateEvent (EventID id) = 0;
+    virtual void updateAndUnlockEvent (EventID id) = 0;
 
     //-------------------------------------------------------------------------
     ///

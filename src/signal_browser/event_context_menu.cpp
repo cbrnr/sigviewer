@@ -138,9 +138,12 @@ void EventContextMenu::addActionsToMenu (QMenu& menu)
 {
     menu.addActions (ApplicationContext::getInstance()->getGUIActionManager()->getActionsOfGroup(GUIActionManager::EVENT_CONTEXT_ACTIONS));
 
+    menu.addActions (GuiActionFactory::getInstance()->getQActions("Event Editing"));
+    menu.addSeparator ();
     menu.addAction (GuiActionFactory::getInstance()->getQAction("Goto and Select Next Event"));
     menu.addAction (GuiActionFactory::getInstance()->getQAction("Goto and Select Previous Event"));
     menu.addSeparator ();
+    menu.addAction (GuiActionFactory::getInstance()->getQAction("Hide Events of other Type"));
     menu.addAction (GuiActionFactory::getInstance()->getQAction("Fit View to Selected Event"));
 }
 

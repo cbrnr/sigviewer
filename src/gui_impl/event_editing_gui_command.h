@@ -1,23 +1,24 @@
-#ifndef FIT_VIEW_GUI_COMMAND_H
-#define FIT_VIEW_GUI_COMMAND_H
+#ifndef EVENT_EDITING_GUI_COMMAND_H
+#define EVENT_EDITING_GUI_COMMAND_H
 
+#include "../base/user_types.h"
 #include "../gui/gui_action_command.h"
 #include "../gui/gui_action_factory_registrator.h"
 
-#include <QStringList>
+#include <QUndoCommand>
 
 namespace BioSig_
 {
 
-class AdaptEventViewGuiCommand : public GuiActionCommand
+class EventEditingGuiCommand : public GuiActionCommand
 {
     Q_OBJECT
 public:
     //-------------------------------------------------------------------------
-    AdaptEventViewGuiCommand ();
+    EventEditingGuiCommand ();
 
     //-------------------------------------------------------------------------
-    virtual ~AdaptEventViewGuiCommand ();
+    virtual ~EventEditingGuiCommand ();
 
     //-------------------------------------------------------------------------
     virtual void init ();
@@ -27,41 +28,36 @@ public slots:
     virtual void trigger (QString const& action_name);
 
     //-------------------------------------------------------------------------
-    virtual void applicationStateChanged (ApplicationState state);
+    void deleteSelectedEvent ();
 
     //-------------------------------------------------------------------------
-    virtual void tabSelectionStateChanged (TabSelectionState state);
+    void changeTypeSelectedEvent ();
 
     //-------------------------------------------------------------------------
-    void hideEventsOfOtherType ();
+    void changeChannelSelectedEvent ();
 
     //-------------------------------------------------------------------------
-    void showAllEvents ();
+    void toAllChannelsSelectedEvent ();
 
+    //-------------------------------------------------------------------------
+    void copyToChannelsSelectedEvent ();
+
+    //-------------------------------------------------------------------------
+    void insertEventOverSelectedEvent ();
 private:
-    //-------------------------------------------------------------------------
-    void fitViewToEvent ();
+    void executeCommand (QUndoCommand* command);
 
-    //-------------------------------------------------------------------------
-    void gotoAndSelectEvent (bool forward);
-
-    //-------------------------------------------------------------------------
-    void updateEnabledness ();
-
-    ApplicationState app_state_;
-    TabSelectionState tab_sec_state_;
-
-    static QString const FIT_TO_EVENT_;
-    static QString const HIDE_EVENTS_OF_OTHER_TYPE_;
-    static QString const SHOW_ALL_EVENTS_;
-    static QString const GO_TO_NEXT_EVENT_;
-    static QString const GO_TO_PREVIOUS_EVENT_;
-    static QStringList const TEXTS_;
+    static QString const DELETE_;
+    static QString const CHANGE_TYPE_;
+    static QString const CHANGE_CHANNEL_;
+    static QString const TO_ALL_CHANNEL_;
+    static QString const COPY_TO_CHANNELS_;
+    static QString const INSERT_OVER_;
+    static QStringList const ACTIONS_;
 
     static GuiActionFactoryRegistrator registrator_;
-
 };
 
-} // namespace BioSig_
+}
 
-#endif // FIT_VIEW_GUI_COMMAND_H
+#endif // EVENT_EDITING_GUI_COMMAND_H

@@ -332,15 +332,5 @@ void EventTypeDialog::itemChanged(QTreeWidgetItem* item ,int)
     }
 }
 
-bool EventTypeDialog::isAllSelected() const
-{
-	return (event_tree_widget_->topLevelItem(0)->checkState(0) == Qt::Checked);
-}
-
-void EventTypeDialog::selectAll()
-{
-	event_tree_widget_->topLevelItem(0)->setCheckState(0, Qt::Checked);
-}
-
 } //namespace BioSig_
 
