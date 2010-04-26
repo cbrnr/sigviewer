@@ -224,11 +224,6 @@ void GUIActionManager::initViewActions ()
                   SLOT(viewAutoScaleAction()),
                   tr("Autoscale all channels"),
                   QIcon(":/images/auto_scale_22x22.png"));
-
-    createAction (ACTION_VIEW_GOTO, tr("&Go To..."),
-                  SLOT(viewGoToAction()),
-                  tr("Go to a specified point of the signal"),
-                  QIcon(":/images/icons/goto.png"));
 }
 
 //-------------------------------------------------------------------------
@@ -265,7 +260,6 @@ void GUIActionManager::initShortcuts ()
 
     setShortCut (ACTION_VIEW_ZOOM_IN, QKeySequence::ZoomIn);
     setShortCut (ACTION_VIEW_ZOOM_OUT, QKeySequence::ZoomOut);
-    setShortCut (ACTION_VIEW_GOTO, QKeySequence("Ctrl+G"));
 }
 
 //-----------------------------------------------------------------------------
@@ -311,7 +305,6 @@ void GUIActionManager::initGroups ()
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_ZOOM_OUT);
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_AUTO_SCALE);
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
-    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_GOTO);
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
 
 
@@ -344,7 +337,6 @@ void GUIActionManager::initDisabledStates ()
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_ZOOM_IN);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_ZOOM_OUT);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_AUTO_SCALE);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_GOTO);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_CHANNELS);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_EVENTS);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_OPTIONS_CHANGE_EVENT_CREATION_TYPE);

@@ -25,7 +25,7 @@ class EventTableDialog : public QDialog
 {
     Q_OBJECT
 public:
-    EventTableDialog (EventManager& event_manager,
+    EventTableDialog (QSharedPointer<EventManager> event_manager,
                       QSharedPointer<CommandExecuter> command_executer,
                       QPointer<BasicHeader> basic_header, QWidget* parent = 0);
 
@@ -89,7 +89,7 @@ private:
 
     void buildEventTable();
 
-    EventManager& event_manager_;
+    QSharedPointer<EventManager> event_manager_;
     QSharedPointer<CommandExecuter> command_executer_;
     QPointer<BasicHeader> basic_header_;
     QTableView *event_table_view_;

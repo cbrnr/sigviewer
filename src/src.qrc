@@ -45,5 +45,6 @@
         <file>images/icons/zoom_out_vertical.png</file>
         <file>images/icons/zoom_in_horizontal.png</file>
         <file>images/icons/zoom_out_horizontal.png</file>
+        <file>images/icons/goto.png</file>
     </qresource>
 </RCC>

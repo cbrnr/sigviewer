@@ -1,10 +1,13 @@
 #include "zoom_gui_command.h"
 #include "../application_context.h"
 
+#include <QInputDialog>
+
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
+QString const ZoomGuiCommand::GOTO_ = "Go to...";
 QString const ZoomGuiCommand::ZOOM_IN_VERTICAL_ = "Zoom In Vertical";
 QString const ZoomGuiCommand::ZOOM_OUT_VERTICAL_ = "Zoom Out Vertical";
 QString const ZoomGuiCommand::ZOOM_IN_HORIZONTAL_ = "Zoom In Horizontal";
@@ -14,7 +17,8 @@ QString const ZoomGuiCommand::ZOOM_OUT_HORIZONTAL_ = "Zoom Out Horizontal";
 QStringList const ZoomGuiCommand::ACTIONS_ = QStringList() << ZoomGuiCommand::ZOOM_IN_VERTICAL_
                                            << ZoomGuiCommand::ZOOM_OUT_VERTICAL_
                                            << ZoomGuiCommand::ZOOM_IN_HORIZONTAL_
-                                           << ZoomGuiCommand::ZOOM_OUT_HORIZONTAL_;
+                                           << ZoomGuiCommand::ZOOM_OUT_HORIZONTAL_
+                                           << ZoomGuiCommand::GOTO_;
 
 
 //-----------------------------------------------------------------------------
@@ -33,10 +37,13 @@ ZoomGuiCommand::ZoomGuiCommand ()
 //-----------------------------------------------------------------------------
 void ZoomGuiCommand::init ()
 {
+    getQAction (GOTO_)->setIcon (QIcon(":/images/icons/goto.png"));
     getQAction (ZOOM_IN_VERTICAL_)->setIcon (QIcon(":/images/icons/zoom_in_vertical.png"));
     getQAction (ZOOM_OUT_VERTICAL_)->setIcon (QIcon(":/images/icons/zoom_out_vertical.png"));
     getQAction (ZOOM_IN_HORIZONTAL_)->setIcon (QIcon(":/images/icons/zoom_in_horizontal.png"));
     getQAction (ZOOM_OUT_HORIZONTAL_)->setIcon (QIcon(":/images/icons/zoom_out_horizontal.png"));
+
+    resetActionTriggerSlot (GOTO_, SLOT(goTo()));
 }
 
 //-----------------------------------------------------------------------------
@@ -90,5 +97,24 @@ void ZoomGuiCommand::evaluateEnabledness ()
         getQAction (ZOOM_IN_HORIZONTAL_)->setEnabled (false);
 }
 
+
+//-------------------------------------------------------------------------
+void ZoomGuiCommand::goTo ()
+{
+    QSharedPointer<ChannelManager> channel_manager =
+            ApplicationContext::getInstance()->getCurrentFileContext()->getChannelManager();
+    bool ok;
+    double sec = QInputDialog::getDouble (0, tr("Go to..."), tr("Second: "), 0, 0,
+                             channel_manager->getDurationInSec(), 1, &ok);
+    if (!ok)
+        return;
+
+    QSharedPointer<MainWindowModel> main_window_model =
+            ApplicationContext::getInstance()->getMainWindowModel ();
+    QSharedPointer<SignalVisualisationModel> vis_model =
+                main_window_model->getCurrentSignalVisualisationModel();
+
+    vis_model->goToSample (sec * vis_model->getSampleRate ());
+}
 
 }

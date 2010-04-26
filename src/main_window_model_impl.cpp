@@ -19,7 +19,6 @@
 #include "log_dialog.h"
 #include "gui_impl/channel_selection_dialog.h"
 #include "event_time_selection_dialog.h"
-#include "go_to_dialog.h"
 #include "gui_impl/event_type_dialog.h"
 #include "event_table_dialog.h"
 #include "settings_dialog.h"
@@ -724,7 +723,7 @@ void MainWindowModelImpl::fileExitAction()
 //-----------------------------------------------------------------------------
 void MainWindowModelImpl::editEventTableAction ()
 {
-    EventTableDialog event_table_dialog (*event_manager_,
+    EventTableDialog event_table_dialog (event_manager_,
         ApplicationContext::getInstance()->getCurrentFileContext()->getMainTabContext(),
                                         file_signal_reader_->getBasicHeader(),
                                         main_window_);
@@ -749,36 +748,6 @@ void MainWindowModelImpl::viewZoomOutAction()
 void MainWindowModelImpl::viewAutoScaleAction()
 {
     signal_browser_model_->autoScaleAll();
-}
-
-// view go to action
-void MainWindowModelImpl::viewGoToAction()
-{
-    GoToDialog go_to_dialog(file_signal_reader_->getBasicHeader(), main_window_);
-
-    // current selected channels
-    for (uint32 channel_nr = 0;
-         channel_nr < file_signal_reader_->getBasicHeader()->getNumberChannels();
-         channel_nr++)
-    {
-        if (signal_browser_model_->isChannelShown(channel_nr))
-        {
-            go_to_dialog.setChannelShown(channel_nr);
-        }
-    }
-
-    go_to_dialog.loadSettings();
-    go_to_dialog.exec();
-    go_to_dialog.saveSettings();
-
-    if (go_to_dialog.result() == QDialog::Rejected)
-    {
-        return; // user cancel
-    }
-
-    signal_browser_model_->goTo(go_to_dialog.getSecond(),
-
-                                go_to_dialog.getChannelIndex());
 }
 
 //-----------------------------------------------------------------------------

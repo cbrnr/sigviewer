@@ -4,7 +4,8 @@
 
 #include "file_handling/basic_header.h"
 #include "file_handling/event_manager.h"
-#include "signal_browser/delete_multiple_events_undo_command.h"
+#include "editing_commands/delete_event_undo_command.h"
+#include "editing_commands/macro_undo_command.h"
 
 #include <QHeaderView>
 #include <QTableView>
@@ -219,7 +220,7 @@ void EventTableDialog::TableModel::sort(int column, Qt::SortOrder order)
 }
 
 // constructor
-EventTableDialog::EventTableDialog (EventManager& event_manager,
+EventTableDialog::EventTableDialog (QSharedPointer<EventManager> event_manager,
                                     QSharedPointer<CommandExecuter> command_executer,
                                     QPointer<BasicHeader> basic_header, QWidget* parent)
  : QDialog(parent),
@@ -304,7 +305,7 @@ void EventTableDialog::buildEventTable()
     event_table_view_->horizontalHeader()->setClickable(false);
     event_table_view_->horizontalHeader()->setSortIndicatorShown(true);
 
-    QList<EventID> event_ids = event_manager_.getAllEvents ();
+    QList<EventID> event_ids = event_manager_->getAllEvents ();
 
     int32 number_channels = (int32)basic_header_->getNumberChannels();
     float64 sample_rate = basic_header_->getEventSamplerate();
@@ -316,7 +317,7 @@ void EventTableDialog::buildEventTable()
          ++id_iter)
     {
         QSharedPointer<SignalEvent const> event =
-                event_manager_.getEvent (*id_iter);
+                event_manager_->getEvent (*id_iter);
 
         event_table_view_->verticalHeader()->resizeSection(*id_iter,
                                                            row_height);
@@ -354,7 +355,7 @@ void EventTableDialog::buildEventTable()
         event_table_model_->setData(event_table_model_->index(*id_iter, 3),
                                     QVariant(tmp));
 
-        tmp = event_manager_.getNameOfEventType(event->getType()) +
+        tmp = event_manager_->getNameOfEventType(event->getType()) +
               QString(" ") + QString("(0x%1)").arg(event->getType(), 4, 16)
                                               .replace(' ', '0');
 
@@ -402,20 +403,22 @@ void EventTableDialog::removeSelectedRows()
     {
         qSort(selected_row_list);
         QList<int32>::iterator it = selected_row_list.end();
-        QList<EventID> event_ids;
+        QList<QSharedPointer<QUndoCommand> > delete_commands;
 
         do
         {
             int32 row = *(--it);
-            event_ids.append (event_table_model_
-                              ->data(event_table_model_->index(row, 0)).toInt());
+            EventID event_id = event_table_model_
+                              ->data(event_table_model_->index(row, 0)).toInt();
+            QSharedPointer<QUndoCommand> delete_command (new DeleteEventUndoCommand (event_manager_,
+                                                                       event_id));
+            delete_commands.push_back (delete_command);
             event_table_model_->removeRows (*it, 1);
         }
         while (it != selected_row_list.begin());
 
-        DeleteMultipleEventsUndoCommand* delete_command =
-                new DeleteMultipleEventsUndoCommand (event_manager_, event_ids);
-        command_executer_->executeCommand (delete_command);
+        QUndoCommand* delete_events_macro = new MacroUndoCommand (delete_commands);
+        command_executer_->executeCommand (delete_events_macro);
     }
 
     // update row heights

@@ -25,9 +25,9 @@ EventColorManager::~EventColorManager ()
 
 
 // get event color
-const QColor& EventColorManager::getEventColor (EventID id) const
+const QColor& EventColorManager::getEventColor (EventType type) const
 {
-    Int2ColorMap::const_iterator it = event_type2color_.find(id);
+    EventColorMap::const_iterator it = event_type2color_.find(type);
     if (it == event_type2color_.end())
     {
         it = event_type2color_.find(-1);
@@ -36,9 +36,9 @@ const QColor& EventColorManager::getEventColor (EventID id) const
 }
 
 // set event color
-void EventColorManager::setEventColor (EventID id, const QColor& color)
+void EventColorManager::setEventColor (EventType type, const QColor& color)
 {
-    event_type2color_[id] = color; 
+    event_type2color_[type] = color;
 }
 
 // load settings
@@ -78,7 +78,7 @@ void EventColorManager::saveSettings()
     settings.beginGroup("EventColorManager");
     settings.beginWriteArray("event");
     int32 i = 0;
-    for (Int2ColorMap::const_iterator it = event_type2color_.begin();
+    for (EventColorMap::const_iterator it = event_type2color_.begin();
          it != event_type2color_.end();
          it++)
     {

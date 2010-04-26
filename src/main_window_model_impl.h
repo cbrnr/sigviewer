@@ -88,7 +88,6 @@ public slots:
     void viewZoomInAction();
     void viewZoomOutAction();
     void viewAutoScaleAction();
-    void viewGoToAction();
     void optionsChannelsAction();
     void optionsChangeCreationType();
     void optionsShowEventsAction();

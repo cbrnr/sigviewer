@@ -23,10 +23,16 @@ protected:
     //-------------------------------------------------------------------------
     virtual void evaluateEnabledness ();
 
+private slots:
+    //-------------------------------------------------------------------------
+    void goTo ();
+
+
 private:
     static float const ZOOM_FACTOR_ = 2;
     static float const MAX_HORIZONTAL_ZOOM_IN_ = 32;
 
+    static QString const GOTO_;
     static QString const ZOOM_IN_VERTICAL_;
     static QString const ZOOM_OUT_VERTICAL_;
     static QString const ZOOM_IN_HORIZONTAL_;

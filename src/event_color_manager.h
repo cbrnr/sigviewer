@@ -21,17 +21,17 @@ public:
     void loadSettings();
     void saveSettings();
 
-    const QColor& getEventColor (EventID id) const;
-    void setEventColor (EventID id, const QColor& color);
+    const QColor& getEventColor (EventType type) const;
+    void setEventColor (EventType type, const QColor& color);
 
 private:
-    typedef QMap<EventID, QColor> Int2ColorMap;
+    typedef QMap<EventType, QColor> EventColorMap;
 
     // not allowed
     EventColorManager(const EventColorManager& src);
     const EventColorManager& operator=(const EventColorManager& src);
 
-    Int2ColorMap event_type2color_;
+    EventColorMap event_type2color_;
 };
 
 } // namespace BioSig_

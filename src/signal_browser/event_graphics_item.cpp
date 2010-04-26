@@ -1,7 +1,7 @@
 #include "event_graphics_item.h"
 
 #include "signal_browser_model_4.h"
-#include "resize_event_undo_command.h"
+#include "../editing_commands/resize_event_undo_command.h"
 #include "event_context_menu.h"
 #include "../base/signal_event.h"
 
