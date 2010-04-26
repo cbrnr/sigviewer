@@ -61,20 +61,6 @@ void AdaptEventViewGuiCommand::trigger (QString const& action_name)
         gotoAndSelectEvent (false);
 }
 
-//-----------------------------------------------------------------------------
-void AdaptEventViewGuiCommand::applicationStateChanged (ApplicationState state)
-{
-    app_state_ = state;
-    updateEnabledness ();
-}
-
-//-------------------------------------------------------------------------
-void AdaptEventViewGuiCommand::tabSelectionStateChanged (TabSelectionState state)
-{
-    tab_sec_state_ = state;
-    updateEnabledness ();
-}
-
 //-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::hideEventsOfOtherType ()
 {
@@ -99,6 +85,18 @@ void AdaptEventViewGuiCommand::showAllEvents ()
 }
 
 //-------------------------------------------------------------------------
+void AdaptEventViewGuiCommand::evaluateEnabledness ()
+{
+    if (getApplicationState () == APP_STATE_FILE_OPEN)
+    {
+        emit qActionEnabledChanged (true);
+    }
+    else
+        emit qActionEnabledChanged (false);
+}
+
+
+//-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::fitViewToEvent ()
 {
     QSharedPointer<MainWindowModel> mw_model = ApplicationContext::getInstance()->getMainWindowModel ();
@@ -113,14 +111,14 @@ void AdaptEventViewGuiCommand::fitViewToEvent ()
 
     float32 width = sv_model->getShownSignalWidth ();
     float32 desired_pixel_per_sample = width / event->getDuration ();
-    float32 pixel_per_sample = 1;
-    while (pixel_per_sample < desired_pixel_per_sample)
+    float32 pixel_per_sample = desired_pixel_per_sample;
+/*    while (pixel_per_sample < desired_pixel_per_sample)
         pixel_per_sample *= 2;
     while (pixel_per_sample > desired_pixel_per_sample)
         pixel_per_sample /= 2;
 
     if (pixel_per_sample > 8)
-        pixel_per_sample = 8;
+        pixel_per_sample = 8;*/
 
     sv_model->setPixelPerSample (pixel_per_sample);
     sv_model->updateLayout ();
@@ -160,13 +158,13 @@ void AdaptEventViewGuiCommand::gotoAndSelectEvent (bool forward)
 //-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::updateEnabledness ()
 {
-    if (app_state_ == APP_STATE_NO_FILE_OPEN)
+    if (getApplicationState () == APP_STATE_NO_FILE_OPEN)
     {
         getQAction (FIT_TO_EVENT_)->setEnabled (false);
         return;
     }
 
-    if (tab_sec_state_ == TAB_STATE_NO_EVENT_SELECTED)
+    if (getTabSelectionState () == TAB_STATE_NO_EVENT_SELECTED)
         getQAction (FIT_TO_EVENT_)->setEnabled (false);
     else
         getQAction (FIT_TO_EVENT_)->setEnabled (true);

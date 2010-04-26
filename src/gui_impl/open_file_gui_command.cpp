@@ -46,8 +46,9 @@ void OpenFileGuiCommand::init ()
 }
 
 //-----------------------------------------------------------------------------
-void OpenFileGuiCommand::openFile (QString const& file_path)
+void OpenFileGuiCommand::openFile (QString file_path)
 {
+    file_path = QDir::toNativeSeparators (file_path);
     QSharedPointer<FileSignalReader> file_signal_reader =
             createAndOpenFileSignalReader (file_path);
 
@@ -63,6 +64,8 @@ void OpenFileGuiCommand::openFile (QString const& file_path)
     if (shown_channels.size() == 0)
         return;
 
+    ApplicationContext::getInstance()->setState (APP_STATE_FILE_OPEN);
+
     QSharedPointer<EventManager> event_manager (new EventManagerImpl (file_signal_reader));
     QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
                                                  channel_manager, file_signal_reader));
@@ -77,7 +80,6 @@ void OpenFileGuiCommand::openFile (QString const& file_path)
     signal_visualisation_model->setShownChannels (shown_channels);
     signal_visualisation_model->updateLayout();
     ApplicationContext::getInstance()->addFileContext (file_context);
-    ApplicationContext::getInstance()->setState (APP_STATE_FILE_OPEN);
 }
 
 //-----------------------------------------------------------------------------

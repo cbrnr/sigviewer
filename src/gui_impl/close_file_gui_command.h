@@ -20,20 +20,21 @@ public:
     CloseFileGuiCommand ();
 
     //-------------------------------------------------------------------------
-    virtual ~CloseFileGuiCommand ();
+    virtual ~CloseFileGuiCommand () {}
 
     //-------------------------------------------------------------------------
     virtual void init ();
 
     //-------------------------------------------------------------------------
-    void CloseFile (QString const& file_path);
+    static void closeCurrentFile ();
 
 public slots:
     //-------------------------------------------------------------------------
     virtual void trigger (QString const& action_name);
 
+protected:
     //-------------------------------------------------------------------------
-    virtual void applicationStateChanged (ApplicationState state);
+    virtual void evaluateEnabledness ();
 
 private:
     static GuiActionFactoryRegistrator registrator_;

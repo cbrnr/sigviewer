@@ -25,9 +25,6 @@ public:
 
 public slots:
     //-------------------------------------------------------------------------
-    virtual void trigger (QString const& action_name);
-
-    //-------------------------------------------------------------------------
     void deleteSelectedEvent ();
 
     //-------------------------------------------------------------------------
@@ -44,6 +41,11 @@ public slots:
 
     //-------------------------------------------------------------------------
     void insertEventOverSelectedEvent ();
+
+protected:
+    //-------------------------------------------------------------------------
+    virtual void evaluateEnabledness ();
+
 private:
     void executeCommand (QUndoCommand* command);
 

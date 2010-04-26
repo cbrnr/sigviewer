@@ -19,12 +19,13 @@ public slots:
     //-------------------------------------------------------------------------
     virtual void trigger (QString const& action_name);
 
+protected:
     //-------------------------------------------------------------------------
-    virtual void applicationStateChanged (ApplicationState state);
-
+    virtual void evaluateEnabledness ();
 
 private:
     static float const ZOOM_FACTOR_ = 2;
+    static float const MAX_HORIZONTAL_ZOOM_IN_ = 32;
 
     static QString const ZOOM_IN_VERTICAL_;
     static QString const ZOOM_OUT_VERTICAL_;

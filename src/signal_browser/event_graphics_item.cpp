@@ -41,8 +41,7 @@ EventGraphicsItem::EventGraphicsItem (SignalBrowserModel& model,
   command_executer_ (command_executer),
   state_ (STATE_NONE),
   is_selected_ (false),
-  signal_event_ (signal_event),
-  move_x_diff_ (0)
+  signal_event_ (signal_event)
 {
     // setAcceptHoverEvents (true);
 }
@@ -111,14 +110,14 @@ bool EventGraphicsItem::displaySelectionMenu (QGraphicsSceneMouseEvent* event)
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::updateToSignalEvent ()
 {
-    float64 factor = signal_browser_model_.getPixelPerSample();
+    float64 pixel_per_sample = signal_browser_model_.getPixelPerSample();
     QRectF old_rect;
     if (scene ())
         old_rect = this->sceneBoundingRect();
-    width_ = factor * signal_event_->getDuration() + 0.5;
+    width_ = pixel_per_sample * signal_event_->getDuration() + 0.5;
     if (width_ < 2)
         width_ = 2;
-    int32 x_pos = factor * signal_event_->getPosition() + 0.5;
+    int32 x_pos = pixel_per_sample * signal_event_->getPosition();
     int32 y_pos = 0;
 
     if (signal_event_->getChannel() == UNDEFINED_CHANNEL)
@@ -166,8 +165,6 @@ void EventGraphicsItem::paint (QPainter * painter, const QStyleOptionGraphicsIte
 void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
 {
     event_handling_mutex_.lock();
-
-    move_x_diff_ = 0;
 
     if (state_ != STATE_NONE)
     {
@@ -226,18 +223,6 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
             {
                 addContextMenuEntry ();
                 event->ignore();
-                //setSelected(true);
-                /*state_ = STATE_NONE;
-                QSharedPointer<EventGraphicsItem> old_selected_item
-                    = signal_browser_model_.getSelectedEventItem();
-                if (!(old_selected_item.isNull()))
-                {
-                    old_selected_item->is_selected_ = false;
-                    old_selected_item->update();
-                }
-                is_selected_ = true;
-                signal_browser_model_.setSelectedEventItem(signal_browser_model_.getEventItem(signal_event_->getId()));
-                update();*/
             }
             break;
         default:
@@ -247,28 +232,12 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
 }
 
 //-----------------------------------------------------------------------------
-void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
+void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* mouse_event)
 {
-    QPoint mouse_pos (mouse_event->scenePos().x(), mouse_event->scenePos().y()); // event->canvas_view->inverseWorldMatrix().map(e->pos());
-    move_x_diff_ += (mouse_event->scenePos().x() - mouse_event->lastScenePos().x());
-    int32 diff = 0;
-    if (move_x_diff_ > 0)
-        while (move_x_diff_ > signal_browser_model_.getPixelPerSample())
-        {
-            diff += signal_browser_model_.getPixelPerSample ();
-            move_x_diff_ -= signal_browser_model_.getPixelPerSample ();
-        }
-    else
-    {
-        while (move_x_diff_ < -signal_browser_model_.getPixelPerSample())
-        {
-            diff -= signal_browser_model_.getPixelPerSample ();
-            move_x_diff_ += signal_browser_model_.getPixelPerSample ();
-        }
-    }
+    float32 pixel_per_sample = signal_browser_model_.getPixelPerSample();
+    int32 mouse_pos_rounded = 0.5 + (mouse_event->scenePos().x() / pixel_per_sample);
+    mouse_pos_rounded *= pixel_per_sample;
 
-    float64 factor = 1;
-    factor /= signal_browser_model_.getPixelPerSample();
     switch(state_)
     {
         case STATE_NONE:
@@ -276,24 +245,29 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
         case STATE_MOVE_BEGIN:
             {
                 int32 old_pos = pos().x();
-                int32 new_pos = (((old_pos + diff) * factor) / factor) + 0.5;
-                width_ = (((width_ - (new_pos - old_pos)) * factor) / factor) + 0.5;
-                if (width_ < 2)
-                    width_ = 2;
+                int32 new_pos = mouse_pos_rounded;
+                width_ = width_ - (new_pos - old_pos);
+                if (width_ < 0)
+                    width_ = 0;
                 setPos (new_pos, pos().y());
-                emit mouseAtSecond (static_cast<float>(pos().x())  / (signal_browser_model_.getPixelPerSample() * event_manager_->getSampleRate()));
+                emit mouseAtSecond (static_cast<float>(pos().x())  / (pixel_per_sample * event_manager_->getSampleRate()));
             }
             break;
         case STATE_MOVE_END:
             {
-                width_ = (((width_ + diff) * factor) / factor) + 0.5;
-                if (width_ < 2)
-                    width_ = 2;
+                int32 old_pos_end = pos().x() + width_;
+                int32 diff = mouse_pos_rounded - old_pos_end;
+                width_ = width_ + diff;
+                if (width_ < 0)
+                    width_ = 0;
+
                 if (diff > 0)
-                    scene()->update (mouse_pos.x() - diff - 20, pos().y(), diff + 40, height_);
+                    scene()->update (pos().x() + width_ - diff - 10, pos().y(),
+                                     diff + 20, height_);
                 else
-                    scene()->update (mouse_pos.x() - 20, pos().y(), (-diff) + 40, height_);
-                emit mouseAtSecond (static_cast<float>(pos().x() + width_)  / (signal_browser_model_.getPixelPerSample() * event_manager_->getSampleRate()));
+                    scene()->update (pos().x() + width_ - 10, pos().y(),
+                                     20 - diff, height_);
+                emit mouseAtSecond (static_cast<float>(pos().x() + width_)  / (pixel_per_sample * event_manager_->getSampleRate()));
             }
             break;
         /*case STATE_SHIFT_TO_exportCHANNEL:
@@ -316,33 +290,20 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent * mouse_event)
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
 {
-    QPoint mouse_pos (event->scenePos().x(), event->scenePos().y());
-    float64 factor = 1;
-    factor /= signal_browser_model_.getPixelPerSample();
+    float32 pixel_per_sample = signal_browser_model_.getPixelPerSample();
     switch(state_)
     {
         case STATE_MOVE_BEGIN:
         {
-            int32 diff = 0; //(event->scenePos().x() - event->lastScenePos().x());
-            int32 old_pos = pos().x();
-            int32 new_pos = (((old_pos + diff) * factor) / factor) + 0.5;
-            width_ = (((width_ - (new_pos - old_pos)) * factor) / factor) + 0.5;
-            if (width_ < 2)
-                width_ = 2;
-            setPos (new_pos, pos().y());
-            int32 dur = (factor * width_) + 0.5;
-
-            ResizeEventUndoCommand* command = new ResizeEventUndoCommand (event_manager_, signal_event_->getId(), (new_pos * factor) + 0.5, dur);
+            int32 sample_pos = (static_cast<float32>(pos().x()) / pixel_per_sample) + 0.5;
+            int32 dur = (static_cast<float32>(width_) / pixel_per_sample) + 0.5;
+            ResizeEventUndoCommand* command = new ResizeEventUndoCommand (event_manager_, signal_event_->getId(), sample_pos, dur);
             command_executer_->executeCommand (command);
         }
         break;
         case STATE_MOVE_END:
         {
-            int32 diff = (event->pos().x() - event->lastPos().x());
-            width_ = (((width_ + diff) * factor) / factor) + 0.5;
-            if (width_ < 2)
-                width_ = 2;
-            int32 dur = (factor * width_) + 0.5;
+            int32 dur = (static_cast<float32>(width_) / pixel_per_sample) + 0.5;
             ResizeEventUndoCommand* command = new ResizeEventUndoCommand (event_manager_, signal_event_->getId(), signal_event_->getPosition(), dur);
             command_executer_->executeCommand (command);
         }

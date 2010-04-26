@@ -24,8 +24,13 @@ public slots:
     //-------------------------------------------------------------------------
     virtual void trigger (QString const& action_name);
 
+protected:
     //-------------------------------------------------------------------------
-    virtual void applicationStateChanged (ApplicationState state);
+    virtual void applicationStateChanged ();
+
+    //-------------------------------------------------------------------------
+    virtual void evaluateEnabledness ();
+
 
 private:
     static QString const NEW_MODE_TEXT_;

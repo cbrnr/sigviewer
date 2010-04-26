@@ -20,9 +20,9 @@ GuiActionCommand::GuiActionCommand (QStringList const& action_ids)
         assert (connect (connectors_.last (), SIGNAL(triggered(QString const&)), SLOT(trigger(QString const&))));
         assert (action_map_[*iter]->connect (this, SIGNAL(qActionEnabledChanged(bool)), SLOT(setEnabled (bool))));
         assert (connect (ApplicationContext::getInstance().data(), SIGNAL(stateChanged(ApplicationState)),
-                          SLOT(applicationStateChanged(ApplicationState))));
+                          SLOT(updateEnablednessToApplicationState(ApplicationState))));
         assert (connect (ApplicationContext::getInstance().data(), SIGNAL(currentTabSelectionStateChanged(TabSelectionState)),
-                          SLOT(tabSelectionStateChanged (TabSelectionState))));
+                          SLOT(updateEnablednessToTabSelectionState (TabSelectionState))));
     }
 }
 
@@ -49,6 +49,22 @@ QAction* GuiActionCommand::getQAction (QString const& id)
 }
 
 //-----------------------------------------------------------------------------
+void GuiActionCommand::updateEnablednessToApplicationState (ApplicationState state)
+{
+    app_state_ = state;
+    applicationStateChanged ();
+    evaluateEnabledness ();
+}
+
+//-----------------------------------------------------------------------------
+void GuiActionCommand::updateEnablednessToTabSelectionState (TabSelectionState state)
+{
+    tab_sec_state_ = state;
+    evaluateEnabledness ();
+}
+
+
+//-----------------------------------------------------------------------------
 void GuiActionCommand::resetActionTriggerSlot (QString const& action_id,
                                               const char* slot)
 {
@@ -57,7 +73,5 @@ void GuiActionCommand::resetActionTriggerSlot (QString const& action_id,
     action->disconnect (SIGNAL(triggered()));
     assert (connect (action, SIGNAL(triggered()), slot));
 }
-
-
 
 }

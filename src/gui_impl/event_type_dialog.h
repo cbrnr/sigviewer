@@ -3,7 +3,7 @@
 #ifndef EVENT_TYPE_DIALOG_H
 #define EVENT_TYPE_DIALOG_H
 
-#include "base/user_types.h"
+#include "../base/user_types.h"
 
 #include <QList>
 #include <qdialog.h>

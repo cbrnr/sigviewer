@@ -103,8 +103,6 @@ private:
     bool is_selected_;
     QSharedPointer<SignalEvent const> signal_event_;
 
-    float32 move_x_diff_;
-
     static int move_mouse_range_;
     static QMutex event_handling_mutex_;
 

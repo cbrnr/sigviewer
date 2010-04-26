@@ -31,13 +31,13 @@ public:
 
 public slots:
     //-------------------------------------------------------------------------
-    virtual void trigger (QString const& action_name) = 0;
+    virtual void trigger (QString const&) {}
 
     //-------------------------------------------------------------------------
-    virtual void applicationStateChanged (ApplicationState) {}
+    void updateEnablednessToApplicationState (ApplicationState state);
 
     //-------------------------------------------------------------------------
-    virtual void tabSelectionStateChanged (TabSelectionState) {}
+    void updateEnablednessToTabSelectionState (TabSelectionState state);
 
     //-------------------------------------------------------------------------
     QAction* getQAction (QString const& id);
@@ -53,9 +53,24 @@ protected:
     //-------------------------------------------------------------------------
     void resetActionTriggerSlot (QString const& action_id, const char* slot);
 
+    //-------------------------------------------------------------------------
+    virtual void applicationStateChanged () {}
+
+    //-------------------------------------------------------------------------
+    virtual void evaluateEnabledness () {}
+
+    //-------------------------------------------------------------------------
+    ApplicationState getApplicationState () const {return app_state_;}
+
+    //-------------------------------------------------------------------------
+    TabSelectionState getTabSelectionState () const {return tab_sec_state_;}
+
 private:
     QMap<QString, QAction*> action_map_;
     QList<ActionConnector*> connectors_;
+
+    ApplicationState app_state_;
+    TabSelectionState tab_sec_state_;
 };
 
 class ActionConnector : public QObject

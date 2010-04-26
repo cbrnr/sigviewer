@@ -73,20 +73,21 @@ void MouseModeGuiCommand::trigger (QString const& action_name)
     sv_model->setMode (action_to_mode_map_[action_name]);
 }
 
-//-----------------------------------------------------------------------------
-void MouseModeGuiCommand::applicationStateChanged (ApplicationState state)
+//-------------------------------------------------------------------------
+void MouseModeGuiCommand::evaluateEnabledness ()
 {
-    QList<QAction*> actions = getQActions ();
+    if (getApplicationState () == APP_STATE_FILE_OPEN)
+        emit qActionEnabledChanged (true);
+    else
+        emit qActionEnabledChanged (false);
+}
 
-    if (state == APP_STATE_NO_FILE_OPEN)
-        foreach (QAction* action, actions)
-            action->setEnabled (false);
-    else if (state == APP_STATE_FILE_OPEN)
-    {
-        foreach (QAction* action, actions)
-            action->setEnabled (true);
+
+//-----------------------------------------------------------------------------
+void MouseModeGuiCommand::applicationStateChanged ()
+{
+    if (getApplicationState () == APP_STATE_FILE_OPEN)
         getQAction (HAND_MODE_TEXT_)->setChecked (true);
-    }
 }
 
 

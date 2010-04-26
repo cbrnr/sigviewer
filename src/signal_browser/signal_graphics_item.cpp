@@ -157,21 +157,26 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     float32 pixel_per_sample = signal_browser_model_.getPixelPerSample();
 
-    float32 last_x = clip.x () - 10.0f;
+    float32 last_x = clip.x () - pixel_per_sample;
     if (last_x < 0)
         last_x = 0;
     unsigned start_sample = last_x / pixel_per_sample;
+    if (start_sample > 0)
+        start_sample--;
 
-    unsigned length = (clip.width() + 20.0f);
+    unsigned length = ((clip.x() - start_sample * pixel_per_sample)
+                       + clip.width() + pixel_per_sample);
     if (last_x + length > width_)
         length = width_ - last_x;
 
     length /= pixel_per_sample;
+    if (length < channel_manager_->getNumberSamples() - start_sample)
+        length++;
 
     QSharedPointer<DataBlock const> data_block = channel_manager_->getData (id_, start_sample, length);
 
-    bool last_valid = false;
-    float32 last_y = 0;
+    last_x = start_sample * pixel_per_sample;
+    float32 last_y = (*data_block)[0];
     float32 new_y = 0;
 
     painter->translate (0, height_ / 2.0f);  
@@ -180,14 +185,11 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     painter->setPen(Qt::darkBlue);
 
     for (unsigned index = 0;
-         index < data_block->size();
+         index < data_block->size() - 1;
          index++)
     {
-        new_y = (*data_block)[index];
-        if (last_valid)
-            painter->drawLine(last_x, y_offset_ - (y_zoom_ * last_y), last_x + pixel_per_sample, y_offset_ - (y_zoom_ * new_y));
-        else
-            last_valid = true;
+        new_y = (*data_block)[index+1];
+        painter->drawLine(last_x, y_offset_ - (y_zoom_ * last_y), last_x + pixel_per_sample, y_offset_ - (y_zoom_ * new_y));
 
         last_x += pixel_per_sample;
         last_y = new_y;
@@ -239,23 +241,32 @@ void SignalGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* event)
     }
     else if (new_event_)
     {
-        float old_width = new_signal_event_->getDuration();
-        float pos = event->scenePos().x();
-        if (pos < new_signal_event_->getPosition())
-            pos = new_signal_event_->getPosition();
-        float new_event_width = pos - new_signal_event_->getPosition();
+        float32 pixel_per_sample = signal_browser_model_.getPixelPerSample ();
+        int32 sample_cleaned_pos = event->scenePos().x() / pixel_per_sample + 0.5;
+        sample_cleaned_pos *= pixel_per_sample;
+        int32 new_event_width = new_signal_event_->getDuration ();
+        uint32 old_pos = new_signal_event_->getPosition ();
+        uint32 old_width = new_signal_event_->getDuration ();
+
+        if (sample_cleaned_pos < new_signal_event_reference_x_)
+        {
+            new_event_width += new_signal_event_->getPosition() - sample_cleaned_pos;
+            new_signal_event_->setPosition (sample_cleaned_pos);
+        }
+        else
+            new_event_width = sample_cleaned_pos - new_signal_event_->getPosition();
+
         if (new_event_width < 0)
             new_event_width = 0;
-        if (old_width < new_event_width)
-            update (new_signal_event_->getPosition() + old_width, 0,
-                    new_event_width - old_width, height_);
-        else
-            update (new_signal_event_->getPosition() + new_event_width, 0,
-                    old_width - new_event_width, height_);
 
-        new_signal_event_->setDuration(new_event_width);
-        emit mouseAtSecond (pos / (signal_browser_model_.getPixelPerSample() *
-                                   channel_manager_->getSampleRate()));
+        new_signal_event_->setDuration (new_event_width);
+
+        int32 update_start = std::min(old_pos, new_signal_event_->getPosition());
+        int32 update_end = std::max(old_pos + old_width, new_event_width + new_signal_event_->getPosition ());
+        update (update_start, 0, update_end - update_start, height_);
+
+        emit mouseAtSecond (sample_cleaned_pos / pixel_per_sample *
+                                   channel_manager_->getSampleRate());
     }
     else
         event->ignore();
@@ -283,13 +294,16 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
             if (signal_browser_model_.getShownEventTypes ().size() == 0)
                 break;
 
+            float32 pixel_per_sample = signal_browser_model_.getPixelPerSample ();
+            int32 sample_cleaned_pos = event->scenePos().x() / pixel_per_sample + 0.5;
+            sample_cleaned_pos *= pixel_per_sample;
             new_event_ = true;
-            new_signal_event_ = QSharedPointer<SignalEvent>(new SignalEvent(event->scenePos().x(),
+            new_signal_event_ = QSharedPointer<SignalEvent>(new SignalEvent(sample_cleaned_pos,
                                                                             signal_browser_model_.getActualEventCreationType(),
                                                                             event_manager_->getSampleRate(),
-                                                                            id_,
-                                                                            0));
+                                                                            id_));
             new_event_color_ = ApplicationContext::getInstance()->getEventColorManager()->getEventColor(signal_browser_model_.getActualEventCreationType());
+            new_signal_event_reference_x_ = sample_cleaned_pos;
             emit mouseMoving (true);
             break;
         }

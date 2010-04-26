@@ -26,7 +26,7 @@ public:
     virtual void init ();
 
     //-------------------------------------------------------------------------
-    static void openFile (QString const& file_path);
+    static void openFile (QString file_path);
 
 public slots:
     //-------------------------------------------------------------------------

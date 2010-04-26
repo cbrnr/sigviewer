@@ -27,16 +27,14 @@ public slots:
     virtual void trigger (QString const& action_name);
 
     //-------------------------------------------------------------------------
-    virtual void applicationStateChanged (ApplicationState state);
-
-    //-------------------------------------------------------------------------
-    virtual void tabSelectionStateChanged (TabSelectionState state);
-
-    //-------------------------------------------------------------------------
     void hideEventsOfOtherType ();
 
     //-------------------------------------------------------------------------
     void showAllEvents ();
+
+protected:
+    //-------------------------------------------------------------------------
+    virtual void evaluateEnabledness ();
 
 private:
     //-------------------------------------------------------------------------
@@ -47,9 +45,6 @@ private:
 
     //-------------------------------------------------------------------------
     void updateEnabledness ();
-
-    ApplicationState app_state_;
-    TabSelectionState tab_sec_state_;
 
     static QString const FIT_TO_EVENT_;
     static QString const HIDE_EVENTS_OF_OTHER_TYPE_;

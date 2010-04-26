@@ -17,12 +17,6 @@ CloseFileGuiCommand::CloseFileGuiCommand ()
 }
 
 //-----------------------------------------------------------------------------
-CloseFileGuiCommand::~CloseFileGuiCommand ()
-{
-    // nothing to do here
-}
-
-//-----------------------------------------------------------------------------
 void CloseFileGuiCommand::init ()
 {
     getQActions().first()->setShortcut (QKeySequence::Close);
@@ -30,8 +24,8 @@ void CloseFileGuiCommand::init ()
 }
 
 
-//-----------------------------------------------------------------------------
-void CloseFileGuiCommand::trigger (QString const&)
+//-------------------------------------------------------------------------
+void CloseFileGuiCommand::closeCurrentFile ()
 {
     QSharedPointer<FileContext> current_file_context =
             ApplicationContext::getInstance()->getCurrentFileContext();
@@ -56,14 +50,20 @@ void CloseFileGuiCommand::trigger (QString const&)
     ApplicationContext::getInstance()->setState (APP_STATE_NO_FILE_OPEN);
 }
 
+
 //-----------------------------------------------------------------------------
-void CloseFileGuiCommand::applicationStateChanged (ApplicationState state)
+void CloseFileGuiCommand::trigger (QString const&)
 {
-    if (state == APP_STATE_NO_FILE_OPEN)
+    closeCurrentFile ();
+}
+
+//-------------------------------------------------------------------------
+void CloseFileGuiCommand::evaluateEnabledness ()
+{
+    if (getApplicationState () == APP_STATE_NO_FILE_OPEN)
         emit qActionEnabledChanged (false);
     else
         emit qActionEnabledChanged (true);
 }
-
 
 } // namespace BioSig_

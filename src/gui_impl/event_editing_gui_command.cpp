@@ -67,12 +67,6 @@ void EventEditingGuiCommand::init ()
 }
 
 //-----------------------------------------------------------------------------
-void EventEditingGuiCommand::trigger (QString const&)
-{
-
-}
-
-//-----------------------------------------------------------------------------
 void EventEditingGuiCommand::deleteSelectedEvent ()
 {
     EventID event = GuiHelper::getSelectedEventID ();
@@ -190,6 +184,28 @@ void EventEditingGuiCommand::insertEventOverSelectedEvent ()
                                                              1);
     executeCommand (new_event_command);
 }
+
+//-------------------------------------------------------------------------
+void EventEditingGuiCommand::evaluateEnabledness ()
+{
+    if (getApplicationState () == APP_STATE_FILE_OPEN)
+    {
+        if (getTabSelectionState () == TAB_STATE_NO_EVENT_SELECTED)
+            emit qActionEnabledChanged (false);
+        else
+        {
+            emit qActionEnabledChanged (true);
+            if (getTabSelectionState () == TAB_STATE_EVENT_SELECTED_ALL_CHANNELS)
+            {
+                getQAction (TO_ALL_CHANNEL_)->setEnabled (false);
+                getQAction (COPY_TO_CHANNELS_)->setEnabled (false);
+            }
+        }
+    }
+    else
+        emit qActionEnabledChanged (false);
+}
+
 
 //-------------------------------------------------------------------------
 void EventEditingGuiCommand::executeCommand (QUndoCommand* command)
