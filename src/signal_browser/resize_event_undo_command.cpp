@@ -10,16 +10,9 @@ ResizeEventUndoCommand::ResizeEventUndoCommand (QSharedPointer<EventManager> eve
                                                 uint32 new_start_position,
                                                 uint32 new_duration)
 : event_manager_ (event_manager),
-  event_ (event_manager->getAndLockEventForEditing (id)),
+  event_id_ (id),
   new_start_position_ (new_start_position),
   new_duration_ (new_duration)
-{
-    old_duration_ = event_->getDuration();
-    old_start_position_ = event_->getPosition();
-}
-
-//-----------------------------------------------------------------------------
-ResizeEventUndoCommand::~ResizeEventUndoCommand ()
 {
     // nothing to do here
 }
@@ -27,17 +20,21 @@ ResizeEventUndoCommand::~ResizeEventUndoCommand ()
 //-----------------------------------------------------------------------------
 void ResizeEventUndoCommand::undo ()
 {
-    event_->setDuration (old_duration_);
-    event_->setPosition (old_start_position_);
-    event_manager_->updateAndUnlockEvent (event_->getId());
+    QSharedPointer<SignalEvent> event = event_manager_->getAndLockEventForEditing (event_id_);
+    event->setDuration (old_duration_);
+    event->setPosition (old_start_position_);
+    event_manager_->updateAndUnlockEvent (event->getId());
 }
 
 //-----------------------------------------------------------------------------
 void ResizeEventUndoCommand::redo ()
 {
-    event_->setDuration (new_duration_);
-    event_->setPosition (new_start_position_);
-    event_manager_->updateAndUnlockEvent (event_->getId());
+    QSharedPointer<SignalEvent> event = event_manager_->getAndLockEventForEditing (event_id_);
+    old_duration_ = event->getDuration();
+    old_start_position_ = event->getPosition();
+    event->setDuration (new_duration_);
+    event->setPosition (new_start_position_);
+    event_manager_->updateAndUnlockEvent (event->getId());
 }
 
 

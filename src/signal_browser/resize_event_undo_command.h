@@ -21,7 +21,7 @@ public:
 
     //-------------------------------------------------------------------------
     /// destructor
-    virtual ~ResizeEventUndoCommand ();
+    virtual ~ResizeEventUndoCommand () {}
 
     //-------------------------------------------------------------------------
     /// undos the resizing
@@ -33,8 +33,8 @@ public:
 
 private:
     QSharedPointer<EventManager> event_manager_;
-    QSharedPointer<SignalEvent> event_;
 
+    EventID event_id_;
     uint32 new_start_position_;
     uint32 new_duration_;
     uint32 old_start_position_;
