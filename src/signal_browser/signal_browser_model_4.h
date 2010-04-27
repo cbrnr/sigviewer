@@ -6,6 +6,7 @@
 #include "../file_context.h"
 #include "../tab_context.h"
 #include "../file_handling/channel_manager.h"
+#include "../file_handling/event_manager.h"
 #include "../gui/signal_visualisation_modes.h"
 #include "event_graphics_item.h"
 
@@ -24,24 +25,20 @@ namespace BioSig_
 class SignalBrowserView;
 class SignalGraphicsItem;
 
-// signal browser model
+//-----------------------------------------------------------------------------
+/// SignalBrowserModel
 class SignalBrowserModel : public AbstractBrowserModel
 {
     Q_OBJECT
-
 public:
-
-    typedef QList<uint16> IntList;
-
-    SignalBrowserModel(QSharedPointer<FileContext> file_context,
+    SignalBrowserModel(QSharedPointer<EventManager> event_manager,
+                       QSharedPointer<ChannelManager> channel_manager,
                        QSharedPointer<TabContext> tab_context);
     virtual ~SignalBrowserModel();
 
     virtual void setPixelPerXUnit (float64 pixel_per_sec);
-    virtual float64 getPixelPerXUnit () const;
 
     virtual void setItemsHeight (int32 height);
-
 
     virtual void updateLayout ();
 
@@ -76,26 +73,17 @@ public:
     void setAutoZoomBehaviour (ScaleMode auto_zoom_type);
     ScaleMode getAutoZoomBehaviour () const;
 
-    // channels
     virtual bool setShownChannels (std::set<ChannelID> const& shown_channels);
-    bool isChannelShown(uint32 channel_nr) const;
     virtual std::set<ChannelID> getShownChannels () const;
     std::map<uint32, QString> getShownChannelsWithLabels () const;
     uint32 getNumberShownChannels() const;
     int32 getYPosOfChannel (uint32 channel_nr) const;
 
-    QPointF getViewingPosition ();
-    void setViewingPosition (QPointF topleft);
-
-    // actions
     void zoomInAll();
     void zoomOutAll();
 
     void autoScaleAll();
 
-    void goTo(float32 sec, int32 channel_index);
-
-    // get parameters
     int32 getSignalHeight();
     int32 getSignalSpacing();
     int32 getVisibleWidth();
@@ -106,7 +94,6 @@ public:
 
     // events
     std::set<uint16> getDisplayedEventTypes () const;
-    void setShownEventTypes(const IntList& event_type);
 
     EventGraphicsItem* getSelectedEventItem();
     QSharedPointer<SignalEvent const> getSelectedSignalEvent();
@@ -122,7 +109,7 @@ public slots:
     virtual void removeEventItem (EventID id);
 
 
-    void setEventChanged (EventID id);
+    void updateEvent (EventID id);
 
     virtual void selectEvent (EventID id);
     void unselectEvent ();
@@ -151,6 +138,7 @@ private:
     static uint8 const EVENT_Z = 5;
 
     QSharedPointer<ChannelManager> channel_manager_;
+    QSharedPointer<EventManager> event_manager_;
     QSharedPointer<FileContext> file_context_;
     QSharedPointer<TabContext> tab_context_;
     SignalBrowserView* signal_browser_view_;

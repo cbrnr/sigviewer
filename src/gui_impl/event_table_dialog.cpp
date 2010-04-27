@@ -1,9 +1,6 @@
 // event_table_dialog.cpp
-
 #include "event_table_dialog.h"
 
-#include "file_handling/basic_header.h"
-#include "file_handling/event_manager.h"
 #include "editing_commands/delete_event_undo_command.h"
 #include "editing_commands/macro_undo_command.h"
 
@@ -222,13 +219,12 @@ void EventTableDialog::TableModel::sort(int column, Qt::SortOrder order)
 // constructor
 EventTableDialog::EventTableDialog (QSharedPointer<EventManager> event_manager,
                                     QSharedPointer<CommandExecuter> command_executer,
-                                    QPointer<BasicHeader> basic_header, QWidget* parent)
- : QDialog(parent),
-   event_manager_ (event_manager),
+                                    QSharedPointer<ChannelManager> channel_manager)
+ : event_manager_ (event_manager),
    command_executer_ (command_executer),
-   basic_header_ (basic_header)
+   channel_manager_ (channel_manager)
 {
-    setWindowTitle(tr("Events"));
+    setWindowTitle (tr("Events"));
     QHBoxLayout* top_layout = new QHBoxLayout(this);
     top_layout->setMargin(10);
     top_layout->setSpacing(10);
@@ -307,8 +303,7 @@ void EventTableDialog::buildEventTable()
 
     QList<EventID> event_ids = event_manager_->getAllEvents ();
 
-    int32 number_channels = (int32)basic_header_->getNumberChannels();
-    float64 sample_rate = basic_header_->getEventSamplerate();
+    float64 sample_rate = event_manager_->getSampleRate ();
     event_table_model_->insertRows(0, event_ids.size());
     int32 row_height = event_table_view_->verticalHeader()->sizeHint().height();
 
@@ -342,14 +337,10 @@ void EventTableDialog::buildEventTable()
         else
         {
             tmp = QString("(%1)").arg(event->getChannel() + 1) + " ";
-            if (event->getChannel() < number_channels)
-            {
-                tmp += basic_header_->getChannel(event->getChannel()).getLabel();
-            }
+            if (event->getChannel() != UNDEFINED_CHANNEL)
+                tmp += channel_manager_->getChannelLabel (event->getChannel());
             else
-            {
                 tmp += "???";
-            }
         }
 
         event_table_model_->setData(event_table_model_->index(*id_iter, 3),

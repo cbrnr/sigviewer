@@ -124,7 +124,7 @@ void YAxisWidget::repaintPixmap (int32 channel)
 
     float64 intervall = signal_height_ + signal_spacing_;
     pixmap_drawing_height_ = intervall * channel_nr2signal_graphics_item_.size ();
-    unsigned w = width ();
+    int32 w = width ();
 
     if (pixmap_)
     {

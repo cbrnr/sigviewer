@@ -3,8 +3,10 @@
 #ifndef EVENT_TABLE_DIALOG_H
 #define EVENT_TABLE_DIALOG_H
 
-#include "base/user_types.h"
-#include "command_executer.h"
+#include "../base/user_types.h"
+#include "../command_executer.h"
+#include "../file_handling/event_manager.h"
+#include "../file_handling/channel_manager.h"
 
 #include <qdialog.h>
 #include <QAbstractTableModel>
@@ -17,8 +19,6 @@ class QTableView;
 namespace BioSig_
 {
 
-class BasicHeader;
-class EventManager;
 
 // event table dialog
 class EventTableDialog : public QDialog
@@ -27,7 +27,7 @@ class EventTableDialog : public QDialog
 public:
     EventTableDialog (QSharedPointer<EventManager> event_manager,
                       QSharedPointer<CommandExecuter> command_executer,
-                      QPointer<BasicHeader> basic_header, QWidget* parent = 0);
+                      QSharedPointer<ChannelManager> channel_manager);
 
     void loadSettings();
     void saveSettings();
@@ -91,7 +91,7 @@ private:
 
     QSharedPointer<EventManager> event_manager_;
     QSharedPointer<CommandExecuter> command_executer_;
-    QPointer<BasicHeader> basic_header_;
+    QSharedPointer<ChannelManager> channel_manager_;
     QTableView *event_table_view_;
     TableModel *event_table_model_;
     QPushButton* close_button_;

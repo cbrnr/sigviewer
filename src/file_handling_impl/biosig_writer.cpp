@@ -146,7 +146,7 @@ void BioSigWriter::updateEventTable (HDRTYPE* header, SignalEventVector& event_v
         header->EVENT.POS[header->EVENT.N] = iter->getPosition ();
         header->EVENT.TYP[header->EVENT.N] = iter->getType ();
         header->EVENT.DUR[header->EVENT.N] = iter->getDuration ();
-        if (iter->getChannel() >= -1)
+        if (iter->getChannel() != UNDEFINED_CHANNEL)
                 header->EVENT.CHN[header->EVENT.N] = iter->getChannel () + 1;
         else
                 header->EVENT.CHN[header->EVENT.N] = 0;

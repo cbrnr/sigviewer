@@ -1,18 +1,10 @@
 // signal_browser_model.cpp
-
 #include "signal_browser_model_4.h"
 #include "../file_handling/event_manager.h"
 #include "../file_handling/channel_manager.h"
 #include "signal_browser_view.h"
 #include "signal_graphics_item.h"
-#include "../editing_commands/change_channel_undo_command.h"
-#include "../editing_commands/change_type_undo_command.h"
-#include "../gui_impl/gui_helper_functions.h"
-#include "../editing_commands/new_event_undo_command.h"
-
-#include "../main_window_model_impl.h"
 #include "../event_color_manager.h"
-#include "../file_context.h"
 #include "../base/math_utils.h"
 #include "../base/signal_event.h"
 
@@ -31,12 +23,13 @@ namespace BioSig_
 
 //-----------------------------------------------------------------------------
 // TODO! constructor
-SignalBrowserModel::SignalBrowserModel(QSharedPointer<FileContext> file_context,
+SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manager,
+                                       QSharedPointer<ChannelManager> channel_manager,
                                        QSharedPointer<TabContext> tab_context)
-: AbstractBrowserModel (file_context->getChannelManager()->getSampleRate(),
-                        file_context->getEventManager()->getAllPossibleEventTypes()),
-  channel_manager_ (file_context->getChannelManager ()),
-  file_context_ (file_context),
+: AbstractBrowserModel (channel_manager->getSampleRate(),
+                        event_manager->getAllPossibleEventTypes()),
+  channel_manager_ (channel_manager),
+  event_manager_ (event_manager),
   tab_context_ (tab_context),
   signal_browser_view_ (0),
   selected_event_item_ (0),
@@ -47,19 +40,22 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<FileContext> file_context,
   x_grid_pixel_intervall_(0),
   show_y_grid_(true)
 {
-    QList<EventID> event_ids = file_context_->getEventManager()->getAllEvents();
-    if (id2event_item_.size() == 0)
+    if (!event_manager_.isNull ())
     {
-        for (QList<EventID>::const_iterator event_id_iter = event_ids.begin ();
-             event_id_iter != event_ids.end ();
-             ++event_id_iter)
-        {
-            id2event_item_[*event_id_iter] = new EventGraphicsItem (
-                    *this,
-                    file_context_->getEventManager()->getEvent (*event_id_iter),
-                    file_context_->getEventManager(),
-                    tab_context_);
-        }
+       QList<EventID> event_ids = event_manager_->getAllEvents();
+       if (id2event_item_.size() == 0)
+       {
+           for (QList<EventID>::const_iterator event_id_iter = event_ids.begin ();
+                event_id_iter != event_ids.end ();
+                ++event_id_iter)
+           {
+               id2event_item_[*event_id_iter] = new EventGraphicsItem (
+                       *this,
+                       event_manager_->getEvent (*event_id_iter),
+                       event_manager_,
+                       tab_context_);
+           }
+       }
     }
 }
 
@@ -182,15 +178,15 @@ bool SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
 //-----------------------------------------------------------------------------
 void SignalBrowserModel::addChannel (ChannelID channel_id)
 {
-    if (channel_id >= file_context_->getChannelManager()->getNumberChannels())
+    if (channel_id >= channel_manager_->getNumberChannels())
         return;
 
     SignalGraphicsItem* signal_item
-        = new SignalGraphicsItem (file_context_->getEventManager(),
+        = new SignalGraphicsItem (event_manager_,
                                   tab_context_,
-                                  file_context_->getChannelManager(),
+                                  channel_manager_,
                                   channel_id,
-                                  file_context_->getChannelManager()->getSignalChannel(channel_id),
+                                  channel_manager_->getSignalChannel(channel_id),
                                   *this);
 
     signal_item->connect (this, SIGNAL(signalHeightChanged(uint32)), SLOT(setHeight(uint32)));
@@ -212,12 +208,6 @@ void SignalBrowserModel::removeChannel (ChannelID channel_id)
     signal_browser_view_->removeSignalGraphicsItem (channel_id, sig_iter->second);
     channel2signal_item_.erase (sig_iter);
     delete sig_iter->second;
-}
-
-//-----------------------------------------------------------------------------
-bool SignalBrowserModel::isChannelShown(uint32 channel_nr) const
-{
-    return channel2signal_item_.find(channel_nr) != channel2signal_item_.end();
 }
 
 //-----------------------------------------------------------------------------
@@ -266,22 +256,6 @@ int32 SignalBrowserModel::getYPosOfChannel (uint32 channel_nr) const
     else
         return 0;
 }
-
-//-----------------------------------------------------------------------------
-// get viewing position
-QPointF SignalBrowserModel::getViewingPosition ()
-{
-    return QPointF(static_cast<float>(signal_browser_view_->getVisibleX()) / getPixelPerSample (), signal_browser_view_->getVisibleY());
-}
-
-//-----------------------------------------------------------------------------
-// set viewing position
-void SignalBrowserModel::setViewingPosition (QPointF topleft)
-{
-    signal_browser_view_->goTo(topleft.x() * getPixelPerSample (), topleft.y());
-}
-
-
 
 //-----------------------------------------------------------------------------
 // zoom in all
@@ -335,14 +309,6 @@ void SignalBrowserModel::setPixelPerXUnit(float64 pixel_per_sec)
     pixel_per_sec_ = pixel_per_sec;
 }
 
-// get pixel per sec
-float64 SignalBrowserModel::getPixelPerXUnit() const
-{
-    return pixel_per_sec_;
-}
-
-
-
 // set signal height
 void SignalBrowserModel::setItemsHeight(int32 height)
 {
@@ -359,7 +325,7 @@ int32 SignalBrowserModel::getSignalHeight()
 // update layout
 void SignalBrowserModel::updateLayout()
 {
-    int32 width = file_context_->getChannelManager()->getNumberSamples()
+    int32 width = channel_manager_->getNumberSamples()
                   * getPixelPerSample();
 
     int32 height = (signal_height_  + signal_spacing_) *
@@ -474,7 +440,7 @@ void SignalBrowserModel::selectEvent (EventID id)
 
     EventGraphicsItem* item = event_iter->second;
 
-    if (file_context_->getEventManager()->getEvent(id)->getChannel() ==
+    if (event_manager_->getEvent(id)->getChannel() ==
         UNDEFINED_CHANNEL)
         tab_context_->setSelectionState(TAB_STATE_EVENT_SELECTED_ALL_CHANNELS);
     else
@@ -547,7 +513,7 @@ void SignalBrowserModel::updateEventItemsImpl ()
          event_iter++)
     {
         QSharedPointer<SignalEvent const> event =
-                file_context_->getEventManager()->getEvent(event_iter->first);
+                event_manager_->getEvent(event_iter->first);
         if (!event)
         {
             continue;
@@ -577,19 +543,6 @@ void SignalBrowserModel::updateEventItemsImpl ()
     }
 }
 
-
-//-----------------------------------------------------------------------------
-// goTo
-void SignalBrowserModel::goTo(float32 sec, int32 channel_index)
-{
-    float32 x = sec * getPixelPerSample() / file_context_->getChannelManager()->getSampleRate();
-    float32 y = channel_index < 0 ? signal_browser_view_->getVisibleY()
-                                : channel_index *
-                                  (signal_height_ + signal_spacing_);
-    signal_browser_view_->goTo(x, y);
-    //signal_browser_view_->smoothGoTo (x, y);
-}
-
 //-----------------------------------------------------------------------------
 std::set<uint16> SignalBrowserModel::getDisplayedEventTypes () const
 {
@@ -605,26 +558,17 @@ std::set<uint16> SignalBrowserModel::getDisplayedEventTypes () const
     return present_event_types;
 }
 
-
-//-----------------------------------------------------------------------------
-void SignalBrowserModel::setShownEventTypes(const IntList& event_type)
-{
-    assert (0);
-}
-
-
 //-----------------------------------------------------------------------------
 void SignalBrowserModel::addEventItem (QSharedPointer<SignalEvent const> event)
 {
     EventGraphicsItem* event_item = new EventGraphicsItem(
-            *this, event, file_context_->getEventManager(),
+            *this, event, event_manager_,
             tab_context_);
 
     id2event_item_[event->getId()] = event_item;
     signal_browser_view_->addEventGraphicsItem(event_item);
     event_item->updateToSignalEvent();
     event_item->show();
-    file_context_->setState (FILE_STATE_CHANGED);
 }
 
 //-----------------------------------------------------------------------------
@@ -633,7 +577,6 @@ void SignalBrowserModel::removeEventItem (EventID id)
     if (id2event_item_.find (id) == id2event_item_.end())
         return;
 
-    file_context_->setState (FILE_STATE_CHANGED);
     EventGraphicsItem* event_item = id2event_item_[id];
     id2event_item_.erase (id);
     signal_browser_view_->removeEventGraphicsItem (event_item);
@@ -644,12 +587,11 @@ void SignalBrowserModel::removeEventItem (EventID id)
 
 //-----------------------------------------------------------------------------
 // set event changed
-void SignalBrowserModel::setEventChanged (EventID id)
+void SignalBrowserModel::updateEvent (EventID id)
 {
     if (id2event_item_.find (id) == id2event_item_.end())
         return;
 
-    file_context_->setState (FILE_STATE_CHANGED);
     EventGraphicsItem* event_item = id2event_item_[id];
     event_item->updateToSignalEvent ();
     if (selected_event_item_)

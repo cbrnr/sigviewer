@@ -4,6 +4,8 @@
 #include "base/user_types.h"
 #include "gui/signal_visualisation_model.h"
 
+#include <cassert>
+
 namespace BioSig_
 {
 
@@ -18,7 +20,7 @@ public:
 
     //-------------------------------------------------------------------------
     virtual void setPixelPerXUnit (float64) = 0;
-    virtual float64 getPixelPerXUnit () const = 0;
+    virtual float64 getPixelPerXUnit () const {assert(0);}
 
     virtual void setItemsHeight (int32) = 0;
 

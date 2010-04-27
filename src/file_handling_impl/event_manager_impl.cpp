@@ -76,6 +76,7 @@ void EventManagerImpl::updateAndUnlockEvent (EventID id)
     QMutexLocker locker (caller_mutex_);
     mutex_map_[id]->unlock ();
     emit eventChanged (id);
+    emit changed ();
 }
 
 //-----------------------------------------------------------------------------
@@ -99,6 +100,7 @@ QSharedPointer<SignalEvent const> EventManagerImpl::createEvent (
     mutex_map_[id] = QSharedPointer<QMutex> (new QMutex);
 
     emit eventCreated (new_event);
+    emit changed ();
     return new_event;
 }
 
@@ -113,6 +115,7 @@ void EventManagerImpl::removeEvent (EventID id)
     event_map_.remove (id);
     mutex_map_.remove (id);
     emit eventRemoved (id);
+    emit changed ();
 }
 
 //-----------------------------------------------------------------------------

@@ -24,7 +24,6 @@
 namespace BioSig_
 {
 
-class SignalBrowserModel;
 class SignalEvent;
 
 class EventInfoWidget : public QWidget
@@ -34,8 +33,7 @@ class EventInfoWidget : public QWidget
 public:
     EventInfoWidget(QWidget* parent,
                     QSharedPointer<EventManager> event_manager,
-                    QSharedPointer<CommandExecuter> command_executer,
-                    QSharedPointer<SignalBrowserModel> signal_browser_model);
+                    QSharedPointer<CommandExecuter> command_executer);
     virtual ~EventInfoWidget ();
 
 public slots:
@@ -51,8 +49,6 @@ private:
     void setSelfUpdating (bool self_updating);
     bool isSelfUpdating ();
 
-
-    QSharedPointer<SignalBrowserModel> signal_browser_model_;
     QSharedPointer<EventManager> event_manager_;
     QSharedPointer<CommandExecuter> command_executer_;
     std::map<uint16, QString> shown_event_types_;
@@ -61,7 +57,6 @@ private:
 
     QList<QWidget*> disabled_widgets_if_nothing_selected_;
     QMap<int32, QSharedPointer<SignalEvent const> > hovered_events_;
-
 
     QDoubleSpinBox* duration_spinbox_;
     QLabel* start_label_;

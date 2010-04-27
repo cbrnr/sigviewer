@@ -62,7 +62,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     hideable_widgets_["Channel Labels"] = label_widget_;
 
     event_info_widget_ = new EventInfoWidget (this, event_manager,
-                                              command_executer, signal_browser_model);
+                                              command_executer);
     hideable_widgets_["Event Toolbar"] = event_info_widget_;
 
     connect(horizontal_scrollbar_, SIGNAL(valueChanged(int)),

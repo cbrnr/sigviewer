@@ -1,5 +1,6 @@
 #include "event_editing_gui_command.h"
 #include "gui_helper_functions.h"
+#include "event_table_dialog.h"
 #include "../application_context.h"
 #include "../editing_commands/delete_event_undo_command.h"
 #include "../editing_commands/change_type_undo_command.h"
@@ -19,13 +20,15 @@ QString const EventEditingGuiCommand::CHANGE_CHANNEL_ = "Change Channel...";
 QString const EventEditingGuiCommand::TO_ALL_CHANNEL_ = "To all Channels";
 QString const EventEditingGuiCommand::COPY_TO_CHANNELS_ = "Copy to Channels...";
 QString const EventEditingGuiCommand::INSERT_OVER_ = "Insert Over";
+QString const EventEditingGuiCommand::SHOW_EVENT_TABLE_DIALOG_ = "Event Table...";
 QStringList const EventEditingGuiCommand::ACTIONS_ = QStringList () <<
                                                      EventEditingGuiCommand::DELETE_ <<
                                                      EventEditingGuiCommand::CHANGE_TYPE_ <<
                                                      EventEditingGuiCommand::CHANGE_CHANNEL_ <<
                                                      EventEditingGuiCommand::TO_ALL_CHANNEL_ <<
                                                      EventEditingGuiCommand::COPY_TO_CHANNELS_ <<
-                                                     EventEditingGuiCommand::INSERT_OVER_;
+                                                     EventEditingGuiCommand::INSERT_OVER_ <<
+                                                     EventEditingGuiCommand::SHOW_EVENT_TABLE_DIALOG_;
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator EventEditingGuiCommand::registrator_ ("Event Editing",
@@ -55,6 +58,7 @@ void EventEditingGuiCommand::init ()
     resetActionTriggerSlot (TO_ALL_CHANNEL_, SLOT (toAllChannelsSelectedEvent()));
     resetActionTriggerSlot (COPY_TO_CHANNELS_, SLOT (copyToChannelsSelectedEvent()));
     resetActionTriggerSlot (INSERT_OVER_, SLOT (insertEventOverSelectedEvent()));
+    resetActionTriggerSlot (SHOW_EVENT_TABLE_DIALOG_, SLOT (showEventTableDialog()));
 
     getQAction (DELETE_)->setIcon (QIcon(":/images/icons/editdelete.png"));
     getQAction (CHANGE_TYPE_)->setIcon (QIcon (":/images/change_type_22x22.png"));
@@ -184,6 +188,21 @@ void EventEditingGuiCommand::insertEventOverSelectedEvent ()
                                                              1);
     executeCommand (new_event_command);
 }
+
+//-------------------------------------------------------------------------
+void EventEditingGuiCommand::showEventTableDialog ()
+{
+    QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager ();
+    QSharedPointer<ChannelManager> channel_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getChannelManager ();
+    QSharedPointer<CommandExecuter> command_executer = ApplicationContext::getInstance()->getCurrentCommandExecuter();
+
+    EventTableDialog event_table_dialog (event_manager, command_executer,
+                                         channel_manager);
+    event_table_dialog.loadSettings();
+    event_table_dialog.exec ();
+    event_table_dialog.saveSettings();
+}
+
 
 //-------------------------------------------------------------------------
 void EventEditingGuiCommand::evaluateEnabledness ()

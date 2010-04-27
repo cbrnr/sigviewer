@@ -89,7 +89,6 @@ private:
     QToolBar* navigation_toolbar_;
 
     QAction* calculate_frequency_spectrum_action_;
-    QAction* calculate_erd_ers_map_action_;
     QAction* help_log_action_;
     QAction* help_about_action_;
 

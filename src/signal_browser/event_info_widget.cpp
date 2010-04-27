@@ -1,12 +1,10 @@
 #include "event_info_widget.h"
 
-#include "signal_browser_model_4.h"
 #include "../editing_commands/change_type_undo_command.h"
 #include "../editing_commands/new_event_undo_command.h"
 #include "../editing_commands/resize_event_undo_command.h"
 #include "../command_executer.h"
 #include "../file_handling/event_manager.h"
-
 
 #include <QPushButton>
 #include <QAction>
@@ -22,10 +20,8 @@ namespace BioSig_
 //-------------------------------------------------------------------
 EventInfoWidget::EventInfoWidget(QWidget* parent,
                                  QSharedPointer<EventManager> event_manager,
-                                 QSharedPointer<CommandExecuter> command_executer,
-                                 QSharedPointer<SignalBrowserModel> signal_browser_model)
+                                 QSharedPointer<CommandExecuter> command_executer)
     : QWidget (parent),
-      signal_browser_model_ (signal_browser_model),
       event_manager_ (event_manager),
       command_executer_ (command_executer)
 {
@@ -156,7 +152,5 @@ bool EventInfoWidget::isSelfUpdating ()
     QMutexLocker locker (&self_updating_mutex_);
     return self_updating_;
 }
-
-
 
 }

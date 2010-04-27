@@ -39,7 +39,7 @@ private:
     QPixmap* pixmap_;
     unsigned signal_height_;
     unsigned signal_spacing_;
-    unsigned pixmap_drawing_height_;
+    int32 pixmap_drawing_height_;
     int32 y_start_;
 
     QMap<int32, SignalGraphicsItem const*> channel_nr2signal_graphics_item_;

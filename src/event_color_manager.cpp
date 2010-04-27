@@ -82,7 +82,7 @@ void EventColorManager::saveSettings()
          it != event_type2color_.end();
          it++)
     {
-        if (it.key() < 0)
+        if (it.key() == UNDEFINED_EVENT_TYPE)
         {
             continue;
         }

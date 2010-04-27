@@ -92,7 +92,7 @@ uint16 SignalEvent::getType() const
 }
 
 // get channel
-int16 SignalEvent::getChannel() const
+ChannelID SignalEvent::getChannel() const
 {
     return channel_;
 }

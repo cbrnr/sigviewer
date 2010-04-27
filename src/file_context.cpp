@@ -16,7 +16,7 @@ FileContext::FileContext (QString const& file_path_and_name,
       channel_manager_ (channel_manager),
       file_signal_reader_ (file_signal_reader)
 {
-    // nothing to do here
+    connect (event_manager_.data(), SIGNAL(changed()), SLOT(setAsChanged()));
 }
 
 //-----------------------------------------------------------------------------
@@ -79,5 +79,13 @@ void FileContext::setState (FileState state)
     state_ = state;
     emit stateChanged (state_);
 }
+
+//-----------------------------------------------------------------------------
+void FileContext::setAsChanged ()
+{
+    state_ = FILE_STATE_CHANGED;
+    emit stateChanged (state_);
+}
+
 
 } // namespace BioSig_

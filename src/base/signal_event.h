@@ -12,10 +12,8 @@ namespace BioSig_
 class SignalEvent
 {
 public:
-    enum
-    {
-        UNDEFINED_DURATION = 0
-    };
+    static const int32 UNDEFINED_DURATION = 0;
+
 
     enum
     {
@@ -38,7 +36,7 @@ public:
     uint32 getPosition() const;
     float32 getPositionInSec() const;
     uint16 getType() const;
-    int16 getChannel() const;
+    ChannelID getChannel() const;
     uint32 getDuration() const;
     float32 getDurationInSec() const;
     float32 getEndInSec () const;
@@ -55,7 +53,7 @@ private:
     uint32 position_;
     float64 sample_rate_;
     uint16 type_;
-    int16 channel_;
+    ChannelID channel_;
     uint32 duration_;
 };
 

@@ -98,7 +98,7 @@ QString EVTWriter::save(FileSignalReader& file_signal_reader,
                               header->EVENT.POS[event_nr] = iter->getPosition ();
                               header->EVENT.TYP[event_nr] = iter->getType ();
                               header->EVENT.DUR[event_nr] = iter->getDuration ();
-                              if (iter->getChannel() >= -1)
+                              if (iter->getChannel() != UNDEFINED_CHANNEL)
                                   header->EVENT.CHN[event_nr] = iter->getChannel () + 1;
                               else
                                   header->EVENT.CHN[event_nr] = 0;

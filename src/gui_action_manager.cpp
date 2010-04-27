@@ -192,9 +192,6 @@ void GUIActionManager::initEditActions ()
     createAction (ACTION_REDO, tr("Redo"), SLOT(redoAction()),
                   tr("Redo last undone command"),
                   QIcon(":/images/icons/redo.png"));
-
-    createAction (ACTION_SHOW_EVENT_TABLE, tr("&Event Table..."),
-                  SLOT(editEventTableAction()), tr("Edit the events in a Table"));
 }
 
 //-----------------------------------------------------------------------------
@@ -290,7 +287,6 @@ void GUIActionManager::initGroups ()
     action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
-    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SHOW_EVENT_TABLE);
 
     // EVENT_CONTEXT_ACTIONS
     action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_SEPARATOR);
@@ -333,7 +329,6 @@ void GUIActionManager::initDisabledStates ()
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_FILE_INFO);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_UNDO);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_REDO);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_SHOW_EVENT_TABLE);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_ZOOM_IN);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_ZOOM_OUT);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_AUTO_SCALE);

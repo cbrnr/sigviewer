@@ -86,6 +86,7 @@ signals:
     void eventChanged (EventID id);
     void eventCreated (QSharedPointer<SignalEvent const> event);
     void eventRemoved (EventID id);
+    void changed ();
 };
 
 } // namespace BioSig_

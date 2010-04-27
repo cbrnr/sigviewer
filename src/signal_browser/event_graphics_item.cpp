@@ -278,7 +278,6 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* mouse_event)
             if (shown_nr != last_shift_shown_nr_)
             {
                 event->setChannel(signal_browser_model_.getChannelNr(shown_nr));
-                signal_browser_model_.setEventChanged(id_);
                 last_shift_shown_nr_ = shown_nr;
             }
             break;*/
@@ -288,7 +287,7 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* mouse_event)
 }
 
 //-----------------------------------------------------------------------------
-void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent * event)
+void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent*)
 {
     float32 pixel_per_sample = signal_browser_model_.getPixelPerSample();
     switch(state_)

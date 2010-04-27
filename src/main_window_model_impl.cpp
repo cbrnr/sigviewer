@@ -19,8 +19,7 @@
 #include "log_dialog.h"
 #include "gui_impl/channel_selection_dialog.h"
 #include "event_time_selection_dialog.h"
-#include "gui_impl/event_type_dialog.h"
-#include "event_table_dialog.h"
+#include "gui_impl/dialogs/event_type_dialog.h"
 #include "settings_dialog.h"
 #include "command_stack.h"
 
@@ -53,7 +52,7 @@
 namespace BioSig_
 {
 
-unsigned const MainWindowModelImpl::NUMBER_RECENT_FILES_ = 8;
+int const MainWindowModelImpl::NUMBER_RECENT_FILES_ = 8;
 
 
 // constructor
@@ -220,15 +219,6 @@ void MainWindowModelImpl::calculateFrequencySpectrumAction ()
         command.execute();
     }
 }
-
-//-----------------------------------------------------------------------------
-void MainWindowModelImpl::calculateERDERSMap ()
-{
-    if (signal_browser_model_.isNull())
-        return;
-
-}
-
 
 //-----------------------------------------------------------------------------
 void MainWindowModelImpl::undoViewAction()
@@ -403,7 +393,7 @@ void MainWindowModelImpl::fileExportEventsAction()
         event_vector.push_back (*event_manager_->getEvent (*events_iter));
 
     // get event types
-    SignalBrowserModel::IntList event_types;
+    EventTypeDialog::IntList event_types;
     FileSignalReader::SignalEventVector::iterator it;
 
     for (it = event_vector.begin(); it != event_vector.end(); it++)
@@ -594,7 +584,7 @@ void MainWindowModelImpl::fileImportEventsAction()
                              file_signal_reader_->getBasicHeader()->getRecordDuration() *
                              file_signal_reader_->getBasicHeader()->getEventSamplerate();
 
-    int32 number_channels = file_signal_reader_->getBasicHeader()->getNumberChannels();
+    uint32 number_channels = file_signal_reader_->getBasicHeader()->getNumberChannels();
 
     for (it = event_vector.begin(); it != event_vector.end(); it++)
     {
@@ -718,18 +708,6 @@ void MainWindowModelImpl::fileExitAction()
     }
 
     QApplication::exit();
-}
-
-//-----------------------------------------------------------------------------
-void MainWindowModelImpl::editEventTableAction ()
-{
-    EventTableDialog event_table_dialog (event_manager_,
-        ApplicationContext::getInstance()->getCurrentFileContext()->getMainTabContext(),
-                                        file_signal_reader_->getBasicHeader(),
-                                        main_window_);
-    event_table_dialog.loadSettings();
-    event_table_dialog.exec();
-    event_table_dialog.saveSettings();
 }
 
 // view zoom in action
@@ -899,7 +877,7 @@ void MainWindowModelImpl::setChanged()
 QSharedPointer<BlocksVisualisationModel> MainWindowModelImpl::createBlocksVisualisationView (QString const& title)
 {
     BlocksVisualisationView* bv_view = new BlocksVisualisationView (tab_widget_);
-    QSharedPointer<BlocksVisualisationModel> bv_model = QSharedPointer<BlocksVisualisationModel> (new BlocksVisualisationModel (bv_view, signal_browser_model_->getPixelPerXUnit (), channel_manager_->getSampleRate()));
+    QSharedPointer<BlocksVisualisationModel> bv_model = QSharedPointer<BlocksVisualisationModel> (new BlocksVisualisationModel (bv_view, 10, channel_manager_->getSampleRate()));
 
     blocks_visualisation_models_.push_back (bv_model);
     int tab_index = tab_widget_->addTab(bv_view, title);
@@ -931,7 +909,9 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
     QSharedPointer<TabContext> tab_context (new TabContext);
     file_ctx->setMainTabContext (tab_context);
 
-    QSharedPointer<SignalBrowserModel> model (new SignalBrowserModel (file_ctx, tab_context));
+    QSharedPointer<SignalBrowserModel> model (new SignalBrowserModel (file_ctx->getEventManager(),
+                                                                      file_ctx->getChannelManager(),
+                                                                      tab_context));
     SignalBrowserView* view = new SignalBrowserView (model, file_ctx->getEventManager(), tab_context, tab_widget_);
 
     int tab_index = tab_widget_->addTab (view, tr("Signal Data"));
@@ -978,7 +958,7 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
     model->connect (file_ctx->getEventManager().data(), SIGNAL(eventRemoved(EventID)),
                                    SLOT(removeEventItem(EventID)));
     model->connect (file_ctx->getEventManager().data(), SIGNAL(eventChanged(EventID)),
-                                   SLOT(setEventChanged(EventID)));
+                                   SLOT(updateEvent(EventID)));
 
 
     return model;
@@ -1023,6 +1003,4 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::getCurrentSignalVi
     return browser_models_[tab_widget_->currentIndex()];
 }
 
-
 } // namespace BioSig_
-

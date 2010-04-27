@@ -108,12 +108,6 @@ void MainWindow::initActions()
     connect(calculate_frequency_spectrum_action_, SIGNAL(triggered()),
             model_.data(), SLOT(calculateFrequencySpectrumAction()));
 
-    calculate_erd_ers_map_action_ = new QAction(tr("Generate ERD/ERS Map"), this);
-    calculate_erd_ers_map_action_->setStatusTip(tr("Calculates ERD/ERS map of selected event type"));
-    calculate_erd_ers_map_action_->setEnabled(false);
-    connect(calculate_erd_ers_map_action_, SIGNAL(triggered()),
-            model_.data(), SLOT(calculateERDERSMap()));
-
     help_log_action_= new QAction(tr("&Log..."), this);
     help_log_action_->setObjectName("help_log_action_");
     help_log_action_->setStatusTip(tr("Log"));

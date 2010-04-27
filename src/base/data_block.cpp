@@ -232,7 +232,7 @@ DataBlock DataBlock::calculateStandardDeviation (std::list<QSharedPointer<DataBl
 }
 
 //-------------------------------------------------------------------------
-DataBlock DataBlock::calculateStandardDeviationImpl (std::list<QSharedPointer<DataBlock const> > const &data_blocks,
+DataBlock DataBlock::calculateStandardDeviationImpl (std::list<QSharedPointer<DataBlock const> > const &,
                                                      DataBlock const &means)
 {
     // waldesel: not implemented yet!!!

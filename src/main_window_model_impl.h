@@ -72,7 +72,6 @@ public slots:
     // actions
     void calculateMeanAction();
     void calculateFrequencySpectrumAction();
-    void calculateERDERSMap ();
     void undoViewAction();
     void redoViewAction();
     void undoAction();
@@ -84,7 +83,6 @@ public slots:
     void fileCloseAction();
     void fileInfoAction();
     void fileExitAction();
-    void editEventTableAction();
     void viewZoomInAction();
     void viewZoomOutAction();
     void viewAutoScaleAction();
@@ -105,7 +103,7 @@ private:
     //-------------------------------------------------------------------------
     bool checkMainWindowPtr(const QString function);
 
-    static unsigned const NUMBER_RECENT_FILES_;
+    static int const NUMBER_RECENT_FILES_;
 
     MainWindow* main_window_;
     QSharedPointer<ApplicationContext> application_context_;

@@ -203,7 +203,7 @@ void BioSigReader::loadEvents(SignalEventVector& event_vector)
             {
                 rev_iter--;
                 if (rev_iter->getType() == start_type &&
-                        rev_iter->getDuration() == SignalEvent::UNDEFINED_DURATION)
+                        rev_iter->getDuration() == 0)
                 {
                     rev_iter->setDuration(iter->position -
                                           rev_iter->getPosition());
