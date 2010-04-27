@@ -9,6 +9,7 @@
 #include <QSet>
 #include <QString>
 #include <QStringList>
+#include <QDebug>
 
 namespace BioSig_
 {
@@ -77,6 +78,7 @@ int8 PrototypeFactory<ElementType>::addPrototype(const QString& name,
     {
         name_set_.insert(name);
         element_map_[name] = element;
+        qDebug() << "PrototypeFactory::addPrototype " << name;
         return PROTOTYPE_REGISTERED;
     }
     else

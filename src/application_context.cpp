@@ -1,5 +1,7 @@
 #include "application_context.h"
 
+#include <QDebug>
+
 namespace BioSig_
 {
 
@@ -25,6 +27,7 @@ ApplicationContext::ApplicationContext ()
 //-------------------------------------------------------------------------
 void ApplicationContext::setImpl (QSharedPointer<ApplicationContextImplInterface> impl)
 {
+    qDebug () << "ApplicationContext::setImpl";
     impl_ = impl;
 }
 

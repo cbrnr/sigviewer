@@ -34,6 +34,7 @@
 #include <QTextStream>
 #include <QTranslator>
 #include <QMutexLocker>
+#include <QDebug>
 
 #include <cmath>
 #include <cassert>
@@ -53,6 +54,7 @@ BioSigReader::BioSigReader() :
     read_data_size_(0),
     buffered_all_channels_ (false)
 {
+    qDebug () << "Constructed BioSigReader";
     // nothing to do here
 }
 
@@ -64,6 +66,7 @@ BioSigReader::BioSigReader (bool) :
        read_data_size_(0),
        buffered_all_channels_ (false)
 {
+    qDebug () << "BioSigReader constructing prototypes";
     FileSignalReaderFactory::getInstance()->addPrototype(".gdf", new BioSigReader ());
     FileSignalReaderFactory::getInstance()->addPrototype(".evt", new BioSigReader ());
     FileSignalReaderFactory::getInstance()->addPrototype(".bdf", new BioSigReader ());

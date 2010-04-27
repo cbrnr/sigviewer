@@ -59,6 +59,7 @@ QString FileSignalReaderFactory::getExtensions()
     {
         extensions = extensions.left(extensions.length() - 1);
     }
+    qDebug () << "FileSignalReaderFactory::getExtensions";
     return extensions;
 }
 

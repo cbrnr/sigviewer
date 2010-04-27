@@ -1,8 +1,8 @@
 // event_table_dialog.cpp
 #include "event_table_dialog.h"
 
-#include "editing_commands/delete_event_undo_command.h"
-#include "editing_commands/macro_undo_command.h"
+#include "../editing_commands/delete_event_undo_command.h"
+#include "../editing_commands/macro_undo_command.h"
 
 #include <QHeaderView>
 #include <QTableView>

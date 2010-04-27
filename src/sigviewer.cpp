@@ -34,6 +34,7 @@
 #include "file_handling_impl/event_table_file_reader.h"
 #include "gui/gui_action_factory.h"
 #include "gui_impl/open_file_gui_command.h"
+#include "file_handling_impl/init_file_handling_impl.h"
 
 #include <stdlib.h>
 
@@ -43,6 +44,7 @@
 #include <QLocale>
 #include <QFile>
 #include <QTextStream>
+#include <QDebug>
 
 #include <iostream>
 
@@ -96,11 +98,11 @@ void removeLogFile()
 // main
 int main(int32 argc, char* argv[])
 {	
-
+    qDebug () << "Starting SigViewer... ";
     QApplication application(argc,argv);
-    removeLogFile();
-    qInstallMsgHandler( myMessageOutput );
-
+    //removeLogFile();
+    //qInstallMsgHandler( myMessageOutput );
+    initFileHandlingImpl ();
     QTranslator qt_translator(0);
     qt_translator.load(QString("qt_") + QLocale::languageToString(QLocale::c().language()) +
                        QString(getenv("QTDIR")) + "/translations");
