@@ -172,6 +172,7 @@ void MainWindow::initMenus()
     file_menu_actions.insert (0, file_recent_files_menu_->menuAction());
     file_menu_ = new QMenu(tr("&File"), this);
     file_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Open File"));
+    file_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Saving"));
     QAction* separator = new QAction (this);
     separator->setSeparator (true);
     file_menu_actions.insert(file_menu_actions.size() - 2, separator);

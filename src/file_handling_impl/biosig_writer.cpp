@@ -30,6 +30,8 @@
 #include <QFile>
 #include <QMutexLocker>
 
+#include <iostream>
+
 namespace BioSig_
 {
 
@@ -58,11 +60,70 @@ FileSignalWriter* BioSigWriter::clone()
     return new BioSigWriter (target_type_);
 }
 
+QString BioSigWriter::newSave (QSharedPointer<ChannelManager> channel_manager,
+                               QSharedPointer<EventManager> event_manager,
+                               QString const& file_path)
+{
+    if (channel_manager.isNull())
+        return "no signals!";
+    unsigned number_events = 0;
+    unsigned length = channel_manager->getNumberSamples();
+    unsigned num_channels = channel_manager->getNumberChannels();
+
+    HDRTYPE* header = constructHDR (channel_manager->getNumberChannels(), number_events);
+    header->TYPE = GDF;
+    header->VERSION = 2;
+    header->NS = num_channels;
+    header->SPR = length;
+    header->NRec = 1;
+    header->SampleRate = channel_manager->getSampleRate();
+    header->FLAG.UCAL = 0;
+    header->FLAG.OVERFLOWDETECTION = 0;
+    header->FLAG.ROW_BASED_CHANNELS = 0;
+
+
+    for (unsigned index = 0; index < num_channels; index++)
+    {
+        header->CHANNEL[index].OnOff = 1;
+        header->CHANNEL[index].GDFTYP = 1;
+        header->CHANNEL[index].SPR = length;
+        header->CHANNEL[index].PhysMin = channel_manager->getMinValue (index);
+        header->CHANNEL[index].PhysMax = channel_manager->getMaxValue (index);
+        header->CHANNEL[index].DigMin = -1;
+        header->CHANNEL[index].DigMax = 1;
+    }
+
+    HDRTYPE* opened_header = sopen (file_path.toStdString().c_str(), "w", header);
+
+    biosig_data_type* raw_data = new biosig_data_type[length * num_channels];
+
+    for (ChannelID channel_id = 0; channel_id < num_channels;
+         ++channel_id)
+    {
+        for (unsigned index = 0; index < length; index++)
+            raw_data[(length * channel_id) + index] = (*(channel_manager->getData (channel_id, index, 1)))[0];
+    }
+
+    std::cout << "will write: " << length * num_channels << std::endl;
+
+    size_t written_blocks = swrite (raw_data, 1, opened_header);
+
+    std::cout << "written: " << written_blocks << std::endl;
+
+    sclose (opened_header);
+
+    return "";
+}
+
+
+
 QString BioSigWriter::save(FileSignalReader& file_signal_reader,
                   SignalEventVector& event_vector,
                   const QString& file_name,
                   bool)
 {
+    // waldesel: the following lines are the old implementation of BioSigWriter
+
     QMutexLocker lock (&mutex_); 
     //return "not implemented yet"; 
     if (file_formats_support_event_saving_.count(target_type_) == 0)

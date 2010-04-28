@@ -21,6 +21,12 @@ public:
 
     virtual FileSignalWriter* clone();
 
+    virtual QString newSave (QSharedPointer<ChannelManager> channel_manager,
+                             QSharedPointer<EventManager> event_manager,
+                             QString const& file_path);
+
+
+
     virtual QString save(FileSignalReader& file_signal_reader,
                       SignalEventVector& event_vector,
                       const QString& file_name,

@@ -4,7 +4,11 @@
 #define FILE_SIGNAL_WRITER_H
 
 #include "file_signal_reader.h"
+#include "event_manager.h"
+#include "channel_manager.h"
 #include "../base/signal_event.h"
+
+
 
 class QTextStream;
 
@@ -21,6 +25,10 @@ public:
     virtual FileSignalWriter* clone() = 0;
 
     void setLogStream(QTextStream* log_stream);
+
+    virtual QString newSave (QSharedPointer<ChannelManager> channel_manager,
+                             QSharedPointer<EventManager> event_manager,
+                             QString const& file_path) {return "not implemented yet!";}
 
     virtual QString save(FileSignalReader& file_signal_reader,
                       SignalEventVector& event_vector,
