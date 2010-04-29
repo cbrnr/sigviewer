@@ -60,6 +60,47 @@ FileSignalWriter* BioSigWriter::clone()
     return new BioSigWriter (target_type_);
 }
 
+//-----------------------------------------------------------------------------
+QString BioSigWriter::saveEvents (QSharedPointer<EventManager> event_manager,
+                                  QString const& file_path)
+{
+    if (file_formats_support_event_saving_.count(target_type_) == 0)
+        return QObject::tr("Can't write events to that file that file type!");
+
+    unsigned number_events = event_manager->getNumberOfEvents ();
+
+    HDRTYPE* header = constructHDR (0, number_events);
+
+    QList<EventID> events = event_manager->getAllEvents();
+    header = sopen (file_path.toStdString().c_str(), "r", header);
+    header->EVENT.N = number_events;
+    header->EVENT.TYP = (typeof(header->EVENT.TYP)) realloc(header->EVENT.TYP,number_events * sizeof(typeof(*header->EVENT.TYP)));
+    header->EVENT.POS = (typeof(header->EVENT.POS)) realloc(header->EVENT.POS,number_events * sizeof(typeof(*header->EVENT.POS)));
+    header->EVENT.CHN = (typeof(header->EVENT.CHN)) realloc(header->EVENT.CHN,number_events * sizeof(typeof(*header->EVENT.CHN)));
+    header->EVENT.DUR = (typeof(header->EVENT.DUR)) realloc(header->EVENT.DUR,number_events * sizeof(typeof(*header->EVENT.DUR)));
+    for (unsigned index = 0; index < number_events; index++)
+    {
+        QSharedPointer<SignalEvent const> event = event_manager->getEvent(events[index]);
+        if (event->getChannel() == UNDEFINED_CHANNEL)
+            header->EVENT.CHN[index] = 0;
+        else
+            header->EVENT.CHN[index] = event->getChannel() + 1;
+        header->EVENT.TYP[index] = event->getType ();
+        header->EVENT.POS[index] = event->getPosition();
+        header->EVENT.DUR[index] = event->getDuration();
+    }
+    std::cout << "flush events: " << sflush_gdf_event_table (header) << std::endl;
+
+    sclose (header);
+    destructHDR (header);
+
+//    sclose (header);
+//    destructHDR (header);
+
+    return "";
+}
+
+
 QString BioSigWriter::newSave (QSharedPointer<ChannelManager> channel_manager,
                                QSharedPointer<EventManager> event_manager,
                                QString const& file_path)
@@ -67,11 +108,16 @@ QString BioSigWriter::newSave (QSharedPointer<ChannelManager> channel_manager,
     if (channel_manager.isNull())
         return "no signals!";
     unsigned number_events = 0;
+
+    if (file_formats_support_event_saving_.count(target_type_) > 0 &&
+        !event_manager.isNull())
+        number_events = event_manager->getNumberOfEvents ();
+
     unsigned length = channel_manager->getNumberSamples();
     unsigned num_channels = channel_manager->getNumberChannels();
 
     HDRTYPE* header = constructHDR (channel_manager->getNumberChannels(), number_events);
-    header->TYPE = GDF;
+    header->TYPE = target_type_;
     header->VERSION = 2;
     header->NS = num_channels;
     header->SPR = length;
@@ -85,23 +131,27 @@ QString BioSigWriter::newSave (QSharedPointer<ChannelManager> channel_manager,
     for (unsigned index = 0; index < num_channels; index++)
     {
         header->CHANNEL[index].OnOff = 1;
-        header->CHANNEL[index].GDFTYP = 1;
+        header->CHANNEL[index].GDFTYP = 2;
         header->CHANNEL[index].SPR = length;
+        header->CHANNEL[index].Off = 0;
         header->CHANNEL[index].PhysMin = channel_manager->getMinValue (index);
         header->CHANNEL[index].PhysMax = channel_manager->getMaxValue (index);
+        QString label = channel_manager->getChannelLabel(index);
+        for (unsigned label_index = 0; label_index < MAX_LENGTH_LABEL && label_index < label.size (); ++label_index)
+            header->CHANNEL[index].Label[label_index] = label.at(label_index).toLatin1();
         header->CHANNEL[index].DigMin = -1;
         header->CHANNEL[index].DigMax = 1;
     }
 
     HDRTYPE* opened_header = sopen (file_path.toStdString().c_str(), "w", header);
-
     biosig_data_type* raw_data = new biosig_data_type[length * num_channels];
 
     for (ChannelID channel_id = 0; channel_id < num_channels;
          ++channel_id)
     {
+        QSharedPointer<DataBlock const> data = channel_manager->getData(channel_id, 0, length);
         for (unsigned index = 0; index < length; index++)
-            raw_data[(length * channel_id) + index] = (*(channel_manager->getData (channel_id, index, 1)))[0];
+            raw_data[(length * channel_id) + index] = (*data)[index];
     }
 
     std::cout << "will write: " << length * num_channels << std::endl;
@@ -110,7 +160,28 @@ QString BioSigWriter::newSave (QSharedPointer<ChannelManager> channel_manager,
 
     std::cout << "written: " << written_blocks << std::endl;
 
+    if (file_formats_support_event_saving_.count(target_type_) > 0 &&
+        number_events > 0)
+    {
+        QList<EventID> events = event_manager->getAllEvents();
+        opened_header->EVENT.N = events.size();
+        opened_header->EVENT.SampleRate = event_manager->getSampleRate();
+        for (unsigned index = 0; index < events.size(); index++)
+        {
+            QSharedPointer<SignalEvent const> event = event_manager->getEvent(events[index]);
+            opened_header->EVENT.TYP[index] = event->getType ();
+            if (event->getChannel() == UNDEFINED_CHANNEL)
+                opened_header->EVENT.CHN[index] = 0;
+            else
+                opened_header->EVENT.CHN[index] = event->getChannel() + 1;
+            opened_header->EVENT.DUR[index] = event->getDuration();
+            opened_header->EVENT.POS[index] = event->getPosition();
+        }
+        std::cout << "flush events: " << sflush_gdf_event_table (opened_header) << std::endl;
+    }
+
     sclose (opened_header);
+    destructHDR (opened_header);
 
     return "";
 }

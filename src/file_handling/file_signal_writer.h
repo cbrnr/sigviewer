@@ -26,6 +26,9 @@ public:
 
     void setLogStream(QTextStream* log_stream);
 
+    virtual QString saveEvents (QSharedPointer<EventManager>,
+                                QString const& file_path) {return file_path;}
+
     virtual QString newSave (QSharedPointer<ChannelManager> channel_manager,
                              QSharedPointer<EventManager> event_manager,
                              QString const& file_path) {return "not implemented yet!";}

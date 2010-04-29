@@ -26,7 +26,7 @@ public:
 
     virtual void enableCaching();
 
-    virtual bool isOpen() {return biosig_header_ ? true : false;}
+    virtual bool isOpen() {return is_open_;}
     virtual void close();
 
     //-------------------------------------------------------------------------
@@ -56,16 +56,18 @@ private:
 
     QString loadFixedHeader(const QString& file_name);
 
-    void doClose();
+    void doClose () const;
 
     QPointer<BasicHeader> basic_header_;
     mutable QMutex mutex_;
     mutable QMutex biosig_access_lock_;
-    HDRTYPE* biosig_header_;
+    mutable HDRTYPE* biosig_header_;
     static double const SAMPLE_RATE_TOLERANCE_;
     mutable biosig_data_type* read_data_;
     mutable uint32 read_data_size_;
     mutable bool buffered_all_channels_;
+    mutable bool events_loaded_;
+    mutable bool is_open_;
     mutable QMap<ChannelID, QSharedPointer<DataBlock const> > channel_map_;
 };
 

@@ -151,6 +151,14 @@ QList<EventID> EventManagerImpl::getAllEvents () const
 }
 
 //-----------------------------------------------------------------------------
+unsigned EventManagerImpl::getNumberOfEvents () const
+{
+    QMutexLocker locker (caller_mutex_);
+    return event_map_.size ();
+}
+
+
+//-----------------------------------------------------------------------------
 std::set<EventType> EventManagerImpl::getAllPossibleEventTypes () const
 {
     QMutexLocker locker (caller_mutex_);

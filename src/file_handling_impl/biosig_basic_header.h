@@ -20,7 +20,8 @@ public:
     virtual QMap<unsigned, QString> getNamesOfUserSpecificEvents () const;
 
 private:
-    HDRTYPE* raw_header_;
+    unsigned number_samples_;
+    QMap<unsigned, QString> user_defined_event_map_;
 };
 
 } // namespace BioSig_

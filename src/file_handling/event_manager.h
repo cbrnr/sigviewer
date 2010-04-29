@@ -70,6 +70,10 @@ public:
     virtual QList<EventID> getAllEvents () const = 0;
 
     //-------------------------------------------------------------------------
+    /// @return amount of events
+    virtual unsigned getNumberOfEvents () const = 0;
+
+    //-------------------------------------------------------------------------
     /// @return set of event_id of all possible event types (even those of
     ///         which no event exists at the moment
     virtual std::set<EventType> getAllPossibleEventTypes () const = 0;

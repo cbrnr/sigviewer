@@ -52,7 +52,9 @@ BioSigReader::BioSigReader() :
     biosig_header_ (0),
     read_data_(0),
     read_data_size_(0),
-    buffered_all_channels_ (false)
+    buffered_all_channels_ (false),
+    events_loaded_ (false),
+    is_open_ (false)
 {
     qDebug () << "Constructed BioSigReader";
     // nothing to do here
@@ -104,7 +106,7 @@ void BioSigReader::close()
 }
 
 //-----------------------------------------------------------------------------
-void BioSigReader::doClose()
+void BioSigReader::doClose () const
 {
     if (biosig_header_)
     {
@@ -124,7 +126,6 @@ QSharedPointer<DataBlock const> BioSigReader::getSignalData (ChannelID channel_i
                                        unsigned length) const
 {
     QMutexLocker lock (&mutex_);
-    assert (biosig_header_);
 
     if (!buffered_all_channels_)
         bufferAllChannels();
@@ -237,6 +238,9 @@ void BioSigReader::loadEvents(SignalEventVector& event_vector)
             }
         }
     }
+    events_loaded_ = true;
+    if (buffered_all_channels_)
+        doClose();
 }
 
 //-----------------------------------------------------------------------------
@@ -334,6 +338,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
             sclose (biosig_header_);
             destructHDR(biosig_header_);
             biosig_header_ = 0;
+            delete c_file_name;
             return "file not supported";
     }
 
@@ -343,6 +348,8 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     //hdr2ascii(biosig_header_,stdout,4);
 
     basic_header_->setFullFileName(c_file_name);
+    delete c_file_name;
+    c_file_name = 0;
 
     basic_header_->setType(GetFileTypeString(biosig_header_->TYPE));
 
@@ -393,7 +400,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         basic_header_->addChannel(channel);
     }
 #endif
-
+    is_open_ = true;
     return "";
 }
 
@@ -447,6 +454,8 @@ void BioSigReader::bufferAllChannels () const
         channel_map_[channel_id] = data_block;
     }
     buffered_all_channels_ = true;
+    if (events_loaded_)
+        doClose();
 }
 
 

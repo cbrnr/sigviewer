@@ -61,6 +61,10 @@ public:
 
     //-------------------------------------------------------------------------
     /// see base class
+    virtual unsigned getNumberOfEvents () const;
+
+    //-------------------------------------------------------------------------
+    /// see base class
     virtual std::set<EventType> getAllPossibleEventTypes () const;
 
     //-------------------------------------------------------------------------

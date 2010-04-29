@@ -25,11 +25,15 @@ public slots:
     //-------------------------------------------------------------------------
     void saveAs ();
 
+    //-------------------------------------------------------------------------
+    void save ();
+
 private:
     //-------------------------------------------------------------------------
 
 
     static QString const SAVE_AS_;
+    static QString const SAVE_;
     static QStringList const ACTIONS_;
 
     static GuiActionFactoryRegistrator registrator_;
