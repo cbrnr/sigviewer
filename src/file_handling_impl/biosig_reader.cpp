@@ -412,12 +412,6 @@ QPointer<BasicHeader> BioSigReader::getBasicHeader ()
 }
 
 //-----------------------------------------------------------------------------
-HDRTYPE* BioSigReader::getRawHeader ()
-{
-    return biosig_header_;
-}
-
-//-----------------------------------------------------------------------------
 void BioSigReader::bufferAllChannels () const
 {
     uint32 length = basic_header_->getNumberOfSamples ();

@@ -4,6 +4,7 @@
 #include "../application_context.h"
 
 #include <QInputDialog>
+#include <QFileDialog>
 
 namespace BioSig_
 {
@@ -166,6 +167,41 @@ std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager> channel_manag
     }
     return selected_channels;
 }
+
+//-----------------------------------------------------------------------------
+QString getFilePathFromSaveAsDialog (QString const& path,
+                                     QString const& extensions,
+                                     bool include_any_extension)
+{
+    QString extension_selection;
+    QStringList ext_list = extensions.split(" ");
+    for (QStringList::iterator it = ext_list.begin();
+         it != ext_list.end();
+         it++)
+    {
+        if (*it != "*.evt")
+        {
+            extension_selection += *it + '\n';
+        }
+    }
+    if (include_any_extension)
+        extension_selection += "*.*";
+    QString selected_extension;
+    QString file_name = QFileDialog::getSaveFileName(0,
+        QObject::tr("Chose file to save as"),
+                                        path, extension_selection,
+                                        &selected_extension);
+    if (selected_extension != "*.*")
+    {
+        selected_extension = selected_extension.mid(1);
+        if(!file_name.endsWith(selected_extension))
+        {
+            file_name += selected_extension;
+        }
+    }
+    return file_name;
+}
+
 
 }
 

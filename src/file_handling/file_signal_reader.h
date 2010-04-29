@@ -7,8 +7,6 @@
 #include "../base/signal_event.h"
 #include "../base/data_block.h"
 
-#include <biosig.h>
-
 #include <QVector>
 #include <QPointer>
 #include <QSharedPointer>
@@ -48,9 +46,6 @@ public:
     virtual void loadEvents(SignalEventVector& event_vector) = 0;
 
     virtual QPointer<BasicHeader> getBasicHeader () = 0;
-
-    virtual HDRTYPE* getRawHeader () {return 0;}
-
 protected:
     FileSignalReader();
 

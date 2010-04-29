@@ -15,32 +15,33 @@ namespace BioSig_
 class BioSigWriter : public FileSignalWriter
 {
 public:
+    //-------------------------------------------------------------------------
     BioSigWriter (FileFormat target_type);
+
+    //-------------------------------------------------------------------------
     BioSigWriter (bool prototype_instance);
+
+    //-------------------------------------------------------------------------
     virtual ~BioSigWriter();
 
+    //-------------------------------------------------------------------------
     virtual FileSignalWriter* clone();
 
     //-------------------------------------------------------------------------
-    virtual QString saveEvents (QSharedPointer<EventManager>,
-                                QString const& file_path);
+    virtual bool supportsSavingEvents () const;
 
     //-------------------------------------------------------------------------
-    virtual QString newSave (QSharedPointer<ChannelManager> channel_manager,
-                             QSharedPointer<EventManager> event_manager,
-                             QString const& file_path);
+    virtual QString saveEventsToSignalFile (QSharedPointer<EventManager>,
+                                            QString const& file_path);
 
+    //-------------------------------------------------------------------------
+    virtual QString save (QSharedPointer<EventManager> event_manager,
+                          QString const& old_file_path,
+                          QString const& file_path);
 
-
-    virtual QString save(FileSignalReader& file_signal_reader,
-                      SignalEventVector& event_vector,
-                      const QString& file_name,
-                      bool save_signals = true);
-    
 private:
     static BioSigWriter prototype_instance_;
-    void updateEventTable (HDRTYPE* header, SignalEventVector& event_vector, double event_sample_rate);
-    
+
     FileFormat target_type_;
     std::set<FileFormat> file_formats_support_event_saving_;
     mutable QMutex mutex_;

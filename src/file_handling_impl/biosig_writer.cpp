@@ -29,15 +29,18 @@
 
 #include <QFile>
 #include <QMutexLocker>
+#include <QMessageBox>
 
 #include <iostream>
 
 namespace BioSig_
 {
 
+//-----------------------------------------------------------------------------
 BioSigWriter BioSigWriter::prototype_instance_ (true);
 
 
+//-----------------------------------------------------------------------------
 BioSigWriter::BioSigWriter(FileFormat target_type)
  : target_type_ (target_type)
 {
@@ -45,23 +48,32 @@ BioSigWriter::BioSigWriter(FileFormat target_type)
     file_formats_support_event_saving_.insert(GDF);
 }
 
+//-----------------------------------------------------------------------------
 BioSigWriter::BioSigWriter (bool)
 {
     FileSignalWriterFactory::getInstance()->addPrototype(".gdf", new BioSigWriter (GDF));
 }
 
 
+//-----------------------------------------------------------------------------
 BioSigWriter::~BioSigWriter()
 {
 }
 
+//-----------------------------------------------------------------------------
 FileSignalWriter* BioSigWriter::clone()
 {
     return new BioSigWriter (target_type_);
 }
 
 //-----------------------------------------------------------------------------
-QString BioSigWriter::saveEvents (QSharedPointer<EventManager> event_manager,
+bool BioSigWriter::supportsSavingEvents () const
+{
+    return file_formats_support_event_saving_.count(target_type_) > 0;
+}
+
+//-----------------------------------------------------------------------------
+QString BioSigWriter::saveEventsToSignalFile (QSharedPointer<EventManager> event_manager,
                                   QString const& file_path)
 {
     if (file_formats_support_event_saving_.count(target_type_) == 0)
@@ -73,6 +85,7 @@ QString BioSigWriter::saveEvents (QSharedPointer<EventManager> event_manager,
 
     QList<EventID> events = event_manager->getAllEvents();
     header = sopen (file_path.toStdString().c_str(), "r", header);
+    header->EVENT.SampleRate = event_manager->getSampleRate();
     header->EVENT.N = number_events;
     header->EVENT.TYP = (typeof(header->EVENT.TYP)) realloc(header->EVENT.TYP,number_events * sizeof(typeof(*header->EVENT.TYP)));
     header->EVENT.POS = (typeof(header->EVENT.POS)) realloc(header->EVENT.POS,number_events * sizeof(typeof(*header->EVENT.POS)));
@@ -89,200 +102,46 @@ QString BioSigWriter::saveEvents (QSharedPointer<EventManager> event_manager,
         header->EVENT.POS[index] = event->getPosition();
         header->EVENT.DUR[index] = event->getDuration();
     }
-    std::cout << "flush events: " << sflush_gdf_event_table (header) << std::endl;
+
+    int error = sflush_gdf_event_table (header);
+    if (error)
+        QMessageBox::critical(0, "Events not saved!!!", QString::number(error));
 
     sclose (header);
     destructHDR (header);
 
-//    sclose (header);
-//    destructHDR (header);
-
     return "";
 }
 
 
-QString BioSigWriter::newSave (QSharedPointer<ChannelManager> channel_manager,
-                               QSharedPointer<EventManager> event_manager,
+//-----------------------------------------------------------------------------
+QString BioSigWriter::save (QSharedPointer<EventManager> event_manager,
+                               QString const& old_file_path,
                                QString const& file_path)
 {
-    if (channel_manager.isNull())
-        return "no signals!";
-    unsigned number_events = 0;
+    HDRTYPE* read_header = sopen (old_file_path.toStdString().c_str(), "r", NULL);
+    uint32 read_data_size = read_header->NS * read_header->NRec * read_header->SPR;
+    biosig_data_type* read_data = new biosig_data_type[read_data_size];
+    sread (read_data, 0, read_data_size, read_header);
 
-    if (file_formats_support_event_saving_.count(target_type_) > 0 &&
-        !event_manager.isNull())
-        number_events = event_manager->getNumberOfEvents ();
+    read_header->TYPE = target_type_;
+    if (target_type_ == GDF)
+        read_header->VERSION = 2;
 
-    unsigned length = channel_manager->getNumberSamples();
-    unsigned num_channels = channel_manager->getNumberChannels();
+    HDRTYPE* write_header = sopen (file_path.toStdString().c_str(), "w", read_header);
+    std::cout << "write NELEM = " << swrite (read_data, read_header->NRec, write_header) << std::endl;
 
-    HDRTYPE* header = constructHDR (channel_manager->getNumberChannels(), number_events);
-    header->TYPE = target_type_;
-    header->VERSION = 2;
-    header->NS = num_channels;
-    header->SPR = length;
-    header->NRec = 1;
-    header->SampleRate = channel_manager->getSampleRate();
-    header->FLAG.UCAL = 0;
-    header->FLAG.OVERFLOWDETECTION = 0;
-    header->FLAG.ROW_BASED_CHANNELS = 0;
+    delete read_data;
 
+    sclose (write_header);
+    sclose (read_header);
 
-    for (unsigned index = 0; index < num_channels; index++)
-    {
-        header->CHANNEL[index].OnOff = 1;
-        header->CHANNEL[index].GDFTYP = 2;
-        header->CHANNEL[index].SPR = length;
-        header->CHANNEL[index].Off = 0;
-        header->CHANNEL[index].PhysMin = channel_manager->getMinValue (index);
-        header->CHANNEL[index].PhysMax = channel_manager->getMaxValue (index);
-        QString label = channel_manager->getChannelLabel(index);
-        for (unsigned label_index = 0; label_index < MAX_LENGTH_LABEL && label_index < label.size (); ++label_index)
-            header->CHANNEL[index].Label[label_index] = label.at(label_index).toLatin1();
-        header->CHANNEL[index].DigMin = -1;
-        header->CHANNEL[index].DigMax = 1;
-    }
+    destructHDR (write_header);
 
-    HDRTYPE* opened_header = sopen (file_path.toStdString().c_str(), "w", header);
-    biosig_data_type* raw_data = new biosig_data_type[length * num_channels];
-
-    for (ChannelID channel_id = 0; channel_id < num_channels;
-         ++channel_id)
-    {
-        QSharedPointer<DataBlock const> data = channel_manager->getData(channel_id, 0, length);
-        for (unsigned index = 0; index < length; index++)
-            raw_data[(length * channel_id) + index] = (*data)[index];
-    }
-
-    std::cout << "will write: " << length * num_channels << std::endl;
-
-    size_t written_blocks = swrite (raw_data, 1, opened_header);
-
-    std::cout << "written: " << written_blocks << std::endl;
-
-    if (file_formats_support_event_saving_.count(target_type_) > 0 &&
-        number_events > 0)
-    {
-        QList<EventID> events = event_manager->getAllEvents();
-        opened_header->EVENT.N = events.size();
-        opened_header->EVENT.SampleRate = event_manager->getSampleRate();
-        for (unsigned index = 0; index < events.size(); index++)
-        {
-            QSharedPointer<SignalEvent const> event = event_manager->getEvent(events[index]);
-            opened_header->EVENT.TYP[index] = event->getType ();
-            if (event->getChannel() == UNDEFINED_CHANNEL)
-                opened_header->EVENT.CHN[index] = 0;
-            else
-                opened_header->EVENT.CHN[index] = event->getChannel() + 1;
-            opened_header->EVENT.DUR[index] = event->getDuration();
-            opened_header->EVENT.POS[index] = event->getPosition();
-        }
-        std::cout << "flush events: " << sflush_gdf_event_table (opened_header) << std::endl;
-    }
-
-    sclose (opened_header);
-    destructHDR (opened_header);
+    if (file_formats_support_event_saving_.count(target_type_))
+        saveEventsToSignalFile (event_manager, file_path);
 
     return "";
-}
-
-
-
-QString BioSigWriter::save(FileSignalReader& file_signal_reader,
-                  SignalEventVector& event_vector,
-                  const QString& file_name,
-                  bool)
-{
-    // waldesel: the following lines are the old implementation of BioSigWriter
-
-    QMutexLocker lock (&mutex_); 
-    //return "not implemented yet"; 
-    if (file_formats_support_event_saving_.count(target_type_) == 0)
-        return "events can't be saved in that file format, please export events";
-
-    HDRTYPE* header = file_signal_reader.getRawHeader();
-    double event_sample_rate = file_signal_reader.getBasicHeader()->getEventSamplerate();
-
-    if (header == 0)
-        return "no biosig header found";
-
-    QString save_file_name = file_name + ".tmp";
-    QString original_file_name =  file_signal_reader.getBasicHeader()->getFullFileName();
-
-    if (original_file_name == file_name)
-    {
-        updateEventTable (header, event_vector, event_sample_rate);
-
-        if (sflush_gdf_event_table(header))
-            return "save event table failed";
-    }
-    else
-    {
-
-        if (target_type_ != header->TYPE)
-            return "conversion of file formats not supported at the moment";
-
-        QFile original_file (original_file_name);
-        original_file.copy (save_file_name);
-
-        HDRTYPE* new_header = sopen (save_file_name.toLocal8Bit ().data(), "r", NULL);
-
-        updateEventTable (new_header, event_vector, event_sample_rate);
-
-        if (sflush_gdf_event_table(new_header))
-        {
-            sclose (new_header); 
-            return "save event table failed";
-        }
-
-        sclose (new_header);
-
-        QFile saved_file (save_file_name);
-        saved_file.rename (file_name);
-        saved_file.close();
-    }
-
-    return "";
-}
-
-void BioSigWriter::updateEventTable (HDRTYPE* header, SignalEventVector& event_vector, double event_sample_rate)
-{
-    header->EVENT.SampleRate = event_sample_rate;
-
-    /* realloc is faster than delete and new  
-    
-    if (header->EVENT.DUR)
-        delete[] header->EVENT.DUR;
-    if (header->EVENT.CHN)
-        delete[] header->EVENT.CHN;
-    if (header->EVENT.TYP)
-        delete[] header->EVENT.TYP;
-    if (header->EVENT.POS)
-        delete[] header->EVENT.POS;
-
-    
-    header->EVENT.POS = new uint32_t [event_vector.size ()];
-    header->EVENT.TYP = new uint16_t [event_vector.size ()];
-    header->EVENT.DUR = new uint32_t [event_vector.size ()];
-    header->EVENT.CHN = new uint16_t [event_vector.size ()];
-    */
-
-    header->EVENT.TYP = (typeof(header->EVENT.TYP)) realloc(header->EVENT.TYP,event_vector.size () * sizeof(typeof(*header->EVENT.TYP)));
-    header->EVENT.POS = (typeof(header->EVENT.POS)) realloc(header->EVENT.POS,event_vector.size () * sizeof(typeof(*header->EVENT.POS)));
-    header->EVENT.CHN = (typeof(header->EVENT.CHN)) realloc(header->EVENT.CHN,event_vector.size () * sizeof(typeof(*header->EVENT.CHN)));
-    header->EVENT.DUR = (typeof(header->EVENT.DUR)) realloc(header->EVENT.DUR,event_vector.size () * sizeof(typeof(*header->EVENT.DUR)));
-
-    header->EVENT.N = 0;
-    for (SignalEventVector::iterator iter = event_vector.begin(); iter != event_vector.end(); ++iter, ++header->EVENT.N)
-    {
-        header->EVENT.POS[header->EVENT.N] = iter->getPosition ();
-        header->EVENT.TYP[header->EVENT.N] = iter->getType ();
-        header->EVENT.DUR[header->EVENT.N] = iter->getDuration ();
-        if (iter->getChannel() != UNDEFINED_CHANNEL)
-                header->EVENT.CHN[header->EVENT.N] = iter->getChannel () + 1;
-        else
-                header->EVENT.CHN[header->EVENT.N] = 0;
-    }
 }
 
 }

@@ -26,17 +26,17 @@ public:
 
     void setLogStream(QTextStream* log_stream);
 
-    virtual QString saveEvents (QSharedPointer<EventManager>,
-                                QString const& file_path) {return file_path;}
+    //-------------------------------------------------------------------------
+    virtual bool supportsSavingEvents () const {return false;}
 
-    virtual QString newSave (QSharedPointer<ChannelManager> channel_manager,
-                             QSharedPointer<EventManager> event_manager,
+    //-------------------------------------------------------------------------
+    virtual QString saveEventsToSignalFile (QSharedPointer<EventManager>,
+                                QString const& file_path) {return "not implemented";}
+
+    //-------------------------------------------------------------------------
+    virtual QString save (QSharedPointer<EventManager> event_manager,
+                             QString const& old_file_path,
                              QString const& file_path) {return "not implemented yet!";}
-
-    virtual QString save(FileSignalReader& file_signal_reader,
-                      SignalEventVector& event_vector,
-                      const QString& file_name,
-                      bool save_signals = true) = 0;
 
 protected: 
     FileSignalWriter();

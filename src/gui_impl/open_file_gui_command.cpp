@@ -64,8 +64,6 @@ void OpenFileGuiCommand::openFile (QString file_path)
     if (shown_channels.size() == 0)
         return;
 
-    ApplicationContext::getInstance()->setState (APP_STATE_FILE_OPEN);
-
     QSharedPointer<EventManager> event_manager (new EventManagerImpl (file_signal_reader));
     QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
                                                  channel_manager, file_signal_reader));
@@ -80,6 +78,7 @@ void OpenFileGuiCommand::openFile (QString file_path)
     signal_visualisation_model->setShownChannels (shown_channels);
     signal_visualisation_model->updateLayout();
     ApplicationContext::getInstance()->addFileContext (file_context);
+    ApplicationContext::getInstance()->setState (APP_STATE_FILE_OPEN);
 }
 
 //-----------------------------------------------------------------------------

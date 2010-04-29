@@ -25,6 +25,13 @@ FileContext::~FileContext ()
     // nothing to do here
 }
 
+//-------------------------------------------------------------------------
+QString FileContext::getFilePath () const
+{
+    QString file_name = getFileName ();
+    return file_path_and_name_.left (file_path_and_name_.length() - file_name.length());
+}
+
 //-----------------------------------------------------------------------------
 QString const& FileContext::getFilePathAndName () const
 {

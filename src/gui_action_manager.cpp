@@ -156,18 +156,6 @@ void GUIActionManager::initFileActions ()
 {
     QStyle* style = QApplication::style ();
 
-    createAction (ACTION_FILE_SAVE, tr("&Save..."), SLOT(fileSaveAction()),
-                  tr("Save signal file"),
-                  QIcon(":/images/icons/filesave.png"));
-
-    createAction (ACTION_FILE_SAVE_AS, tr("Save As..."), SLOT(fileSaveAsAction()),
-                  tr("Save the signal file under a new name"),
-                  QIcon(":/images/icons/filesaveas.png"));
-
-    createAction (ACTION_EXPORT_EVENTS, tr("Export Events..."),
-                  SLOT(fileExportEventsAction()),
-                   tr("Export events to file"));
-
     createAction (ACTION_IMPORT_EVENTS, tr("Import Events..."),
                   SLOT(fileImportEventsAction()),
                   tr("Import events from file"));
@@ -250,8 +238,6 @@ void GUIActionManager::initToolsActions ()
 //-----------------------------------------------------------------------------
 void GUIActionManager::initShortcuts ()
 {
-    setShortCut (ACTION_FILE_SAVE, QKeySequence::Save);
-    setShortCut (ACTION_FILE_SAVE_AS, QKeySequence::SaveAs);
     setShortCut (ACTION_UNDO, QKeySequence::Undo);
     setShortCut (ACTION_REDO, QKeySequence::Redo);
 
@@ -263,11 +249,8 @@ void GUIActionManager::initShortcuts ()
 void GUIActionManager::initGroups ()
 {
     // FILE_MENU_ACTIONS
-    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_FILE_SAVE);
-    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_FILE_SAVE_AS);
     action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_IMPORT_EVENTS);
-    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_EXPORT_EVENTS);
     action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_FILE_INFO);
     action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
@@ -275,8 +258,6 @@ void GUIActionManager::initGroups ()
 
 
     // FILE_TOOLBAR_ACTIONS
-    action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_FILE_SAVE);
-    action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_FILE_SAVE_AS);
     action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_FILE_INFO);
     action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_UNDO);
     action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_REDO);
@@ -322,10 +303,7 @@ void GUIActionManager::initGroups ()
 //-----------------------------------------------------------------------------
 void GUIActionManager::initDisabledStates ()
 {
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_FILE_SAVE);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_FILE_SAVE_AS);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_IMPORT_EVENTS);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_EXPORT_EVENTS);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_FILE_INFO);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_UNDO);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_REDO);
@@ -337,8 +315,6 @@ void GUIActionManager::initDisabledStates ()
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_OPTIONS_CHANGE_EVENT_CREATION_TYPE);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_SHOW_SETTINGS);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_CALCULATE_MEANS);
-
-    file_state_action_map_[FILE_STATE_UNCHANGED].push_back (ACTION_FILE_SAVE);
 
     tab_edit_state_action_map_[TAB_STATE_NO_REDO].push_back (ACTION_REDO);
     tab_edit_state_action_map_[TAB_STATE_NO_UNDO].push_back (ACTION_UNDO);

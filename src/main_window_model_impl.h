@@ -76,9 +76,6 @@ public slots:
     void redoViewAction();
     void undoAction();
     void redoAction();
-    void fileSaveAction();
-    void fileSaveAsAction();
-    void fileExportEventsAction();
     void fileImportEventsAction();
     void fileCloseAction();
     void fileInfoAction();

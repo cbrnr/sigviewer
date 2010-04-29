@@ -34,6 +34,12 @@ std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager> channel_manag
                                     QSharedPointer<SignalVisualisationModel> vis_model
                                     = QSharedPointer<SignalVisualisationModel>(0));
 
+//-----------------------------------------------------------------------------
+QString getFilePathFromSaveAsDialog (QString const& path,
+                                     QString const& extensions,
+                                     bool include_any_extension = false);
+
+
 }
 
 }
