@@ -73,7 +73,7 @@ QSharedPointer<SignalEvent> EventManagerImpl::getAndLockEventForEditing (EventID
 //-----------------------------------------------------------------------------
 void EventManagerImpl::updateAndUnlockEvent (EventID id)
 {
-    QMutexLocker locker (caller_mutex_);
+    //QMutexLocker locker (caller_mutex_);
     mutex_map_[id]->unlock ();
     emit eventChanged (id);
     emit changed ();

@@ -6,6 +6,7 @@ namespace BioSig_
 
 enum TabSelectionState
 {
+    NO_TAB_SELECTION_STATE,
     TAB_STATE_NO_EVENT_SELECTED,
     TAB_STATE_EVENT_SELECTED_ONE_CHANNEL,
     TAB_STATE_EVENT_SELECTED_ALL_CHANNELS
@@ -13,6 +14,7 @@ enum TabSelectionState
 
 enum TabEditState
 {
+    NO_TAB_EDIT_STATE,
     TAB_STATE_NO_REDO,
     TAB_STATE_NO_UNDO,
     TAB_STATE_NO_REDO_NO_UNDO,

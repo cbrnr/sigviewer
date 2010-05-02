@@ -92,7 +92,6 @@ private:
     {
         ACTION_IMPORT_EVENTS,
         ACTION_FILE_INFO,
-        ACTION_EXIT,
         ACTION_SEPARATOR,
         ACTION_UNDO,
         ACTION_REDO,

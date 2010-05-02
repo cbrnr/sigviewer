@@ -26,18 +26,29 @@ public:
     virtual void init ();
 
     //-------------------------------------------------------------------------
-    static void closeCurrentFile ();
+    static bool closeCurrentFile ();
 
 public slots:
     //-------------------------------------------------------------------------
-    virtual void trigger (QString const& action_name);
+    void closeFile ();
+
+    //-------------------------------------------------------------------------
+    void exitApplication ();
+
 
 protected:
     //-------------------------------------------------------------------------
     virtual void evaluateEnabledness ();
 
+
 private:
+    static QString const CLOSE_FILE_;
+    static QString const EXIT_APPLICATION_;
+    static QStringList const ACTIONS_;
+
     static GuiActionFactoryRegistrator registrator_;
+
+
 
     //-------------------------------------------------------------------------
     QString showCloseDialog (QString const& path, QString const& extensions);

@@ -440,28 +440,6 @@ void MainWindowModelImpl::fileInfoAction()
     basic_header_info_dialog.saveSettings();
 }
 
-// file exit action
-void MainWindowModelImpl::fileExitAction()
-{
-    if (!checkMainWindowPtr("fileExitAction"))
-    {
-        return;
-    }
-
-    if (ApplicationContext::getInstance()->getState() == APP_STATE_FILE_OPEN)
-    {
-        fileCloseAction();
-
-        if (ApplicationContext::getInstance()->getState()
-            == APP_STATE_FILE_OPEN)
-        {
-            return; // user cancel;
-        }
-    }
-
-    QApplication::exit();
-}
-
 // view zoom in action
 void MainWindowModelImpl::viewZoomInAction()
 {

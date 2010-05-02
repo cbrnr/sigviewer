@@ -167,6 +167,27 @@ void SaveGuiCommand::exportEvents ()
     delete file_signal_writer;
 }
 
+//-------------------------------------------------------------------------
+void SaveGuiCommand::evaluateEnabledness ()
+{
+    bool file_open = getApplicationState () == APP_STATE_FILE_OPEN;
+    bool no_gdf_file_open = false;
+    bool file_changed = false;
+    bool has_events = false;
+
+    if (file_open)
+    {
+        no_gdf_file_open = !(ApplicationContext::getInstance()->getCurrentFileContext()->getFileName().endsWith("gdf"));
+        file_changed = getFileState () == FILE_STATE_CHANGED;
+        has_events = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager()->getNumberOfEvents() > 0;
+    }
+
+    getQAction (SAVE_)->setEnabled (file_changed);
+    getQAction (SAVE_AS_)->setEnabled (file_open);
+    getQAction (EXPORT_TO_GDF_)->setEnabled (no_gdf_file_open);
+    getQAction (EXPORT_EVENTS_)->setEnabled (has_events);
+}
+
 
 
 }

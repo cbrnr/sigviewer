@@ -131,7 +131,7 @@ void MainWindow::initToolBars()
     view_toolbar_views_menu_->addAction (file_toolbar_->toggleViewAction());
     QList<QAction*> file_toolbar_actions = GuiActionFactory::getInstance()->getQActions("Open File");
     file_toolbar_actions.append (action_manager_->getActionsOfGroup(GUIActionManager::FILE_TOOLBAR_ACTIONS));
-    file_toolbar_actions.append (GuiActionFactory::getInstance()->getQActions("Close File"));
+    file_toolbar_actions.append (GuiActionFactory::getInstance()->getQAction("Close"));
     file_toolbar_->addActions (file_toolbar_actions);
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
@@ -177,8 +177,9 @@ void MainWindow::initMenus()
     separator->setSeparator (true);
     file_menu_actions.insert(file_menu_actions.size() - 2, separator);
     file_menu_actions.insert(file_menu_actions.size() - 2,
-                             GuiActionFactory::getInstance()->getQActions("Close File").first());
+                             GuiActionFactory::getInstance()->getQAction("Close"));
     file_menu_->addActions(file_menu_actions);
+    file_menu_->addAction (GuiActionFactory::getInstance()->getQAction("Exit"));
 
     menuBar()->addMenu(file_menu_);
 
@@ -216,7 +217,7 @@ void MainWindow::initMenus()
 // close event
 void MainWindow::closeEvent(QCloseEvent*)
 {
-    model_->fileExitAction();
+    GuiActionFactory::getInstance()->getQAction("Exit")->trigger();
 }
 
 void MainWindow::dropEvent (QDropEvent* event)

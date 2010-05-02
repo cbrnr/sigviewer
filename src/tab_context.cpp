@@ -14,7 +14,8 @@ TabContext::TabContext ()
 //-----------------------------------------------------------------------------
 TabContext::~TabContext ()
 {
-    // nothing to do here
+    emit selectionStateChanged (NO_TAB_SELECTION_STATE);
+    emit editStateChanged (NO_TAB_EDIT_STATE);
 }
 
 //-----------------------------------------------------------------------------

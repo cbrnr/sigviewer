@@ -57,6 +57,14 @@ void GuiActionCommand::updateEnablednessToApplicationState (ApplicationState sta
 }
 
 //-----------------------------------------------------------------------------
+void GuiActionCommand::updateEnablednessToFileState (FileState state)
+{
+    file_state_ = state;
+    evaluateEnabledness ();
+}
+
+
+//-----------------------------------------------------------------------------
 void GuiActionCommand::updateEnablednessToTabSelectionState (TabSelectionState state)
 {
     tab_sec_state_ = state;

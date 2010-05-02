@@ -5,6 +5,7 @@
 #include "file_handling/event_manager.h"
 #include "file_handling/file_signal_reader.h"
 #include "file_handling/channel_manager.h"
+#include "base/file_states.h"
 
 #include <QObject>
 #include <QString>
@@ -13,11 +14,6 @@
 namespace BioSig_
 {
 
-enum FileState
-{
-    FILE_STATE_UNCHANGED,
-    FILE_STATE_CHANGED
-};
 
 //-----------------------------------------------------------------------------
 ///

@@ -79,7 +79,6 @@ public slots:
     void fileImportEventsAction();
     void fileCloseAction();
     void fileInfoAction();
-    void fileExitAction();
     void viewZoomInAction();
     void viewZoomOutAction();
     void viewAutoScaleAction();

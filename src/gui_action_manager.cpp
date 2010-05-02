@@ -164,10 +164,6 @@ void GUIActionManager::initFileActions ()
                   tr("Show the basic information of the signal file"),
                   style->standardIcon (QStyle::SP_MessageBoxInformation));
 
-    createAction (ACTION_EXIT, tr("E&xit"), SLOT(fileExitAction()),
-                  tr("Exit the application"),
-                  QIcon(":/images/icons/exit.png"));
-
 }
 
 //-----------------------------------------------------------------------------
@@ -254,7 +250,6 @@ void GUIActionManager::initGroups ()
     action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_FILE_INFO);
     action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
-    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_EXIT);
 
 
     // FILE_TOOLBAR_ACTIONS

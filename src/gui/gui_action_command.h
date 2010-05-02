@@ -3,6 +3,7 @@
 
 #include "../base/application_states.h"
 #include "../base/tab_states.h"
+#include "../base/file_states.h"
 
 #include <QObject>
 #include <QAction>
@@ -37,6 +38,9 @@ public slots:
     void updateEnablednessToApplicationState (ApplicationState state);
 
     //-------------------------------------------------------------------------
+    void updateEnablednessToFileState (FileState state);
+
+    //-------------------------------------------------------------------------
     void updateEnablednessToTabSelectionState (TabSelectionState state);
 
     //-------------------------------------------------------------------------
@@ -63,6 +67,9 @@ protected:
     ApplicationState getApplicationState () const {return app_state_;}
 
     //-------------------------------------------------------------------------
+    FileState getFileState () const {return file_state_;}
+
+    //-------------------------------------------------------------------------
     TabSelectionState getTabSelectionState () const {return tab_sec_state_;}
 
 private:
@@ -70,6 +77,7 @@ private:
     QList<ActionConnector*> connectors_;
 
     ApplicationState app_state_;
+    FileState file_state_;
     TabSelectionState tab_sec_state_;
 };
 
