@@ -230,6 +230,7 @@ void EventEditingGuiCommand::evaluateEnabledness ()
 void EventEditingGuiCommand::executeCommand (QUndoCommand* command)
 {
     ApplicationContext::getInstance()->getCurrentCommandExecuter()->executeCommand (command);
+//    ApplicationContext::getInstance()
 }
 
 

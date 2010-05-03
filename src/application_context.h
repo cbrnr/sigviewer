@@ -73,9 +73,11 @@ public slots:
 signals:
     void stateChanged (ApplicationState state);
     void currentTabSelectionStateChanged (TabSelectionState state);
+    void currentTabEditStateChanged (TabEditState state);
 
 private slots:
     void changeTabSelectionState (TabSelectionState state);
+    void changeTabEditState (TabEditState state);
 
 private:
     static QSharedPointer<ApplicationContext> instance_;

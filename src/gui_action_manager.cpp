@@ -169,13 +169,6 @@ void GUIActionManager::initFileActions ()
 //-----------------------------------------------------------------------------
 void GUIActionManager::initEditActions ()
 {
-    createAction (ACTION_UNDO, tr("Undo"), SLOT(undoAction()),
-                  tr("Undo last editing command"),
-                  QIcon(":/images/icons/undo.png"));
-
-    createAction (ACTION_REDO, tr("Redo"), SLOT(redoAction()),
-                  tr("Redo last undone command"),
-                  QIcon(":/images/icons/redo.png"));
 }
 
 //-----------------------------------------------------------------------------
@@ -234,9 +227,6 @@ void GUIActionManager::initToolsActions ()
 //-----------------------------------------------------------------------------
 void GUIActionManager::initShortcuts ()
 {
-    setShortCut (ACTION_UNDO, QKeySequence::Undo);
-    setShortCut (ACTION_REDO, QKeySequence::Redo);
-
     setShortCut (ACTION_VIEW_ZOOM_IN, QKeySequence::ZoomIn);
     setShortCut (ACTION_VIEW_ZOOM_OUT, QKeySequence::ZoomOut);
 }
@@ -254,12 +244,8 @@ void GUIActionManager::initGroups ()
 
     // FILE_TOOLBAR_ACTIONS
     action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_FILE_INFO);
-    action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_UNDO);
-    action_group_map_[FILE_TOOLBAR_ACTIONS].push_back (ACTION_REDO);
 
     // EDIT_MENU_ACTIONS
-    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_UNDO);
-    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_REDO);
     action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
@@ -300,8 +286,6 @@ void GUIActionManager::initDisabledStates ()
 {
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_IMPORT_EVENTS);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_FILE_INFO);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_UNDO);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_REDO);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_ZOOM_IN);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_ZOOM_OUT);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_AUTO_SCALE);
@@ -310,12 +294,6 @@ void GUIActionManager::initDisabledStates ()
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_OPTIONS_CHANGE_EVENT_CREATION_TYPE);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_SHOW_SETTINGS);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_CALCULATE_MEANS);
-
-    tab_edit_state_action_map_[TAB_STATE_NO_REDO].push_back (ACTION_REDO);
-    tab_edit_state_action_map_[TAB_STATE_NO_UNDO].push_back (ACTION_UNDO);
-    tab_edit_state_action_map_[TAB_STATE_NO_REDO_NO_UNDO].push_back (ACTION_REDO);
-    tab_edit_state_action_map_[TAB_STATE_NO_REDO_NO_UNDO].push_back (ACTION_UNDO);
-
 }
 
 

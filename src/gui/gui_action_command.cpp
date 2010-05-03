@@ -23,6 +23,8 @@ GuiActionCommand::GuiActionCommand (QStringList const& action_ids)
                           SLOT(updateEnablednessToApplicationState(ApplicationState))));
         assert (connect (ApplicationContext::getInstance().data(), SIGNAL(currentTabSelectionStateChanged(TabSelectionState)),
                           SLOT(updateEnablednessToTabSelectionState (TabSelectionState))));
+        assert (connect (ApplicationContext::getInstance().data(), SIGNAL(currentTabEditStateChanged(TabEditState)),
+                          SLOT(updateEnablednessToTabEditState (TabEditState))));
     }
 }
 
@@ -67,7 +69,14 @@ void GuiActionCommand::updateEnablednessToFileState (FileState state)
 //-----------------------------------------------------------------------------
 void GuiActionCommand::updateEnablednessToTabSelectionState (TabSelectionState state)
 {
-    tab_sec_state_ = state;
+    tab_selection_state_ = state;
+    evaluateEnabledness ();
+}
+
+//-----------------------------------------------------------------------------
+void GuiActionCommand::updateEnablednessToTabEditState (TabEditState state)
+{
+    tab_edit_state_ = state;
     evaluateEnabledness ();
 }
 
@@ -81,5 +90,22 @@ void GuiActionCommand::resetActionTriggerSlot (QString const& action_id,
     action->disconnect (SIGNAL(triggered()));
     assert (connect (action, SIGNAL(triggered()), slot));
 }
+
+//-----------------------------------------------------------------------------
+void GuiActionCommand::setShortcut (QString const& action_id,
+                                    QKeySequence const& key_sequence)
+{
+    assert (action_map_.contains (action_id));
+    action_map_[action_id]->setShortcut (key_sequence);
+}
+
+//-----------------------------------------------------------------------------
+void GuiActionCommand::setIcon (QString const& action_id, QIcon const& icon)
+{
+    assert (action_map_.contains (action_id));
+    action_map_[action_id]->setIcon (icon);
+}
+
+
 
 }

@@ -133,6 +133,7 @@ void MainWindow::initToolBars()
     file_toolbar_actions.append (action_manager_->getActionsOfGroup(GUIActionManager::FILE_TOOLBAR_ACTIONS));
     file_toolbar_actions.append (GuiActionFactory::getInstance()->getQAction("Close"));
     file_toolbar_->addActions (file_toolbar_actions);
+    file_toolbar_->addActions (GuiActionFactory::getInstance()->getQActions("UndoRedo"));
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
     view_toolbar_views_menu_->addAction (mouse_mode_toolbar_->toggleViewAction());
@@ -140,7 +141,6 @@ void MainWindow::initToolBars()
 
     edit_toolbar_ = addToolBar(tr("Edit"));
     view_toolbar_views_menu_->addAction (edit_toolbar_->toggleViewAction());
-    edit_toolbar_->addActions (action_manager_->getActionsOfGroup(GUIActionManager::EDIT_TOOLBAR_ACTIONS));
 
     view_toolbar_ = addToolBar(tr("View"));
     view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
@@ -184,7 +184,8 @@ void MainWindow::initMenus()
     menuBar()->addMenu(file_menu_);
 
     edit_menu_ = menuBar()->addMenu(tr("&Edit"));
-    edit_menu_->addActions (action_manager_->getActionsOfGroup (GUIActionManager::EDIT_MENU_ACTIONS));
+    edit_menu_->addActions (GuiActionFactory::getInstance()->getQActions("UndoRedo"));
+    edit_menu_->addSeparator ();
     edit_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Event Editing"));
 
     mouse_mode_menu_ = menuBar()->addMenu(tr("&Mode"));

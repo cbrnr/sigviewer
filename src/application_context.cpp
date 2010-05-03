@@ -44,6 +44,7 @@ void ApplicationContext::setCurrentTabContext (QSharedPointer<TabContext> tab_co
         current_tab_context_->disconnect (this);
     current_tab_context_ = tab_context;
     connect (current_tab_context_.data(), SIGNAL(selectionStateChanged(TabSelectionState)), SLOT(changeTabSelectionState(TabSelectionState)));
+    connect (current_tab_context_.data(), SIGNAL(editStateChanged(TabEditState)), SLOT(changeTabEditState(TabEditState)));
 }
 
 //-------------------------------------------------------------------------
@@ -112,6 +113,13 @@ void ApplicationContext::changeTabSelectionState (TabSelectionState state)
 {
     emit currentTabSelectionStateChanged (state);
 }
+
+//-----------------------------------------------------------------------------
+void ApplicationContext::changeTabEditState (TabEditState state)
+{
+    emit currentTabEditStateChanged (state);
+}
+
 
 
 

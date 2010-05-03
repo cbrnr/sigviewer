@@ -219,30 +219,6 @@ void MainWindowModelImpl::calculateFrequencySpectrumAction ()
     }
 }
 
-//-----------------------------------------------------------------------------
-void MainWindowModelImpl::undoViewAction()
-{
-    CommandStack::instance().undoLastViewCommand();
-}
-
-//-----------------------------------------------------------------------------
-void MainWindowModelImpl::redoViewAction()
-{
-    CommandStack::instance().redoLastUndoneViewCommand();
-}
-
-//-----------------------------------------------------------------------------
-void MainWindowModelImpl::undoAction()
-{
-    tab_contexts_[tab_widget_->currentIndex()]->undo ();
-}
-
-//-----------------------------------------------------------------------------
-void MainWindowModelImpl::redoAction()
-{
-    tab_contexts_[tab_widget_->currentIndex()]->redo ();
-}
-
 // file import events action
 void MainWindowModelImpl::fileImportEventsAction()
 {

@@ -44,6 +44,9 @@ public slots:
     void updateEnablednessToTabSelectionState (TabSelectionState state);
 
     //-------------------------------------------------------------------------
+    void updateEnablednessToTabEditState (TabEditState state);
+
+    //-------------------------------------------------------------------------
     QAction* getQAction (QString const& id);
 
 signals:
@@ -58,6 +61,12 @@ protected:
     void resetActionTriggerSlot (QString const& action_id, const char* slot);
 
     //-------------------------------------------------------------------------
+    void setShortcut (QString const& action_id, QKeySequence const& key_sequence);
+
+    //-------------------------------------------------------------------------
+    void setIcon (QString const& action_id, QIcon const& icon);
+
+    //-------------------------------------------------------------------------
     virtual void applicationStateChanged () {}
 
     //-------------------------------------------------------------------------
@@ -70,7 +79,10 @@ protected:
     FileState getFileState () const {return file_state_;}
 
     //-------------------------------------------------------------------------
-    TabSelectionState getTabSelectionState () const {return tab_sec_state_;}
+    TabSelectionState getTabSelectionState () const {return tab_selection_state_;}
+
+    //-------------------------------------------------------------------------
+    TabEditState getTabEditState () const {return tab_edit_state_;}
 
 private:
     QMap<QString, QAction*> action_map_;
@@ -78,7 +90,8 @@ private:
 
     ApplicationState app_state_;
     FileState file_state_;
-    TabSelectionState tab_sec_state_;
+    TabSelectionState tab_selection_state_;
+    TabEditState tab_edit_state_;
 };
 
 class ActionConnector : public QObject

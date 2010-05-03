@@ -72,10 +72,6 @@ public slots:
     // actions
     void calculateMeanAction();
     void calculateFrequencySpectrumAction();
-    void undoViewAction();
-    void redoViewAction();
-    void undoAction();
-    void redoAction();
     void fileImportEventsAction();
     void fileCloseAction();
     void fileInfoAction();

@@ -84,7 +84,6 @@ QSharedPointer<SignalEvent const> EventManagerImpl::createEvent (
         ChannelID channel_id, unsigned pos, unsigned duration, EventType type,
         EventID id)
 {
-    QMutexLocker locker (caller_mutex_);
     if (id == UNDEFINED_EVENT_ID)
     {
         id = next_free_id_;
@@ -107,7 +106,6 @@ QSharedPointer<SignalEvent const> EventManagerImpl::createEvent (
 //-----------------------------------------------------------------------------
 void EventManagerImpl::removeEvent (EventID id)
 {
-    QMutexLocker locker (caller_mutex_);
     EventMap::iterator event_iter = event_map_.find (id);
     if (event_iter == event_map_.end())
         return;
