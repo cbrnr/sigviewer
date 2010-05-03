@@ -45,65 +45,35 @@ void ZoomGuiCommand::init ()
     getQAction (ZOOM_OUT_HORIZONTAL_)->setIcon (QIcon(":/images/icons/zoom_out_horizontal.png"));
 
     resetActionTriggerSlot (GOTO_, SLOT(goTo()));
-}
-
-//-----------------------------------------------------------------------------
-void ZoomGuiCommand::trigger (QString const& action_name)
-{
-    QSharedPointer<MainWindowModel> main_window_model =
-            ApplicationContext::getInstance()->getMainWindowModel ();
-    QSharedPointer<SignalVisualisationModel> vis_model =
-            main_window_model->getCurrentSignalVisualisationModel();
-
-    unsigned shown_pos = vis_model->getShownPosition ();
-
-    float32 pixel_per_sample = vis_model->getPixelPerSample ();
-    if (action_name == ZOOM_IN_VERTICAL_)
-    {
-        unsigned signal_height = vis_model->getSignalHeight();
-        signal_height *= ZOOM_FACTOR_;
-        vis_model->setSignalHeight (signal_height);
-    }
-    else if (action_name == ZOOM_OUT_VERTICAL_)
-    {
-        unsigned signal_height = vis_model->getSignalHeight();
-        signal_height /= ZOOM_FACTOR_;
-        vis_model->setSignalHeight (signal_height);
-    }
-    else if (action_name == ZOOM_IN_HORIZONTAL_)
-    {
-        pixel_per_sample *= ZOOM_FACTOR_;
-        if (pixel_per_sample > MAX_HORIZONTAL_ZOOM_IN_)
-            pixel_per_sample = MAX_HORIZONTAL_ZOOM_IN_;
-        vis_model->setPixelPerSample (pixel_per_sample);
-    }
-    else if (action_name == ZOOM_OUT_HORIZONTAL_)
-        vis_model->setPixelPerSample (pixel_per_sample / ZOOM_FACTOR_);
-    vis_model->updateLayout ();
-    vis_model->goToSample (shown_pos);
-    evaluateEnabledness ();
+    resetActionTriggerSlot (ZOOM_IN_VERTICAL_, SLOT(zoomInVertical()));
+    resetActionTriggerSlot (ZOOM_OUT_VERTICAL_, SLOT(zoomOutVertical()));
+    resetActionTriggerSlot (ZOOM_IN_HORIZONTAL_, SLOT(zoomInHorizontal()));
+    resetActionTriggerSlot (ZOOM_OUT_HORIZONTAL_, SLOT(zoomOutHorizontal()));
 }
 
 //-------------------------------------------------------------------------
 void ZoomGuiCommand::evaluateEnabledness ()
 {
-    if (getApplicationState () == APP_STATE_NO_FILE_OPEN)
+    QSharedPointer<SignalVisualisationModel> vis_model = currentVisModel();
+    bool file_open = getApplicationState () == APP_STATE_FILE_OPEN;
+    bool zoom_out_vertical_possible = false;
+    bool zoom_in_vertical_possible = false;
+    bool zoom_out_horizontal_possible = false;
+    bool zoom_in_horizontal_possible = false;
+
+    if (file_open && !vis_model.isNull())
     {
-        emit qActionEnabledChanged (false);
-        return;
+        zoom_out_vertical_possible = (vis_model->getSignalHeight() * vis_model->getShownChannels().size() > vis_model->getShownHeight());
+        zoom_in_vertical_possible = (vis_model->getSignalHeight() < vis_model->getShownHeight());
+        zoom_out_horizontal_possible = vis_model->getPixelPerSample() > minPixelPerSample();
+        zoom_in_horizontal_possible = vis_model->getPixelPerSample() < maxPixelPerSample();
     }
 
-    QSharedPointer<MainWindowModel> main_window_model =
-            ApplicationContext::getInstance()->getMainWindowModel ();
-    QSharedPointer<SignalVisualisationModel> vis_model =
-                main_window_model->getCurrentSignalVisualisationModel();
-
-    emit qActionEnabledChanged (true);
-    if (vis_model.isNull ())
-        return;
-
-    if (vis_model->getPixelPerSample () >= MAX_HORIZONTAL_ZOOM_IN_)
-        getQAction (ZOOM_IN_HORIZONTAL_)->setEnabled (false);
+    getQAction (ZOOM_OUT_VERTICAL_)->setEnabled (zoom_out_vertical_possible);
+    getQAction (ZOOM_IN_VERTICAL_)->setEnabled (zoom_in_vertical_possible);
+    getQAction (ZOOM_OUT_HORIZONTAL_)->setEnabled (zoom_out_horizontal_possible);
+    getQAction (ZOOM_IN_HORIZONTAL_)->setEnabled (zoom_in_horizontal_possible);
+    getQAction (GOTO_)->setEnabled (file_open);
 }
 
 
@@ -127,10 +97,83 @@ void ZoomGuiCommand::goTo ()
 }
 
 //-----------------------------------------------------------------------------
+void ZoomGuiCommand::zoomInHorizontal ()
+{
+    float32 pixel_per_sample = currentVisModel()->getPixelPerSample();
+    pixel_per_sample = std::max (pixel_per_sample * ZOOM_FACTOR_,
+                                 minPixelPerSample() );
+    currentVisModel()->setPixelPerSample (pixel_per_sample);
+    currentVisModel()->updateLayout();
+    evaluateEnabledness ();
+}
+
+//-----------------------------------------------------------------------------
+void ZoomGuiCommand::zoomOutHorizontal ()
+{
+    float32 pixel_per_sample = currentVisModel()->getPixelPerSample();
+    pixel_per_sample = std::min (pixel_per_sample / ZOOM_FACTOR_,
+                                 maxPixelPerSample ());
+    currentVisModel()->setPixelPerSample (pixel_per_sample);
+    currentVisModel()->updateLayout();
+    evaluateEnabledness ();
+}
+
+
+//-----------------------------------------------------------------------------
+void ZoomGuiCommand::zoomInVertical ()
+{
+    unsigned signal_height = currentVisModel()->getSignalHeight();
+    signal_height = std::min<unsigned> (signal_height * ZOOM_FACTOR_,
+                              maxSignalHeight());
+    currentVisModel()->setSignalHeight (signal_height);
+    currentVisModel()->updateLayout ();
+    evaluateEnabledness ();
+}
+
+//-----------------------------------------------------------------------------
+void ZoomGuiCommand::zoomOutVertical ()
+{
+    unsigned signal_height = currentVisModel()->getSignalHeight();
+    signal_height = std::max<unsigned> (signal_height / ZOOM_FACTOR_,
+                              minSignalHeight());
+    currentVisModel()->setSignalHeight (signal_height);
+    currentVisModel()->updateLayout ();
+    evaluateEnabledness ();
+}
+
+//-----------------------------------------------------------------------------
 void ZoomGuiCommand::autoZoomVertical ()
 {
-
 }
+
+//-------------------------------------------------------------------------
+unsigned ZoomGuiCommand::maxSignalHeight ()
+{
+    return currentVisModel()->getShownHeight();
+}
+
+//-------------------------------------------------------------------------
+unsigned ZoomGuiCommand::minSignalHeight ()
+{
+    return currentVisModel()->getShownHeight() / currentVisModel()->getShownChannels().size();
+}
+
+
+//-------------------------------------------------------------------------
+float32 ZoomGuiCommand::maxPixelPerSample ()
+{
+    return static_cast<float32>(currentVisModel()->getShownSignalWidth ()) / 4.0;
+}
+
+
+//-------------------------------------------------------------------------
+float32 ZoomGuiCommand::minPixelPerSample ()
+{
+    return static_cast<float32>(currentVisModel()->getShownSignalWidth()) /
+           static_cast<float32>(ApplicationContext::getInstance()->getCurrentFileContext()->getChannelManager()->getNumberSamples ());
+}
+
+
 
 
 }

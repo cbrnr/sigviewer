@@ -5,6 +5,8 @@
 #include "../base/tab_states.h"
 #include "../base/file_states.h"
 
+#include "../gui/signal_visualisation_model.h"
+
 #include <QObject>
 #include <QAction>
 #include <QStringList>
@@ -71,6 +73,9 @@ protected:
 
     //-------------------------------------------------------------------------
     virtual void evaluateEnabledness () {}
+
+    //-------------------------------------------------------------------------
+    QSharedPointer<SignalVisualisationModel> currentVisModel ();
 
     //-------------------------------------------------------------------------
     ApplicationState getApplicationState () const {return app_state_;}

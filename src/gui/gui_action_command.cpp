@@ -106,6 +106,21 @@ void GuiActionCommand::setIcon (QString const& action_id, QIcon const& icon)
     action_map_[action_id]->setIcon (icon);
 }
 
+//-------------------------------------------------------------------------
+QSharedPointer<SignalVisualisationModel> GuiActionCommand::currentVisModel ()
+{
+    QSharedPointer<SignalVisualisationModel> model;
+
+    QSharedPointer<MainWindowModel> main_window_model =
+        ApplicationContext::getInstance()->getMainWindowModel ();
+
+    if (!main_window_model.isNull())
+        model = main_window_model->getCurrentSignalVisualisationModel();
+
+    return model;
+}
+
+
 
 
 }
