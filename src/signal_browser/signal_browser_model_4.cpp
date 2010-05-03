@@ -384,7 +384,7 @@ void SignalBrowserModel::goToSample (unsigned sample)
         position += getPixelPerSample ();
     position -= getPixelPerSample ();
 
-    signal_browser_view_->goTo (position, 0);
+    signal_browser_view_->goTo (position);
 }
 
 //-------------------------------------------------------------------------

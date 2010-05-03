@@ -45,7 +45,6 @@ void ZoomGuiCommand::init ()
     getQAction (ZOOM_OUT_HORIZONTAL_)->setIcon (QIcon(":/images/icons/zoom_out_horizontal.png"));
 
     resetActionTriggerSlot (GOTO_, SLOT(goTo()));
-    resetActionTriggerSlot (AUTO_ZOOM_VERTICAL_, SLOT(autoZoomVertical()));
 }
 
 //-----------------------------------------------------------------------------

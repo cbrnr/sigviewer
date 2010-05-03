@@ -122,10 +122,19 @@ void SignalBrowserView::setScrollMode (bool activated)
 //-----------------------------------------------------------------------------
 void SignalBrowserView::resizeScene (int32 width, int32 height)
 {
+    QPointF left_upper_corner = graphics_view_->mapToScene (0, 0);
+
+    left_upper_corner.setY (left_upper_corner.y() * height / graphics_scene_->height());
+    left_upper_corner.setX (left_upper_corner.x() * width / graphics_scene_->width());
+
     graphics_scene_->setSceneRect (0, 0, width, height);
-    graphics_view_->centerOn (0,0);
-    y_axis_widget_->changeYStart (0);
-    x_axis_widget_->changeXStart (0);
+    QPointF center = left_upper_corner;
+    center.setX (center.x () + static_cast<double>(graphics_view_->width()) / 2.0);
+    center.setY (center.y () + static_cast<double>(graphics_view_->height()) / 2.0);
+    graphics_view_->centerOn (center);
+
+    y_axis_widget_->changeYStart (left_upper_corner.y());
+    x_axis_widget_->changeXStart (left_upper_corner.x());
 }
 
 //-----------------------------------------------------------------------------
@@ -248,9 +257,11 @@ void SignalBrowserView::setWidgetVisibility (std::string const &widget_name, boo
 }
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::goTo (float32 x, float32 y)
+void SignalBrowserView::goTo (float32 x)
 {
+    double y = graphics_view_->mapToScene(0, 0).y();
     x += graphics_view_->width() / 2;
+    y += static_cast<double>(graphics_view_->height()) / 2.0;
     graphics_view_->centerOn(x, y);
     graphics_scene_->update(0, 0, graphics_scene_->width(), graphics_scene_->height());
 }
@@ -302,6 +313,9 @@ void SignalBrowserView::setXAxisIntervall (float64 intervall)
 void SignalBrowserView::graphicsSceneResized (QResizeEvent* event)
 {
     unsigned signal_height = model_->getSignalHeight ();
+    if (!signal_height)
+        return;
+
     double signals_per_pagesize = event->oldSize().height() / signal_height;
 
     signal_height = event->size().height() / signals_per_pagesize;
