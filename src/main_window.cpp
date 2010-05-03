@@ -107,19 +107,6 @@ void MainWindow::initActions()
     calculate_frequency_spectrum_action_->setEnabled(false);
     connect(calculate_frequency_spectrum_action_, SIGNAL(triggered()),
             model_.data(), SLOT(calculateFrequencySpectrumAction()));
-
-    help_log_action_= new QAction(tr("&Log..."), this);
-    help_log_action_->setObjectName("help_log_action_");
-    help_log_action_->setStatusTip(tr("Log"));
-    connect(help_log_action_, SIGNAL(triggered()),
-            model_.data(), SLOT(helpLogAction()));
-
-    help_about_action_= new QAction(help_about_icon_,
-                                    tr("&About SigViewer..."), this);
-    help_about_action_->setObjectName("help_about_action_");
-    help_about_action_->setStatusTip(tr("About SigViewer"));
-    connect(help_about_action_, SIGNAL(triggered()),
-            model_.data(), SLOT(helpAboutAction()));
 }
 
 // init tool bars
@@ -211,9 +198,7 @@ void MainWindow::initMenus()
     options_menu_->addActions (action_manager_->getActionsOfGroup(GUIActionManager::OPTIONS_MENU_ACTIONS));
 
     help_menu_ = menuBar()->addMenu(tr("&Help"));
-    help_menu_->addAction(help_log_action_);
-    help_menu_->addSeparator();
-    help_menu_->addAction(help_about_action_);
+    help_menu_->addAction (GuiActionFactory::getInstance()->getQAction("About"));
 }
 
 // close event
@@ -309,22 +294,6 @@ QString MainWindow::showImportDialog(const QString& path,
     extension_selection += "*.*";
     return QFileDialog::getOpenFileName(this, tr("Chose signal file to import"),
                                         path,extension_selection);
-}
-
-// show help about dialog
-void MainWindow::showHelpAboutDialog()
-{
-    QMessageBox about_message_box(tr("About SigViewer"),
-                                  tr("<b><nobr>SigViewer Version 0.3.0</nobr></b><br>\
-                                      <br>\
-									  Thomas Brunner, Christoph Eibel, Clemens Brunner, Alois Schl&ouml;gl, Oliver Terbu<br>\
-									  <br>\
-									  <nobr>Graz University of Technology</nobr>"),
-                                  QMessageBox::NoIcon,
-                                  QMessageBox::Ok, QMessageBox::NoButton, QMessageBox::NoButton,
-                                  this);
-    about_message_box.setIconPixmap(QPixmap(":images/sigviewer128.png"));
-    about_message_box.exec();
 }
 
 // show error read dialog

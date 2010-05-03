@@ -40,7 +40,6 @@ public:
     // do actions
     bool showFileCloseDialog(const QString& file_name);
     QString showOpenDialog(const QString& path, const QString& extensions);
-    void showHelpAboutDialog();
     void showErrorReadDialog(const QString& file_name);
     void showErrorWriteDialog(const QString& file_name);
     QString showExportDialog(const QString& path, const QString& extensions);
@@ -90,7 +89,6 @@ private:
 
     QAction* calculate_frequency_spectrum_action_;
     QAction* help_log_action_;
-    QAction* help_about_action_;
 
     QIcon help_about_icon_;
 

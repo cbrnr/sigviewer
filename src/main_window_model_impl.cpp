@@ -482,32 +482,6 @@ void MainWindowModelImpl::optionsShowSettingsAction()
         signal_browser_model_->updateLayout();
 }
 
-// help log action
-void MainWindowModelImpl::helpLogAction()
-{
-    if (!checkMainWindowPtr("helpLogAction"))
-    {
-        return;
-    }
-
-    // show log dialog
-    LogDialog log_dialog(*log_stream_.get(), main_window_);
-    log_dialog.loadSettings();
-    log_dialog.exec();
-    log_dialog.saveSettings();
-}
-
-// help about action
-void MainWindowModelImpl::helpAboutAction()
-{
-    if (!checkMainWindowPtr("helpAboutAction"))
-    {
-        return;
-    }
-
-    main_window_->showHelpAboutDialog();
-}
-
 //-----------------------------------------------------------------------------
 void MainWindowModelImpl::storeAndInitTabContext (QSharedPointer<TabContext> context, int tab_index)
 {

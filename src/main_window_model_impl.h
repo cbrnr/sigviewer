@@ -81,8 +81,6 @@ public slots:
     void optionsChannelsAction();
     void optionsChangeCreationType();
     void optionsShowSettingsAction();
-    void helpLogAction();
-    void helpAboutAction();
     void recentFileActivated(QAction* recent_file_action);
     void recentFileMenuAboutToShow();
 
