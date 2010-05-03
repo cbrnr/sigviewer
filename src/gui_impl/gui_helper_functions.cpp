@@ -1,6 +1,7 @@
 #include "gui_helper_functions.h"
 #include "channel_selection_dialog.h"
 #include "select_shown_channels_dialog.h"
+#include "dialogs/event_types_selection_dialog.h"
 #include "../application_context.h"
 
 #include <QInputDialog>
@@ -72,6 +73,22 @@ EventType selectEventType (EventType preselected_type)
 
     return new_type;
 }
+
+//-----------------------------------------------------------------------------
+std::set<EventType> selectEventTypes (std::set<EventType> const& preselected_type)
+{
+    std::set<EventType> selected_types;
+    QSharedPointer<EventManager const> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
+    if (event_manager.isNull())
+        return selected_types;
+
+    EventTypesSelectionDialog dialog (QObject::tr("Select Event Types"),
+                                      event_manager, preselected_type, 0);
+    dialog.exec();
+    selected_types = dialog.getSelectedTypes ();
+    return selected_types;
+}
+
 
 //-----------------------------------------------------------------------------
 ChannelID selectChannel (ChannelID preselected_channel_id)

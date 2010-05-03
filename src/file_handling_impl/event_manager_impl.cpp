@@ -163,6 +163,24 @@ std::set<EventType> EventManagerImpl::getAllPossibleEventTypes () const
     return event_table_reader_->getAllEventTypes ();
 }
 
+//-------------------------------------------------------------------------
+std::set<EventType> EventManagerImpl::getEventTypes (QString const& group_id) const
+{
+    return event_table_reader_->getEventTypesOfGroup (group_id);
+}
+
+//-------------------------------------------------------------------------
+std::set<QString> EventManagerImpl::getEventTypeGroupIDs () const
+{
+    std::set<QString> groups;
+    for (EventTableFileReader::StringIterator group = event_table_reader_->getGroupIdBegin();
+         group != event_table_reader_->getGroupIdEnd();
+         ++group)
+        groups.insert (*group);
+    return groups;
+}
+
+
 //-----------------------------------------------------------------------------
 QList<EventID> EventManagerImpl::getEvents (EventType type) const
 {

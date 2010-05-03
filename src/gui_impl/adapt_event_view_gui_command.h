@@ -32,6 +32,9 @@ public slots:
     //-------------------------------------------------------------------------
     void showAllEvents ();
 
+    //-------------------------------------------------------------------------
+    void setShownEvents ();
+
 protected:
     //-------------------------------------------------------------------------
     virtual void evaluateEnabledness ();
@@ -51,6 +54,7 @@ private:
     static QString const SHOW_ALL_EVENTS_;
     static QString const GO_TO_NEXT_EVENT_;
     static QString const GO_TO_PREVIOUS_EVENT_;
+    static QString const SET_SHOWN_EVENTS_;
     static QStringList const TEXTS_;
 
     static GuiActionFactoryRegistrator registrator_;

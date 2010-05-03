@@ -12,12 +12,14 @@ QString const AdaptEventViewGuiCommand::HIDE_EVENTS_OF_OTHER_TYPE_ = "Hide Event
 QString const AdaptEventViewGuiCommand::SHOW_ALL_EVENTS_ = "Show all Events";
 QString const AdaptEventViewGuiCommand::GO_TO_NEXT_EVENT_ = "Goto and Select Next Event";
 QString const AdaptEventViewGuiCommand::GO_TO_PREVIOUS_EVENT_ = "Goto and Select Previous Event";
+QString const AdaptEventViewGuiCommand::SET_SHOWN_EVENTS_ = "Events...";
 QStringList const AdaptEventViewGuiCommand::TEXTS_ = QStringList() <<
                                               AdaptEventViewGuiCommand::FIT_TO_EVENT_ <<
                                               AdaptEventViewGuiCommand::GO_TO_NEXT_EVENT_ <<
                                               AdaptEventViewGuiCommand::GO_TO_PREVIOUS_EVENT_ <<
                                               AdaptEventViewGuiCommand::HIDE_EVENTS_OF_OTHER_TYPE_ <<
-                                              AdaptEventViewGuiCommand::SHOW_ALL_EVENTS_;
+                                              AdaptEventViewGuiCommand::SHOW_ALL_EVENTS_ <<
+                                              AdaptEventViewGuiCommand::SET_SHOWN_EVENTS_;
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator AdaptEventViewGuiCommand::registrator_ ("Adapt Event View",
@@ -40,14 +42,16 @@ AdaptEventViewGuiCommand::~AdaptEventViewGuiCommand ()
 //-----------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::init ()
 {
-    getQAction (GO_TO_NEXT_EVENT_)->setShortcut (QKeySequence("Ctrl+Right"));
-    getQAction (GO_TO_PREVIOUS_EVENT_)->setShortcut (QKeySequence("Ctrl+Left"));
+    setShortcut (GO_TO_NEXT_EVENT_, QKeySequence("Ctrl+Right"));
+    setShortcut (GO_TO_PREVIOUS_EVENT_, QKeySequence("Ctrl+Left"));
 
-    getQAction (GO_TO_NEXT_EVENT_)->setIcon (QIcon(":/images/icons/next.png"));
-    getQAction (GO_TO_PREVIOUS_EVENT_)->setIcon (QIcon(":/images/icons/previous.png"));
+    setIcon (GO_TO_NEXT_EVENT_, QIcon(":/images/icons/next.png"));
+    setIcon (GO_TO_PREVIOUS_EVENT_, QIcon(":/images/icons/previous.png"));
+    setIcon (SET_SHOWN_EVENTS_, QIcon(":/images/events_22x22.png"));
 
     resetActionTriggerSlot (HIDE_EVENTS_OF_OTHER_TYPE_, SLOT(hideEventsOfOtherType()));
     resetActionTriggerSlot (SHOW_ALL_EVENTS_, SLOT(showAllEvents()));
+    resetActionTriggerSlot (SET_SHOWN_EVENTS_, SLOT(setShownEvents()));
 }
 
 //-----------------------------------------------------------------------------
@@ -85,6 +89,19 @@ void AdaptEventViewGuiCommand::showAllEvents ()
 }
 
 //-------------------------------------------------------------------------
+void AdaptEventViewGuiCommand::setShownEvents ()
+{
+    QSharedPointer<MainWindowModel> mw_model = ApplicationContext::getInstance()->getMainWindowModel ();
+    QSharedPointer<SignalVisualisationModel> sv_model = mw_model->getCurrentSignalVisualisationModel ();
+
+    std::set<EventType> shown_types = sv_model->getShownEventTypes ();
+    std::set<EventType> new_shown_types = GuiHelper::selectEventTypes (shown_types);
+    if (shown_types != new_shown_types)
+        sv_model->setShownEventTypes (new_shown_types);
+}
+
+
+//-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::evaluateEnabledness ()
 {
     if (getApplicationState () == APP_STATE_FILE_OPEN)
@@ -112,13 +129,6 @@ void AdaptEventViewGuiCommand::fitViewToEvent ()
     float32 width = sv_model->getShownSignalWidth ();
     float32 desired_pixel_per_sample = width / event->getDuration ();
     float32 pixel_per_sample = desired_pixel_per_sample;
-/*    while (pixel_per_sample < desired_pixel_per_sample)
-        pixel_per_sample *= 2;
-    while (pixel_per_sample > desired_pixel_per_sample)
-        pixel_per_sample /= 2;
-
-    if (pixel_per_sample > 8)
-        pixel_per_sample = 8;*/
 
     sv_model->setPixelPerSample (pixel_per_sample);
     sv_model->updateLayout ();

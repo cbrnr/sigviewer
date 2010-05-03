@@ -145,6 +145,7 @@ void MainWindow::initToolBars()
     view_toolbar_ = addToolBar(tr("View"));
     view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
     view_toolbar_->addActions(action_manager_->getActionsOfGroup(GUIActionManager::VIEW_TOOLBAR_ACTIONS));
+    view_toolbar_->addAction(GuiActionFactory::getInstance()->getQAction("Events..."));
 
     navigation_toolbar_ = addToolBar(tr("Navigation"));
     view_toolbar_views_menu_->addAction (navigation_toolbar_->toggleViewAction());

@@ -79,6 +79,12 @@ public:
     virtual std::set<EventType> getAllPossibleEventTypes () const = 0;
 
     //-------------------------------------------------------------------------
+    virtual std::set<EventType> getEventTypes (QString const& group_id) const = 0;
+
+    //-------------------------------------------------------------------------
+    virtual std::set<QString> getEventTypeGroupIDs () const = 0;
+
+    //-------------------------------------------------------------------------
     /// @return set of event_ids of events of the given type
     virtual QList<EventID> getEvents (EventType type) const = 0;
 

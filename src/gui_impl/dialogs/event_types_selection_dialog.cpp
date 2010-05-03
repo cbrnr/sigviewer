@@ -1,7 +1,4 @@
-// event_type_dialog.cpp
-
-#include "event_type_dialog.h"
-#include "../../file_handling_impl/event_table_file_reader.h"
+#include "event_types_selection_dialog.h"
 #include "../../event_color_manager.h"
 #include "../../application_context.h"
 
@@ -33,12 +30,16 @@ inline bool isDark(const QColor& color)
     return y < 127;
 }
 
-// constructor
-EventTypeDialog::EventTypeDialog(const QString& caption,
-                                 QWidget* parent)
- : QDialog(parent)
+//-----------------------------------------------------------------------------
+EventTypesSelectionDialog::EventTypesSelectionDialog (QString const& caption,
+                                                      QSharedPointer<EventManager const> event_manager,
+                                                      std::set<EventType> const& preselected_types,
+                                                      QWidget* parent)
+    : QDialog(parent),
+      event_manager_ (event_manager)
+
 {
-    setWindowTitle(caption);
+    setWindowTitle (caption);
 
     QVBoxLayout* top_layout = new QVBoxLayout(this);
 
@@ -55,8 +56,8 @@ EventTypeDialog::EventTypeDialog(const QString& caption,
     cancel_button_ = new QPushButton(tr("Cancel"), this);
     button_layout->addWidget(cancel_button_);
     button_layout->addStretch(1);
-    buildTree();
-    resize(550, 600);
+    buildTree (preselected_types);
+    resize (600, 600);
     top_layout->activate();
 
     connect(ok_button_, SIGNAL(clicked()), this, SLOT(accept()));
@@ -68,49 +69,51 @@ EventTypeDialog::EventTypeDialog(const QString& caption,
 }
 
 // load settings
-void EventTypeDialog::loadSettings()
+void EventTypesSelectionDialog::loadSettings()
 {
     QSettings settings("SigViewer");
 
     settings.beginGroup("EventTypeDialog");
-    resize(settings.value("size", QSize(550, 600)).toSize());
+//    resize(settings.value("size", QSize(550, 600)).toSize());
     move(settings.value("pos", QPoint(200, 200)).toPoint());
-    event_tree_widget_->header()->resizeSection(0, settings.value("col0_width", 100).toInt());
+/*    event_tree_widget_->header()->resizeSection(0, settings.value("col0_width", 100).toInt());
     event_tree_widget_->header()->resizeSection(1, settings.value("col1_width", 150).toInt());
     event_tree_widget_->header()->resizeSection(2, settings.value("col2_width", 100).toInt());
-    settings.endGroup();
+  */  settings.endGroup();
 }
 
 // save settings
-void EventTypeDialog::saveSettings()
+void EventTypesSelectionDialog::saveSettings()
 {
     QSettings settings("SigViewer");
 
     settings.beginGroup("EventTypeDialog");
-    settings.setValue("size", size());
+//    settings.setValue("size", size());
     settings.setValue("pos", pos());
-    settings.setValue("col0_width", event_tree_widget_->header()->sectionSize(0));
+/*    settings.setValue("col0_width", event_tree_widget_->header()->sectionSize(0));
     settings.setValue("col1_width", event_tree_widget_->header()->sectionSize(1));
     settings.setValue("col2_width", event_tree_widget_->header()->sectionSize(2));
-    settings.endGroup();
+  */  settings.endGroup();
 }
 
-// build tree
-void EventTypeDialog::buildTree()
+//-----------------------------------------------------------------------------
+void EventTypesSelectionDialog::buildTree (std::set<EventType> const& preselected_types)
 {
     QSharedPointer<EventTableFileReader> event_table_file_reader = ApplicationContext::getInstance()->getEventTableFileReader();
     event_tree_widget_->setRootIsDecorated(true);
     QStringList header_labels;
-    header_labels << tr("Event Type") << tr("Color") << tr("Alpha");
+    header_labels << tr("Shown") << tr("Event Type") << tr("Color") << tr("Alpha") << tr("Id");
     event_tree_widget_->setHeaderLabels(header_labels);
-    event_tree_widget_->header()->setResizeMode(QHeaderView::Interactive);
+    event_tree_widget_->setColumnWidth(ID_COLUMN_INDEX_, 0);
+    event_tree_widget_->header()->setResizeMode (QHeaderView::ResizeToContents);
 
     // root
     QTreeWidgetItem * root_item = new QTreeWidgetItem(event_tree_widget_);
-    root_item->setText(0, tr("All Events"));
-    root_item->setFlags(root_item->flags() ^ Qt::ItemIsSelectable);
-//                        Qt::ItemIsTristate);
-    root_item->setCheckState(0, Qt::Unchecked);
+    root_item->setFlags (Qt::ItemIsUserCheckable |
+                         Qt::ItemIsTristate |
+                         Qt::ItemIsEnabled);
+    root_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Unchecked);
+    root_item->setText(1, tr("All Events"));
     event_tree_widget_->setItemExpanded(root_item, true);
 
     // build groups
@@ -126,10 +129,10 @@ void EventTypeDialog::buildTree()
             QString(" (%1)").arg(*group_it);
 
         QTreeWidgetItem * group_item = new QTreeWidgetItem(root_item);
-        group_item->setFlags(group_item->flags() ^ Qt::ItemIsSelectable);
-//                             Qt::ItemIsTristate);
-        group_item->setCheckState(0, Qt::Unchecked);
-        group_item->setText(0, group_name);
+        group_item->setFlags (Qt::ItemIsUserCheckable |
+                              Qt::ItemIsTristate |
+                              Qt::ItemIsEnabled);
+        group_item->setText (NAME_COLUMN_INDEX_, group_name);
         group_id2list_item[*group_it] = group_item;
     }
 
@@ -144,42 +147,49 @@ void EventTypeDialog::buildTree()
             = event_table_file_reader->getEventGroupId(*event_type_it);
 
         QString event_name
-            = event_table_file_reader->getEventName(*event_type_it);
+            = event_manager_->getNameOfEventType (*event_type_it);
 
         QTreeWidgetItem * event_item
             = new QTreeWidgetItem(group_id2list_item[group_name]);
 
-        event_item->setCheckState(0, Qt::Unchecked);
-        event_item->setFlags(event_item->flags() ^ Qt::ItemIsSelectable);
-        event_item->setText(0, event_name + " " +
-                            QString("(0x%1)").arg(*event_type_it, 4, 16)
-                                             .replace(' ', '0'));
+        event_item->setFlags (Qt::ItemIsUserCheckable |
+                              Qt::ItemIsEnabled);
 
         QColor color = ApplicationContext::getInstance()->getEventColorManager()->getEventColor(*event_type_it);
-        event_item->setBackgroundColor(2, color);
-        event_item->setTextColor(2, isDark(color) ? Qt::white : Qt::black);
-        event_item->setTextAlignment(2, Qt::AlignHCenter);
-        event_item->setText(2, QString("%1").arg(color.alpha()));
-        color.setAlpha(255);
-        event_item->setBackgroundColor(1, color);
-        event_item->setTextColor(1, isDark(color) ? Qt::white : Qt::black);
-        event_item->setTextAlignment(1, Qt::AlignHCenter);
-        event_item->setText(1, color.name());
+        if (preselected_types.count(*event_type_it))
+            event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Checked);
+        else
+            event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Unchecked);
+
+        event_item->setText (NAME_COLUMN_INDEX_, event_name);
+
+        color.setAlpha (255);
+
+        event_item->setBackgroundColor (COLOR_COLUMN_INDEX_, color);
+        event_item->setTextColor (COLOR_COLUMN_INDEX_, isDark(color) ? Qt::white : Qt::black);
+        event_item->setTextAlignment (COLOR_COLUMN_INDEX_, Qt::AlignHCenter);
+        event_item->setText (COLOR_COLUMN_INDEX_, color.name());
+
+        event_item->setTextColor(ALPHA_COLUMN_INDEX_, isDark(color) ? Qt::white : Qt::black);
+        event_item->setTextAlignment(ALPHA_COLUMN_INDEX_, Qt::AlignHCenter);
+        event_item->setText(ALPHA_COLUMN_INDEX_, QString("%1").arg(color.alpha()));
+
+        event_item->setText (ID_COLUMN_INDEX_, QString::number(*event_type_it));
     }
 }
 
 // item clicked
-void EventTypeDialog::itemClicked(QTreeWidgetItem* item, int column)
+void EventTypesSelectionDialog::itemClicked(QTreeWidgetItem* item, int column)
 {
-    if ((column != 1 && column != 2) || (item->childCount() > 0))
+    if ((column != 2 && column != 3) || (item->childCount() > 0))
     {
         return;
     }
 
-    QColor color = item->backgroundColor(2);
+    QColor color = item->backgroundColor(3);
     int32 alpha = color.alpha();
 
-    if (column == 1)
+    if (column == 2)
     {
         color = QColorDialog::getColor(color, this);
         color.setAlpha(alpha);
@@ -200,7 +210,7 @@ void EventTypeDialog::itemClicked(QTreeWidgetItem* item, int column)
 }
 
 // store colors
-void EventTypeDialog::storeColors()
+void EventTypesSelectionDialog::storeColors()
 {
     QTreeWidgetItem* root_item = event_tree_widget_->topLevelItem(0);
 
@@ -221,73 +231,28 @@ void EventTypeDialog::storeColors()
     }
 }
 
-// get shown types
-void EventTypeDialog::getShownTypes(IntList& shown_type_set)
+//-----------------------------------------------------------------------------
+std::set<EventType> EventTypesSelectionDialog::getSelectedTypes () const
 {
-    shown_type_set.clear();
-    QTreeWidgetItem* root_item = event_tree_widget_->topLevelItem(0);
+    std::set<EventType> selected_types;
 
-    for (int32 group_nr = 0; group_nr < root_item->childCount(); group_nr++)
+    QTreeWidgetItem* root_item = event_tree_widget_->topLevelItem (0);
+    for (int group_nr = 0; group_nr < root_item->childCount(); group_nr++)
     {
         QTreeWidgetItem* group_item  = root_item->child(group_nr);
-
-        for (int32 nr = 0; nr < group_item->childCount(); nr++)
+        for (int nr = 0; nr < group_item->childCount(); nr++)
         {
             QTreeWidgetItem* event_item = group_item->child(nr);
-
-            if (event_item->checkState(0) == Qt::Checked)
-            {
-                QString tmp = event_item->text(0);
-                int32 type_id = tmp.mid(tmp.lastIndexOf('(') + 1)
-                                   .remove(')').toInt(0, 16);
-                shown_type_set << type_id;
-            }
+            if (event_item->checkState (CHECKBOX_COLUMN_INDEX_) != Qt::Unchecked)
+                selected_types.insert (event_item->text(ID_COLUMN_INDEX_).toUInt());
         }
     }
 
-    qSort(shown_type_set);
-}
-
-// set shown types
-void EventTypeDialog::setShownTypes(IntList& shown_type_set, const bool all)
-{
-    IntList::const_iterator iter = shown_type_set.begin();
-    QTreeWidgetItem* root_item = event_tree_widget_->topLevelItem(0);
-
-   	if (all)
-   		root_item->setCheckState(0, Qt::Checked);
-
-    for (int32 group_nr = 0; group_nr < root_item->childCount(); group_nr++)
-    {
-        QTreeWidgetItem* group_item  = root_item->child(group_nr);
-
-        for (int32 nr = 0; nr < group_item->childCount();nr++)
-        {
-            QTreeWidgetItem* event_item = group_item->child(nr);
-            QString tmp = event_item->text(0);
-            int32 type_id = tmp.mid(tmp.lastIndexOf('(') + 1)
-                               .remove(')').toInt(0, 16);
-
-            while(iter != shown_type_set.end() && type_id > *iter)
-            {
-                iter++;
-            }
-
-            if (iter != shown_type_set.end() && type_id == *iter)
-            {
-                event_item->setCheckState(0, Qt::Checked);
-                iter++;
-            }
-            else
-            {
-                event_item->setCheckState(0, Qt::Unchecked);
-            }
-        }
-    }
+    return selected_types;
 }
 
 // item changed
-void EventTypeDialog::itemChanged(QTreeWidgetItem* item ,int)
+void EventTypesSelectionDialog::itemChanged(QTreeWidgetItem* item ,int)
 {
     Qt::CheckState check_state = item->checkState(0);
 

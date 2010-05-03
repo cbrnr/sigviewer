@@ -18,7 +18,6 @@
 #include "log_dialog.h"
 #include "gui_impl/channel_selection_dialog.h"
 #include "event_time_selection_dialog.h"
-#include "gui_impl/dialogs/event_type_dialog.h"
 #include "settings_dialog.h"
 #include "command_stack.h"
 
@@ -222,7 +221,7 @@ void MainWindowModelImpl::calculateFrequencySpectrumAction ()
 // file import events action
 void MainWindowModelImpl::fileImportEventsAction()
 {
-    if (!checkMainWindowPtr("fileImportEventsAction"))
+/*    if (!checkMainWindowPtr("fileImportEventsAction"))
     {
         return;
     }
@@ -337,7 +336,7 @@ void MainWindowModelImpl::fileImportEventsAction()
         main_window_->showInconsistentEventsDialog();
     }
 
-    signal_browser_model_->updateLayout();
+    signal_browser_model_->updateLayout();*/
 }
 
 // recent file menu about to show
@@ -450,37 +449,6 @@ void MainWindowModelImpl::optionsChangeCreationType ()
 
     if (new_type != UNDEFINED_EVENT_TYPE)
         signal_browser_model_->setActualEventCreationType (new_type);
-}
-
-//-----------------------------------------------------------------------------
-// options show events action
-void MainWindowModelImpl::optionsShowEventsAction()
-{
-/*    // set curent shown event types
-    EventTypeDialog::IntList shown_event_types;
-
-    signal_browser_model_->getShownEventTypes(shown_event_types);
-
-    EventTypeDialog event_type_dialog(tr("Show Events"),
-                                      main_window_);
-
-    event_type_dialog.setShownTypes(shown_event_types);
-    event_type_dialog.loadSettings();
-    event_type_dialog.exec();
-    event_type_dialog.saveSettings();
-
-    if (event_type_dialog.result() == QDialog::Rejected)
-    {
-        return; // user cancel
-    }
-
-    // store colors
-    event_type_dialog.storeColors();
-
-    // change shown event types
-    event_type_dialog.getShownTypes(shown_event_types);
-    QUndoCommand* eventCommand = new SetShownEventTypesViewUndoCommand (*signal_browser_model_, shown_event_types);
-    CommandStack::instance().executeViewCommand(eventCommand);*/
 }
 
 // options show events action

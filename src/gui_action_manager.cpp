@@ -174,11 +174,6 @@ void GUIActionManager::initEditActions ()
 //-----------------------------------------------------------------------------
 void GUIActionManager::initViewActions ()
 {
-    createAction (ACTION_VIEW_EVENTS, tr("&Events..."),
-                  SLOT(optionsShowEventsAction()),
-                  tr("Select the events that should be shown"),
-                  QIcon(":/images/events_22x22.png"));
-
     createAction (ACTION_VIEW_CHANNELS, tr("Channe&ls..."),
                   SLOT(optionsChannelsAction()),
                   tr("Select the channels that should be shown"),
@@ -257,7 +252,6 @@ void GUIActionManager::initGroups ()
 
     // VIEW_MENU_ACTIONS
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_CHANNELS);
-    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_EVENTS);
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_ZOOM_IN);
     action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_ZOOM_OUT);
@@ -268,7 +262,6 @@ void GUIActionManager::initGroups ()
 
     // VIEW_TOOLBAR_ACTIONS
     action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_CHANNELS);
-    action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_EVENTS);
     action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_ZOOM_IN);
     action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_ZOOM_OUT);
     action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_AUTO_SCALE);
@@ -290,7 +283,6 @@ void GUIActionManager::initDisabledStates ()
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_ZOOM_OUT);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_AUTO_SCALE);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_CHANNELS);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_EVENTS);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_OPTIONS_CHANGE_EVENT_CREATION_TYPE);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_SHOW_SETTINGS);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_CALCULATE_MEANS);

@@ -80,7 +80,6 @@ public slots:
     void viewAutoScaleAction();
     void optionsChannelsAction();
     void optionsChangeCreationType();
-    void optionsShowEventsAction();
     void optionsShowSettingsAction();
     void helpLogAction();
     void helpAboutAction();
