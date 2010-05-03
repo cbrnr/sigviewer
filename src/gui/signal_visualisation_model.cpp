@@ -47,6 +47,19 @@ float32 SignalVisualisationModel::getSampleRate () const
     return sample_rate_;
 }
 
+//-------------------------------------------------------------------------
+unsigned SignalVisualisationModel::getSignalHeight () const
+{
+    return signal_height_;
+}
+
+//-------------------------------------------------------------------------
+void SignalVisualisationModel::setSignalHeight (unsigned height)
+{
+    signal_height_ = height;
+    emit signalHeightChanged (signal_height_);
+}
+
 //-----------------------------------------------------------------------------
 EventID SignalVisualisationModel::getSelectedEvent () const
 {
@@ -80,7 +93,5 @@ void SignalVisualisationModel::setActualEventCreationType (EventType type)
 {
     event_creation_type_ = type;
 }
-
-
 
 }

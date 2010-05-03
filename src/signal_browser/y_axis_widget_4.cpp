@@ -62,7 +62,7 @@ void YAxisWidget::removeChannel(int32 channel_nr)
 //-----------------------------------------------------------------------------
 void YAxisWidget::changeSignalHeight (uint32 signal_height)
 {
-    signal_height_ = signal_height;
+    signal_height_ = signal_height - signal_spacing_;
     repaintPixmap ();
     update ();
 }
@@ -71,6 +71,7 @@ void YAxisWidget::changeSignalHeight (uint32 signal_height)
 void YAxisWidget::changeSignalSpacing (unsigned signal_spacing)
 {
     signal_spacing_ = signal_spacing;
+    signal_height_ -= signal_spacing_;
     repaintPixmap ();
     update ();
 }

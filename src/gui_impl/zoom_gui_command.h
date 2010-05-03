@@ -27,6 +27,8 @@ private slots:
     //-------------------------------------------------------------------------
     void goTo ();
 
+    //-------------------------------------------------------------------------
+    void autoZoomVertical ();
 
 private:
     static float const ZOOM_FACTOR_ = 2;
@@ -37,6 +39,7 @@ private:
     static QString const ZOOM_OUT_VERTICAL_;
     static QString const ZOOM_IN_HORIZONTAL_;
     static QString const ZOOM_OUT_HORIZONTAL_;
+    static QString const AUTO_ZOOM_VERTICAL_;
     static QStringList const ACTIONS_;
 
     static GuiActionFactoryRegistrator registrator_;

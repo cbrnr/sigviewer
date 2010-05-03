@@ -1,5 +1,3 @@
-// signal_browser.cpp
-
 #include "signal_browser_view.h"
 #include "signal_browser_model_4.h"
 #include "signal_graphics_item.h"
@@ -29,13 +27,14 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
                                       QSharedPointer<EventManager> event_manager,
                                       QSharedPointer<CommandExecuter> command_executer,
                                       QWidget* parent)
-: QFrame(parent)
+: QFrame(parent),
+  model_ (signal_browser_model)
 {
     scroll_timer_ = new QTimer (this);
     connect (scroll_timer_, SIGNAL(timeout()), this, SLOT(scroll()));
     resize(parent->contentsRect().width(), parent->contentsRect().height());
     graphics_scene_ = new QGraphicsScene (0,0,parent->contentsRect().width(), parent->contentsRect().height(), this);
-    graphics_view_ = new QGraphicsView(graphics_scene_, this);
+    graphics_view_ = new SignalBrowserGraphicsView (graphics_scene_, this);
     graphics_view_->setAcceptDrops (false);
     graphics_view_->scroll(0,0);
     graphics_view_->horizontalScrollBar()->hide();
@@ -101,6 +100,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     loadSettings();
 
     createLayout();
+    connect (graphics_view_, SIGNAL(resized(QResizeEvent*)), SLOT(graphicsSceneResized(QResizeEvent*)));
 }
 
 //-----------------------------------------------------------------------------
@@ -296,6 +296,17 @@ void SignalBrowserView::updateWidgets (bool update_view)
 void SignalBrowserView::setXAxisIntervall (float64 intervall)
 {
     x_axis_widget_->changeIntervall (intervall);
+}
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::graphicsSceneResized (QResizeEvent* event)
+{
+    unsigned signal_height = model_->getSignalHeight ();
+    double signals_per_pagesize = event->oldSize().height() / signal_height;
+
+    signal_height = event->size().height() / signals_per_pagesize;
+    model_->setSignalHeight (signal_height);
+    model_->updateLayout ();
 }
 
 //-----------------------------------------------------------------------------

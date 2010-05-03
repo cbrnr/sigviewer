@@ -8,7 +8,8 @@ HEADERS += signal_browser/signal_browser_view.h \
     signal_browser/event_info_widget.h \
     signal_browser/calculate_event_mean_command.h \
     signal_browser/calculcate_frequency_spectrum_command.h \
-    signal_browser/signal_grid_graphics_item.h
+    signal_browser/signal_grid_graphics_item.h \
+    signal_browser/signal_browser_graphics_view.h
 SOURCES += signal_browser/signal_browser_view.cpp \
     signal_browser/signal_browser_model_4.cpp \
     signal_browser/signal_graphics_item.cpp \

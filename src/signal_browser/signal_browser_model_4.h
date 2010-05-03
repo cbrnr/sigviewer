@@ -42,7 +42,9 @@ public:
 
     virtual void updateLayout ();
 
-    virtual void zoom (ZoomDimension dimension, float factor);
+    //-------------------------------------------------------------------------
+    /// see base class
+    virtual unsigned getShownHeight () const;
 
     //-------------------------------------------------------------------------
     /// see base class
@@ -84,7 +86,6 @@ public:
 
     void autoScaleAll();
 
-    int32 getSignalHeight();
     int32 getSignalSpacing();
     int32 getVisibleWidth();
     /*    int32 getPreferedXGirdPixelIntervall();
@@ -116,7 +117,6 @@ public slots:
 
 signals:
     void eventSelected (QSharedPointer<SignalEvent const> selected_event);
-    void signalHeightChanged (uint32 signal_height);
     void signalSpacingChanged (unsigned signal_spacing);
 
 protected:
@@ -160,7 +160,6 @@ private:
     // parameters
     float64 pixel_per_sec_;
 
-    int32 signal_height_;
     int32 signal_spacing_;
     int32 prefered_x_grid_pixel_intervall_;
     int32 prefered_y_grid_pixel_intervall_;

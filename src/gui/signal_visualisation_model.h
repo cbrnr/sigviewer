@@ -33,7 +33,6 @@ public:
 
     virtual std::set<ChannelID> getShownChannels () const = 0;
     virtual bool setShownChannels (std::set<ChannelID> const& shown_channels) = 0;
-    virtual void zoom (ZoomDimension dimension, float factor) = 0;
 
     void setMode (SignalVisualisationMode mode);
     SignalVisualisationMode getMode () const;
@@ -42,6 +41,16 @@ public:
     float32 getPixelPerSample () const;
     float32 getSampleRate () const;
 
+
+    //-------------------------------------------------------------------------
+    unsigned getSignalHeight () const;
+
+    //-------------------------------------------------------------------------
+    void setSignalHeight (unsigned height);
+
+    //-------------------------------------------------------------------------
+    /// @return the height of the signal viewport
+    virtual unsigned getShownHeight () const = 0;
 
     //-------------------------------------------------------------------------
     /// @return the amount of pixels whon of the signal
@@ -79,6 +88,7 @@ public slots:
 signals:
     void pixelPerSampleChanged (float32 pixel_per_sample, float32 sample_rate);
     void shownEventTypesChanged (std::set<uint16> shown_event_types);
+    void signalHeightChanged (uint32 signal_height);
 
 protected:
     SignalVisualisationModel (float32 sample_rate, std::set<EventType> const& shown_types);
@@ -91,6 +101,7 @@ private:
     SignalVisualisationMode mode_;
     EventType event_creation_type_;
     std::set<EventType> shown_event_types_;
+    unsigned signal_height_;
 };
 
 

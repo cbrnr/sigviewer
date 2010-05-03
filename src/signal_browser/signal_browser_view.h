@@ -4,11 +4,13 @@
 
 #include "../base/user_types.h"
 #include "../command_executer.h"
+#include "../gui/signal_visualisation_model.h"
 #include "../file_handling/event_manager.h"
+
+#include "signal_browser_graphics_view.h"
 
 #include <QFrame>
 #include <QGraphicsScene>
-#include <QGraphicsView>
 #include <QSharedPointer>
 
 #include <set>
@@ -72,9 +74,6 @@ signals:
     void visibleXChanged (int32 new_x);
     void visibleYChanged (int32 new_y);
 
-protected:
-//    virtual void resizeEvent (QResizeEvent * event);
-
 private slots:
     void verticalSrollbarMoved(int);
     void horizontalSrollbarMoved(int);
@@ -83,6 +82,7 @@ private slots:
     virtual void dropEvent (QDropEvent* event);
     virtual void dragEnterEvent(QDragEnterEvent *event);
     void scroll ();
+    void graphicsSceneResized (QResizeEvent* event);
 
 private:
     //-------------------------------------------------------------------------
@@ -92,9 +92,11 @@ private:
     void loadSettings ();
     void saveSettings ();
 
+    QSharedPointer<SignalVisualisationModel> model_;
+
     QTimer* scroll_timer_;
     QGraphicsScene* graphics_scene_;
-    QGraphicsView* graphics_view_;
+    SignalBrowserGraphicsView* graphics_view_;
 
     YAxisWidget* y_axis_widget_;
     XAxisWidget* x_axis_widget_;

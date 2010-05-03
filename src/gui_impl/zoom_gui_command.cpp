@@ -12,6 +12,7 @@ QString const ZoomGuiCommand::ZOOM_IN_VERTICAL_ = "Zoom In Vertical";
 QString const ZoomGuiCommand::ZOOM_OUT_VERTICAL_ = "Zoom Out Vertical";
 QString const ZoomGuiCommand::ZOOM_IN_HORIZONTAL_ = "Zoom In Horizontal";
 QString const ZoomGuiCommand::ZOOM_OUT_HORIZONTAL_ = "Zoom Out Horizontal";
+QString const ZoomGuiCommand::AUTO_ZOOM_VERTICAL_ = "Auto Zoom Vertical";
 
 
 QStringList const ZoomGuiCommand::ACTIONS_ = QStringList() << ZoomGuiCommand::ZOOM_IN_VERTICAL_
@@ -44,6 +45,7 @@ void ZoomGuiCommand::init ()
     getQAction (ZOOM_OUT_HORIZONTAL_)->setIcon (QIcon(":/images/icons/zoom_out_horizontal.png"));
 
     resetActionTriggerSlot (GOTO_, SLOT(goTo()));
+    resetActionTriggerSlot (AUTO_ZOOM_VERTICAL_, SLOT(autoZoomVertical()));
 }
 
 //-----------------------------------------------------------------------------
@@ -58,9 +60,17 @@ void ZoomGuiCommand::trigger (QString const& action_name)
 
     float32 pixel_per_sample = vis_model->getPixelPerSample ();
     if (action_name == ZOOM_IN_VERTICAL_)
-        vis_model->zoom (ZOOM_VERTICAL, ZOOM_FACTOR_);
+    {
+        unsigned signal_height = vis_model->getSignalHeight();
+        signal_height *= ZOOM_FACTOR_;
+        vis_model->setSignalHeight (signal_height);
+    }
     else if (action_name == ZOOM_OUT_VERTICAL_)
-        vis_model->zoom (ZOOM_VERTICAL, ZOOM_FACTOR_ * -1);
+    {
+        unsigned signal_height = vis_model->getSignalHeight();
+        signal_height /= ZOOM_FACTOR_;
+        vis_model->setSignalHeight (signal_height);
+    }
     else if (action_name == ZOOM_IN_HORIZONTAL_)
     {
         pixel_per_sample *= ZOOM_FACTOR_;
@@ -116,5 +126,12 @@ void ZoomGuiCommand::goTo ()
 
     vis_model->goToSample (sec * vis_model->getSampleRate ());
 }
+
+//-----------------------------------------------------------------------------
+void ZoomGuiCommand::autoZoomVertical ()
+{
+
+}
+
 
 }

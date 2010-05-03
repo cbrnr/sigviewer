@@ -56,6 +56,7 @@ void LabelWidget::paintEvent(QPaintEvent*)
 {
     int32 signal_height = signal_browser_model_.getSignalHeight();
     int32 signal_spacing = signal_browser_model_.getSignalSpacing();
+    signal_height -= signal_spacing;
     float64 intervall = signal_height + signal_spacing;
     int32 y_start = signal_browser_->getVisibleY();
     int32 y_end = y_start + height();
@@ -77,7 +78,7 @@ void LabelWidget::paintEvent(QPaintEvent*)
         if (float_y > float_y_start)
         {
             int32 y = (int32)(float_y + 0.5);
-            p.drawText(0, (int32)(y - intervall /2) , w - 10, (int32)intervall,
+            p.drawText(5, (int32)(y - intervall /2) , w - 10, (int32)intervall,
                        Qt::AlignHCenter | Qt::AlignVCenter, iter.value());
         }
     }

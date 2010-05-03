@@ -33,7 +33,6 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
   tab_context_ (tab_context),
   signal_browser_view_ (0),
   selected_event_item_ (0),
-  signal_height_(75),
   signal_spacing_(1),
   prefered_x_grid_pixel_intervall_(100),
   prefered_y_grid_pixel_intervall_(25),
@@ -81,7 +80,6 @@ void SignalBrowserModel::loadSettings()
 
     settings.beginGroup("SignalBrowserModel");
 
-    signal_height_ = settings.value("signal_height", signal_height_).toInt();
     signal_spacing_ = settings.value("signal_spacing", signal_spacing_).toInt();
     prefered_x_grid_pixel_intervall_ = settings.value("prefered_x_grid_pixel_intervall",
                                                       prefered_x_grid_pixel_intervall_).toInt();
@@ -102,7 +100,6 @@ void SignalBrowserModel::saveSettings()
 
     settings.beginGroup("SignalBrowserModel");
 
-    settings.setValue("signal_height", signal_height_);
     settings.setValue("signal_spacing", signal_spacing_);
     settings.setValue("prefered_x_grid_pixel_intervall", prefered_x_grid_pixel_intervall_);
     settings.setValue("prefered_y_grid_pixel_intervall", prefered_y_grid_pixel_intervall_);
@@ -136,9 +133,9 @@ bool SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
     if (!new_channels)
         return new_channels;
 
-    signal_height_ = signal_browser_view_->getVisibleHeight() /
-                     new_shown_channels.size();
-    signal_height_ -= signal_spacing_;
+    unsigned new_signal_height = signal_browser_view_->getVisibleHeight() /
+                                 new_shown_channels.size();
+    new_signal_height -= signal_spacing_;
 
     for (Int2SignalGraphicsItemPtrMap::const_iterator channel = channel2signal_item_.begin();
          channel != channel2signal_item_.end();
@@ -165,7 +162,7 @@ bool SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
     }
     progress.setValue (progress.maximum() );
 
-    emit signalHeightChanged (signal_height_);
+    setSignalHeight (new_signal_height);
 
     for (std::set<ChannelID>::const_iterator channel = new_shown_channels.begin();
          channel != new_shown_channels.end();
@@ -312,14 +309,7 @@ void SignalBrowserModel::setPixelPerXUnit(float64 pixel_per_sec)
 // set signal height
 void SignalBrowserModel::setItemsHeight(int32 height)
 {
-    signal_height_ = height;
-    emit signalHeightChanged (height);
-}
-
-// get signal height
-int32 SignalBrowserModel::getSignalHeight()
-{
-    return signal_height_;
+    // waldesel: REMOVE THIS METHOD!!!
 }
 
 // update layout
@@ -328,7 +318,7 @@ void SignalBrowserModel::updateLayout()
     int32 width = channel_manager_->getNumberSamples()
                   * getPixelPerSample();
 
-    int32 height = (signal_height_  + signal_spacing_) *
+    int32 height = getSignalHeight() *
                    channel2signal_item_.size();
 
     signal_browser_view_->resizeScene (width, height);
@@ -341,10 +331,10 @@ void SignalBrowserModel::updateLayout()
 
     for (signal_iter = channel2signal_item_.begin();
          signal_iter != channel2signal_item_.end();
-         signal_iter++, y_pos += signal_height_ + signal_spacing_)
+         signal_iter++, y_pos += getSignalHeight())
     {
         channel2y_pos_[signal_iter->first] = y_pos;
-        signal_iter->second->setHeight (signal_height_);
+        signal_iter->second->setHeight (getSignalHeight() - signal_spacing_);
         signal_iter->second->setPos (0, y_pos);
         signal_iter->second->setZValue(SIGNAL_Z);
         signal_iter->second->updateYGridIntervall();
@@ -368,23 +358,10 @@ void SignalBrowserModel::updateLayout()
     signal_browser_view_->updateWidgets();
 }
 
-//-------------------------------------------------------------------
-void SignalBrowserModel::zoom (ZoomDimension dimension, float factor)
+//-------------------------------------------------------------------------
+unsigned SignalBrowserModel::getShownHeight () const
 {
-    if (dimension == ZOOM_VERTICAL || dimension == ZOOM_BOTH)
-    {
-        if (factor > 0)
-        {
-            signal_height_ *= factor;
-        }
-        else
-        {
-            signal_height_ /= -factor;
-        }
-        emit signalHeightChanged (signal_height_);
-    }
-
-    updateLayout ();
+    return signal_browser_view_->getVisibleHeight ();
 }
 
 //-------------------------------------------------------------------------

@@ -35,6 +35,11 @@ public:
     virtual void updateLayout ();
 
     //-------------------------------------------------------------------------
+    /// @return the height of the signal viewport
+    virtual unsigned getShownHeight () const {return 0;}
+
+
+    //-------------------------------------------------------------------------
     /// see base class
     virtual unsigned getShownSignalWidth () const {return 0;}
 
