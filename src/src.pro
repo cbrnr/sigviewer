@@ -47,7 +47,6 @@ HEADERS += event_color_manager.h \
     main_window_model_impl.h \
     settings_dialog.h \
     signal_browser_mouse_handling.h \
-    command_stack.h \
     event_time_selection_dialog.h \
     abstract_browser_model.h \
     gui_action_manager.h \
@@ -65,7 +64,6 @@ SOURCES += event_color_manager.cpp \
     settings_dialog.cpp \
     signal_browser_mouse_handling.cpp \
     sigviewer.cpp \
-    command_stack.cpp \
     event_time_selection_dialog.cpp \
     gui_action_manager.cpp \
     application_context.cpp \

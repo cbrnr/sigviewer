@@ -81,7 +81,7 @@ void OpenFileGuiCommand::openFile (QString file_path)
 
     QSharedPointer<EventManager> event_manager (new EventManagerImpl (file_signal_reader));
     QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
-                                                 channel_manager, file_signal_reader));
+                                                 channel_manager, file_signal_reader->getBasicHeader()));
 
     QSettings settings("SigViewer");
     settings.setValue("file_open_path", file_path.left (file_path.length() -

@@ -3,7 +3,7 @@
 
 #include "tab_context.h"
 #include "file_handling/event_manager.h"
-#include "file_handling/file_signal_reader.h"
+#include "file_handling/basic_header.h"
 #include "file_handling/channel_manager.h"
 #include "base/file_states.h"
 
@@ -29,7 +29,7 @@ public:
     FileContext (QString const & file_path_and_name,
                  QSharedPointer<EventManager> event_manager,
                  QSharedPointer<ChannelManager> channel_manager,
-                 QSharedPointer<FileSignalReader> file_signal_reader);
+                 QSharedPointer<BasicHeader> header);
 
     //-------------------------------------------------------------------------
     ~FileContext ();
@@ -48,9 +48,6 @@ public:
 
     //-------------------------------------------------------------------------
     QSharedPointer<ChannelManager> getChannelManager ();
-
-    //-------------------------------------------------------------------------
-    QSharedPointer<FileSignalReader> getFileSignalReader ();
 
     //-------------------------------------------------------------------------
     QSharedPointer<BasicHeader> getHeader () {return basic_header_;}
@@ -86,7 +83,6 @@ private:
     QSharedPointer<EventManager> event_manager_;
     QSharedPointer<ChannelManager> channel_manager_;
     QSharedPointer<TabContext> tab_context_;
-    QSharedPointer<FileSignalReader> file_signal_reader_;
     QSharedPointer<BasicHeader> basic_header_;
 };
 

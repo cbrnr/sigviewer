@@ -9,13 +9,12 @@ namespace BioSig_
 FileContext::FileContext (QString const& file_path_and_name,
                           QSharedPointer<EventManager> event_manager,
                           QSharedPointer<ChannelManager> channel_manager,
-                          QSharedPointer<FileSignalReader> file_signal_reader)
+                          QSharedPointer<BasicHeader> header)
     : state_ (FILE_STATE_UNCHANGED),
       file_path_and_name_ (file_path_and_name),
       event_manager_ (event_manager),
       channel_manager_ (channel_manager),
-      file_signal_reader_ (file_signal_reader),
-      basic_header_ (file_signal_reader->getBasicHeader())
+      basic_header_ (header)
 {
     connect (event_manager_.data(), SIGNAL(changed()), SLOT(setAsChanged()));
 }
@@ -55,12 +54,6 @@ QSharedPointer<EventManager> FileContext::getEventManager ()
 QSharedPointer<ChannelManager> FileContext::getChannelManager ()
 {
     return channel_manager_;
-}
-
-//-----------------------------------------------------------------------------
-QSharedPointer<FileSignalReader> FileContext::getFileSignalReader ()
-{
-    return file_signal_reader_;
 }
 
 //-------------------------------------------------------------------------

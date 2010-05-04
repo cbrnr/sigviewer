@@ -31,7 +31,6 @@ namespace BioSig_
 class FileSignalReader;
 class MainWindow;
 class SignalBrowserModel;
-class SignalBrowserView;
 class EventTableFileReader;
 class BlocksVisualisationView;
 class AbstractBrowserModel;
@@ -48,7 +47,6 @@ public:
     MainWindowModelImpl ();
     ~MainWindowModelImpl();
 
-    QTextStream& getLogStream();
     void setMainWindow(MainWindow* main_window);
     void loadSettings();
     void saveSettings();
@@ -86,23 +84,15 @@ private:
     //-------------------------------------------------------------------------
     void storeAndInitTabContext (QSharedPointer<TabContext> context, int tab_index);
 
-    //-------------------------------------------------------------------------
-    bool checkMainWindowPtr(const QString function);
-
     static int const NUMBER_RECENT_FILES_;
 
     MainWindow* main_window_;
     QSharedPointer<ApplicationContext> application_context_;
-    QSharedPointer<FileSignalReader> file_signal_reader_;
     QSharedPointer<FileContext> current_file_context_;
     QSharedPointer<SignalBrowserModel> signal_browser_model_;
-    SignalBrowserView* signal_browser_; // main_window cares for destruction!!
     QTabWidget* tab_widget_;
     QWidget* signal_browser_tab_;
     QStringList recent_file_list_;
-    std::auto_ptr<QTextStream> log_stream_;
-    QString log_string_;
-    bool overflow_detection_;
     std::map<int, QSharedPointer<AbstractBrowserModel> > browser_models_;
     std::list<QSharedPointer<BlocksVisualisationModel> > blocks_visualisation_models_;
     std::map<int, QSharedPointer<TabContext> > tab_contexts_;

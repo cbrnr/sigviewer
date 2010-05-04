@@ -5,7 +5,6 @@
 #include "tab_context.h"
 #include "file_context.h"
 #include "application_context.h"
-#include "gui_action_manager.h"
 
 #include "file_handling/file_signal_reader_factory.h"
 #include "file_handling_impl/event_table_file_reader.h"
@@ -14,11 +13,8 @@
 #include "gui_impl/gui_helper_functions.h"
 #include "gui_impl/open_file_gui_command.h"
 #include "base/signal_event.h"
-#include "log_dialog.h"
-#include "gui_impl/channel_selection_dialog.h"
 #include "event_time_selection_dialog.h"
 #include "settings_dialog.h"
-#include "command_stack.h"
 
 #include "abstract_browser_model.h"
 
@@ -26,7 +22,6 @@
 #include "signal_browser/signal_browser_view.h"
 #include "signal_browser/calculate_event_mean_command.h"
 #include "signal_browser/calculcate_frequency_spectrum_command.h"
-#include "editing_commands/new_event_undo_command.h"
 #include "block_visualisation/blocks_visualisation_view.h"
 #include "block_visualisation/blocks_visualisation_model.h"
 
@@ -57,23 +52,15 @@ MainWindowModelImpl::MainWindowModelImpl ()
 : main_window_(0),
   application_context_ (ApplicationContext::getInstance()),
   signal_browser_model_ (0),
-  signal_browser_ (0),
-  tab_widget_ (0),
-  overflow_detection_ (false)
+  tab_widget_ (0)
 {
-    log_stream_.reset(new QTextStream(&log_string_));
+
 }
 
 // destructor
 MainWindowModelImpl::~MainWindowModelImpl()
 {
     // nothing
-}
-
-// get log stream
-QTextStream& MainWindowModelImpl::getLogStream()
-{
-    return *log_stream_.get();
 }
 
 // set main window
@@ -86,11 +73,6 @@ void MainWindowModelImpl::setMainWindow (MainWindow* main_window)
 // void load settings
 void MainWindowModelImpl::loadSettings()
 {
-    if (checkMainWindowPtr("loadSettings"))
-    {
-        main_window_->loadSettings();
-    }
-
     QSettings settings("SigViewer");
     settings.beginGroup("MainWindowModelImpl");
 
@@ -103,19 +85,12 @@ void MainWindowModelImpl::loadSettings()
 
     settings.endArray();
 
-    overflow_detection_ = settings.value("overflow_detection", overflow_detection_).toBool();
-
     settings.endGroup();
 }
 
 // void save settings
 void MainWindowModelImpl::saveSettings()
 {
-    if (checkMainWindowPtr("saveSettings"))
-    {
-        main_window_->saveSettings();
-    }
-
     QSettings settings("SigViewer");
     settings.beginGroup("MainWindowModelImpl");
     settings.beginWriteArray("recent_file");
@@ -127,7 +102,6 @@ void MainWindowModelImpl::saveSettings()
     }
 
     settings.endArray();
-    settings.setValue("overflow_detection", overflow_detection_);
     settings.endGroup();
 }
 
@@ -226,11 +200,6 @@ void MainWindowModelImpl::recentFileMenuAboutToShow()
 // recent file activated
 void MainWindowModelImpl::recentFileActivated(QAction* recent_file_action)
 {
-    if (!checkMainWindowPtr("recentFileActivated"))
-    {
-        return;
-    }
-
     OpenFileGuiCommand::openFile (recent_file_action->text());
 }
 
@@ -238,11 +207,6 @@ void MainWindowModelImpl::recentFileActivated(QAction* recent_file_action)
 // file close action
 void MainWindowModelImpl::fileCloseAction()
 {
-    if (!checkMainWindowPtr("fileCloseAction"))
-    {
-        return;
-    }
-
     if (current_file_context_.isNull())
         return;
 
@@ -255,16 +219,12 @@ void MainWindowModelImpl::fileCloseAction()
     signal_browser_model_->disconnect (SIGNAL(eventSelected(QSharedPointer<SignalEvent>)));
 
     // close
-    CommandStack::instance().clearStacks();
     signal_browser_model_->saveSettings();
 
     signal_browser_model_.clear();
     main_window_->setCentralWidget(0);
     tab_widget_ = 0;
-    signal_browser_ = 0;
     signal_browser_tab_ = 0;
-    file_signal_reader_->close();
-    file_signal_reader_ = QSharedPointer<FileSignalReader>(0);
     tab_contexts_.clear ();
 
     // reset status bar
@@ -322,7 +282,6 @@ void MainWindowModelImpl::optionsShowSettingsAction()
     // user ok
 //    settings_dialog.saveSettings();
 
-    overflow_detection_ = settings_dialog.isOverflowDetection();
 
         signal_browser_model_->setHideableWidgetsVisibilities(settings_dialog.getWidgetVisibilities());
         //signal_browser_model_->showChannelLabels(settings_dialog.isShowChannelLables());
@@ -352,20 +311,6 @@ void MainWindowModelImpl::storeAndInitTabContext (QSharedPointer<TabContext> con
 
     context->setSelectionState (TAB_STATE_NO_EVENT_SELECTED);
     context->setEditState (TAB_STATE_NO_REDO_NO_UNDO);
-}
-
-//-----------------------------------------------------------------------------
-// check main window ptr
-inline bool MainWindowModelImpl::checkMainWindowPtr(const QString function)
-{
-    if (!main_window_)
-    {
-        *log_stream_ << "MainWindowModelImpl::" << function
-                     << " Error: MainWindow not set\n";
-        return false;
-    }
-
-    return true;
 }
 
 // set changed
@@ -431,11 +376,9 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
     //   this is only to support old code here.. remove this line as soon
     //   command pattern for gui commands is finalised
     signal_browser_model_ = model;
-    signal_browser_ = view;
     current_file_context_ = file_ctx;
     event_manager_ = file_ctx->getEventManager();
     channel_manager_ = file_ctx->getChannelManager();
-    file_signal_reader_ = file_ctx->getFileSignalReader();
     // --end
 
 
@@ -476,8 +419,6 @@ void MainWindowModelImpl::closeCurrentFileTabs ()
     current_file_context_.clear ();
     event_manager_.clear ();
     channel_manager_.clear ();
-    file_signal_reader_.clear ();
-    CommandStack::instance().clearStacks();
     // --end
 
     // waldesel:
@@ -485,7 +426,6 @@ void MainWindowModelImpl::closeCurrentFileTabs ()
     //   to be refactored as soon as multi file support is implemented
     main_window_->setCentralWidget (0);
     tab_widget_ = 0;
-    signal_browser_ = 0;
     signal_browser_tab_ = 0;
     tab_contexts_.clear ();
     // --end
