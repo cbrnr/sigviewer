@@ -28,11 +28,19 @@ public:
     //-------------------------------------------------------------------------
     static void openFile (QString file_path);
 
-public slots:
+private slots:
     //-------------------------------------------------------------------------
-    virtual void trigger (QString const& action_name);
+    void open ();
+
+    //-------------------------------------------------------------------------
+    void importEvents ();
+
 
 private:
+    static QString const IMPORT_EVENTS_;
+    static QString const OPEN_;
+    static QStringList const ACTIONS_;
+
     static GuiActionFactoryRegistrator registrator_;
 
     //-------------------------------------------------------------------------

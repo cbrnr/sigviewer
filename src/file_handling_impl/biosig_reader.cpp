@@ -53,7 +53,7 @@ BioSigReader::BioSigReader() :
     read_data_(0),
     read_data_size_(0),
     buffered_all_channels_ (false),
-    events_loaded_ (false),
+    buffered_all_events_ (false),
     is_open_ (false)
 {
     qDebug () << "Constructed BioSigReader";
@@ -169,78 +169,18 @@ QSharedPointer<DataBlock const> BioSigReader::getSignalData (ChannelID channel_i
     return DataBlock (raw_data, biosig_header_->SampleRate);*/
 }
 
-
 //-----------------------------------------------------------------------------
-void BioSigReader::loadEvents(SignalEventVector& event_vector)
+QList<QSharedPointer<SignalEvent const> > BioSigReader::getEvents () const
 {
     QMutexLocker lock (&mutex_);
+    QList<QSharedPointer<SignalEvent const> > empty_list;
     if (!biosig_header_)
-        return;
+        return empty_list;
 
-    QVector<GDFEvent> gdf_events(biosig_header_->EVENT.N);
-    QVector<GDFEvent>::iterator iter;
+    if (!buffered_all_events_)
+        bufferAllEvents();
 
-    uint32 event_nr = 0;
-    for (iter = gdf_events.begin(); iter != gdf_events.end(); iter++, event_nr++)
-    {
-        iter->type = biosig_header_->EVENT.TYP[event_nr];
-        iter->position = biosig_header_->EVENT.POS[event_nr];
-        if (biosig_header_->EVENT.CHN)
-        {
-            iter->channel = biosig_header_->EVENT.CHN[event_nr];
-            iter->duration = biosig_header_->EVENT.DUR[event_nr];
-        }
-    }
-
-    // sort events by position, type and channel
-    qSort(gdf_events);
-
-    // store to signal events
-    for (iter = gdf_events.begin(); iter != gdf_events.end(); iter++)
-    {
-        if (iter->type & SignalEvent::EVENT_END)
-        {
-            uint32 start_type = iter->type - SignalEvent::EVENT_END;
-            bool start_found = false;
-            FileSignalReader::SignalEventVector::iterator rev_iter = event_vector.end();
-            while (rev_iter != event_vector.begin())
-            {
-                rev_iter--;
-                if (rev_iter->getType() == start_type &&
-                        rev_iter->getDuration() == 0)
-                {
-                    rev_iter->setDuration(iter->position -
-                                          rev_iter->getPosition());
-                    start_found = true;
-                    break;
-                }
-            }
-            if (!start_found)
-            {
-//                if (log_stream_)
-//                {
-//                    *log_stream_ << "GDFReader::loadEvents Warning: unexpected "
-//                                 << " end-event\n";
-//                }
-            }
-        }
-        else
-        {
-            if (biosig_header_->EVENT.CHN)
-            {
-                event_vector.push_back(SignalEvent(iter->position, iter->type, biosig_header_->EVENT.SampleRate,
-                                            (int32)iter->channel - 1,
-                                            iter->duration));
-            }
-            else
-            {
-                event_vector.push_back(SignalEvent(iter->position, iter->type, biosig_header_->EVENT.SampleRate));
-            }
-        }
-    }
-    events_loaded_ = true;
-    if (buffered_all_channels_)
-        doClose();
+    return events_;
 }
 
 //-----------------------------------------------------------------------------
@@ -448,9 +388,35 @@ void BioSigReader::bufferAllChannels () const
         channel_map_[channel_id] = data_block;
     }
     buffered_all_channels_ = true;
-    if (events_loaded_)
+    if (buffered_all_events_)
         doClose();
 }
+
+//-------------------------------------------------------------------------
+void BioSigReader::bufferAllEvents () const
+{
+    unsigned number_events = biosig_header_->EVENT.N;
+    for (unsigned index = 0; index < number_events; index++)
+    {
+        QSharedPointer<SignalEvent> event (new SignalEvent (biosig_header_->EVENT.POS[index],
+                                                            biosig_header_->EVENT.TYP[index],
+                                                            biosig_header_->EVENT.SampleRate));
+        if (biosig_header_->EVENT.CHN)
+        {
+            if (biosig_header_->EVENT.CHN[index] == 0)
+                event->setChannel (UNDEFINED_CHANNEL);
+            else
+                event->setChannel (biosig_header_->EVENT.CHN[index] - 1);
+            event->setDuration (biosig_header_->EVENT.DUR[index]);
+        }
+        events_.append (event);
+    }
+
+    buffered_all_events_ = true;
+    if (buffered_all_channels_)
+        doClose();
+}
+
 
 
 }

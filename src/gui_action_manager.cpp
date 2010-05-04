@@ -156,10 +156,6 @@ void GUIActionManager::initFileActions ()
 {
     QStyle* style = QApplication::style ();
 
-    createAction (ACTION_IMPORT_EVENTS, tr("Import Events..."),
-                  SLOT(fileImportEventsAction()),
-                  tr("Import events from file"));
-
     createAction (ACTION_FILE_INFO, tr("&Info..."), SLOT(fileInfoAction()),
                   tr("Show the basic information of the signal file"),
                   style->standardIcon (QStyle::SP_MessageBoxInformation));
@@ -226,7 +222,6 @@ void GUIActionManager::initGroups ()
 {
     // FILE_MENU_ACTIONS
     action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
-    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_IMPORT_EVENTS);
     action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
     action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_FILE_INFO);
     action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
@@ -270,7 +265,6 @@ void GUIActionManager::initGroups ()
 //-----------------------------------------------------------------------------
 void GUIActionManager::initDisabledStates ()
 {
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_IMPORT_EVENTS);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_FILE_INFO);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_ZOOM_IN);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_ZOOM_OUT);

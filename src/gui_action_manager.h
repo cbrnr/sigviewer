@@ -90,7 +90,6 @@ private:
     //-------------------------------------------------------------------------
     enum GUIAction
     {
-        ACTION_IMPORT_EVENTS,
         ACTION_FILE_INFO,
         ACTION_SEPARATOR,
         ACTION_CHANGE_CHANNEL,

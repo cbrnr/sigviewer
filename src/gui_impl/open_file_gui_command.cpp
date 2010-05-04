@@ -10,6 +10,8 @@
 #include "../application_context.h"
 #include "../gui_action_manager.h"
 #include "../gui/main_window_model.h"
+#include "../editing_commands/macro_undo_command.h"
+#include "../editing_commands/new_event_undo_command.h"
 
 #include <QFileDialog>
 #include <QSettings>
@@ -18,15 +20,21 @@
 namespace BioSig_
 {
 
+//-----------------------------------------------------------------------------
+QString const OpenFileGuiCommand::IMPORT_EVENTS_ = "Import Events";
+QString const OpenFileGuiCommand::OPEN_ = "Open...";
+QStringList const OpenFileGuiCommand::ACTIONS_ = QStringList() <<
+                                                 OpenFileGuiCommand::IMPORT_EVENTS_ <<
+                                                 OpenFileGuiCommand::OPEN_;
 
 //-----------------------------------------------------------------------------
-GuiActionFactoryRegistrator OpenFileGuiCommand::registrator_ ("Open File",
+GuiActionFactoryRegistrator OpenFileGuiCommand::registrator_ ("Opening",
                                                               QSharedPointer<OpenFileGuiCommand> (new OpenFileGuiCommand));
 
 
 //-----------------------------------------------------------------------------
 OpenFileGuiCommand::OpenFileGuiCommand ()
-    : GuiActionCommand (QStringList() << "Open...")
+    : GuiActionCommand (ACTIONS_)
 {
     // nothing to do here
 }
@@ -41,8 +49,11 @@ OpenFileGuiCommand::~OpenFileGuiCommand ()
 //-----------------------------------------------------------------------------
 void OpenFileGuiCommand::init ()
 {
-    getQActions().first()->setShortcut (QKeySequence::Open);
-    getQActions().first()->setIcon (QIcon(":/images/icons/fileopen.png"));
+    setShortcut (OPEN_, QKeySequence::Open);
+    setIcon (OPEN_, QIcon(":/images/icons/fileopen.png"));
+
+    resetActionTriggerSlot (OPEN_, SLOT(open()));
+    resetActionTriggerSlot (IMPORT_EVENTS_, SLOT(importEvents()));
 }
 
 //-----------------------------------------------------------------------------
@@ -81,8 +92,8 @@ void OpenFileGuiCommand::openFile (QString file_path)
     ApplicationContext::getInstance()->setState (APP_STATE_FILE_OPEN);
 }
 
-//-----------------------------------------------------------------------------
-void OpenFileGuiCommand::trigger (QString const&)
+//-------------------------------------------------------------------------
+void OpenFileGuiCommand::open ()
 {
     QString extensions = FileSignalReaderFactory::getInstance()->getExtensions();
     QSettings settings ("SigViewer");
@@ -96,6 +107,36 @@ void OpenFileGuiCommand::trigger (QString const&)
 
     openFile (file_path);
 }
+
+//-------------------------------------------------------------------------
+void OpenFileGuiCommand::importEvents ()
+{
+    QString extensions = "*.evt";
+    QSettings settings ("SigViewer");
+    QString open_path = settings.value ("file_open_path").toString();
+    if (!open_path.length())
+        open_path = QDir::homePath ();
+    QString file_path = showOpenDialog (open_path, extensions);
+
+    QSharedPointer<FileSignalReader> file_signal_reader = createAndOpenFileSignalReader (file_path);
+
+    if (file_signal_reader.isNull())
+        return;
+
+    QList<QSharedPointer<SignalEvent const> > events = file_signal_reader->getEvents ();
+    file_signal_reader->close ();
+
+    QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
+    QList<QSharedPointer<QUndoCommand> > creation_commands;
+    foreach (QSharedPointer<SignalEvent const> event, events)
+    {
+        QSharedPointer<QUndoCommand> creation_command (new NewEventUndoCommand (event_manager, event));
+        creation_commands.append (creation_command);
+    }
+    MacroUndoCommand* macro_command = new MacroUndoCommand (creation_commands);
+    ApplicationContext::getInstance()->getCurrentCommandExecuter()->executeCommand (macro_command);
+}
+
 
 //-----------------------------------------------------------------------------
 QString OpenFileGuiCommand::showOpenDialog (QString const& path, QString const& extensions)

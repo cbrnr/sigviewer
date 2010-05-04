@@ -16,14 +16,13 @@ EventManagerImpl::EventManagerImpl (QSharedPointer<FileSignalReader> reader)
       caller_mutex_ (new QMutex)
 {
     assert (reader_->isOpen());
-    FileSignalReader::SignalEventVector signal_events;
-    reader_->loadEvents (signal_events);
+    QList<QSharedPointer<SignalEvent const> > signal_events = reader_->getEvents ();
     next_free_id_ = 0;
     for (int index = 0; index < signal_events.size(); index++)
     {
         event_map_.insert (next_free_id_,
                            QSharedPointer<SignalEvent> (
-                                   new SignalEvent(signal_events[index],
+                                   new SignalEvent(*(signal_events[index]),
                                                    next_free_id_)));
         mutex_map_.insert (next_free_id_,
                            QSharedPointer<QMutex> (

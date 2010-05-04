@@ -43,7 +43,7 @@ public:
                                                            unsigned start_sample,
                                                            unsigned length) const = 0;
 
-    virtual void loadEvents(SignalEventVector& event_vector) = 0;
+    virtual QList<QSharedPointer<SignalEvent const> > getEvents () const = 0;
 
     virtual QPointer<BasicHeader> getBasicHeader () = 0;
 protected:

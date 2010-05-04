@@ -35,7 +35,7 @@ public:
                                                            unsigned length) const;
 
     //-------------------------------------------------------------------------
-    virtual void loadEvents (SignalEventVector& event_vector);
+    virtual QList<QSharedPointer<SignalEvent const> > getEvents () const;
 
     //-------------------------------------------------------------------------
     virtual QPointer<BasicHeader> getBasicHeader ();
@@ -43,6 +43,9 @@ public:
 private:
     //-------------------------------------------------------------------------
     void bufferAllChannels () const;
+
+    //-------------------------------------------------------------------------
+    void bufferAllEvents () const;
 
     //-------------------------------------------------------------------------
     static BioSigReader prototype_instance_;
@@ -63,9 +66,10 @@ private:
     mutable biosig_data_type* read_data_;
     mutable uint32 read_data_size_;
     mutable bool buffered_all_channels_;
-    mutable bool events_loaded_;
+    mutable bool buffered_all_events_;
     mutable bool is_open_;
     mutable QMap<ChannelID, QSharedPointer<DataBlock const> > channel_map_;
+    mutable QList<QSharedPointer<SignalEvent const> > events_;
 };
 
 } // namespace BioSig_
