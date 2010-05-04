@@ -1,5 +1,5 @@
 #include "gui_helper_functions.h"
-#include "channel_selection_dialog.h"
+#include "dialogs/channel_selection_dialog.h"
 #include "select_shown_channels_dialog.h"
 #include "dialogs/event_types_selection_dialog.h"
 #include "../application_context.h"
@@ -167,9 +167,7 @@ std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager> channel_manag
             channel_dialog.setSelected (channel_id, show_channel);
     }
 
-    channel_dialog.loadSettings();
     channel_dialog.exec();
-    channel_dialog.saveSettings();
 
     if (channel_dialog.result() == QDialog::Rejected)
         return pre_selected_channels;
