@@ -3,8 +3,10 @@
 #ifndef BASIC_HEADER_INFO_DIALOG_H
 #define BASIC_HEADER_INFO_DIALOG_H
 
+#include "../../file_handling/basic_header.h"
+
 #include <QDialog>
-#include <QPointer>
+#include <QSharedPointer>
 
 class QTreeWidget;
 class QPushButton;
@@ -12,14 +14,12 @@ class QPushButton;
 namespace BioSig_
 {
 
-class BasicHeader;
-
 // basic header info dialog
 class BasicHeaderInfoDialog : public QDialog
 {
     Q_OBJECT
 public:
-    BasicHeaderInfoDialog(QPointer<BasicHeader> header, QWidget* parent = 0);
+    BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header, QWidget* parent = 0);
 
     void loadSettings();
     void saveSettings();
@@ -32,7 +32,7 @@ private:
 
     void buildTree();
 
-    QPointer<BasicHeader> basic_header_;
+    QSharedPointer<BasicHeader> basic_header_;
     QTreeWidget* info_tree_widget_;
     QPushButton* close_button_;
 };

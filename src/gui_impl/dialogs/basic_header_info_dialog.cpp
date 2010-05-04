@@ -16,7 +16,7 @@ namespace BioSig_
 {
 
 // constructor
-BasicHeaderInfoDialog::BasicHeaderInfoDialog(QPointer<BasicHeader> header,
+BasicHeaderInfoDialog::BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header,
                                              QWidget* parent)
  : QDialog(parent),
    basic_header_(header)

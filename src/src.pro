@@ -40,8 +40,7 @@ include(file_handling/file_handling.pri)
 include(gui/gui.pri)
 include(gui_impl/gui_impl.pri)
 include(editing_commands/editing_commands.pri)
-HEADERS += basic_header_info_dialog.h \
-    event_color_manager.h \
+HEADERS += event_color_manager.h \
     label_widget.h \
     log_dialog.h \
     main_window.h \
@@ -58,8 +57,7 @@ HEADERS += basic_header_info_dialog.h \
     command_executer.h \
     application_context_impl.h \
     application_context_impl_interface.h
-SOURCES += basic_header_info_dialog.cpp \
-    event_color_manager.cpp \
+SOURCES += event_color_manager.cpp \
     label_widget.cpp \
     log_dialog.cpp \
     main_window.cpp \

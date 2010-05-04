@@ -14,7 +14,8 @@ FileContext::FileContext (QString const& file_path_and_name,
       file_path_and_name_ (file_path_and_name),
       event_manager_ (event_manager),
       channel_manager_ (channel_manager),
-      file_signal_reader_ (file_signal_reader)
+      file_signal_reader_ (file_signal_reader),
+      basic_header_ (file_signal_reader->getBasicHeader())
 {
     connect (event_manager_.data(), SIGNAL(changed()), SLOT(setAsChanged()));
 }

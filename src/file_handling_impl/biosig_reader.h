@@ -38,7 +38,7 @@ public:
     virtual QList<QSharedPointer<SignalEvent const> > getEvents () const;
 
     //-------------------------------------------------------------------------
-    virtual QPointer<BasicHeader> getBasicHeader ();
+    virtual QSharedPointer<BasicHeader> getBasicHeader ();
 
 private:
     //-------------------------------------------------------------------------
@@ -58,7 +58,7 @@ private:
 
     void doClose () const;
 
-    QPointer<BasicHeader> basic_header_;
+    QSharedPointer<BasicHeader> basic_header_;
     mutable QMutex mutex_;
     mutable QMutex biosig_access_lock_;
     mutable HDRTYPE* biosig_header_;

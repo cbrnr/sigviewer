@@ -254,10 +254,9 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     }
 
     biosig_header_ = sopen(c_file_name, "r", biosig_header_ );
-    if (!basic_header_.isNull())
-        delete basic_header_;
 
-    basic_header_ = new BiosigBasicHeader (biosig_header_);
+    basic_header_ = QSharedPointer<BasicHeader>
+                    (new BiosigBasicHeader (biosig_header_));
 
     /// waldesel: REMOVE OLD STUFF from here downwards
     ///           and move it into BiosigBasicHeader!!!
@@ -345,10 +344,10 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
 }
 
 //-----------------------------------------------------------------------------
-QPointer<BasicHeader> BioSigReader::getBasicHeader ()
+QSharedPointer<BasicHeader> BioSigReader::getBasicHeader ()
 {
     QMutexLocker lock (&mutex_);
-    return QPointer<BasicHeader>(basic_header_);
+    return basic_header_;
 }
 
 //-----------------------------------------------------------------------------

@@ -109,8 +109,9 @@ void MainWindow::initToolBars()
 
     file_toolbar_ = addToolBar(tr("File"));
     view_toolbar_views_menu_->addAction (file_toolbar_->toggleViewAction());
-    QList<QAction*> file_toolbar_actions = GuiActionFactory::getInstance()->getQActions("Opening");
-    file_toolbar_actions.append (action_manager_->getActionsOfGroup(GUIActionManager::FILE_TOOLBAR_ACTIONS));
+    QList<QAction*> file_toolbar_actions;
+    file_toolbar_actions.append (GuiActionFactory::getInstance()->getQAction("Open..."));
+    file_toolbar_actions.append (GuiActionFactory::getInstance()->getQAction("Info..."));
     file_toolbar_actions.append (GuiActionFactory::getInstance()->getQAction("Close"));
     file_toolbar_->addActions (file_toolbar_actions);
     file_toolbar_->addActions (GuiActionFactory::getInstance()->getQActions("UndoRedo"));

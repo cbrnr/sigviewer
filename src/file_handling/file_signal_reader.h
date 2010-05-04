@@ -45,7 +45,7 @@ public:
 
     virtual QList<QSharedPointer<SignalEvent const> > getEvents () const = 0;
 
-    virtual QPointer<BasicHeader> getBasicHeader () = 0;
+    virtual QSharedPointer<BasicHeader> getBasicHeader () = 0;
 protected:
     FileSignalReader();
 

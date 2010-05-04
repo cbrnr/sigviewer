@@ -14,7 +14,6 @@
 #include "gui_impl/gui_helper_functions.h"
 #include "gui_impl/open_file_gui_command.h"
 #include "base/signal_event.h"
-#include "basic_header_info_dialog.h"
 #include "log_dialog.h"
 #include "gui_impl/channel_selection_dialog.h"
 #include "event_time_selection_dialog.h"
@@ -275,23 +274,6 @@ void MainWindowModelImpl::fileCloseAction()
     ApplicationContext::getInstance()->addFileContext (QSharedPointer<FileContext>(0));
     application_context_->setState(APP_STATE_NO_FILE_OPEN);
     main_window_->setWindowTitle (tr("SigViewer"));
-}
-
-// file info action
-void MainWindowModelImpl::fileInfoAction()
-{
-    if (!checkMainWindowPtr("fileInfoAction"))
-    {
-        return;
-    }
-
-    // show basic header info dialog
-    BasicHeaderInfoDialog basic_header_info_dialog(file_signal_reader_->getBasicHeader(),
-                                                   main_window_);
-
-    basic_header_info_dialog.loadSettings();
-    basic_header_info_dialog.exec();
-    basic_header_info_dialog.saveSettings();
 }
 
 // view zoom in action

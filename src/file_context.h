@@ -53,6 +53,9 @@ public:
     QSharedPointer<FileSignalReader> getFileSignalReader ();
 
     //-------------------------------------------------------------------------
+    QSharedPointer<BasicHeader> getHeader () {return basic_header_;}
+
+    //-------------------------------------------------------------------------
     FileState getState () const;
 
     //-------------------------------------------------------------------------
@@ -84,6 +87,7 @@ private:
     QSharedPointer<ChannelManager> channel_manager_;
     QSharedPointer<TabContext> tab_context_;
     QSharedPointer<FileSignalReader> file_signal_reader_;
+    QSharedPointer<BasicHeader> basic_header_;
 };
 
 } // namespace BioSig_

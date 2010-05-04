@@ -1,6 +1,7 @@
 #include "open_file_gui_command.h"
 #include "gui_helper_functions.h"
 
+#include "dialogs/basic_header_info_dialog.h"
 #include "../gui/signal_visualisation_model.h"
 #include "../file_handling/file_signal_reader_factory.h"
 #include "../file_handling_impl/event_manager_impl.h"
@@ -23,9 +24,11 @@ namespace BioSig_
 //-----------------------------------------------------------------------------
 QString const OpenFileGuiCommand::IMPORT_EVENTS_ = "Import Events";
 QString const OpenFileGuiCommand::OPEN_ = "Open...";
+QString const OpenFileGuiCommand::SHOW_FILE_INFO_ = "Info...";
 QStringList const OpenFileGuiCommand::ACTIONS_ = QStringList() <<
                                                  OpenFileGuiCommand::IMPORT_EVENTS_ <<
-                                                 OpenFileGuiCommand::OPEN_;
+                                                 OpenFileGuiCommand::OPEN_ <<
+                                                 OpenFileGuiCommand::SHOW_FILE_INFO_;
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator OpenFileGuiCommand::registrator_ ("Opening",
@@ -54,6 +57,7 @@ void OpenFileGuiCommand::init ()
 
     resetActionTriggerSlot (OPEN_, SLOT(open()));
     resetActionTriggerSlot (IMPORT_EVENTS_, SLOT(importEvents()));
+    resetActionTriggerSlot (SHOW_FILE_INFO_, SLOT(showFileInfo()));
 }
 
 //-----------------------------------------------------------------------------
@@ -135,6 +139,16 @@ void OpenFileGuiCommand::importEvents ()
     }
     MacroUndoCommand* macro_command = new MacroUndoCommand (creation_commands);
     ApplicationContext::getInstance()->getCurrentCommandExecuter()->executeCommand (macro_command);
+}
+
+//-------------------------------------------------------------------------
+void OpenFileGuiCommand::showFileInfo ()
+{
+    BasicHeaderInfoDialog basic_header_info_dialog(ApplicationContext::getInstance()->getCurrentFileContext()->getHeader());
+
+    basic_header_info_dialog.loadSettings();
+    basic_header_info_dialog.exec();
+    basic_header_info_dialog.saveSettings();
 }
 
 

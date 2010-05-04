@@ -44,7 +44,6 @@ public:
         EDIT_TOOLBAR_ACTIONS,
         EVENT_CONTEXT_ACTIONS,
         FILE_MENU_ACTIONS,
-        FILE_TOOLBAR_ACTIONS,
         VIEW_MENU_ACTIONS,
         VIEW_TOOLBAR_ACTIONS,
         OPTIONS_MENU_ACTIONS,
@@ -90,7 +89,6 @@ private:
     //-------------------------------------------------------------------------
     enum GUIAction
     {
-        ACTION_FILE_INFO,
         ACTION_SEPARATOR,
         ACTION_CHANGE_CHANNEL,
         ACTION_VIEW_ZOOM_IN,
@@ -105,12 +103,6 @@ private:
     // disabled assignment and copy-ctr
     GUIActionManager (GUIActionManager const&);
     GUIActionManager& operator= (GUIActionManager const&);
-
-    //-------------------------------------------------------------------------
-    void initFileActions ();
-
-    //-------------------------------------------------------------------------
-    void initEditActions ();
 
     //-------------------------------------------------------------------------
     void initViewActions ();

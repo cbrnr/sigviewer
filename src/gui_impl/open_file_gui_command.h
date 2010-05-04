@@ -35,10 +35,13 @@ private slots:
     //-------------------------------------------------------------------------
     void importEvents ();
 
+    //-------------------------------------------------------------------------
+    void showFileInfo ();
 
 private:
     static QString const IMPORT_EVENTS_;
     static QString const OPEN_;
+    static QString const SHOW_FILE_INFO_;
     static QStringList const ACTIONS_;
 
     static GuiActionFactoryRegistrator registrator_;
