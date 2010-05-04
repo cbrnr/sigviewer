@@ -32,7 +32,7 @@ public:
     virtual ~SignalVisualisationModel () {}
 
     virtual std::set<ChannelID> getShownChannels () const = 0;
-    virtual bool setShownChannels (std::set<ChannelID> const& shown_channels) = 0;
+    virtual void setShownChannels (std::set<ChannelID> const& shown_channels) = 0;
 
     void setMode (SignalVisualisationMode mode);
     SignalVisualisationMode getMode () const;

@@ -434,14 +434,6 @@ void MainWindowModelImpl::viewAutoScaleAction()
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModelImpl::optionsChannelsAction()
-{
-    if (signal_browser_model_->setShownChannels (GuiHelper::selectChannels (
-            current_file_context_->getChannelManager(), current_file_context_->getFileName(), signal_browser_model_)))
-        signal_browser_model_->updateLayout();
-}
-
-//-----------------------------------------------------------------------------
 void MainWindowModelImpl::optionsChangeCreationType ()
 {
     uint16 current_type = signal_browser_model_->getActualEventCreationType();

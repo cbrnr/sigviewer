@@ -78,7 +78,6 @@ public slots:
     void viewZoomInAction();
     void viewZoomOutAction();
     void viewAutoScaleAction();
-    void optionsChannelsAction();
     void optionsChangeCreationType();
     void optionsShowSettingsAction();
     void recentFileActivated(QAction* recent_file_action);

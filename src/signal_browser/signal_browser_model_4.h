@@ -75,7 +75,7 @@ public:
     void setAutoZoomBehaviour (ScaleMode auto_zoom_type);
     ScaleMode getAutoZoomBehaviour () const;
 
-    virtual bool setShownChannels (std::set<ChannelID> const& shown_channels);
+    virtual void setShownChannels (std::set<ChannelID> const& shown_channels);
     virtual std::set<ChannelID> getShownChannels () const;
     std::map<uint32, QString> getShownChannelsWithLabels () const;
     uint32 getNumberShownChannels() const;

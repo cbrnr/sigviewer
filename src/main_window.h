@@ -59,10 +59,8 @@ private slots:
 
 private:
     MainWindow(const MainWindow&);
-
     const MainWindow& operator=(const MainWindow&);
 
-    void initIconSets();
     void initActions();
     void initToolBars();
     void initMenus();
@@ -88,9 +86,6 @@ private:
     QToolBar* navigation_toolbar_;
 
     QAction* calculate_frequency_spectrum_action_;
-    QAction* help_log_action_;
-
-    QIcon help_about_icon_;
 
     QLabel* status_bar_signal_length_label_;
     QLabel* status_bar_nr_channels_label_;

@@ -25,12 +25,13 @@ public slots:
     //-------------------------------------------------------------------------
     void selectShownChannels ();
 
+protected:
     //-------------------------------------------------------------------------
-    void selectShownEvents ();
+    virtual void evaluateEnabledness ();
+
 
 private:
     static QString const CHANNELS_;
-    static QString const EVENTS_;
     static QStringList const ACTIONS_;
 
     static GuiActionFactoryRegistrator registrator_;

@@ -30,6 +30,7 @@ ChannelSelectionDialog::ChannelSelectionDialog (QSharedPointer<ChannelManager> c
     channel_list_widget_
         ->setSelectionMode(QAbstractItemView::MultiSelection);
     top_layout->addWidget(channel_list_widget_);
+    connect (channel_list_widget_, SIGNAL(itemSelectionChanged()), SLOT(selectionChanged()));
 
 //    QHBoxLayout* tmpLayout= new QHBoxLayout;
 //    top_layout->addItem(tmpLayout);
@@ -206,6 +207,18 @@ void ChannelSelectionDialog::selectAll ()
     for (int32 channel_number = 0; channel_number < channel_list_widget_->count(); ++channel_number)
         channel_list_widget_->item(channel_number)->setSelected(true);
 }
+
+//-----------------------------------------------------------------------------
+void ChannelSelectionDialog::selectionChanged ()
+{
+    unsigned num_selected_items = channel_list_widget_->selectedItems().count();
+    bool nothing_selected = (num_selected_items == 0);
+    bool all_selected = (num_selected_items == channel_list_widget_->count());
+    ok_button_->setDisabled (nothing_selected);
+    select_all_button_->setDisabled (all_selected);
+    unselect_all_button_->setDisabled (nothing_selected);
+}
+
 
 //void ChannelSelectionDialog::maxChanged(double value)
 //{

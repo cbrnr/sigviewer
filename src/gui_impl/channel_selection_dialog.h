@@ -59,6 +59,7 @@ private:
  private slots:
     void unselectAll();
     void selectAll();
+    void selectionChanged ();
 //    void maxChanged(double value);
 //    void minChanged(double value);
 //    void rangeSearchChanged(bool checked);

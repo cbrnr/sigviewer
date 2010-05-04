@@ -30,7 +30,7 @@ public:
     virtual void zoom (ZoomDimension, float) {}
 
     virtual std::set<ChannelID> getShownChannels () const {std::set<ChannelID> blub; return blub;}
-    virtual bool setShownChannels (std::set<ChannelID> const&) {return true;}
+    virtual void setShownChannels (std::set<ChannelID> const&) {}
 
     virtual void updateLayout ();
 

@@ -63,7 +63,6 @@ MainWindow::MainWindow (QSharedPointer<MainWindowModelImpl> model)
     setAcceptDrops (true);
     setWindowIcon(QIcon(":images/sigviewer16.png"));
     initStatusBar();
-    initIconSets();
     initActions();
     initToolBars();
     initMenus();
@@ -91,12 +90,6 @@ void MainWindow::initStatusBar()
     status_bar_nr_channels_label_->setMinimumWidth(status_bar_nr_channels_label_->sizeHint().width() + 10);
     status_bar->addPermanentWidget(status_bar_signal_length_label_);
     status_bar->addPermanentWidget(status_bar_nr_channels_label_);
-}
-
-// init icons sets
-void MainWindow::initIconSets()
-{
-    help_about_icon_.addFile(":/images/help_22x22.png");
 }
 
 // init actions
@@ -133,6 +126,7 @@ void MainWindow::initToolBars()
     view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
     view_toolbar_->addActions(action_manager_->getActionsOfGroup(GUIActionManager::VIEW_TOOLBAR_ACTIONS));
     view_toolbar_->addAction(GuiActionFactory::getInstance()->getQAction("Events..."));
+    view_toolbar_->addAction(GuiActionFactory::getInstance()->getQAction("Channels..."));
 
     navigation_toolbar_ = addToolBar(tr("Navigation"));
     view_toolbar_views_menu_->addAction (navigation_toolbar_->toggleViewAction());
