@@ -25,7 +25,7 @@ class ChannelSelectionDialog : public QDialog
 {
     Q_OBJECT
 public:
-    ChannelSelectionDialog (QSharedPointer<ChannelManager> channel_manager,
+    ChannelSelectionDialog (QSharedPointer<ChannelManager const> channel_manager,
                             QString const& file_name,
                             QWidget* parent = 0);
 
@@ -44,7 +44,7 @@ private:
     ChannelSelectionDialog(const ChannelSelectionDialog&);
     const ChannelSelectionDialog& operator=(const ChannelSelectionDialog&);
 
-    QSharedPointer<ChannelManager> channel_manager_;
+    QSharedPointer<ChannelManager const> channel_manager_;
     Ui::ChannelDialog ui_;
 };
 

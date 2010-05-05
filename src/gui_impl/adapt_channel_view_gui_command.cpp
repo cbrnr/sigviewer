@@ -34,8 +34,8 @@ void AdaptChannelViewGuiCommand::selectShownChannels ()
     QSharedPointer<SignalVisualisationModel> sv_model = currentVisModel ();
     QSharedPointer<FileContext> file_ctx = ApplicationContext::getInstance()->getCurrentFileContext();
     std::set<ChannelID> previous_shown_channels = sv_model->getShownChannels ();
-    std::set<ChannelID> new_shown_channels = GuiHelper::selectChannels (file_ctx->getChannelManager(),
-                                                                        file_ctx->getFileName(),
+    std::set<ChannelID> new_shown_channels = GuiHelper::selectChannels (sv_model->getChannelManager(),
+                                                                        "",
                                                                         sv_model);
     if (previous_shown_channels != new_shown_channels)
     {

@@ -323,6 +323,13 @@ void SignalBrowserModel::updateLayout()
 }
 
 //-------------------------------------------------------------------------
+QSharedPointer<ChannelManager const> SignalBrowserModel::getChannelManager () const
+{
+    return channel_manager_;
+}
+
+
+//-------------------------------------------------------------------------
 unsigned SignalBrowserModel::getShownHeight () const
 {
     return signal_browser_view_->getVisibleHeight ();

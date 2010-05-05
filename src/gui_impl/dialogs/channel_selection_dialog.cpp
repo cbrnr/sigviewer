@@ -4,7 +4,7 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-ChannelSelectionDialog::ChannelSelectionDialog (QSharedPointer<ChannelManager>
+ChannelSelectionDialog::ChannelSelectionDialog (QSharedPointer<ChannelManager const>
                                                 channel_manager,
                                                 QString const& file_name,
                                                 QWidget* parent)
@@ -12,30 +12,33 @@ ChannelSelectionDialog::ChannelSelectionDialog (QSharedPointer<ChannelManager>
    channel_manager_ (channel_manager)
 {
     ui_.setupUi (this);
-    setWindowTitle(file_name + tr(" - Channel Selection"));
+    QString window_title ("Channel Selection");
+    if (file_name.size ())
+        window_title.prepend(file_name + " - ");
 
-    for (uint32 channel_nr = 0;
-         channel_nr < channel_manager_->getNumberChannels();
-         channel_nr++)
-    {
-        ui_.list_widget_->addItem(QString("(%1) %2").arg(channel_nr + 1)
-                                  .arg(channel_manager_->getChannelLabel
-                                       (channel_nr)));
-    }
+    setWindowTitle (window_title);
+
+    foreach (ChannelID id, channel_manager->getChannels())
+        ui_.list_widget_->addItem(QString::number(id) + " - " + channel_manager_->getChannelLabel (id));
+
     adjustSize ();
 }
 
 //-----------------------------------------------------------------------------
 bool ChannelSelectionDialog::isSelected(uint32 channel_nr)
 {
-    return ui_.list_widget_->isItemSelected (ui_.list_widget_->item (channel_nr));
+    foreach (QListWidgetItem* item, ui_.list_widget_->selectedItems())
+        if (item->text().section(" - ", 0, 0) == QString::number(channel_nr))
+            return true;
+
+    return false;
 }
 
 //-----------------------------------------------------------------------------
 void ChannelSelectionDialog::setSelected(uint32 channel_nr, bool selected)
 {
-    ui_.list_widget_->setItemSelected (ui_.list_widget_->item(channel_nr),
-                                       selected);
+    foreach (QListWidgetItem* item, ui_.list_widget_->findItems(QString::number(channel_nr) + " - ", Qt::MatchStartsWith))
+        item->setSelected(selected);
 }
 
 //-----------------------------------------------------------------------------

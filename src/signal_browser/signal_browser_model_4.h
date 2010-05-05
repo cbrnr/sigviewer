@@ -43,6 +43,9 @@ public:
     virtual void updateLayout ();
 
     //-------------------------------------------------------------------------
+    virtual QSharedPointer<ChannelManager const> getChannelManager () const;
+
+    //-------------------------------------------------------------------------
     /// see base class
     virtual unsigned getShownHeight () const;
 

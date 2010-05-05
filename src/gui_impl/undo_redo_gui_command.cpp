@@ -55,11 +55,13 @@ void UndoRedoGuiCommand::evaluateEnabledness ()
 {
     bool can_undo = getTabEditState() != TAB_STATE_NO_UNDO &&
                     getTabEditState() != TAB_STATE_NO_REDO_NO_UNDO &&
-                    getTabEditState() != NO_TAB_EDIT_STATE;
+                    getTabEditState() != NO_TAB_EDIT_STATE &&
+                    getApplicationState() == APP_STATE_FILE_OPEN;
 
     bool can_redo = getTabEditState() != TAB_STATE_NO_REDO &&
                     getTabEditState() != TAB_STATE_NO_REDO_NO_UNDO &&
-                    getTabEditState() != NO_TAB_EDIT_STATE;
+                    getTabEditState() != NO_TAB_EDIT_STATE &&
+                    getApplicationState() == APP_STATE_FILE_OPEN;
 
     getQAction (UNDO_)->setEnabled (can_undo);
     getQAction (REDO_)->setEnabled (can_redo);

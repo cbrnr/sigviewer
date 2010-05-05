@@ -12,10 +12,13 @@ ChannelManagerImpl::ChannelManagerImpl (QSharedPointer<FileSignalReader> file_si
 
 }
 
-//-----------------------------------------------------------------------------
-ChannelManagerImpl::~ChannelManagerImpl ()
+//-------------------------------------------------------------------------
+std::set<ChannelID> ChannelManagerImpl::getChannels () const
 {
-
+    std::set<ChannelID> channels;
+    for (ChannelID id = 0; id < reader_->getBasicHeader()->getNumberChannels(); ++id)
+        channels.insert(id);
+    return channels;
 }
 
 //-----------------------------------------------------------------------------

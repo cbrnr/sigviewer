@@ -19,6 +19,15 @@ void ProcessedSignalChannelManager::addChannel (ChannelID id, QSharedPointer<Dat
     channel_labels_[id] = label;
 }
 
+//-------------------------------------------------------------------------
+std::set<ChannelID> ProcessedSignalChannelManager::getChannels () const
+{
+    std::set<ChannelID> channels;
+    foreach (ChannelID id, channels_.keys())
+        channels.insert(id);
+    return channels;
+}
+
 
 //-------------------------------------------------------------------------
 uint32 ProcessedSignalChannelManager::getNumberChannels () const

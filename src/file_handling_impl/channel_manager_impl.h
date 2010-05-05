@@ -18,8 +18,11 @@ class ChannelManagerImpl : public ChannelManager
 {
 public:
     ChannelManagerImpl (QSharedPointer<FileSignalReader> file_signal_reader);
-    virtual ~ChannelManagerImpl ();
 
+    virtual ~ChannelManagerImpl () {}
+
+    //-------------------------------------------------------------------------
+    virtual std::set<ChannelID> getChannels () const;
 
     //-------------------------------------------------------------------------
     virtual uint32 getNumberChannels () const;

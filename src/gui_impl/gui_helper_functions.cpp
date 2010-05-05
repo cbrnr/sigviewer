@@ -145,7 +145,7 @@ std::set<ChannelID> selectShownChannels (ChannelID hide_channel)
 
 
 //-----------------------------------------------------------------------------
-std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager> channel_manager,
+std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager const> channel_manager,
                                     QString const& file_name,
                                     QSharedPointer<SignalVisualisationModel> vis_model)
 {
@@ -156,9 +156,7 @@ std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager> channel_manag
 
     bool empty_selection = pre_selected_channels.size () == 0;
 
-    for (ChannelID channel_id = 0;
-         channel_id < channel_manager->getNumberChannels();
-         channel_id++)
+    foreach (ChannelID channel_id, channel_manager->getChannels())
     {
         bool show_channel = empty_selection ||
                             (pre_selected_channels.count(channel_id) > 0);
@@ -173,9 +171,7 @@ std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager> channel_manag
         return pre_selected_channels;
 
     std::set<ChannelID> selected_channels;
-    for (ChannelID channel_id = 0;
-         channel_id < channel_manager->getNumberChannels();
-         channel_id++)
+    foreach (ChannelID channel_id, channel_manager->getChannels())
     {
         if (channel_dialog.isSelected (channel_id))
             selected_channels.insert (channel_id);

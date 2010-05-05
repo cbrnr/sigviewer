@@ -63,7 +63,7 @@ void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation ()
         }
 
         QSharedPointer<DataBlock> mean = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateMean (data)));
-        processed_channel_manager->addChannel (channel_id, mean, tr("Mean of\n") + channel_manager->getChannelLabel(channel_id));
+        processed_channel_manager->addChannel (channel_id, mean, channel_manager->getChannelLabel(channel_id));
     }
 
     QSharedPointer<SignalVisualisationModel> signal_visualisation_model =

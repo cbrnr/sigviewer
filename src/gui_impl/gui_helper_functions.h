@@ -32,7 +32,7 @@ ChannelID selectChannel (ChannelID preselected_channel);
 std::set<ChannelID> selectShownChannels (ChannelID hide_channel);
 
 //-----------------------------------------------------------------------------
-std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager> channel_manager,
+std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager const> channel_manager,
                                     QString const& file_name = "",
                                     QSharedPointer<SignalVisualisationModel> vis_model
                                     = QSharedPointer<SignalVisualisationModel>(0));

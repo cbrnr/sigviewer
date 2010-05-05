@@ -6,6 +6,7 @@
 #include "../base/signal_channel.h"
 
 #include <QSharedPointer>
+#include <set>
 
 namespace BioSig_
 {
@@ -20,6 +21,9 @@ public:
     //-------------------------------------------------------------------------
     /// destructor
     virtual ~ChannelManager () {}
+
+    //-------------------------------------------------------------------------
+    virtual std::set<ChannelID> getChannels () const = 0;
 
     //-------------------------------------------------------------------------
     virtual uint32 getNumberChannels () const = 0;

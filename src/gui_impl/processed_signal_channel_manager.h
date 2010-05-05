@@ -22,6 +22,9 @@ public:
     virtual ~ProcessedSignalChannelManager () {}
 
     //-------------------------------------------------------------------------
+    virtual std::set<ChannelID> getChannels () const;
+
+    //-------------------------------------------------------------------------
     virtual uint32 getNumberChannels () const;
 
     //-------------------------------------------------------------------------
