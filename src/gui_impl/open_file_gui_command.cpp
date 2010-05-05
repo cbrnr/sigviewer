@@ -22,7 +22,7 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-QString const OpenFileGuiCommand::IMPORT_EVENTS_ = "Import Events";
+QString const OpenFileGuiCommand::IMPORT_EVENTS_ = "Import Events...";
 QString const OpenFileGuiCommand::OPEN_ = "Open...";
 QString const OpenFileGuiCommand::SHOW_FILE_INFO_ = "Info...";
 QStringList const OpenFileGuiCommand::ACTIONS_ = QStringList() <<
@@ -54,6 +54,7 @@ void OpenFileGuiCommand::init ()
 {
     setShortcut (OPEN_, QKeySequence::Open);
     setIcon (OPEN_, QIcon(":/images/icons/fileopen.png"));
+    setIcon (SHOW_FILE_INFO_, QIcon(":/images/info_16x16.png"));
 
     resetActionTriggerSlot (OPEN_, SLOT(open()));
     resetActionTriggerSlot (IMPORT_EVENTS_, SLOT(importEvents()));
@@ -95,6 +96,15 @@ void OpenFileGuiCommand::openFile (QString file_path)
     ApplicationContext::getInstance()->addFileContext (file_context);
     ApplicationContext::getInstance()->setState (APP_STATE_FILE_OPEN);
 }
+
+//-------------------------------------------------------------------------
+void OpenFileGuiCommand::evaluateEnabledness ()
+{
+    bool file_opened = (getApplicationState() == APP_STATE_FILE_OPEN);
+    getQAction (IMPORT_EVENTS_)->setEnabled (file_opened);
+    getQAction (SHOW_FILE_INFO_)->setEnabled (file_opened);
+}
+
 
 //-------------------------------------------------------------------------
 void OpenFileGuiCommand::open ()

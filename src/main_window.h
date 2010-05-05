@@ -39,7 +39,6 @@ public:
 
     // do actions
     bool showFileCloseDialog(const QString& file_name);
-    QString showOpenDialog(const QString& path, const QString& extensions);
     void showErrorReadDialog(const QString& file_name);
     void showErrorWriteDialog(const QString& file_name);
     QString showExportDialog(const QString& path, const QString& extensions);
@@ -58,6 +57,8 @@ private slots:
     void toggleStatusBar (bool visible);
 
 private:
+    QAction* action (QString const& action_id);
+
     MainWindow(const MainWindow&);
     const MainWindow& operator=(const MainWindow&);
 

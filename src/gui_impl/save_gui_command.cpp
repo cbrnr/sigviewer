@@ -178,7 +178,7 @@ void SaveGuiCommand::evaluateEnabledness ()
     if (file_open)
     {
         no_gdf_file_open = !(ApplicationContext::getInstance()->getCurrentFileContext()->getFileName().endsWith("gdf"));
-        file_changed = getFileState () == FILE_STATE_CHANGED;
+        file_changed = (getFileState () == FILE_STATE_CHANGED);
         has_events = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager()->getNumberOfEvents() > 0;
     }
 

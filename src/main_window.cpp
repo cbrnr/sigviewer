@@ -23,7 +23,6 @@
 
 */
 
-
 // main_window.cpp
 
 #include "main_window.h"
@@ -145,24 +144,27 @@ void MainWindow::toggleStatusBar (bool visible)
 //-----------------------------------------------------------------------------
 void MainWindow::initMenus()
 {
-    QList<QAction*> file_menu_actions =
-            action_manager_->getActionsOfGroup(GUIActionManager::FILE_MENU_ACTIONS);
     file_recent_files_menu_ = new QMenu(tr("Open &Recent"), this);
     connect(file_recent_files_menu_, SIGNAL(aboutToShow()),
             model_.data(), SLOT(recentFileMenuAboutToShow()));
     connect(file_recent_files_menu_, SIGNAL(triggered(QAction*)),
             model_.data(), SLOT(recentFileActivated(QAction*)));
-    file_menu_actions.insert (0, file_recent_files_menu_->menuAction());
+
     file_menu_ = new QMenu(tr("&File"), this);
-    file_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Opening"));
-    file_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Saving"));
-    QAction* separator = new QAction (this);
-    separator->setSeparator (true);
-    file_menu_actions.insert(file_menu_actions.size() - 2, separator);
-    file_menu_actions.insert(file_menu_actions.size() - 2,
-                             GuiActionFactory::getInstance()->getQAction("Close"));
-    file_menu_->addActions(file_menu_actions);
-    file_menu_->addAction (GuiActionFactory::getInstance()->getQAction("Exit"));
+    file_menu_->addAction(action("Open..."));
+    file_menu_->addMenu (file_recent_files_menu_);
+    file_menu_->addAction (action("Save"));
+    file_menu_->addAction (action("Save as..."));
+    file_menu_->addSeparator ();
+    file_menu_->addAction (action("Export to GDF..."));
+    file_menu_->addAction (action("Export Events..."));
+    file_menu_->addAction (action("Import Events..."));
+    file_menu_->addSeparator ();
+    file_menu_->addAction (action("Info..."));
+    file_menu_->addSeparator ();
+    file_menu_->addAction (action("Close"));
+    file_menu_->addSeparator ();
+    file_menu_->addAction (action("Exit"));
 
     menuBar()->addMenu(file_menu_);
 
@@ -196,12 +198,13 @@ void MainWindow::initMenus()
     help_menu_->addAction (GuiActionFactory::getInstance()->getQAction("About"));
 }
 
-// close event
+//-----------------------------------------------------------------------------
 void MainWindow::closeEvent(QCloseEvent*)
 {
     GuiActionFactory::getInstance()->getQAction("Exit")->trigger();
 }
 
+//-----------------------------------------------------------------------------
 void MainWindow::dropEvent (QDropEvent* event)
 {
     if (event->mimeData()->hasText())
@@ -217,6 +220,7 @@ void MainWindow::dropEvent (QDropEvent* event)
     }
 }
 
+//-----------------------------------------------------------------------------
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->mimeData()->hasText() || event->mimeData()->hasUrls())
@@ -225,9 +229,7 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
     }
 }
 
-
-
-// load settings
+//-----------------------------------------------------------------------------
 void MainWindow::loadSettings()
 {
     QSettings settings("SigViewer");
@@ -237,7 +239,7 @@ void MainWindow::loadSettings()
     settings.endGroup();
 }
 
-// save settings
+//-----------------------------------------------------------------------------
 void MainWindow::saveSettings()
 {
     QSettings settings("SigViewer");
@@ -247,7 +249,7 @@ void MainWindow::saveSettings()
     settings.endGroup();
 }
 
-// show file close dialog
+//-----------------------------------------------------------------------------
 bool MainWindow::showFileCloseDialog(const QString& file_name)
 {
     int res;
@@ -255,23 +257,6 @@ bool MainWindow::showFileCloseDialog(const QString& file_name)
                 tr("Changes in '%1' are not saved!!").arg(file_name) + "\n" +
                 tr("Really close?"), tr("Yes"),  tr("No"));
     return (res == 0);
-}
-
-// show file open dialog
-QString MainWindow::showOpenDialog(const QString& path,
-                                   const QString& extensions)
-{
-    QString extension_selection = tr("Signal files (%1)").arg(extensions);
-    QStringList ext_list = extensions.split (" ");//, QString::SkipEmptyParts, extensions);
-    for (QStringList::iterator it = ext_list.begin();
-         it != ext_list.end();
-         it++)
-    {
-        extension_selection += ";; " + *it +" (" + *it + ")";
-    }
-    extension_selection += ";; *.* (*.*)";
-    return QFileDialog::getOpenFileName(this, tr("Chose signal file to open"),
-                                        path, extension_selection);
 }
 
 // show import dialog
@@ -410,6 +395,12 @@ void MainWindow::setStatusBarNrChannels(int32 nr_channels)
     QString tmp = nr_channels < 0 ? "---" : QString("%1").arg(nr_channels, 3);
     status_bar_nr_channels_label_->setText(tr("Channels: %1").arg(tmp));
     status_bar_nr_channels_label_->setMinimumWidth(status_bar_nr_channels_label_->sizeHint().width() + 10);
+}
+
+//-----------------------------------------------------------------------------
+QAction* MainWindow::action (QString const& action_id)
+{
+    return GuiActionFactory::getInstance()->getQAction (action_id);
 }
 
 } // namespace BioSig_
