@@ -122,72 +122,6 @@ void MainWindowModelImpl::closeTab (int tab_index)
     delete widget;
 }
 
-//-----------------------------------------------------------------------------
-void MainWindowModelImpl::calculateMeanAction ()
-{
-    /*
-    if (signal_browser_model_.isNull())
-        return;
-    std::map<uint32, QString> shown_channels = signal_browser_model_->getShownChannelsWithLabels ();
-    std::set<uint16> displayed_event_types = signal_browser_model_->getDisplayedEventTypes ();
-    std::map<uint16, QString> shown_event_types;
-    for (std::set<uint16>::iterator event_type_it = displayed_event_types.begin();
-         event_type_it != displayed_event_types.end();
-         ++event_type_it)
-    {
-        shown_event_types[*event_type_it] = ApplicationContext::getInstance()->getEventTableFileReader()->getEventName (*event_type_it);
-    }
-
-    EventTimeSelectionDialog event_time_dialog (shown_event_types, shown_channels,
-                                                current_file_context_->getEventManager());
-    if (event_time_dialog.exec () == QDialog::Rejected)
-        return;
-    else
-    {
-        CalculateEventMeanCommand command (current_file_context_->getEventManager(),
-                                           current_file_context_->getChannelManager(),
-                                           *this,
-                                           event_time_dialog.getSelectedEventType(),
-                                           event_time_dialog.getSelectedChannels(),
-                                           event_time_dialog.getSecondsBeforeEvent(),
-                                           event_time_dialog.getLengthInSeconds());
-        command.execute();
-    }
-    */
-}
-
-//-----------------------------------------------------------------------------
-void MainWindowModelImpl::calculateFrequencySpectrumAction ()
-{
-    /*
-    if (signal_browser_model_.isNull())
-        return;
-    std::map<uint32, QString> shown_channels = signal_browser_model_->getShownChannelsWithLabels ();
-    std::set<uint16> displayed_event_types = signal_browser_model_->getDisplayedEventTypes ();
-    std::map<uint16, QString> shown_event_types;
-    for (std::set<uint16>::iterator event_type_it = displayed_event_types.begin();
-         event_type_it != displayed_event_types.end();
-         ++event_type_it)
-    {
-        shown_event_types[*event_type_it] = ApplicationContext::getInstance()->getEventTableFileReader()->getEventName (*event_type_it);
-    }
-
-    EventTimeSelectionDialog event_time_dialog (shown_event_types, shown_channels,
-                                                current_file_context_->getEventManager());
-    if (event_time_dialog.exec () == QDialog::Rejected)
-        return;
-    else
-    {
-        CalculcateFrequencySpectrumCommand command (signal_browser_model_, *this,
-                                                    event_time_dialog.getSelectedEventType(),
-                                                    event_time_dialog.getSelectedChannels(),
-                                                    event_time_dialog.getSecondsBeforeEvent(),
-                                                    event_time_dialog.getLengthInSeconds());
-        command.execute();
-    }
-    */
-}
-
 // recent file menu about to show
 void MainWindowModelImpl::recentFileMenuAboutToShow()
 {
@@ -231,24 +165,6 @@ void MainWindowModelImpl::fileCloseAction()
     ApplicationContext::getInstance()->addFileContext (QSharedPointer<FileContext>(0));
     application_context_->setState(APP_STATE_NO_FILE_OPEN);
     main_window_->setWindowTitle (tr("SigViewer"));
-}
-
-// view zoom in action
-void MainWindowModelImpl::viewZoomInAction()
-{
-    signal_browser_model_->zoomInAll();
-}
-
-// view zoom out action
-void MainWindowModelImpl::viewZoomOutAction()
-{
-    signal_browser_model_->zoomOutAll();
-}
-
-// view auto scale action
-void MainWindowModelImpl::viewAutoScaleAction()
-{
-    signal_browser_model_->autoScaleAll();
 }
 
 //-----------------------------------------------------------------------------

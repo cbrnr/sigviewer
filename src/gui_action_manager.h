@@ -93,10 +93,8 @@ private:
         ACTION_CHANGE_CHANNEL,
         ACTION_VIEW_ZOOM_IN,
         ACTION_VIEW_ZOOM_OUT,
-        ACTION_VIEW_AUTO_SCALE,
         ACTION_OPTIONS_CHANGE_EVENT_CREATION_TYPE,
-        ACTION_SHOW_SETTINGS,
-        ACTION_CALCULATE_MEANS
+        ACTION_SHOW_SETTINGS
     };
 
     //-------------------------------------------------------------------------
@@ -109,9 +107,6 @@ private:
 
     //-------------------------------------------------------------------------
     void initOptionsActions ();
-
-    //-------------------------------------------------------------------------
-    void initToolsActions ();
 
     //-------------------------------------------------------------------------
     void initShortcuts ();

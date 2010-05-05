@@ -21,17 +21,21 @@ public:
     //-------------------------------------------------------------------------
     virtual void init ();
 
-public slots:
-    //-------------------------------------------------------------------------
-    void selectShownChannels ();
-
 protected:
     //-------------------------------------------------------------------------
     virtual void evaluateEnabledness ();
 
+private slots:
+    //-------------------------------------------------------------------------
+    void selectShownChannels ();
+
+    //-------------------------------------------------------------------------
+    void autoScaleAll ();
+
 
 private:
     static QString const CHANNELS_;
+    static QString const AUTO_SCALE_ALL_;
     static QStringList const ACTIONS_;
 
     static GuiActionFactoryRegistrator registrator_;

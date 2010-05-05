@@ -323,6 +323,19 @@ void SignalBrowserModel::updateLayout()
 }
 
 //-------------------------------------------------------------------------
+void SignalBrowserModel::scaleChannel (ChannelID id, float32, float32)
+{
+    channel2signal_item_[id]->autoScale (auto_zoom_type_);
+}
+
+//-------------------------------------------------------------------------
+void SignalBrowserModel::autoScaleChannel (ChannelID id)
+{
+    channel2signal_item_[id]->autoScale (auto_zoom_type_);
+    signal_browser_view_->updateWidgets();
+}
+
+//-------------------------------------------------------------------------
 QSharedPointer<ChannelManager const> SignalBrowserModel::getChannelManager () const
 {
     return channel_manager_;

@@ -64,12 +64,7 @@ public slots:
     void closeTab (int tab_index);
 
     // actions
-    void calculateMeanAction();
-    void calculateFrequencySpectrumAction();
     void fileCloseAction();
-    void viewZoomInAction();
-    void viewZoomOutAction();
-    void viewAutoScaleAction();
     void optionsChangeCreationType();
     void optionsShowSettingsAction();
     void recentFileActivated(QAction* recent_file_action);

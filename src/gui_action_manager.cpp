@@ -32,9 +32,7 @@ void GUIActionManager::init (MainWindowModelImpl* main_window_model)
 {
     connect (ApplicationContext::getInstance().data(), SIGNAL(stateChanged(ApplicationState)), SLOT(setApplicationState(ApplicationState)));
     main_window_model_ = main_window_model;
-    initViewActions();
     initOptionsActions();
-    initToolsActions();
     initShortcuts ();
     initGroups ();
     initDisabledStates ();
@@ -148,25 +146,6 @@ QList<QAction*> GUIActionManager::getActionsOfGroup (ActionGroup group)
     return list;
 }
 
-//-----------------------------------------------------------------------------
-void GUIActionManager::initViewActions ()
-{
-    createAction (ACTION_VIEW_ZOOM_IN, tr("Zoom &In"),
-                  SLOT(viewZoomInAction()),
-                  tr("Zoom in all channels"),
-                  QIcon(":/images/zoom_in_22x22.png"));
-
-    createAction (ACTION_VIEW_ZOOM_OUT, tr("Zoom &Out"),
-                  SLOT(viewZoomOutAction()),
-                  tr("Zoom out all channels"),
-                  QIcon(":/images/zoom_out_22x22.png"));
-
-    createAction (ACTION_VIEW_AUTO_SCALE, tr("&Auto Scale"),
-                  SLOT(viewAutoScaleAction()),
-                  tr("Autoscale all channels"),
-                  QIcon(":/images/auto_scale_22x22.png"));
-}
-
 //-------------------------------------------------------------------------
 void GUIActionManager::initOptionsActions ()
 {
@@ -182,15 +161,6 @@ void GUIActionManager::initOptionsActions ()
                   QIcon(":/images/icons/configure.png"));
 }
 
-//-------------------------------------------------------------------------
-void GUIActionManager::initToolsActions ()
-{
-    createAction (ACTION_CALCULATE_MEANS,
-                  tr("Calculate Mean (alpha version)"),
-                  SLOT(calculateMeanAction()),
-                  tr("Calculates mean of selected event type"));
-}
-
 //-----------------------------------------------------------------------------
 void GUIActionManager::initShortcuts ()
 {
@@ -201,52 +171,16 @@ void GUIActionManager::initShortcuts ()
 //-----------------------------------------------------------------------------
 void GUIActionManager::initGroups ()
 {
-    // FILE_MENU_ACTIONS
-    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
-    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
-    action_group_map_[FILE_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
-
-    // EDIT_MENU_ACTIONS
-    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
-    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
-    action_group_map_[EDIT_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
-
-    // EVENT_CONTEXT_ACTIONS
-    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_SEPARATOR);
-    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_SEPARATOR);
-    action_group_map_[EVENT_CONTEXT_ACTIONS].push_back (ACTION_SEPARATOR);
-
-    // VIEW_MENU_ACTIONS
-    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
-    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_ZOOM_IN);
-    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_ZOOM_OUT);
-    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_VIEW_AUTO_SCALE);
-    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
-    action_group_map_[VIEW_MENU_ACTIONS].push_back (ACTION_SEPARATOR);
-
-
-    // VIEW_TOOLBAR_ACTIONS
-    action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_ZOOM_IN);
-    action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_ZOOM_OUT);
-    action_group_map_[VIEW_TOOLBAR_ACTIONS].push_back (ACTION_VIEW_AUTO_SCALE);
-
     // OPTIONS_MENU_ACTIONS
     action_group_map_[OPTIONS_MENU_ACTIONS].push_back (ACTION_SHOW_SETTINGS);
     action_group_map_[OPTIONS_MENU_ACTIONS].push_back (ACTION_OPTIONS_CHANGE_EVENT_CREATION_TYPE);
-
-    // TOOLS_MENU_ACTIONS
-    action_group_map_[TOOLS_MENU_ACTIONS].push_back (ACTION_CALCULATE_MEANS);
 }
 
 //-----------------------------------------------------------------------------
 void GUIActionManager::initDisabledStates ()
 {
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_ZOOM_IN);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_ZOOM_OUT);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_VIEW_AUTO_SCALE);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_OPTIONS_CHANGE_EVENT_CREATION_TYPE);
     app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_SHOW_SETTINGS);
-    app_state_action_map_[APP_STATE_NO_FILE_OPEN].push_back (ACTION_CALCULATE_MEANS);
 }
 
 

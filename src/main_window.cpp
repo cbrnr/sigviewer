@@ -94,11 +94,7 @@ void MainWindow::initStatusBar()
 // init actions
 void MainWindow::initActions()
 {
-    calculate_frequency_spectrum_action_ = new QAction(tr("Calculate Power Spectrum"), this);
-    calculate_frequency_spectrum_action_->setStatusTip(tr("Calculates power spectrum of selected event type"));
-    calculate_frequency_spectrum_action_->setEnabled(false);
-    connect(calculate_frequency_spectrum_action_, SIGNAL(triggered()),
-            model_.data(), SLOT(calculateFrequencySpectrumAction()));
+
 }
 
 // init tool bars
@@ -127,6 +123,7 @@ void MainWindow::initToolBars()
     view_toolbar_->addActions(action_manager_->getActionsOfGroup(GUIActionManager::VIEW_TOOLBAR_ACTIONS));
     view_toolbar_->addAction(GuiActionFactory::getInstance()->getQAction("Events..."));
     view_toolbar_->addAction(GuiActionFactory::getInstance()->getQAction("Channels..."));
+    view_toolbar_->addAction(action("Auto Scale All"));
 
     navigation_toolbar_ = addToolBar(tr("Navigation"));
     view_toolbar_views_menu_->addAction (navigation_toolbar_->toggleViewAction());

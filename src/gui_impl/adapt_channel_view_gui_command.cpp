@@ -7,8 +7,10 @@ namespace BioSig_
 
 //-----------------------------------------------------------------------------
 QString const AdaptChannelViewGuiCommand::CHANNELS_ = "Channels...";
+QString const AdaptChannelViewGuiCommand::AUTO_SCALE_ALL_ = "Auto Scale All";
 QStringList const AdaptChannelViewGuiCommand::ACTIONS_ = QStringList() <<
-                                                         AdaptChannelViewGuiCommand::CHANNELS_;
+                                                         AdaptChannelViewGuiCommand::CHANNELS_ <<
+                                                         AdaptChannelViewGuiCommand::AUTO_SCALE_ALL_ ;
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator registrator_ ("Adapt Channel View",
@@ -25,7 +27,9 @@ AdaptChannelViewGuiCommand::AdaptChannelViewGuiCommand ()
 void AdaptChannelViewGuiCommand::init ()
 {
     setIcon (CHANNELS_, QIcon(":/images/channels_22x22.png"));
+    setIcon (AUTO_SCALE_ALL_, QIcon(":/images/icons/autoscale.png"));
     resetActionTriggerSlot (CHANNELS_, SLOT(selectShownChannels()));
+    resetActionTriggerSlot (AUTO_SCALE_ALL_, SLOT(autoScaleAll()));
 }
 
 //-------------------------------------------------------------------------
@@ -51,6 +55,14 @@ void AdaptChannelViewGuiCommand::evaluateEnabledness ()
     bool file_open = (getApplicationState() == APP_STATE_FILE_OPEN);
     getQAction (CHANNELS_)->setEnabled (file_open);
 }
+
+//-------------------------------------------------------------------------
+void AdaptChannelViewGuiCommand::autoScaleAll ()
+{
+    foreach (ChannelID id, currentVisModel()->getShownChannels())
+        currentVisModel()->autoScaleChannel (id);
+}
+
 
 
 }

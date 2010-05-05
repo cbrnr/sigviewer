@@ -86,8 +86,6 @@ private:
     QToolBar* view_toolbar_;
     QToolBar* navigation_toolbar_;
 
-    QAction* calculate_frequency_spectrum_action_;
-
     QLabel* status_bar_signal_length_label_;
     QLabel* status_bar_nr_channels_label_;
 };

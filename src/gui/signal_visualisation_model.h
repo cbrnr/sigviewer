@@ -43,6 +43,12 @@ public:
     float32 getSampleRate () const;
 
     //-------------------------------------------------------------------------
+    virtual void scaleChannel (ChannelID id, float32 lower_value, float32 upper_value) = 0;
+
+    //-------------------------------------------------------------------------
+    virtual void autoScaleChannel (ChannelID id) = 0;
+
+    //-------------------------------------------------------------------------
     virtual QSharedPointer<ChannelManager const> getChannelManager () const = 0;
 
     //-------------------------------------------------------------------------
