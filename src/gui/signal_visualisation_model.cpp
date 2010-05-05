@@ -1,5 +1,7 @@
 #include "signal_visualisation_model.h"
 
+#include <iostream>
+
 namespace BioSig_
 {
 
@@ -10,7 +12,8 @@ SignalVisualisationModel::SignalVisualisationModel (float32 sample_rate,
       sample_rate_ (sample_rate),
       mode_ (MODE_HAND),
       event_creation_type_ (1),
-      shown_event_types_ (shown_types)
+      shown_event_types_ (shown_types),
+      signal_height_ (10)
 {
     // nothing to do here
 }
@@ -57,6 +60,12 @@ unsigned SignalVisualisationModel::getSignalHeight () const
 void SignalVisualisationModel::setSignalHeight (unsigned height)
 {
     signal_height_ = height;
+    std::cout << "SignalVisualisationModel::signal_height_ = " << signal_height_ << std::endl;
+    if (signal_height_ == 0)
+    {
+        std::cout << "WARUM???" << std::endl;
+        signal_height_ = 100;
+    }
     emit signalHeightChanged (signal_height_);
 }
 

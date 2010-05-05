@@ -24,14 +24,8 @@ uint32 ChannelManagerImpl::getNumberChannels () const
     return reader_->getBasicHeader()->getNumberChannels();
 }
 
-//-----------------------------------------------------------------------------
-SignalChannel const& ChannelManagerImpl::getSignalChannel (ChannelID id) const
-{
-    return reader_->getBasicHeader()->getChannel (id);
-}
-
 //-------------------------------------------------------------------------
-QString const& ChannelManagerImpl::getChannelLabel (ChannelID id) const
+QString ChannelManagerImpl::getChannelLabel (ChannelID id) const
 {
     return reader_->getBasicHeader()->getChannel (id).getLabel();
 }

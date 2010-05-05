@@ -25,10 +25,7 @@ public:
     virtual uint32 getNumberChannels () const = 0;
 
     //-------------------------------------------------------------------------
-    virtual SignalChannel const& getSignalChannel (ChannelID id) const = 0;
-
-    //-------------------------------------------------------------------------
-    virtual QString const& getChannelLabel (ChannelID id) const = 0;
+    virtual QString getChannelLabel (ChannelID id) const = 0;
 
     //-------------------------------------------------------------------------
     /// @param channel_id the id of the channel

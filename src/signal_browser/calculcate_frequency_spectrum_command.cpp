@@ -1,7 +1,6 @@
 #include "calculcate_frequency_spectrum_command.h"
 
 #include "../base/data_block.h"
-#include "../block_visualisation/blocks_visualisation_model.h"
 #include "../signal_processing/fftw++.h"
 
 #include <QSharedPointer>

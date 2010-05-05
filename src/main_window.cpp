@@ -187,7 +187,7 @@ void MainWindow::initMenus()
     view_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Adapt Event View"));
 
     tools_menu_ = menuBar()->addMenu(tr("&Tools"));
-    tools_menu_->addActions(action_manager_->getActionsOfGroup(GUIActionManager::TOOLS_MENU_ACTIONS));
+    tools_menu_->addActions(GuiActionFactory::getInstance()->getQActions("Signal Processing"));
 
     options_menu_ = menuBar()->addMenu(tr("&Options"));
     options_menu_->addActions (action_manager_->getActionsOfGroup(GUIActionManager::OPTIONS_MENU_ACTIONS));

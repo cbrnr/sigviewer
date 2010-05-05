@@ -62,18 +62,6 @@ FileState FileContext::getState () const
     return state_;
 }
 
-//-------------------------------------------------------------------------
-QSharedPointer<TabContext> FileContext::getMainTabContext ()
-{
-    return tab_context_;
-}
-
-//-------------------------------------------------------------------------
-void FileContext::setMainTabContext (QSharedPointer<TabContext> tab_context)
-{
-    tab_context_ = tab_context;
-}
-
 //-----------------------------------------------------------------------------
 void FileContext::setState (FileState state)
 {

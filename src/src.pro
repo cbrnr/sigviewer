@@ -33,7 +33,6 @@ TRANSLATIONS += translations\sigviewer_de.ts \
     translations\sigviewer_fr.ts
 include(base/base.pri)
 include(signal_browser/signal_browser.pri)
-include(block_visualisation/block_visualisation.pri)
 include(signal_processing/signal_processing.pri)
 include(file_handling_impl/file_handling_impl.pri)
 include(file_handling/file_handling.pri)
@@ -47,8 +46,6 @@ HEADERS += event_color_manager.h \
     main_window_model_impl.h \
     settings_dialog.h \
     signal_browser_mouse_handling.h \
-    event_time_selection_dialog.h \
-    abstract_browser_model.h \
     gui_action_manager.h \
     application_context.h \
     file_context.h \
@@ -64,7 +61,6 @@ SOURCES += event_color_manager.cpp \
     settings_dialog.cpp \
     signal_browser_mouse_handling.cpp \
     sigviewer.cpp \
-    event_time_selection_dialog.cpp \
     gui_action_manager.cpp \
     application_context.cpp \
     file_context.cpp \

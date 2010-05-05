@@ -41,10 +41,11 @@ public:
     SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_browser_model,
                        QSharedPointer<EventManager> event_manager,
                        QSharedPointer<CommandExecuter> command_executer,
+                       QRect const& initial_size,
                        QWidget* parent = 0);
     virtual ~SignalBrowserView ();
 
-    void addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item);
+    void addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item, QString const& label);
     void removeSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item);
     void addEventGraphicsItem (EventGraphicsItem* event_graphics_item);
     void removeEventGraphicsItem (EventGraphicsItem* event_graphics_item, bool update_view = true);

@@ -28,13 +28,8 @@ class QTextStream;
 namespace BioSig_
 {
 
-class FileSignalReader;
 class MainWindow;
 class SignalBrowserModel;
-class EventTableFileReader;
-class BlocksVisualisationView;
-class AbstractBrowserModel;
-class BlocksVisualisationModel;
 class ApplicationContext;
 class TabContext;
 
@@ -52,7 +47,8 @@ public:
     void saveSettings();
     void setChanged();
 
-    QSharedPointer<BlocksVisualisationModel> createBlocksVisualisationView (QString const& title);
+    //-------------------------------------------------------------------------
+    virtual QSharedPointer<SignalVisualisationModel> createSignalVisualisation (QSharedPointer<ChannelManager> channel_manager);
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<SignalVisualisationModel> createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx);
@@ -82,6 +78,10 @@ public slots:
 
 private:
     //-------------------------------------------------------------------------
+    int createSignalVisualisationImpl (QSharedPointer<ChannelManager> channel_manager,
+                                       QSharedPointer<EventManager> event_manager);
+
+    //-------------------------------------------------------------------------
     void storeAndInitTabContext (QSharedPointer<TabContext> context, int tab_index);
 
     static int const NUMBER_RECENT_FILES_;
@@ -93,11 +93,8 @@ private:
     QTabWidget* tab_widget_;
     QWidget* signal_browser_tab_;
     QStringList recent_file_list_;
-    std::map<int, QSharedPointer<AbstractBrowserModel> > browser_models_;
-    std::list<QSharedPointer<BlocksVisualisationModel> > blocks_visualisation_models_;
+    std::map<int, QSharedPointer<SignalVisualisationModel> > browser_models_;
     std::map<int, QSharedPointer<TabContext> > tab_contexts_;
-    QSharedPointer<EventManager> event_manager_;
-    QSharedPointer<ChannelManager> channel_manager_;
 
     //-------------------------------------------------------------------------
     // not allowed

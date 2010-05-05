@@ -17,6 +17,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 
 namespace BioSig_
 {
@@ -26,8 +27,8 @@ namespace BioSig_
 SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manager,
                                        QSharedPointer<ChannelManager> channel_manager,
                                        QSharedPointer<TabContext> tab_context)
-: AbstractBrowserModel (channel_manager->getSampleRate(),
-                        event_manager->getAllPossibleEventTypes()),
+: SignalVisualisationModel (channel_manager->getSampleRate(),
+                            std::set<EventType> ()),
   channel_manager_ (channel_manager),
   event_manager_ (event_manager),
   tab_context_ (tab_context),
@@ -67,9 +68,12 @@ SignalBrowserModel::~SignalBrowserModel()
 
 //-----------------------------------------------------------------------------
 // set signal browser view
-void SignalBrowserModel::setSignalBrowserView(SignalBrowserView* signal_browser_view)
+void SignalBrowserModel::setSignalBrowserView (SignalBrowserView* signal_browser_view)
 {
     signal_browser_view_ = signal_browser_view;
+    if (!event_manager_.isNull())
+        setShownEventTypes (event_manager_->getAllPossibleEventTypes());
+
 }
 
 //-----------------------------------------------------------------------------
@@ -145,29 +149,25 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
 
     setSignalHeight (new_signal_height);
 
-    for (std::set<ChannelID>::const_iterator channel = new_shown_channels.begin();
-         channel != new_shown_channels.end();
+    for (Int2SignalGraphicsItemPtrMap::const_iterator channel = channel2signal_item_.begin();
+         channel != channel2signal_item_.end();
          ++channel)
-        channel2signal_item_[*channel]->autoScale (auto_zoom_type_);
+        channel->second->autoScale (auto_zoom_type_);
 }
 
 //-----------------------------------------------------------------------------
 void SignalBrowserModel::addChannel (ChannelID channel_id)
 {
-    if (channel_id >= channel_manager_->getNumberChannels())
-        return;
-
     SignalGraphicsItem* signal_item
         = new SignalGraphicsItem (event_manager_,
                                   tab_context_,
                                   channel_manager_,
                                   channel_id,
-                                  channel_manager_->getSignalChannel(channel_id),
                                   *this);
 
     signal_item->connect (this, SIGNAL(signalHeightChanged(uint32)), SLOT(setHeight(uint32)));
     channel2signal_item_[channel_id] = signal_item;
-    signal_browser_view_->addSignalGraphicsItem (channel_id, signal_item);
+    signal_browser_view_->addSignalGraphicsItem (channel_id, signal_item, channel_manager_->getChannelLabel(channel_id));
 }
 
 //-----------------------------------------------------------------------------
@@ -196,21 +196,6 @@ std::set<ChannelID> SignalBrowserModel::getShownChannels () const
          ++sig_iter)
     {
         shown_channels.insert(sig_iter->first);
-    }
-    return shown_channels;
-}
-
-
-//-----------------------------------------------------------------------------
-std::map<uint32, QString> SignalBrowserModel::getShownChannelsWithLabels () const
-{
-    std::map<uint32, QString> shown_channels;
-    for (Int2SignalGraphicsItemPtrMap::const_iterator sig_iter =
-         channel2signal_item_.begin();
-         sig_iter != channel2signal_item_.end();
-         ++sig_iter)
-    {
-        shown_channels[sig_iter->first] = sig_iter->second->getLabel();
     }
     return shown_channels;
 }
@@ -493,7 +478,8 @@ void SignalBrowserModel::updateEventItemsImpl ()
         else
         {
             event_iter->second->updateToSignalEvent ();
-            signal_browser_view_->addEventGraphicsItem(event_iter->second);
+            if (!(event_iter->second->scene()))
+                signal_browser_view_->addEventGraphicsItem(event_iter->second);
             event_iter->second->show();
         }
     }

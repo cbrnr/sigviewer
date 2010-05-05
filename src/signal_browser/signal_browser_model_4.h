@@ -2,12 +2,12 @@
 #ifndef SIGNAL_BROWSER_MODEL_H_q4
 #define SIGNAL_BROWSER_MODEL_H_q4
 
-#include "../abstract_browser_model.h"
 #include "../file_context.h"
 #include "../tab_context.h"
 #include "../file_handling/channel_manager.h"
 #include "../file_handling/event_manager.h"
 #include "../gui/signal_visualisation_modes.h"
+#include "../gui/signal_visualisation_model.h"
 #include "event_graphics_item.h"
 
 #include <QObject>
@@ -27,7 +27,7 @@ class SignalGraphicsItem;
 
 //-----------------------------------------------------------------------------
 /// SignalBrowserModel
-class SignalBrowserModel : public AbstractBrowserModel
+class SignalBrowserModel : public SignalVisualisationModel
 {
     Q_OBJECT
 public:
@@ -77,7 +77,6 @@ public:
 
     virtual void setShownChannels (std::set<ChannelID> const& shown_channels);
     virtual std::set<ChannelID> getShownChannels () const;
-    std::map<uint32, QString> getShownChannelsWithLabels () const;
     uint32 getNumberShownChannels() const;
     int32 getYPosOfChannel (uint32 channel_nr) const;
 

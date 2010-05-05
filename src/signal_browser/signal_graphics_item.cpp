@@ -35,13 +35,11 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<EventManager> event_manag
                                         QSharedPointer<CommandExecuter> command_executor,
                                         QSharedPointer<ChannelManager> channel_manager,
                                         ChannelID id,
-                                        const SignalChannel& channel,
                                         SignalBrowserModel& model)
 : event_manager_ (event_manager),
   command_executor_ (command_executor),
   channel_manager_ (channel_manager),
   id_ (id),
-  signal_channel_(channel),
   signal_browser_model_(model),
   minimum_ (channel_manager_->getMinValue (id_)),
   maximum_ (channel_manager_->getMaxValue (id_)),
@@ -218,12 +216,6 @@ void SignalGraphicsItem::enableYGrid(bool enabled)
 void SignalGraphicsItem::enableXGrid(bool enabled)
 {
     draw_x_grid_ = enabled;
-}
-
-//-----------------------------------------------------------------------------
-QString const &SignalGraphicsItem::getLabel () const
-{
-    return signal_channel_.getLabel();
 }
 
 //-----------------------------------------------------------------------------

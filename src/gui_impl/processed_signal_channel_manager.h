@@ -1,25 +1,25 @@
-#ifndef CHANNEL_MANAGER_IMPL_H
-#define CHANNEL_MANAGER_IMPL_H
+#ifndef PROCESSED_SIGNAL_CHANNEL_MANAGER_H
+#define PROCESSED_SIGNAL_CHANNEL_MANAGER_H
 
 #include "../file_handling/channel_manager.h"
-#include "../file_handling/file_signal_reader.h"
 
-#include <QSharedPointer>
+#include <QMap>
 
 namespace BioSig_
 {
 
-//-----------------------------------------------------------------------------
-/// ChannelManagerImpl
-///
-/// implementation of ChannelManager
-///
-class ChannelManagerImpl : public ChannelManager
+class ProcessedSignalChannelManager : public ChannelManager
 {
 public:
-    ChannelManagerImpl (QSharedPointer<FileSignalReader> file_signal_reader);
-    virtual ~ChannelManagerImpl ();
+    //-------------------------------------------------------------------------
+    ProcessedSignalChannelManager (float32 sample_rate, unsigned length);
 
+    //-------------------------------------------------------------------------
+    void addChannel (ChannelID id, QSharedPointer<DataBlock const> data_block,
+                     QString const& label);
+
+    //-------------------------------------------------------------------------
+    virtual ~ProcessedSignalChannelManager () {}
 
     //-------------------------------------------------------------------------
     virtual uint32 getNumberChannels () const;
@@ -48,11 +48,13 @@ public:
     //-------------------------------------------------------------------------
     virtual float64 getMaxValue (ChannelID channel_id) const;
 
-
 private:
-    QSharedPointer<FileSignalReader> reader_;
+    float32 sample_rate_;
+    unsigned length_;
+    QMap<ChannelID, QSharedPointer<DataBlock const> > channels_;
+    QMap<ChannelID, QString> channel_labels_;
 };
 
 }
 
-#endif // CHANNEL_MANAGER_IMPL_H
+#endif // PROCESSED_SIGNAL_CHANNEL_MANAGER_H

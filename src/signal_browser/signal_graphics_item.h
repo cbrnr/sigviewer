@@ -31,7 +31,6 @@ public:
                        QSharedPointer<CommandExecuter> command_executor,
                        QSharedPointer<ChannelManager> channel_manager,
                        ChannelID id,
-                       const SignalChannel& channel,
                        SignalBrowserModel& model);
 
     virtual ~SignalGraphicsItem ();
@@ -41,7 +40,6 @@ public:
     void updateYGridIntervall();
     void enableYGrid(bool enabled);
     void enableXGrid(bool enabled);
-    QString const &getLabel () const;
 
     float64 getYZoom() const;
     float64 getYOffset() const;
@@ -74,7 +72,6 @@ private:
     QSharedPointer<CommandExecuter> command_executor_;
     QSharedPointer<ChannelManager> channel_manager_;
     ChannelID id_;
-    const SignalChannel& signal_channel_;
     SignalBrowserModel& signal_browser_model_;
 
     float64 minimum_;

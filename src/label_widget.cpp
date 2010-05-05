@@ -62,6 +62,9 @@ void LabelWidget::paintEvent(QPaintEvent*)
     int32 y_end = y_start + height();
     int32 w = width();
 
+    if (intervall < 1)
+        return;
+
     QPainter p(this);
     p.translate(0, -y_start);
     p.drawLine(0, y_start, 0, y_end);

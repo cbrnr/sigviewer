@@ -12,18 +12,11 @@
 #include "file_handling_impl/channel_manager_impl.h"
 #include "gui_impl/gui_helper_functions.h"
 #include "gui_impl/open_file_gui_command.h"
-#include "base/signal_event.h"
-#include "event_time_selection_dialog.h"
 #include "settings_dialog.h"
-
-#include "abstract_browser_model.h"
 
 #include "signal_browser/signal_browser_model_4.h"
 #include "signal_browser/signal_browser_view.h"
-#include "signal_browser/calculate_event_mean_command.h"
 #include "signal_browser/calculcate_frequency_spectrum_command.h"
-#include "block_visualisation/blocks_visualisation_view.h"
-#include "block_visualisation/blocks_visualisation_model.h"
 
 #include <QInputDialog>
 #include <QString>
@@ -132,6 +125,7 @@ void MainWindowModelImpl::closeTab (int tab_index)
 //-----------------------------------------------------------------------------
 void MainWindowModelImpl::calculateMeanAction ()
 {
+    /*
     if (signal_browser_model_.isNull())
         return;
     std::map<uint32, QString> shown_channels = signal_browser_model_->getShownChannelsWithLabels ();
@@ -159,11 +153,13 @@ void MainWindowModelImpl::calculateMeanAction ()
                                            event_time_dialog.getLengthInSeconds());
         command.execute();
     }
+    */
 }
 
 //-----------------------------------------------------------------------------
 void MainWindowModelImpl::calculateFrequencySpectrumAction ()
 {
+    /*
     if (signal_browser_model_.isNull())
         return;
     std::map<uint32, QString> shown_channels = signal_browser_model_->getShownChannelsWithLabels ();
@@ -189,6 +185,7 @@ void MainWindowModelImpl::calculateFrequencySpectrumAction ()
                                                     event_time_dialog.getLengthInSeconds());
         command.execute();
     }
+    */
 }
 
 // recent file menu about to show
@@ -216,7 +213,7 @@ void MainWindowModelImpl::fileCloseAction()
         return; // user cancel
 
     current_file_context_.clear ();
-    signal_browser_model_->disconnect (SIGNAL(eventSelected(QSharedPointer<SignalEvent>)));
+    signal_browser_model_->disconnect ();
 
     // close
     signal_browser_model_->saveSettings();
@@ -319,31 +316,18 @@ void MainWindowModelImpl::setChanged()
     ApplicationContext::getInstance()->getCurrentFileContext()->setState (FILE_STATE_CHANGED);
 }
 
-//-----------------------------------------------------------------------------
-QSharedPointer<BlocksVisualisationModel> MainWindowModelImpl::createBlocksVisualisationView (QString const& title)
+//-------------------------------------------------------------------------
+QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisualisation (QSharedPointer<ChannelManager> channel_manager)
 {
-    BlocksVisualisationView* bv_view = new BlocksVisualisationView (tab_widget_);
-    QSharedPointer<BlocksVisualisationModel> bv_model = QSharedPointer<BlocksVisualisationModel> (new BlocksVisualisationModel (bv_view, 10, channel_manager_->getSampleRate()));
-
-    blocks_visualisation_models_.push_back (bv_model);
-    int tab_index = tab_widget_->addTab(bv_view, title);
-    browser_models_[tab_index] = bv_model;
-    tab_widget_->setCurrentWidget(bv_view);
-    QSharedPointer<TabContext> tab_context (new TabContext ());
-    storeAndInitTabContext (tab_context, tab_index);
-
-    return bv_model;
+    int tab_index = createSignalVisualisationImpl (channel_manager, QSharedPointer<EventManager>(0));
+    tab_widget_->setTabText(tab_index, tr("Mean"));
+    tab_widget_->setCurrentIndex(tab_index);
+    return browser_models_[tab_index];
 }
 
 //-----------------------------------------------------------------------------
 QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx)
 {
-    // waldesel:
-    // --begin
-    //   to be replaced as soon as multi file support is implemented
-    if (!current_file_context_.isNull())
-        fileCloseAction();
-    // --end
     if (!tab_widget_)
     {
         tab_widget_ = new QTabWidget (main_window_);
@@ -352,41 +336,26 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
         tab_widget_->setTabsClosable (true);
     }
 
-    QSharedPointer<TabContext> tab_context (new TabContext);
-    file_ctx->setMainTabContext (tab_context);
 
-    QSharedPointer<SignalBrowserModel> model (new SignalBrowserModel (file_ctx->getEventManager(),
-                                                                      file_ctx->getChannelManager(),
-                                                                      tab_context));
-    SignalBrowserView* view = new SignalBrowserView (model, file_ctx->getEventManager(), tab_context, tab_widget_);
+    // waldesel:
+    // --begin
+    //   to be replaced as soon as multi file support is implemented
+    if (!current_file_context_.isNull())
+        fileCloseAction();
+    // --end
 
-    int tab_index = tab_widget_->addTab (view, tr("Signal Data"));
-    storeAndInitTabContext (tab_context, tab_index);
-
-    model->setSignalBrowserView (view);
-    browser_models_[tab_index] = model;
-    model->loadSettings ();
-
-    main_window_->setCentralWidget(tab_widget_);
-    tab_widget_->show();
-    view->show();
 
     // waldesel:
     // --begin
     //   this is only to support old code here.. remove this line as soon
     //   command pattern for gui commands is finalised
-    signal_browser_model_ = model;
     current_file_context_ = file_ctx;
-    event_manager_ = file_ctx->getEventManager();
-    channel_manager_ = file_ctx->getChannelManager();
     // --end
-
 
     recent_file_list_.removeAll (file_ctx->getFilePathAndName());
     if (recent_file_list_.size() == NUMBER_RECENT_FILES_)
         recent_file_list_.pop_back();
     recent_file_list_.push_front (file_ctx->getFilePathAndName());
-
 
     // waldesel:
     // --begin
@@ -397,15 +366,13 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
     main_window_->setStatusBarNrChannels (file_ctx->getChannelManager()->getNumberChannels());
     main_window_->setWindowTitle (file_ctx->getFileName() + tr(" - SigViewer"));
 
-    model->connect (file_ctx->getEventManager().data(), SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)),
-                                   SLOT(addEventItem(QSharedPointer<SignalEvent const>)));
-    model->connect (file_ctx->getEventManager().data(), SIGNAL(eventRemoved(EventID)),
-                                   SLOT(removeEventItem(EventID)));
-    model->connect (file_ctx->getEventManager().data(), SIGNAL(eventChanged(EventID)),
-                                   SLOT(updateEvent(EventID)));
 
-
-    return model;
+    int tab_index = createSignalVisualisationImpl (file_ctx->getChannelManager(), file_ctx->getEventManager());
+    //signal_browser_model_ = model;
+    main_window_->setCentralWidget(tab_widget_);
+    tab_widget_->show();
+    tab_widget_->setTabText(tab_index, tr("Signal Data"));
+    return browser_models_[tab_index];
 }
 
 //-----------------------------------------------------------------------------
@@ -417,8 +384,6 @@ void MainWindowModelImpl::closeCurrentFileTabs ()
     //   command pattern for gui commands is finalised
     signal_browser_model_.clear ();
     current_file_context_.clear ();
-    event_manager_.clear ();
-    channel_manager_.clear ();
     // --end
 
     // waldesel:
@@ -443,5 +408,36 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::getCurrentSignalVi
 
     return browser_models_[tab_widget_->currentIndex()];
 }
+
+//-------------------------------------------------------------------------
+int MainWindowModelImpl::createSignalVisualisationImpl (QSharedPointer<ChannelManager> channel_manager,
+                                                                        QSharedPointer<EventManager> event_manager)
+{
+    QSharedPointer<TabContext> tab_context (new TabContext);
+
+    QSharedPointer<SignalBrowserModel> model (new SignalBrowserModel (event_manager,
+                                                                      channel_manager,
+                                                                      tab_context));
+
+    SignalBrowserView* view = new SignalBrowserView (model, event_manager, tab_context, main_window_->rect(), tab_widget_);
+
+    int tab_index = tab_widget_->addTab (view, tr("Signal"));
+
+    model->setSignalBrowserView (view);
+    browser_models_[tab_index] = model;
+
+    if (!event_manager.isNull())
+    {
+        model->connect (event_manager.data(), SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)),
+                                   SLOT(addEventItem(QSharedPointer<SignalEvent const>)));
+        model->connect (event_manager.data(), SIGNAL(eventRemoved(EventID)),
+                                   SLOT(removeEventItem(EventID)));
+        model->connect (event_manager.data(), SIGNAL(eventChanged(EventID)),
+                                   SLOT(updateEvent(EventID)));
+    }
+    storeAndInitTabContext (tab_context, tab_index);
+    return tab_index;
+}
+
 
 } // namespace BioSig_

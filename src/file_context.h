@@ -1,7 +1,6 @@
 #ifndef FILE_CONTEXT_H
 #define FILE_CONTEXT_H
 
-#include "tab_context.h"
 #include "file_handling/event_manager.h"
 #include "file_handling/basic_header.h"
 #include "file_handling/channel_manager.h"
@@ -55,12 +54,6 @@ public:
     //-------------------------------------------------------------------------
     FileState getState () const;
 
-    //-------------------------------------------------------------------------
-    QSharedPointer<TabContext> getMainTabContext ();
-
-    //-------------------------------------------------------------------------
-    void setMainTabContext (QSharedPointer<TabContext> tab_context);
-
 signals:
     //-------------------------------------------------------------------------
     void stateChanged (FileState state);
@@ -82,7 +75,6 @@ private:
     QString file_path_and_name_;
     QSharedPointer<EventManager> event_manager_;
     QSharedPointer<ChannelManager> channel_manager_;
-    QSharedPointer<TabContext> tab_context_;
     QSharedPointer<BasicHeader> basic_header_;
 };
 

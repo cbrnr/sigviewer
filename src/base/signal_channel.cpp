@@ -37,7 +37,7 @@ SignalChannel::SignalChannel(uint32 number,
                              uint32 samples_per_record,
                              CHANNEL_STRUCT C)
 : number_(number),
-  label_(QString(C.Label)),
+  label_(QString(C.Label).trimmed()),
   samples_per_record_(samples_per_record),
   physical_maximum_(C.PhysMax),
   digital_maximum_(C.DigMax),

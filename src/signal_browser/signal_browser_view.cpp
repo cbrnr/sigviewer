@@ -26,14 +26,15 @@ namespace BioSig_
 SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_browser_model,
                                       QSharedPointer<EventManager> event_manager,
                                       QSharedPointer<CommandExecuter> command_executer,
+                                      QRect const& initial_size,
                                       QWidget* parent)
-: QFrame(parent),
+: QFrame (parent),
   model_ (signal_browser_model)
 {
     scroll_timer_ = new QTimer (this);
     connect (scroll_timer_, SIGNAL(timeout()), this, SLOT(scroll()));
-    resize(parent->contentsRect().width(), parent->contentsRect().height());
-    graphics_scene_ = new QGraphicsScene (0,0,parent->contentsRect().width(), parent->contentsRect().height(), this);
+    resize(initial_size.width(), initial_size.height());
+    graphics_scene_ = new QGraphicsScene (0,0,initial_size.width(), initial_size.height(), this);
     graphics_view_ = new SignalBrowserGraphicsView (graphics_scene_, this);
     graphics_view_->setAcceptDrops (false);
     graphics_view_->scroll(0,0);
@@ -60,9 +61,15 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     label_widget_ = new LabelWidget (*signal_browser_model, this);
     hideable_widgets_["Channel Labels"] = label_widget_;
 
-    event_info_widget_ = new EventInfoWidget (this, event_manager,
-                                              command_executer);
-    hideable_widgets_["Event Toolbar"] = event_info_widget_;
+    if (event_manager.isNull())
+        event_info_widget_ = 0;
+    else
+    {
+        event_info_widget_ = new EventInfoWidget (this, event_manager,
+                                                  command_executer);
+        hideable_widgets_["Event Toolbar"] = event_info_widget_;
+    }
+
 
     connect(horizontal_scrollbar_, SIGNAL(valueChanged(int)),
             graphics_view_->horizontalScrollBar(), SLOT(setValue(int)));
@@ -86,9 +93,12 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     connect(signal_browser_model.data(), SIGNAL(pixelPerSampleChanged(float32,float32)), x_axis_widget_, SLOT(changePixelPerSample(float32,float32)));
     connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
     connect(signal_browser_model.data(), SIGNAL(signalHeightChanged(uint32)), y_axis_widget_, SLOT(changeSignalHeight(uint32)));
-    connect(event_info_widget_, SIGNAL(eventCreationTypeChanged(uint16)), signal_browser_model.data(), SLOT(setActualEventCreationType(uint16)));
-    connect(signal_browser_model.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent const>)));
-    connect(signal_browser_model.data(), SIGNAL(shownEventTypesChanged(std::set<uint16>)), event_info_widget_, SLOT(updateShownEventTypes(std::set<uint16>)));
+    if (event_info_widget_)
+    {
+        connect(event_info_widget_, SIGNAL(eventCreationTypeChanged(uint16)), signal_browser_model.data(), SLOT(setActualEventCreationType(uint16)));
+        connect(signal_browser_model.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent const>)));
+        connect(signal_browser_model.data(), SIGNAL(shownEventTypesChanged(std::set<uint16>)), event_info_widget_, SLOT(updateShownEventTypes(std::set<uint16>)));
+    }
 
     graphics_view_->resize(width() - label_widget_->width() - y_axis_widget_->width() + (vertical_scrollbar_->width()*2), height() - x_axis_widget_->height() + horizontal_scrollbar_->height());
 
@@ -138,11 +148,11 @@ void SignalBrowserView::resizeScene (int32 width, int32 height)
 }
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item)
+void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item, QString const& label)
 {
     graphics_scene_->addItem (graphics_item);
     y_axis_widget_->addChannel (channel_nr, graphics_item);
-    label_widget_->addChannel (channel_nr, graphics_item->getLabel());
+    label_widget_->addChannel (channel_nr, label);
 
     graphics_view_->update();
 
@@ -169,12 +179,15 @@ void SignalBrowserView::removeSignalGraphicsItem (int32 channel_nr, SignalGraphi
 void SignalBrowserView::addEventGraphicsItem (EventGraphicsItem* event_graphics_item)
 {
     // TODO: really remove before add????
-    graphics_scene_->removeItem(event_graphics_item);
+    //graphics_scene_->removeItem(event_graphics_item);
     graphics_scene_->addItem(event_graphics_item);
 
     graphics_view_->update();
-    connect (event_graphics_item, SIGNAL(hoverEnterSignalEvent (QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(addHoveredEvent(QSharedPointer<SignalEvent const>)));
-    connect (event_graphics_item, SIGNAL(hoverLeaveSignalEvent(QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(removeHoveredEvent(QSharedPointer<SignalEvent const>)));
+    if (event_info_widget_)
+    {
+        //connect (event_graphics_item, SIGNAL(hoverEnterSignalEvent (QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(addHoveredEvent(QSharedPointer<SignalEvent const>)));
+        //connect (event_graphics_item, SIGNAL(hoverLeaveSignalEvent(QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(removeHoveredEvent(QSharedPointer<SignalEvent const>)));
+    }
     connect (event_graphics_item, SIGNAL(mouseAtSecond(float64)), x_axis_widget_, SLOT(changeHighlightTime(float64)));
     connect (event_graphics_item, SIGNAL(mouseMoving(bool)), x_axis_widget_, SLOT(enableHighlightTime(bool)));
 }
@@ -316,6 +329,9 @@ void SignalBrowserView::graphicsSceneResized (QResizeEvent* event)
     if (!signal_height)
         return;
 
+    if (event->size().height() < 1)
+        return;
+
     double signals_per_pagesize = event->oldSize().height() / signal_height;
 
     signal_height = event->size().height() / signals_per_pagesize;
@@ -419,7 +435,10 @@ void SignalBrowserView::createLayout()
     layout_->setVerticalSpacing(0);
     layout_->setHorizontalSpacing(0);
 
-    layout_->addWidget(event_info_widget_, 1, 2);
+    if (event_info_widget_)
+        layout_->addWidget(event_info_widget_, 1, 2);
+    else
+        layout_->addWidget(new QWidget(this), 1, 2);
     layout_->addWidget(y_axis_widget_, 2, 1);
     layout_->addWidget(graphics_view_, 2, 2);
     layout_->addWidget(x_axis_widget_, 3, 2);
