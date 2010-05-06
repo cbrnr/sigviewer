@@ -19,7 +19,6 @@ namespace BioSig_
 {
 
 class ApplicationContext;
-class GUIActionManager;
 
 // main window
 class MainWindow : public QMainWindow
@@ -68,7 +67,6 @@ private:
     void initStatusBar();
 
     QSharedPointer<MainWindowModelImpl> model_;
-    QSharedPointer<GUIActionManager> action_manager_;
 
     QMenu* file_menu_;
     QMenu* file_recent_files_menu_;

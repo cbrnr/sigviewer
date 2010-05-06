@@ -9,7 +9,6 @@
 #include "../tab_context.h"
 #include "../file_context.h"
 #include "../application_context.h"
-#include "../gui_action_manager.h"
 #include "../gui/main_window_model.h"
 #include "../editing_commands/macro_undo_command.h"
 #include "../editing_commands/new_event_undo_command.h"

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>310</width>
-    <height>93</height>
+    <width>405</width>
+    <height>66</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,6 +23,24 @@
    </item>
    <item>
     <widget class="QComboBox" name="comboBox"/>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QRadioButton" name="all_channels_radio_">
+       <property name="text">
+        <string>All Channels</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="one_channel_radio_">
+       <property name="text">
+        <string>One Channel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

@@ -91,7 +91,6 @@ void SignalBrowserModel::loadSettings()
                                                       prefered_y_grid_pixel_intervall_).toInt();
     show_x_grid_ = settings.value("show_x_grid", show_x_grid_).toBool();
     show_y_grid_ = settings.value("show_y_grid", show_y_grid_).toBool();
-    auto_zoom_type_ = static_cast<ScaleMode>(settings.value("auto_zoom_type_", auto_zoom_type_).toUInt());
 
     settings.endGroup();
 }
@@ -109,7 +108,6 @@ void SignalBrowserModel::saveSettings()
     settings.setValue("prefered_y_grid_pixel_intervall", prefered_y_grid_pixel_intervall_);
     settings.setValue("show_x_grid", show_x_grid_);
     settings.setValue("show_y_grid", show_y_grid_);
-    settings.setValue("auto_zoom_type_", auto_zoom_type_);
 
     settings.endGroup();
 }
@@ -152,7 +150,7 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
     for (Int2SignalGraphicsItemPtrMap::const_iterator channel = channel2signal_item_.begin();
          channel != channel2signal_item_.end();
          ++channel)
-        channel->second->autoScale (auto_zoom_type_);
+        channel->second->autoScale (getAutoScaleMode());
 }
 
 //-----------------------------------------------------------------------------
@@ -258,7 +256,7 @@ void SignalBrowserModel::autoScaleAll()
          iter != channel2signal_item_.end();
          iter++)
     {
-        iter->second->autoScale(auto_zoom_type_);
+        iter->second->autoScale(getAutoScaleMode());
     }
 
     signal_browser_view_->updateWidgets();
@@ -325,13 +323,22 @@ void SignalBrowserModel::updateLayout()
 //-------------------------------------------------------------------------
 void SignalBrowserModel::scaleChannel (ChannelID id, float32, float32)
 {
-    channel2signal_item_[id]->autoScale (auto_zoom_type_);
+    channel2signal_item_[id]->autoScale (getAutoScaleMode());
 }
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::autoScaleChannel (ChannelID id)
 {
-    channel2signal_item_[id]->autoScale (auto_zoom_type_);
+    if (id == UNDEFINED_CHANNEL)
+    {
+        for (Int2SignalGraphicsItemPtrMap::iterator it =
+             channel2signal_item_.begin(); it != channel2signal_item_.end();
+            ++it)
+        it->second->autoScale (getAutoScaleMode());
+    }
+    else
+        channel2signal_item_[id]->autoScale (getAutoScaleMode());
+
     signal_browser_view_->updateWidgets();
 }
 
@@ -616,18 +623,6 @@ bool SignalBrowserModel::getGridVisible () const
 void SignalBrowserModel::setYGridVisible(bool visible)
 {
     show_y_grid_ = visible;
-}
-
-//-------------------------------------------------------------------------
-void SignalBrowserModel::setAutoZoomBehaviour(ScaleMode auto_zoom_type)
-{
-    auto_zoom_type_ = auto_zoom_type;
-}
-
-//-------------------------------------------------------------------------
-ScaleMode SignalBrowserModel::getAutoZoomBehaviour () const
-{
-    return auto_zoom_type_;
 }
 
 } // namespace BioSig_

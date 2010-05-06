@@ -13,7 +13,6 @@
 namespace BioSig_
 {
 
-class GUIActionManager;
 class MainWindowModel;
 class EventTableFileReader;
 
@@ -21,7 +20,6 @@ class EventTableFileReader;
 /// ApplicationContext
 ///
 /// exists once in an application
-/// holds instances of GUIActionManager
 class ApplicationContext : public QObject
 {
     Q_OBJECT
@@ -51,9 +49,6 @@ public:
 
     //-------------------------------------------------------------------------
     void removeCurrentFileContext ();
-
-    //-------------------------------------------------------------------------
-    QSharedPointer<GUIActionManager> getGUIActionManager ();
 
     //-------------------------------------------------------------------------
     ApplicationState getState () const;

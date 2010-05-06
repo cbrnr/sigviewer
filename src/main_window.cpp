@@ -26,7 +26,6 @@
 // main_window.cpp
 
 #include "main_window.h"
-#include "gui_action_manager.h"
 #include "application_context.h"
 #include "gui/gui_action_factory.h"
 #include "gui_impl/open_file_gui_command.h"
@@ -55,8 +54,7 @@ namespace BioSig_
 // constructor
 MainWindow::MainWindow (QSharedPointer<MainWindowModelImpl> model)
  : QMainWindow(0),
-   model_ (model),
-   action_manager_ (ApplicationContext::getInstance()->getGUIActionManager())
+   model_ (model)
 {
     setWindowTitle (tr("SigViewer"));
     setAcceptDrops (true);
@@ -120,7 +118,6 @@ void MainWindow::initToolBars()
 
     view_toolbar_ = addToolBar(tr("View"));
     view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
-    view_toolbar_->addActions(action_manager_->getActionsOfGroup(GUIActionManager::VIEW_TOOLBAR_ACTIONS));
     view_toolbar_->addAction(GuiActionFactory::getInstance()->getQAction("Events..."));
     view_toolbar_->addAction(GuiActionFactory::getInstance()->getQAction("Channels..."));
     view_toolbar_->addAction(action("Auto Scale All"));
@@ -181,7 +178,6 @@ void MainWindow::initMenus()
     connect (toggle_status_bar, SIGNAL(toggled(bool)), this, SLOT(toggleStatusBar(bool)));
     view_menu_->addAction(toggle_status_bar);
     view_menu_->addSeparator();
-    view_menu_->addActions (action_manager_->getActionsOfGroup(GUIActionManager::VIEW_MENU_ACTIONS));
     view_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Zooming"));
     view_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Adapt Event View"));
 
@@ -189,7 +185,7 @@ void MainWindow::initMenus()
     tools_menu_->addActions(GuiActionFactory::getInstance()->getQActions("Signal Processing"));
 
     options_menu_ = menuBar()->addMenu(tr("&Options"));
-    options_menu_->addActions (action_manager_->getActionsOfGroup(GUIActionManager::OPTIONS_MENU_ACTIONS));
+    options_menu_->addAction (action("Set Event Creation Type..."));
 
     help_menu_ = menuBar()->addMenu(tr("&Help"));
     help_menu_->addAction (GuiActionFactory::getInstance()->getQAction("About"));

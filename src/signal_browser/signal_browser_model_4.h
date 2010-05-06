@@ -81,8 +81,6 @@ public:
     void setXGridVisible(bool visible);
     bool getGridVisible () const;
     void setYGridVisible(bool visible);
-    void setAutoZoomBehaviour (ScaleMode auto_zoom_type);
-    ScaleMode getAutoZoomBehaviour () const;
 
     virtual void setShownChannels (std::set<ChannelID> const& shown_channels);
     virtual std::set<ChannelID> getShownChannels () const;
@@ -175,7 +173,6 @@ private:
 
     bool show_y_grid_;
     bool show_x_grid_;
-    ScaleMode auto_zoom_type_;
 };
 
 } // namespace PortingToQT4_

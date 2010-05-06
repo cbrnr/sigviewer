@@ -44,9 +44,7 @@ HEADERS += event_color_manager.h \
     log_dialog.h \
     main_window.h \
     main_window_model_impl.h \
-    settings_dialog.h \
     signal_browser_mouse_handling.h \
-    gui_action_manager.h \
     application_context.h \
     file_context.h \
     tab_context.h \
@@ -58,10 +56,8 @@ SOURCES += event_color_manager.cpp \
     log_dialog.cpp \
     main_window.cpp \
     main_window_model_impl.cpp \
-    settings_dialog.cpp \
     signal_browser_mouse_handling.cpp \
     sigviewer.cpp \
-    gui_action_manager.cpp \
     application_context.cpp \
     file_context.cpp \
     tab_context.cpp \

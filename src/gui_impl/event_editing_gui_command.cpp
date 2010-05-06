@@ -20,6 +20,7 @@ QString const EventEditingGuiCommand::CHANGE_CHANNEL_ = "Change Channel...";
 QString const EventEditingGuiCommand::TO_ALL_CHANNEL_ = "To all Channels";
 QString const EventEditingGuiCommand::COPY_TO_CHANNELS_ = "Copy to Channels...";
 QString const EventEditingGuiCommand::INSERT_OVER_ = "Insert Over";
+QString const EventEditingGuiCommand::SET_EVENT_CREATION_TYPE_ = "Set Event Creation Type...";
 QString const EventEditingGuiCommand::SHOW_EVENT_TABLE_DIALOG_ = "Event Table...";
 QStringList const EventEditingGuiCommand::ACTIONS_ = QStringList () <<
                                                      EventEditingGuiCommand::DELETE_ <<
@@ -28,7 +29,8 @@ QStringList const EventEditingGuiCommand::ACTIONS_ = QStringList () <<
                                                      EventEditingGuiCommand::TO_ALL_CHANNEL_ <<
                                                      EventEditingGuiCommand::COPY_TO_CHANNELS_ <<
                                                      EventEditingGuiCommand::INSERT_OVER_ <<
-                                                     EventEditingGuiCommand::SHOW_EVENT_TABLE_DIALOG_;
+                                                     EventEditingGuiCommand::SHOW_EVENT_TABLE_DIALOG_ <<
+                                                     EventEditingGuiCommand::SET_EVENT_CREATION_TYPE_;
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator EventEditingGuiCommand::registrator_ ("Event Editing",
@@ -59,6 +61,7 @@ void EventEditingGuiCommand::init ()
     resetActionTriggerSlot (COPY_TO_CHANNELS_, SLOT (copyToChannelsSelectedEvent()));
     resetActionTriggerSlot (INSERT_OVER_, SLOT (insertEventOverSelectedEvent()));
     resetActionTriggerSlot (SHOW_EVENT_TABLE_DIALOG_, SLOT (showEventTableDialog()));
+    resetActionTriggerSlot (SET_EVENT_CREATION_TYPE_, SLOT (setEventCreationType()));
 
     getQAction (DELETE_)->setIcon (QIcon(":/images/icons/editdelete.png"));
     getQAction (CHANGE_TYPE_)->setIcon (QIcon (":/images/change_type_22x22.png"));
@@ -203,26 +206,41 @@ void EventEditingGuiCommand::showEventTableDialog ()
     event_table_dialog.saveSettings();
 }
 
+//-------------------------------------------------------------------------
+void EventEditingGuiCommand::setEventCreationType ()
+{
+    EventType current_type = currentVisModel()->getActualEventCreationType();
+    EventType new_type = GuiHelper::selectEventType (current_type);
+
+    if (new_type != UNDEFINED_EVENT_TYPE &&
+        new_type != current_type)
+        currentVisModel()->setActualEventCreationType (new_type);
+}
+
 
 //-------------------------------------------------------------------------
 void EventEditingGuiCommand::evaluateEnabledness ()
 {
+    bool events_possible = false;
+    bool event_selected = false;
+    bool event_one_channel_selected = false;
+
     if (getApplicationState () == APP_STATE_FILE_OPEN)
     {
-        if (getTabSelectionState () == TAB_STATE_NO_EVENT_SELECTED)
-            emit qActionEnabledChanged (false);
-        else
-        {
-            emit qActionEnabledChanged (true);
-            if (getTabSelectionState () == TAB_STATE_EVENT_SELECTED_ALL_CHANNELS)
-            {
-                getQAction (TO_ALL_CHANNEL_)->setEnabled (false);
-                getQAction (COPY_TO_CHANNELS_)->setEnabled (false);
-            }
-        }
+        events_possible = true;
+        event_selected = (getTabSelectionState() == TAB_STATE_EVENT_SELECTED_ALL_CHANNELS ||
+                          getTabSelectionState() == TAB_STATE_EVENT_SELECTED_ONE_CHANNEL);
+        event_one_channel_selected = (getTabSelectionState() == TAB_STATE_EVENT_SELECTED_ONE_CHANNEL);
     }
-    else
-        emit qActionEnabledChanged (false);
+
+    getQAction(SET_EVENT_CREATION_TYPE_)->setEnabled(events_possible);
+    getQAction(SHOW_EVENT_TABLE_DIALOG_)->setEnabled(events_possible);
+    getQAction(INSERT_OVER_)->setEnabled(event_selected);
+    getQAction(COPY_TO_CHANNELS_)->setEnabled(event_one_channel_selected);
+    getQAction(TO_ALL_CHANNEL_)->setEnabled(event_one_channel_selected);
+    getQAction(CHANGE_CHANNEL_)->setEnabled(event_selected);
+    getQAction(CHANGE_TYPE_)->setEnabled(event_selected);
+    getQAction(DELETE_)->setEnabled(event_selected);
 }
 
 

@@ -18,19 +18,6 @@ ApplicationContextImpl::~ApplicationContextImpl ()
 {
 }
 
-
-//-----------------------------------------------------------------------------
-QSharedPointer<GUIActionManager> ApplicationContextImpl::getGUIActionManager ()
-{
-    return gui_action_manager_;
-}
-
-//-----------------------------------------------------------------------------
-void ApplicationContextImpl::setGUIActionManager (QSharedPointer<GUIActionManager> gui_action_manager)
-{
-    gui_action_manager_ = gui_action_manager;
-}
-
 //-----------------------------------------------------------------------------
 QSharedPointer<MainWindowModel> ApplicationContextImpl::getMainWindowModel () const
 {

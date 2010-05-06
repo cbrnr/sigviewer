@@ -29,7 +29,6 @@ namespace BioSig_
 {
 
 class MainWindow;
-class SignalBrowserModel;
 class ApplicationContext;
 class TabContext;
 
@@ -63,10 +62,7 @@ public slots:
     void tabChanged (int tab_index);
     void closeTab (int tab_index);
 
-    // actions
     void fileCloseAction();
-    void optionsChangeCreationType();
-    void optionsShowSettingsAction();
     void recentFileActivated(QAction* recent_file_action);
     void recentFileMenuAboutToShow();
 
@@ -84,7 +80,6 @@ private:
     MainWindow* main_window_;
     QSharedPointer<ApplicationContext> application_context_;
     QSharedPointer<FileContext> current_file_context_;
-    QSharedPointer<SignalBrowserModel> signal_browser_model_;
     QTabWidget* tab_widget_;
     QWidget* signal_browser_tab_;
     QStringList recent_file_list_;

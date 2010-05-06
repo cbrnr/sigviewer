@@ -96,6 +96,17 @@ EventType SignalVisualisationModel::getActualEventCreationType () const
     return event_creation_type_;
 }
 
+//-------------------------------------------------------------------------
+void SignalVisualisationModel::setAutoScaleMode (ScaleMode scale_mode)
+{
+    scale_mode_ = scale_mode;
+}
+
+//-------------------------------------------------------------------------
+ScaleMode SignalVisualisationModel::getAutoScaleMode () const
+{
+    return scale_mode_;
+}
 
 //-----------------------------------------------------------------------------
 void SignalVisualisationModel::setActualEventCreationType (EventType type)

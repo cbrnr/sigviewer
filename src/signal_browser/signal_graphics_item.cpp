@@ -11,6 +11,7 @@
 #include "../signal_browser_mouse_handling.h"
 #include "../application_context.h"
 #include "../event_color_manager.h"
+#include "../gui/gui_action_factory.h"
 
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
@@ -331,11 +332,12 @@ void SignalGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * even
 {
     if (!EventGraphicsItem::displayContextMenu(event))
     {
-        event->ignore();
-        return; // TODO: implement!!!!
         QMenu context_menu;
-        context_menu.addAction("Set Scaling");
         context_menu.addSeparator();
+        context_menu.addAction(GuiActionFactory::getInstance()->getQAction("Auto Scale All"));
+        QMenu* scale_menu = context_menu.addMenu(tr("Auto Scaling Mode"));
+        scale_menu->addAction(GuiActionFactory::getInstance()->getQAction("Zero Line Centered"));
+        scale_menu->addAction(GuiActionFactory::getInstance()->getQAction("Zero Line Fitted"));
         context_menu.exec(event->screenPos());
     }
     else

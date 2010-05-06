@@ -8,9 +8,13 @@ namespace BioSig_
 //-----------------------------------------------------------------------------
 QString const AdaptChannelViewGuiCommand::CHANNELS_ = "Channels...";
 QString const AdaptChannelViewGuiCommand::AUTO_SCALE_ALL_ = "Auto Scale All";
+QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MAX_TO_MAX_ = "Zero Line Centered";
+QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MIN_TO_MAX_ = "Zero Line Fitted";
 QStringList const AdaptChannelViewGuiCommand::ACTIONS_ = QStringList() <<
                                                          AdaptChannelViewGuiCommand::CHANNELS_ <<
-                                                         AdaptChannelViewGuiCommand::AUTO_SCALE_ALL_ ;
+                                                         AdaptChannelViewGuiCommand::AUTO_SCALE_ALL_  <<
+                                                         AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MAX_TO_MAX_ <<
+                                                         AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MIN_TO_MAX_;
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator registrator_ ("Adapt Channel View",
@@ -30,6 +34,16 @@ void AdaptChannelViewGuiCommand::init ()
     setIcon (AUTO_SCALE_ALL_, QIcon(":/images/icons/autoscale.png"));
     resetActionTriggerSlot (CHANNELS_, SLOT(selectShownChannels()));
     resetActionTriggerSlot (AUTO_SCALE_ALL_, SLOT(autoScaleAll()));
+
+    QActionGroup* scale_mode_action_group = new QActionGroup (this);
+    scale_mode_action_group->setExclusive(true);
+    scale_mode_action_group->addAction (getQAction(SET_AUTO_SCALE_MAX_TO_MAX_));
+    scale_mode_action_group->addAction (getQAction(SET_AUTO_SCALE_MIN_TO_MAX_));
+    getQAction(SET_AUTO_SCALE_MAX_TO_MAX_)->setCheckable(true);
+    getQAction(SET_AUTO_SCALE_MIN_TO_MAX_)->setCheckable(true);
+
+    resetActionTriggerSlot (SET_AUTO_SCALE_MAX_TO_MAX_, SLOT(setScaleModeZeroCentered()));
+    resetActionTriggerSlot (SET_AUTO_SCALE_MIN_TO_MAX_, SLOT(setScaleModeZeroFitted()));
 }
 
 //-------------------------------------------------------------------------
@@ -62,6 +76,21 @@ void AdaptChannelViewGuiCommand::autoScaleAll ()
     foreach (ChannelID id, currentVisModel()->getShownChannels())
         currentVisModel()->autoScaleChannel (id);
 }
+
+//-------------------------------------------------------------------------
+void AdaptChannelViewGuiCommand::setScaleModeZeroCentered ()
+{
+    currentVisModel()->setAutoScaleMode (MAX_TO_MAX);
+    currentVisModel()->autoScaleChannel(UNDEFINED_CHANNEL);
+}
+
+//-------------------------------------------------------------------------
+void AdaptChannelViewGuiCommand::setScaleModeZeroFitted ()
+{
+    currentVisModel()->setAutoScaleMode (MIN_TO_MAX);
+    currentVisModel()->autoScaleChannel(UNDEFINED_CHANNEL);
+}
+
 
 
 

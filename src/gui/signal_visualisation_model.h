@@ -89,6 +89,12 @@ public:
     //-------------------------------------------------------------------------
     EventType getActualEventCreationType () const;
 
+    //-------------------------------------------------------------------------
+    void setAutoScaleMode (ScaleMode scale_mode);
+
+    //-------------------------------------------------------------------------
+    ScaleMode getAutoScaleMode () const;
+
     virtual void updateLayout () = 0;
 
 public slots:
@@ -111,6 +117,7 @@ private:
     EventType event_creation_type_;
     std::set<EventType> shown_event_types_;
     unsigned signal_height_;
+    ScaleMode scale_mode_;
 };
 
 

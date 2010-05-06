@@ -1,5 +1,3 @@
-// main_window_model.cpp
-
 #include "main_window_model_impl.h"
 #include "main_window.h"
 #include "tab_context.h"
@@ -12,27 +10,12 @@
 #include "file_handling_impl/channel_manager_impl.h"
 #include "gui_impl/gui_helper_functions.h"
 #include "gui_impl/open_file_gui_command.h"
-#include "settings_dialog.h"
 
 #include "signal_browser/signal_browser_model_4.h"
 #include "signal_browser/signal_browser_view.h"
 #include "signal_browser/calculcate_frequency_spectrum_command.h"
 
-#include <QInputDialog>
-#include <QString>
-#include <QApplication>
-#include <QFile>
-#include <QDir>
-#include <QAction>
-#include <QTextStream>
 #include <QSettings>
-#include <QSharedPointer>
-#include <QObject>
-#include <QTime>
-#include <QProgressDialog>
-
-#include <cmath>
-#include <iostream>
 
 namespace BioSig_
 {
@@ -44,7 +27,6 @@ int const MainWindowModelImpl::NUMBER_RECENT_FILES_ = 8;
 MainWindowModelImpl::MainWindowModelImpl ()
 : main_window_(0),
   application_context_ (ApplicationContext::getInstance()),
-  signal_browser_model_ (0),
   tab_widget_ (0)
 {
 
@@ -147,12 +129,8 @@ void MainWindowModelImpl::fileCloseAction()
         return; // user cancel
 
     current_file_context_.clear ();
-    signal_browser_model_->disconnect ();
 
     // close
-    signal_browser_model_->saveSettings();
-
-    signal_browser_model_.clear();
     main_window_->setCentralWidget(0);
     tab_widget_ = 0;
     signal_browser_tab_ = 0;
@@ -168,57 +146,10 @@ void MainWindowModelImpl::fileCloseAction()
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModelImpl::optionsChangeCreationType ()
-{
-    uint16 current_type = signal_browser_model_->getActualEventCreationType();
-    uint16 new_type = GuiHelper::selectEventType (current_type);
-
-    if (new_type != UNDEFINED_EVENT_TYPE)
-        signal_browser_model_->setActualEventCreationType (new_type);
-}
-
-// options show events action
-void MainWindowModelImpl::optionsShowSettingsAction()
-{
-    SettingsDialog settings_dialog (signal_browser_model_,
-                                    signal_browser_model_->getHideableWidgetsVisibilities(),
-                                    main_window_);
-
-//    settings_dialog.loadSettings();
-    settings_dialog.exec();
-
-    if (settings_dialog.result() == QDialog::Rejected)
-    {
-        return; // user cancel
-    }
-
-    // user ok
-//    settings_dialog.saveSettings();
-
-
-        signal_browser_model_->setHideableWidgetsVisibilities(settings_dialog.getWidgetVisibilities());
-        //signal_browser_model_->showChannelLabels(settings_dialog.isShowChannelLables());
-        //signal_browser_model_->showXScales(settings_dialog.isShowChannelScales());
-        //signal_browser_model_->showYScales(settings_dialog.isShowChannelScales());
-        signal_browser_model_->setXGridVisible(settings_dialog.isShowGrid());
-        signal_browser_model_->setYGridVisible(settings_dialog.isShowGrid());
-        signal_browser_model_->setAutoZoomBehaviour(settings_dialog.getScaleModeType());
-        signal_browser_model_->autoScaleAll();
-        signal_browser_model_->updateLayout();
-}
-
-//-----------------------------------------------------------------------------
 void MainWindowModelImpl::storeAndInitTabContext (QSharedPointer<TabContext> context, int tab_index)
 {
     tab_contexts_[tab_index] = context;
 
-
-    application_context_->getGUIActionManager ()->connect (context.data(),
-                                                         SIGNAL(selectionStateChanged(TabSelectionState)),
-                                                         SLOT(setTabSelectionState(TabSelectionState)));
-    application_context_->getGUIActionManager ()->connect (context.data(),
-                                                         SIGNAL(editStateChanged(TabEditState)),
-                                                         SLOT(setTabEditState(TabEditState)));
 
     ApplicationContext::getInstance()->setCurrentTabContext (context);
 
@@ -284,7 +215,6 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
 
 
     int tab_index = createSignalVisualisationImpl (file_ctx->getChannelManager(), file_ctx->getEventManager());
-    //signal_browser_model_ = model;
     main_window_->setCentralWidget(tab_widget_);
     tab_widget_->show();
     tab_widget_->setTabText(tab_index, tr("Signal Data"));
@@ -298,7 +228,6 @@ void MainWindowModelImpl::closeCurrentFileTabs ()
     // --begin
     //   this is only to support old code here.. refactor these lines as soon
     //   command pattern for gui commands is finalised
-    signal_browser_model_.clear ();
     current_file_context_.clear ();
     // --end
 

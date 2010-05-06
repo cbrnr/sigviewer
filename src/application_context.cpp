@@ -57,7 +57,6 @@ QSharedPointer<CommandExecuter> ApplicationContext::getCurrentCommandExecuter ()
 void ApplicationContext::addFileContext (QSharedPointer<FileContext>file_context)
 {
     current_file_context_ = file_context;
-    impl_->getGUIActionManager()->connect(current_file_context_.data(), SIGNAL(stateChanged(FileState)), SLOT(setFileState(FileState)));
 }
 
 //-------------------------------------------------------------------------
@@ -66,13 +65,6 @@ void ApplicationContext::removeCurrentFileContext ()
     if (!current_file_context_.isNull())
         current_file_context_->disconnect ();
     current_file_context_ = QSharedPointer<FileContext> (0);
-}
-
-
-//-----------------------------------------------------------------------------
-QSharedPointer<GUIActionManager> ApplicationContext::getGUIActionManager ()
-{
-    return impl_->getGUIActionManager ();
 }
 
 //-----------------------------------------------------------------------------

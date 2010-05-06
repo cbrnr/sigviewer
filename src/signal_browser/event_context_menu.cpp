@@ -1,7 +1,6 @@
 #include "event_context_menu.h"
 #include "signal_browser_model_4.h"
 #include "../application_context.h"
-#include "../gui_action_manager.h"
 #include "../gui/gui_action_factory.h"
 
 #include <QGraphicsSceneContextMenuEvent>
@@ -136,8 +135,6 @@ void EventContextMenu::selectEvent (QAction* q)
 //-------------------------------------------------------------------------
 void EventContextMenu::addActionsToMenu (QMenu& menu)
 {
-    menu.addActions (ApplicationContext::getInstance()->getGUIActionManager()->getActionsOfGroup(GUIActionManager::EVENT_CONTEXT_ACTIONS));
-
     menu.addActions (GuiActionFactory::getInstance()->getQActions("Event Editing"));
     menu.addSeparator ();
     menu.addAction (GuiActionFactory::getInstance()->getQAction("Goto and Select Next Event"));

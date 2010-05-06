@@ -28,7 +28,6 @@
 #include "base/user_types.h"
 #include "main_window.h"
 #include "main_window_model_impl.h"
-#include "gui_action_manager.h"
 #include "application_context.h"
 #include "application_context_impl.h"
 #include "file_handling_impl/event_table_file_reader.h"
@@ -100,8 +99,6 @@ int main(int32 argc, char* argv[])
 {	
     qDebug () << "Starting SigViewer... ";
     QApplication application(argc,argv);
-    //removeLogFile();
-    //qInstallMsgHandler( myMessageOutput );
     initFileHandlingImpl ();
     QTranslator qt_translator(0);
     qt_translator.load(QString("qt_") + QLocale::languageToString(QLocale::c().language()) +
@@ -115,17 +112,13 @@ int main(int32 argc, char* argv[])
 
     GuiActionFactory::getInstance()->initAllCommands ();
 
-    QSharedPointer<GUIActionManager> action_manager (new GUIActionManager);
     QSharedPointer<MainWindowModelImpl> main_window_model (new MainWindowModelImpl);
 
     QSharedPointer<ApplicationContextImpl> app_ctx_impl (new ApplicationContextImpl);
-    app_ctx_impl->setGUIActionManager (action_manager);
     app_ctx_impl->setMainWindowModel (main_window_model);
 
     ApplicationContext::getInstance()->setImpl (app_ctx_impl);
     app_ctx_impl->loadSettings();
-
-    action_manager->init (main_window_model.data());
 
     MainWindow* main_window = new MainWindow (main_window_model);
     main_window_model->setMainWindow (main_window);
