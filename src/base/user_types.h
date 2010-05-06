@@ -29,7 +29,6 @@
 #ifndef USER_TYPES_H
 #define USER_TYPES_H
 
-// von settings dialog ausgelagert!
 enum ScaleMode
 {
         MAX_TO_MAX,

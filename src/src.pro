@@ -41,7 +41,6 @@ include(gui_impl/gui_impl.pri)
 include(editing_commands/editing_commands.pri)
 HEADERS += event_color_manager.h \
     label_widget.h \
-    log_dialog.h \
     main_window.h \
     main_window_model_impl.h \
     signal_browser_mouse_handling.h \
@@ -53,7 +52,6 @@ HEADERS += event_color_manager.h \
     application_context_impl_interface.h
 SOURCES += event_color_manager.cpp \
     label_widget.cpp \
-    log_dialog.cpp \
     main_window.cpp \
     main_window_model_impl.cpp \
     signal_browser_mouse_handling.cpp \

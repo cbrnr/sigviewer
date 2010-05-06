@@ -25,7 +25,6 @@
 */
 
 #include "biosig_reader.h"
-#include "gdf_event.h"
 #include "biosig_basic_header.h"
 #include "../file_handling/file_signal_reader_factory.h"
 

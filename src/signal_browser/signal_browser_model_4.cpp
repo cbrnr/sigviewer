@@ -5,8 +5,8 @@
 #include "signal_browser_view.h"
 #include "signal_graphics_item.h"
 #include "../event_color_manager.h"
-#include "../base/math_utils.h"
 #include "../base/signal_event.h"
+#include "../base/math_utils.h"
 
 #include <QTextStream>
 #include <QApplication>
@@ -57,13 +57,6 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
            }
        }
     }
-}
-
-//-----------------------------------------------------------------------------
-// destructor
-SignalBrowserModel::~SignalBrowserModel()
-{
-    // nothing to do here
 }
 
 //-----------------------------------------------------------------------------
@@ -247,33 +240,6 @@ void SignalBrowserModel::zoomOutAll()
     signal_browser_view_->updateWidgets();
 }
 
-//-----------------------------------------------------------------------------
-void SignalBrowserModel::autoScaleAll()
-{
-    Int2SignalGraphicsItemPtrMap::iterator iter;
-
-    for (iter = channel2signal_item_.begin();
-         iter != channel2signal_item_.end();
-         iter++)
-    {
-        iter->second->autoScale(getAutoScaleMode());
-    }
-
-    signal_browser_view_->updateWidgets();
-}
-
-//-----------------------------------------------------------------------------
-void SignalBrowserModel::setPixelPerXUnit(float64 pixel_per_sec)
-{
-    pixel_per_sec_ = pixel_per_sec;
-}
-
-// set signal height
-void SignalBrowserModel::setItemsHeight(int32 height)
-{
-    // waldesel: REMOVE THIS METHOD!!!
-}
-
 // update layout
 void SignalBrowserModel::updateLayout()
 {
@@ -454,12 +420,6 @@ int32 SignalBrowserModel::getSignalSpacing()
     return signal_spacing_;
 }
 
-//-------------------------------------------------------------------
-int32 SignalBrowserModel::getVisibleWidth()
-{
-    return signal_browser_view_->getVisibleWidth();
-}
-
 // get prefered y grid pixel intervall
 int32 SignalBrowserModel::getPreferedYGirdPixelIntervall()
 {
@@ -510,21 +470,6 @@ void SignalBrowserModel::updateEventItemsImpl ()
             event_iter->second->show();
         }
     }
-}
-
-//-----------------------------------------------------------------------------
-std::set<uint16> SignalBrowserModel::getDisplayedEventTypes () const
-{
-    std::set<uint16> present_event_types;
-    for (Int2EventGraphicsItemPtrMap::const_iterator event_it =
-         id2event_item_.begin();
-         event_it != id2event_item_.end();
-         ++event_it)
-    {
-        if (event_it->second->isVisible())
-            present_event_types.insert (event_it->second->getSignalEvent()->getType());
-    }
-    return present_event_types;
 }
 
 //-----------------------------------------------------------------------------
@@ -581,12 +526,6 @@ void SignalBrowserModel::updateEvent (EventID id)
 EventGraphicsItem* SignalBrowserModel::getSelectedEventItem()
 {
     return selected_event_item_;
-}
-
-//-----------------------------------------------------------------------------
-QSharedPointer<SignalEvent const> SignalBrowserModel::getSelectedSignalEvent()
-{
-    return selected_event_item_->getSignalEvent();
 }
 
 //-------------------------------------------------------------------------

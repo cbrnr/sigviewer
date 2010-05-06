@@ -31,15 +31,15 @@ class SignalBrowserModel : public SignalVisualisationModel
 {
     Q_OBJECT
 public:
+    //-------------------------------------------------------------------------
     SignalBrowserModel(QSharedPointer<EventManager> event_manager,
                        QSharedPointer<ChannelManager> channel_manager,
                        QSharedPointer<TabContext> tab_context);
-    virtual ~SignalBrowserModel();
 
-    virtual void setPixelPerXUnit (float64 pixel_per_sec);
+    //-------------------------------------------------------------------------
+    virtual ~SignalBrowserModel() {}
 
-    virtual void setItemsHeight (int32 height);
-
+    //-------------------------------------------------------------------------
     virtual void updateLayout ();
 
     //-------------------------------------------------------------------------
@@ -90,20 +90,13 @@ public:
     void zoomInAll();
     void zoomOutAll();
 
-    void autoScaleAll();
-
     int32 getSignalSpacing();
-    int32 getVisibleWidth();
     /*    int32 getPreferedXGirdPixelIntervall();
 */
     int32 getPreferedYGirdPixelIntervall();
     float64 getXGridPixelIntervall();
 
-    // events
-    std::set<uint16> getDisplayedEventTypes () const;
-
     EventGraphicsItem* getSelectedEventItem();
-    QSharedPointer<SignalEvent const> getSelectedSignalEvent();
     void updateEventItems ();
 
 public slots:
@@ -145,7 +138,6 @@ private:
 
     QSharedPointer<ChannelManager> channel_manager_;
     QSharedPointer<EventManager> event_manager_;
-    QSharedPointer<FileContext> file_context_;
     QSharedPointer<TabContext> tab_context_;
     SignalBrowserView* signal_browser_view_;
 
@@ -162,9 +154,6 @@ private:
 
     Int2IntMap channel2y_pos_;
     EventGraphicsItem* selected_event_item_;
-
-    // parameters
-    float64 pixel_per_sec_;
 
     int32 signal_spacing_;
     int32 prefered_x_grid_pixel_intervall_;

@@ -15,7 +15,6 @@ class QPoint;
 namespace BioSig_
 {
 
-class SignalChannel;
 class SignalEvent;
 class SignalBrowserModel;
 class EventGraphicsItem;
