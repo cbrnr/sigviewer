@@ -51,7 +51,7 @@
 namespace BioSig_
 {
 
-// constructor
+//----------------------------------------------------------------------------
 MainWindow::MainWindow (QSharedPointer<MainWindowModelImpl> model)
  : QMainWindow(0),
    model_ (model)
@@ -60,20 +60,12 @@ MainWindow::MainWindow (QSharedPointer<MainWindowModelImpl> model)
     setAcceptDrops (true);
     setWindowIcon(QIcon(":images/sigviewer16.png"));
     initStatusBar();
-    initActions();
     initToolBars();
     initMenus();
-    resize(QSize(800, 600).expandedTo(minimumSizeHint()));
-
+    resize (800, 600);
 }
 
-// destructor
-MainWindow::~MainWindow()
-{
-    // nothing
-}
-
-// init status bar
+//-----------------------------------------------------------------------------
 void MainWindow::initStatusBar()
 {
     QStatusBar* status_bar = statusBar();
@@ -89,25 +81,19 @@ void MainWindow::initStatusBar()
     status_bar->addPermanentWidget(status_bar_nr_channels_label_);
 }
 
-// init actions
-void MainWindow::initActions()
-{
-
-}
-
-// init tool bars
+//-----------------------------------------------------------------------------
 void MainWindow::initToolBars()
 {
     view_toolbar_views_menu_ = new QMenu (tr("Toolbars"), this);
 
     file_toolbar_ = addToolBar(tr("File"));
     view_toolbar_views_menu_->addAction (file_toolbar_->toggleViewAction());
-    QList<QAction*> file_toolbar_actions;
-    file_toolbar_actions.append (GuiActionFactory::getInstance()->getQAction("Open..."));
-    file_toolbar_actions.append (GuiActionFactory::getInstance()->getQAction("Info..."));
-    file_toolbar_actions.append (GuiActionFactory::getInstance()->getQAction("Close"));
-    file_toolbar_->addActions (file_toolbar_actions);
-    file_toolbar_->addActions (GuiActionFactory::getInstance()->getQActions("UndoRedo"));
+    file_toolbar_->addAction (action("Open..."));
+    file_toolbar_->addAction (action("Save"));
+    file_toolbar_->addAction (action("Info..."));
+    file_toolbar_->addAction (action("Undo"));
+    file_toolbar_->addAction (action("Redo"));
+    file_toolbar_->addAction (action("Close"));
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
     view_toolbar_views_menu_->addAction (mouse_mode_toolbar_->toggleViewAction());
@@ -126,6 +112,12 @@ void MainWindow::initToolBars()
     view_toolbar_views_menu_->addAction (navigation_toolbar_->toggleViewAction());
     navigation_toolbar_->setIconSize(QSize(22, 22));
     navigation_toolbar_->addActions (GuiActionFactory::getInstance()->getQActions("Zooming"));
+
+    view_toolbar_views_menu_->addSeparator ();
+    toggle_all_toolbars_ = new QAction (tr("Hide all Toolbars"), this);
+    connect (toggle_all_toolbars_, SIGNAL(triggered()), SLOT(toggleAllToolbars()));
+    toggle_all_toolbars_->setData (true);
+    view_toolbar_views_menu_->addAction (toggle_all_toolbars_);
 }
 
 //-------------------------------------------------------------------
@@ -133,6 +125,28 @@ void MainWindow::toggleStatusBar (bool visible)
 {
     statusBar()->setVisible (visible);
 }
+
+//-------------------------------------------------------------------
+void MainWindow::toggleAllToolbars ()
+{
+    if (toggle_all_toolbars_->data().toBool())
+    {
+        toggle_all_toolbars_->setData (false);
+        toggle_all_toolbars_->setText(tr("Show all Toolbars"));
+        foreach (QAction* toggle_action, view_toolbar_views_menu_->actions())
+            if (toggle_action->isCheckable() && toggle_action->isChecked())
+                toggle_action->trigger ();
+    }
+    else
+    {
+        toggle_all_toolbars_->setData (true);
+        toggle_all_toolbars_->setText(tr("Hide all Toolbars"));
+        foreach (QAction* toggle_action, view_toolbar_views_menu_->actions())
+            if (toggle_action->isCheckable() && !toggle_action->isChecked())
+                toggle_action->trigger ();
+    }
+}
+
 
 
 //-----------------------------------------------------------------------------
@@ -144,7 +158,7 @@ void MainWindow::initMenus()
     connect(file_recent_files_menu_, SIGNAL(triggered(QAction*)),
             model_.data(), SLOT(recentFileActivated(QAction*)));
 
-    file_menu_ = new QMenu(tr("&File"), this);
+    file_menu_ = menuBar()->addMenu(tr("&File"));
     file_menu_->addAction(action("Open..."));
     file_menu_->addMenu (file_recent_files_menu_);
     file_menu_->addAction (action("Save"));
@@ -160,26 +174,49 @@ void MainWindow::initMenus()
     file_menu_->addSeparator ();
     file_menu_->addAction (action("Exit"));
 
-    menuBar()->addMenu(file_menu_);
-
     edit_menu_ = menuBar()->addMenu(tr("&Edit"));
-    edit_menu_->addActions (GuiActionFactory::getInstance()->getQActions("UndoRedo"));
+    edit_menu_->addAction (action("Undo"));
+    edit_menu_->addAction (action("Redo"));
     edit_menu_->addSeparator ();
-    edit_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Event Editing"));
+    edit_menu_->addAction (action("To all Channels"));
+    edit_menu_->addAction (action("Copy to Channels..."));
+    edit_menu_->addAction (action("Delete"));
+    edit_menu_->addAction (action("Change Channel..."));
+    edit_menu_->addAction (action("Change Type..."));
+    edit_menu_->addSeparator ();
+    edit_menu_->addAction (action("Insert Over"));
+    edit_menu_->addSeparator ();
+    edit_menu_->addAction (action("Event Table..."));
 
     mouse_mode_menu_ = menuBar()->addMenu(tr("&Mode"));
     mouse_mode_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Mouse Modes"));
 
-    view_menu_ = menuBar()->addMenu(tr("&View"));
-    view_menu_->addMenu(view_toolbar_views_menu_);
+
     QAction* toggle_status_bar = new QAction (tr("Statusbar"), this);
     toggle_status_bar->setCheckable (true);
     toggle_status_bar->setChecked (true);
     connect (toggle_status_bar, SIGNAL(toggled(bool)), this, SLOT(toggleStatusBar(bool)));
+
+    view_menu_ = menuBar()->addMenu(tr("&View"));
+    view_menu_->addMenu (view_toolbar_views_menu_);
     view_menu_->addAction(toggle_status_bar);
     view_menu_->addSeparator();
-    view_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Zooming"));
-    view_menu_->addActions (GuiActionFactory::getInstance()->getQActions("Adapt Event View"));
+    view_menu_->addAction(action("Channels..."));
+    view_menu_->addAction(action("Events..."));
+    view_menu_->addSeparator();
+    view_menu_->addAction(action("Zoom In Vertical"));
+    view_menu_->addAction(action("Zoom Out Vertical"));
+    view_menu_->addAction(action("Zoom In Horizontal"));
+    view_menu_->addAction(action("Zoom Out Horizontal"));
+    view_menu_->addSeparator();
+    view_menu_->addAction(action("Go to..."));
+    view_menu_->addSeparator();
+    view_menu_->addAction(action("Goto and Select Next Event"));
+    view_menu_->addAction(action("Goto and Select Previous Event"));
+    view_menu_->addSeparator();
+    view_menu_->addAction(action("Fit View to Selected Event"));
+    view_menu_->addAction(action("Hide Events of other Type"));
+    view_menu_->addAction(action("Show all Events"));
 
     tools_menu_ = menuBar()->addMenu(tr("&Tools"));
     tools_menu_->addActions(GuiActionFactory::getInstance()->getQActions("Signal Processing"));
@@ -188,7 +225,7 @@ void MainWindow::initMenus()
     options_menu_->addAction (action("Set Event Creation Type..."));
 
     help_menu_ = menuBar()->addMenu(tr("&Help"));
-    help_menu_->addAction (GuiActionFactory::getInstance()->getQAction("About"));
+    help_menu_->addAction (action("About"));
 }
 
 //-----------------------------------------------------------------------------
@@ -223,26 +260,6 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 }
 
 //-----------------------------------------------------------------------------
-void MainWindow::loadSettings()
-{
-    QSettings settings("SigViewer");
-    settings.beginGroup("MainWindow");
-    resize(settings.value("size", QSize(800, 600)).toSize());
-    move(settings.value("pos", QPoint(200, 200)).toPoint());
-    settings.endGroup();
-}
-
-//-----------------------------------------------------------------------------
-void MainWindow::saveSettings()
-{
-    QSettings settings("SigViewer");
-    settings.beginGroup("MainWindow");
-    settings.setValue("size", size());
-    settings.setValue("pos", pos());
-    settings.endGroup();
-}
-
-//-----------------------------------------------------------------------------
 bool MainWindow::showFileCloseDialog(const QString& file_name)
 {
     int res;
@@ -252,117 +269,7 @@ bool MainWindow::showFileCloseDialog(const QString& file_name)
     return (res == 0);
 }
 
-// show import dialog
-QString MainWindow::showImportDialog(const QString& path,
-                                     const QString& extensions)
-{
-    QString extension_selection;
-    QStringList ext_list = extensions.split(" ");
-    for (QStringList::iterator it = ext_list.begin();
-         it != ext_list.end();
-         it++)
-    {
-        extension_selection += *it + '\n';
-    }
-    extension_selection += "*.*";
-    return QFileDialog::getOpenFileName(this, tr("Chose signal file to import"),
-                                        path,extension_selection);
-}
-
-// show error read dialog
-void MainWindow::showErrorReadDialog(const QString& file_name)
-{
-    QMessageBox::critical(this, tr("Error reading file"),
-                          tr("Invalid file: %1").arg(file_name));
-}
-
-// show error write dialog
-void MainWindow::showErrorWriteDialog(const QString& file_name)
-{
-        QMessageBox::critical(this, tr("Error writing file"),
-                              tr("Writing failed: %1").arg(file_name));
-}
-
-// show file export dialog
-QString MainWindow::showExportDialog(const QString& path,
-                                     const QString& extensions)
-{
-    //QString extension_selection = tr("Signal files (%1)").arg(extensions);
-    QString extension_selection;
-    QStringList ext_list = extensions.split(" ");
-    for (QStringList::iterator it = ext_list.begin();
-         it != ext_list.end();
-         it++)
-    {
-        extension_selection += *it + '\n';
-    }
-    extension_selection += "*.*";
-    QString selected_extension;
-    QString file_name = QFileDialog::getSaveFileName(this,
-                                            tr("Chose signal file to export"),
-                                            path, extension_selection,
-                                            &selected_extension);
-    if (selected_extension != "*.*")
-    {
-        selected_extension = selected_extension.mid(1);
-        if(!file_name.endsWith(selected_extension))
-        {
-            file_name += selected_extension;
-        }
-    }
-    return file_name;
-}
-
-// show file save as dialog
-QString MainWindow::showSaveAsDialog(const QString& path,
-                                     const QString& extensions)
-{
-    QString extension_selection;
-    QStringList ext_list = extensions.split(" ");
-    for (QStringList::iterator it = ext_list.begin();
-         it != ext_list.end();
-         it++)
-    {
-        if (*it != "*.evt")
-        {
-            extension_selection += *it + '\n';
-        }
-    }
-    extension_selection += "*.*";
-    QString selected_extension;
-    QString file_name = QFileDialog::getSaveFileName(this,
-                                        tr("Chose signal file to save as"),
-                                        path, extension_selection,
-                                        &selected_extension);
-    if (selected_extension != "*.*")
-    {
-        selected_extension = selected_extension.mid(1);
-        if(!file_name.endsWith(selected_extension))
-        {
-            file_name += selected_extension;
-        }
-    }
-    return file_name;
-}
-
-// show overwrite dialog
-bool MainWindow::showOverwriteDialog(const QString& file_name)
-{
-    int res=  QMessageBox::question(this, tr("Really overwrite?"),
-                tr("File '%1' alreay exists!!").arg(file_name) + "\n" +
-                tr("Really overwrite?"), tr("Yes"),  tr("No"));
-    return (res == 0);
-}
-
-// show inconsistent events dialog
-void MainWindow::showInconsistentEventsDialog()
-{
-    QMessageBox::warning(this, tr("Inconsistent Events"),
-                         tr("Inconsistant event positions or channels!!"),
-                         QMessageBox::Ok, QMessageBox::NoButton);
-}
-
-// set recent files
+//-----------------------------------------------------------------------------
 void MainWindow::setRecentFiles(const QStringList& recent_file_list)
 {
     file_recent_files_menu_->clear();
@@ -374,7 +281,7 @@ void MainWindow::setRecentFiles(const QStringList& recent_file_list)
     }
 }
 
-// set status bar signal length
+//-----------------------------------------------------------------------------
 void MainWindow::setStatusBarSignalLength(float64 length)
 {
     QString tmp = length < 0 ? "----.-" : QString("%1").arg(length, 0, 'f', 1);
@@ -382,7 +289,7 @@ void MainWindow::setStatusBarSignalLength(float64 length)
     status_bar_signal_length_label_->setMinimumWidth(status_bar_signal_length_label_->sizeHint().width() + 10);
 }
 
-// set status bar nr channels
+//-----------------------------------------------------------------------------
 void MainWindow::setStatusBarNrChannels(int32 nr_channels)
 {
     QString tmp = nr_channels < 0 ? "---" : QString("%1").arg(nr_channels, 3);

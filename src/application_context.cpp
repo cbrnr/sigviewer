@@ -57,6 +57,7 @@ QSharedPointer<CommandExecuter> ApplicationContext::getCurrentCommandExecuter ()
 void ApplicationContext::addFileContext (QSharedPointer<FileContext>file_context)
 {
     current_file_context_ = file_context;
+    connect (current_file_context_.data(), SIGNAL(stateChanged(FileState)), SLOT(changeFileState(FileState)));
 }
 
 //-------------------------------------------------------------------------
@@ -91,8 +92,6 @@ QSharedPointer<EventColorManager> ApplicationContext::getEventColorManager () co
     return impl_->getEventColorManager ();
 }
 
-
-
 //-----------------------------------------------------------------------------
 void ApplicationContext::setState (ApplicationState state)
 {
@@ -111,6 +110,13 @@ void ApplicationContext::changeTabEditState (TabEditState state)
 {
     emit currentTabEditStateChanged (state);
 }
+
+//-----------------------------------------------------------------------------
+void ApplicationContext::changeFileState (FileState state)
+{
+    emit currentFileStateChanged (state);
+}
+
 
 
 

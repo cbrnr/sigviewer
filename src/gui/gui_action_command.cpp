@@ -25,6 +25,8 @@ GuiActionCommand::GuiActionCommand (QStringList const& action_ids)
                           SLOT(updateEnablednessToTabSelectionState (TabSelectionState))));
         assert (connect (ApplicationContext::getInstance().data(), SIGNAL(currentTabEditStateChanged(TabEditState)),
                           SLOT(updateEnablednessToTabEditState (TabEditState))));
+        assert (connect (ApplicationContext::getInstance().data(), SIGNAL(currentFileStateChanged(FileState)),
+                          SLOT(updateEnablednessToFileState (FileState))));
     }
 }
 

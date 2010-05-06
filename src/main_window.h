@@ -9,7 +9,6 @@
 #include <QMainWindow>
 #include <QIcon>
 
-class QCloseEvent;
 class QAction;
 class QComboBox;
 class QMenu;
@@ -18,33 +17,19 @@ class QLabel;
 namespace BioSig_
 {
 
-class ApplicationContext;
-
 // main window
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-
     MainWindow (QSharedPointer<MainWindowModelImpl> model);
-    ~MainWindow ();
-
-    void loadSettings();
-    void saveSettings();
+    virtual ~MainWindow () {};
 
     void setStatusBarSignalLength(float64 length);
     void setStatusBarNrChannels(int32 nr_channels);
 
-    // do actions
     bool showFileCloseDialog(const QString& file_name);
-    void showErrorReadDialog(const QString& file_name);
-    void showErrorWriteDialog(const QString& file_name);
-    QString showExportDialog(const QString& path, const QString& extensions);
-    bool showOverwriteDialog(const QString& file_name);
-    QString showSaveAsDialog(const QString& path, const QString& extensions);
-    QString showImportDialog(const QString& path, const QString& extensions);
-    void showInconsistentEventsDialog();
     void setRecentFiles(const QStringList& recent_file_list);
 
 protected:
@@ -54,6 +39,7 @@ protected:
 
 private slots:
     void toggleStatusBar (bool visible);
+    void toggleAllToolbars ();
 
 private:
     QAction* action (QString const& action_id);
@@ -86,6 +72,8 @@ private:
 
     QLabel* status_bar_signal_length_label_;
     QLabel* status_bar_nr_channels_label_;
+
+    QAction* toggle_all_toolbars_;
 };
 
 } // namespace BioSig_

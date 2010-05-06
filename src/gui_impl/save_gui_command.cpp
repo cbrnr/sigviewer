@@ -39,6 +39,8 @@ SaveGuiCommand::SaveGuiCommand ()
 //-----------------------------------------------------------------------------
 void SaveGuiCommand::init ()
 {
+    setIcon(SAVE_, QIcon (":/images/icons/filesave.png"));
+
     resetActionTriggerSlot (SAVE_AS_, SLOT(saveAs()));
     resetActionTriggerSlot (SAVE_, SLOT(save()));
     resetActionTriggerSlot (EXPORT_TO_GDF_, SLOT(exportToGDF()));
@@ -99,7 +101,12 @@ void SaveGuiCommand::save ()
     if (writer && can_save_events)
     {
         QSharedPointer<EventManager> event_mgr = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
-        writer->saveEventsToSignalFile(event_mgr, file_path);
+        QString error = writer->saveEventsToSignalFile(event_mgr, file_path);
+        if (error.size())
+            QMessageBox::critical (0, tr("Error"), error);
+        else
+            ApplicationContext::getInstance()->getCurrentFileContext()->setState(FILE_STATE_UNCHANGED);
+
         delete writer;
     }
     else

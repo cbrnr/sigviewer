@@ -44,6 +44,11 @@ void ZoomGuiCommand::init ()
     getQAction (ZOOM_IN_HORIZONTAL_)->setIcon (QIcon(":/images/icons/zoom_in_horizontal.png"));
     getQAction (ZOOM_OUT_HORIZONTAL_)->setIcon (QIcon(":/images/icons/zoom_out_horizontal.png"));
 
+    setShortcut (ZOOM_IN_VERTICAL_, QKeySequence::ZoomIn);
+    setShortcut (ZOOM_OUT_VERTICAL_, QKeySequence::ZoomOut);
+    setShortcut (ZOOM_IN_HORIZONTAL_, Qt::ALT + Qt::Key_Plus);
+    setShortcut (ZOOM_OUT_HORIZONTAL_, Qt::ALT + Qt::Key_Minus);
+
     resetActionTriggerSlot (GOTO_, SLOT(goTo()));
     resetActionTriggerSlot (ZOOM_IN_VERTICAL_, SLOT(zoomInVertical()));
     resetActionTriggerSlot (ZOOM_OUT_VERTICAL_, SLOT(zoomOutVertical()));
