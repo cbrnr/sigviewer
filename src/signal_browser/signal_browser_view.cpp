@@ -95,7 +95,6 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     connect(signal_browser_model.data(), SIGNAL(signalHeightChanged(uint32)), y_axis_widget_, SLOT(changeSignalHeight(uint32)));
     if (event_info_widget_)
     {
-        connect(event_info_widget_, SIGNAL(eventCreationTypeChanged(uint16)), signal_browser_model.data(), SLOT(setActualEventCreationType(uint16)));
         connect(signal_browser_model.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent const>)));
         connect(signal_browser_model.data(), SIGNAL(shownEventTypesChanged(std::set<uint16>)), event_info_widget_, SLOT(updateShownEventTypes(std::set<uint16>)));
     }

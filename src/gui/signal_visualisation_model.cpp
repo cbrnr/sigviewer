@@ -1,6 +1,6 @@
 #include "signal_visualisation_model.h"
 
-#include <iostream>
+#include <QDebug>
 
 namespace BioSig_
 {
@@ -60,10 +60,9 @@ unsigned SignalVisualisationModel::getSignalHeight () const
 void SignalVisualisationModel::setSignalHeight (unsigned height)
 {
     signal_height_ = height;
-    std::cout << "SignalVisualisationModel::signal_height_ = " << signal_height_ << std::endl;
+    qDebug() << "SignalVisualisationModel::signal_height_ = " << signal_height_;
     if (signal_height_ == 0)
     {
-        std::cout << "WARUM???" << std::endl;
         signal_height_ = 100;
     }
     emit signalHeightChanged (signal_height_);

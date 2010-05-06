@@ -5,18 +5,21 @@ CONFIG += warn_on \
     link_prl \
     qt \
     thread
-debug { 
+
+OBJECTS_DIR = ../tmp/release
+MOC_DIR = ../tmp/release
+RCC_DIR = ../tmp/release
+UI_DIR = ../tmp/release
+DEFINES += QT_NO_DEBUG_OUTPUT
+
+CONFIG(debug) {
     OBJECTS_DIR = ../tmp/debug
     MOC_DIR = ../tmp/debug
     RCC_DIR = ../tmp/debug
     UI_DIR = ../tmp/debug
+    DEFINES -= QT_NO_DEBUG_OUTPUT
 }
-else:release { 
-    OBJECTS_DIR = ../tmp/release
-    MOC_DIR = ../tmp/release
-    RCC_DIR = ../tmp/release
-    UI_DIR = ../tmp/release
-}
+
 INCLUDEPATH += ../extern
 LIBS += -L../extern \
     -lbiosig \

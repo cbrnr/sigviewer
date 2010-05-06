@@ -5,7 +5,7 @@
 #include "application_context.h"
 
 #include <QSettings>
-#include <iostream>
+#include <QDebug>
 
 namespace BioSig_
 {
@@ -13,13 +13,13 @@ namespace BioSig_
 // constructor
 EventColorManager::EventColorManager ()
 {
-    std::cout << "constructing event color manager" << std::endl;
+    qDebug() << "constructing event color manager";
 
 }
 
 EventColorManager::~EventColorManager ()
 {
-    std::cout << "destructing event color manager" << std::endl;
+    qDebug() << "destructing event color manager";
     saveSettings();
 }
 
@@ -73,7 +73,7 @@ void EventColorManager::loadSettings()
 // save settings
 void EventColorManager::saveSettings()
 {
-    std::cout << "color manager save settings" << std::endl;
+    qDebug() << "color manager save settings";
     QSettings settings("SigViewer");
     settings.beginGroup("EventColorManager");
     settings.beginWriteArray("event");
