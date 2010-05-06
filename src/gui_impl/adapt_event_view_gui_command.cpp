@@ -13,7 +13,7 @@ QString const AdaptEventViewGuiCommand::SHOW_ALL_EVENTS_ = "Show all Events";
 QString const AdaptEventViewGuiCommand::GO_TO_NEXT_EVENT_ = "Goto and Select Next Event";
 QString const AdaptEventViewGuiCommand::GO_TO_PREVIOUS_EVENT_ = "Goto and Select Previous Event";
 QString const AdaptEventViewGuiCommand::SET_SHOWN_EVENTS_ = "Events...";
-QStringList const AdaptEventViewGuiCommand::TEXTS_ = QStringList() <<
+QStringList const AdaptEventViewGuiCommand::ACTIONS_ = QStringList() <<
                                               AdaptEventViewGuiCommand::FIT_TO_EVENT_ <<
                                               AdaptEventViewGuiCommand::GO_TO_NEXT_EVENT_ <<
                                               AdaptEventViewGuiCommand::GO_TO_PREVIOUS_EVENT_ <<
@@ -28,13 +28,7 @@ GuiActionFactoryRegistrator AdaptEventViewGuiCommand::registrator_ ("Adapt Event
 
 //-----------------------------------------------------------------------------
 AdaptEventViewGuiCommand::AdaptEventViewGuiCommand ()
-    : GuiActionCommand (TEXTS_)
-{
-    // nothing to do here
-}
-
-//-----------------------------------------------------------------------------
-AdaptEventViewGuiCommand::~AdaptEventViewGuiCommand ()
+    : GuiActionCommand (ACTIONS_)
 {
     // nothing to do here
 }
@@ -70,83 +64,59 @@ void AdaptEventViewGuiCommand::hideEventsOfOtherType ()
 {
     QSharedPointer<SignalEvent const> event = GuiHelper::getSelectedEvent ();
 
-    QSharedPointer<MainWindowModel> mw_model = ApplicationContext::getInstance()->getMainWindowModel ();
-    QSharedPointer<SignalVisualisationModel> sv_model = mw_model->getCurrentSignalVisualisationModel ();
-
     std::set<EventType> shown_types;
     shown_types.insert (event->getType ());
-    sv_model->setShownEventTypes (shown_types);
+    currentVisModel()->setShownEventTypes (shown_types);
 }
 
 //-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::showAllEvents ()
 {
-    QSharedPointer<MainWindowModel> mw_model = ApplicationContext::getInstance()->getMainWindowModel ();
-    QSharedPointer<SignalVisualisationModel> sv_model = mw_model->getCurrentSignalVisualisationModel ();
-
     std::set<EventType> shown_types = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager()->getAllPossibleEventTypes ();
-    sv_model->setShownEventTypes (shown_types);
+    currentVisModel()->setShownEventTypes (shown_types);
 }
 
 //-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::setShownEvents ()
 {
-    QSharedPointer<MainWindowModel> mw_model = ApplicationContext::getInstance()->getMainWindowModel ();
-    QSharedPointer<SignalVisualisationModel> sv_model = mw_model->getCurrentSignalVisualisationModel ();
-
-    std::set<EventType> shown_types = sv_model->getShownEventTypes ();
+    std::set<EventType> shown_types = currentVisModel()->getShownEventTypes ();
     std::set<EventType> new_shown_types = GuiHelper::selectEventTypes (shown_types);
     if (shown_types != new_shown_types)
-        sv_model->setShownEventTypes (new_shown_types);
+        currentVisModel()->setShownEventTypes (new_shown_types);
 }
 
 
 //-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::evaluateEnabledness ()
 {
-    if (getApplicationState () == APP_STATE_FILE_OPEN)
-    {
-        emit qActionEnabledChanged (true);
-    }
-    else
-        emit qActionEnabledChanged (false);
+    disableIfNoFileIsOpened (ACTIONS_);
+    disableIfNoEventSelected (QStringList() << HIDE_EVENTS_OF_OTHER_TYPE_
+                              << GO_TO_PREVIOUS_EVENT_
+                              << GO_TO_NEXT_EVENT_
+                              << FIT_TO_EVENT_);
 }
 
 
 //-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::fitViewToEvent ()
 {
-    QSharedPointer<MainWindowModel> mw_model = ApplicationContext::getInstance()->getMainWindowModel ();
-    QSharedPointer<SignalVisualisationModel> sv_model = mw_model->getCurrentSignalVisualisationModel ();
-    EventID event_id = sv_model->getSelectedEvent ();
+    QSharedPointer<SignalEvent const> event = GuiHelper::getSelectedEvent ();
 
-    if (event_id == UNDEFINED_EVENT_ID)
-        return;
-
-    QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
-    QSharedPointer<SignalEvent const> event = event_manager->getEvent (event_id);
-
-    float32 width = sv_model->getShownSignalWidth ();
+    float32 width = currentVisModel()->getShownSignalWidth ();
     float32 desired_pixel_per_sample = width / event->getDuration ();
     float32 pixel_per_sample = desired_pixel_per_sample;
 
-    sv_model->setPixelPerSample (pixel_per_sample);
-    sv_model->updateLayout ();
-    sv_model->goToSample (event->getPosition ());
+    currentVisModel()->setPixelPerSample (pixel_per_sample);
+    currentVisModel()->updateLayout ();
+    currentVisModel()->goToSample (event->getPosition ());
 }
 
 //-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::gotoAndSelectEvent (bool forward)
 {
     QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
-    QSharedPointer<MainWindowModel> mw_model = ApplicationContext::getInstance()->getMainWindowModel ();
-    QSharedPointer<SignalVisualisationModel> sv_model = mw_model->getCurrentSignalVisualisationModel ();
-    EventID event_id = sv_model->getSelectedEvent ();
 
-    if (event_id == UNDEFINED_EVENT_ID)
-        return;
-
-    QSharedPointer<SignalEvent const> event = event_manager->getEvent (event_id);
+    QSharedPointer<SignalEvent const> event = GuiHelper::getSelectedEvent();
 
     QMap<uint32, EventID> events = event_manager->getEventPositions (event->getType());
     QMap<uint32, EventID>::iterator current_event_iter = events.find (event->getPosition());
@@ -159,26 +129,9 @@ void AdaptEventViewGuiCommand::gotoAndSelectEvent (bool forward)
 
     if (current_event_iter != events.end())
     {
-        sv_model->goToSample (current_event_iter.key ());
-        sv_model->selectEvent (current_event_iter.value ());
+        currentVisModel()->goToSample (current_event_iter.key ());
+        currentVisModel()->selectEvent (current_event_iter.value ());
     }
 }
-
-
-//-------------------------------------------------------------------------
-void AdaptEventViewGuiCommand::updateEnabledness ()
-{
-    if (getApplicationState () == APP_STATE_NO_FILE_OPEN)
-    {
-        getQAction (FIT_TO_EVENT_)->setEnabled (false);
-        return;
-    }
-
-    if (getTabSelectionState () == TAB_STATE_NO_EVENT_SELECTED)
-        getQAction (FIT_TO_EVENT_)->setEnabled (false);
-    else
-        getQAction (FIT_TO_EVENT_)->setEnabled (true);
-}
-
 
 }

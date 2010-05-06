@@ -122,6 +122,25 @@ QSharedPointer<SignalVisualisationModel> GuiActionCommand::currentVisModel ()
     return model;
 }
 
+//-------------------------------------------------------------------------
+void GuiActionCommand::disableIfNoEventSelected (QStringList const &actions)
+{
+    bool no_event_selected = app_state_ == APP_STATE_NO_FILE_OPEN ||
+                             tab_selection_state_ == TAB_STATE_NO_EVENT_SELECTED ||
+                             tab_selection_state_ == NO_TAB_SELECTION_STATE;
+    foreach (QString action, actions)
+        action_map_[action]->setDisabled (no_event_selected);
+}
+
+//-------------------------------------------------------------------------
+void GuiActionCommand::disableIfNoFileIsOpened (QStringList const &actions)
+{
+    bool no_file_open = (app_state_ == APP_STATE_NO_FILE_OPEN);
+    foreach (QString action, actions)
+        action_map_[action]->setDisabled (no_file_open);
+}
+
+
 
 
 

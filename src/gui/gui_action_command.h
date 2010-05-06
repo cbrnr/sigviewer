@@ -89,6 +89,12 @@ protected:
     //-------------------------------------------------------------------------
     TabEditState getTabEditState () const {return tab_edit_state_;}
 
+    //-------------------------------------------------------------------------
+    void disableIfNoEventSelected (QStringList const &actions);
+
+    //-------------------------------------------------------------------------
+    void disableIfNoFileIsOpened (QStringList const &actions);
+
 private:
     QMap<QString, QAction*> action_map_;
     QList<ActionConnector*> connectors_;

@@ -9,6 +9,7 @@
 namespace BioSig_
 {
 
+//-------------------------------------------------------------------------
 class AdaptEventViewGuiCommand : public GuiActionCommand
 {
     Q_OBJECT
@@ -17,7 +18,7 @@ public:
     AdaptEventViewGuiCommand ();
 
     //-------------------------------------------------------------------------
-    virtual ~AdaptEventViewGuiCommand ();
+    virtual ~AdaptEventViewGuiCommand () {}
 
     //-------------------------------------------------------------------------
     virtual void init ();
@@ -46,19 +47,15 @@ private:
     //-------------------------------------------------------------------------
     void gotoAndSelectEvent (bool forward);
 
-    //-------------------------------------------------------------------------
-    void updateEnabledness ();
-
     static QString const FIT_TO_EVENT_;
     static QString const HIDE_EVENTS_OF_OTHER_TYPE_;
     static QString const SHOW_ALL_EVENTS_;
     static QString const GO_TO_NEXT_EVENT_;
     static QString const GO_TO_PREVIOUS_EVENT_;
     static QString const SET_SHOWN_EVENTS_;
-    static QStringList const TEXTS_;
+    static QStringList const ACTIONS_;
 
     static GuiActionFactoryRegistrator registrator_;
-
 };
 
 } // namespace BioSig_
