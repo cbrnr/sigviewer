@@ -4,16 +4,10 @@
 #include "file_context.h"
 #include "application_context.h"
 
-#include "file_handling/file_signal_reader_factory.h"
-#include "file_handling_impl/event_table_file_reader.h"
-#include "file_handling_impl/event_manager_impl.h"
-#include "file_handling_impl/channel_manager_impl.h"
-#include "gui_impl/gui_helper_functions.h"
 #include "gui_impl/open_file_gui_command.h"
 
 #include "signal_browser/signal_browser_model_4.h"
 #include "signal_browser/signal_browser_view.h"
-#include "signal_browser/calculcate_frequency_spectrum_command.h"
 
 #include <QSettings>
 
@@ -22,30 +16,22 @@ namespace BioSig_
 
 int const MainWindowModelImpl::NUMBER_RECENT_FILES_ = 8;
 
-
-// constructor
+//-----------------------------------------------------------------------------
 MainWindowModelImpl::MainWindowModelImpl ()
 : main_window_(0),
-  application_context_ (ApplicationContext::getInstance()),
   tab_widget_ (0)
 {
-
+    // nothing to do here
 }
 
-// destructor
-MainWindowModelImpl::~MainWindowModelImpl()
-{
-    // nothing
-}
-
-// set main window
+//-----------------------------------------------------------------------------
 void MainWindowModelImpl::setMainWindow (MainWindow* main_window)
 {
     main_window_ = main_window;
-    application_context_->setState(APP_STATE_NO_FILE_OPEN);
+    ApplicationContext::getInstance()->setState(APP_STATE_NO_FILE_OPEN);
 }
 
-// void load settings
+//-----------------------------------------------------------------------------
 void MainWindowModelImpl::loadSettings()
 {
     QSettings settings("SigViewer");
@@ -63,7 +49,7 @@ void MainWindowModelImpl::loadSettings()
     settings.endGroup();
 }
 
-// void save settings
+//-----------------------------------------------------------------------------
 void MainWindowModelImpl::saveSettings()
 {
     QSettings settings("SigViewer");
@@ -95,7 +81,12 @@ void MainWindowModelImpl::closeTab (int tab_index)
 {
     if (tab_index == 0)
     {
-        fileCloseAction();
+        // waldesel:
+        // --begin
+        //   to be replaced as soon as multi file support is implemented
+        if (!(ApplicationContext::getInstance()->getCurrentFileContext().isNull()))
+            GuiActionFactory::getInstance()->getQAction("Close")->trigger();
+        // --end
         return;
     }
     QWidget* widget = tab_widget_->widget (tab_index);
@@ -104,45 +95,16 @@ void MainWindowModelImpl::closeTab (int tab_index)
     delete widget;
 }
 
-// recent file menu about to show
+//-----------------------------------------------------------------------------
 void MainWindowModelImpl::recentFileMenuAboutToShow()
 {
     main_window_->setRecentFiles(recent_file_list_);
 }
 
-// recent file activated
+//-----------------------------------------------------------------------------
 void MainWindowModelImpl::recentFileActivated(QAction* recent_file_action)
 {
     OpenFileGuiCommand::openFile (recent_file_action->text());
-}
-
-
-// file close action
-void MainWindowModelImpl::fileCloseAction()
-{
-    if (current_file_context_.isNull())
-        return;
-
-    if (current_file_context_->getState() == FILE_STATE_CHANGED &&
-        !main_window_
-        ->showFileCloseDialog(current_file_context_->getFileName ()))
-        return; // user cancel
-
-    current_file_context_.clear ();
-
-    // close
-    main_window_->setCentralWidget(0);
-    tab_widget_ = 0;
-    signal_browser_tab_ = 0;
-    tab_contexts_.clear ();
-
-    // reset status bar
-    main_window_->setStatusBarSignalLength(-1);
-    main_window_->setStatusBarNrChannels(-1);
-
-    ApplicationContext::getInstance()->addFileContext (QSharedPointer<FileContext>(0));
-    application_context_->setState(APP_STATE_NO_FILE_OPEN);
-    main_window_->setWindowTitle (tr("SigViewer"));
 }
 
 //-----------------------------------------------------------------------------
@@ -150,17 +112,10 @@ void MainWindowModelImpl::storeAndInitTabContext (QSharedPointer<TabContext> con
 {
     tab_contexts_[tab_index] = context;
 
-
     ApplicationContext::getInstance()->setCurrentTabContext (context);
 
     context->setSelectionState (TAB_STATE_NO_EVENT_SELECTED);
     context->setEditState (TAB_STATE_NO_REDO_NO_UNDO);
-}
-
-// set changed
-void MainWindowModelImpl::setChanged()
-{
-    ApplicationContext::getInstance()->getCurrentFileContext()->setState (FILE_STATE_CHANGED);
 }
 
 //-------------------------------------------------------------------------
@@ -175,6 +130,13 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
 //-----------------------------------------------------------------------------
 QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx)
 {
+    // waldesel:
+    // --begin
+    //   to be replaced as soon as multi file support is implemented
+    if (!(ApplicationContext::getInstance()->getCurrentFileContext().isNull()))
+        GuiActionFactory::getInstance()->getQAction("Close")->trigger();
+    // --end
+
     if (!tab_widget_)
     {
         tab_widget_ = new QTabWidget (main_window_);
@@ -182,22 +144,6 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
         connect (tab_widget_, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
         tab_widget_->setTabsClosable (true);
     }
-
-
-    // waldesel:
-    // --begin
-    //   to be replaced as soon as multi file support is implemented
-    if (!current_file_context_.isNull())
-        fileCloseAction();
-    // --end
-
-
-    // waldesel:
-    // --begin
-    //   this is only to support old code here.. remove this line as soon
-    //   command pattern for gui commands is finalised
-    current_file_context_ = file_ctx;
-    // --end
 
     recent_file_list_.removeAll (file_ctx->getFilePathAndName());
     if (recent_file_list_.size() == NUMBER_RECENT_FILES_)
@@ -226,17 +172,9 @@ void MainWindowModelImpl::closeCurrentFileTabs ()
 {
     // waldesel:
     // --begin
-    //   this is only to support old code here.. refactor these lines as soon
-    //   command pattern for gui commands is finalised
-    current_file_context_.clear ();
-    // --end
-
-    // waldesel:
-    // --begin
     //   to be refactored as soon as multi file support is implemented
     main_window_->setCentralWidget (0);
     tab_widget_ = 0;
-    signal_browser_tab_ = 0;
     tab_contexts_.clear ();
     // --end
 
