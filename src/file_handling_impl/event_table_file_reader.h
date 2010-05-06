@@ -47,7 +47,6 @@ public:
     QString getEventGroupId (EventType event_type_id) const;
 
     std::set<uint16> getAllEventTypes () const;
-    std::set<EventType> getEventTypesOfGroup (QString const& group_id) const;
 private:
     struct EventItem
     {

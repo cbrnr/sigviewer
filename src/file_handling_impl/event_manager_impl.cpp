@@ -163,12 +163,6 @@ std::set<EventType> EventManagerImpl::getAllPossibleEventTypes () const
 }
 
 //-------------------------------------------------------------------------
-std::set<EventType> EventManagerImpl::getEventTypes (QString const& group_id) const
-{
-    return event_table_reader_->getEventTypesOfGroup (group_id);
-}
-
-//-------------------------------------------------------------------------
 std::set<QString> EventManagerImpl::getEventTypeGroupIDs () const
 {
     std::set<QString> groups;

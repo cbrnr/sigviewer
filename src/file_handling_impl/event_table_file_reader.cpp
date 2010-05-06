@@ -162,14 +162,6 @@ std::set<EventType> EventTableFileReader::getAllEventTypes () const
     return type_set;
 }
 
-//-------------------------------------------------------------------
-std::set<EventType> EventTableFileReader::getEventTypesOfGroup (QString const& group_id) const
-{
-
-}
-
-
-
 // get event group name
 QString EventTableFileReader::getEventGroupName(const QString& group_id)
 {

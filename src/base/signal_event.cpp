@@ -18,7 +18,7 @@ SignalEvent::SignalEvent()
 }
 
 // constructor
-SignalEvent::SignalEvent(uint32 position, uint16 type, float64 sample_rate, int16 channel,
+SignalEvent::SignalEvent(uint32 position, EventType type, float64 sample_rate, ChannelID channel,
                          uint32 duration, int32 id)
 : id_(id),
   position_(position),
@@ -122,7 +122,7 @@ float64 SignalEvent::getSampleRate () const
 }
 
 //-----------------------------------------------------------------------------
-void SignalEvent::setId (int32 id)
+void SignalEvent::setId (EventID id)
 {
     id_ = id;
 }
@@ -134,13 +134,13 @@ void SignalEvent::setPosition(uint32 position)
 }
 
 // set type
-void SignalEvent::setType(uint16 type)
+void SignalEvent::setType(EventType type)
 {
     type_ = type;
 }
 
 // set channel
-void SignalEvent::setChannel(int16 channel)
+void SignalEvent::setChannel(ChannelID channel)
 {
     channel_ = channel;
 }

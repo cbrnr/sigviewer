@@ -26,6 +26,9 @@ public:
     //-------------------------------------------------------------------------
     virtual FileSignalWriter* clone();
 
+    virtual QString saveEventsToSignalFile (QSharedPointer<EventManager>,
+                                            QString const&) {return "not implemented!";}
+
     //-------------------------------------------------------------------------
     virtual QString save (QSharedPointer<EventManager> event_manager,
                           QString const& old_file_path,

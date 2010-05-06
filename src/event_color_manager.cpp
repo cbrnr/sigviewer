@@ -20,7 +20,6 @@ EventColorManager::EventColorManager ()
 EventColorManager::~EventColorManager ()
 {
     qDebug() << "destructing event color manager";
-    saveSettings();
 }
 
 

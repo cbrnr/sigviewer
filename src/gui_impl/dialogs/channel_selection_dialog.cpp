@@ -56,7 +56,7 @@ void ChannelSelectionDialog::on_select_all_button__clicked ()
 //-----------------------------------------------------------------------------
 void ChannelSelectionDialog::on_list_widget__itemSelectionChanged()
 {
-    unsigned num_selected_items = ui_.list_widget_->selectedItems().count();
+    int num_selected_items = ui_.list_widget_->selectedItems().count();
     bool nothing_selected = (num_selected_items == 0);
     bool all_selected = (num_selected_items == ui_.list_widget_->count());
 

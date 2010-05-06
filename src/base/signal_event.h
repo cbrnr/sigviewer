@@ -23,10 +23,10 @@ public:
 
 
     SignalEvent();
-    SignalEvent(uint32 position, uint16 type,
+    SignalEvent(uint32 position, EventType type,
                 float64 sample_rate,
-                int16 channel = UNDEFINED_CHANNEL,
-                uint32 duration = UNDEFINED_DURATION, int32 id = UNDEFINED_EVENT_ID);
+                ChannelID channel = UNDEFINED_CHANNEL,
+                uint32 duration = UNDEFINED_DURATION, EventID id = UNDEFINED_EVENT_ID);
 
     SignalEvent(const SignalEvent& src, int32 id);
     SignalEvent(const SignalEvent& src);
@@ -42,17 +42,17 @@ public:
     float32 getEndInSec () const;
     float64 getSampleRate () const;
 
-    void setId (int32 id);
+    void setId (EventID id);
     void setPosition(uint32 position);
-    void setType(uint16 type);
-    void setChannel(int16 channel);
+    void setType(EventType type);
+    void setChannel(ChannelID channel);
     void setDuration(uint32 duration);
 
 private:
-    int32 id_;
+    EventID id_;
     uint32 position_;
     float64 sample_rate_;
-    uint16 type_;
+    EventType type_;
     ChannelID channel_;
     uint32 duration_;
 };

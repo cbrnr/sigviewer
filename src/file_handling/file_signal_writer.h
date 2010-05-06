@@ -31,12 +31,12 @@ public:
 
     //-------------------------------------------------------------------------
     virtual QString saveEventsToSignalFile (QSharedPointer<EventManager>,
-                                QString const& file_path) {return "not implemented";}
+                                QString const& file_path) = 0;
 
     //-------------------------------------------------------------------------
     virtual QString save (QSharedPointer<EventManager> event_manager,
                              QString const& old_file_path,
-                             QString const& file_path) {return "not implemented yet!";}
+                             QString const& file_path) = 0;
 
 protected: 
     FileSignalWriter();

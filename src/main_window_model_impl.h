@@ -3,6 +3,7 @@
 
 #include "base/user_types.h"
 #include "file_context.h"
+#include "tab_context.h"
 #include "file_handling/event_manager.h"
 #include "file_handling/channel_manager.h"
 #include "gui/signal_visualisation_model.h"
@@ -22,7 +23,6 @@ namespace BioSig_
 {
 
 class MainWindow;
-class TabContext;
 
 //-------------------------------------------------------------------------
 class MainWindowModelImpl : public QObject, public MainWindowModel
