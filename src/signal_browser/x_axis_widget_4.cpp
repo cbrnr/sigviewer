@@ -1,5 +1,7 @@
 #include "x_axis_widget_4.h"
 
+#include "../gui/gui_action_factory.h"
+
 #include <QPainter>
 #include <QGraphicsView>
 #include <QGraphicsScene>
@@ -8,6 +10,7 @@
 #include <QPaintEvent>
 #include <QGraphicsTextItem>
 #include <QScrollBar>
+#include <QMenu>
 #include <QHBoxLayout>
 #include <cmath>
 
@@ -126,5 +129,14 @@ void XAxisWidget::paintEvent(QPaintEvent*)
         last_highlight_rect_ = bounding_rect;
     }
 }
+
+//-----------------------------------------------------------------------------
+void XAxisWidget::contextMenuEvent (QContextMenuEvent* event)
+{
+    QMenu menu;
+    menu.addAction(GuiActionFactory::getInstance()->getQAction("Scale X Axis"));
+    menu.exec (event->globalPos());
+}
+
 
 }

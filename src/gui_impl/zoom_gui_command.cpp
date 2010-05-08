@@ -12,6 +12,7 @@ QString const ZoomGuiCommand::ZOOM_IN_VERTICAL_ = "Zoom In Vertical";
 QString const ZoomGuiCommand::ZOOM_OUT_VERTICAL_ = "Zoom Out Vertical";
 QString const ZoomGuiCommand::ZOOM_IN_HORIZONTAL_ = "Zoom In Horizontal";
 QString const ZoomGuiCommand::ZOOM_OUT_HORIZONTAL_ = "Zoom Out Horizontal";
+QString const ZoomGuiCommand::SCALE_X_AXIS_ = "Scale X Axis";
 QString const ZoomGuiCommand::AUTO_ZOOM_VERTICAL_ = "Auto Zoom Vertical";
 
 
@@ -19,7 +20,8 @@ QStringList const ZoomGuiCommand::ACTIONS_ = QStringList() << ZoomGuiCommand::ZO
                                            << ZoomGuiCommand::ZOOM_OUT_VERTICAL_
                                            << ZoomGuiCommand::ZOOM_IN_HORIZONTAL_
                                            << ZoomGuiCommand::ZOOM_OUT_HORIZONTAL_
-                                           << ZoomGuiCommand::GOTO_;
+                                           << ZoomGuiCommand::GOTO_
+                                           << ZoomGuiCommand::SCALE_X_AXIS_;
 
 
 //-----------------------------------------------------------------------------
@@ -54,6 +56,7 @@ void ZoomGuiCommand::init ()
     resetActionTriggerSlot (ZOOM_OUT_VERTICAL_, SLOT(zoomOutVertical()));
     resetActionTriggerSlot (ZOOM_IN_HORIZONTAL_, SLOT(zoomInHorizontal()));
     resetActionTriggerSlot (ZOOM_OUT_HORIZONTAL_, SLOT(zoomOutHorizontal()));
+    resetActionTriggerSlot (SCALE_X_AXIS_, SLOT(scaleXAxis()));
 }
 
 //-------------------------------------------------------------------------
@@ -79,6 +82,7 @@ void ZoomGuiCommand::evaluateEnabledness ()
     getQAction (ZOOM_OUT_HORIZONTAL_)->setEnabled (zoom_out_horizontal_possible);
     getQAction (ZOOM_IN_HORIZONTAL_)->setEnabled (zoom_in_horizontal_possible);
     getQAction (GOTO_)->setEnabled (file_open);
+    getQAction (SCALE_X_AXIS_)->setEnabled (file_open);
 }
 
 
@@ -105,8 +109,8 @@ void ZoomGuiCommand::goTo ()
 void ZoomGuiCommand::zoomInHorizontal ()
 {
     float32 pixel_per_sample = currentVisModel()->getPixelPerSample();
-    pixel_per_sample = std::max (pixel_per_sample * ZOOM_FACTOR_,
-                                 minPixelPerSample() );
+    pixel_per_sample = std::min (pixel_per_sample * ZOOM_FACTOR_,
+                                 maxPixelPerSample() );
     currentVisModel()->setPixelPerSample (pixel_per_sample);
     currentVisModel()->updateLayout();
     evaluateEnabledness ();
@@ -116,8 +120,8 @@ void ZoomGuiCommand::zoomInHorizontal ()
 void ZoomGuiCommand::zoomOutHorizontal ()
 {
     float32 pixel_per_sample = currentVisModel()->getPixelPerSample();
-    pixel_per_sample = std::min (pixel_per_sample / ZOOM_FACTOR_,
-                                 maxPixelPerSample ());
+    pixel_per_sample = std::max (pixel_per_sample / ZOOM_FACTOR_,
+                                 minPixelPerSample ());
     currentVisModel()->setPixelPerSample (pixel_per_sample);
     currentVisModel()->updateLayout();
     evaluateEnabledness ();
@@ -149,6 +153,21 @@ void ZoomGuiCommand::zoomOutVertical ()
 //-----------------------------------------------------------------------------
 void ZoomGuiCommand::autoZoomVertical ()
 {
+}
+
+
+//-------------------------------------------------------------------------
+void ZoomGuiCommand::scaleXAxis ()
+{
+    float32 sample_rate = currentVisModel()->getSampleRate();
+    float32 pixel_per_second = currentVisModel()->getPixelPerSample() * sample_rate;
+    float32 width = currentVisModel()->getShownSignalWidth();
+    float32 new_secs_per_page = QInputDialog::getDouble (0, tr("Scale X Axis"), tr("Seconds"), width / pixel_per_second, minPixelPerSample() / sample_rate, currentVisModel()->getChannelManager()->getDurationInSec());
+
+    float32 pixel_per_sample = width / (new_secs_per_page * sample_rate);
+    currentVisModel()->setPixelPerSample (pixel_per_sample);
+    currentVisModel()->updateLayout();
+    evaluateEnabledness ();
 }
 
 //-------------------------------------------------------------------------

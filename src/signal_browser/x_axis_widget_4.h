@@ -28,6 +28,7 @@ public slots:
 
 private:
     virtual void paintEvent(QPaintEvent*);
+    virtual void contextMenuEvent (QContextMenuEvent* event);
 
     float64 intervall_;
     int32 x_start_;
