@@ -54,11 +54,6 @@ public:
     void setRecordSize (uint32 record_size);
 
     // file
-    const QString& getFullFileName() const;
-    void setFullFileName (QString const &full_file_name);
-    const QString getFileName() const;
-    const QString getFilePath() const;
-    const QString getFileExtension() const;
     uint32 getFileSize() const;
     void setFileSize (uint32 file_size);
 
@@ -112,7 +107,6 @@ protected:
     uint32 record_size_;
 
     // file
-    QString full_file_name_;
     uint32 file_size_;
 
     // patient

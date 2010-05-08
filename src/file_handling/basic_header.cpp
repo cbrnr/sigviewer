@@ -16,7 +16,6 @@ BasicHeader::BasicHeader()
   number_records_(0),
   record_duration_(0),
   record_size_(0),
-  full_file_name_(""),
   file_size_(0),
   patient_name_(""),
   patient_age_(0),
@@ -117,41 +116,6 @@ uint32 BasicHeader::getRecordSize() const
 void BasicHeader::setRecordSize (uint32 record_size)
 {
     record_size_ = record_size;
-}
-
-// get full file-name
-const QString& BasicHeader::getFullFileName() const
-{
-    return full_file_name_;
-}
-
-void BasicHeader::setFullFileName (QString const &full_file_name)
-{
-    full_file_name_ = full_file_name;
-}
-
-// get file-name
-const QString BasicHeader::getFileName() const
-{
-    int32 pos = full_file_name_.lastIndexOf(DIR_SEPARATOR);
-    return pos == -1 ? full_file_name_ 
-                     : full_file_name_.mid(pos + 1);
-}
-
-// get file-path
-const QString BasicHeader::getFilePath() const
-{
-    int32 pos = full_file_name_.lastIndexOf(DIR_SEPARATOR);
-    return pos == -1 ? full_file_name_.mid(0, 0)
-                     : full_file_name_.mid(0, pos);
-}
-
-// get file-path
-const QString BasicHeader::getFileExtension() const
-{
-    int32 pos = full_file_name_.lastIndexOf(".");
-    return pos == -1 ? full_file_name_ 
-                     : full_file_name_.mid(pos + 1);
 }
 
 // get file-size
@@ -302,7 +266,6 @@ void BasicHeader::resetBasicHeader()
     number_records_ = 0;
     record_duration_ = 0;
     record_size_ = 0;
-    full_file_name_ = "";
     file_size_ = 0;
     patient_name_ = "";
     patient_age_ = 0;

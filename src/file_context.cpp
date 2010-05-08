@@ -19,10 +19,11 @@ FileContext::FileContext (QString const& file_path_and_name,
     connect (event_manager_.data(), SIGNAL(changed()), SLOT(setAsChanged()));
 }
 
-//-----------------------------------------------------------------------------
-FileContext::~FileContext ()
+//-------------------------------------------------------------------------
+void FileContext::resetFilePathAndName (QString const& new_file_path_and_name)
 {
-    // nothing to do here
+    file_path_and_name_ = new_file_path_and_name;
+    emit fileNameChanged (file_path_and_name_.section (QDir::separator(), -1));
 }
 
 //-------------------------------------------------------------------------

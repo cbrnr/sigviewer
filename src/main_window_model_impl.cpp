@@ -157,8 +157,8 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
     // --end
 
     main_window_->setStatusBarNrChannels (file_ctx->getChannelManager()->getNumberChannels());
-    main_window_->setWindowTitle (file_ctx->getFileName() + tr(" - SigViewer"));
-
+    resetCurrentFileName (file_ctx->getFileName());
+    connect (file_ctx.data(), SIGNAL(fileNameChanged(QString const&)), SLOT(resetCurrentFileName(QString const&)));
 
     int tab_index = createSignalVisualisationImpl (file_ctx->getChannelManager(), file_ctx->getEventManager());
     main_window_->setCentralWidget(tab_widget_);
@@ -180,7 +180,7 @@ void MainWindowModelImpl::closeCurrentFileTabs ()
 
     main_window_->setStatusBarSignalLength(-1);
     main_window_->setStatusBarNrChannels(-1);
-    main_window_->setWindowTitle (tr("SigViewer"));
+    resetCurrentFileName ("");
 }
 
 //-----------------------------------------------------------------------------
@@ -190,6 +190,15 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::getCurrentSignalVi
         return QSharedPointer<SignalVisualisationModel>(0);
 
     return browser_models_[tab_widget_->currentIndex()];
+}
+
+//-------------------------------------------------------------------------
+void MainWindowModelImpl::resetCurrentFileName (QString const& file_name)
+{
+    if (file_name.size() == 0)
+        main_window_->setWindowTitle (tr("SigViewer"));
+    else
+        main_window_->setWindowTitle (file_name + tr(" - SigViewer"));
 }
 
 //-------------------------------------------------------------------------

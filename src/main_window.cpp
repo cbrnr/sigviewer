@@ -229,9 +229,10 @@ void MainWindow::initMenus()
 }
 
 //-----------------------------------------------------------------------------
-void MainWindow::closeEvent(QCloseEvent*)
+void MainWindow::closeEvent (QCloseEvent* event)
 {
     GuiActionFactory::getInstance()->getQAction("Exit")->trigger();
+    event->ignore ();
 }
 
 //-----------------------------------------------------------------------------

@@ -31,7 +31,10 @@ public:
                  QSharedPointer<BasicHeader> header);
 
     //-------------------------------------------------------------------------
-    ~FileContext ();
+    ~FileContext () {}
+
+    //-------------------------------------------------------------------------
+    void resetFilePathAndName (QString const& new_file_path_and_name);
 
     //-------------------------------------------------------------------------
     QString getFilePath () const;
@@ -57,6 +60,9 @@ public:
 signals:
     //-------------------------------------------------------------------------
     void stateChanged (FileState state);
+
+    //-------------------------------------------------------------------------
+    void fileNameChanged (QString const& file_path_and_name);
 
 public slots:
     //-------------------------------------------------------------------------

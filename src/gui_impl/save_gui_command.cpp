@@ -5,6 +5,7 @@
 #include "open_file_gui_command.h"
 
 #include <QMessageBox>
+#include <QFileDialog>
 #include <QFile>
 
 namespace BioSig_
@@ -51,9 +52,10 @@ void SaveGuiCommand::init ()
 //-----------------------------------------------------------------------------
 void SaveGuiCommand::saveAs ()
 {
-    QString old_file_path = ApplicationContext::getInstance()->getCurrentFileContext()->getFilePath ();
-    QString old_file_path_and_name = ApplicationContext::getInstance()->getCurrentFileContext()->getFilePathAndName();
-    QString file_name = ApplicationContext::getInstance()->getCurrentFileContext()->getFileName();
+    QSharedPointer<FileContext> file_context = ApplicationContext::getInstance()->getCurrentFileContext();
+    QString old_file_path = file_context->getFilePath ();
+    QString old_file_path_and_name = file_context->getFilePathAndName();
+    QString file_name = file_context->getFileName();
     QString extension = file_name.mid(file_name.lastIndexOf('.'));
     extension = "*" + extension;
 
@@ -62,6 +64,14 @@ void SaveGuiCommand::saveAs ()
 
     if (new_file_path.size())
     {
+        if (QFile::exists (new_file_path))
+        {
+            if (QMessageBox::question(0, tr("Overwrite"), tr("Replace ") + new_file_path + tr("?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No)
+                == QMessageBox::Yes)
+                QFile::remove(new_file_path);
+            else
+                return;
+        }
         if (QFile::copy (old_file_path_and_name, new_file_path))
         {
             FileSignalWriter* writer = FileSignalWriterFactory::getInstance()->getElement(new_file_path.mid(new_file_path.lastIndexOf('.')));
@@ -70,13 +80,17 @@ void SaveGuiCommand::saveAs ()
             if (writer)
                 can_save_events = writer->supportsSavingEvents ();
 
-            QSharedPointer<EventManager> event_mgr = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
+            QSharedPointer<EventManager> event_mgr = file_context->getEventManager();
             if (writer && can_save_events)
             {
                 QString error = writer->saveEventsToSignalFile (event_mgr, new_file_path, event_mgr->getAllPossibleEventTypes());
                 delete writer;
                 if (error.size())
                     QMessageBox::critical(0, new_file_path, error);
+                else
+                {
+                    file_context->resetFilePathAndName (new_file_path);
+                }
             }
             else if (event_mgr->getNumberOfEvents() > 0)
                 QMessageBox::information(0, "", "Events not stored to " + new_file_path + "\n If you want to store events export the file to GDF or export the events into a EVT file!");
@@ -159,17 +173,23 @@ void SaveGuiCommand::exportEvents ()
 {
     std::set<EventType> types = GuiHelper::selectEventTypes (currentVisModel()->getShownEventTypes());
 
-    QString file_path = ApplicationContext::getInstance()->getCurrentFileContext()->getFilePathAndName();
+    QString current_file_path = ApplicationContext::getInstance()->getCurrentFileContext()->getFilePathAndName();
 
-    QString new_file_ending = ".evt";
-    QString new_file_path = file_path;
-    new_file_path.replace(file_path.lastIndexOf('.'), new_file_ending.length(), new_file_ending);
+    QString extension = ".evt";
+    QString extenstions = "*.evt";
+
+    QString new_file_path = GuiHelper::getFilePathFromSaveAsDialog (current_file_path.left(current_file_path.lastIndexOf('.')) + extension, extenstions);//QFileDialog::getSaveFileName(0, QObject::tr("Export Events"), current_file_path.left(current_file_path.lastIndexOf('.')) + extension, QString("Event Files (*")+extension+QString(")"));
+
+    if (new_file_path.size() == 0)
+        return;
 
     FileSignalWriter* file_signal_writer = FileSignalWriterFactory::getInstance()
-                                           ->getElement(new_file_ending);
+                                           ->getElement(extension);
+
+    qDebug() << new_file_path;
 
     file_signal_writer->save (ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager(),
-                              file_path,
+                              current_file_path,
                               new_file_path, types);
     delete file_signal_writer;
 }

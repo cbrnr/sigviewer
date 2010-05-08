@@ -115,18 +115,6 @@ void BasicHeaderInfoDialog::buildTree()
     info_tree_widget_->setItemExpanded(root_item, true);
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-    tmp_item->setText(0, tr("Name"));
-    tmp_item->setText(1, basic_header_->getFileName());
-    tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-    tmp_item->setText(0, tr("Path"));
-    tmp_item->setText(1, basic_header_->getFilePath());
-    tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-    tmp_item->setText(0, tr("Extension"));
-    tmp_item->setText(1, basic_header_->getFileExtension());
-    tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Size"));
     tmp_item->setText(1, QString::number(basic_header_->getFileSize() / 1024));
     tmp_item->setText(0, tr("kByte"));
