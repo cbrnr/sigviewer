@@ -75,7 +75,8 @@ EventType selectEventType (EventType preselected_type)
 }
 
 //-----------------------------------------------------------------------------
-std::set<EventType> selectEventTypes (std::set<EventType> const& preselected_type)
+std::set<EventType> selectEventTypes (std::set<EventType> const& preselected_type,
+                                      bool enable_color_editing)
 {
     std::set<EventType> selected_types;
     QSharedPointer<EventManager const> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
@@ -83,9 +84,12 @@ std::set<EventType> selectEventTypes (std::set<EventType> const& preselected_typ
         return selected_types;
 
     EventTypesSelectionDialog dialog (QObject::tr("Select Event Types"),
-                                      event_manager, preselected_type, 0);
+                                      event_manager, preselected_type,
+                                      enable_color_editing, 0);
     dialog.exec();
     selected_types = dialog.getSelectedTypes ();
+    if (enable_color_editing)
+        dialog.storeColors ();
     return selected_types;
 }
 

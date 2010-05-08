@@ -29,7 +29,8 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
                                       QRect const& initial_size,
                                       QWidget* parent)
 : QFrame (parent),
-  model_ (signal_browser_model)
+  model_ (signal_browser_model),
+  spacer_item_ (0)
 {
     scroll_timer_ = new QTimer (this);
     connect (scroll_timer_, SIGNAL(timeout()), this, SLOT(scroll()));
@@ -131,6 +132,18 @@ void SignalBrowserView::setScrollMode (bool activated)
 //-----------------------------------------------------------------------------
 void SignalBrowserView::resizeScene (int32 width, int32 height)
 {
+//    if (width < graphics_view_->viewport()->width())
+//    {
+//        if (spacer_item_)
+//            delete spacer_item_;
+//        spacer_item_ = new QSpacerItem (graphics_view_->viewport()->width() - width - 10, 100);
+//        layout_->addItem(spacer_item_, 2, 5);
+//    }
+//    else
+//    {
+//        if (spacer_item_)
+//            layout_->removeItem (spacer_item_);
+//    }
     QPointF left_upper_corner = graphics_view_->mapToScene (0, 0);
 
     left_upper_corner.setY (left_upper_corner.y() * height / graphics_scene_->height());

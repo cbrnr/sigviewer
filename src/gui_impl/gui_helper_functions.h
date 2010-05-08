@@ -23,7 +23,8 @@ EventID getSelectedEventID ();
 EventType selectEventType (EventType preselected_type);
 
 //-----------------------------------------------------------------------------
-std::set<EventType> selectEventTypes (std::set<EventType> const& preselected_type);
+std::set<EventType> selectEventTypes (std::set<EventType> const& preselected_type,
+                                      bool enable_color_editing = false);
 
 //-----------------------------------------------------------------------------
 ChannelID selectChannel (ChannelID preselected_channel);

@@ -30,8 +30,7 @@
 #include <QFile>
 #include <QMutexLocker>
 #include <QMessageBox>
-
-#include <iostream>
+#include <QDebug>
 
 namespace BioSig_
 {
@@ -74,7 +73,8 @@ bool BioSigWriter::supportsSavingEvents () const
 
 //-----------------------------------------------------------------------------
 QString BioSigWriter::saveEventsToSignalFile (QSharedPointer<EventManager> event_manager,
-                                  QString const& file_path)
+                                  QString const& file_path,
+                                  std::set<EventType> const& types)
 {
     if (file_formats_support_event_saving_.count(target_type_) == 0)
         return QObject::tr("Can't write events to that file that file type!");
@@ -83,7 +83,10 @@ QString BioSigWriter::saveEventsToSignalFile (QSharedPointer<EventManager> event
 
     HDRTYPE* header = constructHDR (0, number_events);
 
-    QList<EventID> events = event_manager->getAllEvents();
+    QList<EventID> events;
+    foreach (EventType type, types)
+        events.append(event_manager->getEvents(type));
+
     header = sopen (file_path.toStdString().c_str(), "r", header);
     header->EVENT.SampleRate = event_manager->getSampleRate();
     header->EVENT.N = number_events;
@@ -117,7 +120,8 @@ QString BioSigWriter::saveEventsToSignalFile (QSharedPointer<EventManager> event
 //-----------------------------------------------------------------------------
 QString BioSigWriter::save (QSharedPointer<EventManager> event_manager,
                                QString const& old_file_path,
-                               QString const& file_path)
+                               QString const& file_path,
+                               std::set<EventType> const& types)
 {
     HDRTYPE* read_header = sopen (old_file_path.toStdString().c_str(), "r", NULL);
     uint32 read_data_size = read_header->NS * read_header->NRec * read_header->SPR;
@@ -129,7 +133,7 @@ QString BioSigWriter::save (QSharedPointer<EventManager> event_manager,
         read_header->VERSION = 2;
 
     HDRTYPE* write_header = sopen (file_path.toStdString().c_str(), "w", read_header);
-    std::cout << "write NELEM = " << swrite (read_data, read_header->NRec, write_header) << std::endl;
+    qDebug() << "write NELEM = " << swrite (read_data, read_header->NRec, write_header);
 
     delete read_data;
 
@@ -139,7 +143,7 @@ QString BioSigWriter::save (QSharedPointer<EventManager> event_manager,
     destructHDR (write_header);
 
     if (file_formats_support_event_saving_.count(target_type_))
-        saveEventsToSignalFile (event_manager, file_path);
+        saveEventsToSignalFile (event_manager, file_path, types);
 
     return "";
 }

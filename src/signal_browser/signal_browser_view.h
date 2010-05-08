@@ -20,6 +20,7 @@
 class QGridLayout;
 class QScrollBar;
 class QCursor;
+class QSpacerItem;
 
 namespace BioSig_
 {
@@ -112,6 +113,7 @@ private:
     int32 scroll_x_step_;
     bool scroll_x_left_;
     std::map<std::string, QWidget*> hideable_widgets_;
+    QSpacerItem* spacer_item_;
 };
 
 } // namespace BioSig_

@@ -27,12 +27,14 @@ public:
     virtual FileSignalWriter* clone();
 
     virtual QString saveEventsToSignalFile (QSharedPointer<EventManager>,
-                                            QString const&) {return "not implemented!";}
+                                            QString const&,
+                                            std::set<EventType> const&) {return "not implemented!";}
 
     //-------------------------------------------------------------------------
     virtual QString save (QSharedPointer<EventManager> event_manager,
                           QString const& old_file_path,
-                          QString const& file_path);
+                          QString const& file_path,
+                          std::set<EventType> const& types);
 
 private:
     static EVTWriter prototype_instance_;

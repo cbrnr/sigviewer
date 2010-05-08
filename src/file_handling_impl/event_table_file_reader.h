@@ -44,6 +44,7 @@ public:
     QString getEventName (EventType event_type_id) const;
     void setEventName (EventType event_type_id, QString const& name);
     void restoreEventNames ();
+    std::set<EventType> getEventsOfGroup (QString const& group_id) const;
     QString getEventGroupId (EventType event_type_id) const;
 
     std::set<uint16> getAllEventTypes () const;

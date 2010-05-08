@@ -141,6 +141,18 @@ void EventTableFileReader::restoreEventNames ()
     load (event_file_path_);
 }
 
+//-----------------------------------------------------------------------------
+std::set<EventType> EventTableFileReader::getEventsOfGroup (QString const& group_id) const
+{
+    std::set<EventType> group_types;
+    foreach (EventType event_type, event_types_)
+        if (event_type2name_[event_type].group_id == group_id)
+            group_types.insert (event_type);
+
+    return group_types;
+}
+
+
 // get event group id
 QString EventTableFileReader::getEventGroupId(uint16 event_type_id) const
 {

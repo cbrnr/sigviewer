@@ -32,12 +32,14 @@ public:
 
     //-------------------------------------------------------------------------
     virtual QString saveEventsToSignalFile (QSharedPointer<EventManager>,
-                                            QString const& file_path);
+                                            QString const& file_path,
+                                            std::set<EventType> const& types);
 
     //-------------------------------------------------------------------------
     virtual QString save (QSharedPointer<EventManager> event_manager,
                           QString const& old_file_path,
-                          QString const& file_path);
+                          QString const& file_path,
+                          std::set<EventType> const& types);
 
 private:
     static BioSigWriter prototype_instance_;

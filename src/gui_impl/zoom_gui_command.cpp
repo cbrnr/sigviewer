@@ -175,7 +175,7 @@ float32 ZoomGuiCommand::maxPixelPerSample ()
 float32 ZoomGuiCommand::minPixelPerSample ()
 {
     return static_cast<float32>(currentVisModel()->getShownSignalWidth()) /
-           static_cast<float32>(ApplicationContext::getInstance()->getCurrentFileContext()->getChannelManager()->getNumberSamples ());
+           static_cast<float32>(currentVisModel()->getChannelManager()->getNumberSamples ());
 }
 
 

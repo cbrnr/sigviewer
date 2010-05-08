@@ -232,32 +232,30 @@ DataBlock DataBlock::calculateStandardDeviation (std::list<QSharedPointer<DataBl
 }
 
 //-------------------------------------------------------------------------
-DataBlock DataBlock::calculateStandardDeviationImpl (std::list<QSharedPointer<DataBlock const> > const &,
-                                                     DataBlock const &means)
+DataBlock DataBlock::calculateStandardDeviationImpl (std::list<QSharedPointer<DataBlock const> >
+                                                     const & data_blocks,
+                                                     DataBlock const& means)
 {
-    // waldesel: not implemented yet!!!
-    return means;
+    DataBlock stddev_block;
+    if (data_blocks.size() == 0)
+        return stddev_block;
 
-//    DataBlock stddev_block;
-//    if (data_blocks.size() == 0)
-//        return stddev_block;
-//
-//    std::list<DataBlock>::const_iterator it = data_blocks.begin();
-//    stddev_block.sample_rate_per_unit_ = it->sample_rate_per_unit_;
-//    float32 tmp_stddev = 0;
-//    for (unsigned index = 0; index < (*(data_blocks.begin())).size(); index++)
-//    {
-//        it = data_blocks.begin();
-//        tmp_stddev = 0;
-//        float32 mean = means[index];
-//        while (it != data_blocks.end())
-//        {
-//            tmp_stddev += pow(((*it)[index] - mean), 2);
-//            ++it;
-//        }
-//        stddev_block.data_->push_back(sqrt(tmp_stddev / data_blocks.size()));
-//    }
-//    return stddev_block;
+    std::list<QSharedPointer<DataBlock const> >::const_iterator it = data_blocks.begin();
+    stddev_block.sample_rate_per_unit_ = (*it)->sample_rate_per_unit_;
+    float32 tmp_stddev = 0;
+    for (unsigned index = 0; index < (*(data_blocks.begin()))->size(); index++)
+    {
+        it = data_blocks.begin();
+        tmp_stddev = 0;
+        float32 mean = means[index];
+        while (it != data_blocks.end())
+        {
+            tmp_stddev += pow(((**it)[index] - mean), 2);
+            ++it;
+        }
+        stddev_block.data_->push_back(sqrt(tmp_stddev / data_blocks.size()));
+    }
+    return stddev_block;
 }
 
 //-------------------------------------------------------------------------

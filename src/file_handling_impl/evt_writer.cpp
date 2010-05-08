@@ -63,13 +63,17 @@ FileSignalWriter* EVTWriter::clone()
 //-----------------------------------------------------------------------------
 QString EVTWriter::save(QSharedPointer<EventManager> event_manager,
                         QString const&,
-                        QString const& file_path)
+                        QString const& file_path,
+                        std::set<EventType> const& types)
 {
     unsigned number_events = event_manager->getNumberOfEvents ();
 
     HDRTYPE* header = constructHDR (0, number_events);
 
-    QList<EventID> events = event_manager->getAllEvents();
+    QList<EventID> events;
+    foreach (EventType type, types)
+        events.append(event_manager->getEvents(type));
+
     header->TYPE = GDF;
     header->VERSION = 2.0;
     header->SampleRate = event_manager->getSampleRate();

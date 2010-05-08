@@ -73,7 +73,7 @@ void SaveGuiCommand::saveAs ()
             QSharedPointer<EventManager> event_mgr = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
             if (writer && can_save_events)
             {
-                QString error = writer->saveEventsToSignalFile (event_mgr, new_file_path);
+                QString error = writer->saveEventsToSignalFile (event_mgr, new_file_path, event_mgr->getAllPossibleEventTypes());
                 delete writer;
                 if (error.size())
                     QMessageBox::critical(0, new_file_path, error);
@@ -101,7 +101,7 @@ void SaveGuiCommand::save ()
     if (writer && can_save_events)
     {
         QSharedPointer<EventManager> event_mgr = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
-        QString error = writer->saveEventsToSignalFile(event_mgr, file_path);
+        QString error = writer->saveEventsToSignalFile(event_mgr, file_path, event_mgr->getAllPossibleEventTypes());
         if (error.size())
             QMessageBox::critical (0, tr("Error"), error);
         else
@@ -137,7 +137,7 @@ void SaveGuiCommand::exportToGDF ()
 
     QSharedPointer<EventManager> event_mgr = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
 
-    QString error = writer->save (event_mgr, ApplicationContext::getInstance()->getCurrentFileContext()->getFilePathAndName(), new_file_path);
+    QString error = writer->save (event_mgr, ApplicationContext::getInstance()->getCurrentFileContext()->getFilePathAndName(), new_file_path, event_mgr->getAllPossibleEventTypes());
 
     delete writer;
 
@@ -157,7 +157,7 @@ void SaveGuiCommand::exportToGDF ()
 //-------------------------------------------------------------------------
 void SaveGuiCommand::exportEvents ()
 {
-    /// waldesel: SHOW EVENT TYPE DIALOG to choose event types that should be exported!!
+    std::set<EventType> types = GuiHelper::selectEventTypes (currentVisModel()->getShownEventTypes());
 
     QString file_path = ApplicationContext::getInstance()->getCurrentFileContext()->getFilePathAndName();
 
@@ -170,7 +170,7 @@ void SaveGuiCommand::exportEvents ()
 
     file_signal_writer->save (ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager(),
                               file_path,
-                              new_file_path);
+                              new_file_path, types);
     delete file_signal_writer;
 }
 
