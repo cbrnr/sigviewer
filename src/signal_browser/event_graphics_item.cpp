@@ -425,19 +425,17 @@ void EventGraphicsItem::addContextMenuEntry ()
 {
     context_menu_mutex_.lock();
     if (context_menu_.isNull())
-        context_menu_ = QSharedPointer<EventContextMenu> (new EventContextMenu (signal_browser_model_));
+        context_menu_ = QSharedPointer<EventContextMenu> (new EventContextMenu (signal_browser_model_, event_manager_));
     else
     {
         if (context_menu_->getNumberOfEvents() == 0)
         {
             context_menu_.clear();
-            context_menu_ = QSharedPointer<EventContextMenu> (new EventContextMenu (signal_browser_model_));
+            context_menu_ = QSharedPointer<EventContextMenu> (new EventContextMenu (signal_browser_model_, event_manager_));
         }
     }
 
-    QString event_name = event_manager_->getNameOfEventType (signal_event_->getType());
-
-    context_menu_->addEvent(signal_event_->getId(), event_name);
+    context_menu_->addEvent(signal_event_->getId());
     context_menu_mutex_.unlock();
 }
 

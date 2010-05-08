@@ -11,10 +11,19 @@ class SignalProcessingGuiCommand : public GuiActionCommand
 {
     Q_OBJECT
 public:
+    //-------------------------------------------------------------------------
     SignalProcessingGuiCommand ();
 
+    //-------------------------------------------------------------------------
     virtual void init ();
+
+protected:
+    //-------------------------------------------------------------------------
+    virtual void evaluateEnabledness ();
+
+
 private slots:
+    //-------------------------------------------------------------------------
     void calculateMeanAndStandardDeviation ();
 
 private:

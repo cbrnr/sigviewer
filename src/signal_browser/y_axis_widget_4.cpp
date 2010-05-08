@@ -41,10 +41,7 @@ QSize YAxisWidget::sizeHint () const
 void YAxisWidget::addChannel(int32 channel_nr, SignalGraphicsItem const* const signal_item)
 {
     if (signal_item)
-    {
         channel_nr2signal_graphics_item_[channel_nr] = signal_item;
-        update ();
-    }
 }
 
 //-----------------------------------------------------------------------------

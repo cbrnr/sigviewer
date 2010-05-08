@@ -23,7 +23,6 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-// TODO! constructor
 SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manager,
                                        QSharedPointer<ChannelManager> channel_manager,
                                        QSharedPointer<TabContext> tab_context)
@@ -111,7 +110,7 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
 {
     unsigned new_signal_height = signal_browser_view_->getVisibleHeight() /
                                  new_shown_channels.size();
-    new_signal_height -= signal_spacing_;
+    //new_signal_height = signal_spacing_;
 
     for (Int2SignalGraphicsItemPtrMap::const_iterator channel = channel2signal_item_.begin();
          channel != channel2signal_item_.end();
@@ -126,7 +125,6 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
     progress.setMinimum (0);
     progress.setModal (true);
     progress.setLabelText (tr("Buffering channel "));
-    progress.show ();
 
     for (std::set<ChannelID>::const_iterator channel = new_shown_channels.begin();
          channel != new_shown_channels.end();
@@ -136,7 +134,7 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
         if (channel2signal_item_.count (*channel) == 0)
             addChannel (*channel);
     }
-    progress.setValue (progress.maximum() );
+    progress.setValue (progress.maximum ());
 
     setSignalHeight (new_signal_height);
 
@@ -300,7 +298,7 @@ void SignalBrowserModel::autoScaleChannel (ChannelID id)
         for (Int2SignalGraphicsItemPtrMap::iterator it =
              channel2signal_item_.begin(); it != channel2signal_item_.end();
             ++it)
-        it->second->autoScale (getAutoScaleMode());
+            it->second->autoScale (getAutoScaleMode());
     }
     else
         channel2signal_item_[id]->autoScale (getAutoScaleMode());

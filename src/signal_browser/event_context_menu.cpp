@@ -10,8 +10,10 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-EventContextMenu::EventContextMenu (SignalBrowserModel& model)
- : signal_browser_model_ (model)
+EventContextMenu::EventContextMenu (SignalVisualisationModel& browser_model,
+                                    QSharedPointer<EventManager> event_manager)
+    : browser_model_ (browser_model),
+      event_manager_ (event_manager)
 {
     // nothing to do here
 }
@@ -20,13 +22,11 @@ EventContextMenu::EventContextMenu (SignalBrowserModel& model)
 EventContextMenu::~EventContextMenu ()
 {
     event_ids_.clear();
-    event_item_type_names_.clear();
     sub_menus_.clear();
 }
 
 //-------------------------------------------------------------------------
-void EventContextMenu::addEvent (uint16 event_id,
-                                 QString const &type_name)
+void EventContextMenu::addEvent (EventID event)
 {
     QVector<QMenu*>::iterator it = sub_menus_.begin();
     while (it != sub_menus_.end())
@@ -39,8 +39,7 @@ void EventContextMenu::addEvent (uint16 event_id,
 
     clear();
     QObject::disconnect(this, 0);
-    event_ids_.append (event_id);
-    event_item_type_names_.append(type_name);
+    event_ids_.append (event);
 }
 
 //-------------------------------------------------------------------------
@@ -53,39 +52,34 @@ unsigned EventContextMenu::getNumberOfEvents () const
 //-------------------------------------------------------------------------
 void EventContextMenu::finaliseAndShowContextMenu (QGraphicsSceneContextMenuEvent* context_event)
 {
-    QVector<uint16>::iterator it = event_ids_.begin();
-    QVector<QString>::iterator it_name = event_item_type_names_.begin();
+    QVector<EventID>::iterator it = event_ids_.begin();
     if (event_ids_.size() > 1)
     {
         while (it != event_ids_.end())
         {
-            QString text ("...");
-            if (it_name != event_item_type_names_.end())
-                text = *it_name;
+            QString text (event_manager_->getNameOfEvent(*it));
             QMenu* submenu = new QMenu (text, this);
             sub_menus_.append(submenu);
 
             // context-menu actions
-            addActionsToMenu (*submenu);
+            addActionsToMenu (*submenu, *it);
 
             QAction* action = addMenu (submenu);
             action->activate(QAction::Hover);
             action->setData(*it);
             addAction(action);
             ++it;
-            ++it_name;
         }
     }
     else if (event_ids_.size() == 1)
     {
-        QAction* title = addAction (*it_name);
+        QAction* title = addAction (event_manager_->getNameOfEvent(*it));
         title->setEnabled (false);
-        addActionsToMenu (*this);
-        signal_browser_model_.selectEvent (*it);
+        addActionsToMenu (*this, *(event_ids_.begin ()));
+        browser_model_.selectEvent (*it);
     }
 
     event_ids_.clear();
-    event_item_type_names_.clear();
     QObject::connect(this, SIGNAL(hovered(QAction*)), this, SLOT(selectEvent(QAction*)));
     exec (context_event->screenPos());
 }
@@ -93,33 +87,27 @@ void EventContextMenu::finaliseAndShowContextMenu (QGraphicsSceneContextMenuEven
 //-------------------------------------------------------------------------
 void EventContextMenu::finaliseAndShowSelectionMenu (QGraphicsSceneMouseEvent* event)
 {
-    QVector<uint16>::iterator it = event_ids_.begin();
-    QVector<QString>::iterator it_name = event_item_type_names_.begin();
+    QVector<EventID>::iterator it = event_ids_.begin();
     if (event_ids_.size() > 1)
     {
         while (it != event_ids_.end())
         {
-            QString text ("...");
-            if (it_name != event_item_type_names_.end())
-                text = *it_name;
-
+            QString text (event_manager_->getNameOfEvent (*it));
             QAction* action = addAction(text);
             //action->activate(QAction::Hover);
             action->setData(*it);
             //addAction(action);
             ++it;
-            ++it_name;
         }
         QObject::connect(this, SIGNAL(triggered(QAction*)), this, SLOT(selectEvent(QAction*)));
         exec (event->screenPos());
     }
     else if (event_ids_.size() == 1)
     {
-        signal_browser_model_.selectEvent (*it);
+        browser_model_.selectEvent (*it);
     }
 
     event_ids_.clear();
-    event_item_type_names_.clear();
 }
 
 
@@ -129,19 +117,39 @@ void EventContextMenu::selectEvent (QAction* q)
     bool ok = false;
     int32 event_id = q->data().toInt(&ok);
     if (q->data().isValid())
-        signal_browser_model_.selectEvent (event_id);
+        browser_model_.selectEvent (event_id);
 }
 
 //-------------------------------------------------------------------------
-void EventContextMenu::addActionsToMenu (QMenu& menu)
+void EventContextMenu::addActionsToMenu (QMenu& menu, EventID event)
 {
-    menu.addActions (GuiActionFactory::getInstance()->getQActions("Event Editing"));
-    menu.addSeparator ();
-    menu.addAction (GuiActionFactory::getInstance()->getQAction("Goto and Select Next Event"));
-    menu.addAction (GuiActionFactory::getInstance()->getQAction("Goto and Select Previous Event"));
-    menu.addSeparator ();
-    menu.addAction (GuiActionFactory::getInstance()->getQAction("Hide Events of other Type"));
-    menu.addAction (GuiActionFactory::getInstance()->getQAction("Fit View to Selected Event"));
+    QList<QAction*> actions;
+
+    if (event_manager_->getEvent(event)->getChannel() != UNDEFINED_CHANNEL)
+    {
+        actions.append (GuiActionFactory::getInstance()->getQAction("To all Channels"));
+        actions.append (GuiActionFactory::getInstance()->getQAction("Copy to Channels..."));
+    }
+    actions.append (GuiActionFactory::getInstance()->getQAction("Delete"));
+    actions.append (GuiActionFactory::getInstance()->getQAction("Change Channel..."));
+    actions.append (GuiActionFactory::getInstance()->getQAction("Change Type..."));
+    actions.append (new QAction (this));
+    actions.last()->setSeparator(true);
+    actions.append (GuiActionFactory::getInstance()->getQAction("Insert Over"));
+    actions.append (new QAction (this));
+    actions.last()->setSeparator(true);
+    actions.append (GuiActionFactory::getInstance()->getQAction("Goto and Select Next Event"));
+    actions.append (GuiActionFactory::getInstance()->getQAction("Goto and Select Previous Event"));
+    actions.append (new QAction (this));
+    actions.last()->setSeparator(true);
+    if (browser_model_.getShownEventTypes().size() > 1)
+        actions.append (GuiActionFactory::getInstance()->getQAction("Hide Events of other Type"));
+    else
+        actions.append (GuiActionFactory::getInstance()->getQAction("Show all Events"));
+    actions.append (GuiActionFactory::getInstance()->getQAction("Fit View to Selected Event"));
+
+    foreach (QAction* action, actions)
+        menu.addAction (action);
 }
 
 

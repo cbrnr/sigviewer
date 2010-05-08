@@ -135,9 +135,15 @@ void SignalGraphicsItem::autoScale (ScaleMode auto_zoom_type)
             abs_max = abs_min;
     }
 
-    y_zoom_ = height_ / (abs_max + abs_min);
-    y_offset_ = ((abs_max - abs_min) / 2) * y_zoom_;
-    updateYGridIntervall ();
+    float64 new_y_zoom = height_ / (abs_max + abs_min);
+    float64 new_y_offset = ((abs_max - abs_min) / 2) * y_zoom_;
+    if (y_zoom_ != new_y_zoom ||
+        y_offset_ != new_y_offset)
+    {
+        y_zoom_ = new_y_zoom;
+        y_offset_ = new_y_offset;
+        updateYGridIntervall ();
+    }
 }
 
 

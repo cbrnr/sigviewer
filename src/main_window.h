@@ -66,9 +66,7 @@ private:
 
     QToolBar* file_toolbar_;
     QToolBar* mouse_mode_toolbar_;
-    QToolBar* edit_toolbar_;
     QToolBar* view_toolbar_;
-    QToolBar* navigation_toolbar_;
 
     QLabel* status_bar_signal_length_label_;
     QLabel* status_bar_nr_channels_label_;

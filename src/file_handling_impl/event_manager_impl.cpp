@@ -140,6 +140,15 @@ QString EventManagerImpl::getNameOfEventType (EventType type) const
     return event_table_reader_->getEventName (type);
 }
 
+//-------------------------------------------------------------------------
+QString EventManagerImpl::getNameOfEvent (EventID event) const
+{
+    if (event_map_.contains (event))
+        return event_table_reader_->getEventName (event_map_[event]->getType ());
+    else
+        return "";
+}
+
 //-----------------------------------------------------------------------------
 QList<EventID> EventManagerImpl::getAllEvents () const
 {

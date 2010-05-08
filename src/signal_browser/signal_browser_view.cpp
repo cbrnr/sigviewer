@@ -166,8 +166,6 @@ void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsI
     y_axis_widget_->addChannel (channel_nr, graphics_item);
     label_widget_->addChannel (channel_nr, label);
 
-    graphics_view_->update();
-
     connect (graphics_item, SIGNAL(updatedYGrid(ChannelID)), y_axis_widget_, SLOT(updateChannel(ChannelID)));
     connect (graphics_item, SIGNAL(shifting(ChannelID)), y_axis_widget_, SLOT(updateChannel(ChannelID)));
     connect (graphics_item, SIGNAL(mouseAtSecond(float64)), x_axis_widget_, SLOT(changeHighlightTime(float64)));

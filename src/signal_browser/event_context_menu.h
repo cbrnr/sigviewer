@@ -2,6 +2,8 @@
 #define EVENT_CONTEXT_MENU_H
 
 #include "event_graphics_item.h"
+#include "../file_handling/event_manager.h"
+#include "../gui/signal_visualisation_model.h"
 
 #include <QVector>
 #include <QSharedPointer>
@@ -11,8 +13,6 @@
 
 namespace BioSig_
 {
-
-class SignalBrowserModel;
 
 //-----------------------------------------------------------------------------
 ///
@@ -27,14 +27,14 @@ class EventContextMenu : public QMenu
 
 public:
     //-------------------------------------------------------------------------
-    EventContextMenu (SignalBrowserModel& model);
+    EventContextMenu (SignalVisualisationModel& browser_model,
+                      QSharedPointer<EventManager> event_manager);
 
     //-------------------------------------------------------------------------
     virtual ~EventContextMenu ();
 
     //-------------------------------------------------------------------------
-    void addEvent (uint16 event_id,
-                   QString const &type_name);
+    void addEvent (EventID event);
 
     //-------------------------------------------------------------------------
     unsigned getNumberOfEvents () const;
@@ -48,12 +48,12 @@ public:
 
 private:
     //-------------------------------------------------------------------------
-    void addActionsToMenu (QMenu& menu);
+    void addActionsToMenu (QMenu& menu, EventID event);
 
-    QVector<uint16> event_ids_;
-    QVector<QString> event_item_type_names_;
+    QVector<EventID> event_ids_;
     QVector<QMenu*> sub_menus_;
-    SignalBrowserModel& signal_browser_model_;
+    SignalVisualisationModel& browser_model_;
+    QSharedPointer<EventManager> event_manager_;
 
     //-------------------------------------------------------------------------
     /// copy-constructor disabled

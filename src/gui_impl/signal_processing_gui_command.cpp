@@ -30,6 +30,13 @@ void SignalProcessingGuiCommand::init ()
 }
 
 //-----------------------------------------------------------------------------
+void SignalProcessingGuiCommand::evaluateEnabledness ()
+{
+    disableIfNoFileIsOpened (ACTIONS_);
+}
+
+
+//-----------------------------------------------------------------------------
 void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation ()
 {
     QSharedPointer<ChannelManager> channel_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getChannelManager();

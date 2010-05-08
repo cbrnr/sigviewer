@@ -235,12 +235,11 @@ void EventEditingGuiCommand::evaluateEnabledness ()
 
     getQAction(SET_EVENT_CREATION_TYPE_)->setEnabled(events_possible);
     getQAction(SHOW_EVENT_TABLE_DIALOG_)->setEnabled(events_possible);
-    getQAction(INSERT_OVER_)->setEnabled(event_selected);
     getQAction(COPY_TO_CHANNELS_)->setEnabled(event_one_channel_selected);
     getQAction(TO_ALL_CHANNEL_)->setEnabled(event_one_channel_selected);
-    getQAction(CHANGE_CHANNEL_)->setEnabled(event_selected);
-    getQAction(CHANGE_TYPE_)->setEnabled(event_selected);
-    getQAction(DELETE_)->setEnabled(event_selected);
+    disableIfNoEventSelected (QStringList() << INSERT_OVER_ <<
+                              CHANGE_CHANNEL_ << CHANGE_TYPE_ <<
+                              DELETE_);
 }
 
 

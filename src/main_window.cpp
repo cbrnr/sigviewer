@@ -99,19 +99,15 @@ void MainWindow::initToolBars()
     view_toolbar_views_menu_->addAction (mouse_mode_toolbar_->toggleViewAction());
     mouse_mode_toolbar_->addActions (GuiActionFactory::getInstance()->getQActions("Mouse Modes"));
 
-    edit_toolbar_ = addToolBar(tr("Edit"));
-    view_toolbar_views_menu_->addAction (edit_toolbar_->toggleViewAction());
-
     view_toolbar_ = addToolBar(tr("View"));
     view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
-    view_toolbar_->addAction(GuiActionFactory::getInstance()->getQAction("Events..."));
-    view_toolbar_->addAction(GuiActionFactory::getInstance()->getQAction("Channels..."));
+    view_toolbar_->addAction(action("Events..."));
+    view_toolbar_->addAction(action("Channels..."));
     view_toolbar_->addAction(action("Auto Scale All"));
-
-    navigation_toolbar_ = addToolBar(tr("Navigation"));
-    view_toolbar_views_menu_->addAction (navigation_toolbar_->toggleViewAction());
-    navigation_toolbar_->setIconSize(QSize(22, 22));
-    navigation_toolbar_->addActions (GuiActionFactory::getInstance()->getQActions("Zooming"));
+    view_toolbar_->addAction(action("Zoom In Vertical"));
+    view_toolbar_->addAction(action("Zoom Out Vertical"));
+    view_toolbar_->addAction(action("Zoom In Horizontal"));
+    view_toolbar_->addAction(action("Zoom Out Horizontal"));
 
     view_toolbar_views_menu_->addSeparator ();
     toggle_all_toolbars_ = new QAction (tr("Hide all Toolbars"), this);

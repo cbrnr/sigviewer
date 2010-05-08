@@ -84,7 +84,7 @@ void CloseFileGuiCommand::exitApplication ()
 //-------------------------------------------------------------------------
 void CloseFileGuiCommand::evaluateEnabledness ()
 {
-    getQAction(CLOSE_FILE_)->setEnabled (getApplicationState () == APP_STATE_FILE_OPEN);
+    disableIfNoFileIsOpened (QStringList() << CLOSE_FILE_);
 }
 
 } // namespace BioSig_

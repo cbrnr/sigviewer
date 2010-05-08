@@ -66,6 +66,10 @@ public:
     virtual QString getNameOfEventType (EventType type) const = 0;
 
     //-------------------------------------------------------------------------
+    /// @return the name of the given event
+    virtual QString getNameOfEvent (EventID event) const = 0;
+
+    //-------------------------------------------------------------------------
     /// @return list of event_id of all events
     virtual QList<EventID> getAllEvents () const = 0;
 
