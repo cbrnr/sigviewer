@@ -217,9 +217,6 @@ void MainWindow::initMenus()
     tools_menu_ = menuBar()->addMenu(tr("&Tools"));
     tools_menu_->addActions(GuiActionFactory::getInstance()->getQActions("Signal Processing"));
 
-    options_menu_ = menuBar()->addMenu(tr("&Options"));
-    options_menu_->addAction (action("Set Event Creation Type..."));
-
     help_menu_ = menuBar()->addMenu(tr("&Help"));
     help_menu_->addAction (action("About"));
 }

@@ -45,9 +45,6 @@ public slots:
     //-------------------------------------------------------------------------
     void showEventTableDialog ();
 
-    //-------------------------------------------------------------------------
-    void setEventCreationType ();
-
 protected:
     //-------------------------------------------------------------------------
     virtual void evaluateEnabledness ();
@@ -61,7 +58,6 @@ private:
     static QString const TO_ALL_CHANNEL_;
     static QString const COPY_TO_CHANNELS_;
     static QString const INSERT_OVER_;
-    static QString const SET_EVENT_CREATION_TYPE_;
     static QString const SHOW_EVENT_TABLE_DIALOG_;
     static QStringList const ACTIONS_;
 
