@@ -295,10 +295,20 @@ void SignalBrowserModel::autoScaleChannel (ChannelID id)
 {
     if (id == UNDEFINED_CHANNEL)
     {
+        QProgressDialog progress;
+        progress.setMaximum (channel2signal_item_.size());
+        progress.setMinimum (0);
+        progress.setModal (true);
+        progress.setLabelText (tr("Scaling..."));
+        progress.show ();
         for (Int2SignalGraphicsItemPtrMap::iterator it =
              channel2signal_item_.begin(); it != channel2signal_item_.end();
             ++it)
+        {
             it->second->autoScale (getAutoScaleMode());
+            progress.setValue (progress.value() + 1);
+        }
+        progress.setValue (progress.maximum ());
     }
     else
         channel2signal_item_[id]->autoScale (getAutoScaleMode());
@@ -394,15 +404,6 @@ void SignalBrowserModel::unselectEvent ()
         selected_event_item_->setSelected (false);
     selected_event_item_ = 0;
     emit eventSelected (QSharedPointer<SignalEvent const>(0));
-}
-
-//-------------------------------------------------------------------
-void SignalBrowserModel::modeChanged (SignalVisualisationMode mode)
-{
-    if (mode == MODE_HAND)
-        signal_browser_view_->setScrollMode (true);
-    else
-        signal_browser_view_->setScrollMode (false);
 }
 
 //-------------------------------------------------------------------

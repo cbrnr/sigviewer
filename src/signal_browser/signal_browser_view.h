@@ -20,7 +20,6 @@
 class QGridLayout;
 class QScrollBar;
 class QCursor;
-class QSpacerItem;
 
 namespace BioSig_
 {
@@ -31,7 +30,8 @@ class XAxisWidget;
 class SignalBrowserModel;
 class SignalGraphicsItem;
 class EventGraphicsItem;
-class EventInfoWidget;
+class EventEditingWidget;
+class EventCreationWidget;
 
 // signal browser view
 class SignalBrowserView : public QFrame
@@ -71,6 +71,7 @@ public:
 
 public slots:
     void setXAxisIntervall (float64 intervall);
+    void setMode (SignalVisualisationMode mode);
 
 signals:
     void visibleXChanged (int32 new_x);
@@ -105,7 +106,10 @@ private:
     QScrollBar* horizontal_scrollbar_;
     QScrollBar* vertical_scrollbar_;
     LabelWidget* label_widget_;
-    EventInfoWidget* event_info_widget_;
+    EventEditingWidget* event_editing_widget_;
+    EventCreationWidget* event_creation_widget_;
+    QWidget* current_info_widget_;
+    QWidget* empty_widget_;
 
     QGridLayout* layout_;
     float32 scroll_x_destination_;
@@ -113,7 +117,6 @@ private:
     int32 scroll_x_step_;
     bool scroll_x_left_;
     std::map<std::string, QWidget*> hideable_widgets_;
-    QSpacerItem* spacer_item_;
 };
 
 } // namespace BioSig_

@@ -119,7 +119,6 @@ signals:
     void signalSpacingChanged (unsigned signal_spacing);
 
 protected:
-    virtual void modeChanged (SignalVisualisationMode mode);
     virtual void shownEventTypesChangedImpl ();
 
 private:

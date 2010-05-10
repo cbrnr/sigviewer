@@ -22,7 +22,7 @@ SignalVisualisationModel::SignalVisualisationModel (float32 sample_rate,
 void SignalVisualisationModel::setMode (SignalVisualisationMode mode)
 {
     mode_ = mode;
-    modeChanged (mode_);
+    emit modeChanged (mode_);
 }
 
 //-----------------------------------------------------------------------------

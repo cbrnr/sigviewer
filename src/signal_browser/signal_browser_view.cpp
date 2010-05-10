@@ -5,7 +5,8 @@
 #include "y_axis_widget_4.h"
 #include "x_axis_widget_4.h"
 #include "../label_widget.h"
-#include "event_info_widget.h"
+#include "event_creation_widget.h"
+#include "event_editing_widget.h"
 
 #include <QGraphicsLineItem>
 #include <QGridLayout>
@@ -15,6 +16,7 @@
 #include <QSettings>
 #include <QToolBox>
 #include <QMenu>
+#include <QPropertyAnimation>
 
 #include <iostream>
 
@@ -30,7 +32,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
                                       QWidget* parent)
 : QFrame (parent),
   model_ (signal_browser_model),
-  spacer_item_ (0)
+  empty_widget_ (new QWidget)
 {
     scroll_timer_ = new QTimer (this);
     connect (scroll_timer_, SIGNAL(timeout()), this, SLOT(scroll()));
@@ -62,13 +64,18 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     label_widget_ = new LabelWidget (*signal_browser_model, this);
     hideable_widgets_["Channel Labels"] = label_widget_;
 
+    current_info_widget_ = empty_widget_;
     if (event_manager.isNull())
-        event_info_widget_ = 0;
+    {
+        event_creation_widget_ = 0;
+        event_editing_widget_ = 0;
+    }
     else
     {
-        event_info_widget_ = new EventInfoWidget (this, event_manager,
-                                                  command_executer);
-        hideable_widgets_["Event Toolbar"] = event_info_widget_;
+        event_creation_widget_ = new EventCreationWidget ();
+        event_editing_widget_ = new EventEditingWidget (event_manager, command_executer);
+        event_editing_widget_->connect (signal_browser_model.data(), SIGNAL(shownEventTypesChanged(std::set<EventType> const&)), SLOT(updateShownEventTypes (std::set<EventType> const&)));
+        event_editing_widget_->connect (signal_browser_model.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent const>)), SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent const>)));
     }
 
 
@@ -94,16 +101,10 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     connect(signal_browser_model.data(), SIGNAL(pixelPerSampleChanged(float32,float32)), x_axis_widget_, SLOT(changePixelPerSample(float32,float32)));
     connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
     connect(signal_browser_model.data(), SIGNAL(signalHeightChanged(uint32)), y_axis_widget_, SLOT(changeSignalHeight(uint32)));
-    if (event_info_widget_)
-    {
-        connect(signal_browser_model.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent const>)));
-        connect(signal_browser_model.data(), SIGNAL(shownEventTypesChanged(std::set<uint16>)), event_info_widget_, SLOT(updateShownEventTypes(std::set<uint16>)));
-    }
+    connect(signal_browser_model.data(), SIGNAL(modeChanged(SignalVisualisationMode)), SLOT(setMode(SignalVisualisationMode)));
 
     graphics_view_->resize(width() - label_widget_->width() - y_axis_widget_->width() + (vertical_scrollbar_->width()*2), height() - x_axis_widget_->height() + horizontal_scrollbar_->height());
 
-    // graphics_view_->setVerticalScrollBarPolicy(setViewportMargins(0, 0, 0, 0);
-    //graphics_view_->setOptimizationFlag(QGraphicsView::DontClipPainter, true);
     graphics_view_->setMinimumSize(0, 0);
     graphics_view_->setFrameStyle(QFrame::NoFrame);
     setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
@@ -193,11 +194,6 @@ void SignalBrowserView::addEventGraphicsItem (EventGraphicsItem* event_graphics_
     graphics_scene_->addItem(event_graphics_item);
 
     graphics_view_->update();
-    if (event_info_widget_)
-    {
-        //connect (event_graphics_item, SIGNAL(hoverEnterSignalEvent (QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(addHoveredEvent(QSharedPointer<SignalEvent const>)));
-        //connect (event_graphics_item, SIGNAL(hoverLeaveSignalEvent(QSharedPointer<SignalEvent const>)), event_info_widget_, SLOT(removeHoveredEvent(QSharedPointer<SignalEvent const>)));
-    }
     connect (event_graphics_item, SIGNAL(mouseAtSecond(float64)), x_axis_widget_, SLOT(changeHighlightTime(float64)));
     connect (event_graphics_item, SIGNAL(mouseMoving(bool)), x_axis_widget_, SLOT(enableHighlightTime(bool)));
 }
@@ -333,6 +329,39 @@ void SignalBrowserView::setXAxisIntervall (float64 intervall)
 }
 
 //-----------------------------------------------------------------------------
+void SignalBrowserView::setMode (SignalVisualisationMode mode)
+{
+    if (current_info_widget_)
+    {
+        layout_->removeWidget (current_info_widget_);
+        current_info_widget_->hide();
+    }
+    switch (mode)
+    {
+    case MODE_NEW:
+        current_info_widget_ = event_creation_widget_;
+        graphics_view_->setDragMode(QGraphicsView::NoDrag);
+        break;
+    case MODE_POINTER:
+        current_info_widget_ = event_editing_widget_;
+        graphics_view_->setDragMode(QGraphicsView::NoDrag);
+        break;
+    case MODE_HAND:
+        graphics_view_->setDragMode(QGraphicsView::ScrollHandDrag);
+        current_info_widget_ = empty_widget_;
+        break;
+    default:
+        current_info_widget_ = empty_widget_;
+        break;
+    }
+    if (current_info_widget_)
+    {
+        layout_->addWidget (current_info_widget_, 1, 2);
+        current_info_widget_->show();
+    }
+}
+
+//-----------------------------------------------------------------------------
 void SignalBrowserView::graphicsSceneResized (QResizeEvent* event)
 {
     unsigned signal_height = model_->getSignalHeight ();
@@ -434,7 +463,6 @@ void SignalBrowserView::contextMenuEvent (QContextMenuEvent * event)
     menu->exec(event->globalPos());
 }
 
-
 //-----------------------------------------------------------------------------
 void SignalBrowserView::createLayout()
 {
@@ -445,10 +473,7 @@ void SignalBrowserView::createLayout()
     layout_->setVerticalSpacing(0);
     layout_->setHorizontalSpacing(0);
 
-    if (event_info_widget_)
-        layout_->addWidget(event_info_widget_, 1, 2);
-    else
-        layout_->addWidget(new QWidget(this), 1, 2);
+    layout_->addWidget(current_info_widget_, 1, 1, 1, 3);
     layout_->addWidget(y_axis_widget_, 2, 1);
     layout_->addWidget(graphics_view_, 2, 2);
     layout_->addWidget(x_axis_widget_, 3, 2);

@@ -2,14 +2,6 @@
 <ui version="4.0">
  <class>EventCreationToolbox</class>
  <widget class="QWidget" name="EventCreationToolbox">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>405</width>
-    <height>66</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -17,30 +9,15 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Event Creation Type</string>
+      <string>Type</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QComboBox" name="comboBox"/>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <widget class="QRadioButton" name="all_channels_radio_">
-       <property name="text">
-        <string>All Channels</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="one_channel_radio_">
-       <property name="text">
-        <string>One Channel</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </item>
   </layout>
  </widget>

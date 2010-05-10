@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>EventSelectedToolbox</class>
- <widget class="QWidget" name="EventSelectedToolbox">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>390</width>
-    <height>101</height>
-   </rect>
+ <class>EventEditingWidget</class>
+ <widget class="QWidget" name="EventEditingWidget">
+  <property name="enabled">
+   <bool>false</bool>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -48,6 +43,20 @@
     <widget class="QDoubleSpinBox" name="duration_spinbox_">
      <property name="suffix">
       <string>s</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="previous_button_">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="next_button_">
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>

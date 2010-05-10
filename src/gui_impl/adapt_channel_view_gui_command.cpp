@@ -2,8 +2,6 @@
 #include "gui_helper_functions.h"
 #include "../application_context.h"
 
-#include <QProgressDialog>
-
 namespace BioSig_
 {
 
@@ -74,20 +72,6 @@ void AdaptChannelViewGuiCommand::evaluateEnabledness ()
 //-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::autoScaleAll ()
 {
-//    std::set<ChannelID> shown_channels = currentVisModel()->getShownChannels();
-//
-//    QProgressDialog progress_bar;
-//    progress_bar.setMaximum (shown_channels.size());
-//    progress_bar.setMinimum (0);
-//    progress_bar.setModal (true);
-//    progress_bar.setLabelText (tr("Auto Scaling..."));
-//
-//    foreach (ChannelID id, shown_channels)
-//    {
-//        currentVisModel()->autoScaleChannel (id);
-//        progress_bar.setValue (progress_bar.value()+1);
-//    }
-//    progress_bar.setValue (progress_bar.maximum());
     currentVisModel()->autoScaleChannel(UNDEFINED_CHANNEL);
 }
 

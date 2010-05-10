@@ -102,12 +102,12 @@ public slots:
 
 signals:
     void pixelPerSampleChanged (float32 pixel_per_sample, float32 sample_rate);
-    void shownEventTypesChanged (std::set<uint16> shown_event_types);
+    void shownEventTypesChanged (std::set<EventType> const& shown_event_types);
     void signalHeightChanged (uint32 signal_height);
+    void modeChanged (SignalVisualisationMode mode);
 
 protected:
     SignalVisualisationModel (float32 sample_rate, std::set<EventType> const& shown_types);
-    virtual void modeChanged (SignalVisualisationMode mode) = 0;
     virtual void shownEventTypesChangedImpl () {assert (0);}
 
 private:
