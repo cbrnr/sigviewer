@@ -21,5 +21,5 @@ SOURCES += signal_browser/signal_browser_view.cpp \
     signal_browser/signal_grid_graphics_item.cpp \
     signal_browser/event_creation_widget.cpp \
     signal_browser/event_editing_widget.cpp
-FORMS += signal_browser/event_creation_toolbox.ui \
+FORMS += signal_browser/event_creation_widget.ui \
     signal_browser/event_editing_widget.ui

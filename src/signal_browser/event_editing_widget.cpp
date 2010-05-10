@@ -4,7 +4,6 @@
 #include "../editing_commands/resize_event_undo_command.h"
 
 #include <QMutexLocker>
-#include <QToolButton>
 #include <QDebug>
 
 namespace BioSig_
@@ -16,7 +15,8 @@ EventEditingWidget::EventEditingWidget (QSharedPointer<EventManager> event_manag
                                         QWidget *parent) :
     QWidget(parent),
     event_manager_ (event_manager),
-    command_executer_ (command_executer)
+    command_executer_ (command_executer),
+    self_updating_ (false)
 {
     ui_.setupUi (this);
     previous_action_ = GuiActionFactory::getInstance()->getQAction("Goto and Select Previous Event");
@@ -38,10 +38,14 @@ EventEditingWidget::EventEditingWidget (QSharedPointer<EventManager> event_manag
 //-----------------------------------------------------------------------------
 void EventEditingWidget::updateShownEventTypes (std::set<EventType> const& shown_event_types)
 {
+    setSelfUpdating (true);
+
     ui_.type_combobox_->clear ();
     foreach (EventType type, shown_event_types)
         ui_.type_combobox_->addItem (event_manager_->getNameOfEventType (type),
                                      QVariant (type));
+
+    setSelfUpdating (false);
 }
 
 //-----------------------------------------------------------------------------

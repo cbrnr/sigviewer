@@ -72,8 +72,9 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     }
     else
     {
-        event_creation_widget_ = new EventCreationWidget ();
+        event_creation_widget_ = new EventCreationWidget (signal_browser_model, event_manager);
         event_editing_widget_ = new EventEditingWidget (event_manager, command_executer);
+        event_creation_widget_->connect (signal_browser_model.data(), SIGNAL(shownEventTypesChanged(std::set<EventType> const&)), SLOT(updateShownEventTypes (std::set<EventType> const&)));
         event_editing_widget_->connect (signal_browser_model.data(), SIGNAL(shownEventTypesChanged(std::set<EventType> const&)), SLOT(updateShownEventTypes (std::set<EventType> const&)));
         event_editing_widget_->connect (signal_browser_model.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent const>)), SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent const>)));
     }
