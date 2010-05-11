@@ -4,6 +4,7 @@
 #include "../base/application_states.h"
 #include "../base/tab_states.h"
 #include "../base/file_states.h"
+#include "../base/exception.h"
 
 #include "../gui/signal_visualisation_model.h"
 
@@ -50,10 +51,6 @@ public slots:
 
     //-------------------------------------------------------------------------
     QAction* getQAction (QString const& id);
-
-signals:
-    //-------------------------------------------------------------------------
-    void qActionEnabledChanged (bool enabled);
 
 protected:
     //-------------------------------------------------------------------------

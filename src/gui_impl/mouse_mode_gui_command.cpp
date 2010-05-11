@@ -76,10 +76,7 @@ void MouseModeGuiCommand::trigger (QString const& action_name)
 //-------------------------------------------------------------------------
 void MouseModeGuiCommand::evaluateEnabledness ()
 {
-    if (getApplicationState () == APP_STATE_FILE_OPEN)
-        emit qActionEnabledChanged (true);
-    else
-        emit qActionEnabledChanged (false);
+    disableIfNoFileIsOpened (MODE_TEXTS_);
 }
 
 

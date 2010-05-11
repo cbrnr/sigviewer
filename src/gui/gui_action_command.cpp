@@ -5,6 +5,15 @@
 namespace BioSig_
 {
 
+class GuiActionCommandException : public Exception
+{
+public:
+    explicit GuiActionCommandException (QString const& action_id,
+                                        std::string const& error) :
+    Exception (std::string ("GuiActionCommand: \"") + action_id.toStdString () + "\" failed: " + error)
+    {}
+};
+
 //-----------------------------------------------------------------------------
 GuiActionCommand::GuiActionCommand (QStringList const& action_ids)
 {
@@ -12,22 +21,23 @@ GuiActionCommand::GuiActionCommand (QStringList const& action_ids)
          iter != action_ids.end();
          ++iter)
     {
-        bool connect_ok = false;
-        if (action_ids.contains("Zoom In Horizontal"))
-            connect_ok = true; // dummy statement just to get debugger here
         action_map_[*iter] = new QAction (*iter, this);
         connectors_.push_back (new ActionConnector (this, *iter));
         connectors_.last ()->connect (action_map_[*iter], SIGNAL(triggered()), SLOT(trigger()));
-        connect_ok = connect (connectors_.last (), SIGNAL(triggered(QString const&)), SLOT(trigger(QString const&)));
-        connect_ok = action_map_[*iter]->connect (this, SIGNAL(qActionEnabledChanged(bool)), SLOT(setEnabled (bool)));
-        connect_ok = connect (ApplicationContext::getInstance().data(), SIGNAL(stateChanged(ApplicationState)),
-                          SLOT(updateEnablednessToApplicationState(ApplicationState)));
-        connect_ok = connect (ApplicationContext::getInstance().data(), SIGNAL(currentTabSelectionStateChanged(TabSelectionState)),
-                          SLOT(updateEnablednessToTabSelectionState (TabSelectionState)));
-        connect_ok = connect (ApplicationContext::getInstance().data(), SIGNAL(currentTabEditStateChanged(TabEditState)),
-                          SLOT(updateEnablednessToTabEditState (TabEditState)));
-        connect_ok = connect (ApplicationContext::getInstance().data(), SIGNAL(currentFileStateChanged(FileState)),
-                          SLOT(updateEnablednessToFileState (FileState)));
+        connect (connectors_.last (), SIGNAL(triggered(QString const&)), SLOT(trigger(QString const&)));
+
+        if (!connect (ApplicationContext::getInstance().data(), SIGNAL(stateChanged(ApplicationState)),
+                          SLOT(updateEnablednessToApplicationState(ApplicationState))))
+            throw (GuiActionCommandException (*iter, "connect to signal stateChanged(ApplicationState)"));
+        if (!connect (ApplicationContext::getInstance().data(), SIGNAL(currentTabSelectionStateChanged(TabSelectionState)),
+                          SLOT(updateEnablednessToTabSelectionState (TabSelectionState))))
+            throw (GuiActionCommandException (*iter, "connect to signal currentTabSelectionStateChanged(TabSelectionState)"));
+        if (!connect (ApplicationContext::getInstance().data(), SIGNAL(currentTabEditStateChanged(TabEditState)),
+                          SLOT(updateEnablednessToTabEditState (TabEditState))))
+            throw (GuiActionCommandException (*iter, "connect to signal currentTabEditStateChanged(TabEditState)"));
+        if (!connect (ApplicationContext::getInstance().data(), SIGNAL(currentFileStateChanged(FileState)),
+                          SLOT(updateEnablednessToFileState (FileState))))
+            throw (GuiActionCommandException (*iter, "connect to signal currentFileStateChanged(FileState)"));
     }
 }
 
@@ -50,7 +60,8 @@ QAction* GuiActionCommand::getQAction (QString const& id)
     if (action_map_.contains (id))
         return action_map_[id];
     else
-        return 0;
+        throw GuiActionCommandException (id, "not exists");
+    return 0;
 }
 
 //-----------------------------------------------------------------------------

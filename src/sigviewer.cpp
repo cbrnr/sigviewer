@@ -97,40 +97,48 @@ void removeLogFile()
 // main
 int main(int32 argc, char* argv[])
 {	
-    qDebug () << "Starting SigViewer... ";
-    QApplication application(argc,argv);
-    initFileHandlingImpl ();
-    QTranslator qt_translator(0);
-    qt_translator.load(QString("qt_") + QLocale::languageToString(QLocale::c().language()) +
-                       QString(getenv("QTDIR")) + "/translations");
-    application.installTranslator(&qt_translator);
+    try
+    {
+        qDebug () << "Starting SigViewer... ";
+        QApplication application(argc,argv);
+        initFileHandlingImpl ();
+        QTranslator qt_translator(0);
+        qt_translator.load(QString("qt_") + QLocale::languageToString(QLocale::c().language()) +
+                           QString(getenv("QTDIR")) + "/translations");
+        application.installTranslator(&qt_translator);
 
-    QTranslator sigviewer_translator(0);
-    sigviewer_translator.load(QString("sigviewer_") + QLocale::languageToString(QLocale::c().language()),
-                              application.applicationDirPath());
-    application.installTranslator(&sigviewer_translator);
+        QTranslator sigviewer_translator(0);
+        sigviewer_translator.load(QString("sigviewer_") + QLocale::languageToString(QLocale::c().language()),
+                                  application.applicationDirPath());
+        application.installTranslator(&sigviewer_translator);
 
-    GuiActionFactory::getInstance()->initAllCommands ();
+        GuiActionFactory::getInstance()->initAllCommands ();
 
-    QSharedPointer<MainWindowModelImpl> main_window_model (new MainWindowModelImpl);
+        QSharedPointer<MainWindowModelImpl> main_window_model (new MainWindowModelImpl);
 
-    QSharedPointer<ApplicationContextImpl> app_ctx_impl (new ApplicationContextImpl);
-    app_ctx_impl->setMainWindowModel (main_window_model);
+        QSharedPointer<ApplicationContextImpl> app_ctx_impl (new ApplicationContextImpl);
+        app_ctx_impl->setMainWindowModel (main_window_model);
 
-    ApplicationContext::getInstance()->setImpl (app_ctx_impl);
-    app_ctx_impl->loadSettings();
+        ApplicationContext::getInstance()->setImpl (app_ctx_impl);
+        app_ctx_impl->loadSettings();
 
-    MainWindow* main_window = new MainWindow (main_window_model);
-    main_window_model->setMainWindow (main_window);
-    main_window_model->loadSettings();
-    main_window->setUnifiedTitleAndToolBarOnMac(true);
-    main_window->show();
+        MainWindow* main_window = new MainWindow (main_window_model);
+        main_window_model->setMainWindow (main_window);
+        main_window_model->loadSettings();
+        main_window->setUnifiedTitleAndToolBarOnMac(true);
+        main_window->show();
 
-    if (application.arguments().count() > 1)
-        OpenFileGuiCommand::openFile (application.arguments().at(1));
+        if (application.arguments().count() > 1)
+            OpenFileGuiCommand::openFile (application.arguments().at(1));
 
-    int result = application.exec();
-    main_window_model->saveSettings();
+        int result = application.exec();
+        main_window_model->saveSettings();
 
-    return result;
+        return result;
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "exception caught: " << e.what() << std::endl;
+    }
+    return 0;
 }
