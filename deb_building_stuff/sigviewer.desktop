@@ -1,8 +1,8 @@
 [Desktop Entry]
 Name=SigViewer
-Comment=Hello World Skript from http://biosig.sourceforge.net
-Comment[­de­]=Hallo Welt Skript von http://biosig.sourceforge.net
+Version=1.0
+Comment=Viewer for biosignals such as EEG, EMG, and ECG. http://sigviewer.sourceforge.net/
 Exec=/usr/bin/sigviewer
 Icon=sigviewer128.png
 Type=Application
-Categories=Science;
+Categories=Education;Science;

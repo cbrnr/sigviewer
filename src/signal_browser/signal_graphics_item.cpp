@@ -81,8 +81,6 @@ void SignalGraphicsItem::setHeight (uint32 height)
    updateYGridIntervall ();
 }
 
-
-
 //-----------------------------------------------------------------------------
 QRectF SignalGraphicsItem::boundingRect () const
 {
