@@ -3,6 +3,8 @@
 #include "../application_context.h"
 #include "../gui/signal_visualisation_model.h"
 
+#include <QDebug>
+
 namespace BioSig_
 {
 
@@ -27,8 +29,11 @@ GuiActionFactoryRegistrator AdaptEventViewGuiCommand::registrator_ ("Adapt Event
 
 
 //-----------------------------------------------------------------------------
-AdaptEventViewGuiCommand::AdaptEventViewGuiCommand ()
-    : GuiActionCommand (ACTIONS_)
+AdaptEventViewGuiCommand::AdaptEventViewGuiCommand () :
+    GuiActionCommand (ACTIONS_),
+    current_event_ (UNDEFINED_EVENT_ID),
+    next_event_ (UNDEFINED_EVENT_ID),
+    previous_event_ (UNDEFINED_EVENT_ID)
 {
     // nothing to do here
 }
@@ -93,9 +98,9 @@ void AdaptEventViewGuiCommand::evaluateEnabledness ()
 {
     disableIfNoFileIsOpened (ACTIONS_);
     disableIfNoEventSelected (QStringList() << HIDE_EVENTS_OF_OTHER_TYPE_
-                              << GO_TO_PREVIOUS_EVENT_
-                              << GO_TO_NEXT_EVENT_
                               << FIT_TO_EVENT_);
+
+    setNextAndPreviousEvent ();
 }
 
 
@@ -116,24 +121,49 @@ void AdaptEventViewGuiCommand::fitViewToEvent ()
 //-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::gotoAndSelectEvent (bool forward)
 {
-    QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
-
-    QSharedPointer<SignalEvent const> event = GuiHelper::getSelectedEvent();
-
-    QMap<uint32, EventID> events = event_manager->getEventPositions (event->getType());
-    QMap<uint32, EventID>::iterator current_event_iter = events.find (event->getPosition());
-    if (forward)
-        ++current_event_iter;
-    else if (current_event_iter != events.begin())
-        --current_event_iter;
-    else
-        return;
-
-    if (current_event_iter != events.end())
+    QSharedPointer<EventManager const> event_manager = currentVisModel()->getEventManager();
+    if (event_manager.isNull())
     {
-        currentVisModel()->goToSample (current_event_iter.key ());
-        currentVisModel()->selectEvent (current_event_iter.value ());
+        qCritical() << "AdaptEventViewGuiCommand::gotoAndSelectEvent no EventManager available!!";
+        return;
     }
+
+    EventID event_id;
+    if (forward)
+        event_id = next_event_;
+    else
+        event_id = previous_event_;
+
+    QSharedPointer<SignalEvent const> event = event_manager->getEvent (event_id);
+
+    if (!event.isNull())
+    {
+        currentVisModel()->goToSample (event->getPosition ());
+        currentVisModel()->selectEvent (event->getId());
+    }
+    //setNextAndPreviousEvent ();
 }
+
+//-------------------------------------------------------------------------
+void AdaptEventViewGuiCommand::setNextAndPreviousEvent ()
+{
+    QSharedPointer<SignalEvent const> event = GuiHelper::getSelectedEvent();
+    if (!event.isNull ())
+    {
+        if (current_event_ == event->getId ())
+            return;
+        current_event_ = event->getId ();
+        QSharedPointer<EventManager const> event_manager = currentVisModel()->getEventManager ();
+        next_event_ = event_manager->getNextEventOfSameType (event->getId ());
+        previous_event_ = event_manager->getPreviousEventOfSameType (event->getId ());
+        qDebug () << "next event " << next_event_;
+        qDebug () << "previous event "<< previous_event_;
+    }
+
+    qDebug () << "setting enablement " << (next_event_ == UNDEFINED_EVENT_ID);
+    getQAction (GO_TO_NEXT_EVENT_)->setEnabled (next_event_ != UNDEFINED_EVENT_ID);
+    getQAction (GO_TO_PREVIOUS_EVENT_)->setEnabled (previous_event_ != UNDEFINED_EVENT_ID);
+}
+
 
 }

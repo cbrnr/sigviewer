@@ -62,6 +62,9 @@ public:
     virtual double getSampleRate () const = 0;
 
     //-------------------------------------------------------------------------
+    virtual unsigned getMaxEventPosition () const = 0;
+
+    //-------------------------------------------------------------------------
     /// @return the name of the given event type
     virtual QString getNameOfEventType (EventType type) const = 0;
 
@@ -90,8 +93,10 @@ public:
     virtual QList<EventID> getEvents (EventType type) const = 0;
 
     //-------------------------------------------------------------------------
-    /// @return map of positions and event_ids of events of the given type
-    virtual QMap<uint32, EventID> getEventPositions (EventType type) const = 0;
+    virtual EventID getNextEventOfSameType (EventID id) const = 0;
+
+    //-------------------------------------------------------------------------
+    virtual EventID getPreviousEventOfSameType (EventID id) const = 0;
 
 signals:
     void eventChanged (EventID id);

@@ -52,6 +52,9 @@ public:
     virtual double getSampleRate () const;
 
     //-------------------------------------------------------------------------
+    virtual unsigned getMaxEventPosition () const;
+
+    //-------------------------------------------------------------------------
     /// see base class
     virtual QString getNameOfEventType (EventType type) const;
 
@@ -79,8 +82,10 @@ public:
     virtual QList<EventID> getEvents (EventType type) const;
 
     //-------------------------------------------------------------------------
-    /// see base class
-    virtual QMap<uint32, EventID> getEventPositions (EventType type) const;
+    virtual EventID getNextEventOfSameType (EventID id) const;
+
+    //-------------------------------------------------------------------------
+    virtual EventID getPreviousEventOfSameType (EventID id) const;
 
     //-------------------------------------------------------------------------
     /// fills the given eventvector with all events
@@ -95,10 +100,13 @@ private:
 
     typedef QMap<EventID, QSharedPointer<SignalEvent> > EventMap;
     typedef QMap<EventID, QSharedPointer<QMutex> > MutexMap;
+    typedef QMultiMap<uint32, EventID> PositionMap;
 
     EventMap event_map_;
     MutexMap mutex_map_;
     EventID next_free_id_;
+    PositionMap position_event_map_;
+    QMap<EventID, uint32> temp_event_position_map_;
 };
 
 }

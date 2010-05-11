@@ -47,6 +47,17 @@ private:
     //-------------------------------------------------------------------------
     void gotoAndSelectEvent (bool forward);
 
+    //-------------------------------------------------------------------------
+    void setNextAndPreviousEvent ();
+
+    //-------------------------------------------------------------------------
+    EventID current_event_;
+    EventID next_event_;
+    EventID previous_event_;
+
+
+
+    //-------------------------------------------------------------------------
     static QString const FIT_TO_EVENT_;
     static QString const HIDE_EVENTS_OF_OTHER_TYPE_;
     static QString const SHOW_ALL_EVENTS_;

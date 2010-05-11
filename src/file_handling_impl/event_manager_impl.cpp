@@ -27,6 +27,9 @@ EventManagerImpl::EventManagerImpl (QSharedPointer<FileSignalReader> reader)
         mutex_map_.insert (next_free_id_,
                            QSharedPointer<QMutex> (
                                    new QMutex));
+
+        position_event_map_.insertMulti (signal_events[index]->getPosition (), next_free_id_);
+
         next_free_id_++;
     }
     sample_rate_ = reader_->getBasicHeader()->getEventSamplerate();
@@ -64,6 +67,7 @@ QSharedPointer<SignalEvent> EventManagerImpl::getAndLockEventForEditing (EventID
         return QSharedPointer<SignalEvent> (0);
     else
     {
+        temp_event_position_map_.insert (id, event_it.value()->getPosition ());
         mutex_map_[id]->lock ();
         return event_it.value();
     }
@@ -73,6 +77,11 @@ QSharedPointer<SignalEvent> EventManagerImpl::getAndLockEventForEditing (EventID
 void EventManagerImpl::updateAndUnlockEvent (EventID id)
 {
     //QMutexLocker locker (caller_mutex_);
+    if (!mutex_map_.contains (id))
+        return;
+    position_event_map_.remove (temp_event_position_map_[id], id);
+    temp_event_position_map_.remove (id);
+    position_event_map_.insertMulti (event_map_[id]->getPosition (), id);
     mutex_map_[id]->unlock ();
     emit eventChanged (id);
     emit changed ();
@@ -96,6 +105,7 @@ QSharedPointer<SignalEvent const> EventManagerImpl::createEvent (
             new SignalEvent(pos, type, sample_rate_, channel_id, duration, id));
     event_map_[id] = new_event;
     mutex_map_[id] = QSharedPointer<QMutex> (new QMutex);
+    position_event_map_.insertMulti (pos, id);
 
     emit eventCreated (new_event);
     emit changed ();
@@ -109,6 +119,7 @@ void EventManagerImpl::removeEvent (EventID id)
     if (event_iter == event_map_.end())
         return;
 
+    position_event_map_.remove (event_map_[id]->getPosition(), id);
     event_map_.remove (id);
     mutex_map_.remove (id);
     emit eventRemoved (id);
@@ -132,6 +143,14 @@ double EventManagerImpl::getSampleRate () const
     QMutexLocker locker (caller_mutex_);
     return sample_rate_;
 }
+
+//-------------------------------------------------------------------------
+unsigned EventManagerImpl::getMaxEventPosition () const
+{
+    QMutexLocker locker (caller_mutex_);
+    return reader_->getBasicHeader ()->getNumberOfSamples ();
+}
+
 
 //-----------------------------------------------------------------------------
 QString EventManagerImpl::getNameOfEventType (EventType type) const
@@ -198,19 +217,53 @@ QList<EventID> EventManagerImpl::getEvents (EventType type) const
     return events;
 }
 
-//-----------------------------------------------------------------------------
-QMap<uint32, EventID> EventManagerImpl::getEventPositions (EventType type) const
+//-------------------------------------------------------------------------
+EventID EventManagerImpl::getNextEventOfSameType (EventID id) const
 {
     QMutexLocker locker (caller_mutex_);
-    QMap<uint32, EventID> events;
-    for (EventMap::ConstIterator event_iter = event_map_.begin ();
-         event_iter != event_map_.end ();
-         ++event_iter)
-        if (event_iter.value ()->getType () == type)
-        {
-            events.insert (event_iter.value()->getPosition (), event_iter.key ());
-        }
-    return events;
+    if (!event_map_.contains(id))
+        return UNDEFINED_EVENT_ID;
+
+    EventType type = event_map_[id]->getType ();
+    PositionMap::const_iterator iter = position_event_map_.find (event_map_[id]->getPosition ());
+    ++iter;
+    while (iter != position_event_map_.end ())
+    {
+        foreach (EventID next_event_id, position_event_map_.values (iter.key()))
+            if (event_map_[next_event_id]->getType () == type
+                && next_event_id != id)
+                return next_event_id;
+        ++iter;
+    }
+    return UNDEFINED_EVENT_ID;
+}
+
+//-------------------------------------------------------------------------
+EventID EventManagerImpl::getPreviousEventOfSameType (EventID id) const
+{
+    QMutexLocker locker (caller_mutex_);
+    if (!event_map_.contains(id))
+        return UNDEFINED_EVENT_ID;
+
+    EventType type = event_map_[id]->getType ();
+    PositionMap::const_iterator iter = position_event_map_.find (event_map_[id]->getPosition ());
+    if (iter == position_event_map_.begin ())
+        return UNDEFINED_EVENT_ID;
+    --iter;
+    while (iter != position_event_map_.begin ())
+    {
+        foreach (EventID previous_event_id, position_event_map_.values (iter.key()))
+            if (event_map_[previous_event_id]->getType () == type
+                && previous_event_id != id)
+                return previous_event_id;
+        --iter;
+    }
+    foreach (EventID previous_event_id, position_event_map_.values (iter.key()))
+        if (event_map_[previous_event_id]->getType () == type
+            && previous_event_id != id)
+            return previous_event_id;
+
+    return UNDEFINED_EVENT_ID;
 }
 
 //-----------------------------------------------------------------------------

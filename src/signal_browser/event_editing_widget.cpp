@@ -37,6 +37,7 @@ EventEditingWidget::EventEditingWidget (QSharedPointer<EventManager> event_manag
     for (float32 sample_rate = event_manager_->getSampleRate(); sample_rate > 10; sample_rate /= 10)
         precision++;
     ui_.begin_spinbox_->setDecimals (precision);
+    ui_.begin_spinbox_->setMaximum (static_cast<double>(event_manager_->getMaxEventPosition()) / event_manager_->getSampleRate ());
     ui_.duration_spinbox_->setDecimals (precision);
 }
 
@@ -60,15 +61,22 @@ void EventEditingWidget::updateSelectedEventInfo (QSharedPointer<SignalEvent con
     setSelfUpdating (true);
     selected_signal_event_ = selected_signal_event;
     if (selected_signal_event_.isNull())
-        setDisabled (true);
+        ui_.selection_frame_->setDisabled (true);
     else
     {
-        setEnabled (true);
+        ui_.selection_frame_->setEnabled (true);
         ui_.type_combobox_->setCurrentIndex (ui_.type_combobox_->findData (QVariant(selected_signal_event_->getType())));
         ui_.duration_spinbox_->setValue (selected_signal_event_->getDurationInSec ());
+        ui_.duration_spinbox_->setMaximum (static_cast<double>(event_manager_->getMaxEventPosition () -
+                                                               selected_signal_event->getPosition()) /
+                                           event_manager_->getSampleRate ());
         ui_.begin_spinbox_->setValue (selected_signal_event_->getPositionInSec ());
-        ui_.next_button_->setEnabled (next_action_->isEnabled ());
-        ui_.previous_button_->setEnabled (previous_action_->isEnabled ());
+        bool has_no_previous_event = event_manager_->getPreviousEventOfSameType (selected_signal_event->getId ())
+                                  == UNDEFINED_EVENT_ID;
+        bool has_no_next_event = event_manager_->getNextEventOfSameType (selected_signal_event->getId ())
+                              == UNDEFINED_EVENT_ID;
+        ui_.next_button_->setDisabled (has_no_next_event);
+        ui_.previous_button_->setDisabled (has_no_previous_event);
     }
     setSelfUpdating (false);
 }

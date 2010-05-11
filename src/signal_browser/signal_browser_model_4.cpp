@@ -322,6 +322,12 @@ QSharedPointer<ChannelManager const> SignalBrowserModel::getChannelManager () co
     return channel_manager_;
 }
 
+//-------------------------------------------------------------------------
+QSharedPointer<EventManager const> SignalBrowserModel::getEventManager () const
+{
+    return event_manager_;
+}
+
 
 //-------------------------------------------------------------------------
 unsigned SignalBrowserModel::getShownHeight () const
@@ -374,19 +380,13 @@ void SignalBrowserModel::selectEvent (EventID id)
     Int2EventGraphicsItemPtrMap::iterator event_iter = id2event_item_.find (id);
     if (event_iter == id2event_item_.end())
     {
-        tab_context_->setSelectionState(TAB_STATE_NO_EVENT_SELECTED);
         selected_event_item_ = 0;
         emit eventSelected (QSharedPointer<SignalEvent const>(0));
+        tab_context_->setSelectionState(TAB_STATE_NO_EVENT_SELECTED);
         return;
     }
 
     EventGraphicsItem* item = event_iter->second;
-
-    if (event_manager_->getEvent(id)->getChannel() ==
-        UNDEFINED_CHANNEL)
-        tab_context_->setSelectionState(TAB_STATE_EVENT_SELECTED_ALL_CHANNELS);
-    else
-        tab_context_->setSelectionState (TAB_STATE_EVENT_SELECTED_ONE_CHANNEL);
 
     if (selected_event_item_)
         selected_event_item_->setSelected (false);
@@ -394,6 +394,12 @@ void SignalBrowserModel::selectEvent (EventID id)
     selected_event_item_->setSelected (true);
 
     emit eventSelected(item->getSignalEvent());
+
+    if (event_manager_->getEvent(id)->getChannel() ==
+        UNDEFINED_CHANNEL)
+        tab_context_->setSelectionState(TAB_STATE_EVENT_SELECTED_ALL_CHANNELS);
+    else
+        tab_context_->setSelectionState (TAB_STATE_EVENT_SELECTED_ONE_CHANNEL);
 }
 
 //-------------------------------------------------------------------

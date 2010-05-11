@@ -18,6 +18,8 @@ namespace GuiHelper
 QSharedPointer<SignalEvent const> getSelectedEvent ()
 {
     EventID id = getSelectedEventID ();
+    if (id == UNDEFINED_EVENT_ID)
+        return QSharedPointer<SignalEvent const> (0);
     QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
     QSharedPointer<SignalEvent const> event = event_manager->getEvent (id);
 

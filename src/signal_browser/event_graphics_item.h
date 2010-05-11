@@ -107,7 +107,7 @@ private:
     static QMutex event_handling_mutex_;
 
     static QMutex context_menu_mutex_;
-    static QSharedPointer<EventContextMenu> context_menu_;
+    static EventContextMenu* context_menu_;
 
 };
 

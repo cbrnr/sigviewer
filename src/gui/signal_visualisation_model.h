@@ -4,6 +4,7 @@
 #include "../base/user_types.h"
 #include "../base/signal_event.h"
 #include "../file_handling/channel_manager.h"
+#include "../file_handling/event_manager.h"
 #include "signal_visualisation_modes.h"
 
 #include <QObject>
@@ -50,6 +51,9 @@ public:
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<ChannelManager const> getChannelManager () const = 0;
+
+    //-------------------------------------------------------------------------
+    virtual QSharedPointer<EventManager const> getEventManager () const = 0;
 
     //-------------------------------------------------------------------------
     unsigned getSignalHeight () const;

@@ -52,6 +52,9 @@ public:
     virtual QSharedPointer<ChannelManager const> getChannelManager () const;
 
     //-------------------------------------------------------------------------
+    virtual QSharedPointer<EventManager const> getEventManager () const;
+
+    //-------------------------------------------------------------------------
     /// see base class
     virtual unsigned getShownHeight () const;
 

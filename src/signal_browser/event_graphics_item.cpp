@@ -29,7 +29,7 @@ namespace BioSig_
 int EventGraphicsItem::move_mouse_range_ = 5;
 QMutex EventGraphicsItem::event_handling_mutex_;
 QMutex EventGraphicsItem::context_menu_mutex_;
-QSharedPointer<EventContextMenu> EventGraphicsItem::context_menu_ (0);
+EventContextMenu* EventGraphicsItem::context_menu_ = 0;
 
 //-----------------------------------------------------------------------------
 EventGraphicsItem::EventGraphicsItem (SignalBrowserModel& model,
@@ -78,7 +78,7 @@ bool EventGraphicsItem::displayContextMenu (QGraphicsSceneContextMenuEvent * eve
 {
     context_menu_mutex_.lock();
     bool menu_shown = false;
-    if (context_menu_.isNull())
+    if (!context_menu_)
         menu_shown = false;
     else if (context_menu_->getNumberOfEvents())
     {
@@ -94,7 +94,7 @@ bool EventGraphicsItem::displaySelectionMenu (QGraphicsSceneMouseEvent* event)
 {
     context_menu_mutex_.lock();
     bool menu_shown = false;
-    if (context_menu_.isNull())
+    if (!context_menu_)
     {
         menu_shown = false;
     }
@@ -424,14 +424,14 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
 void EventGraphicsItem::addContextMenuEntry ()
 {
     context_menu_mutex_.lock();
-    if (context_menu_.isNull())
-        context_menu_ = QSharedPointer<EventContextMenu> (new EventContextMenu (signal_browser_model_, event_manager_));
+    if (!context_menu_)
+        context_menu_ = new EventContextMenu (signal_browser_model_, event_manager_);
     else
     {
         if (context_menu_->getNumberOfEvents() == 0)
         {
-            context_menu_.clear();
-            context_menu_ = QSharedPointer<EventContextMenu> (new EventContextMenu (signal_browser_model_, event_manager_));
+            delete context_menu_;
+            context_menu_ = new EventContextMenu (signal_browser_model_, event_manager_);
         }
     }
 

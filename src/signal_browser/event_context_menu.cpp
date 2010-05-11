@@ -5,6 +5,7 @@
 
 #include <QGraphicsSceneContextMenuEvent>
 #include <QAction>
+#include <QDebug>
 
 namespace BioSig_
 {
@@ -21,8 +22,7 @@ EventContextMenu::EventContextMenu (SignalVisualisationModel& browser_model,
 //-----------------------------------------------------------------------------
 EventContextMenu::~EventContextMenu ()
 {
-    event_ids_.clear();
-    sub_menus_.clear();
+
 }
 
 //-------------------------------------------------------------------------
@@ -58,7 +58,7 @@ void EventContextMenu::finaliseAndShowContextMenu (QGraphicsSceneContextMenuEven
         while (it != event_ids_.end())
         {
             QString text (event_manager_->getNameOfEvent(*it));
-            QMenu* submenu = new QMenu (text, this);
+            QMenu* submenu = new QMenu (text);
             sub_menus_.append(submenu);
 
             // context-menu actions
@@ -138,10 +138,15 @@ void EventContextMenu::addActionsToMenu (QMenu& menu, EventID event)
     actions.append (GuiActionFactory::getInstance()->getQAction("Insert Over"));
     actions.append (new QAction (this));
     actions.last()->setSeparator(true);
-    actions.append (GuiActionFactory::getInstance()->getQAction("Goto and Select Next Event"));
-    actions.append (GuiActionFactory::getInstance()->getQAction("Goto and Select Previous Event"));
-    actions.append (new QAction (this));
-    actions.last()->setSeparator(true);
+    if (event_manager_->getNextEventOfSameType (event) != UNDEFINED_EVENT_ID)
+        actions.append (GuiActionFactory::getInstance()->getQAction("Goto and Select Next Event"));
+    if (event_manager_->getPreviousEventOfSameType (event) != UNDEFINED_EVENT_ID)
+        actions.append (GuiActionFactory::getInstance()->getQAction("Goto and Select Previous Event"));
+    if (!actions.last()->isSeparator())
+    {
+        actions.append (new QAction (this));
+        actions.last()->setSeparator(true);
+    }
     if (browser_model_.getShownEventTypes().size() > 1)
         actions.append (GuiActionFactory::getInstance()->getQAction("Hide Events of other Type"));
     else
