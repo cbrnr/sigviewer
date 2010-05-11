@@ -2,8 +2,6 @@
 #include "gui_action_factory.h"
 #include "../application_context.h"
 
-#include <cassert>
-
 namespace BioSig_
 {
 
@@ -14,19 +12,22 @@ GuiActionCommand::GuiActionCommand (QStringList const& action_ids)
          iter != action_ids.end();
          ++iter)
     {
+        bool connect_ok = false;
+        if (action_ids.contains("Zoom In Horizontal"))
+            connect_ok = true; // dummy statement just to get debugger here
         action_map_[*iter] = new QAction (*iter, this);
         connectors_.push_back (new ActionConnector (this, *iter));
-        assert (connectors_.last ()->connect (action_map_[*iter], SIGNAL(triggered()), SLOT(trigger())));
-        assert (connect (connectors_.last (), SIGNAL(triggered(QString const&)), SLOT(trigger(QString const&))));
-        assert (action_map_[*iter]->connect (this, SIGNAL(qActionEnabledChanged(bool)), SLOT(setEnabled (bool))));
-        assert (connect (ApplicationContext::getInstance().data(), SIGNAL(stateChanged(ApplicationState)),
-                          SLOT(updateEnablednessToApplicationState(ApplicationState))));
-        assert (connect (ApplicationContext::getInstance().data(), SIGNAL(currentTabSelectionStateChanged(TabSelectionState)),
-                          SLOT(updateEnablednessToTabSelectionState (TabSelectionState))));
-        assert (connect (ApplicationContext::getInstance().data(), SIGNAL(currentTabEditStateChanged(TabEditState)),
-                          SLOT(updateEnablednessToTabEditState (TabEditState))));
-        assert (connect (ApplicationContext::getInstance().data(), SIGNAL(currentFileStateChanged(FileState)),
-                          SLOT(updateEnablednessToFileState (FileState))));
+        connectors_.last ()->connect (action_map_[*iter], SIGNAL(triggered()), SLOT(trigger()));
+        connect_ok = connect (connectors_.last (), SIGNAL(triggered(QString const&)), SLOT(trigger(QString const&)));
+        connect_ok = action_map_[*iter]->connect (this, SIGNAL(qActionEnabledChanged(bool)), SLOT(setEnabled (bool)));
+        connect_ok = connect (ApplicationContext::getInstance().data(), SIGNAL(stateChanged(ApplicationState)),
+                          SLOT(updateEnablednessToApplicationState(ApplicationState)));
+        connect_ok = connect (ApplicationContext::getInstance().data(), SIGNAL(currentTabSelectionStateChanged(TabSelectionState)),
+                          SLOT(updateEnablednessToTabSelectionState (TabSelectionState)));
+        connect_ok = connect (ApplicationContext::getInstance().data(), SIGNAL(currentTabEditStateChanged(TabEditState)),
+                          SLOT(updateEnablednessToTabEditState (TabEditState)));
+        connect_ok = connect (ApplicationContext::getInstance().data(), SIGNAL(currentFileStateChanged(FileState)),
+                          SLOT(updateEnablednessToFileState (FileState)));
     }
 }
 
