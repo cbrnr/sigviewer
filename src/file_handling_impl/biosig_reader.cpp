@@ -192,23 +192,6 @@ QString BioSigReader::open(const QString& file_name)
     return loadFixedHeader (file_name);
 }
 
-void BioSigReader::enableCaching()
-{
-    QMutexLocker lock (&mutex_);
-    // caching - this is optional.
-    // fileIO only done once, most useful for zipped files,
-    // turn it off if ratio between size of available RAM and filesize is smaller than 2
-    //if (biosig_header_->FILE.COMPRESSION)
-    if (biosig_header_)
-        cachingWholeFile(biosig_header_);
-}
-
-//-----------------------------------------------------------------------------
-void BioSigReader::setFlagOverflow(const bool overflow_detection)
-{
-    biosig_header_->FLAG.OVERFLOWDETECTION = overflow_detection;
-}
-
 //-----------------------------------------------------------------------------
 QString BioSigReader::open(const QString& file_name, const bool overflow_detection)
 {

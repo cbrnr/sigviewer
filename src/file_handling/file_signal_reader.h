@@ -26,15 +26,13 @@ class FileSignalReader
 public:
     typedef QVector<SignalEvent> SignalEventVector;
 
-    virtual ~FileSignalReader();
+    virtual ~FileSignalReader() {}
     virtual FileSignalReader* clone() = 0;
 
     void setLogStream(QTextStream* log_stream);
 
     virtual QString open(const QString& file_name) = 0;
     virtual QString open(const QString& file_name, const bool overflow_detection) = 0;
-
-    virtual void enableCaching() = 0;
 
     virtual bool isOpen() = 0;
     virtual void close() = 0;
@@ -46,10 +44,9 @@ public:
     virtual QList<QSharedPointer<SignalEvent const> > getEvents () const = 0;
 
     virtual QSharedPointer<BasicHeader> getBasicHeader () = 0;
-protected:
-    FileSignalReader();
 
-    QTextStream* log_stream_;
+protected:
+    FileSignalReader () {}
 
 private:
     // not allowed
