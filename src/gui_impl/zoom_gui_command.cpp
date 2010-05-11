@@ -2,6 +2,7 @@
 #include "../application_context.h"
 
 #include <QInputDialog>
+#include <QDebug>
 
 namespace BioSig_
 {
@@ -71,6 +72,9 @@ void ZoomGuiCommand::evaluateEnabledness ()
 
     if (file_open && !vis_model.isNull())
     {
+        qDebug () << "Zooming: maxPixelPerSample = " << maxPixelPerSample ();
+        qDebug () << "Zooming: minPixelPerSample = " << minPixelPerSample ();
+        qDebug () << "Zooming: vis_model->getPixelPerSample() = " << vis_model->getPixelPerSample();
         zoom_out_vertical_possible = (vis_model->getSignalHeight() * vis_model->getShownChannels().size() > vis_model->getShownHeight());
         zoom_in_vertical_possible = (vis_model->getSignalHeight() < vis_model->getShownHeight());
         zoom_out_horizontal_possible = vis_model->getPixelPerSample() > minPixelPerSample();
