@@ -45,6 +45,7 @@ private:
 
     QAction* previous_action_;
     QAction* next_action_;
+    QAction* fit_view_action_;
 
     QSharedPointer<SignalEvent const> selected_signal_event_;
 

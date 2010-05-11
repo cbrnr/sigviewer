@@ -42,6 +42,7 @@ void AdaptEventViewGuiCommand::init ()
     setIcon (GO_TO_NEXT_EVENT_, QIcon(":/images/icons/next.png"));
     setIcon (GO_TO_PREVIOUS_EVENT_, QIcon(":/images/icons/previous.png"));
     setIcon (SET_SHOWN_EVENTS_, QIcon(":/images/events_22x22.png"));
+    setIcon (FIT_TO_EVENT_, QIcon(":/images/icons/zoom_fit_event_horizontal.png"));
 
     resetActionTriggerSlot (HIDE_EVENTS_OF_OTHER_TYPE_, SLOT(hideEventsOfOtherType()));
     resetActionTriggerSlot (SHOW_ALL_EVENTS_, SLOT(showAllEvents()));

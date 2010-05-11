@@ -21,12 +21,17 @@ EventEditingWidget::EventEditingWidget (QSharedPointer<EventManager> event_manag
     ui_.setupUi (this);
     previous_action_ = GuiActionFactory::getInstance()->getQAction("Goto and Select Previous Event");
     next_action_ = GuiActionFactory::getInstance()->getQAction("Goto and Select Next Event");
+    fit_view_action_ = GuiActionFactory::getInstance()->getQAction("Fit View to Selected Event");
 
     ui_.previous_button_->setIcon (previous_action_->icon ());
     previous_action_->connect (ui_.previous_button_, SIGNAL(pressed()), SLOT(trigger()));
 
     ui_.next_button_->setIcon (next_action_->icon ());
     next_action_->connect (ui_.next_button_, SIGNAL(pressed()), SLOT(trigger()));
+
+    ui_.fit_button_->setIcon (fit_view_action_->icon ());
+    fit_view_action_->connect (ui_.fit_button_, SIGNAL(pressed()), SLOT(trigger()));
+
 
     unsigned precision = 0;
     for (float32 sample_rate = event_manager_->getSampleRate(); sample_rate > 10; sample_rate /= 10)
