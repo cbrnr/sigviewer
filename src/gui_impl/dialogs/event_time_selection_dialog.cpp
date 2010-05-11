@@ -1,5 +1,5 @@
 #include "event_time_selection_dialog.h"
-#include "file_handling/event_manager.h"
+#include "../../file_handling/event_manager.h"
 
 #include <QPushButton>
 #include <limits>

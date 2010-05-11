@@ -34,6 +34,8 @@
 #include <QTranslator>
 #include <QMutexLocker>
 #include <QDebug>
+#include <QTime>
+#include <QProgressDialog>
 
 #include <cmath>
 #include <cassert>
@@ -353,37 +355,54 @@ void BioSigReader::bufferAllChannels () const
 {
     uint32 length = basic_header_->getNumberOfSamples ();
 
-    if (read_data_ == 0 || read_data_size_ < length * biosig_header_->NS)
+    if (read_data_ == 0 || read_data_size_ < length)
     {
-        read_data_size_ = length * biosig_header_->NS;
+        read_data_size_ = length;
         delete[] read_data_;
         read_data_ = new biosig_data_type[read_data_size_];
     }
 
     biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
+    QProgressDialog progress_dialog;
+    progress_dialog.setMaximum (basic_header_->getNumberChannels());
+    progress_dialog.setLabelText(QObject::tr("Loading channels..."));
+    progress_dialog.show ();
+    QTime timer;
+    timer.start();
 
-    memset (read_data_, 0, read_data_size_ * sizeof(biosig_data_type));
-    sread (read_data_, 0,
-           length / biosig_header_->SPR,
-           biosig_header_);
+    for (ChannelID channel_id_sub = 0; channel_id_sub <  basic_header_->getNumberChannels(); ++channel_id_sub)
+        biosig_header_->CHANNEL[channel_id_sub].OnOff = 0;
 
     for (ChannelID channel_id = 0; channel_id < basic_header_->getNumberChannels();
          ++channel_id)
     {
-        std::vector<float32> raw_data (length);
-        for (unsigned index = 0; index < length; index++)
-        {
+        if (channel_id > 0)
+            biosig_header_->CHANNEL[channel_id-1].OnOff = 0;
+        biosig_header_->CHANNEL[channel_id].OnOff = 1;
+
+        sread (read_data_, 0,
+            length / biosig_header_->SPR,
+               biosig_header_);
+
+        QSharedPointer<std::vector<float32> > raw_data (new std::vector<float32> (length));
+//        for (unsigned index = 0; index < length; index++)
+//        {
 //            if (biosig_header_->FLAG.ROW_BASED_CHANNELS == 1)
 //            {
 //                raw_data[index] = read_data_[length + (index * channel_id)];
 //            }
 //            else
-                raw_data[index] = read_data_[(length * channel_id) + index];
-        }
+            raw_data->insert(raw_data->begin(), read_data_, read_data_+ length);
+//                (*raw_data)[index] = read_data_[(length * channel_id) + index];
+//        }
         QSharedPointer<DataBlock> data_block (new DataBlock (raw_data,
                                                              basic_header_->getSampleRate()));
         channel_map_[channel_id] = data_block;
+        progress_dialog.setValue(progress_dialog.value()+1);
     }
+    progress_dialog.setValue(progress_dialog.maximum());
+    qDebug() << "buffering time = " << timer.elapsed();
+
     buffered_all_channels_ = true;
     if (buffered_all_events_)
         doClose();

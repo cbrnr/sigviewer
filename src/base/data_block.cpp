@@ -16,10 +16,10 @@ DataBlock::DataBlock ()
 }
 
 //-----------------------------------------------------------------------------
-DataBlock::DataBlock (std::vector<float32> const &data,
+DataBlock::DataBlock (QSharedPointer<std::vector<float32> > data,
                       float32 sample_rate_per_unit)
-    : data_ (QSharedPointer<std::vector<float32> >(new std::vector<float32>(data))),
-      length_ (data.size()),
+    : data_ (data),
+      length_ (data->size()),
       start_index_ (0),
       sample_rate_per_unit_ (sample_rate_per_unit)
 {
@@ -179,9 +179,9 @@ DataBlock DataBlock::getBandpassFilteredBlock (float32 lower_hz_boundary, float3
     crfft1d backward (num_samples, data_out, data_in);
     backward.fft (data_out, data_in);
 
-    std::vector<float32> band_passed_data;
+    QSharedPointer<std::vector<float32> > band_passed_data (new std::vector<float32>);
     for (unsigned x = 0; x < num_samples; x++)
-        band_passed_data.push_back (data_in[x]);// = data_in[x] = data_[x];
+        band_passed_data->push_back (data_in[x]);// = data_in[x] = data_[x];
 
     DataBlock band_passed_block (band_passed_data, sample_rate_per_unit_);
 
@@ -201,7 +201,7 @@ DataBlock DataBlock::calculateMean (std::list<QSharedPointer<DataBlock const> > 
         return mean_block;
 
     std::list<QSharedPointer<DataBlock const> >::const_iterator it = data_blocks.begin();
-    std::vector<float32> mean;
+    QSharedPointer<std::vector<float32> > mean (new std::vector<float32>);
     float32 sample_rate = (*it)->sample_rate_per_unit_;
     float32 tmp_mean = 0;
     for (unsigned index = 0; index < (*(data_blocks.begin()))->size(); index++)
@@ -213,7 +213,7 @@ DataBlock DataBlock::calculateMean (std::list<QSharedPointer<DataBlock const> > 
             tmp_mean += (**it)[index];
             ++it;
         }
-        mean.push_back(tmp_mean / data_blocks.size());
+        mean->push_back(tmp_mean / data_blocks.size());
     }
     return DataBlock (mean, sample_rate);
 }

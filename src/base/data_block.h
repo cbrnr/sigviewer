@@ -21,7 +21,7 @@ public:
     /// @param sample_rate_per_unit as a data_block must not represent data which
     ///                             is associated to time, the sample_rate is given
     ///                             in "per unit" (e.g. "s" or "hz", etc.)
-    DataBlock (std::vector<float32> const &data, float32 sample_rate_per_unit);
+    DataBlock (QSharedPointer<std::vector<float32> > data, float32 sample_rate_per_unit);
 
     //-------------------------------------------------------------------------
     DataBlock (DataBlock const &src);
