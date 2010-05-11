@@ -71,11 +71,6 @@ signals:
     void currentTabSelectionStateChanged (TabSelectionState state);
     void currentTabEditStateChanged (TabEditState state);
 
-private slots:
-    void changeTabSelectionState (TabSelectionState state);
-    void changeTabEditState (TabEditState state);
-    void changeFileState (FileState state);
-
 private:
     static QSharedPointer<ApplicationContext> instance_;
     QSharedPointer<ApplicationContextImplInterface> impl_;

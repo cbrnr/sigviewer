@@ -1,4 +1,5 @@
 #include "application_context.h"
+#include "base/exception.h"
 
 #include <QDebug>
 
@@ -43,8 +44,10 @@ void ApplicationContext::setCurrentTabContext (QSharedPointer<TabContext> tab_co
     if (!current_tab_context_.isNull())
         current_tab_context_->disconnect (this);
     current_tab_context_ = tab_context;
-    connect (current_tab_context_.data(), SIGNAL(selectionStateChanged(TabSelectionState)), SLOT(changeTabSelectionState(TabSelectionState)));
-    connect (current_tab_context_.data(), SIGNAL(editStateChanged(TabEditState)), SLOT(changeTabEditState(TabEditState)));
+    if (!connect (current_tab_context_.data(), SIGNAL(selectionStateChanged(TabSelectionState)), SIGNAL(currentTabSelectionStateChanged(TabSelectionState))))
+        throw (Exception ("ApplicationContext::setCurrentTabContext failed to connect to selectionStateChanged"));
+    if (!connect (current_tab_context_.data(), SIGNAL(editStateChanged(TabEditState)), SIGNAL(currentTabEditStateChanged(TabEditState))))
+        throw (Exception ("ApplicationContext::setCurrentTabContext failed to connect to editStateChanged"));
 }
 
 //-------------------------------------------------------------------------
@@ -57,7 +60,8 @@ QSharedPointer<CommandExecuter> ApplicationContext::getCurrentCommandExecuter ()
 void ApplicationContext::addFileContext (QSharedPointer<FileContext>file_context)
 {
     current_file_context_ = file_context;
-    connect (current_file_context_.data(), SIGNAL(stateChanged(FileState)), SLOT(changeFileState(FileState)));
+    if (!connect (current_file_context_.data(), SIGNAL(stateChanged(FileState)), SIGNAL(currentFileStateChanged(FileState))))
+        throw (Exception ("ApplicationContext::addFileContext faild to connect stateChanged(FileState)"));
 }
 
 //-------------------------------------------------------------------------
@@ -98,28 +102,6 @@ void ApplicationContext::setState (ApplicationState state)
     state_ = state;
     emit stateChanged (state_);
 }
-
-//-----------------------------------------------------------------------------
-void ApplicationContext::changeTabSelectionState (TabSelectionState state)
-{
-    emit currentTabSelectionStateChanged (state);
-}
-
-//-----------------------------------------------------------------------------
-void ApplicationContext::changeTabEditState (TabEditState state)
-{
-    emit currentTabEditStateChanged (state);
-}
-
-//-----------------------------------------------------------------------------
-void ApplicationContext::changeFileState (FileState state)
-{
-    emit currentFileStateChanged (state);
-}
-
-
-
-
 
 
 } // namespace BioSig_

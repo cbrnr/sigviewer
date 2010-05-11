@@ -3,6 +3,7 @@
 #include "tab_context.h"
 #include "file_context.h"
 #include "application_context.h"
+#include "base/exception.h"
 
 #include "gui_impl/open_file_gui_command.h"
 
@@ -140,7 +141,8 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
     if (!tab_widget_)
     {
         tab_widget_ = new QTabWidget (main_window_);
-        connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+        if (!connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int))))
+            throw (Exception ("MainWindowModelImpl::createSignalVisualisationOfFile failed: connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)))"));
         connect (tab_widget_, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
         tab_widget_->setTabsClosable (true);
     }

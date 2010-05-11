@@ -3,7 +3,6 @@
 
 #include <QPushButton>
 #include <limits>
-#include <iostream>
 
 namespace BioSig_
 {
@@ -40,7 +39,6 @@ std::set<ChannelID> EventTimeSelectionDialog::getSelectedChannels () const
     foreach (QListWidgetItem* list_item, ui_.list_widget_->selectedItems())
     {
         ChannelID id = list_item->text().section (" - ", 0, 0).toUInt();
-        std::cout << "selected: " << id << std::endl;
         channels.insert (id);
     }
 

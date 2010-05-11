@@ -1,6 +1,7 @@
 #include "event_manager_impl.h"
 #include "../file_handling/file_signal_reader.h"
 #include "../application_context.h"
+#include "../base/exception.h"
 
 #include <QMutexLocker>
 

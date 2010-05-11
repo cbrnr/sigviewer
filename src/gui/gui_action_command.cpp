@@ -99,24 +99,28 @@ void GuiActionCommand::updateEnablednessToTabEditState (TabEditState state)
 void GuiActionCommand::resetActionTriggerSlot (QString const& action_id,
                                               const char* slot)
 {
-    assert (action_map_.contains (action_id));
+    if (!action_map_.contains (action_id))
+        throw (GuiActionCommandException (action_id, "resetActionTriggerSlot, action not exists"));
     QAction* action = action_map_[action_id];
     action->disconnect (SIGNAL(triggered()));
-    assert (connect (action, SIGNAL(triggered()), slot));
+    if (!connect (action, SIGNAL(triggered()), slot))
+        throw (GuiActionCommandException (action_id, std::string ("connect triggered to ") + slot));
 }
 
 //-----------------------------------------------------------------------------
 void GuiActionCommand::setShortcut (QString const& action_id,
                                     QKeySequence const& key_sequence)
 {
-    assert (action_map_.contains (action_id));
+    if (!action_map_.contains (action_id))
+        throw (GuiActionCommandException (action_id, "setting shortcut, action not exists"));
     action_map_[action_id]->setShortcut (key_sequence);
 }
 
 //-----------------------------------------------------------------------------
 void GuiActionCommand::setIcon (QString const& action_id, QIcon const& icon)
 {
-    assert (action_map_.contains (action_id));
+    if (!action_map_.contains (action_id))
+        throw (GuiActionCommandException (action_id, "setting icon, action not exists"));
     action_map_[action_id]->setIcon (icon);
 }
 
