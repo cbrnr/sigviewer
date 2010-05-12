@@ -1,5 +1,3 @@
-// file_signal_reader.h
-
 #ifndef FILE_SIGNAL_READER_H
 #define FILE_SIGNAL_READER_H
 
@@ -27,15 +25,8 @@ public:
     typedef QVector<SignalEvent> SignalEventVector;
 
     virtual ~FileSignalReader() {}
-    virtual FileSignalReader* clone() = 0;
 
-    void setLogStream(QTextStream* log_stream);
-
-    virtual QString open(const QString& file_name) = 0;
-    virtual QString open(const QString& file_name, const bool overflow_detection) = 0;
-
-    virtual bool isOpen() = 0;
-    virtual void close() = 0;
+    virtual QSharedPointer<FileSignalReader> createInstance (QString const& file_path) = 0;
 
     virtual QSharedPointer<DataBlock const> getSignalData (ChannelID channel_id,
                                                            unsigned start_sample,

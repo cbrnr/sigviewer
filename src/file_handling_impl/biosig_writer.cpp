@@ -50,19 +50,22 @@ BioSigWriter::BioSigWriter(FileFormat target_type)
 //-----------------------------------------------------------------------------
 BioSigWriter::BioSigWriter (bool)
 {
-    FileSignalWriterFactory::getInstance()->addPrototype(".gdf", new BioSigWriter (GDF));
-}
-
-
-//-----------------------------------------------------------------------------
-BioSigWriter::~BioSigWriter()
-{
+    FileSignalWriterFactory::getInstance()->registerHandler("gdf", QSharedPointer<BioSigWriter>(new BioSigWriter (GDF)));
 }
 
 //-----------------------------------------------------------------------------
-FileSignalWriter* BioSigWriter::clone()
+BioSigWriter::BioSigWriter (FileFormat target_type, QString new_file_path) :
+        target_type_ (target_type),
+        new_file_path_ (new_file_path)
 {
-    return new BioSigWriter (target_type_);
+    // nothing to do here
+}
+
+
+//-------------------------------------------------------------------------
+QSharedPointer<FileSignalWriter> BioSigWriter::createInstance (QString const&)
+{
+    return QSharedPointer<FileSignalWriter>(new BioSigWriter (target_type_));
 }
 
 //-----------------------------------------------------------------------------
@@ -73,8 +76,7 @@ bool BioSigWriter::supportsSavingEvents () const
 
 //-----------------------------------------------------------------------------
 QString BioSigWriter::saveEventsToSignalFile (QSharedPointer<EventManager> event_manager,
-                                  QString const& file_path,
-                                  std::set<EventType> const& types)
+                                              std::set<EventType> const& types)
 {
     if (file_formats_support_event_saving_.count(target_type_) == 0)
         return QObject::tr("Can't write events to that file that file type!");
@@ -87,7 +89,7 @@ QString BioSigWriter::saveEventsToSignalFile (QSharedPointer<EventManager> event
     foreach (EventType type, types)
         events.append(event_manager->getEvents(type));
 
-    header = sopen (file_path.toStdString().c_str(), "r", header);
+    header = sopen (new_file_path_.toStdString().c_str(), "r", header);
     header->EVENT.SampleRate = event_manager->getSampleRate();
     header->EVENT.N = number_events;
     header->EVENT.TYP = (typeof(header->EVENT.TYP)) realloc(header->EVENT.TYP,number_events * sizeof(typeof(*header->EVENT.TYP)));
@@ -119,11 +121,10 @@ QString BioSigWriter::saveEventsToSignalFile (QSharedPointer<EventManager> event
 
 //-----------------------------------------------------------------------------
 QString BioSigWriter::save (QSharedPointer<EventManager> event_manager,
-                               QString const& old_file_path,
-                               QString const& file_path,
-                               std::set<EventType> const& types)
+                            QString const& source_file_path,
+                            std::set<EventType> const& types)
 {
-    HDRTYPE* read_header = sopen (old_file_path.toStdString().c_str(), "r", NULL);
+    HDRTYPE* read_header = sopen (source_file_path.toStdString().c_str(), "r", NULL);
     uint32 read_data_size = read_header->NS * read_header->NRec * read_header->SPR;
     biosig_data_type* read_data = new biosig_data_type[read_data_size];
     sread (read_data, 0, read_data_size, read_header);
@@ -132,7 +133,7 @@ QString BioSigWriter::save (QSharedPointer<EventManager> event_manager,
     if (target_type_ == GDF)
         read_header->VERSION = 2;
 
-    HDRTYPE* write_header = sopen (file_path.toStdString().c_str(), "w", read_header);
+    HDRTYPE* write_header = sopen (new_file_path_.toStdString().c_str(), "w", read_header);
     qDebug() << "write NELEM = " << swrite (read_data, read_header->NRec, write_header);
 
     delete read_data;
@@ -143,7 +144,7 @@ QString BioSigWriter::save (QSharedPointer<EventManager> event_manager,
     destructHDR (write_header);
 
     if (file_formats_support_event_saving_.count(target_type_))
-        saveEventsToSignalFile (event_manager, file_path, types);
+        saveEventsToSignalFile (event_manager, types);
 
     return "";
 }

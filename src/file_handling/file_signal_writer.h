@@ -21,29 +21,25 @@ class FileSignalWriter
 public:
     typedef FileSignalReader::SignalEventVector SignalEventVector;
 
-    virtual ~FileSignalWriter();
-    virtual FileSignalWriter* clone() = 0;
+    virtual ~FileSignalWriter() {}
 
-    void setLogStream(QTextStream* log_stream);
+    //-------------------------------------------------------------------------
+    virtual QSharedPointer<FileSignalWriter> createInstance (QString const& file_path) = 0;
 
     //-------------------------------------------------------------------------
     virtual bool supportsSavingEvents () const {return false;}
 
     //-------------------------------------------------------------------------
     virtual QString saveEventsToSignalFile (QSharedPointer<EventManager>,
-                                QString const& file_path,
-                                std::set<EventType> const& types) = 0;
+                                            std::set<EventType> const& types) = 0;
 
     //-------------------------------------------------------------------------
     virtual QString save (QSharedPointer<EventManager> event_manager,
-                             QString const& old_file_path,
-                             QString const& file_path,
-                             std::set<EventType> const& types) = 0;
+                          QString const& source_file_path,
+                          std::set<EventType> const& types) = 0;
 
 protected: 
-    FileSignalWriter();
-
-    QTextStream* log_stream_;
+    FileSignalWriter () {}
 
 private:
     // not allowed

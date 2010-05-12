@@ -3,7 +3,6 @@ HEADERS += base/application_states.h \
     base/exception.h \
     base/file_states.h \
     base/math_utils.h \
-    base/prototype_factory.h \
     base/signal_channel.h \
     base/signal_event.h \
     base/tab_states.h \

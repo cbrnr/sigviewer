@@ -30,10 +30,6 @@ public:
     QSharedPointer<DataBlock> createSubBlock (uint32 start, uint32 length) const;
 
     //-------------------------------------------------------------------------
-    void setData (std::vector<float32> const &data, float32 sample_rate_per_unit);
-
-    //-------------------------------------------------------------------------
-    //std::vector<float32> const &getData () const;
     float32 const& operator[] (uint32 index) const;
 
     //-------------------------------------------------------------------------

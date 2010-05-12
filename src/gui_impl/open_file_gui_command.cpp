@@ -64,8 +64,7 @@ void OpenFileGuiCommand::init ()
 void OpenFileGuiCommand::openFile (QString file_path)
 {
     file_path = QDir::toNativeSeparators (file_path);
-    QSharedPointer<FileSignalReader> file_signal_reader =
-            createAndOpenFileSignalReader (file_path);
+    QSharedPointer<FileSignalReader> file_signal_reader = FileSignalReaderFactory::getInstance()->getHandler (file_path);
 
     if (file_signal_reader.isNull())
         return;
@@ -108,7 +107,10 @@ void OpenFileGuiCommand::evaluateEnabledness ()
 //-------------------------------------------------------------------------
 void OpenFileGuiCommand::open ()
 {
-    QString extensions = FileSignalReaderFactory::getInstance()->getExtensions();
+    QStringList extension_list = FileSignalReaderFactory::getInstance()->getAllFileEndingsWithWildcards();
+    QString extensions;
+    foreach (QString extension, extension_list)
+        extensions.append (extension + " ");
     QSettings settings ("SigViewer");
     QString open_path = settings.value ("file_open_path").toString();
     if (!open_path.length())
@@ -131,13 +133,12 @@ void OpenFileGuiCommand::importEvents ()
         open_path = QDir::homePath ();
     QString file_path = showOpenDialog (open_path, extensions);
 
-    QSharedPointer<FileSignalReader> file_signal_reader = createAndOpenFileSignalReader (file_path);
+    QSharedPointer<FileSignalReader> file_signal_reader = FileSignalReaderFactory::getInstance()->getHandler (file_path);
 
     if (file_signal_reader.isNull())
         return;
 
     QList<QSharedPointer<SignalEvent const> > events = file_signal_reader->getEvents ();
-    file_signal_reader->close ();
 
     QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
     QList<QSharedPointer<QUndoCommand> > creation_commands;
@@ -176,34 +177,5 @@ QString OpenFileGuiCommand::showOpenDialog (QString const& path, QString const& 
     return QFileDialog::getOpenFileName (0, tr("Chose signal file to open"),
                                         path, extension_selection);
 }
-
-//-----------------------------------------------------------------------------
-QSharedPointer<FileSignalReader> OpenFileGuiCommand::createAndOpenFileSignalReader
-        (QString const& file_path)
-{
-    QSharedPointer<FileSignalReader> signal_reader;
-    QString load;
-
-    if (file_path.lastIndexOf('.') != -1)
-    {
-        signal_reader = QSharedPointer<FileSignalReader>(FileSignalReaderFactory::getInstance()->
-                    getElement (file_path.mid (file_path.lastIndexOf('.'))));
-        if (signal_reader)
-        {
-            load = signal_reader->open (file_path, false); // OVERFLOW DETECTION????
-
-            if (load.size ())
-            {
-                QMessageBox::critical (0, tr("Error reading file"),
-                                      tr("Invalid file: %1").arg (file_path+load));
-            }
-            else
-                return signal_reader;
-        }
-    }
-    return QSharedPointer<FileSignalReader> (0);
-}
-
-
 
 } // namespace BioSig_

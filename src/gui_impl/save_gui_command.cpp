@@ -74,23 +74,20 @@ void SaveGuiCommand::saveAs ()
         }
         if (QFile::copy (old_file_path_and_name, new_file_path))
         {
-            FileSignalWriter* writer = FileSignalWriterFactory::getInstance()->getElement(new_file_path.mid(new_file_path.lastIndexOf('.')));
+            QSharedPointer<FileSignalWriter> writer = FileSignalWriterFactory::getInstance()->getHandler(new_file_path);
 
             bool can_save_events = false;
-            if (writer)
+            if (!writer.isNull())
                 can_save_events = writer->supportsSavingEvents ();
 
             QSharedPointer<EventManager> event_mgr = file_context->getEventManager();
-            if (writer && can_save_events)
+            if (!writer.isNull() && can_save_events)
             {
-                QString error = writer->saveEventsToSignalFile (event_mgr, new_file_path, event_mgr->getAllPossibleEventTypes());
-                delete writer;
+                QString error = writer->saveEventsToSignalFile (event_mgr, event_mgr->getAllPossibleEventTypes());
                 if (error.size())
                     QMessageBox::critical(0, new_file_path, error);
                 else
-                {
                     file_context->resetFilePathAndName (new_file_path);
-                }
             }
             else if (event_mgr->getNumberOfEvents() > 0)
                 QMessageBox::information(0, "", "Events not stored to " + new_file_path + "\n If you want to store events export the file to GDF or export the events into a EVT file!");
@@ -105,28 +102,24 @@ void SaveGuiCommand::save ()
 {
     QString file_path = ApplicationContext::getInstance()->getCurrentFileContext()->getFilePathAndName();
     QString file_name = ApplicationContext::getInstance()->getCurrentFileContext()->getFileName();
-    FileSignalWriter* writer = FileSignalWriterFactory::getInstance()->getElement(file_name.mid(file_name.lastIndexOf('.')));
+    QSharedPointer<FileSignalWriter> writer = FileSignalWriterFactory::getInstance()->getHandler (file_path);
 
     bool can_save_events = false;
 
-    if (writer)
+    if (!writer.isNull())
         can_save_events = writer->supportsSavingEvents();
 
-    if (writer && can_save_events)
+    if (!writer.isNull() && can_save_events)
     {
         QSharedPointer<EventManager> event_mgr = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
-        QString error = writer->saveEventsToSignalFile(event_mgr, file_path, event_mgr->getAllPossibleEventTypes());
+        QString error = writer->saveEventsToSignalFile(event_mgr, event_mgr->getAllPossibleEventTypes());
         if (error.size())
             QMessageBox::critical (0, tr("Error"), error);
         else
             ApplicationContext::getInstance()->getCurrentFileContext()->setState(FILE_STATE_UNCHANGED);
-
-        delete writer;
     }
     else
     {
-        if (writer)
-            delete writer;
         QMessageBox::StandardButton pressed_button = QMessageBox::question (0, file_name, tr("Saving of Events is not possible to this file format! Do you want to convert this file into GDF?"),
             QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         if (pressed_button == QMessageBox::Yes)
@@ -147,13 +140,16 @@ void SaveGuiCommand::exportToGDF ()
     if (new_file_path.size() == 0)
         return;
 
-    FileSignalWriter* writer = FileSignalWriterFactory::getInstance()->getElement(".gdf");
+    QSharedPointer<FileSignalWriter> writer = FileSignalWriterFactory::getInstance()->getHandler (new_file_path);
+    if (writer.isNull())
+    {
+        QMessageBox::critical (0, tr("Error"), tr("Export failed!"));
+        return;
+    }
 
     QSharedPointer<EventManager> event_mgr = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
 
-    QString error = writer->save (event_mgr, ApplicationContext::getInstance()->getCurrentFileContext()->getFilePathAndName(), new_file_path, event_mgr->getAllPossibleEventTypes());
-
-    delete writer;
+    QString error = writer->save (event_mgr, ApplicationContext::getInstance()->getCurrentFileContext()->getFilePathAndName(), event_mgr->getAllPossibleEventTypes());
 
     if (error.size() == 0)
     {
@@ -183,15 +179,13 @@ void SaveGuiCommand::exportEvents ()
     if (new_file_path.size() == 0)
         return;
 
-    FileSignalWriter* file_signal_writer = FileSignalWriterFactory::getInstance()
-                                           ->getElement(extension);
+    QSharedPointer<FileSignalWriter> file_signal_writer = FileSignalWriterFactory::getInstance()
+                                           ->getHandler(new_file_path);
 
     qDebug() << new_file_path;
 
     file_signal_writer->save (ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager(),
-                              current_file_path,
-                              new_file_path, types);
-    delete file_signal_writer;
+                              current_file_path, types);
 }
 
 //-------------------------------------------------------------------------

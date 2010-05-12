@@ -28,39 +28,17 @@
 namespace BioSig_
 {
 
-// instance
+//-------------------------------------------------------------------------
 std::auto_ptr<FileSignalReaderFactory> FileSignalReaderFactory::instance_;
 
-// get instance
-FileSignalReaderFactory* FileSignalReaderFactory::getInstance()
+//-------------------------------------------------------------------------
+FileSignalReaderFactory* FileSignalReaderFactory::getInstance ()
 {
     if (!instance_.get())
     {
         instance_.reset(new FileSignalReaderFactory);
-
-        // register all readers
     }
     return instance_.get();
-}
-
-// get extensions
-QString FileSignalReaderFactory::getExtensions()
-{
-    QString extensions;
-    QStringList extension_list = getElementNames();
-    foreach(QString extension, extension_list)
-    {
-        if (extension.startsWith("."))
-        {
-            extensions += "*" + extension + " ";
-        }
-    }
-    if (extensions.length() > 0)
-    {
-        extensions = extensions.left(extensions.length() - 1);
-    }
-    qDebug () << "FileSignalReaderFactory::getExtensions";
-    return extensions;
 }
 
 } // namespace BioSig_

@@ -36,6 +36,7 @@
 #include <QDebug>
 #include <QTime>
 #include <QProgressDialog>
+#include <QMessageBox>
 
 #include <cmath>
 #include <cassert>
@@ -51,11 +52,8 @@ BioSigReader BioSigReader::prototype_instance_ (true);
 BioSigReader::BioSigReader() :
     basic_header_ (0),
     biosig_header_ (0),
-    read_data_(0),
-    read_data_size_(0),
     buffered_all_channels_ (false),
-    buffered_all_events_ (false),
-    is_open_ (false)
+    buffered_all_events_ (false)
 {
     qDebug () << "Constructed BioSigReader";
     // nothing to do here
@@ -65,59 +63,58 @@ BioSigReader::BioSigReader() :
 BioSigReader::BioSigReader (bool) :
        basic_header_ (0),
        biosig_header_ (0),
-       read_data_(0),
-       read_data_size_(0),
        buffered_all_channels_ (false)
 {
     qDebug () << "BioSigReader constructing prototypes";
-    FileSignalReaderFactory::getInstance()->addPrototype(".gdf", new BioSigReader ());
-    FileSignalReaderFactory::getInstance()->addPrototype(".evt", new BioSigReader ());
-    FileSignalReaderFactory::getInstance()->addPrototype(".bdf", new BioSigReader ());
-    FileSignalReaderFactory::getInstance()->addPrototype(".bkr", new BioSigReader ());
-    FileSignalReaderFactory::getInstance()->addPrototype(".cnt", new BioSigReader ());
-    FileSignalReaderFactory::getInstance()->addPrototype(".edf", new BioSigReader ());
-    FileSignalReaderFactory::getInstance()->addPrototype(".eeg", new BioSigReader ());
+    FileSignalReaderFactory::getInstance()->registerHandler ("gdf", QSharedPointer<BioSigReader>(new BioSigReader ()));
+    FileSignalReaderFactory::getInstance()->registerHandler ("evt", QSharedPointer<BioSigReader>(new BioSigReader ()));
+    FileSignalReaderFactory::getInstance()->registerHandler ("bdf", QSharedPointer<BioSigReader>(new BioSigReader ()));
+    FileSignalReaderFactory::getInstance()->registerHandler ("bkr", QSharedPointer<BioSigReader>(new BioSigReader ()));
+    FileSignalReaderFactory::getInstance()->registerHandler ("cnt", QSharedPointer<BioSigReader>(new BioSigReader ()));
+    FileSignalReaderFactory::getInstance()->registerHandler ("edf", QSharedPointer<BioSigReader>(new BioSigReader ()));
+    FileSignalReaderFactory::getInstance()->registerHandler ("eeg", QSharedPointer<BioSigReader>(new BioSigReader ()));
 
-    FileSignalReaderFactory::getInstance()->addPrototype(".acq", new BioSigReader ());	// Biopac
-    FileSignalReaderFactory::getInstance()->addPrototype(".ahdr", new BioSigReader ());	// BrainVision file format
-    FileSignalReaderFactory::getInstance()->addPrototype(".vhdr", new BioSigReader ());	// BrainVision file format
-    FileSignalReaderFactory::getInstance()->addPrototype(".scp", new BioSigReader ());	// SCP-ECG: EN1064, ISO 11073-91064
+    FileSignalReaderFactory::getInstance()->registerHandler ("acq", QSharedPointer<BioSigReader>(new BioSigReader ()));	// Biopac
+    FileSignalReaderFactory::getInstance()->registerHandler ("ahdr", QSharedPointer<BioSigReader>(new BioSigReader ()));	// BrainVision file format
+    FileSignalReaderFactory::getInstance()->registerHandler ("vhdr", QSharedPointer<BioSigReader>(new BioSigReader ()));	// BrainVision file format
+    FileSignalReaderFactory::getInstance()->registerHandler ("scp", QSharedPointer<BioSigReader>(new BioSigReader ()));	// SCP-ECG: EN1064, ISO 11073-91064
 
-    FileSignalReaderFactory::getInstance()->setDefaultPrototype (new BioSigReader ());
+    FileSignalReaderFactory::getInstance()->registerDefaultHandler (QSharedPointer<BioSigReader>(new BioSigReader ()));
 }
 
 
 //-----------------------------------------------------------------------------
 BioSigReader::~BioSigReader()
 {
-	doClose();
+    doClose();
 }
 
 //-----------------------------------------------------------------------------
-FileSignalReader* BioSigReader::clone()
+QSharedPointer<FileSignalReader> BioSigReader::createInstance (QString const& file_path)
 {
-    BioSigReader *new_instance = new BioSigReader ();
-    return new_instance;
+    QSharedPointer<BioSigReader> reader (new BioSigReader);
+    if (file_path.section('.', -1) == "evt")
+        reader->buffered_all_channels_ = true;
+    QString error = reader->open (file_path);
+    if (error.size() > 0)
+    {
+        qDebug () << error;
+        QMessageBox::critical(0, QObject::tr("Error"), error);
+        return QSharedPointer<FileSignalReader> (0);
+    }
+    else
+        return reader;
 }
 
-//-----------------------------------------------------------------------------
-void BioSigReader::close()
-{
-	doClose();
-}
 
 //-----------------------------------------------------------------------------
 void BioSigReader::doClose () const
 {
     if (biosig_header_)
     {
-        sclose(biosig_header_);
-        destructHDR(biosig_header_);
-        biosig_header_ = 0;
+        sclose (biosig_header_);
+        destructHDR (biosig_header_);
     }
-    delete[] read_data_;
-    read_data_ = 0;
-    read_data_size_ = 0;
     biosig_header_ = 0;
 }
 
@@ -139,35 +136,6 @@ QSharedPointer<DataBlock const> BioSigReader::getSignalData (ChannelID channel_i
         return channel_map_[channel_id];
     else
         return channel_map_[channel_id]->createSubBlock (start_sample, length);
-    /*
-    start_sample = floor (static_cast<float32>(start_sample) / biosig_header_->SPR);
-    start_sample *= biosig_header_->SPR;
-    length = ceil (static_cast<float32>(length) / biosig_header_->SPR);
-    length *= biosig_header_->SPR;
-
-    if (read_data_ == 0 || read_data_size_ < length * biosig_header_->NS)
-    {
-        read_data_size_ = length * biosig_header_->NS;
-        delete[] read_data_;
-        read_data_ = new biosig_data_type[read_data_size_];
-    }
-
-    memset (read_data_, 0, read_data_size_ * sizeof(double));
-    sread (read_data_, start_sample / biosig_header_->SPR,
-           length / biosig_header_->SPR,
-           biosig_header_);
-
-    std::vector<float32> raw_data (length);
-    for (unsigned index = 0; index < length; index++)
-    {
-        if (biosig_header_->FLAG.ROW_BASED_CHANNELS == 1)
-        {
-            raw_data[index] = read_data_[length + (index * channel_id)];
-        }
-        else
-            raw_data[index] = read_data_[(length * channel_id) + index];
-    }
-    return DataBlock (raw_data, biosig_header_->SampleRate);*/
 }
 
 //-----------------------------------------------------------------------------
@@ -185,35 +153,10 @@ QList<QSharedPointer<SignalEvent const> > BioSigReader::getEvents () const
 }
 
 //-----------------------------------------------------------------------------
-QString BioSigReader::open(const QString& file_name)
+QString BioSigReader::open (QString const& file_name)
 {
 
     QMutexLocker lock (&mutex_);
-    return loadFixedHeader (file_name);
-}
-
-//-----------------------------------------------------------------------------
-QString BioSigReader::open(const QString& file_name, const bool overflow_detection)
-{
-
-    QMutexLocker lock (&mutex_);
-
-    if (biosig_header_)
-    {
-        sclose(biosig_header_);
-        destructHDR(biosig_header_);
-        biosig_header_ = 0;
-    }
-
-    biosig_header_ = constructHDR(0,0);
-    biosig_header_->FLAG.UCAL = 0;
-    /* TODO:
-    - changing Overflow flag when file is already opened has no effect.
-        Solution: the overflow_detection flag must always propagate to
-        biosig_header_->FLAG.OVERFLOWDETECTION = overflow_detection;
-    */
-    biosig_header_->FLAG.OVERFLOWDETECTION = overflow_detection;
-
     return loadFixedHeader (file_name);
 }
 
@@ -227,12 +170,10 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
 
     tzset();
 
-//  VERBOSE_LEVEL=8;
-
     // set flags
     if(biosig_header_==NULL)
     {
-        biosig_header_ = constructHDR(0,0);
+        biosig_header_ = constructHDR (0,0);
         biosig_header_->FLAG.UCAL = 0;
         biosig_header_->FLAG.OVERFLOWDETECTION = 0;
     }
@@ -322,7 +263,6 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         basic_header_->addChannel(channel);
     }
 #endif
-    is_open_ = true;
     return "";
 }
 
@@ -337,13 +277,7 @@ QSharedPointer<BasicHeader> BioSigReader::getBasicHeader ()
 void BioSigReader::bufferAllChannels () const
 {
     uint32 length = basic_header_->getNumberOfSamples ();
-
-    if (read_data_ == 0 || read_data_size_ < length)
-    {
-        read_data_size_ = length;
-        delete[] read_data_;
-        read_data_ = new biosig_data_type[read_data_size_];
-    }
+    biosig_data_type* read_data = new biosig_data_type[length];
 
     biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
     QProgressDialog progress_dialog;
@@ -363,21 +297,14 @@ void BioSigReader::bufferAllChannels () const
             biosig_header_->CHANNEL[channel_id-1].OnOff = 0;
         biosig_header_->CHANNEL[channel_id].OnOff = 1;
 
-        sread (read_data_, 0,
-            length / biosig_header_->SPR,
-               biosig_header_);
+        sread (read_data, 0, length / biosig_header_->SPR, biosig_header_);
 
         QSharedPointer<std::vector<float32> > raw_data (new std::vector<float32> (length));
-//        for (unsigned index = 0; index < length; index++)
-//        {
 //            if (biosig_header_->FLAG.ROW_BASED_CHANNELS == 1)
 //            {
-//                raw_data[index] = read_data_[length + (index * channel_id)];
+//                raw_data[index] = read_data[length + (index * channel_id)];
 //            }
-//            else
-            raw_data->insert(raw_data->begin(), read_data_, read_data_+ length);
-//                (*raw_data)[index] = read_data_[(length * channel_id) + index];
-//        }
+        raw_data->insert(raw_data->begin(), read_data, read_data + length);
         QSharedPointer<DataBlock> data_block (new DataBlock (raw_data,
                                                              basic_header_->getSampleRate()));
         channel_map_[channel_id] = data_block;
@@ -389,6 +316,7 @@ void BioSigReader::bufferAllChannels () const
     buffered_all_channels_ = true;
     if (buffered_all_events_)
         doClose();
+    delete read_data;
 }
 
 //-------------------------------------------------------------------------
@@ -415,7 +343,5 @@ void BioSigReader::bufferAllEvents () const
     if (buffered_all_channels_)
         doClose();
 }
-
-
 
 }

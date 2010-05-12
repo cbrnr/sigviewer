@@ -49,22 +49,7 @@ QSharedPointer<DataBlock> DataBlock::createSubBlock (uint32 start,
     return sub_block;
 }
 
-
 //-----------------------------------------------------------------------------
-void DataBlock::setData (std::vector<float32> const &data,
-                         float32 sample_rate_per_unit)
-{
-    data_ = QSharedPointer<std::vector<float32> >(new std::vector<float32>(data));
-    start_index_ = 0;
-    length_ = data.size ();
-    sample_rate_per_unit_ = sample_rate_per_unit;
-}
-
-//-----------------------------------------------------------------------------
-//std::vector<float32> const &DataBlock::getData () const
-//{
-//    return data_;
-//}
 float32 const& DataBlock::operator[] (uint32 index) const
 {
     return data_->at(start_index_ + index);

@@ -53,12 +53,6 @@ private:
 
     //-------------------------------------------------------------------------
     QString showOpenDialog (QString const& path, QString const& extensions);
-
-    //-------------------------------------------------------------------------
-    static QSharedPointer<FileSignalReader> createAndOpenFileSignalReader
-            (QString const& file_path);
-
-
 };
 
 } // namespace BioSig_

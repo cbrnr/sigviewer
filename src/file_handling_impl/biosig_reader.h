@@ -1,5 +1,5 @@
-#ifndef CNT_READER_H_
-#define CNT_READER_H_
+#ifndef BIOSIG_READER_H_
+#define BIOSIG_READER_H_
 
 #include "../file_handling/file_signal_reader.h"
 
@@ -17,13 +17,9 @@ public:
     BioSigReader (bool prototype_instance);
 
     virtual ~BioSigReader();
-    virtual FileSignalReader* clone();
 
-    virtual QString open(const QString& file_name);
-    virtual QString open(const QString& file_name, const bool overflow_detection);
-
-    virtual bool isOpen() {return is_open_;}
-    virtual void close();
+    //-------------------------------------------------------------------------
+    QSharedPointer<FileSignalReader> createInstance (QString const& file_path);
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<DataBlock const> getSignalData (ChannelID channel_id,
@@ -37,6 +33,9 @@ public:
     virtual QSharedPointer<BasicHeader> getBasicHeader ();
 
 private:
+    //-------------------------------------------------------------------------
+    QString open (QString const& file_name);
+
     //-------------------------------------------------------------------------
     void bufferAllChannels () const;
 
@@ -58,12 +57,8 @@ private:
     mutable QMutex mutex_;
     mutable QMutex biosig_access_lock_;
     mutable HDRTYPE* biosig_header_;
-    static double const SAMPLE_RATE_TOLERANCE_;
-    mutable biosig_data_type* read_data_;
-    mutable uint32 read_data_size_;
     mutable bool buffered_all_channels_;
     mutable bool buffered_all_events_;
-    mutable bool is_open_;
     mutable QMap<ChannelID, QSharedPointer<DataBlock const> > channel_map_;
     mutable QList<QSharedPointer<SignalEvent const> > events_;
 };

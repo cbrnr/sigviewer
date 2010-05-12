@@ -16,8 +16,6 @@ EventManagerImpl::EventManagerImpl (QSharedPointer<FileSignalReader> reader)
       event_table_reader_ (ApplicationContext::getInstance()->getEventTableFileReader()),
       caller_mutex_ (new QMutex)
 {
-    if (!reader_->isOpen())
-        throw (Exception ("EventManagerImpl c'tor: reader not open"));
     QList<QSharedPointer<SignalEvent const> > signal_events = reader_->getEvents ();
     next_free_id_ = 0;
     for (int index = 0; index < signal_events.size(); index++)

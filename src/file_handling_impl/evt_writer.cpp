@@ -25,8 +25,9 @@
 #include "evt_writer.h"
 #include "../file_handling/file_signal_writer_factory.h"
 
+#include <QDebug>
+
 #include <biosig.h>
-#include <iostream>
 
 namespace BioSig_
 {
@@ -43,8 +44,16 @@ EVTWriter::EVTWriter()
 //-----------------------------------------------------------------------------
 EVTWriter::EVTWriter (bool)
 {
-    FileSignalWriterFactory::getInstance()->addPrototype(".evt", new EVTWriter);
+    FileSignalWriterFactory::getInstance()->registerHandler("evt", QSharedPointer<EVTWriter>(new EVTWriter));
 }
+
+//-----------------------------------------------------------------------------
+EVTWriter::EVTWriter (QString const& new_file_path) :
+        new_file_path_ (new_file_path)
+{
+    // nothing to do here
+}
+
 
 //-----------------------------------------------------------------------------
 EVTWriter::~EVTWriter()
@@ -52,18 +61,16 @@ EVTWriter::~EVTWriter()
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
-FileSignalWriter* EVTWriter::clone()
+
+//-------------------------------------------------------------------------
+QSharedPointer<FileSignalWriter> EVTWriter::createInstance (QString const& new_file_path)
 {
-  FileSignalWriter* new_instance = new EVTWriter;
-  new_instance->setLogStream(log_stream_);
-  return new_instance;
+  return QSharedPointer<FileSignalWriter> (new EVTWriter (new_file_path));
 }
 
 //-----------------------------------------------------------------------------
 QString EVTWriter::save(QSharedPointer<EventManager> event_manager,
                         QString const&,
-                        QString const& file_path,
                         std::set<EventType> const& types)
 {
     unsigned number_events = event_manager->getNumberOfEvents ();
@@ -100,7 +107,9 @@ QString EVTWriter::save(QSharedPointer<EventManager> event_manager,
 //        QMessageBox::critical(0, "Events not saved!!!", QString::number(error));
 
 
-    HDRTYPE *new_header = sopen (file_path.toLocal8Bit().data(), "w", header);
+    qDebug () << "write events to " << new_file_path_;
+
+    HDRTYPE *new_header = sopen (new_file_path_.toLocal8Bit().data(), "w", header);
     sclose (new_header);
     destructHDR (new_header);
 

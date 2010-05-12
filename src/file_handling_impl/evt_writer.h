@@ -21,23 +21,26 @@ public:
     EVTWriter (bool prototype_instance);
 
     //-------------------------------------------------------------------------
+    virtual QSharedPointer<FileSignalWriter> createInstance (QString const& file_path);
+
+    //-------------------------------------------------------------------------
     virtual ~EVTWriter();
 
     //-------------------------------------------------------------------------
-    virtual FileSignalWriter* clone();
-
     virtual QString saveEventsToSignalFile (QSharedPointer<EventManager>,
-                                            QString const&,
                                             std::set<EventType> const&) {return "not implemented!";}
 
     //-------------------------------------------------------------------------
     virtual QString save (QSharedPointer<EventManager> event_manager,
-                          QString const& old_file_path,
-                          QString const& file_path,
+                          QString const& source_file_path,
                           std::set<EventType> const& types);
 
 private:
+    //-------------------------------------------------------------------------
+    EVTWriter (QString const& new_file_path);
+
     static EVTWriter prototype_instance_;
+    QString new_file_path_;
 
     // not allowed
     EVTWriter(const EVTWriter& src);

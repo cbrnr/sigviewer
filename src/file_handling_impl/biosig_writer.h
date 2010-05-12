@@ -22,29 +22,31 @@ public:
     BioSigWriter (bool prototype_instance);
 
     //-------------------------------------------------------------------------
-    virtual ~BioSigWriter();
+    virtual QSharedPointer<FileSignalWriter> createInstance (QString const& file_path);
 
     //-------------------------------------------------------------------------
-    virtual FileSignalWriter* clone();
+    virtual ~BioSigWriter() {}
 
     //-------------------------------------------------------------------------
     virtual bool supportsSavingEvents () const;
 
     //-------------------------------------------------------------------------
     virtual QString saveEventsToSignalFile (QSharedPointer<EventManager>,
-                                            QString const& file_path,
                                             std::set<EventType> const& types);
 
     //-------------------------------------------------------------------------
     virtual QString save (QSharedPointer<EventManager> event_manager,
-                          QString const& old_file_path,
-                          QString const& file_path,
+                          QString const& source_file_path,
                           std::set<EventType> const& types);
 
 private:
+    //-------------------------------------------------------------------------
+    BioSigWriter (FileFormat target_type, QString new_file_path);
+
     static BioSigWriter prototype_instance_;
 
     FileFormat target_type_;
+    QString new_file_path_;
     std::set<FileFormat> file_formats_support_event_saving_;
     mutable QMutex mutex_;
 };
