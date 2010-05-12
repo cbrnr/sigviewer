@@ -26,8 +26,12 @@ private slots:
     //-------------------------------------------------------------------------
     void calculateMeanAndStandardDeviation ();
 
+    //-------------------------------------------------------------------------
+    void calculatePowerSpectrum ();
+
 private:
     static QString const MEAN_;
+    static QString const POWER_SPECTRUM_;
     static QStringList const ACTIONS_;
 
     static GuiActionFactoryRegistrator registrator_;

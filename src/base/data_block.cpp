@@ -176,7 +176,27 @@ DataBlock DataBlock::getBandpassFilteredBlock (float32 lower_hz_boundary, float3
     return band_passed_block;
 }
 
+//-----------------------------------------------------------------------------
+QSharedPointer<DataBlock const> DataBlock::createPowerSpectrum () const
+{
+    unsigned num_samples = length_;
+    double* data_in = new double[num_samples];
+    for (unsigned x = 0; x < num_samples; x++)
+        data_in[x] = data_->at(start_index_ + x);
 
+    unsigned out_length = (num_samples / 2);
+    Complex* data_out = FFTWComplex(out_length + 1);
+
+    rcfft1d forward (num_samples, data_in, data_out);
+    forward.fft0Normalized (data_in, data_out);
+
+    QSharedPointer<std::vector<float32> > spectrum_data (new std::vector<float32>);
+    for (unsigned index = 1; index < out_length + 1; index++)
+    {
+        spectrum_data->push_back (pow(data_out[index].real(),2) + pow(data_out[index].imag(), 2));
+    }
+    return QSharedPointer<DataBlock const> (new DataBlock (spectrum_data, static_cast<float32>(num_samples) / sample_rate_per_unit_));
+}
 
 //-----------------------------------------------------------------------------
 DataBlock DataBlock::calculateMean (std::list<QSharedPointer<DataBlock const> > const &data_blocks)

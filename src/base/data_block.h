@@ -70,6 +70,9 @@ public:
     DataBlock getBandpassFilteredBlock (float32 lower_hz_boundary, float32 upper_hz_boundary) const;
 
     //-------------------------------------------------------------------------
+    QSharedPointer<DataBlock const> createPowerSpectrum () const;
+
+    //-------------------------------------------------------------------------
     static DataBlock calculateMean (std::list<QSharedPointer<DataBlock const> > const &data_blocks);
 
     //-------------------------------------------------------------------------

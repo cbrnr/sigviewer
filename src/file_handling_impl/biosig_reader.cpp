@@ -305,8 +305,8 @@ void BioSigReader::bufferAllChannels () const
 //                raw_data[index] = read_data[length + (index * channel_id)];
 //            }
         raw_data->insert(raw_data->begin(), read_data, read_data + length);
-        QSharedPointer<DataBlock> data_block (new DataBlock (raw_data,
-                                                             basic_header_->getSampleRate()));
+        QSharedPointer<DataBlock const> data_block (new DataBlock (raw_data,
+                                                                   basic_header_->getSampleRate()));
         channel_map_[channel_id] = data_block;
         progress_dialog.setValue(progress_dialog.value()+1);
     }
