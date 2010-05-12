@@ -126,6 +126,8 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
     progress.setModal (true);
     progress.setLabelText (tr("Buffering channel "));
 
+    setSignalHeight (std::max<unsigned>(50, new_signal_height));
+
     for (std::set<ChannelID>::const_iterator channel = new_shown_channels.begin();
          channel != new_shown_channels.end();
          ++channel)
@@ -136,7 +138,6 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
     }
     progress.setValue (progress.maximum ());
 
-    setSignalHeight (new_signal_height);
 
     for (Int2SignalGraphicsItemPtrMap::const_iterator channel = channel2signal_item_.begin();
          channel != channel2signal_item_.end();

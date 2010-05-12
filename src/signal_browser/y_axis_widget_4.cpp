@@ -6,9 +6,9 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QProgressDialog>
+#include <QDebug>
 
 #include <cmath>
-#include <iostream>
 
 namespace BioSig_
 {
@@ -112,6 +112,14 @@ void YAxisWidget::paintEvent(QPaintEvent*)
     painter.drawPixmap (0, y, *pixmap_, 0, y_start_, pixmap_->width(), pixmap_drawing_height_);
 }
 
+//-----------------------------------------------------------------------------
+void YAxisWidget::showEvent (QShowEvent*)
+{
+    repaintPixmap();
+    update ();
+}
+
+
 //-------------------------------------------------------------------
 void YAxisWidget::repaintPixmap (int32 channel)
 {
@@ -131,10 +139,14 @@ void YAxisWidget::repaintPixmap (int32 channel)
         {
             delete pixmap_;
             pixmap_ = new QPixmap (w, pixmap_drawing_height_);
+            qDebug () << "YAxisWidget::repaintPixmap new pixmap " << w << "x" << pixmap_drawing_height_;
         }
     }
     else
+    {
         pixmap_ = new QPixmap (w, pixmap_drawing_height_);
+        qDebug () << "YAxisWidget::repaintPixmap new pixmap " << w << "x" << pixmap_drawing_height_;
+    }
 
     QPainter painter (pixmap_);
     painter.setPen(Qt::black);

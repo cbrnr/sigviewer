@@ -32,6 +32,7 @@ class SignalGraphicsItem;
 class EventGraphicsItem;
 class EventEditingWidget;
 class EventCreationWidget;
+class AdaptBrowserViewWidget;
 
 // signal browser view
 class SignalBrowserView : public QFrame
@@ -108,6 +109,7 @@ private:
     LabelWidget* label_widget_;
     EventEditingWidget* event_editing_widget_;
     EventCreationWidget* event_creation_widget_;
+    AdaptBrowserViewWidget* adapt_browser_view_widget_;
     QWidget* current_info_widget_;
     QWidget* empty_widget_;
 

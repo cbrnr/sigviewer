@@ -33,7 +33,8 @@ public slots:
     void updateAllChannels ();
 
 private:
-    virtual void paintEvent(QPaintEvent* event = 0);
+    virtual void paintEvent (QPaintEvent* event = 0);
+    virtual void showEvent (QShowEvent* event = 0);
     void repaintPixmap (int32 channel = -1);
 
     QPixmap* pixmap_;

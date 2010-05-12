@@ -7,6 +7,7 @@
 #include "../label_widget.h"
 #include "event_creation_widget.h"
 #include "event_editing_widget.h"
+#include "adapt_browser_view_widget.h"
 
 #include <QGraphicsLineItem>
 #include <QGridLayout>
@@ -79,6 +80,10 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
         event_editing_widget_->connect (signal_browser_model.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent const>)), SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent const>)));
     }
 
+    adapt_browser_view_widget_ = new AdaptBrowserViewWidget;
+    x_axis_widget_->connect (adapt_browser_view_widget_, SIGNAL(xAxisVisibilityChanged(bool)), SLOT(setVisible(bool)));
+    y_axis_widget_->connect (adapt_browser_view_widget_, SIGNAL(yAxisVisibilityChanged(bool)), SLOT(setVisible(bool)));
+    label_widget_->connect (adapt_browser_view_widget_, SIGNAL(labelsVisibilityChanged(bool)), SLOT(setVisible(bool)));
 
     connect(horizontal_scrollbar_, SIGNAL(valueChanged(int)),
             graphics_view_->horizontalScrollBar(), SLOT(setValue(int)));
@@ -350,6 +355,10 @@ void SignalBrowserView::setMode (SignalVisualisationMode mode)
     case MODE_HAND:
         graphics_view_->setDragMode(QGraphicsView::ScrollHandDrag);
         current_info_widget_ = empty_widget_;
+        break;
+    case MODE_SHIFT_SIGNAL:
+        current_info_widget_ = adapt_browser_view_widget_;
+        graphics_view_->setDragMode(QGraphicsView::NoDrag);
         break;
     default:
         current_info_widget_ = empty_widget_;

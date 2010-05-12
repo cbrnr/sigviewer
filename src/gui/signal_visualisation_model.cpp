@@ -13,7 +13,8 @@ SignalVisualisationModel::SignalVisualisationModel (float32 sample_rate,
       mode_ (MODE_HAND),
       event_creation_type_ (1),
       shown_event_types_ (shown_types),
-      signal_height_ (10)
+      signal_height_ (10),
+      scale_mode_ (MIN_TO_MAX)
 {
     // nothing to do here
 }
