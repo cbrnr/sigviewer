@@ -91,7 +91,7 @@ QSharedPointer<EventTableFileReader> ApplicationContext::getEventTableFileReader
 }
 
 //-------------------------------------------------------------------------
-QSharedPointer<EventColorManager> ApplicationContext::getEventColorManager () const
+QSharedPointer<ColorManager> ApplicationContext::getEventColorManager () const
 {
     return impl_->getEventColorManager ();
 }

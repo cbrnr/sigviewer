@@ -1,13 +1,13 @@
 #include "application_context_impl.h"
 #include "file_handling_impl/event_table_file_reader.h"
-#include "event_color_manager.h"
+#include "gui/color_manager.h"
 
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
 ApplicationContextImpl::ApplicationContextImpl ()
-    : event_color_manager_ (new EventColorManager ()),
+    : event_color_manager_ (new ColorManager ()),
       event_table_file_reader_ (new EventTableFileReader ())
 {
     event_table_file_reader_->load (":/eventcodes.txt");
@@ -37,7 +37,7 @@ QSharedPointer<EventTableFileReader> ApplicationContextImpl::getEventTableFileRe
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<EventColorManager> ApplicationContextImpl::getEventColorManager () const
+QSharedPointer<ColorManager> ApplicationContextImpl::getEventColorManager () const
 {
     return event_color_manager_;
 }

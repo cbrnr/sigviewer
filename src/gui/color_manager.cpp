@@ -1,8 +1,6 @@
-// event_color_manager.cpp
-
-#include "event_color_manager.h"
-#include "file_handling_impl/event_table_file_reader.h"
-#include "application_context.h"
+#include "color_manager.h"
+#include "../file_handling_impl/event_table_file_reader.h"
+#include "../application_context.h"
 
 #include <QSettings>
 #include <QDebug>
@@ -11,20 +9,20 @@ namespace BioSig_
 {
 
 // constructor
-EventColorManager::EventColorManager ()
+ColorManager::ColorManager ()
 {
     qDebug() << "constructing event color manager";
 
 }
 
-EventColorManager::~EventColorManager ()
+ColorManager::~ColorManager ()
 {
     qDebug() << "destructing event color manager";
 }
 
 
 // get event color
-const QColor& EventColorManager::getEventColor (EventType type) const
+const QColor& ColorManager::getEventColor (EventType type) const
 {
     EventColorMap::const_iterator it = event_type2color_.find(type);
     if (it == event_type2color_.end())
@@ -35,13 +33,13 @@ const QColor& EventColorManager::getEventColor (EventType type) const
 }
 
 // set event color
-void EventColorManager::setEventColor (EventType type, const QColor& color)
+void ColorManager::setEventColor (EventType type, const QColor& color)
 {
     event_type2color_[type] = color;
 }
 
 // load settings
-void EventColorManager::loadSettings()
+void ColorManager::loadSettings()
 {
     // get event types from event table reader
     QColor alpha_color(0, 0, 0, 50);
@@ -70,7 +68,7 @@ void EventColorManager::loadSettings()
 }
 
 // save settings
-void EventColorManager::saveSettings()
+void ColorManager::saveSettings()
 {
     qDebug() << "color manager save settings";
     QSettings settings("SigViewer");

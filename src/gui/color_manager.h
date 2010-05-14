@@ -1,5 +1,3 @@
-// event_color_manager.h
-
 #ifndef EVENT_COLOR_MANAGER
 #define EVENT_COLOR_MANAGER
 
@@ -11,12 +9,12 @@
 namespace BioSig_
 {
 
-// event color manager
-class EventColorManager
+// color manager
+class ColorManager
 {
 public:
-    EventColorManager ();
-    ~EventColorManager ();
+    ColorManager ();
+    ~ColorManager ();
 
     void loadSettings();
     void saveSettings();
@@ -28,8 +26,8 @@ private:
     typedef QMap<EventType, QColor> EventColorMap;
 
     // not allowed
-    EventColorManager(const EventColorManager& src);
-    const EventColorManager& operator=(const EventColorManager& src);
+    ColorManager(const ColorManager& src);
+    const ColorManager& operator=(const ColorManager& src);
 
     EventColorMap event_type2color_;
 };

@@ -10,7 +10,7 @@
 #include "../base/math_utils.h"
 #include "../signal_browser_mouse_handling.h"
 #include "../application_context.h"
-#include "../event_color_manager.h"
+#include "../gui/color_manager.h"
 #include "../gui/gui_action_factory.h"
 
 #include <QStyleOptionGraphicsItem>

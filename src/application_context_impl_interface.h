@@ -1,7 +1,7 @@
 #ifndef APPLICATION_CONTEXT_IMPL_INTERFACE_H
 #define APPLICATION_CONTEXT_IMPL_INTERFACE_H
 
-#include "event_color_manager.h"
+#include "gui/color_manager.h"
 #include "file_handling_impl/event_table_file_reader.h"
 #include "gui/main_window_model.h"
 
@@ -22,7 +22,7 @@ public:
     virtual QSharedPointer<EventTableFileReader> getEventTableFileReader () const = 0;
 
     //-------------------------------------------------------------------------
-    virtual QSharedPointer<EventColorManager> getEventColorManager () const = 0;
+    virtual QSharedPointer<ColorManager> getEventColorManager () const = 0;
 
 };
 

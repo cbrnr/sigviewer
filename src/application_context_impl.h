@@ -25,12 +25,12 @@ public:
     QSharedPointer<EventTableFileReader> getEventTableFileReader () const;
 
     //-------------------------------------------------------------------------
-    QSharedPointer<EventColorManager> getEventColorManager () const;
+    QSharedPointer<ColorManager> getEventColorManager () const;
 
     //-------------------------------------------------------------------------
     void loadSettings ();
 private:
-    QSharedPointer<EventColorManager> event_color_manager_;
+    QSharedPointer<ColorManager> event_color_manager_;
     QSharedPointer<EventTableFileReader> event_table_file_reader_;
     QSharedPointer<MainWindowModel> main_window_model_;
 };

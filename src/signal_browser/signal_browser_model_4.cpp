@@ -4,7 +4,7 @@
 #include "../file_handling/channel_manager.h"
 #include "signal_browser_view.h"
 #include "signal_graphics_item.h"
-#include "../event_color_manager.h"
+#include "../gui/color_manager.h"
 #include "../base/signal_event.h"
 #include "../base/math_utils.h"
 

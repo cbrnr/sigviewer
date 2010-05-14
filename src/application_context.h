@@ -2,7 +2,7 @@
 #define APPLICATION_CONTEXT_H
 
 #include "base/application_states.h"
-#include "event_color_manager.h"
+#include "gui/color_manager.h"
 #include "file_context.h"
 #include "tab_context.h"
 #include "application_context_impl_interface.h"
@@ -60,7 +60,7 @@ public:
     QSharedPointer<EventTableFileReader> getEventTableFileReader () const;
 
     //-------------------------------------------------------------------------
-    QSharedPointer<EventColorManager> getEventColorManager () const;
+    QSharedPointer<ColorManager> getEventColorManager () const;
 
 public slots:
     void setState (ApplicationState state);

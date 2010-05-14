@@ -1,5 +1,5 @@
 #include "event_types_selection_dialog.h"
-#include "../../event_color_manager.h"
+#include "../../gui/color_manager.h"
 #include "../../application_context.h"
 
 #include <QPushButton>
