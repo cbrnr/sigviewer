@@ -490,7 +490,6 @@ void SignalBrowserView::createLayout()
     layout_->addWidget(horizontal_scrollbar_, 4, 2);
     layout_->addWidget(label_widget_, 2, 3);
     layout_->addWidget(vertical_scrollbar_, 2, 4);
-    layout_->setColumnStretch(3, 1);
 }
 
 //-----------------------------------------------------------------------------

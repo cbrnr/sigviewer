@@ -28,6 +28,8 @@ signals:
 public slots:
 
 private:
+    virtual void showEvent (QShowEvent* event);
+
     Ui::AdaptBrowserViewWidget ui_;
 };
 

@@ -20,9 +20,9 @@
 #include <QObject>
 #include <QMenu>
 #include <QPainter>
+#include <QDebug>
 
 #include <cmath>
-#include <iostream>
 
 namespace BioSig_
 {
@@ -120,10 +120,8 @@ void SignalGraphicsItem::zoomOut()
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::autoScale (ScaleMode auto_zoom_type)
 {
-    float64 min = minimum_;
-    float64 max = maximum_;
-    float64 abs_max = ((max < 0) ? (-max) : (max));
-    float64 abs_min = ((min < 0) ? (-min) : (min));
+    float64 abs_max = fabs(maximum_);
+    float64 abs_min = fabs(minimum_);
 
     if (auto_zoom_type == MAX_TO_MAX)
     {
@@ -134,7 +132,7 @@ void SignalGraphicsItem::autoScale (ScaleMode auto_zoom_type)
     }
 
     float64 new_y_zoom = height_ / (abs_max + abs_min);
-    float64 new_y_offset = ((abs_max - abs_min) / 2) * y_zoom_;
+    float64 new_y_offset = ((abs_max - abs_min) / 2) * new_y_zoom;
     if (y_zoom_ != new_y_zoom ||
         y_offset_ != new_y_offset)
     {
