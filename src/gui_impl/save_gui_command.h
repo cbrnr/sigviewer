@@ -29,6 +29,9 @@ public slots:
     void save ();
 
     //-------------------------------------------------------------------------
+    void exportToPNG ();
+
+    //-------------------------------------------------------------------------
     void exportToGDF ();
 
     //-------------------------------------------------------------------------
@@ -45,6 +48,7 @@ private:
 
     static QString const SAVE_AS_;
     static QString const SAVE_;
+    static QString const EXPORT_TO_PNG_;
     static QString const EXPORT_TO_GDF_;
     static QString const EXPORT_EVENTS_;
     static QStringList const ACTIONS_;

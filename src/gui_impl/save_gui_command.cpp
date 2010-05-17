@@ -13,6 +13,7 @@ namespace BioSig_
 
 QString const SaveGuiCommand::SAVE_AS_ = "Save as...";
 QString const SaveGuiCommand::SAVE_ = "Save";
+QString const SaveGuiCommand::EXPORT_TO_PNG_ = "Export to PNG...";
 QString const SaveGuiCommand::EXPORT_TO_GDF_ = "Export to GDF...";
 QString const SaveGuiCommand::EXPORT_EVENTS_ = "Export Events...";
 
@@ -21,7 +22,8 @@ QStringList const SaveGuiCommand::ACTIONS_ = QStringList() <<
                                              SaveGuiCommand::SAVE_AS_ <<
                                              SaveGuiCommand::SAVE_ <<
                                              SaveGuiCommand::EXPORT_TO_GDF_ <<
-                                             SaveGuiCommand::EXPORT_EVENTS_;
+                                             SaveGuiCommand::EXPORT_EVENTS_ <<
+                                             SaveGuiCommand::EXPORT_TO_PNG_;
 
 
 
@@ -126,6 +128,13 @@ void SaveGuiCommand::save ()
             exportToGDF ();
     }
 }
+
+//-----------------------------------------------------------------------------
+void SaveGuiCommand::exportToPNG ()
+{
+
+}
+
 
 //-----------------------------------------------------------------------------
 void SaveGuiCommand::exportToGDF ()

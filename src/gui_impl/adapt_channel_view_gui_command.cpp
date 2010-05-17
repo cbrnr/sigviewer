@@ -69,7 +69,7 @@ void AdaptChannelViewGuiCommand::selectShownChannels ()
     if (previous_shown_channels != new_shown_channels)
     {
         sv_model->setShownChannels (new_shown_channels);
-        sv_model->updateLayout ();
+        sv_model->update ();
     }
 }
 
@@ -132,27 +132,27 @@ void AdaptChannelViewGuiCommand::hide ()
     std::set<ChannelID> shown_channels = currentVisModel()->getShownChannels();
     shown_channels.erase (channel);
     currentVisModel()->setShownChannels (shown_channels);
-    currentVisModel()->updateLayout();
+    currentVisModel()->update();
 }
 
 //-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::autoScaleAll ()
 {
-    currentVisModel()->autoScaleChannel(UNDEFINED_CHANNEL);
+    currentVisModel()->scaleChannel(UNDEFINED_CHANNEL);
 }
 
 //-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::setScaleModeZeroCentered ()
 {
     currentVisModel()->setAutoScaleMode (MAX_TO_MAX);
-    currentVisModel()->autoScaleChannel(UNDEFINED_CHANNEL);
+    currentVisModel()->scaleChannel(UNDEFINED_CHANNEL);
 }
 
 //-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::setScaleModeZeroFitted ()
 {
     currentVisModel()->setAutoScaleMode (MIN_TO_MAX);
-    currentVisModel()->autoScaleChannel(UNDEFINED_CHANNEL);
+    currentVisModel()->scaleChannel(UNDEFINED_CHANNEL);
 }
 
 

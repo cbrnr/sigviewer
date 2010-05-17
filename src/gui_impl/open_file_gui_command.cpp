@@ -90,7 +90,7 @@ void OpenFileGuiCommand::openFile (QString file_path)
             ApplicationContext::getInstance()->getMainWindowModel()->createSignalVisualisationOfFile (file_context);
 
     signal_visualisation_model->setShownChannels (shown_channels);
-    signal_visualisation_model->updateLayout();
+    signal_visualisation_model->update();
     ApplicationContext::getInstance()->addFileContext (file_context);
     ApplicationContext::getInstance()->setState (APP_STATE_FILE_OPEN);
 }

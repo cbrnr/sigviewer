@@ -27,8 +27,7 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
                                        QSharedPointer<ChannelManager> channel_manager,
                                        QSharedPointer<TabContext> tab_context,
                                        QSharedPointer<ColorManager const> color_manager)
-: SignalVisualisationModel (channel_manager->getSampleRate(),
-                            std::set<EventType> ()),
+: SignalVisualisationModel (std::set<EventType> ()),
   channel_manager_ (channel_manager),
   event_manager_ (event_manager),
   tab_context_ (tab_context),
@@ -244,7 +243,7 @@ void SignalBrowserModel::zoomOutAll()
 }
 
 // update layout
-void SignalBrowserModel::updateLayout()
+void SignalBrowserModel::update()
 {
     int32 width = channel_manager_->getNumberSamples()
                   * getPixelPerSample();
@@ -284,7 +283,7 @@ void SignalBrowserModel::updateLayout()
 
     x_grid_pixel_intervall_ =  pixel_per_sec * x_grid_intervall;
     signal_browser_view_->setXAxisIntervall (x_grid_pixel_intervall_);
-    emit pixelPerSampleChanged (getPixelPerSample (), getSampleRate());
+    emit pixelPerSampleChanged (getPixelPerSample (), channel_manager_->getSampleRate());
     signal_browser_view_->update();
     signal_browser_view_->updateWidgets();
 }
@@ -314,7 +313,7 @@ void SignalBrowserModel::scaleChannel (ChannelID id, float32 lower_value, float3
 }
 
 //-------------------------------------------------------------------------
-void SignalBrowserModel::autoScaleChannel (ChannelID id)
+void SignalBrowserModel::scaleChannel (ChannelID id)
 {
     if (id == UNDEFINED_CHANNEL)
     {

@@ -385,7 +385,7 @@ void SignalBrowserView::graphicsSceneResized (QResizeEvent* event)
 
     signal_height = event->size().height() / signals_per_pagesize;
     model_->setSignalHeight (signal_height);
-    model_->updateLayout ();
+    model_->update ();
 }
 
 //-----------------------------------------------------------------------------

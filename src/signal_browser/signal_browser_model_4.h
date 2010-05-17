@@ -42,13 +42,13 @@ public:
     virtual ~SignalBrowserModel() {}
 
     //-------------------------------------------------------------------------
-    virtual void updateLayout ();
+    virtual void update ();
 
     //-------------------------------------------------------------------------
     virtual void scaleChannel (ChannelID id, float32 lower_value, float32 upper_value);
 
     //-------------------------------------------------------------------------
-    virtual void autoScaleChannel (ChannelID id);
+    virtual void scaleChannel (ChannelID id);
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<ChannelManager const> getChannelManager () const;

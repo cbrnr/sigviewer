@@ -6,10 +6,8 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-SignalVisualisationModel::SignalVisualisationModel (float32 sample_rate,
-                                                    std::set<EventType> const& shown_types)
+SignalVisualisationModel::SignalVisualisationModel (std::set<EventType> const& shown_types)
     : pixel_per_sample_ (1),
-      sample_rate_ (sample_rate),
       mode_ (MODE_HAND),
       event_creation_type_ (1),
       shown_event_types_ (shown_types),
@@ -37,19 +35,13 @@ SignalVisualisationMode SignalVisualisationModel::getMode () const
 void SignalVisualisationModel::setPixelPerSample (float32 pixel_per_sample)
 {
     pixel_per_sample_ = pixel_per_sample;
-    emit pixelPerSampleChanged (pixel_per_sample_, sample_rate_);
+    emit pixelPerSampleChanged (pixel_per_sample_, getChannelManager()->getSampleRate());
 }
 
 //-----------------------------------------------------------------------------
 float32 SignalVisualisationModel::getPixelPerSample () const
 {
     return pixel_per_sample_;
-}
-
-//-----------------------------------------------------------------------------
-float32 SignalVisualisationModel::getSampleRate () const
-{
-    return sample_rate_;
 }
 
 //-------------------------------------------------------------------------

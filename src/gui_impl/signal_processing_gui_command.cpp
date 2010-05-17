@@ -81,7 +81,7 @@ void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation ()
             ApplicationContext::getInstance()->getMainWindowModel()->createSignalVisualisation (processed_channel_manager);
 
     signal_visualisation_model->setShownChannels (channels);
-    signal_visualisation_model->updateLayout();
+    signal_visualisation_model->update();
 }
 
 
@@ -125,7 +125,7 @@ void SignalProcessingGuiCommand::calculatePowerSpectrum ()
             ApplicationContext::getInstance()->getMainWindowModel()->createSignalVisualisation (processed_channel_manager);
 
     signal_visualisation_model->setShownChannels (channels);
-    signal_visualisation_model->updateLayout();
+    signal_visualisation_model->update();
 }
 
 }

@@ -30,24 +30,33 @@ class SignalVisualisationModel : public QObject
 {
     Q_OBJECT
 public:
-
+    //-------------------------------------------------------------------------
+    /// virtual destructor
     virtual ~SignalVisualisationModel () {}
 
+    //-------------------------------------------------------------------------
     virtual std::set<ChannelID> getShownChannels () const = 0;
+
+    //-------------------------------------------------------------------------
     virtual void setShownChannels (std::set<ChannelID> const& shown_channels) = 0;
 
+    //-------------------------------------------------------------------------
     void setMode (SignalVisualisationMode mode);
+
+    //-------------------------------------------------------------------------
     SignalVisualisationMode getMode () const;
 
+    //-------------------------------------------------------------------------
     void setPixelPerSample (float32 pixel_per_sample);
+
+    //-------------------------------------------------------------------------
     float32 getPixelPerSample () const;
-    float32 getSampleRate () const;
 
     //-------------------------------------------------------------------------
     virtual void scaleChannel (ChannelID id, float32 lower_value, float32 upper_value) = 0;
 
     //-------------------------------------------------------------------------
-    virtual void autoScaleChannel (ChannelID id) = 0;
+    virtual void scaleChannel (ChannelID id) = 0;
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<ChannelManager const> getChannelManager () const = 0;
@@ -105,7 +114,8 @@ public:
     //-------------------------------------------------------------------------
     ScaleMode getAutoScaleMode () const;
 
-    virtual void updateLayout () = 0;
+    //-------------------------------------------------------------------------
+    virtual void update () = 0;
 
 public slots:
     void setActualEventCreationType (EventType type);
@@ -117,12 +127,11 @@ signals:
     void modeChanged (SignalVisualisationMode mode);
 
 protected:
-    SignalVisualisationModel (float32 sample_rate, std::set<EventType> const& shown_types);
+    SignalVisualisationModel (std::set<EventType> const& shown_types);
     virtual void shownEventTypesChangedImpl () = 0;
 
 private:
     float32 pixel_per_sample_;
-    float32 sample_rate_;
     SignalVisualisationMode mode_;
     EventType event_creation_type_;
     std::set<EventType> shown_event_types_;

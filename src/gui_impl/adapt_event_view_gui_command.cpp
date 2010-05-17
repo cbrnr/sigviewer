@@ -89,7 +89,7 @@ void AdaptEventViewGuiCommand::setShownEvents ()
     std::set<EventType> new_shown_types = GuiHelper::selectEventTypes (shown_types, true);
     if (shown_types != new_shown_types)
         currentVisModel()->setShownEventTypes (new_shown_types);
-    currentVisModel()->updateLayout ();
+    currentVisModel()->update ();
 }
 
 
@@ -114,7 +114,7 @@ void AdaptEventViewGuiCommand::fitViewToEvent ()
     float32 pixel_per_sample = desired_pixel_per_sample;
 
     currentVisModel()->setPixelPerSample (pixel_per_sample);
-    currentVisModel()->updateLayout ();
+    currentVisModel()->update ();
     currentVisModel()->goToSample (event->getPosition ());
 }
 
