@@ -78,6 +78,12 @@ public:
     virtual void goToSample (unsigned sample) = 0;
 
     //-------------------------------------------------------------------------
+    virtual ChannelID getSelectedChannel () const;
+
+    //-------------------------------------------------------------------------
+    virtual void selectChannel (ChannelID channel);
+
+    //-------------------------------------------------------------------------
     /// @return the id of the currently selected signal event
     virtual EventID getSelectedEvent () const;
 
@@ -122,6 +128,7 @@ private:
     std::set<EventType> shown_event_types_;
     unsigned signal_height_;
     ScaleMode scale_mode_;
+    ChannelID selected_channel_;
 };
 
 

@@ -5,47 +5,53 @@
 
 #include "../../base/user_types.h"
 #include "../../file_handling/channel_manager.h"
+#include "../../gui/color_manager.h"
 
 #include "ui_channel_dialog.h"
 
 #include <QDialog>
 #include <QSharedPointer>
 
-class QListWidget;
-class QPushButton;
-class QCheckBox;
-class QComboBox;
-class QDoubleSpinBox;
-
 namespace BioSig_
 {
 
-// channel selection dialog
+//-----------------------------------------------------------------------------
 class ChannelSelectionDialog : public QDialog
 {
     Q_OBJECT
 public:
     ChannelSelectionDialog (QSharedPointer<ChannelManager const> channel_manager,
                             QString const& file_name,
+                            QSharedPointer<ColorManager> color_manager,
                             QWidget* parent = 0);
 
-    bool isSelected(uint32 channel_nr);
-    void setSelected(uint32 channel_nr, bool selected);
+    bool isSelected (ChannelID channel_id);
+    void setSelected (ChannelID channel_id, bool selected);
 
 private slots:
    void on_unselect_all_button__clicked ();
    void on_select_all_button__clicked ();
-   void on_list_widget__itemSelectionChanged();
+   void on_reset_colors_button__clicked ();
+   void on_channel_table__cellClicked (int row, int column);
+   void on_channel_table__cellChanged (int row, int column);
 
 private:
-    //-------------------------------------------------------------------------
+    void updateColor (int row, QColor const& color);
+
+   //-------------------------------------------------------------------------
     /// disabled
     ChannelSelectionDialog();
     ChannelSelectionDialog(const ChannelSelectionDialog&);
     const ChannelSelectionDialog& operator=(const ChannelSelectionDialog&);
 
     QSharedPointer<ChannelManager const> channel_manager_;
+    QSharedPointer<ColorManager> color_manager_;
     Ui::ChannelDialog ui_;
+
+    static int const VISIBLE_INDEX_ = 0;
+    static int const LABEL_INDEX_ = 0;
+    static int const COLOR_INDEX_ = 1;
+    static int const ID_INDEX_ = 2;
 };
 
 } // namespace BioSig_

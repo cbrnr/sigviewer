@@ -50,7 +50,8 @@ unsigned EventContextMenu::getNumberOfEvents () const
 
 
 //-------------------------------------------------------------------------
-void EventContextMenu::finaliseAndShowContextMenu (QGraphicsSceneContextMenuEvent* context_event)
+void EventContextMenu::finaliseAndShowContextMenu (QGraphicsSceneContextMenuEvent* context_event,
+                                                   QMenu* channel_menu)
 {
     QVector<EventID>::iterator it = event_ids_.begin();
     if (event_ids_.size() > 1)
@@ -81,6 +82,12 @@ void EventContextMenu::finaliseAndShowContextMenu (QGraphicsSceneContextMenuEven
 
     event_ids_.clear();
     QObject::connect(this, SIGNAL(hovered(QAction*)), this, SLOT(selectEvent(QAction*)));
+    if (channel_menu)
+    {
+        addSeparator ();
+        addMenu (channel_menu);
+    }
+
     exec (context_event->screenPos());
 }
 

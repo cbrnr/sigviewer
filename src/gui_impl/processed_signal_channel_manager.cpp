@@ -67,17 +67,5 @@ float32 ProcessedSignalChannelManager::getSampleRate () const
     return sample_rate_;
 }
 
-//-------------------------------------------------------------------------
-float64 ProcessedSignalChannelManager::getMinValue (ChannelID channel_id) const
-{
-    return channels_[channel_id]->getMin ();
-}
-
-//-------------------------------------------------------------------------
-float64 ProcessedSignalChannelManager::getMaxValue (ChannelID channel_id) const
-{
-    return channels_[channel_id]->getMax ();
-}
-
 }
 

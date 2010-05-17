@@ -8,6 +8,10 @@
 namespace BioSig_
 {
 
+QColor const ColorManager::DEFAULT_EVENT_COLOR_ = QColor (200, 0, 0, 25);
+QColor const ColorManager::DEFAULT_CHANNEL_COLOR_ = Qt::darkBlue;
+
+
 // constructor
 ColorManager::ColorManager ()
 {
@@ -20,25 +24,54 @@ ColorManager::~ColorManager ()
     qDebug() << "destructing event color manager";
 }
 
+//-----------------------------------------------------------------------------
+QColor ColorManager::getChannelColor (ChannelID channel_id) const
+{
+    if (channel_color_map_.contains (channel_id))
+        return channel_color_map_[channel_id];
+    else
+        return DEFAULT_CHANNEL_COLOR_;
+}
 
-// get event color
-const QColor& ColorManager::getEventColor (EventType type) const
+//-----------------------------------------------------------------------------
+void ColorManager::setChannelColor (ChannelID channel_id, QColor const& color)
+{
+    channel_color_map_[channel_id] = color;
+}
+
+
+//-----------------------------------------------------------------------------
+QColor ColorManager::getEventColor (EventType type) const
 {
     EventColorMap::const_iterator it = event_type2color_.find(type);
     if (it == event_type2color_.end())
     {
-        it = event_type2color_.find(-1);
+        return DEFAULT_EVENT_COLOR_;
     }
-    return *it;
+    else
+        return *it;
 }
 
-// set event color
+//-----------------------------------------------------------------------------
 void ColorManager::setEventColor (EventType type, const QColor& color)
 {
     event_type2color_[type] = color;
 }
 
-// load settings
+//-----------------------------------------------------------------------------
+bool ColorManager::isDark (QColor const& color)
+{
+    double alpha_factor = color.alpha() / 255.0;
+    double tmp = 255 * (1 - alpha_factor);
+    float64 y = 0.299 * (tmp + color.red() * alpha_factor)+
+                0.587 * (tmp + color.green() * alpha_factor) +
+                0.114 * (tmp + color.blue() * alpha_factor);
+
+    return y < 127;
+}
+
+
+//-----------------------------------------------------------------------------
 void ColorManager::loadSettings()
 {
     // get event types from event table reader
@@ -53,7 +86,7 @@ void ColorManager::loadSettings()
     }
 
     QSettings settings("SigViewer");
-    settings.beginGroup("EventColorManager");
+    settings.beginGroup("ColorManager");
     int size = settings.beginReadArray("event");
     for (int i = 0; i < size; i++)
     {
@@ -64,15 +97,25 @@ void ColorManager::loadSettings()
         event_type2color_[id] = color;
     }
     settings.endArray();
+
+    size = settings.beginReadArray("channel");
+    for (int i = 0; i < size; i++)
+    {
+        settings.setArrayIndex(i);
+        ChannelID id = settings.value("id").toUInt ();
+        QColor color = settings.value("color").toString();
+        channel_color_map_[id] = color;
+    }
+    settings.endArray();
     settings.endGroup();
 }
 
-// save settings
+//-----------------------------------------------------------------------------
 void ColorManager::saveSettings()
 {
     qDebug() << "color manager save settings";
     QSettings settings("SigViewer");
-    settings.beginGroup("EventColorManager");
+    settings.beginGroup("ColorManager");
     settings.beginWriteArray("event");
     int32 i = 0;
     for (EventColorMap::const_iterator it = event_type2color_.begin();
@@ -89,6 +132,17 @@ void ColorManager::saveSettings()
         settings.setValue("alpha", it->alpha());
     }
     settings.endArray();
+
+    i = 0;
+    settings.beginWriteArray("channel");
+    foreach (ChannelID id, channel_color_map_.keys ())
+    {
+        settings.setArrayIndex (i++);
+        settings.setValue ("id", id);
+        settings.setValue ("color", channel_color_map_[id]);
+    }
+    settings.endArray();
+
     settings.endGroup();
 }
 

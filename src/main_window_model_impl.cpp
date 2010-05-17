@@ -211,7 +211,8 @@ int MainWindowModelImpl::createSignalVisualisationImpl (QSharedPointer<ChannelMa
 
     QSharedPointer<SignalBrowserModel> model (new SignalBrowserModel (event_manager,
                                                                       channel_manager,
-                                                                      tab_context));
+                                                                      tab_context,
+                                                                      ApplicationContext::getInstance()->getEventColorManager()));
 
     SignalBrowserView* view = new SignalBrowserView (model, event_manager, tab_context, main_window_->rect(), tab_widget_);
 

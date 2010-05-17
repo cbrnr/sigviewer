@@ -30,6 +30,15 @@ private slots:
     void selectShownChannels ();
 
     //-------------------------------------------------------------------------
+    void changeColor ();
+
+    //-------------------------------------------------------------------------
+    void scale ();
+
+    //-------------------------------------------------------------------------
+    void hide ();
+
+    //-------------------------------------------------------------------------
     void autoScaleAll ();
 
     //-------------------------------------------------------------------------
@@ -40,6 +49,9 @@ private slots:
 
 private:
     static QString const CHANNELS_;
+    static QString const CHANGE_COLOR_;
+    static QString const SCALE_;
+    static QString const HIDE_;
     static QString const AUTO_SCALE_ALL_;
     static QString const SET_AUTO_SCALE_MAX_TO_MAX_;
     static QString const SET_AUTO_SCALE_MIN_TO_MAX_;

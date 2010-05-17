@@ -18,18 +18,6 @@
 namespace BioSig_
 {
 
-// is dark
-inline bool isDark(const QColor& color)
-{
-    double alpha_factor = color.alpha() / 255.0;
-    double tmp = 255 * (1 - alpha_factor);
-    float64 y = 0.299 * (tmp + color.red() * alpha_factor)+
-                0.587 * (tmp + color.green() * alpha_factor) +
-                0.114 * (tmp + color.blue() * alpha_factor);
-
-    return y < 127;
-}
-
 //-----------------------------------------------------------------------------
 EventTypesSelectionDialog::EventTypesSelectionDialog (QString const& caption,
                                                       QSharedPointer<EventManager const> event_manager,
@@ -94,6 +82,7 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
                                   Qt::ItemIsTristate |
                                   Qt::ItemIsEnabled);
             group_item->setText (NAME_COLUMN_INDEX_, group_name);
+            group_item->setExpanded (true);
             group_id2list_item[*group_it] = group_item;
         }
     }
@@ -131,14 +120,14 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
         color.setAlpha (255);
 
         event_item->setBackgroundColor (COLOR_COLUMN_INDEX_, color);
-        event_item->setTextColor (COLOR_COLUMN_INDEX_, isDark(color) ? Qt::white : Qt::black);
+        event_item->setTextColor (COLOR_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
         event_item->setTextAlignment (COLOR_COLUMN_INDEX_, Qt::AlignHCenter);
         event_item->setText (COLOR_COLUMN_INDEX_, color.name());
 
         color = ApplicationContext::getInstance()->getEventColorManager()->getEventColor(*event_type_it);
 
         event_item->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
-        event_item->setTextColor(ALPHA_COLUMN_INDEX_, isDark(color) ? Qt::white : Qt::black);
+        event_item->setTextColor(ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
         event_item->setTextAlignment(ALPHA_COLUMN_INDEX_, Qt::AlignHCenter);
         event_item->setText(ALPHA_COLUMN_INDEX_, QString("%1").arg(color.alpha()));
 
@@ -242,6 +231,9 @@ void EventTypesSelectionDialog::handleSelected (QTreeWidgetItem* item)
 //-------------------------------------------------------------------------
 void EventTypesSelectionDialog::handleColor (QTreeWidgetItem* item)
 {
+    if (item->text(ID_COLUMN_INDEX_).size() == 0)
+        return;
+
     QColor color = item->backgroundColor (COLOR_COLUMN_INDEX_);
 
     color = QColorDialog::getColor (color, this);
@@ -249,18 +241,21 @@ void EventTypesSelectionDialog::handleColor (QTreeWidgetItem* item)
         return;
 
     item->setBackgroundColor (COLOR_COLUMN_INDEX_, color);
-    item->setTextColor (COLOR_COLUMN_INDEX_, isDark(color) ? Qt::white : Qt::black);
+    item->setTextColor (COLOR_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
     item->setText (COLOR_COLUMN_INDEX_, QString("%1").arg(color.name()));
 
     color.setAlpha (item->text(ALPHA_COLUMN_INDEX_).toInt());
     item->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
-    item->setTextColor (ALPHA_COLUMN_INDEX_, isDark(color) ? Qt::white : Qt::black);
+    item->setTextColor (ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
     item->setText (ALPHA_COLUMN_INDEX_, QString::number (color.alpha()));
 }
 
 //-------------------------------------------------------------------------
 void EventTypesSelectionDialog::handleAlpha (QTreeWidgetItem* item)
 {
+    if (item->text(ID_COLUMN_INDEX_).size() == 0)
+        return;
+
     QColor color = item->backgroundColor (ALPHA_COLUMN_INDEX_);
 
     color.setAlpha (QInputDialog::getInteger(this, tr("Alpha"), tr("Enter new Value"),
@@ -268,7 +263,7 @@ void EventTypesSelectionDialog::handleAlpha (QTreeWidgetItem* item)
 
 
     item->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
-    item->setTextColor (ALPHA_COLUMN_INDEX_, isDark(color) ? Qt::white : Qt::black);
+    item->setTextColor (ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
     item->setText (ALPHA_COLUMN_INDEX_, QString::number (color.alpha()));
 }
 

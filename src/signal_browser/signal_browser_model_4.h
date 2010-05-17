@@ -8,6 +8,7 @@
 #include "../file_handling/event_manager.h"
 #include "../gui/signal_visualisation_modes.h"
 #include "../gui/signal_visualisation_model.h"
+#include "../gui/color_manager.h"
 #include "event_graphics_item.h"
 
 #include <QObject>
@@ -34,7 +35,8 @@ public:
     //-------------------------------------------------------------------------
     SignalBrowserModel(QSharedPointer<EventManager> event_manager,
                        QSharedPointer<ChannelManager> channel_manager,
-                       QSharedPointer<TabContext> tab_context);
+                       QSharedPointer<TabContext> tab_context,
+                       QSharedPointer<ColorManager const> color_manager);
 
     //-------------------------------------------------------------------------
     virtual ~SignalBrowserModel() {}
@@ -141,6 +143,7 @@ private:
     QSharedPointer<ChannelManager> channel_manager_;
     QSharedPointer<EventManager> event_manager_;
     QSharedPointer<TabContext> tab_context_;
+    QSharedPointer<ColorManager const> color_manager_;
     SignalBrowserView* signal_browser_view_;
 
     typedef std::map<int32, SignalGraphicsItem*> Int2SignalGraphicsItemPtrMap;

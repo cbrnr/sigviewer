@@ -6,6 +6,7 @@
 #include "../base/signal_event.h"
 #include "../command_executer.h"
 #include "../file_handling/event_manager.h"
+#include "../gui/color_manager.h"
 
 #include <QGraphicsItem>
 #include <QObject>
@@ -32,7 +33,8 @@ public:
     EventGraphicsItem(SignalBrowserModel& model,
                       QSharedPointer<SignalEvent const> signal_event,
                       QSharedPointer<EventManager> event_manager,
-                      QSharedPointer<CommandExecuter> command_executer);
+                      QSharedPointer<CommandExecuter> command_executer,
+                      QSharedPointer<ColorManager const> color_manager);
 
     virtual ~EventGraphicsItem ();
 
@@ -41,7 +43,8 @@ public:
     void setSelected (bool selected);
     QSharedPointer<SignalEvent const> getSignalEvent () const;
 
-    static bool displayContextMenu (QGraphicsSceneContextMenuEvent * event);
+    static bool displayContextMenu (QGraphicsSceneContextMenuEvent* event,
+                                    QMenu* channel_menu);
     static bool displaySelectionMenu (QGraphicsSceneMouseEvent* event);
 
 
@@ -102,6 +105,7 @@ private:
     int32 width_;
     bool is_selected_;
     QSharedPointer<SignalEvent const> signal_event_;
+    QSharedPointer<ColorManager const> color_manager_;
 
     static int move_mouse_range_;
     static QMutex event_handling_mutex_;

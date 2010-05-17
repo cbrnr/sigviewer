@@ -5,6 +5,7 @@
 #include "../command_executer.h"
 #include "../file_handling/event_manager.h"
 #include "../file_handling/channel_manager.h"
+#include "../gui/color_manager.h"
 
 #include <QGraphicsItem>
 #include <QSharedPointer>
@@ -29,6 +30,7 @@ public:
     SignalGraphicsItem(QSharedPointer<EventManager> event_manager,
                        QSharedPointer<CommandExecuter> command_executor,
                        QSharedPointer<ChannelManager> channel_manager,
+                       QSharedPointer<ColorManager const> color_manager,
                        ChannelID id,
                        SignalBrowserModel& model);
 
@@ -46,6 +48,7 @@ public:
 
     void zoomIn();
     void zoomOut();
+    void scale (double lower_value, double upper_value);
     void autoScale (ScaleMode auto_zoom_type);
 
 public slots:
@@ -58,6 +61,8 @@ signals:
     void updatedYGrid (ChannelID channel_id);
 
 private:
+    void scaleImpl (double abs_min, double abs_max);
+
     virtual void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
     virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );
     virtual void mousePressEvent ( QGraphicsSceneMouseEvent * event );
@@ -70,6 +75,7 @@ private:
     QSharedPointer<EventManager> event_manager_;
     QSharedPointer<CommandExecuter> command_executor_;
     QSharedPointer<ChannelManager> channel_manager_;
+    QSharedPointer<ColorManager const> color_manager_;
     ChannelID id_;
     SignalBrowserModel& signal_browser_model_;
 

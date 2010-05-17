@@ -6,9 +6,6 @@
 #include "../base/signal_event.h"
 
 #include "../signal_browser_mouse_handling.h"
-#include "../application_context.h"
-#include "../gui/color_manager.h"
-
 
 #include <QRectF>
 #include <QStyleOptionGraphicsItem>
@@ -35,13 +32,15 @@ EventContextMenu* EventGraphicsItem::context_menu_ = 0;
 EventGraphicsItem::EventGraphicsItem (SignalBrowserModel& model,
                                       QSharedPointer<SignalEvent const> signal_event,
                                       QSharedPointer<EventManager> event_manager,
-                                      QSharedPointer<CommandExecuter> command_executer)
+                                      QSharedPointer<CommandExecuter> command_executer,
+                                      QSharedPointer<ColorManager const> color_manager)
 : signal_browser_model_ (model),
   event_manager_ (event_manager),
   command_executer_ (command_executer),
   state_ (STATE_NONE),
   is_selected_ (false),
-  signal_event_ (signal_event)
+  signal_event_ (signal_event),
+  color_manager_ (color_manager)
 {
     // setAcceptHoverEvents (true);
 }
@@ -74,7 +73,8 @@ QSharedPointer<SignalEvent const> EventGraphicsItem::getSignalEvent () const
 }
 
 //-----------------------------------------------------------------------------
-bool EventGraphicsItem::displayContextMenu (QGraphicsSceneContextMenuEvent * event)
+bool EventGraphicsItem::displayContextMenu (QGraphicsSceneContextMenuEvent* event,
+                                            QMenu* channel_menu)
 {
     context_menu_mutex_.lock();
     bool menu_shown = false;
@@ -82,7 +82,7 @@ bool EventGraphicsItem::displayContextMenu (QGraphicsSceneContextMenuEvent * eve
         menu_shown = false;
     else if (context_menu_->getNumberOfEvents())
     {
-        context_menu_->finaliseAndShowContextMenu (event);
+        context_menu_->finaliseAndShowContextMenu (event, channel_menu);
         menu_shown = true;
     }
     context_menu_mutex_.unlock();
@@ -129,7 +129,7 @@ void EventGraphicsItem::updateToSignalEvent ()
     }
 
 
-    color_ = ApplicationContext::getInstance()->getEventColorManager()->getEventColor(signal_event_->getType());
+    color_ = color_manager_->getEventColor(signal_event_->getType());
 
     /// FIXXME: REMOVE MAGIC NUMBER
     setZValue (5 + signal_event_->getType() / 100000.0);

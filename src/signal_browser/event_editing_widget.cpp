@@ -19,19 +19,10 @@ EventEditingWidget::EventEditingWidget (QSharedPointer<EventManager> event_manag
     self_updating_ (false)
 {
     ui_.setupUi (this);
-    previous_action_ = GuiActionFactory::getInstance()->getQAction("Goto and Select Previous Event");
-    next_action_ = GuiActionFactory::getInstance()->getQAction("Goto and Select Next Event");
-    fit_view_action_ = GuiActionFactory::getInstance()->getQAction("Fit View to Selected Event");
 
-    ui_.previous_button_->setIcon (previous_action_->icon ());
-    previous_action_->connect (ui_.previous_button_, SIGNAL(pressed()), SLOT(trigger()));
-
-    ui_.next_button_->setIcon (next_action_->icon ());
-    next_action_->connect (ui_.next_button_, SIGNAL(pressed()), SLOT(trigger()));
-
-    ui_.fit_button_->setIcon (fit_view_action_->icon ());
-    fit_view_action_->connect (ui_.fit_button_, SIGNAL(pressed()), SLOT(trigger()));
-
+    ui_.previous_button_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Goto and Select Previous Event"));
+    ui_.next_button_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Goto and Select Next Event"));
+    ui_.fit_button_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Fit View to Selected Event"));
 
     unsigned precision = 0;
     for (float32 sample_rate = event_manager_->getSampleRate(); sample_rate > 10; sample_rate /= 10)
@@ -72,9 +63,9 @@ void EventEditingWidget::updateSelectedEventInfo (QSharedPointer<SignalEvent con
                                            event_manager_->getSampleRate ());
         ui_.begin_spinbox_->setValue (selected_signal_event_->getPositionInSec ());
         bool has_no_previous_event = event_manager_->getPreviousEventOfSameType (selected_signal_event->getId ())
-                                  == UNDEFINED_EVENT_ID;
+                                     == UNDEFINED_EVENT_ID;
         bool has_no_next_event = event_manager_->getNextEventOfSameType (selected_signal_event->getId ())
-                              == UNDEFINED_EVENT_ID;
+                                 == UNDEFINED_EVENT_ID;
         ui_.next_button_->setDisabled (has_no_next_event);
         ui_.previous_button_->setDisabled (has_no_previous_event);
     }

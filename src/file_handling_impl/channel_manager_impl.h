@@ -45,13 +45,6 @@ public:
     //-------------------------------------------------------------------------
     virtual float32 getSampleRate () const;
 
-    //-------------------------------------------------------------------------
-    virtual float64 getMinValue (ChannelID channel_id) const;
-
-    //-------------------------------------------------------------------------
-    virtual float64 getMaxValue (ChannelID channel_id) const;
-
-
 private:
     QSharedPointer<FileSignalReader> reader_;
 };

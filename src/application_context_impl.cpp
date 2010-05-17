@@ -2,6 +2,8 @@
 #include "file_handling_impl/event_table_file_reader.h"
 #include "gui/color_manager.h"
 
+#include <QDebug>
+
 namespace BioSig_
 {
 
@@ -39,6 +41,7 @@ QSharedPointer<EventTableFileReader> ApplicationContextImpl::getEventTableFileRe
 //-----------------------------------------------------------------------------
 QSharedPointer<ColorManager> ApplicationContextImpl::getEventColorManager () const
 {
+    qDebug () << "ApplicationContextImpl::getEventColorManager event_color_manager_.data = " << event_color_manager_.data();
     return event_color_manager_;
 }
 

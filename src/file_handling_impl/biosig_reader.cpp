@@ -286,7 +286,12 @@ void BioSigReader::bufferAllChannels () const
     progress_dialog.show ();
     QTime timer;
     timer.start();
-
+    QTime alloc_timer;
+    int alloc_time = 0;
+    QTime copy_timer;
+    int copy_time = 0;
+    QTime sread_timer;
+    int sread_time = 0;
     for (ChannelID channel_id_sub = 0; channel_id_sub <  basic_header_->getNumberChannels(); ++channel_id_sub)
         biosig_header_->CHANNEL[channel_id_sub].OnOff = 0;
 
@@ -297,14 +302,20 @@ void BioSigReader::bufferAllChannels () const
             biosig_header_->CHANNEL[channel_id-1].OnOff = 0;
         biosig_header_->CHANNEL[channel_id].OnOff = 1;
 
+        sread_timer.restart();
         sread (read_data, 0, length / biosig_header_->SPR, biosig_header_);
+        sread_time += sread_timer.elapsed();
 
+        alloc_timer.restart ();
         QSharedPointer<std::vector<float32> > raw_data (new std::vector<float32> (length));
+        alloc_time += alloc_timer.elapsed ();
 //            if (biosig_header_->FLAG.ROW_BASED_CHANNELS == 1)
 //            {
 //                raw_data[index] = read_data[length + (index * channel_id)];
 //            }
+        copy_timer.restart();
         raw_data->insert(raw_data->begin(), read_data, read_data + length);
+        copy_time += copy_timer.elapsed();
         QSharedPointer<DataBlock const> data_block (new DataBlock (raw_data,
                                                                    basic_header_->getSampleRate()));
         channel_map_[channel_id] = data_block;
@@ -312,6 +323,9 @@ void BioSigReader::bufferAllChannels () const
     }
     progress_dialog.setValue(progress_dialog.maximum());
     qDebug() << "buffering time = " << timer.elapsed();
+    qDebug() << "sread time = " << sread_time;
+    qDebug() << "alloc time = " << alloc_time;
+    qDebug() << "copy time = " << copy_time;
 
     buffered_all_channels_ = true;
     if (buffered_all_events_)

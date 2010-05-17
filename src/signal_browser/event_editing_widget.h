@@ -39,13 +39,8 @@ private:
     void setSelfUpdating (bool self_updating);
     bool isSelfUpdating ();
 
-
     QSharedPointer<EventManager> event_manager_;
     QSharedPointer<CommandExecuter> command_executer_;
-
-    QAction* previous_action_;
-    QAction* next_action_;
-    QAction* fit_view_action_;
 
     QSharedPointer<SignalEvent const> selected_signal_event_;
 

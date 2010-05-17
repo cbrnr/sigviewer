@@ -63,9 +63,12 @@ BioSigWriter::BioSigWriter (FileFormat target_type, QString new_file_path) :
 
 
 //-------------------------------------------------------------------------
-QSharedPointer<FileSignalWriter> BioSigWriter::createInstance (QString const&)
+QSharedPointer<FileSignalWriter> BioSigWriter::createInstance (QString const&
+                                                               file_path)
 {
-    return QSharedPointer<FileSignalWriter>(new BioSigWriter (target_type_));
+    QSharedPointer<BioSigWriter> writer (new BioSigWriter (target_type_));
+    writer->new_file_path_ = file_path;
+    return writer;
 }
 
 //-----------------------------------------------------------------------------
@@ -89,6 +92,7 @@ QString BioSigWriter::saveEventsToSignalFile (QSharedPointer<EventManager> event
     foreach (EventType type, types)
         events.append(event_manager->getEvents(type));
 
+    qDebug () << "BioSigWriter::saveEventsToSignalFile to " << new_file_path_;
     header = sopen (new_file_path_.toStdString().c_str(), "r", header);
     header->EVENT.SampleRate = event_manager->getSampleRate();
     header->EVENT.N = number_events;

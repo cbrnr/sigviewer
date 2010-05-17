@@ -17,17 +17,12 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget(QWidget *parent) :
     if (!connect (ui_.labels_checkbox_, SIGNAL(toggled(bool)), SIGNAL(labelsVisibilityChanged(bool))))
         throw (Exception ("connect failed: labels_checkbox_"));
 
-    QAction* zero_centered = GuiActionFactory::getInstance()->getQAction("Zero Line Centered");
-    if (!zero_centered->connect (ui_.zero_centered_, SIGNAL(clicked()), SLOT(trigger())))
-        throw (Exception ("connect failed: zero_centered_"));
-
-    QAction* zero_fitted = GuiActionFactory::getInstance()->getQAction("Zero Line Fitted");
-    if (!zero_fitted->connect (ui_.zero_fitted_, SIGNAL(clicked()), SLOT(trigger())))
-        throw (Exception ("connect failed: zero_fitted_"));
+    ui_.zero_centered_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Zero Line Centered"));
+    ui_.zero_fitted_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Zero Line Fitted"));
 }
 
 //-------------------------------------------------------------------------
-void AdaptBrowserViewWidget::showEvent (QShowEvent* event)
+void AdaptBrowserViewWidget::showEvent (QShowEvent*)
 {
 }
 

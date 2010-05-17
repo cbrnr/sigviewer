@@ -3,10 +3,10 @@
 
 #include "../base/user_types.h"
 #include "../base/data_block.h"
-#include "../base/signal_channel.h"
 
 #include <QSharedPointer>
 #include <set>
+#include <map>
 
 namespace BioSig_
 {
@@ -49,10 +49,27 @@ public:
     virtual float32 getSampleRate () const = 0;
 
     //-------------------------------------------------------------------------
-    virtual float64 getMinValue (ChannelID channel_id) const = 0;
+    float64 getMinValue (std::set<ChannelID> const& channels) const;
 
     //-------------------------------------------------------------------------
-    virtual float64 getMaxValue (ChannelID channel_id) const = 0;
+    float64 getMaxValue (std::set<ChannelID> const& channels) const;
+
+    //-------------------------------------------------------------------------
+    float64 getMinValue (ChannelID channel_id) const;
+
+    //-------------------------------------------------------------------------
+    float64 getMaxValue (ChannelID channel_id) const;
+
+protected:
+    ChannelManager () : min_max_initialized_ (false) {}
+
+private:
+    //-------------------------------------------------------------------------
+    void initMinMax () const;
+
+    mutable bool min_max_initialized_;
+    mutable std::map<ChannelID, float64> max_values_;
+    mutable std::map<ChannelID, float64> min_values_;
 };
 
 } // namespace BioSig_

@@ -14,7 +14,8 @@ SignalVisualisationModel::SignalVisualisationModel (float32 sample_rate,
       event_creation_type_ (1),
       shown_event_types_ (shown_types),
       signal_height_ (10),
-      scale_mode_ (MIN_TO_MAX)
+      scale_mode_ (MIN_TO_MAX),
+      selected_channel_ (UNDEFINED_CHANNEL)
 {
     // nothing to do here
 }
@@ -68,6 +69,19 @@ void SignalVisualisationModel::setSignalHeight (unsigned height)
     }
     emit signalHeightChanged (signal_height_);
 }
+
+//-------------------------------------------------------------------------
+ChannelID SignalVisualisationModel::getSelectedChannel () const
+{
+    return selected_channel_;
+}
+
+//-------------------------------------------------------------------------
+void SignalVisualisationModel::selectChannel (ChannelID channel)
+{
+    selected_channel_ = channel;
+}
+
 
 //-----------------------------------------------------------------------------
 EventID SignalVisualisationModel::getSelectedEvent () const

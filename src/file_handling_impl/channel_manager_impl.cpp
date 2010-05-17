@@ -60,24 +60,4 @@ float32 ChannelManagerImpl::getSampleRate () const
     return reader_->getBasicHeader()->getSampleRate();
 }
 
-//-----------------------------------------------------------------------------
-float64 ChannelManagerImpl::getMinValue (ChannelID channel_id) const
-{
-    QSharedPointer<DataBlock const> channel_data = reader_->getSignalData (channel_id, 0,
-                                                    reader_->getBasicHeader()->getNumberOfSamples());
-
-    return channel_data->getMin();
-}
-
-//-----------------------------------------------------------------------------
-float64 ChannelManagerImpl::getMaxValue (ChannelID channel_id) const
-{
-    QSharedPointer<DataBlock const> channel_data = reader_->getSignalData (channel_id, 0,
-                                                    reader_->getBasicHeader()->getNumberOfSamples());
-
-    return channel_data->getMax();
-}
-
-
-
 }

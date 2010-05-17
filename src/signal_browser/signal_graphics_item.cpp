@@ -9,7 +9,6 @@
 #include "../base/signal_channel.h"
 #include "../base/math_utils.h"
 #include "../signal_browser_mouse_handling.h"
-#include "../application_context.h"
 #include "../gui/color_manager.h"
 #include "../gui/gui_action_factory.h"
 
@@ -35,11 +34,13 @@ float64 SignalGraphicsItem::prefered_pixel_per_sample_ = 1.0;
 SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<EventManager> event_manager,
                                         QSharedPointer<CommandExecuter> command_executor,
                                         QSharedPointer<ChannelManager> channel_manager,
+                                        QSharedPointer<ColorManager const> color_manager,
                                         ChannelID id,
                                         SignalBrowserModel& model)
 : event_manager_ (event_manager),
   command_executor_ (command_executor),
   channel_manager_ (channel_manager),
+  color_manager_ (color_manager),
   id_ (id),
   signal_browser_model_(model),
   minimum_ (channel_manager_->getMinValue (id_)),
@@ -118,8 +119,22 @@ void SignalGraphicsItem::zoomOut()
 }
 
 //-----------------------------------------------------------------------------
+void SignalGraphicsItem::scale (double lower_value, double upper_value)
+{
+    minimum_ = lower_value;
+    maximum_ = upper_value;
+    float64 abs_max = fabs(upper_value);
+    float64 abs_min = fabs(lower_value);
+
+    scaleImpl (abs_min, abs_max);
+}
+
+
+//-----------------------------------------------------------------------------
 void SignalGraphicsItem::autoScale (ScaleMode auto_zoom_type)
 {
+    minimum_ = channel_manager_->getMinValue (id_);
+    maximum_ = channel_manager_->getMaxValue (id_);
     float64 abs_max = fabs(maximum_);
     float64 abs_min = fabs(minimum_);
 
@@ -130,7 +145,12 @@ void SignalGraphicsItem::autoScale (ScaleMode auto_zoom_type)
         else
             abs_max = abs_min;
     }
+    scaleImpl (abs_min, abs_max);
+}
 
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::scaleImpl (double abs_min, double abs_max)
+{
     float64 new_y_zoom = height_ / (abs_max + abs_min);
     float64 new_y_offset = ((abs_max - abs_min) / 2) * new_y_zoom;
     if (y_zoom_ != new_y_zoom ||
@@ -183,7 +203,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     painter->translate (0, height_ / 2.0f);  
     if (draw_y_grid_)
         drawYGrid (painter, option);
-    painter->setPen(Qt::darkBlue);
+    painter->setPen (color_manager_->getChannelColor (id_));
 
     for (unsigned index = 0;
          index < data_block->size() - 1;
@@ -297,7 +317,7 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
                                                                             signal_browser_model_.getActualEventCreationType(),
                                                                             event_manager_->getSampleRate(),
                                                                             id_));
-            new_event_color_ = ApplicationContext::getInstance()->getEventColorManager()->getEventColor(signal_browser_model_.getActualEventCreationType());
+            new_event_color_ = color_manager_->getEventColor(signal_browser_model_.getActualEventCreationType());
             new_signal_event_reference_x_ = sample_cleaned_pos;
             emit mouseMoving (true);
             break;
@@ -332,16 +352,18 @@ void SignalGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent* event)
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event)
 {
-    if (!EventGraphicsItem::displayContextMenu(event))
+    signal_browser_model_.selectChannel (id_);
+    QMenu* context_menu = new QMenu (channel_manager_->getChannelLabel(id_));
+    context_menu->addAction(GuiActionFactory::getInstance()->getQAction("Change Color..."));
+    context_menu->addAction(GuiActionFactory::getInstance()->getQAction("Scale..."));
+    if (signal_browser_model_.getShownChannels().size() > 1)
     {
-        QMenu context_menu;
-        context_menu.addSeparator();
-        context_menu.addAction(GuiActionFactory::getInstance()->getQAction("Auto Scale All"));
-        QMenu* scale_menu = context_menu.addMenu(tr("Auto Scaling Mode"));
-        scale_menu->addAction(GuiActionFactory::getInstance()->getQAction("Zero Line Centered"));
-        scale_menu->addAction(GuiActionFactory::getInstance()->getQAction("Zero Line Fitted"));
-        context_menu.exec(event->screenPos());
+        context_menu->addSeparator ();
+        context_menu->addAction(GuiActionFactory::getInstance()->getQAction("Hide Channel"));
     }
+
+    if (!EventGraphicsItem::displayContextMenu (event, context_menu))
+        context_menu->exec(event->screenPos());
     else
         event->accept();
 }

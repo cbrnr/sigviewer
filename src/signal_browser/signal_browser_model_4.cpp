@@ -25,12 +25,14 @@ namespace BioSig_
 //-----------------------------------------------------------------------------
 SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manager,
                                        QSharedPointer<ChannelManager> channel_manager,
-                                       QSharedPointer<TabContext> tab_context)
+                                       QSharedPointer<TabContext> tab_context,
+                                       QSharedPointer<ColorManager const> color_manager)
 : SignalVisualisationModel (channel_manager->getSampleRate(),
                             std::set<EventType> ()),
   channel_manager_ (channel_manager),
   event_manager_ (event_manager),
   tab_context_ (tab_context),
+  color_manager_ (color_manager),
   signal_browser_view_ (0),
   selected_event_item_ (0),
   signal_spacing_(1),
@@ -52,7 +54,8 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
                        *this,
                        event_manager_->getEvent (*event_id_iter),
                        event_manager_,
-                       tab_context_);
+                       tab_context_,
+                       color_manager_);
            }
        }
     }
@@ -152,6 +155,7 @@ void SignalBrowserModel::addChannel (ChannelID channel_id)
         = new SignalGraphicsItem (event_manager_,
                                   tab_context_,
                                   channel_manager_,
+                                  color_manager_,
                                   channel_id,
                                   *this);
 
@@ -286,9 +290,27 @@ void SignalBrowserModel::updateLayout()
 }
 
 //-------------------------------------------------------------------------
-void SignalBrowserModel::scaleChannel (ChannelID id, float32, float32)
+void SignalBrowserModel::scaleChannel (ChannelID id, float32 lower_value, float32 upper_value)
 {
-    channel2signal_item_[id]->autoScale (getAutoScaleMode());
+    if (id == UNDEFINED_CHANNEL)
+    {
+        QProgressDialog progress;
+        progress.setMaximum (channel2signal_item_.size());
+        progress.setMinimum (0);
+        progress.setModal (true);
+        progress.setLabelText (tr("Scaling..."));
+        progress.show ();
+        for (Int2SignalGraphicsItemPtrMap::iterator it =
+             channel2signal_item_.begin(); it != channel2signal_item_.end();
+            ++it)
+        {
+            it->second->scale (lower_value, upper_value);
+            progress.setValue (progress.value() + 1);
+        }
+        progress.setValue (progress.maximum ());
+    }
+    else
+        channel2signal_item_[id]->scale (lower_value, upper_value);
 }
 
 //-------------------------------------------------------------------------
@@ -483,7 +505,7 @@ void SignalBrowserModel::addEventItem (QSharedPointer<SignalEvent const> event)
 {
     EventGraphicsItem* event_item = new EventGraphicsItem(
             *this, event, event_manager_,
-            tab_context_);
+            tab_context_, color_manager_);
 
     id2event_item_[event->getId()] = event_item;
     signal_browser_view_->addEventGraphicsItem(event_item);

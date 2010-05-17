@@ -156,7 +156,7 @@ std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager const> channel
                                     QString const& file_name,
                                     QSharedPointer<SignalVisualisationModel> vis_model)
 {
-    ChannelSelectionDialog channel_dialog (channel_manager, file_name);
+    ChannelSelectionDialog channel_dialog (channel_manager, file_name, ApplicationContext::getInstance()->getEventColorManager());
     std::set<ChannelID> pre_selected_channels;
     if (!vis_model.isNull())
         pre_selected_channels = vis_model->getShownChannels ();
