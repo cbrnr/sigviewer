@@ -4,7 +4,7 @@
 #include "event_graphics_item.h"
 #include "y_axis_widget_4.h"
 #include "x_axis_widget_4.h"
-#include "../label_widget.h"
+#include "label_widget.h"
 #include "event_creation_widget.h"
 #include "event_editing_widget.h"
 #include "adapt_browser_view_widget.h"

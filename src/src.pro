@@ -42,16 +42,14 @@ include(file_handling/file_handling.pri)
 include(gui/gui.pri)
 include(gui_impl/gui_impl.pri)
 include(editing_commands/editing_commands.pri)
-HEADERS += label_widget.h \
-    main_window.h \
+HEADERS += main_window.h \
     main_window_model_impl.h \
     signal_browser_mouse_handling.h \
     application_context_impl.h \
     file_context.h \
     tab_context.h \
     command_executer.h
-SOURCES += label_widget.cpp \
-    main_window.cpp \
+SOURCES += main_window.cpp \
     main_window_model_impl.cpp \
     signal_browser_mouse_handling.cpp \
     main/sigviewer.cpp \

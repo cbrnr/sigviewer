@@ -1,9 +1,9 @@
 // label_widget.cpp
 
 #include "label_widget.h"
-#include "signal_browser/signal_browser_view.h"
+#include "signal_browser_view.h"
 
-#include <math.h>
+#include <cmath>
 
 #include <QPalette>
 #include <QPainter>
