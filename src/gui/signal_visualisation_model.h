@@ -66,6 +66,9 @@ public:
     virtual QSharedPointer<EventManager const> getEventManager () const = 0;
 
     //-------------------------------------------------------------------------
+    virtual QSharedPointer<EventManager> getEventManager () = 0;
+
+    //-------------------------------------------------------------------------
     unsigned getSignalHeight () const;
 
     //-------------------------------------------------------------------------

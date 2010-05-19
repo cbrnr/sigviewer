@@ -84,13 +84,15 @@ QString BioSigWriter::saveEventsToSignalFile (QSharedPointer<EventManager> event
     if (file_formats_support_event_saving_.count(target_type_) == 0)
         return QObject::tr("Can't write events to that file that file type!");
 
-    unsigned number_events = event_manager->getNumberOfEvents ();
-
-    HDRTYPE* header = constructHDR (0, number_events);
 
     QList<EventID> events;
     foreach (EventType type, types)
         events.append(event_manager->getEvents(type));
+
+    unsigned number_events = events.size();
+    qDebug () << "number_events = " <<number_events;
+    qDebug () << "event_manager->getNumberOfEvents() = " << event_manager->getNumberOfEvents();
+    HDRTYPE* header = constructHDR (0, number_events);
 
     qDebug () << "BioSigWriter::saveEventsToSignalFile to " << new_file_path_;
     header = sopen (new_file_path_.toStdString().c_str(), "r", header);

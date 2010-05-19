@@ -1,4 +1,4 @@
-#include "application_context.h"
+#include "application_context_impl.h"
 #include "base/exception.h"
 
 #include "main_window_model_impl.h"
@@ -8,50 +8,55 @@
 namespace BioSig_
 {
 
-ApplicationContext* ApplicationContext::instance_ = 0;
+QSharedPointer<ApplicationContextImpl> ApplicationContextImpl::instance_;
 
-//-----------------------------------------------------------------------------
-ApplicationContext* ApplicationContext::getInstance ()
+//-------------------------------------------------------------------------
+QSharedPointer<ApplicationContext> ApplicationContextImpl::getContext ()
 {
-    if (!instance_)
-        instance_ = new ApplicationContext;
-
     return instance_;
 }
 
-//-------------------------------------------------------------------------
-void ApplicationContext::init ()
+//-----------------------------------------------------------------------------
+ApplicationContextImpl* ApplicationContextImpl::getInstance ()
 {
-    if (!instance_)
-        instance_ = new ApplicationContext;
+    if (instance_.isNull ())
+        instance_ = QSharedPointer<ApplicationContextImpl> (new ApplicationContextImpl);
+
+    return instance_.data ();
+}
+
+//-------------------------------------------------------------------------
+void ApplicationContextImpl::init ()
+{
+    if (instance_.isNull())
+        getInstance();
 
     instance_->color_manager_ = QSharedPointer<ColorManager> (new ColorManager);
-    instance_->main_window_model_ = QSharedPointer<MainWindowModel> (new MainWindowModelImpl);
+    instance_->main_window_model_ = QSharedPointer<MainWindowModel> (new MainWindowModelImpl (instance_));
     instance_->setState (APP_STATE_NO_FILE_OPEN);
 }
 
 //-------------------------------------------------------------------------
-void ApplicationContext::cleanup ()
+void ApplicationContextImpl::cleanup ()
 {
-    delete instance_;
-    instance_ = 0;
+    instance_.clear();
 }
 
 
 //-----------------------------------------------------------------------------
-ApplicationContext::~ApplicationContext ()
+ApplicationContextImpl::~ApplicationContextImpl ()
 {
-    qDebug () << "deleting ApplicationContext";
+    qDebug () << "deleting ApplicationContextImpl";
 }
 
 //-------------------------------------------------------------------------
-QSharedPointer<FileContext> ApplicationContext::getCurrentFileContext () const
+QSharedPointer<FileContext> ApplicationContextImpl::getCurrentFileContext ()
 {
     return current_file_context_;
 }
 
 //-------------------------------------------------------------------------
-void ApplicationContext::setCurrentTabContext (QSharedPointer<TabContext> tab_context)
+void ApplicationContextImpl::setCurrentTabContext (QSharedPointer<TabContext> tab_context)
 {
     if (!current_tab_context_.isNull())
         current_tab_context_->disconnect (this);
@@ -63,47 +68,43 @@ void ApplicationContext::setCurrentTabContext (QSharedPointer<TabContext> tab_co
 }
 
 //-------------------------------------------------------------------------
-QSharedPointer<CommandExecuter> ApplicationContext::getCurrentCommandExecuter ()
+QSharedPointer<CommandExecuter> ApplicationContextImpl::getCurrentCommandExecuter ()
 {
     return current_tab_context_;
 }
 
 //-------------------------------------------------------------------------
-void ApplicationContext::addFileContext (QSharedPointer<FileContext>file_context)
+void ApplicationContextImpl::addFileContext (QSharedPointer<FileContext>file_context)
 {
     current_file_context_ = file_context;
     if (!connect (current_file_context_.data(), SIGNAL(stateChanged(FileState)), SIGNAL(currentFileStateChanged(FileState))))
         throw (Exception ("ApplicationContext::addFileContext faild to connect stateChanged(FileState)"));
+    setState (APP_STATE_FILE_OPEN);
 }
 
 //-------------------------------------------------------------------------
-void ApplicationContext::removeCurrentFileContext ()
+void ApplicationContextImpl::removeCurrentFileContext ()
 {
     if (!current_file_context_.isNull())
         current_file_context_->disconnect ();
     current_file_context_ = QSharedPointer<FileContext> (0);
+    setState (APP_STATE_NO_FILE_OPEN);
 }
 
 //-----------------------------------------------------------------------------
-ApplicationState ApplicationContext::getState () const
-{
-    return state_;
-}
-
-//-----------------------------------------------------------------------------
-QSharedPointer<MainWindowModel> ApplicationContext::getMainWindowModel () const
+QSharedPointer<MainWindowModel> ApplicationContextImpl::getMainWindowModel ()
 {
     return main_window_model_;
 }
 
 //-------------------------------------------------------------------------
-QSharedPointer<ColorManager> ApplicationContext::getEventColorManager () const
+QSharedPointer<ColorManager> ApplicationContextImpl::getEventColorManager ()
 {
     return color_manager_;
 }
 
 //-----------------------------------------------------------------------------
-void ApplicationContext::setState (ApplicationState state)
+void ApplicationContextImpl::setState (ApplicationState state)
 {
     state_ = state;
     emit stateChanged (state_);

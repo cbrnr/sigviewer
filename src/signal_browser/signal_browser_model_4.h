@@ -57,6 +57,9 @@ public:
     virtual QSharedPointer<EventManager const> getEventManager () const;
 
     //-------------------------------------------------------------------------
+    virtual QSharedPointer<EventManager> getEventManager ();
+
+    //-------------------------------------------------------------------------
     /// see base class
     virtual unsigned getShownHeight () const;
 

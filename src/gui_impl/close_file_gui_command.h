@@ -26,7 +26,7 @@ public:
     virtual void init ();
 
     //-------------------------------------------------------------------------
-    static bool closeCurrentFile ();
+    bool closeCurrentFile ();
 
 public slots:
     //-------------------------------------------------------------------------

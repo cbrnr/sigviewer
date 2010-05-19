@@ -1,7 +1,6 @@
 #include "adapt_channel_view_gui_command.h"
 #include "gui_helper_functions.h"
 #include "dialogs/scale_channel_dialog.h"
-#include "../application_context.h"
 
 #include <QColorDialog>
 
@@ -64,6 +63,7 @@ void AdaptChannelViewGuiCommand::selectShownChannels ()
     QSharedPointer<SignalVisualisationModel> sv_model = currentVisModel ();
     std::set<ChannelID> previous_shown_channels = sv_model->getShownChannels ();
     std::set<ChannelID> new_shown_channels = GuiHelper::selectChannels (sv_model->getChannelManager(),
+                                                                        applicationContext()->getEventColorManager(),
                                                                         "",
                                                                         sv_model);
     if (previous_shown_channels != new_shown_channels)
@@ -95,7 +95,7 @@ void AdaptChannelViewGuiCommand::changeColor ()
     ChannelID channel = currentVisModel()->getSelectedChannel();
     if (channel == UNDEFINED_CHANNEL)
         return;
-    QSharedPointer<ColorManager> color_manager = ApplicationContext::getInstance()->getEventColorManager();
+    QSharedPointer<ColorManager> color_manager = applicationContext()->getEventColorManager();
     QColor old_color = color_manager->getChannelColor(channel);
     QColorDialog color_dialog (old_color);
 

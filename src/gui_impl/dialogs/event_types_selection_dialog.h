@@ -3,6 +3,7 @@
 
 #include "../../base/user_types.h"
 #include "../../file_handling/event_manager.h"
+#include "../../gui/color_manager.h"
 #include "ui_event_type_selection_dialog.h"
 
 #include <QList>
@@ -25,6 +26,7 @@ public:
     EventTypesSelectionDialog (QString const& caption,
                                QSharedPointer<EventManager const> event_manager,
                                std::set<EventType> const& preselected_types,
+                               QSharedPointer<ColorManager> color_manager,
                                bool show_colors = false,
                                QWidget* parent = 0);
 
@@ -68,6 +70,7 @@ private:
     bool const show_colors_;
     QSharedPointer<EventManager const> event_manager_;
     std::set<EventType> selected_types_;
+    QSharedPointer<ColorManager> color_manager_;
     Ui::EventTypeSelectionDialog ui_;
 };
 

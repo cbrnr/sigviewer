@@ -27,7 +27,7 @@ class EventTableDialog : public QDialog
 public:
     EventTableDialog (QSharedPointer<EventManager> event_manager,
                       QSharedPointer<CommandExecuter> command_executer,
-                      QSharedPointer<ChannelManager> channel_manager);
+                      QSharedPointer<ChannelManager const> channel_manager);
 
     void loadSettings();
     void saveSettings();
@@ -91,7 +91,7 @@ private:
 
     QSharedPointer<EventManager> event_manager_;
     QSharedPointer<CommandExecuter> command_executer_;
-    QSharedPointer<ChannelManager> channel_manager_;
+    QSharedPointer<ChannelManager const> channel_manager_;
     QTableView *event_table_view_;
     TableModel *event_table_model_;
     QPushButton* close_button_;

@@ -1,14 +1,10 @@
 #include "event_types_selection_dialog.h"
-#include "../../gui/color_manager.h"
-#include "../../application_context.h"
 
 #include <QPushButton>
 #include <QPainter>
 #include <QColorDialog>
 #include <QInputDialog>
 #include <QMap>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QTreeWidget>
 #include <QHeaderView>
 #include <QSettings>
@@ -22,12 +18,14 @@ namespace BioSig_
 EventTypesSelectionDialog::EventTypesSelectionDialog (QString const& caption,
                                                       QSharedPointer<EventManager const> event_manager,
                                                       std::set<EventType> const& preselected_types,
+                                                      QSharedPointer<ColorManager> color_manager,
                                                       bool show_colors,
                                                       QWidget* parent)
     : QDialog(parent),
       show_colors_ (show_colors),
       event_manager_ (event_manager),
-      selected_types_ (preselected_types)
+      selected_types_ (preselected_types),
+      color_manager_ (color_manager)
 
 {
     ui_.setupUi (this);
@@ -109,7 +107,7 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
         event_item->setFlags (Qt::ItemIsUserCheckable |
                               Qt::ItemIsEnabled);
 
-        QColor color = ApplicationContext::getInstance()->getEventColorManager()->getEventColor(*event_type_it);
+        QColor color = color_manager_->getEventColor(*event_type_it);
         if (selected_types_.count(*event_type_it))
             event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Checked);
         else
@@ -124,7 +122,7 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
         event_item->setTextAlignment (COLOR_COLUMN_INDEX_, Qt::AlignHCenter);
         event_item->setText (COLOR_COLUMN_INDEX_, color.name());
 
-        color = ApplicationContext::getInstance()->getEventColorManager()->getEventColor(*event_type_it);
+        color = color_manager_->getEventColor(*event_type_it);
 
         event_item->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
         event_item->setTextColor(ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
@@ -160,11 +158,11 @@ void EventTypesSelectionDialog::storeColors()
         {
             QTreeWidgetItem* event_item = group_item->child(nr);
             EventType type = event_item->text(ID_COLUMN_INDEX_).toUInt();
-            ApplicationContext::getInstance()->getEventColorManager()->setEventColor (type,
-                                               event_item->backgroundColor(ALPHA_COLUMN_INDEX_));
+            color_manager_->setEventColor (type,
+                                           event_item->backgroundColor(ALPHA_COLUMN_INDEX_));
         }
     }
-    ApplicationContext::getInstance()->getEventColorManager()->saveSettings();
+    color_manager_->saveSettings();
 }
 
 //-----------------------------------------------------------------------------

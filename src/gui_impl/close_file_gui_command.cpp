@@ -1,5 +1,4 @@
 #include "close_file_gui_command.h"
-#include "../application_context.h"
 
 #include <QApplication>
 #include <QMessageBox>
@@ -44,7 +43,7 @@ void CloseFileGuiCommand::init ()
 bool CloseFileGuiCommand::closeCurrentFile ()
 {
     QSharedPointer<FileContext> current_file_context =
-            ApplicationContext::getInstance()->getCurrentFileContext();
+            applicationContext()->getCurrentFileContext();
 
     if (current_file_context.isNull())
         return true;
@@ -61,9 +60,8 @@ bool CloseFileGuiCommand::closeCurrentFile ()
             return false;
     }
 
-    ApplicationContext::getInstance()->getMainWindowModel ()->closeCurrentFileTabs ();
-    ApplicationContext::getInstance()->removeCurrentFileContext ();
-    ApplicationContext::getInstance()->setState (APP_STATE_NO_FILE_OPEN);
+    applicationContext()->getMainWindowModel ()->closeCurrentFileTabs ();
+    applicationContext()->removeCurrentFileContext ();
     return true;
 }
 

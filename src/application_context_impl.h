@@ -1,11 +1,11 @@
-#ifndef APPLICATION_CONTEXT_H
-#define APPLICATION_CONTEXT_H
+#ifndef APPLICATION_CONTEXT_IMPL_H
+#define APPLICATION_CONTEXT_IMPL_H
 
 #include "base/application_states.h"
 #include "gui/color_manager.h"
 #include "gui/main_window_model.h"
+#include "gui/application_context.h"
 #include "file_context.h"
-#include "tab_context.h"
 
 #include <QObject>
 #include <QSharedPointer>
@@ -17,12 +17,15 @@ namespace BioSig_
 /// ApplicationContext
 ///
 /// exists once in an application
-class ApplicationContext : public QObject
+class ApplicationContextImpl : public QObject, public ApplicationContext
 {
     Q_OBJECT
 public:
     //-------------------------------------------------------------------------
-    static ApplicationContext* getInstance ();
+    static QSharedPointer<ApplicationContext> getContext ();
+
+    //-------------------------------------------------------------------------
+    static ApplicationContextImpl* getInstance ();
 
     //-------------------------------------------------------------------------
     static void init ();
@@ -31,37 +34,31 @@ public:
     static void cleanup ();
 
     //-------------------------------------------------------------------------
-    ApplicationContext () {}
-    ~ApplicationContext ();
+    ApplicationContextImpl () {}
+    virtual ~ApplicationContextImpl ();
 
     //-------------------------------------------------------------------------
-    QSharedPointer<FileContext> getCurrentFileContext () const;
+    virtual QSharedPointer<FileContext> getCurrentFileContext ();
 
     //-------------------------------------------------------------------------
-    void setCurrentTabContext (QSharedPointer<TabContext> tab_context);
+    virtual void setCurrentTabContext (QSharedPointer<TabContext> tab_context);
 
     //-------------------------------------------------------------------------
-    QSharedPointer<CommandExecuter> getCurrentCommandExecuter ();
+    virtual QSharedPointer<CommandExecuter> getCurrentCommandExecuter ();
 
     //-------------------------------------------------------------------------
     /// NO MULTI-FILE SUPPORT IMPLEMENTED YET!!!
     /// THIS CALL WILL REPLACE ACTUAL FILE CONTEXT
-    void addFileContext (QSharedPointer<FileContext> file_context);
+    virtual void addFileContext (QSharedPointer<FileContext> file_context);
 
     //-------------------------------------------------------------------------
-    void removeCurrentFileContext ();
+    virtual void removeCurrentFileContext ();
 
     //-------------------------------------------------------------------------
-    ApplicationState getState () const;
+    virtual QSharedPointer<MainWindowModel> getMainWindowModel ();
 
     //-------------------------------------------------------------------------
-    QSharedPointer<MainWindowModel> getMainWindowModel () const;
-
-    //-------------------------------------------------------------------------
-    QSharedPointer<ColorManager> getEventColorManager () const;
-
-public slots:
-    void setState (ApplicationState state);
+    virtual QSharedPointer<ColorManager> getEventColorManager ();
 
 signals:
     void stateChanged (ApplicationState state);
@@ -70,7 +67,8 @@ signals:
     void currentTabEditStateChanged (TabEditState state);
 
 private:
-    static ApplicationContext* instance_;
+    void setState (ApplicationState state);
+    static QSharedPointer<ApplicationContextImpl> instance_;
     QSharedPointer<ColorManager> color_manager_;
     QSharedPointer<MainWindowModel> main_window_model_;
     QSharedPointer<FileContext> current_file_context_;
@@ -80,4 +78,4 @@ private:
 
 } // namespace BioSig_
 
-#endif // APPLICATION_CONTEXT_H
+#endif // APPLICATION_CONTEXT_IMPL_H

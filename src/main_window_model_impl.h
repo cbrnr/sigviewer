@@ -8,6 +8,7 @@
 #include "file_handling/channel_manager.h"
 #include "gui/signal_visualisation_model.h"
 #include "gui/main_window_model.h"
+#include "gui/application_context.h"
 
 #include <QObject>
 #include <QStringList>
@@ -30,7 +31,7 @@ class MainWindowModelImpl : public QObject, public MainWindowModel
     Q_OBJECT
 public:
     //-------------------------------------------------------------------------
-    MainWindowModelImpl ();
+    MainWindowModelImpl (QSharedPointer<ApplicationContext> application_context);
 
     //-------------------------------------------------------------------------
     virtual  ~MainWindowModelImpl ();
@@ -77,6 +78,7 @@ private:
 
     static int const NUMBER_RECENT_FILES_;
 
+    QSharedPointer<ApplicationContext> application_context_;
     MainWindow* main_window_;
     QTabWidget* tab_widget_;
     QStringList recent_file_list_;

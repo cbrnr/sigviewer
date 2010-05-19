@@ -1,6 +1,6 @@
 #include "gui_action_command.h"
 #include "gui_action_factory.h"
-#include "../application_context.h"
+#include "../application_context_impl.h"
 
 namespace BioSig_
 {
@@ -26,16 +26,16 @@ GuiActionCommand::GuiActionCommand (QStringList const& action_ids)
         connectors_.last ()->connect (action_map_[*iter], SIGNAL(triggered()), SLOT(trigger()));
         connect (connectors_.last (), SIGNAL(triggered(QString const&)), SLOT(trigger(QString const&)));
 
-        if (!connect (ApplicationContext::getInstance(), SIGNAL(stateChanged(ApplicationState)),
+        if (!connect (ApplicationContextImpl::getInstance(), SIGNAL(stateChanged(ApplicationState)),
                           SLOT(updateEnablednessToApplicationState(ApplicationState))))
             throw (GuiActionCommandException (*iter, "connect to signal stateChanged(ApplicationState)"));
-        if (!connect (ApplicationContext::getInstance(), SIGNAL(currentTabSelectionStateChanged(TabSelectionState)),
+        if (!connect (ApplicationContextImpl::getInstance(), SIGNAL(currentTabSelectionStateChanged(TabSelectionState)),
                           SLOT(updateEnablednessToTabSelectionState (TabSelectionState))))
             throw (GuiActionCommandException (*iter, "connect to signal currentTabSelectionStateChanged(TabSelectionState)"));
-        if (!connect (ApplicationContext::getInstance(), SIGNAL(currentTabEditStateChanged(TabEditState)),
+        if (!connect (ApplicationContextImpl::getInstance(), SIGNAL(currentTabEditStateChanged(TabEditState)),
                           SLOT(updateEnablednessToTabEditState (TabEditState))))
             throw (GuiActionCommandException (*iter, "connect to signal currentTabEditStateChanged(TabEditState)"));
-        if (!connect (ApplicationContext::getInstance(), SIGNAL(currentFileStateChanged(FileState)),
+        if (!connect (ApplicationContextImpl::getInstance(), SIGNAL(currentFileStateChanged(FileState)),
                           SLOT(updateEnablednessToFileState (FileState))))
             throw (GuiActionCommandException (*iter, "connect to signal currentFileStateChanged(FileState)"));
     }
@@ -130,13 +130,20 @@ QSharedPointer<SignalVisualisationModel> GuiActionCommand::currentVisModel ()
     QSharedPointer<SignalVisualisationModel> model;
 
     QSharedPointer<MainWindowModel> main_window_model =
-        ApplicationContext::getInstance()->getMainWindowModel ();
+        ApplicationContextImpl::getInstance()->getMainWindowModel ();
 
     if (!main_window_model.isNull())
         model = main_window_model->getCurrentSignalVisualisationModel();
 
     return model;
 }
+
+//-------------------------------------------------------------------------
+QSharedPointer<ApplicationContext> GuiActionCommand::applicationContext ()
+{
+    return ApplicationContextImpl::getContext ();
+}
+
 
 //-------------------------------------------------------------------------
 void GuiActionCommand::disableIfNoEventSelected (QStringList const &actions)

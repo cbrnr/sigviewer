@@ -1,6 +1,8 @@
 #ifndef GUI_ACTION_COMMAND_H
 #define GUI_ACTION_COMMAND_H
 
+#include "application_context.h"
+
 #include "../base/application_states.h"
 #include "../base/tab_states.h"
 #include "../base/file_states.h"
@@ -73,6 +75,9 @@ protected:
 
     //-------------------------------------------------------------------------
     QSharedPointer<SignalVisualisationModel> currentVisModel ();
+
+    //-------------------------------------------------------------------------
+    QSharedPointer<ApplicationContext> applicationContext ();
 
     //-------------------------------------------------------------------------
     ApplicationState getApplicationState () const {return app_state_;}

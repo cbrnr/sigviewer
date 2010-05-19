@@ -2,7 +2,6 @@
 #include "dialogs/channel_selection_dialog.h"
 #include "select_shown_channels_dialog.h"
 #include "dialogs/event_types_selection_dialog.h"
-#include "../application_context.h"
 
 #include <QInputDialog>
 #include <QFileDialog>
@@ -15,12 +14,13 @@ namespace GuiHelper
 {
 
 //-----------------------------------------------------------------------------
-QSharedPointer<SignalEvent const> getSelectedEvent ()
+QSharedPointer<SignalEvent const> getSelectedEvent (QSharedPointer<SignalVisualisationModel>
+                                                    signal_visualisation_model)
 {
-    EventID id = getSelectedEventID ();
+    EventID id = getSelectedEventID (signal_visualisation_model);
     if (id == UNDEFINED_EVENT_ID)
         return QSharedPointer<SignalEvent const> (0);
-    QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
+    QSharedPointer<EventManager> event_manager = signal_visualisation_model->getEventManager();
     QSharedPointer<SignalEvent const> event = event_manager->getEvent (id);
 
     return event;
@@ -28,27 +28,23 @@ QSharedPointer<SignalEvent const> getSelectedEvent ()
 
 
 //-----------------------------------------------------------------------------
-EventID getSelectedEventID ()
+EventID getSelectedEventID (QSharedPointer<SignalVisualisationModel>
+                            signal_visualisation_model)
 {
-    QSharedPointer<MainWindowModel> mw_model = ApplicationContext::getInstance()->getMainWindowModel ();
-    if (mw_model.isNull())
+    if (signal_visualisation_model.isNull())
         return UNDEFINED_EVENT_ID;
-    QSharedPointer<SignalVisualisationModel> sv_model = mw_model->getCurrentSignalVisualisationModel ();
-    if (sv_model.isNull())
-        return UNDEFINED_EVENT_ID;
-    return sv_model->getSelectedEvent ();
+    return signal_visualisation_model->getSelectedEvent ();
 }
 
 //-----------------------------------------------------------------------------
-EventType selectEventType (EventType preselected_type)
+EventType selectEventType (EventType preselected_type,
+                           QSharedPointer<SignalVisualisationModel> signal_visualisation_model)
 {
     EventType new_type = UNDEFINED_EVENT_TYPE;
 
-    QSharedPointer<MainWindowModel> mw_model = ApplicationContext::getInstance()->getMainWindowModel ();
-    QSharedPointer<SignalVisualisationModel> sv_model = mw_model->getCurrentSignalVisualisationModel ();
-    QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
+    QSharedPointer<EventManager> event_manager = signal_visualisation_model->getEventManager();
 
-    std::set<EventType> types = sv_model->getShownEventTypes ();
+    std::set<EventType> types = signal_visualisation_model->getShownEventTypes ();
     QStringList event_type_list;
     int32 current_item = 0;
 
@@ -79,15 +75,17 @@ EventType selectEventType (EventType preselected_type)
 
 //-----------------------------------------------------------------------------
 std::set<EventType> selectEventTypes (std::set<EventType> const& preselected_type,
+                                      QSharedPointer<EventManager const> event_manager,
+                                      QSharedPointer<ColorManager> color_manager,
                                       bool enable_color_editing)
 {
     std::set<EventType> selected_types;
-    QSharedPointer<EventManager const> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
     if (event_manager.isNull())
         return selected_types;
 
     EventTypesSelectionDialog dialog (QObject::tr("Select Event Types"),
                                       event_manager, preselected_type,
+                                      color_manager,
                                       enable_color_editing, 0);
     dialog.exec();
     selected_types = dialog.getSelectedTypes ();
@@ -98,18 +96,17 @@ std::set<EventType> selectEventTypes (std::set<EventType> const& preselected_typ
 
 
 //-----------------------------------------------------------------------------
-ChannelID selectChannel (ChannelID preselected_channel_id)
+ChannelID selectChannel (ChannelID preselected_channel_id,
+                         QSharedPointer<SignalVisualisationModel> signal_visualisation_model)
 {
     int32 current_item = 0;
     QStringList channel_list;
 
     channel_list.append (QObject::tr("All Channels"));
 
-    QSharedPointer<MainWindowModel> mw_model = ApplicationContext::getInstance()->getMainWindowModel ();
-    QSharedPointer<SignalVisualisationModel> sv_model = mw_model->getCurrentSignalVisualisationModel ();
-    QSharedPointer<ChannelManager> channel_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getChannelManager();
+    QSharedPointer<ChannelManager const> channel_manager = signal_visualisation_model->getChannelManager();
 
-    std::set<ChannelID> shown_channels = sv_model->getShownChannels ();
+    std::set<ChannelID> shown_channels = signal_visualisation_model->getShownChannels ();
 
     for (std::set<ChannelID>::iterator channel_iter = shown_channels.begin();
          channel_iter != shown_channels.end();
@@ -138,14 +135,14 @@ ChannelID selectChannel (ChannelID preselected_channel_id)
 }
 
 //-----------------------------------------------------------------------------
-std::set<ChannelID> selectShownChannels (ChannelID hide_channel)
+std::set<ChannelID> selectShownChannels (ChannelID hide_channel,
+                                         QSharedPointer<SignalVisualisationModel> vis_model)
 {
-    QSharedPointer<MainWindowModel> mw_model = ApplicationContext::getInstance()->getMainWindowModel ();
-    QSharedPointer<SignalVisualisationModel> sv_model = mw_model->getCurrentSignalVisualisationModel ();
-    std::set<ChannelID> channels = sv_model->getShownChannels ();
+    std::set<ChannelID> channels = vis_model->getShownChannels ();
     channels.erase (hide_channel);
     SelectShownChannelsDialog dialog (QObject::tr("Copy Event to Channels"),
-                                      channels);
+                                      channels,
+                                      vis_model->getChannelManager());
     dialog.exec ();
     return dialog.getSelectedChannels ();
 }
@@ -153,10 +150,11 @@ std::set<ChannelID> selectShownChannels (ChannelID hide_channel)
 
 //-----------------------------------------------------------------------------
 std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager const> channel_manager,
+                                    QSharedPointer<ColorManager> color_manager,
                                     QString const& file_name,
                                     QSharedPointer<SignalVisualisationModel> vis_model)
 {
-    ChannelSelectionDialog channel_dialog (channel_manager, file_name, ApplicationContext::getInstance()->getEventColorManager());
+    ChannelSelectionDialog channel_dialog (channel_manager, file_name, color_manager);
     std::set<ChannelID> pre_selected_channels;
     if (!vis_model.isNull())
         pre_selected_channels = vis_model->getShownChannels ();

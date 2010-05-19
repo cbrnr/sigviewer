@@ -1,7 +1,5 @@
 #include "undo_redo_gui_command.h"
 
-#include "../application_context.h"
-
 namespace BioSig_
 {
 
@@ -41,13 +39,13 @@ void UndoRedoGuiCommand::init ()
 //-----------------------------------------------------------------------------
 void UndoRedoGuiCommand::undo ()
 {
-    ApplicationContext::getInstance()->getCurrentCommandExecuter()->undo();
+    applicationContext()->getCurrentCommandExecuter()->undo();
 }
 
 //-----------------------------------------------------------------------------
 void UndoRedoGuiCommand::redo ()
 {
-    ApplicationContext::getInstance()->getCurrentCommandExecuter()->redo();
+    applicationContext()->getCurrentCommandExecuter()->redo();
 }
 
 //-------------------------------------------------------------------------

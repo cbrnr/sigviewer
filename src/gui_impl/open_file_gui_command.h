@@ -44,12 +44,19 @@ private slots:
     void showFileInfo ();
 
 private:
+
     static QString const IMPORT_EVENTS_;
     static QString const OPEN_;
     static QString const SHOW_FILE_INFO_;
     static QStringList const ACTIONS_;
 
+
+    static QSharedPointer<OpenFileGuiCommand> instance_;
+
     static GuiActionFactoryRegistrator registrator_;
+
+    //-------------------------------------------------------------------------
+    void openFileImpl (QString file_path);
 
     //-------------------------------------------------------------------------
     QString showOpenDialog (QString const& path, QString const& extensions);

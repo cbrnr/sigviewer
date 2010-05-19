@@ -1,7 +1,6 @@
 #include "save_gui_command.h"
 #include "gui_helper_functions.h"
 #include "../file_handling/file_signal_writer_factory.h"
-#include "../application_context.h"
 #include "open_file_gui_command.h"
 
 #include <QMessageBox>
@@ -57,7 +56,7 @@ void SaveGuiCommand::init ()
 //-----------------------------------------------------------------------------
 void SaveGuiCommand::saveAs ()
 {
-    QSharedPointer<FileContext> file_context = ApplicationContext::getInstance()->getCurrentFileContext();
+    QSharedPointer<FileContext> file_context = applicationContext()->getCurrentFileContext();
     QString old_file_path = file_context->getFilePath ();
     QString old_file_path_and_name = file_context->getFilePathAndName();
     QString file_name = file_context->getFileName();
@@ -105,8 +104,8 @@ void SaveGuiCommand::saveAs ()
 //-----------------------------------------------------------------------------
 void SaveGuiCommand::save ()
 {
-    QString file_path = ApplicationContext::getInstance()->getCurrentFileContext()->getFilePathAndName();
-    QString file_name = ApplicationContext::getInstance()->getCurrentFileContext()->getFileName();
+    QString file_path = applicationContext()->getCurrentFileContext()->getFilePathAndName();
+    QString file_name = applicationContext()->getCurrentFileContext()->getFileName();
     QSharedPointer<FileSignalWriter> writer = FileSignalWriterFactory::getInstance()->getHandler (file_path);
 
     bool can_save_events = false;
@@ -116,12 +115,12 @@ void SaveGuiCommand::save ()
 
     if (!writer.isNull() && can_save_events)
     {
-        QSharedPointer<EventManager> event_mgr = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
+        QSharedPointer<EventManager> event_mgr = currentVisModel()->getEventManager();
         QString error = writer->saveEventsToSignalFile(event_mgr, event_mgr->getAllPossibleEventTypes());
         if (error.size())
             QMessageBox::critical (0, tr("Error"), error);
         else
-            ApplicationContext::getInstance()->getCurrentFileContext()->setState(FILE_STATE_UNCHANGED);
+            applicationContext()->getCurrentFileContext()->setState(FILE_STATE_UNCHANGED);
     }
     else
     {
@@ -149,8 +148,8 @@ void SaveGuiCommand::exportToPNG ()
 void SaveGuiCommand::exportToGDF ()
 {
     QString extensions = "*.gdf";
-    QString current_file_path = ApplicationContext::getInstance()->getCurrentFileContext()->getFilePathAndName();
-    QString current_file_name = ApplicationContext::getInstance()->getCurrentFileContext()->getFileName();
+    QString current_file_path = applicationContext()->getCurrentFileContext()->getFilePathAndName();
+    QString current_file_name = applicationContext()->getCurrentFileContext()->getFileName();
     current_file_path = current_file_path.left(current_file_path.size() - current_file_name.size());
 
     QString new_file_path = GuiHelper::getFilePathFromSaveAsDialog (current_file_path, extensions);
@@ -165,9 +164,9 @@ void SaveGuiCommand::exportToGDF ()
         return;
     }
 
-    QSharedPointer<EventManager> event_mgr = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
+    QSharedPointer<EventManager> event_mgr = currentVisModel()->getEventManager();
 
-    QString error = writer->save (event_mgr, ApplicationContext::getInstance()->getCurrentFileContext()->getFilePathAndName(), event_mgr->getAllPossibleEventTypes());
+    QString error = writer->save (event_mgr, applicationContext()->getCurrentFileContext()->getFilePathAndName(), event_mgr->getAllPossibleEventTypes());
 
     if (error.size() == 0)
     {
@@ -185,9 +184,11 @@ void SaveGuiCommand::exportToGDF ()
 //-------------------------------------------------------------------------
 void SaveGuiCommand::exportEvents ()
 {
-    std::set<EventType> types = GuiHelper::selectEventTypes (currentVisModel()->getShownEventTypes());
+    std::set<EventType> types = GuiHelper::selectEventTypes (currentVisModel()->getShownEventTypes(),
+                                                             currentVisModel()->getEventManager(),
+                                                             applicationContext()->getEventColorManager());
 
-    QString current_file_path = ApplicationContext::getInstance()->getCurrentFileContext()->getFilePathAndName();
+    QString current_file_path = applicationContext()->getCurrentFileContext()->getFilePathAndName();
 
     QString extension = ".evt";
     QString extenstions = "*.evt";
@@ -202,7 +203,7 @@ void SaveGuiCommand::exportEvents ()
 
     qDebug() << new_file_path;
 
-    file_signal_writer->save (ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager(),
+    file_signal_writer->save (currentVisModel()->getEventManager(),
                               current_file_path, types);
 }
 
@@ -216,9 +217,9 @@ void SaveGuiCommand::evaluateEnabledness ()
 
     if (file_open)
     {
-        no_gdf_file_open = !(ApplicationContext::getInstance()->getCurrentFileContext()->getFileName().endsWith("gdf"));
+        no_gdf_file_open = !(applicationContext()->getCurrentFileContext()->getFileName().endsWith("gdf"));
         file_changed = (getFileState () == FILE_STATE_CHANGED);
-        has_events = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager()->getNumberOfEvents() > 0;
+        has_events = currentVisModel()->getEventManager()->getNumberOfEvents() > 0;
     }
 
     getQAction (SAVE_)->setEnabled (file_changed);

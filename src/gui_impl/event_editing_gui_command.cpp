@@ -1,7 +1,6 @@
 #include "event_editing_gui_command.h"
 #include "gui_helper_functions.h"
 #include "event_table_dialog.h"
-#include "../application_context.h"
 #include "../editing_commands/delete_event_undo_command.h"
 #include "../editing_commands/change_type_undo_command.h"
 #include "../editing_commands/change_channel_undo_command.h"
@@ -73,12 +72,12 @@ void EventEditingGuiCommand::init ()
 //-----------------------------------------------------------------------------
 void EventEditingGuiCommand::deleteSelectedEvent ()
 {
-    EventID event = GuiHelper::getSelectedEventID ();
+    EventID event = GuiHelper::getSelectedEventID (currentVisModel());
     if (event == UNDEFINED_EVENT_ID)
         return;
 
     QUndoCommand* command = new DeleteEventUndoCommand (
-            ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager(),
+            currentVisModel()->getEventManager(),
             event);
     executeCommand (command);
 }
@@ -86,13 +85,13 @@ void EventEditingGuiCommand::deleteSelectedEvent ()
 //-----------------------------------------------------------------------------
 void EventEditingGuiCommand::changeTypeSelectedEvent ()
 {
-    EventID event = GuiHelper::getSelectedEventID ();
+    EventID event = GuiHelper::getSelectedEventID (currentVisModel());
     if (event == UNDEFINED_EVENT_ID)
         return;
 
-    QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
+    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
     EventType pre_selected_type = event_manager->getEvent (event)->getType ();
-    EventType new_type = GuiHelper::selectEventType (pre_selected_type);
+    EventType new_type = GuiHelper::selectEventType (pre_selected_type, currentVisModel());
 
     if (new_type == UNDEFINED_EVENT_TYPE)
         return;
@@ -107,13 +106,14 @@ void EventEditingGuiCommand::changeTypeSelectedEvent ()
 //-------------------------------------------------------------------------
 void EventEditingGuiCommand::changeChannelSelectedEvent ()
 {
-    EventID event = GuiHelper::getSelectedEventID ();
+    EventID event = GuiHelper::getSelectedEventID (currentVisModel());
     if (event == UNDEFINED_EVENT_ID)
         return;
 
-    QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
+    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
     ChannelID preselected_channel = event_manager->getEvent (event)->getChannel ();
-    ChannelID new_channel = GuiHelper::selectChannel (preselected_channel);
+    ChannelID new_channel = GuiHelper::selectChannel (preselected_channel,
+                                                      currentVisModel());
 
     if (new_channel == preselected_channel)
         return;
@@ -127,11 +127,11 @@ void EventEditingGuiCommand::changeChannelSelectedEvent ()
 //-------------------------------------------------------------------------
 void EventEditingGuiCommand::toAllChannelsSelectedEvent ()
 {
-    EventID event = GuiHelper::getSelectedEventID ();
+    EventID event = GuiHelper::getSelectedEventID (currentVisModel());
     if (event == UNDEFINED_EVENT_ID)
         return;
 
-    QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
+    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
 
     if (event_manager->getEvent (event)->getChannel () == UNDEFINED_CHANNEL)
         return;
@@ -145,13 +145,14 @@ void EventEditingGuiCommand::toAllChannelsSelectedEvent ()
 //-------------------------------------------------------------------------
 void EventEditingGuiCommand::copyToChannelsSelectedEvent ()
 {
-    EventID event_id = GuiHelper::getSelectedEventID ();
+    EventID event_id = GuiHelper::getSelectedEventID (currentVisModel());
     if (event_id == UNDEFINED_EVENT_ID)
         return;
 
-    QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
+    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
     QSharedPointer<SignalEvent const> event = event_manager->getEvent (event_id);
-    std::set<ChannelID> channels = GuiHelper::selectShownChannels (event->getChannel ());
+    std::set<ChannelID> channels = GuiHelper::selectShownChannels (event->getChannel (),
+                                                                   currentVisModel());
 
     if (channels.size () == 0)
         return;
@@ -173,13 +174,12 @@ void EventEditingGuiCommand::copyToChannelsSelectedEvent ()
 //-------------------------------------------------------------------------
 void EventEditingGuiCommand::insertEventOverSelectedEvent ()
 {
-    EventID event = GuiHelper::getSelectedEventID ();
+    EventID event = GuiHelper::getSelectedEventID (currentVisModel());
     if (event == UNDEFINED_EVENT_ID)
         return;
 
-    QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
-    QSharedPointer<MainWindowModel> mw_model = ApplicationContext::getInstance()->getMainWindowModel ();
-    QSharedPointer<SignalVisualisationModel> sv_model = mw_model->getCurrentSignalVisualisationModel ();
+    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
+    QSharedPointer<SignalVisualisationModel> sv_model = currentVisModel();
     QSharedPointer<SignalEvent> new_event (new SignalEvent (*(event_manager->getEvent (event))));
     new_event->setType (sv_model->getActualEventCreationType ());
 
@@ -192,9 +192,9 @@ void EventEditingGuiCommand::insertEventOverSelectedEvent ()
 //-------------------------------------------------------------------------
 void EventEditingGuiCommand::showEventTableDialog ()
 {
-    QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager ();
-    QSharedPointer<ChannelManager> channel_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getChannelManager ();
-    QSharedPointer<CommandExecuter> command_executer = ApplicationContext::getInstance()->getCurrentCommandExecuter();
+    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager ();
+    QSharedPointer<ChannelManager const> channel_manager = currentVisModel()->getChannelManager ();
+    QSharedPointer<CommandExecuter> command_executer = applicationContext()->getCurrentCommandExecuter();
 
     EventTableDialog event_table_dialog (event_manager, command_executer,
                                          channel_manager);
@@ -230,8 +230,7 @@ void EventEditingGuiCommand::evaluateEnabledness ()
 //-------------------------------------------------------------------------
 void EventEditingGuiCommand::executeCommand (QUndoCommand* command)
 {
-    ApplicationContext::getInstance()->getCurrentCommandExecuter()->executeCommand (command);
-//    ApplicationContext::getInstance()
+    applicationContext()->getCurrentCommandExecuter()->executeCommand (command);
 }
 
 

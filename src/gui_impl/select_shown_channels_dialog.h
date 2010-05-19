@@ -2,6 +2,7 @@
 #define SELECT_SHOWN_CHANNELS_DIALOG_H
 
 #include "../base/user_types.h"
+#include "../file_handling/channel_manager.h"
 
 #include <QDialog>
 
@@ -18,7 +19,8 @@ class SelectShownChannelsDialog : public QDialog
     Q_OBJECT
 public:
     SelectShownChannelsDialog (QString const& dialog_title,
-                               std::set<ChannelID> const& channels);
+                               std::set<ChannelID> const& channels,
+                               QSharedPointer<ChannelManager const> channel_manager);
 
     std::set<ChannelID> getSelectedChannels () const;
 

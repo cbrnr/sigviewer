@@ -351,6 +351,12 @@ QSharedPointer<EventManager const> SignalBrowserModel::getEventManager () const
     return event_manager_;
 }
 
+//-------------------------------------------------------------------------
+QSharedPointer<EventManager> SignalBrowserModel::getEventManager ()
+{
+    return event_manager_;
+}
+
 
 //-------------------------------------------------------------------------
 unsigned SignalBrowserModel::getShownHeight () const

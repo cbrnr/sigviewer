@@ -36,6 +36,8 @@ void EventManagerTest::testCreatingEvents ()
     QVERIFY2(stored_event->getPosition() == pos, "check pos");
     QVERIFY2(stored_event->getDuration() == duration, "check duration");
     QVERIFY2(stored_event->getType() == type, "check type");
+
+    QVERIFY2(event_manager_->getEvents (type).size() == 1, "getting events of created type");
 }
 
 

@@ -2,7 +2,6 @@
 #include "main_window.h"
 #include "tab_context.h"
 #include "file_context.h"
-#include "application_context.h"
 #include "base/exception.h"
 
 #include "gui_impl/open_file_gui_command.h"
@@ -19,8 +18,9 @@ namespace BioSig_
 int const MainWindowModelImpl::NUMBER_RECENT_FILES_ = 8;
 
 //-----------------------------------------------------------------------------
-MainWindowModelImpl::MainWindowModelImpl ()
-: main_window_ (new MainWindow),
+MainWindowModelImpl::MainWindowModelImpl (QSharedPointer<ApplicationContext> application_context)
+: application_context_ (application_context),
+  main_window_ (new MainWindow),
   tab_widget_ (0)
 {
     main_window_->show();
@@ -31,7 +31,6 @@ MainWindowModelImpl::~MainWindowModelImpl ()
 {
     qDebug () << "deleting MainWindowModelImpl";
 }
-
 
 //-----------------------------------------------------------------------------
 void MainWindowModelImpl::loadSettings()
@@ -73,7 +72,7 @@ void MainWindowModelImpl::tabChanged (int tab_index)
 {
     if (tab_contexts_.find(tab_index) != tab_contexts_.end ())
     {
-        ApplicationContext::getInstance()->setCurrentTabContext (tab_contexts_[tab_index]);
+        application_context_->setCurrentTabContext (tab_contexts_[tab_index]);
         tab_contexts_[tab_index]->gotActive ();
     }
 }
@@ -86,7 +85,7 @@ void MainWindowModelImpl::closeTab (int tab_index)
         // waldesel:
         // --begin
         //   to be replaced as soon as multi file support is implemented
-        if (!(ApplicationContext::getInstance()->getCurrentFileContext().isNull()))
+        if (!(application_context_->getCurrentFileContext().isNull()))
             GuiActionFactory::getInstance()->getQAction("Close")->trigger();
         // --end
         return;
@@ -114,7 +113,7 @@ void MainWindowModelImpl::storeAndInitTabContext (QSharedPointer<TabContext> con
 {
     tab_contexts_[tab_index] = context;
 
-    ApplicationContext::getInstance()->setCurrentTabContext (context);
+    application_context_->setCurrentTabContext (context);
 
     context->setSelectionState (TAB_STATE_NO_EVENT_SELECTED);
     context->setEditState (TAB_STATE_NO_REDO_NO_UNDO);
@@ -135,7 +134,7 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
     // waldesel:
     // --begin
     //   to be replaced as soon as multi file support is implemented
-    if (!(ApplicationContext::getInstance()->getCurrentFileContext().isNull()))
+    if (!(application_context_->getCurrentFileContext().isNull()))
         GuiActionFactory::getInstance()->getQAction("Close")->trigger();
     // --end
 
@@ -213,7 +212,7 @@ int MainWindowModelImpl::createSignalVisualisationImpl (QSharedPointer<ChannelMa
     QSharedPointer<SignalBrowserModel> model (new SignalBrowserModel (event_manager,
                                                                       channel_manager,
                                                                       tab_context,
-                                                                      ApplicationContext::getInstance()->getEventColorManager()));
+                                                                      application_context_->getEventColorManager()));
 
     SignalBrowserView* view = new SignalBrowserView (model, event_manager, tab_context, main_window_->rect(), tab_widget_);
 

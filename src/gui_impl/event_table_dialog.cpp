@@ -219,7 +219,7 @@ void EventTableDialog::TableModel::sort(int column, Qt::SortOrder order)
 // constructor
 EventTableDialog::EventTableDialog (QSharedPointer<EventManager> event_manager,
                                     QSharedPointer<CommandExecuter> command_executer,
-                                    QSharedPointer<ChannelManager> channel_manager)
+                                    QSharedPointer<ChannelManager const> channel_manager)
  : event_manager_ (event_manager),
    command_executer_ (command_executer),
    channel_manager_ (channel_manager)

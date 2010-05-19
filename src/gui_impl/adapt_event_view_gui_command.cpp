@@ -1,6 +1,5 @@
 #include "adapt_event_view_gui_command.h"
 #include "gui_helper_functions.h"
-#include "../application_context.h"
 #include "../gui/signal_visualisation_model.h"
 
 #include <QDebug>
@@ -68,7 +67,7 @@ void AdaptEventViewGuiCommand::trigger (QString const& action_name)
 //-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::hideEventsOfOtherType ()
 {
-    QSharedPointer<SignalEvent const> event = GuiHelper::getSelectedEvent ();
+    QSharedPointer<SignalEvent const> event = GuiHelper::getSelectedEvent (currentVisModel());
 
     std::set<EventType> shown_types;
     shown_types.insert (event->getType ());
@@ -78,7 +77,7 @@ void AdaptEventViewGuiCommand::hideEventsOfOtherType ()
 //-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::showAllEvents ()
 {
-    std::set<EventType> shown_types = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager()->getAllPossibleEventTypes ();
+    std::set<EventType> shown_types = currentVisModel()->getEventManager()->getAllPossibleEventTypes();
     currentVisModel()->setShownEventTypes (shown_types);
 }
 
@@ -86,7 +85,10 @@ void AdaptEventViewGuiCommand::showAllEvents ()
 void AdaptEventViewGuiCommand::setShownEvents ()
 {
     std::set<EventType> shown_types = currentVisModel()->getShownEventTypes ();
-    std::set<EventType> new_shown_types = GuiHelper::selectEventTypes (shown_types, true);
+    std::set<EventType> new_shown_types = GuiHelper::selectEventTypes (shown_types,
+                                                                       currentVisModel()->getEventManager(),
+                                                                       applicationContext()->getEventColorManager(),
+                                                                       true);
     if (shown_types != new_shown_types)
         currentVisModel()->setShownEventTypes (new_shown_types);
     currentVisModel()->update ();
@@ -107,7 +109,7 @@ void AdaptEventViewGuiCommand::evaluateEnabledness ()
 //-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::fitViewToEvent ()
 {
-    QSharedPointer<SignalEvent const> event = GuiHelper::getSelectedEvent ();
+    QSharedPointer<SignalEvent const> event = GuiHelper::getSelectedEvent (currentVisModel());
 
     float32 width = currentVisModel()->getShownSignalWidth ();
     float32 desired_pixel_per_sample = width / event->getDuration ();
@@ -147,7 +149,7 @@ void AdaptEventViewGuiCommand::gotoAndSelectEvent (bool forward)
 //-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::setNextAndPreviousEvent ()
 {
-    QSharedPointer<SignalEvent const> event = GuiHelper::getSelectedEvent();
+    QSharedPointer<SignalEvent const> event = GuiHelper::getSelectedEvent(currentVisModel());
     if (!event.isNull ())
     {
         if (current_event_ == event->getId ())
@@ -160,7 +162,6 @@ void AdaptEventViewGuiCommand::setNextAndPreviousEvent ()
         qDebug () << "previous event "<< previous_event_;
     }
 
-    qDebug () << "setting enablement " << (next_event_ == UNDEFINED_EVENT_ID);
     getQAction (GO_TO_NEXT_EVENT_)->setEnabled (next_event_ != UNDEFINED_EVENT_ID);
     getQAction (GO_TO_PREVIOUS_EVENT_)->setEnabled (previous_event_ != UNDEFINED_EVENT_ID);
 }

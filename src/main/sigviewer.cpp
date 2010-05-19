@@ -28,7 +28,7 @@
 #include "../base/user_types.h"
 #include "../main_window.h"
 #include "../main_window_model_impl.h"
-#include "../application_context.h"
+#include "../application_context_impl.h"
 #include "../file_handling_impl/event_table_file_reader.h"
 #include "../gui/gui_action_factory.h"
 #include "../gui_impl/open_file_gui_command.h"
@@ -112,14 +112,14 @@ int main(int32 argc, char* argv[])
         application.installTranslator(&sigviewer_translator);
 
         GuiActionFactory::getInstance()->initAllCommands ();
-        ApplicationContext::init();
+        ApplicationContextImpl::init();
 
         if (application.arguments().count() > 1)
             OpenFileGuiCommand::openFile (application.arguments().at(1));
 
         int result = application.exec();
 
-        ApplicationContext::cleanup();
+        ApplicationContextImpl::cleanup();
         return result;
     }
     catch (std::exception& e)

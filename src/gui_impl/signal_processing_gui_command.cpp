@@ -2,7 +2,6 @@
 #include "dialogs/event_time_selection_dialog.h"
 #include "gui_helper_functions.h"
 #include "processed_signal_channel_manager.h"
-#include "../application_context.h"
 
 namespace BioSig_
 {
@@ -42,8 +41,8 @@ void SignalProcessingGuiCommand::evaluateEnabledness ()
 //-----------------------------------------------------------------------------
 void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation ()
 {
-    QSharedPointer<ChannelManager> channel_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getChannelManager();
-    QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
+    QSharedPointer<ChannelManager const> channel_manager = currentVisModel()->getChannelManager();
+    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
     std::set<EventType> event_types = currentVisModel()->getShownEventTypes();
     std::set<ChannelID> file_channels = currentVisModel()->getShownChannels();
     EventTimeSelectionDialog event_dialog (event_types, file_channels, channel_manager, event_manager);
@@ -78,7 +77,7 @@ void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation ()
     }
 
     QSharedPointer<SignalVisualisationModel> signal_visualisation_model =
-            ApplicationContext::getInstance()->getMainWindowModel()->createSignalVisualisation (processed_channel_manager);
+            applicationContext()->getMainWindowModel()->createSignalVisualisation (processed_channel_manager);
 
     signal_visualisation_model->setShownChannels (channels);
     signal_visualisation_model->update();
@@ -88,8 +87,8 @@ void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation ()
 //-------------------------------------------------------------------------
 void SignalProcessingGuiCommand::calculatePowerSpectrum ()
 {
-    QSharedPointer<ChannelManager> channel_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getChannelManager();
-    QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
+    QSharedPointer<ChannelManager const> channel_manager = currentVisModel()->getChannelManager();
+    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
     std::set<EventType> event_types = currentVisModel()->getShownEventTypes();
     std::set<ChannelID> file_channels = currentVisModel()->getShownChannels();
     EventTimeSelectionDialog event_dialog (event_types, file_channels, channel_manager, event_manager);
@@ -122,7 +121,7 @@ void SignalProcessingGuiCommand::calculatePowerSpectrum ()
     }
 
     QSharedPointer<SignalVisualisationModel> signal_visualisation_model =
-            ApplicationContext::getInstance()->getMainWindowModel()->createSignalVisualisation (processed_channel_manager);
+            applicationContext()->getMainWindowModel()->createSignalVisualisation (processed_channel_manager);
 
     signal_visualisation_model->setShownChannels (channels);
     signal_visualisation_model->update();

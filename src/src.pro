@@ -46,7 +46,7 @@ HEADERS += label_widget.h \
     main_window.h \
     main_window_model_impl.h \
     signal_browser_mouse_handling.h \
-    application_context.h \
+    application_context_impl.h \
     file_context.h \
     tab_context.h \
     command_executer.h
@@ -55,6 +55,6 @@ SOURCES += label_widget.cpp \
     main_window_model_impl.cpp \
     signal_browser_mouse_handling.cpp \
     main/sigviewer.cpp \
-    application_context.cpp \
+    application_context_impl.cpp \
     file_context.cpp \
     tab_context.cpp

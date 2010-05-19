@@ -8,7 +8,6 @@
 #include "../file_handling_impl/channel_manager_impl.h"
 #include "../tab_context.h"
 #include "../file_context.h"
-#include "../application_context.h"
 #include "../gui/main_window_model.h"
 #include "../editing_commands/macro_undo_command.h"
 #include "../editing_commands/new_event_undo_command.h"
@@ -30,8 +29,11 @@ QStringList const OpenFileGuiCommand::ACTIONS_ = QStringList() <<
                                                  OpenFileGuiCommand::SHOW_FILE_INFO_;
 
 //-----------------------------------------------------------------------------
+QSharedPointer<OpenFileGuiCommand> OpenFileGuiCommand::instance_ = QSharedPointer<OpenFileGuiCommand> (new OpenFileGuiCommand);
+
+//-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator OpenFileGuiCommand::registrator_ ("Opening",
-                                                              QSharedPointer<OpenFileGuiCommand> (new OpenFileGuiCommand));
+                                                              OpenFileGuiCommand::instance_);
 
 
 //-----------------------------------------------------------------------------
@@ -63,36 +65,7 @@ void OpenFileGuiCommand::init ()
 //-----------------------------------------------------------------------------
 void OpenFileGuiCommand::openFile (QString file_path)
 {
-    file_path = QDir::toNativeSeparators (file_path);
-    QSharedPointer<FileSignalReader> file_signal_reader = FileSignalReaderFactory::getInstance()->getHandler (file_path);
-
-    if (file_signal_reader.isNull())
-        return;
-
-    QString file_name = file_path.section (QDir::separator(), -1);
-
-    QSharedPointer<ChannelManager> channel_manager (new ChannelManagerImpl (file_signal_reader));
-
-    std::set<ChannelID> shown_channels = GuiHelper::selectChannels (channel_manager,
-                                                                    file_name);
-    if (shown_channels.size() == 0)
-        return;
-
-    QSharedPointer<EventManager> event_manager (new EventManagerImpl (file_signal_reader));
-    QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
-                                                 channel_manager, file_signal_reader->getBasicHeader()));
-
-    QSettings settings("SigViewer");
-    settings.setValue("file_open_path", file_path.left (file_path.length() -
-                                                        file_name.length()));
-
-    QSharedPointer<SignalVisualisationModel> signal_visualisation_model =
-            ApplicationContext::getInstance()->getMainWindowModel()->createSignalVisualisationOfFile (file_context);
-
-    signal_visualisation_model->setShownChannels (shown_channels);
-    signal_visualisation_model->update();
-    ApplicationContext::getInstance()->addFileContext (file_context);
-    ApplicationContext::getInstance()->setState (APP_STATE_FILE_OPEN);
+    instance_->openFileImpl (file_path);
 }
 
 //-------------------------------------------------------------------------
@@ -120,7 +93,7 @@ void OpenFileGuiCommand::open ()
     if (file_path.isEmpty())
         return;
 
-    openFile (file_path);
+    openFileImpl (file_path);
 }
 
 //-------------------------------------------------------------------------
@@ -140,7 +113,7 @@ void OpenFileGuiCommand::importEvents ()
 
     QList<QSharedPointer<SignalEvent const> > events = file_signal_reader->getEvents ();
 
-    QSharedPointer<EventManager> event_manager = ApplicationContext::getInstance()->getCurrentFileContext()->getEventManager();
+    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
     QList<QSharedPointer<QUndoCommand> > creation_commands;
     foreach (QSharedPointer<SignalEvent const> event, events)
     {
@@ -148,17 +121,52 @@ void OpenFileGuiCommand::importEvents ()
         creation_commands.append (creation_command);
     }
     MacroUndoCommand* macro_command = new MacroUndoCommand (creation_commands);
-    ApplicationContext::getInstance()->getCurrentCommandExecuter()->executeCommand (macro_command);
+    applicationContext()->getCurrentCommandExecuter()->executeCommand (macro_command);
 }
 
 //-------------------------------------------------------------------------
 void OpenFileGuiCommand::showFileInfo ()
 {
-    BasicHeaderInfoDialog basic_header_info_dialog(ApplicationContext::getInstance()->getCurrentFileContext()->getHeader());
+    BasicHeaderInfoDialog basic_header_info_dialog(applicationContext()->getCurrentFileContext()->getHeader());
 
     basic_header_info_dialog.loadSettings();
     basic_header_info_dialog.exec();
     basic_header_info_dialog.saveSettings();
+}
+
+//-------------------------------------------------------------------------
+void OpenFileGuiCommand::openFileImpl (QString file_path)
+{
+    file_path = QDir::toNativeSeparators (file_path);
+    QSharedPointer<FileSignalReader> file_signal_reader = FileSignalReaderFactory::getInstance()->getHandler (file_path);
+
+    if (file_signal_reader.isNull())
+        return;
+
+    QString file_name = file_path.section (QDir::separator(), -1);
+
+    QSharedPointer<ChannelManager> channel_manager (new ChannelManagerImpl (file_signal_reader));
+
+    std::set<ChannelID> shown_channels = GuiHelper::selectChannels (channel_manager,
+                                                                    applicationContext()->getEventColorManager(),
+                                                                    file_name);
+    if (shown_channels.size() == 0)
+        return;
+
+    QSharedPointer<EventManager> event_manager (new EventManagerImpl (file_signal_reader));
+    QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
+                                                 channel_manager, file_signal_reader->getBasicHeader()));
+
+    QSettings settings("SigViewer");
+    settings.setValue("file_open_path", file_path.left (file_path.length() -
+                                                        file_name.length()));
+
+    QSharedPointer<SignalVisualisationModel> signal_visualisation_model =
+            applicationContext()->getMainWindowModel()->createSignalVisualisationOfFile (file_context);
+
+    signal_visualisation_model->setShownChannels (shown_channels);
+    signal_visualisation_model->update();
+    applicationContext()->addFileContext (file_context);
 }
 
 

@@ -1,6 +1,5 @@
 #include "mouse_mode_gui_command.h"
 #include "../gui/signal_visualisation_model.h"
-#include "../application_context.h"
 
 namespace BioSig_
 {
@@ -68,9 +67,7 @@ void MouseModeGuiCommand::init ()
 //-----------------------------------------------------------------------------
 void MouseModeGuiCommand::trigger (QString const& action_name)
 {
-    QSharedPointer<MainWindowModel> mw_model = ApplicationContext::getInstance()->getMainWindowModel ();
-    QSharedPointer<SignalVisualisationModel> sv_model = mw_model->getCurrentSignalVisualisationModel ();
-    sv_model->setMode (action_to_mode_map_[action_name]);
+    currentVisModel()->setMode (action_to_mode_map_[action_name]);
 }
 
 //-------------------------------------------------------------------------
