@@ -93,7 +93,7 @@ public:
 
 private:
     QSharedPointer<FileSignalReader> reader_;
-    QSharedPointer<EventTableFileReader> event_table_reader_;
+    EventTableFileReader event_table_reader_;
 
     double sample_rate_;
     QMutex* caller_mutex_;

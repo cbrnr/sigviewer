@@ -2,6 +2,7 @@
 
 #include "dummy_file_signal_reader.h"
 #include "file_handling_impl/event_manager_impl.h"
+#include "application_context.h"
 
 using namespace BioSig_;
 
@@ -9,7 +10,6 @@ using namespace BioSig_;
 void EventManagerTest::init ()
 {
     QSharedPointer<DummyFileSignalReader> dummy_reader (new DummyFileSignalReader);
-    dummy_reader->open ("asdf");
     event_manager_ = new BioSig_::EventManagerImpl (dummy_reader);
 }
 

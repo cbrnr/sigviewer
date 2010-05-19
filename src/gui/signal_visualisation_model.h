@@ -6,6 +6,7 @@
 #include "../file_handling/channel_manager.h"
 #include "../file_handling/event_manager.h"
 #include "signal_visualisation_modes.h"
+#include "signal_visualisation_view.h"
 
 #include <QObject>
 
@@ -117,6 +118,8 @@ public:
     //-------------------------------------------------------------------------
     virtual void update () = 0;
 
+    //-------------------------------------------------------------------------
+    virtual SignalVisualisationView const* view () const = 0;
 public slots:
     void setActualEventCreationType (EventType type);
 

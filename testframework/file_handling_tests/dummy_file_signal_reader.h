@@ -7,31 +7,23 @@
 
 #include <cmath>
 
-using BioSig_::DataBlock;
-using BioSig_::BasicHeader;
+using namespace BioSig_;
 
-class DummyFileSignalReader : public BioSig_::FileSignalReader
+class DummyFileSignalReader : public FileSignalReader
 {
 public:
     DummyFileSignalReader () {open_ = false;}
     virtual ~DummyFileSignalReader () {}
-    virtual FileSignalReader* clone ()
+    virtual QSharedPointer<FileSignalReader> createInstance (QString const&)
     {
-        return new DummyFileSignalReader ();
+        return QSharedPointer<DummyFileSignalReader>(new DummyFileSignalReader);
     }
 
-    virtual QString open(const QString&)
+    virtual QList<QSharedPointer<SignalEvent const> > getEvents () const
     {
-        open_ = true;
-        return "";
+        QList<QSharedPointer<SignalEvent const> > events;
+        return  events;
     }
-    virtual QString open(const QString&, const bool)
-    {
-        open_ = true;
-        return "";
-    }
-
-    virtual void enableCaching() {}
 
     virtual bool isOpen()
     { return open_; }
@@ -41,22 +33,16 @@ public:
                                                            unsigned start_sample,
                                                            unsigned length) const
     {
-        QSharedPointer<DataBlock> data_block (new DataBlock);
-        std::vector<float32> data (length);
+        QSharedPointer<std::vector<float32> > data (new std::vector<float32>);
         for (unsigned index = 0; index < length; index++)
-            data[index] = sin (start_sample + index);
-        data_block->setData (data, 50);
+            data->push_back (sin (start_sample + index));
+        QSharedPointer<DataBlock> data_block (new DataBlock (data, 50));
         return data_block;
     }
 
-    virtual void loadEvents(SignalEventVector&)
+    virtual QSharedPointer<BasicHeader> getBasicHeader ()
     {
-
-    }
-
-    virtual QPointer<BasicHeader> getBasicHeader ()
-    {
-        return QPointer<BasicHeader> (new DummyBasicHeader);
+        return QSharedPointer<BasicHeader> (new DummyBasicHeader);
     }
 
 private:

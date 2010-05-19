@@ -33,10 +33,9 @@ public:
 
     void setLogStream(QTextStream* log_stream);
 
-    bool load(const QString& file_name);
 
-    StringIterator getGroupIdBegin();
-    StringIterator getGroupIdEnd();
+    StringIterator getGroupIdBegin() const;
+    StringIterator getGroupIdEnd() const;
     QString getEventGroupName(const QString& group_id);
 
     IntIterator eventTypesBegin();
@@ -49,6 +48,8 @@ public:
 
     std::set<uint16> getAllEventTypes () const;
 private:
+    bool load(const QString& file_name);
+
     struct EventItem
     {
         QString name;

@@ -1,5 +1,7 @@
 #include "tab_context.h"
 
+#include <QDebug>
+
 namespace BioSig_
 {
 
@@ -16,6 +18,7 @@ TabContext::~TabContext ()
 {
     emit selectionStateChanged (NO_TAB_SELECTION_STATE);
     emit editStateChanged (NO_TAB_EDIT_STATE);
+    qDebug () << "deleting TabContext";
 }
 
 //-----------------------------------------------------------------------------

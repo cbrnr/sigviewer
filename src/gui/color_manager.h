@@ -2,6 +2,7 @@
 #define EVENT_COLOR_MANAGER
 
 #include "base/user_types.h"
+#include "../file_handling_impl/event_table_file_reader.h"
 
 #include <QMap>
 #include <QColor>
@@ -39,6 +40,7 @@ private:
 
     EventColorMap event_type2color_;
     ChannelColorMap channel_color_map_;
+    EventTableFileReader event_table_file_reader_;
 };
 
 } // namespace BioSig_

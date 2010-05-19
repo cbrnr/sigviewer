@@ -14,7 +14,7 @@ namespace BioSig_
 EventTableFileReader::EventTableFileReader()
 : log_stream_(0)
 {
-    // nothing
+    load (":/eventcodes.txt");
 }
 
 // destructor
@@ -97,13 +97,13 @@ bool EventTableFileReader::load(const QString& file_name)
 }
 
 // get group id begin
-EventTableFileReader::StringIterator EventTableFileReader::getGroupIdBegin()
+EventTableFileReader::StringIterator EventTableFileReader::getGroupIdBegin() const
 {
     return event_group_ids_.begin();
 }
 
 // get group id end
-EventTableFileReader::StringIterator EventTableFileReader::getGroupIdEnd()
+EventTableFileReader::StringIterator EventTableFileReader::getGroupIdEnd() const
 {
     return event_group_ids_.end();
 }

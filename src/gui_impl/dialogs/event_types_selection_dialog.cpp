@@ -38,7 +38,7 @@ EventTypesSelectionDialog::EventTypesSelectionDialog (QString const& caption,
 //-----------------------------------------------------------------------------
 void EventTypesSelectionDialog::buildTree (bool only_existing_events)
 {
-    QSharedPointer<EventTableFileReader> event_table_file_reader = ApplicationContext::getInstance()->getEventTableFileReader();
+    EventTableFileReader event_table_file_reader;
     ui_.tree_widget_->setRootIsDecorated(true);
     QStringList header_labels;
     header_labels << tr("Event Type") << tr("Color") << tr("Alpha") << tr("Type Id");
@@ -63,15 +63,15 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
     QMap<QString, QTreeWidgetItem*> group_id2list_item;
     EventTableFileReader::StringIterator group_it;
 
-    for (group_it = event_table_file_reader->getGroupIdBegin();
-         group_it != event_table_file_reader->getGroupIdEnd();
+    for (group_it = event_table_file_reader.getGroupIdBegin();
+         group_it != event_table_file_reader.getGroupIdEnd();
          group_it++)
     {
         QString group_name =
-            event_table_file_reader->getEventGroupName(*group_it);
+            event_table_file_reader.getEventGroupName(*group_it);
 
         bool show_group = !only_existing_events;
-        foreach (EventType group_type, event_table_file_reader->getEventsOfGroup(*group_it))
+        foreach (EventType group_type, event_table_file_reader.getEventsOfGroup(*group_it))
             if (existing_types.count(group_type) && only_existing_events)
                 show_group = true;
 
@@ -90,15 +90,15 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
     // build events
     EventTableFileReader::IntIterator event_type_it;
 
-    for (event_type_it = event_table_file_reader->eventTypesBegin();
-         event_type_it != event_table_file_reader->eventTypesEnd();
+    for (event_type_it = event_table_file_reader.eventTypesBegin();
+         event_type_it != event_table_file_reader.eventTypesEnd();
          event_type_it++)
     {
         if (only_existing_events && !existing_types.count(*event_type_it))
             continue;
 
         QString group_name
-            = event_table_file_reader->getEventGroupId(*event_type_it);
+            = event_table_file_reader.getEventGroupId(*event_type_it);
 
         QString event_name
             = event_manager_->getNameOfEventType (*event_type_it);

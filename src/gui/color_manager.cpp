@@ -1,6 +1,4 @@
 #include "color_manager.h"
-#include "../file_handling_impl/event_table_file_reader.h"
-#include "../application_context.h"
 
 #include <QSettings>
 #include <QDebug>
@@ -16,7 +14,7 @@ QColor const ColorManager::DEFAULT_CHANNEL_COLOR_ = Qt::darkBlue;
 ColorManager::ColorManager ()
 {
     qDebug() << "constructing event color manager";
-
+    loadSettings();
 }
 
 ColorManager::~ColorManager ()
@@ -78,8 +76,8 @@ void ColorManager::loadSettings()
     QColor alpha_color(0, 0, 0, 50);
     event_type2color_[-1] = alpha_color;
     EventTableFileReader::IntIterator it;
-    for (it = ApplicationContext::getInstance()->getEventTableFileReader()->eventTypesBegin();
-         it != ApplicationContext::getInstance()->getEventTableFileReader()->eventTypesEnd();
+    for (it = event_table_file_reader_.eventTypesBegin();
+         it != event_table_file_reader_.eventTypesEnd();
          it++)
     {
         event_type2color_[*it] = QColor(0xff, 0, 0, 50);

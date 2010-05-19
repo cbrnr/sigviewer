@@ -76,13 +76,14 @@ public:
     /// see base class
     virtual EventID getSelectedEvent () const;
 
+    //-------------------------------------------------------------------------
+    virtual SignalVisualisationView const* view () const;
+
     void setSignalBrowserView(SignalBrowserView* signal_browser_view);
     void loadSettings();
     void saveSettings();
 
     //settings
-    std::map<std::string, bool> getHideableWidgetsVisibilities () const;
-    void setHideableWidgetsVisibilities (std::map<std::string, bool> const &widgets_visiblities);
     void setXGridVisible(bool visible);
     bool getGridVisible () const;
     void setYGridVisible(bool visible);
@@ -96,10 +97,7 @@ public:
     void zoomOutAll();
 
     int32 getSignalSpacing();
-    /*    int32 getPreferedXGirdPixelIntervall();
-*/
     int32 getPreferedYGirdPixelIntervall();
-    float64 getXGridPixelIntervall();
 
     EventGraphicsItem* getSelectedEventItem();
     void updateEventItems ();
@@ -112,7 +110,6 @@ public slots:
     //-------------------------------------------------------------------------
     /// removes the given event
     virtual void removeEventItem (EventID id);
-
 
     void updateEvent (EventID id);
 
@@ -161,7 +158,6 @@ private:
     EventGraphicsItem* selected_event_item_;
 
     int32 signal_spacing_;
-    int32 prefered_x_grid_pixel_intervall_;
     int32 prefered_y_grid_pixel_intervall_;
     float64 x_grid_pixel_intervall_;
 

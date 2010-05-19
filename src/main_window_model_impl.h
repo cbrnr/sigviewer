@@ -33,9 +33,8 @@ public:
     MainWindowModelImpl ();
 
     //-------------------------------------------------------------------------
-    virtual  ~MainWindowModelImpl() {}
+    virtual  ~MainWindowModelImpl ();
 
-    void setMainWindow(MainWindow* main_window);
     void loadSettings();
     void saveSettings();
 

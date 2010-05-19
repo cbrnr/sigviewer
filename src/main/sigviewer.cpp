@@ -25,15 +25,14 @@
 
 // sigviewer.cpp
 
-#include "base/user_types.h"
-#include "main_window.h"
-#include "main_window_model_impl.h"
-#include "application_context.h"
-#include "application_context_impl.h"
-#include "file_handling_impl/event_table_file_reader.h"
-#include "gui/gui_action_factory.h"
-#include "gui_impl/open_file_gui_command.h"
-#include "file_handling_impl/init_file_handling_impl.h"
+#include "../base/user_types.h"
+#include "../main_window.h"
+#include "../main_window_model_impl.h"
+#include "../application_context.h"
+#include "../file_handling_impl/event_table_file_reader.h"
+#include "../gui/gui_action_factory.h"
+#include "../gui_impl/open_file_gui_command.h"
+#include "../file_handling_impl/init_file_handling_impl.h"
 
 #include <stdlib.h>
 
@@ -113,27 +112,14 @@ int main(int32 argc, char* argv[])
         application.installTranslator(&sigviewer_translator);
 
         GuiActionFactory::getInstance()->initAllCommands ();
-
-        QSharedPointer<MainWindowModelImpl> main_window_model (new MainWindowModelImpl);
-
-        QSharedPointer<ApplicationContextImpl> app_ctx_impl (new ApplicationContextImpl);
-        app_ctx_impl->setMainWindowModel (main_window_model);
-
-        ApplicationContext::getInstance()->setImpl (app_ctx_impl);
-        app_ctx_impl->loadSettings();
-
-        MainWindow* main_window = new MainWindow (main_window_model);
-        main_window_model->setMainWindow (main_window);
-        main_window_model->loadSettings();
-        main_window->setUnifiedTitleAndToolBarOnMac(true);
-        main_window->show();
+        ApplicationContext::init();
 
         if (application.arguments().count() > 1)
             OpenFileGuiCommand::openFile (application.arguments().at(1));
 
         int result = application.exec();
-        main_window_model->saveSettings();
 
+        ApplicationContext::cleanup();
         return result;
     }
     catch (std::exception& e)

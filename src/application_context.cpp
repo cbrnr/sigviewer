@@ -1,35 +1,47 @@
 #include "application_context.h"
 #include "base/exception.h"
 
+#include "main_window_model_impl.h"
+
 #include <QDebug>
 
 namespace BioSig_
 {
 
-QSharedPointer<ApplicationContext> ApplicationContext::instance_;
+ApplicationContext* ApplicationContext::instance_ = 0;
 
 //-----------------------------------------------------------------------------
-QSharedPointer<ApplicationContext> ApplicationContext::getInstance ()
+ApplicationContext* ApplicationContext::getInstance ()
 {
-    if (instance_.isNull())
-        instance_ = QSharedPointer<ApplicationContext> (new ApplicationContext ());
+    if (!instance_)
+        instance_ = new ApplicationContext;
 
     return instance_;
 }
 
-//-----------------------------------------------------------------------------
-ApplicationContext::ApplicationContext ()
-    : impl_ (QSharedPointer<ApplicationContextImplInterface> (0))
+//-------------------------------------------------------------------------
+void ApplicationContext::init ()
 {
-    // nothing to do here
+    if (!instance_)
+        instance_ = new ApplicationContext;
+
+    instance_->color_manager_ = QSharedPointer<ColorManager> (new ColorManager);
+    instance_->main_window_model_ = QSharedPointer<MainWindowModel> (new MainWindowModelImpl);
+    instance_->setState (APP_STATE_NO_FILE_OPEN);
+}
+
+//-------------------------------------------------------------------------
+void ApplicationContext::cleanup ()
+{
+    delete instance_;
+    instance_ = 0;
 }
 
 
-//-------------------------------------------------------------------------
-void ApplicationContext::setImpl (QSharedPointer<ApplicationContextImplInterface> impl)
+//-----------------------------------------------------------------------------
+ApplicationContext::~ApplicationContext ()
 {
-    qDebug () << "ApplicationContext::setImpl";
-    impl_ = impl;
+    qDebug () << "deleting ApplicationContext";
 }
 
 //-------------------------------------------------------------------------
@@ -81,19 +93,13 @@ ApplicationState ApplicationContext::getState () const
 //-----------------------------------------------------------------------------
 QSharedPointer<MainWindowModel> ApplicationContext::getMainWindowModel () const
 {
-    return impl_->getMainWindowModel ();
-}
-
-//-------------------------------------------------------------------------
-QSharedPointer<EventTableFileReader> ApplicationContext::getEventTableFileReader () const
-{
-    return impl_->getEventTableFileReader ();
+    return main_window_model_;
 }
 
 //-------------------------------------------------------------------------
 QSharedPointer<ColorManager> ApplicationContext::getEventColorManager () const
 {
-    return impl_->getEventColorManager ();
+    return color_manager_;
 }
 
 //-----------------------------------------------------------------------------

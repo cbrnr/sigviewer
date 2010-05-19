@@ -35,7 +35,6 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
   signal_browser_view_ (0),
   selected_event_item_ (0),
   signal_spacing_(1),
-  prefered_x_grid_pixel_intervall_(100),
   prefered_y_grid_pixel_intervall_(25),
   x_grid_pixel_intervall_(0),
   show_y_grid_(true)
@@ -61,6 +60,13 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
 }
 
 //-----------------------------------------------------------------------------
+SignalVisualisationView const* SignalBrowserModel::view () const
+{
+    return signal_browser_view_;
+}
+
+
+//-----------------------------------------------------------------------------
 // set signal browser view
 void SignalBrowserModel::setSignalBrowserView (SignalBrowserView* signal_browser_view)
 {
@@ -79,8 +85,6 @@ void SignalBrowserModel::loadSettings()
     settings.beginGroup("SignalBrowserModel");
 
     signal_spacing_ = settings.value("signal_spacing", signal_spacing_).toInt();
-    prefered_x_grid_pixel_intervall_ = settings.value("prefered_x_grid_pixel_intervall",
-                                                      prefered_x_grid_pixel_intervall_).toInt();
     prefered_y_grid_pixel_intervall_ = settings.value("prefered_y_grid_pixel_intervall",
                                                       prefered_y_grid_pixel_intervall_).toInt();
     show_x_grid_ = settings.value("show_x_grid", show_x_grid_).toBool();
@@ -98,7 +102,6 @@ void SignalBrowserModel::saveSettings()
     settings.beginGroup("SignalBrowserModel");
 
     settings.setValue("signal_spacing", signal_spacing_);
-    settings.setValue("prefered_x_grid_pixel_intervall", prefered_x_grid_pixel_intervall_);
     settings.setValue("prefered_y_grid_pixel_intervall", prefered_y_grid_pixel_intervall_);
     settings.setValue("show_x_grid", show_x_grid_);
     settings.setValue("show_y_grid", show_y_grid_);
@@ -278,10 +281,8 @@ void SignalBrowserModel::update()
 
     // update x grid intervall
     float64 pixel_per_sec = getPixelPerSample () * channel_manager_->getSampleRate();
-    float64 x_grid_intervall = round125(prefered_x_grid_pixel_intervall_ /
-                                        pixel_per_sec);
 
-    x_grid_pixel_intervall_ =  pixel_per_sec * x_grid_intervall;
+    x_grid_pixel_intervall_ =  pixel_per_sec * round125 (100.0 / pixel_per_sec);
     signal_browser_view_->setXAxisIntervall (x_grid_pixel_intervall_);
     emit pixelPerSampleChanged (getPixelPerSample (), channel_manager_->getSampleRate());
     signal_browser_view_->update();
@@ -453,12 +454,6 @@ int32 SignalBrowserModel::getPreferedYGirdPixelIntervall()
     return prefered_y_grid_pixel_intervall_;
 }
 
-// get x grid pixel intervall
-float64 SignalBrowserModel::getXGridPixelIntervall()
-{
-    return x_grid_pixel_intervall_;
-}
-
 //-----------------------------------------------------------------------------
 void SignalBrowserModel::updateEventItemsImpl ()
 {
@@ -553,23 +548,6 @@ void SignalBrowserModel::updateEvent (EventID id)
 EventGraphicsItem* SignalBrowserModel::getSelectedEventItem()
 {
     return selected_event_item_;
-}
-
-//-------------------------------------------------------------------------
-std::map<std::string, bool> SignalBrowserModel::getHideableWidgetsVisibilities () const
-{
-    return signal_browser_view_->getWidgetVisibilities();
-}
-
-//-------------------------------------------------------------------------
-void SignalBrowserModel::setHideableWidgetsVisibilities (std::map<std::string, bool> const &widgets_visiblities)
-{
-    for (std::map<std::string, bool>::const_iterator widget_iterator = widgets_visiblities.begin();
-         widget_iterator != widgets_visiblities.end();
-         ++widget_iterator)
-    {
-        signal_browser_view_->setWidgetVisibility(widget_iterator->first, widget_iterator->second);
-    }
 }
 
 //-------------------------------------------------------------------------

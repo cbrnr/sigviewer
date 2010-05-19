@@ -31,7 +31,7 @@ public:
                  QSharedPointer<BasicHeader> header);
 
     //-------------------------------------------------------------------------
-    ~FileContext () {}
+    ~FileContext ();
 
     //-------------------------------------------------------------------------
     void resetFilePathAndName (QString const& new_file_path_and_name);

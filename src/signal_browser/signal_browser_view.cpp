@@ -329,6 +329,13 @@ void SignalBrowserView::updateWidgets (bool update_view)
 }
 
 //-----------------------------------------------------------------------------
+void SignalBrowserView::renderVisibleScene (QPainter* destination) const
+{
+    graphics_view_->render (destination, graphics_view_->viewport()->rect(), graphics_view_->viewport()->rect());
+}
+
+
+//-----------------------------------------------------------------------------
 void SignalBrowserView::setXAxisIntervall (float64 intervall)
 {
     x_axis_widget_->changeIntervall (intervall);

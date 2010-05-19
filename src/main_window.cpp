@@ -26,7 +26,6 @@
 // main_window.cpp
 
 #include "main_window.h"
-#include "application_context.h"
 #include "gui/gui_action_factory.h"
 #include "gui_impl/open_file_gui_command.h"
 
@@ -52,9 +51,8 @@ namespace BioSig_
 {
 
 //----------------------------------------------------------------------------
-MainWindow::MainWindow (QSharedPointer<MainWindowModelImpl> model)
- : QMainWindow(0),
-   model_ (model)
+MainWindow::MainWindow ()
+ : QMainWindow(0)
 {
     setWindowTitle (tr("SigViewer"));
     setAcceptDrops (true);
@@ -149,17 +147,18 @@ void MainWindow::toggleAllToolbars ()
 void MainWindow::initMenus()
 {
     file_recent_files_menu_ = new QMenu(tr("Open &Recent"), this);
-    connect(file_recent_files_menu_, SIGNAL(aboutToShow()),
+/*    connect(file_recent_files_menu_, SIGNAL(aboutToShow()),
             model_.data(), SLOT(recentFileMenuAboutToShow()));
     connect(file_recent_files_menu_, SIGNAL(triggered(QAction*)),
             model_.data(), SLOT(recentFileActivated(QAction*)));
-
+*/
     file_menu_ = menuBar()->addMenu(tr("&File"));
     file_menu_->addAction(action("Open..."));
     file_menu_->addMenu (file_recent_files_menu_);
     file_menu_->addAction (action("Save"));
     file_menu_->addAction (action("Save as..."));
     file_menu_->addSeparator ();
+    file_menu_->addAction (action("Export to PNG..."));
     file_menu_->addAction (action("Export to GDF..."));
     file_menu_->addAction (action("Export Events..."));
     file_menu_->addAction (action("Import Events..."));

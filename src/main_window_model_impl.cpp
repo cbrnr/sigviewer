@@ -11,6 +11,7 @@
 #include "signal_browser/signal_browser_view.h"
 
 #include <QSettings>
+#include <QDebug>
 
 namespace BioSig_
 {
@@ -19,18 +20,18 @@ int const MainWindowModelImpl::NUMBER_RECENT_FILES_ = 8;
 
 //-----------------------------------------------------------------------------
 MainWindowModelImpl::MainWindowModelImpl ()
-: main_window_(0),
+: main_window_ (new MainWindow),
   tab_widget_ (0)
 {
-    // nothing to do here
+    main_window_->show();
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModelImpl::setMainWindow (MainWindow* main_window)
+MainWindowModelImpl::~MainWindowModelImpl ()
 {
-    main_window_ = main_window;
-    ApplicationContext::getInstance()->setState(APP_STATE_NO_FILE_OPEN);
+    qDebug () << "deleting MainWindowModelImpl";
 }
+
 
 //-----------------------------------------------------------------------------
 void MainWindowModelImpl::loadSettings()

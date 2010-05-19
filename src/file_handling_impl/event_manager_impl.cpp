@@ -1,6 +1,5 @@
 #include "event_manager_impl.h"
 #include "../file_handling/file_signal_reader.h"
-#include "../application_context.h"
 #include "../base/exception.h"
 
 #include <QMutexLocker>
@@ -13,7 +12,6 @@ namespace BioSig_
 //-----------------------------------------------------------------------------
 EventManagerImpl::EventManagerImpl (QSharedPointer<FileSignalReader> reader)
     : reader_ (reader),
-      event_table_reader_ (ApplicationContext::getInstance()->getEventTableFileReader()),
       caller_mutex_ (new QMutex)
 {
     QList<QSharedPointer<SignalEvent const> > signal_events = reader_->getEvents ();
@@ -37,13 +35,13 @@ EventManagerImpl::EventManagerImpl (QSharedPointer<FileSignalReader> reader)
     for (QMap<unsigned, QString>::iterator name_iter = event_names.begin();
          name_iter != event_names.end();
          ++name_iter)
-        event_table_reader_->setEventName (name_iter.key(), name_iter.value());
+        event_table_reader_.setEventName (name_iter.key(), name_iter.value());
 }
 
 //-----------------------------------------------------------------------------
 EventManagerImpl::~EventManagerImpl ()
 {
-    event_table_reader_->restoreEventNames ();
+    event_table_reader_.restoreEventNames ();
     delete caller_mutex_;
 }
 
@@ -156,14 +154,14 @@ unsigned EventManagerImpl::getMaxEventPosition () const
 QString EventManagerImpl::getNameOfEventType (EventType type) const
 {
     QMutexLocker locker (caller_mutex_);
-    return event_table_reader_->getEventName (type);
+    return event_table_reader_.getEventName (type);
 }
 
 //-------------------------------------------------------------------------
 QString EventManagerImpl::getNameOfEvent (EventID event) const
 {
     if (event_map_.contains (event))
-        return event_table_reader_->getEventName (event_map_[event]->getType ());
+        return event_table_reader_.getEventName (event_map_[event]->getType ());
     else
         return "";
 }
@@ -187,15 +185,15 @@ unsigned EventManagerImpl::getNumberOfEvents () const
 std::set<EventType> EventManagerImpl::getAllPossibleEventTypes () const
 {
     QMutexLocker locker (caller_mutex_);
-    return event_table_reader_->getAllEventTypes ();
+    return event_table_reader_.getAllEventTypes ();
 }
 
 //-------------------------------------------------------------------------
 std::set<QString> EventManagerImpl::getEventTypeGroupIDs () const
 {
     std::set<QString> groups;
-    for (EventTableFileReader::StringIterator group = event_table_reader_->getGroupIdBegin();
-         group != event_table_reader_->getGroupIdEnd();
+    for (EventTableFileReader::StringIterator group = event_table_reader_.getGroupIdBegin();
+         group != event_table_reader_.getGroupIdEnd();
          ++group)
         groups.insert (*group);
     return groups;

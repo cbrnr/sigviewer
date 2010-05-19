@@ -6,7 +6,9 @@
 
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QPaintEngine>
 #include <QFile>
+#include <QPainter>
 
 namespace BioSig_
 {
@@ -46,6 +48,7 @@ void SaveGuiCommand::init ()
 
     resetActionTriggerSlot (SAVE_AS_, SLOT(saveAs()));
     resetActionTriggerSlot (SAVE_, SLOT(save()));
+    resetActionTriggerSlot (EXPORT_TO_PNG_, SLOT(exportToPNG()));
     resetActionTriggerSlot (EXPORT_TO_GDF_, SLOT(exportToGDF()));
     resetActionTriggerSlot (EXPORT_EVENTS_, SLOT(exportEvents()));
 }
@@ -132,7 +135,13 @@ void SaveGuiCommand::save ()
 //-----------------------------------------------------------------------------
 void SaveGuiCommand::exportToPNG ()
 {
-
+    SignalVisualisationView const* view = currentVisModel()->view();
+    QImage image (currentVisModel()->getShownSignalWidth(),
+                  currentVisModel()->getShownHeight(), QImage::Format_ARGB32);
+    image.fill(0);
+    QPainter* painter = new QPainter (&image);
+    view->renderVisibleScene (painter);
+    image.save ("/home/ce/bild.png", "PNG", 100);
 }
 
 

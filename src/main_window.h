@@ -4,7 +4,6 @@
 #define MAIN_WINDOW_H
 
 #include "base/user_types.h"
-#include "main_window_model_impl.h"
 
 #include <QMainWindow>
 #include <QIcon>
@@ -23,7 +22,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow (QSharedPointer<MainWindowModelImpl> model);
+    MainWindow ();
     virtual ~MainWindow () {};
 
     void setStatusBarSignalLength(float64 length);
@@ -51,8 +50,6 @@ private:
     void initToolBars();
     void initMenus();
     void initStatusBar();
-
-    QSharedPointer<MainWindowModelImpl> model_;
 
     QMenu* file_menu_;
     QMenu* file_recent_files_menu_;

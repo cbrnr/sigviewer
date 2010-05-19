@@ -3,18 +3,15 @@
 
 #include "base/application_states.h"
 #include "gui/color_manager.h"
+#include "gui/main_window_model.h"
 #include "file_context.h"
 #include "tab_context.h"
-#include "application_context_impl_interface.h"
 
 #include <QObject>
 #include <QSharedPointer>
 
 namespace BioSig_
 {
-
-class MainWindowModel;
-class EventTableFileReader;
 
 //-----------------------------------------------------------------------------
 /// ApplicationContext
@@ -25,13 +22,17 @@ class ApplicationContext : public QObject
     Q_OBJECT
 public:
     //-------------------------------------------------------------------------
-    static QSharedPointer<ApplicationContext> getInstance ();
+    static ApplicationContext* getInstance ();
 
     //-------------------------------------------------------------------------
-    void setImpl (QSharedPointer<ApplicationContextImplInterface> impl);
+    static void init ();
 
     //-------------------------------------------------------------------------
-    ApplicationContext ();
+    static void cleanup ();
+
+    //-------------------------------------------------------------------------
+    ApplicationContext () {}
+    ~ApplicationContext ();
 
     //-------------------------------------------------------------------------
     QSharedPointer<FileContext> getCurrentFileContext () const;
@@ -57,9 +58,6 @@ public:
     QSharedPointer<MainWindowModel> getMainWindowModel () const;
 
     //-------------------------------------------------------------------------
-    QSharedPointer<EventTableFileReader> getEventTableFileReader () const;
-
-    //-------------------------------------------------------------------------
     QSharedPointer<ColorManager> getEventColorManager () const;
 
 public slots:
@@ -72,8 +70,9 @@ signals:
     void currentTabEditStateChanged (TabEditState state);
 
 private:
-    static QSharedPointer<ApplicationContext> instance_;
-    QSharedPointer<ApplicationContextImplInterface> impl_;
+    static ApplicationContext* instance_;
+    QSharedPointer<ColorManager> color_manager_;
+    QSharedPointer<MainWindowModel> main_window_model_;
     QSharedPointer<FileContext> current_file_context_;
     QSharedPointer<TabContext> current_tab_context_;
     ApplicationState state_;

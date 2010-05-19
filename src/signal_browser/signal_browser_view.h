@@ -5,6 +5,7 @@
 #include "../base/user_types.h"
 #include "../command_executer.h"
 #include "../gui/signal_visualisation_model.h"
+#include "../gui/signal_visualisation_view.h"
 #include "../file_handling/event_manager.h"
 
 #include "signal_browser_graphics_view.h"
@@ -35,7 +36,7 @@ class EventCreationWidget;
 class AdaptBrowserViewWidget;
 
 // signal browser view
-class SignalBrowserView : public QFrame
+class SignalBrowserView : public QFrame, public SignalVisualisationView
 {
     Q_OBJECT
 
@@ -70,6 +71,7 @@ public:
     void setViewCursor (QCursor const &cursor);
     void updateWidgets (bool update_view = true);
 
+    virtual void renderVisibleScene (QPainter* destination) const;
 public slots:
     void setXAxisIntervall (float64 intervall);
     void setMode (SignalVisualisationMode mode);
