@@ -3,6 +3,7 @@
 
 #include "../gui/gui_action_command.h"
 #include "../gui/gui_action_factory_registrator.h"
+#include "dialogs/event_time_selection_dialog.h"
 
 namespace BioSig_
 {
@@ -30,6 +31,12 @@ private slots:
     void calculatePowerSpectrum ();
 
 private:
+    //-------------------------------------------------------------------------
+    QSharedPointer<EventTimeSelectionDialog> getFinishedEventTimeSelectionDialog ();
+
+    //-------------------------------------------------------------------------
+    void createVisualisation (QString const& title, QSharedPointer<ChannelManager> channel_manager);
+
     static QString const MEAN_;
     static QString const POWER_SPECTRUM_;
     static QStringList const ACTIONS_;

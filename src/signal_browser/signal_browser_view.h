@@ -60,9 +60,6 @@ public:
     int32 getVisibleX () const;
     int32 getVisibleY () const;
 
-    QPointF getCenter () const;
-    void setCenter (QPointF new_center);
-
     std::map<std::string, bool> getWidgetVisibilities () const;
     void setWidgetVisibility (std::string const &widget_name, bool visibility);
 

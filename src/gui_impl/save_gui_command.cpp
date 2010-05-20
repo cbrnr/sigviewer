@@ -226,7 +226,8 @@ void SaveGuiCommand::evaluateEnabledness ()
     {
         no_gdf_file_open = !(applicationContext()->getCurrentFileContext()->getFileName().endsWith("gdf"));
         file_changed = (getFileState () == FILE_STATE_CHANGED);
-        has_events = currentVisModel()->getEventManager()->getNumberOfEvents() > 0;
+        if (!currentVisModel()->getEventManager().isNull())
+            has_events = currentVisModel()->getEventManager()->getNumberOfEvents() > 0;
     }
 
     getQAction (SAVE_)->setEnabled (file_changed);

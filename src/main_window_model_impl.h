@@ -37,7 +37,8 @@ public:
     virtual  ~MainWindowModelImpl ();
 
     //-------------------------------------------------------------------------
-    virtual QSharedPointer<SignalVisualisationModel> createSignalVisualisation (QSharedPointer<ChannelManager> channel_manager);
+    virtual QSharedPointer<SignalVisualisationModel> createSignalVisualisation (QString const& title,
+                                                                                QSharedPointer<ChannelManager> channel_manager);
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<SignalVisualisationModel> createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx);

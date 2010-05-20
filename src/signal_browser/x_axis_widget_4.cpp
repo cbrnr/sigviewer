@@ -125,7 +125,7 @@ void XAxisWidget::paintEvent(QPaintEvent*)
         bounding_rect.moveTo (time_to_highlight_ * pixel_per_sec_, 5);
         p.fillRect (bounding_rect, Qt::white);
         p.setPen (Qt::black);
-        p.drawText (bounding_rect, Qt::AlignLeft | Qt::AlignTop, QString::number(time_to_highlight_, 'f', 3));
+        p.drawText (bounding_rect, Qt::AlignLeft | Qt::AlignTop, QString::number(time_to_highlight_, 'f', 2));
         last_highlight_rect_ = bounding_rect;
     }
 }

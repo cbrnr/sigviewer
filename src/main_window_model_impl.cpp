@@ -123,10 +123,10 @@ void MainWindowModelImpl::storeAndInitTabContext (QSharedPointer<TabContext> con
 }
 
 //-------------------------------------------------------------------------
-QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisualisation (QSharedPointer<ChannelManager> channel_manager)
+QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisualisation (QString const& title, QSharedPointer<ChannelManager> channel_manager)
 {
     int tab_index = createSignalVisualisationImpl (channel_manager, QSharedPointer<EventManager>(0));
-    tab_widget_->setTabText(tab_index, tr("Mean"));
+    tab_widget_->setTabText(tab_index, title);
     tab_widget_->setCurrentIndex(tab_index);
     return browser_models_[tab_index];
 }

@@ -18,8 +18,7 @@
 #include <QToolBox>
 #include <QMenu>
 #include <QPropertyAnimation>
-
-#include <iostream>
+#include <QDebug>
 
 namespace BioSig_
 {
@@ -139,18 +138,6 @@ void SignalBrowserView::setScrollMode (bool activated)
 //-----------------------------------------------------------------------------
 void SignalBrowserView::resizeScene (int32 width, int32 height)
 {
-//    if (width < graphics_view_->viewport()->width())
-//    {
-//        if (spacer_item_)
-//            delete spacer_item_;
-//        spacer_item_ = new QSpacerItem (graphics_view_->viewport()->width() - width - 10, 100);
-//        layout_->addItem(spacer_item_, 2, 5);
-//    }
-//    else
-//    {
-//        if (spacer_item_)
-//            layout_->removeItem (spacer_item_);
-//    }
     QPointF left_upper_corner = graphics_view_->mapToScene (0, 0);
 
     left_upper_corner.setY (left_upper_corner.y() * height / graphics_scene_->height());
@@ -163,7 +150,7 @@ void SignalBrowserView::resizeScene (int32 width, int32 height)
     graphics_view_->centerOn (center);
 
     y_axis_widget_->changeYStart (left_upper_corner.y());
-    x_axis_widget_->changeXStart (left_upper_corner.x());
+    emit visibleXChanged (graphics_view_->mapToScene (0, 0).x());
 }
 
 //-----------------------------------------------------------------------------
@@ -236,19 +223,6 @@ int32 SignalBrowserView::getVisibleX () const
 int32 SignalBrowserView::getVisibleY () const
 {
     return graphics_view_->mapToScene(0,0).y();
-}
-
-//-----------------------------------------------------------------------------
-QPointF SignalBrowserView::getCenter () const
-{
-    return graphics_view_->mapToScene (graphics_view_->viewport()->width(),
-                                       graphics_view_->viewport()->height());
-}
-
-//-----------------------------------------------------------------------------
-void SignalBrowserView::setCenter (QPointF new_center)
-{
-    graphics_view_->centerOn (new_center);
 }
 
 //-----------------------------------------------------------------------------
