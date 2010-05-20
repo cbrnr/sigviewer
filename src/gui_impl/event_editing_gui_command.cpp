@@ -1,13 +1,12 @@
 #include "event_editing_gui_command.h"
 #include "gui_helper_functions.h"
 #include "event_table_dialog.h"
+#include "dialogs/event_table_editing_dialog.h"
 #include "../editing_commands/delete_event_undo_command.h"
 #include "../editing_commands/change_type_undo_command.h"
 #include "../editing_commands/change_channel_undo_command.h"
 #include "../editing_commands/new_event_undo_command.h"
 #include "../editing_commands/macro_undo_command.h"
-
-#include <iostream>
 
 namespace BioSig_
 {
@@ -196,11 +195,16 @@ void EventEditingGuiCommand::showEventTableDialog ()
     QSharedPointer<ChannelManager const> channel_manager = currentVisModel()->getChannelManager ();
     QSharedPointer<CommandExecuter> command_executer = applicationContext()->getCurrentCommandExecuter();
 
-    EventTableDialog event_table_dialog (event_manager, command_executer,
-                                         channel_manager);
-    event_table_dialog.loadSettings();
-    event_table_dialog.exec ();
-    event_table_dialog.saveSettings();
+    EventTableEditingDialog event_dialog (event_manager,
+                                          channel_manager,
+                                          command_executer);
+    event_dialog.exec ();
+
+//    EventTableDialog event_table_dialog (event_manager, command_executer,
+//                                         channel_manager);
+//    event_table_dialog.loadSettings();
+//    event_table_dialog.exec ();
+//    event_table_dialog.saveSettings();
 }
 
 //-------------------------------------------------------------------------

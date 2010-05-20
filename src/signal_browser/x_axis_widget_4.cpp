@@ -3,8 +3,6 @@
 #include "../gui/gui_action_factory.h"
 
 #include <QPainter>
-#include <QGraphicsView>
-#include <QGraphicsScene>
 #include <QFont>
 #include <QTime>
 #include <QPaintEvent>
@@ -13,8 +11,6 @@
 #include <QMenu>
 #include <QHBoxLayout>
 #include <cmath>
-
-#include <iostream>
 
 namespace BioSig_
 {

@@ -30,7 +30,10 @@ uint32 ChannelManagerImpl::getNumberChannels () const
 //-------------------------------------------------------------------------
 QString ChannelManagerImpl::getChannelLabel (ChannelID id) const
 {
-    return reader_->getBasicHeader()->getChannel (id).getLabel();
+    if (id == UNDEFINED_CHANNEL)
+        return QObject::tr("All Channels");
+    else
+        return reader_->getBasicHeader()->getChannel (id).getLabel();
 }
 
 

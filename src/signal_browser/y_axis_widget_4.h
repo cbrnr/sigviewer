@@ -17,7 +17,7 @@ class YAxisWidget : public QWidget
 {
     Q_OBJECT
 public:
-    YAxisWidget(QWidget* parent);//, SignalBrowserModel& model, SignalBrowserView* browser);
+    YAxisWidget(QWidget* parent);
 
     virtual ~YAxisWidget ();
     virtual QSize sizeHint () const;

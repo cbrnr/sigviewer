@@ -5,9 +5,6 @@
 
 #include <QWidget>
 
-class QGraphicsScene;
-class QGraphicsView;
-
 namespace BioSig_
 {
 

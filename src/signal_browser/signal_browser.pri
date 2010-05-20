@@ -26,3 +26,4 @@ SOURCES += signal_browser/signal_browser_view.cpp \
 FORMS += signal_browser/event_creation_widget.ui \
     signal_browser/event_editing_widget.ui \
     signal_browser/adapt_browser_view_widget.ui
+
