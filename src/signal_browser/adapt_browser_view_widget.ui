@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>396</width>
-    <height>46</height>
+    <width>556</width>
+    <height>42</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,18 +45,18 @@
     </widget>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QToolButton" name="zero_centered_">
-       <property name="text">
-        <string>0-Line Centered</string>
-       </property>
-      </widget>
-     </item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QToolButton" name="zero_fitted_">
        <property name="text">
         <string>0-Line Fitted</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="zero_centered_">
+       <property name="text">
+        <string>0-Line Centered</string>
        </property>
       </widget>
      </item>

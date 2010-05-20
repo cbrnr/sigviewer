@@ -197,13 +197,6 @@ std::set<ChannelID> SignalBrowserModel::getShownChannels () const
 }
 
 //-----------------------------------------------------------------------------
-// get number shown channels
-uint32 SignalBrowserModel::getNumberShownChannels() const
-{
-    return channel2signal_item_.size();
-}
-
-//-----------------------------------------------------------------------------
 int32 SignalBrowserModel::getYPosOfChannel (uint32 channel_nr) const
 {
     Int2IntMap::const_iterator y_iter =
@@ -554,25 +547,6 @@ void SignalBrowserModel::updateEvent (EventID id)
 EventGraphicsItem* SignalBrowserModel::getSelectedEventItem()
 {
     return selected_event_item_;
-}
-
-//-------------------------------------------------------------------------
-void SignalBrowserModel::setXGridVisible(bool visible)
-{
-    show_x_grid_ = visible;
-}
-
-//-------------------------------------------------------------------------
-bool SignalBrowserModel::getGridVisible () const
-{
-    return show_x_grid_ || show_y_grid_;
-}
-
-
-//-------------------------------------------------------------------------
-void SignalBrowserModel::setYGridVisible(bool visible)
-{
-    show_y_grid_ = visible;
 }
 
 } // namespace BioSig_

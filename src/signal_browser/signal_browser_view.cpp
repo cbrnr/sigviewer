@@ -79,7 +79,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
         event_editing_widget_->connect (signal_browser_model.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent const>)), SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent const>)));
     }
 
-    adapt_browser_view_widget_ = new AdaptBrowserViewWidget;
+    adapt_browser_view_widget_ = new AdaptBrowserViewWidget (this);
     x_axis_widget_->connect (adapt_browser_view_widget_, SIGNAL(xAxisVisibilityChanged(bool)), SLOT(setVisible(bool)));
     y_axis_widget_->connect (adapt_browser_view_widget_, SIGNAL(yAxisVisibilityChanged(bool)), SLOT(setVisible(bool)));
     label_widget_->connect (adapt_browser_view_widget_, SIGNAL(labelsVisibilityChanged(bool)), SLOT(setVisible(bool)));
@@ -124,16 +124,6 @@ SignalBrowserView::~SignalBrowserView ()
 {
     saveSettings ();
 }
-
-//-----------------------------------------------------------------------------
-void SignalBrowserView::setScrollMode (bool activated)
-{
-    if (activated)
-        graphics_view_->setDragMode(QGraphicsView::ScrollHandDrag);
-    else
-        graphics_view_->setDragMode(QGraphicsView::NoDrag);
-}
-
 
 //-----------------------------------------------------------------------------
 void SignalBrowserView::resizeScene (int32 width, int32 height)
@@ -226,36 +216,6 @@ int32 SignalBrowserView::getVisibleY () const
 }
 
 //-----------------------------------------------------------------------------
-std::map<std::string, bool> SignalBrowserView::getWidgetVisibilities () const
-{
-    std::map<std::string, bool> hideable_widgets_visibilities;
-
-    for (std::map<std::string, QWidget*>::const_iterator widget_iterator =
-         hideable_widgets_.begin();
-         widget_iterator != hideable_widgets_.end();
-         ++widget_iterator)
-    {
-        QWidget const* blub = this;
-        QWidget* bla = const_cast<QWidget*>(blub);
-        hideable_widgets_visibilities[widget_iterator->first] =
-                widget_iterator->second->isVisibleTo (bla);
-    }
-
-    return hideable_widgets_visibilities;
-}
-
-
-//-----------------------------------------------------------------------------
-void SignalBrowserView::setWidgetVisibility (std::string const &widget_name, bool visibility)
-{
-    std::map<std::string, QWidget*>::iterator widget_iterator = hideable_widgets_.find(widget_name);
-    if (widget_iterator == hideable_widgets_.end())
-        return;
-    else
-        widget_iterator->second->setVisible (visibility);
-}
-
-//-----------------------------------------------------------------------------
 void SignalBrowserView::goTo (float32 x)
 {
     double y = graphics_view_->mapToScene(0, 0).y();
@@ -280,14 +240,6 @@ void SignalBrowserView::smoothGoTo (float32 x, float32)
     scroll_timer_->start();
 }
 
-
-//-----------------------------------------------------------------------------
-void SignalBrowserView::setViewCursor (QCursor const &cursor)
-{
-    graphics_view_->setCursor(cursor);
-}
-
-
 //-----------------------------------------------------------------------------
 void SignalBrowserView::updateWidgets (bool update_view)
 {
@@ -303,11 +255,34 @@ void SignalBrowserView::updateWidgets (bool update_view)
 }
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::renderVisibleScene (QPainter* destination) const
+QSharedPointer<QImage> SignalBrowserView::renderVisibleScene () const
 {
-    graphics_view_->render (destination, graphics_view_->viewport()->rect(), graphics_view_->viewport()->rect());
+    QSharedPointer<QImage> image (new QImage(graphics_view_->viewport()->width(),
+                                             graphics_view_->viewport()->height(),
+                                             QImage::Format_ARGB32));
+    image->fill (0);
+    QPainter painter (image.data());
+    graphics_view_->render (&painter, graphics_view_->viewport()->rect(), graphics_view_->viewport()->rect());
+    return image;
 }
 
+//-----------------------------------------------------------------------------
+bool SignalBrowserView::getXAxisVisibility () const
+{
+    return x_axis_widget_->isVisible ();
+}
+
+//-----------------------------------------------------------------------------
+bool SignalBrowserView::getYAxisVisibility () const
+{
+    return y_axis_widget_->isVisible ();
+}
+
+//-----------------------------------------------------------------------------
+bool SignalBrowserView::getLabelsVisibility () const
+{
+    return label_widget_->isVisible ();
+}
 
 //-----------------------------------------------------------------------------
 void SignalBrowserView::setXAxisIntervall (float64 intervall)
@@ -372,7 +347,7 @@ void SignalBrowserView::graphicsSceneResized (QResizeEvent* event)
 //-----------------------------------------------------------------------------
 void SignalBrowserView::verticalSrollbarMoved(int)
 {
-    label_widget_->update();//repaint();
+    label_widget_->update();
     qreal y = graphics_view_->mapToScene(0,0).y();
     if (y < 0)
         y = 0;
@@ -396,8 +371,7 @@ void SignalBrowserView::horizontalScrollBarRangeChaned (int min, int max)
 //-----------------------------------------------------------------------------
 void SignalBrowserView::verticalScrollBarRangeChaned (int min, int max)
 {
-    //y_axis_widget_->repaint();
-    label_widget_->update ();//repaint();
+    label_widget_->update ();
     vertical_scrollbar_->setRange(min, max);
     vertical_scrollbar_->setPageStep(graphics_view_->verticalScrollBar()->pageStep());
     qreal y = graphics_view_->mapToScene(0,0).y();
@@ -434,24 +408,6 @@ void SignalBrowserView::scroll ()
     if ((scroll_x_left_ && graphics_view_->mapToScene(0,0).x() <= scroll_x_destination_)
         || (!scroll_x_left_ && graphics_view_->mapToScene(0,0).x() >= scroll_x_destination_))
         scroll_timer_->stop();
-}
-
-//-------------------------------------------------------------------------
-void SignalBrowserView::contextMenuEvent (QContextMenuEvent * event)
-{
-    QMenu* menu = new QMenu (this);
-    for (std::map<std::string, QWidget*>::iterator widget_iter =
-         hideable_widgets_.begin();
-         widget_iter != hideable_widgets_.end();
-         ++widget_iter)
-    {
-        QAction* action = new QAction (tr(widget_iter->first.c_str()), menu);
-        action->setCheckable (true);
-        action->setChecked (widget_iter->second->isVisibleTo(this));
-        widget_iter->second->connect (action, SIGNAL(toggled(bool)), SLOT(setVisible (bool)));
-        menu->addAction (action);
-    }
-    menu->exec(event->globalPos());
 }
 
 //-----------------------------------------------------------------------------

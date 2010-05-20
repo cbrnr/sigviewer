@@ -2,7 +2,6 @@
 #ifndef SIGNAL_BROWSER_MODEL_H_q4
 #define SIGNAL_BROWSER_MODEL_H_q4
 
-#include "../file_context.h"
 #include "../tab_context.h"
 #include "../file_handling/channel_manager.h"
 #include "../file_handling/event_manager.h"
@@ -17,7 +16,6 @@
 #include <QPointF>
 
 #include <map>
-#include <vector>
 #include <set>
 
 namespace BioSig_
@@ -86,14 +84,8 @@ public:
     void loadSettings();
     void saveSettings();
 
-    //settings
-    void setXGridVisible(bool visible);
-    bool getGridVisible () const;
-    void setYGridVisible(bool visible);
-
     virtual void setShownChannels (std::set<ChannelID> const& shown_channels);
     virtual std::set<ChannelID> getShownChannels () const;
-    uint32 getNumberShownChannels() const;
     int32 getYPosOfChannel (uint32 channel_nr) const;
 
     void zoomInAll();
@@ -134,11 +126,10 @@ private:
     void removeChannel (ChannelID channel_nr);
 
     //-------------------------------------------------------------------------
-    static uint8 const NAVIGATION_Z = 1;
-    static uint8 const X_GRID_Z = 2;
-    static uint8 const CHANNEL_SEPARATOR_Z = 3;
+    void updateEventItemsImpl ();
+
+    //-------------------------------------------------------------------------
     static uint8 const SIGNAL_Z = 4;
-    static uint8 const EVENT_Z = 5;
 
     QSharedPointer<ChannelManager> channel_manager_;
     QSharedPointer<EventManager> event_manager_;
@@ -151,9 +142,7 @@ private:
 
     typedef std::map<int32, int32> Int2IntMap;
 
-    void updateEventItemsImpl ();
 
-    // items
     Int2SignalGraphicsItemPtrMap channel2signal_item_;
     Int2EventGraphicsItemPtrMap id2event_item_;
 

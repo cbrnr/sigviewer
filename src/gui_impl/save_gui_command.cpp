@@ -141,11 +141,7 @@ void SaveGuiCommand::exportToPNG ()
                                                                 tr("PNG files"));
 
     SignalVisualisationView const* view = currentVisModel()->view();
-    QImage* image = new QImage (currentVisModel()->getShownSignalWidth(),
-                                currentVisModel()->getShownHeight(), QImage::Format_ARGB32);
-    image->fill(0);
-    QPainter* painter = new QPainter (image);
-    view->renderVisibleScene (painter);
+    QSharedPointer<QImage> image = view->renderVisibleScene ();
     image->save (file_path, "PNG", 100);
 }
 

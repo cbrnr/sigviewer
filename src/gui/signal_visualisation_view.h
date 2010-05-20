@@ -9,7 +9,11 @@ namespace BioSig_
 class SignalVisualisationView
 {
 public:
-    virtual void renderVisibleScene (QPainter* destination) const = 0;
+    virtual QSharedPointer<QImage> renderVisibleScene () const = 0;
+
+    virtual bool getXAxisVisibility () const = 0;
+    virtual bool getYAxisVisibility () const = 0;
+    virtual bool getLabelsVisibility () const = 0;
 };
 
 }

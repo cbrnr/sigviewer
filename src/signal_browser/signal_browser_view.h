@@ -53,22 +53,20 @@ public:
     void addEventGraphicsItem (EventGraphicsItem* event_graphics_item);
     void removeEventGraphicsItem (EventGraphicsItem* event_graphics_item, bool update_view = true);
 
-    void setScrollMode (bool activated);
     void resizeScene (int32 width, int32 height);
     int32 getVisibleWidth () const;
     int32 getVisibleHeight () const;
     int32 getVisibleX () const;
     int32 getVisibleY () const;
 
-    std::map<std::string, bool> getWidgetVisibilities () const;
-    void setWidgetVisibility (std::string const &widget_name, bool visibility);
-
     void goTo (float32 x);
     void smoothGoTo (float32 x, float32 y);
-    void setViewCursor (QCursor const &cursor);
     void updateWidgets (bool update_view = true);
 
-    virtual void renderVisibleScene (QPainter* destination) const;
+    virtual QSharedPointer<QImage> renderVisibleScene () const;
+    virtual bool getXAxisVisibility () const;
+    virtual bool getYAxisVisibility () const;
+    virtual bool getLabelsVisibility () const;
 public slots:
     void setXAxisIntervall (float64 intervall);
     void setMode (SignalVisualisationMode mode);
@@ -88,9 +86,6 @@ private slots:
     void graphicsSceneResized (QResizeEvent* event);
 
 private:
-    //-------------------------------------------------------------------------
-    virtual void contextMenuEvent (QContextMenuEvent * event);
-
     void createLayout ();
     void loadSettings ();
     void saveSettings ();
