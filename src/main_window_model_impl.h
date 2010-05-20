@@ -36,9 +36,6 @@ public:
     //-------------------------------------------------------------------------
     virtual  ~MainWindowModelImpl ();
 
-    void loadSettings();
-    void saveSettings();
-
     //-------------------------------------------------------------------------
     virtual QSharedPointer<SignalVisualisationModel> createSignalVisualisation (QSharedPointer<ChannelManager> channel_manager);
 
@@ -58,17 +55,23 @@ public slots:
     //-------------------------------------------------------------------------
     void closeTab (int tab_index);
 
+private slots:
     //-------------------------------------------------------------------------
     void recentFileActivated(QAction* recent_file_action);
 
     //-------------------------------------------------------------------------
     void recentFileMenuAboutToShow();
 
-private slots:
     //-------------------------------------------------------------------------
     void resetCurrentFileName (QString const& file_name);
 
-private:
+private:    
+    //-------------------------------------------------------------------------
+    void loadSettings();
+
+    //-------------------------------------------------------------------------
+    void saveSettings();
+
     //-------------------------------------------------------------------------
     int createSignalVisualisationImpl (QSharedPointer<ChannelManager> channel_manager,
                                        QSharedPointer<EventManager> event_manager);

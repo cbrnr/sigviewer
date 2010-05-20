@@ -31,6 +31,11 @@ public:
     bool showFileCloseDialog(const QString& file_name);
     void setRecentFiles(const QStringList& recent_file_list);
 
+signals:
+    void recentFileActivated(QAction* recent_file_action);
+    void recentFileMenuAboutToShow();
+
+
 protected:
     virtual void closeEvent(QCloseEvent* close_event);
     virtual void dropEvent (QDropEvent* event);

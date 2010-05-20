@@ -147,11 +147,11 @@ void MainWindow::toggleAllToolbars ()
 void MainWindow::initMenus()
 {
     file_recent_files_menu_ = new QMenu(tr("Open &Recent"), this);
-/*    connect(file_recent_files_menu_, SIGNAL(aboutToShow()),
-            model_.data(), SLOT(recentFileMenuAboutToShow()));
+    connect(file_recent_files_menu_, SIGNAL(aboutToShow()),
+            SIGNAL(recentFileMenuAboutToShow()));
     connect(file_recent_files_menu_, SIGNAL(triggered(QAction*)),
-            model_.data(), SLOT(recentFileActivated(QAction*)));
-*/
+            SIGNAL(recentFileActivated(QAction*)));
+
     file_menu_ = menuBar()->addMenu(tr("&File"));
     file_menu_->addAction(action("Open..."));
     file_menu_->addMenu (file_recent_files_menu_);

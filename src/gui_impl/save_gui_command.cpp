@@ -37,7 +37,7 @@ GuiActionFactoryRegistrator SaveGuiCommand::registrator_ ("Saving",
 SaveGuiCommand::SaveGuiCommand ()
     : GuiActionCommand (ACTIONS_)
 {
-
+    // nothing to do here
 }
 
 //-----------------------------------------------------------------------------
@@ -64,7 +64,8 @@ void SaveGuiCommand::saveAs ()
     extension = "*" + extension;
 
     QString new_file_path = GuiHelper::getFilePathFromSaveAsDialog (old_file_path,
-                                                                    extension);
+                                                                    extension,
+                                                                    tr("Signal files"));
 
     if (new_file_path.size())
     {
@@ -134,13 +135,18 @@ void SaveGuiCommand::save ()
 //-----------------------------------------------------------------------------
 void SaveGuiCommand::exportToPNG ()
 {
+    QString extension = "*.png";
+    QString file_path = GuiHelper::getFilePathFromSaveAsDialog (applicationContext()->getCurrentFileContext()->getFilePath(),
+                                                                extension,
+                                                                tr("PNG files"));
+
     SignalVisualisationView const* view = currentVisModel()->view();
-    QImage image (currentVisModel()->getShownSignalWidth(),
-                  currentVisModel()->getShownHeight(), QImage::Format_ARGB32);
-    image.fill(0);
-    QPainter* painter = new QPainter (&image);
+    QImage* image = new QImage (currentVisModel()->getShownSignalWidth(),
+                                currentVisModel()->getShownHeight(), QImage::Format_ARGB32);
+    image->fill(0);
+    QPainter* painter = new QPainter (image);
     view->renderVisibleScene (painter);
-    image.save ("/home/ce/bild.png", "PNG", 100);
+    image->save (file_path, "PNG", 100);
 }
 
 
@@ -152,7 +158,7 @@ void SaveGuiCommand::exportToGDF ()
     QString current_file_name = applicationContext()->getCurrentFileContext()->getFileName();
     current_file_path = current_file_path.left(current_file_path.size() - current_file_name.size());
 
-    QString new_file_path = GuiHelper::getFilePathFromSaveAsDialog (current_file_path, extensions);
+    QString new_file_path = GuiHelper::getFilePathFromSaveAsDialog (current_file_path, extensions, tr("GDF files"));
 
     if (new_file_path.size() == 0)
         return;
@@ -193,7 +199,7 @@ void SaveGuiCommand::exportEvents ()
     QString extension = ".evt";
     QString extenstions = "*.evt";
 
-    QString new_file_path = GuiHelper::getFilePathFromSaveAsDialog (current_file_path.left(current_file_path.lastIndexOf('.')) + extension, extenstions);//QFileDialog::getSaveFileName(0, QObject::tr("Export Events"), current_file_path.left(current_file_path.lastIndexOf('.')) + extension, QString("Event Files (*")+extension+QString(")"));
+    QString new_file_path = GuiHelper::getFilePathFromSaveAsDialog (current_file_path.left(current_file_path.lastIndexOf('.')) + extension, extenstions, tr("Events files"));
 
     if (new_file_path.size() == 0)
         return;
@@ -210,6 +216,7 @@ void SaveGuiCommand::exportEvents ()
 //-------------------------------------------------------------------------
 void SaveGuiCommand::evaluateEnabledness ()
 {
+    disableIfNoFileIsOpened (QStringList() << EXPORT_TO_PNG_);
     bool file_open = getApplicationState () == APP_STATE_FILE_OPEN;
     bool no_gdf_file_open = false;
     bool file_changed = false;

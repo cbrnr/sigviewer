@@ -23,7 +23,10 @@ MainWindowModelImpl::MainWindowModelImpl (QSharedPointer<ApplicationContext> app
   main_window_ (new MainWindow),
   tab_widget_ (0)
 {
+    connect (main_window_, SIGNAL(recentFileActivated(QAction*)), SLOT(recentFileActivated(QAction*)));
+    connect (main_window_, SIGNAL(recentFileMenuAboutToShow()), SLOT(recentFileMenuAboutToShow()));
     main_window_->show();
+    loadSettings();
 }
 
 //-----------------------------------------------------------------------------
@@ -151,6 +154,8 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
     if (recent_file_list_.size() == NUMBER_RECENT_FILES_)
         recent_file_list_.pop_back();
     recent_file_list_.push_front (file_ctx->getFilePathAndName());
+
+    saveSettings();
 
     // waldesel:
     // --begin

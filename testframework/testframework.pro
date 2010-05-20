@@ -26,6 +26,7 @@ LIBS += -L../extern \
 #include(../src/file_handling_impl/file_handling_impl.pri)
 SOURCES += base_tests/*.cpp \
            file_handling_tests/*.cpp \
+           gui_tests/*.cpp \
            ../src/base/*.cpp \
            ../src/signal_processing/*.cc \
            ../src/editing_commands/*.cpp \
@@ -38,6 +39,7 @@ SOURCES += base_tests/*.cpp \
            ../src/*.cpp \
            *.cpp
 HEADERS += base_tests/*.h \
+           gui_tests/*.h \
            ../src/signal_processing/*.h \
            ../src/base/*.h \
            ../src/editing_commands/*.h \

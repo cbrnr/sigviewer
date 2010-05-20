@@ -49,7 +49,8 @@ std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager const> channel
 
 //-----------------------------------------------------------------------------
 QString getFilePathFromSaveAsDialog (QString const& path,
-                                     QString const& extensions);
+                                     QString const& extensions,
+                                     QString const& file_type_description);
 
 
 }
