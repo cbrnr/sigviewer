@@ -1,76 +1,46 @@
-// label_widget.cpp
-
 #include "label_widget.h"
-#include "signal_browser_view.h"
 
 #include <cmath>
 
-#include <QPalette>
 #include <QPainter>
-#include <QPaintEvent>
-#include <QPixmap>
-#include <QSettings>
-
-#define min(a, b) ((a) < (b) ? (a) : (b))
 
 namespace BioSig_
 {
 
-// axis color
-QColor LabelWidget::axis_color_("#e0e0e0");
-
 // constructor
-LabelWidget::LabelWidget(SignalBrowserModel& model, SignalBrowserView* browser)
-: QWidget(browser),
-  signal_browser_model_(model),
-  signal_browser_(browser)
+LabelWidget::LabelWidget(SignalBrowserModel& model)
+: signal_browser_model_(model),
+  y_start_ (0)
 {
-    QPalette palette;
-    palette.setColor(backgroundRole(), axis_color_);
-    setPalette(palette);
+    // nothing to do here
 }
 
-// get axis color
-const QColor& LabelWidget::getAxisColor()
+//-----------------------------------------------------------------------------
+void LabelWidget::changeYStart (int32 y_start)
 {
-    return axis_color_;
+    y_start_ = y_start;
+    update ();
 }
 
-// load settings
-void LabelWidget::loadSettings()
-{
-    QSettings settings("SigViewer");
-    axis_color_.setNamedColor(settings.value("LabelWidget/axis_color",
-                                             axis_color_.name()).toString());
-}
 
-// save settings
-void LabelWidget::saveSettings()
-{
-    QSettings settings("SigViewer");
-    settings.setValue("LabelWidget/axis_color", axis_color_.name());
-}
-
-// paint event
+//-----------------------------------------------------------------------------
 void LabelWidget::paintEvent(QPaintEvent*)
 {
     int32 signal_height = signal_browser_model_.getSignalHeight();
     int32 signal_spacing = signal_browser_model_.getSignalSpacing();
     signal_height -= signal_spacing;
     float64 intervall = signal_height + signal_spacing;
-    int32 y_start = signal_browser_->getVisibleY();
-    int32 y_end = y_start + height();
-    int32 w = width();
+    int32 y_end = y_start_ + height();
 
     if (intervall < 1)
         return;
 
     QPainter p(this);
-    p.translate(0, -y_start);
-    p.drawLine(0, y_start, 0, y_end);
+    p.translate(0, -y_start_);
+    p.drawLine(0, y_start_, 0, y_end);
 
     // labels
-    float64 float_y_start = y_start;//floor(static_cast<float64>(y_start) / intervall) * intervall;
+    float64 float_y_start = y_start_;//floor(static_cast<float64>(y_start) / intervall) * intervall;
     float64 float_y_end = y_end;//ceil(y_end / intervall) * intervall;
     QMap<int32, QString>::iterator iter = channel_nr2label_.begin();
 
@@ -81,7 +51,7 @@ void LabelWidget::paintEvent(QPaintEvent*)
         if (float_y > float_y_start)
         {
             int32 y = (int32)(float_y + 0.5);
-            p.drawText(5, (int32)(y - intervall /2) , w - 10, (int32)intervall,
+            p.drawText(5, (int32)(y - intervall /2) , width() - 10, (int32)intervall,
                        Qt::AlignHCenter | Qt::AlignVCenter, iter.value());
         }
     }
@@ -90,11 +60,11 @@ void LabelWidget::paintEvent(QPaintEvent*)
          float_y <= intervall * channel_nr2label_.size();
          float_y += intervall)
     {
-        p.drawLine(0, float_y, w - 1, float_y);
+        p.drawLine(0, float_y, width() - 1, float_y);
     }
 }
 
-// add channel
+//-----------------------------------------------------------------------------
 void LabelWidget::addChannel(int32 channel_nr, const QString& label)
 {
     channel_nr2label_[channel_nr] = label;
@@ -107,7 +77,7 @@ void LabelWidget::addChannel(int32 channel_nr, const QString& label)
     setMinimumWidth(10 + max_width);
 }
 
-// remove channel
+//-----------------------------------------------------------------------------
 void LabelWidget::removeChannel(int32 channel_nr)
 {
     channel_nr2label_.erase(channel_nr2label_.find(channel_nr));
@@ -128,58 +98,6 @@ void LabelWidget::removeChannel(int32 channel_nr)
 
     setMinimumWidth(10 + max_width);
 }
-
-//-----------------------------------------------------------------------------
-void LabelWidget::redrawPixmap ()
-{
-    pixmap_.clear();
-    float64 intervall = signal_height_ + signal_spacing_;
-    unsigned total_height = channel_nr2label_.size() * intervall;
-    pixmap_ = QSharedPointer<QPixmap>(new QPixmap(width(), total_height));
-
-    QPainter painter (pixmap_.data());
-    painter.drawLine(0, 0, 0, pixmap_->height());
-
-    /*
-    // labels
-    QMap<int32, QString>::iterator iter = channel_nr2label_.begin();
-
-    for (float32 float_y = signal_height / 2;
-         float_y < float_y_end && iter != channel_nr2label_.end();
-         float_y += intervall, iter++)
-    {
-        if (float_y > float_y_start)
-        {
-            int32 y = (int32)(float_y + 0.5);
-            p.drawText(0, (int32)(y - intervall /2) , w - 10, (int32)intervall,
-                       Qt::AlignHCenter | Qt::AlignVCenter, iter.value());
-        }
-    }
-
-    // markers
-    float_y_start = ceil((y_start - signal_height - signal_spacing / 2) /
-                         intervall) *
-                    intervall + signal_height + signal_spacing / 2;
-
-    float_y_end = min(floor((y_end + signal_height + signal_spacing / 2) /
-                            intervall), channel_nr2label_.size()) *
-                  intervall - signal_spacing / 2 + intervall / 2;
-
-    for (float32 float_y = float_y_start;
-         float_y < float_y_end;
-         float_y += intervall)
-    {
-        int32 y = (int32)(float_y + 0.5);
-        p.drawLine(0, y, w - 1, y);
-    }*/
-}
-
-
-////-----------------------------------------------------------------------------
-//QSize LabelWidget::sizeHint () const
-//{
-//    return QSize (100,0);
-//}
 
 } // namespace BioSig_
 

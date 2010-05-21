@@ -83,7 +83,7 @@ void SignalBrowserModel::loadSettings()
 
     settings.beginGroup("SignalBrowserModel");
 
-    signal_spacing_ = settings.value("signal_spacing", signal_spacing_).toInt();
+//    signal_spacing_ = settings.value("signal_spacing", signal_spacing_).toInt();
     prefered_y_grid_pixel_intervall_ = settings.value("prefered_y_grid_pixel_intervall",
                                                       prefered_y_grid_pixel_intervall_).toInt();
     show_x_grid_ = settings.value("show_x_grid", show_x_grid_).toBool();

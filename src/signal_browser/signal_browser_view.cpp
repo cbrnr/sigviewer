@@ -19,6 +19,7 @@
 #include <QMenu>
 #include <QPropertyAnimation>
 #include <QDebug>
+#include <QResizeEvent>
 
 namespace BioSig_
 {
@@ -61,7 +62,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     horizontal_scrollbar_ = new QScrollBar (Qt::Horizontal, this);
     vertical_scrollbar_ = new QScrollBar (Qt::Vertical, this);
 
-    label_widget_ = new LabelWidget (*signal_browser_model, this);
+    label_widget_ = new LabelWidget (*signal_browser_model);
     hideable_widgets_["Channel Labels"] = label_widget_;
 
     current_info_widget_ = empty_widget_;
@@ -104,6 +105,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
 
     connect(this, SIGNAL(visibleXChanged(int32)), x_axis_widget_, SLOT(changeXStart(int32)));
     connect(signal_browser_model.data(), SIGNAL(pixelPerSampleChanged(float32,float32)), x_axis_widget_, SLOT(changePixelPerSample(float32,float32)));
+    label_widget_->connect (this, SIGNAL(visibleYChanged(int32)), SLOT(changeYStart (int32)));
     connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
     connect(signal_browser_model.data(), SIGNAL(signalHeightChanged(uint32)), y_axis_widget_, SLOT(changeSignalHeight(uint32)));
     connect(signal_browser_model.data(), SIGNAL(modeChanged(SignalVisualisationMode)), SLOT(setMode(SignalVisualisationMode)));

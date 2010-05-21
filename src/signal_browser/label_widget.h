@@ -1,5 +1,3 @@
-// label_widget.h
-
 #ifndef LABEL_WIDGET_H
 #define LABEL_WIDGET_H
 
@@ -8,45 +6,34 @@
 
 #include <QMap>
 #include <QWidget>
-#include <QPaintEvent>
-#include <QPixmap>
 
 namespace BioSig_
 {
 
-class SignalBrowserView;
-
-// label widget
+//-----------------------------------------------------------------------------
 class LabelWidget : public QWidget
 {
+    Q_OBJECT
 public:
-    LabelWidget(SignalBrowserModel& model, SignalBrowserView* browser);
+    LabelWidget(SignalBrowserModel& model);
 
     void addChannel(int32 channel_nr, const QString& label);
     void removeChannel(int32 channel_nr);
 
-//    virtual QSize sizeHint () const;
-
-    static void loadSettings();
-    static void saveSettings();
-
-    static const QColor& getAxisColor();
+public slots:
+    void changeYStart (int32 y_start);
 
 protected:
     void paintEvent(QPaintEvent* pe);
 
 private:
-    void redrawPixmap ();
-
     SignalBrowserModel& signal_browser_model_;
-    SignalBrowserView* signal_browser_;
 
     unsigned signal_height_;
     unsigned signal_spacing_;
 
-    QSharedPointer<QPixmap> pixmap_;
     QMap<int32, QString> channel_nr2label_;
-    static QColor axis_color_;
+    int32 y_start_;
 };
 
 } // namespace BioSig_
