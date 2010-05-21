@@ -2,7 +2,6 @@ HEADERS += gui_impl/adapt_channel_view_gui_command.h \
     gui_impl/adapt_event_view_gui_command.h \
     gui_impl/close_file_gui_command.h \
     gui_impl/event_editing_gui_command.h \
-    gui_impl/event_table_dialog.h \
     gui_impl/gui_helper_functions.h \
     gui_impl/help_gui_command.h \
     gui_impl/mouse_mode_gui_command.h \
@@ -17,7 +16,6 @@ SOURCES += gui_impl/adapt_channel_view_gui_command.cpp \
     gui_impl/adapt_event_view_gui_command.cpp \
     gui_impl/close_file_gui_command.cpp \
     gui_impl/event_editing_gui_command.cpp \
-    gui_impl/event_table_dialog.cpp \
     gui_impl/gui_helper_functions.cpp \
     gui_impl/help_gui_command.cpp \
     gui_impl/mouse_mode_gui_command.cpp \
