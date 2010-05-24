@@ -53,6 +53,18 @@ QString FileContext::getFileName () const
     return file_path_and_name_.section (QDir::separator(), -1);
 }
 
+//-------------------------------------------------------------------------
+QSharedPointer<SignalVisualisationModel> FileContext::getMainVisualisationModel ()
+{
+    return main_signal_vis_model_;
+}
+
+//-------------------------------------------------------------------------
+void FileContext::setMainVisualisationModel (QSharedPointer<SignalVisualisationModel> signal_vis_model)
+{
+    main_signal_vis_model_ = signal_vis_model;
+}
+
 //-----------------------------------------------------------------------------
 QSharedPointer<EventManager> FileContext::getEventManager ()
 {

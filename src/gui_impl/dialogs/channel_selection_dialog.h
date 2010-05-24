@@ -34,6 +34,7 @@ private slots:
    void on_reset_colors_button__clicked ();
    void on_channel_table__cellClicked (int row, int column);
    void on_channel_table__cellChanged (int row, int column);
+   void on_button_box__accepted ();
 
 private:
     void updateColor (int row, QColor const& color);
@@ -52,6 +53,8 @@ private:
     static int const LABEL_INDEX_ = 0;
     static int const COLOR_INDEX_ = 1;
     static int const ID_INDEX_ = 2;
+    static QColor const NOT_VISIBLE_COLOR_;
+    static QColor const VISIBLE_COLOR_;
 };
 
 } // namespace BioSig_

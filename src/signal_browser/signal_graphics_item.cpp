@@ -26,10 +26,6 @@
 namespace BioSig_
 {
 
-// prefered pixel per sample
-float64 SignalGraphicsItem::prefered_pixel_per_sample_ = 1.0;
-
-
 //-----------------------------------------------------------------------------
 SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<EventManager> event_manager,
                                         QSharedPointer<CommandExecuter> command_executor,

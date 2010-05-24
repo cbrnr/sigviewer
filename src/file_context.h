@@ -4,6 +4,7 @@
 #include "file_handling/event_manager.h"
 #include "file_handling/basic_header.h"
 #include "file_handling/channel_manager.h"
+#include "gui/signal_visualisation_model.h"
 #include "base/file_states.h"
 
 #include <QObject>
@@ -46,6 +47,12 @@ public:
     QString getFileName () const;
 
     //-------------------------------------------------------------------------
+    QSharedPointer<SignalVisualisationModel> getMainVisualisationModel ();
+
+    //-------------------------------------------------------------------------
+    void setMainVisualisationModel (QSharedPointer<SignalVisualisationModel> signal_vis_model);
+
+    //-------------------------------------------------------------------------
     QSharedPointer<EventManager> getEventManager ();
 
     //-------------------------------------------------------------------------
@@ -82,6 +89,7 @@ private:
     QSharedPointer<EventManager> event_manager_;
     QSharedPointer<ChannelManager> channel_manager_;
     QSharedPointer<BasicHeader> basic_header_;
+    QSharedPointer<SignalVisualisationModel> main_signal_vis_model_;
 };
 
 } // namespace BioSig_

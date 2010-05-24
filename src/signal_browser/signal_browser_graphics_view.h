@@ -2,6 +2,8 @@
 #define SIGNAL_BROWSER_GRAPHICS_VIEW_H
 
 #include <QGraphicsView>
+#include <QPoint>
+#include <QMouseEvent>
 
 namespace BioSig_
 {
@@ -14,10 +16,12 @@ public:
          : QGraphicsView (scene, parent) {}
 
 protected:
-    virtual void resizeEvent(QResizeEvent* event) {emit resized (event);}
+    virtual void resizeEvent (QResizeEvent* event) {emit resized (event);}
+    //virtual void mouseMoveEvent (QMouseEvent* event) {this->moveEvent(event);}//event->ignore();}//emit sceneMouseMoved (mapToScene (event->pos()));}
 
 signals:
     void resized (QResizeEvent*);
+    void sceneMouseMoved (QPointF scene_pos);
 };
 
 }

@@ -139,6 +139,12 @@ QSharedPointer<SignalVisualisationModel> GuiActionCommand::currentVisModel ()
 }
 
 //-------------------------------------------------------------------------
+QSharedPointer<FileContext> GuiActionCommand::currentFileContext ()
+{
+    return ApplicationContextImpl::getContext()->getCurrentFileContext();
+}
+
+//-------------------------------------------------------------------------
 QSharedPointer<ApplicationContext> GuiActionCommand::applicationContext ()
 {
     return ApplicationContextImpl::getContext ();

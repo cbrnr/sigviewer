@@ -91,7 +91,6 @@ public:
     void zoomInAll();
     void zoomOutAll();
 
-    int32 getSignalSpacing();
     int32 getPreferedYGirdPixelIntervall();
 
     EventGraphicsItem* getSelectedEventItem();
@@ -113,7 +112,6 @@ public slots:
 
 signals:
     void eventSelected (QSharedPointer<SignalEvent const> selected_event);
-    void signalSpacingChanged (unsigned signal_spacing);
 
 protected:
     virtual void shownEventTypesChangedImpl ();
@@ -149,7 +147,6 @@ private:
     Int2IntMap channel2y_pos_;
     EventGraphicsItem* selected_event_item_;
 
-    int32 signal_spacing_;
     int32 prefered_y_grid_pixel_intervall_;
     float64 x_grid_pixel_intervall_;
 

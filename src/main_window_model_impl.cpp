@@ -97,6 +97,12 @@ void MainWindowModelImpl::closeTab (int tab_index)
     browser_models_.erase (tab_index);
     tab_widget_->removeTab (tab_index);
     delete widget;
+    int models_count = browser_models_.size();
+    if (models_count >= tab_index)
+    {
+        for (int index = tab_index + 1; index < models_count; index++)
+            browser_models_[index - 1] = browser_models_[index];
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -146,7 +152,7 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
         tab_widget_ = new QTabWidget (main_window_);
         if (!connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int))))
             throw (Exception ("MainWindowModelImpl::createSignalVisualisationOfFile failed: connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)))"));
-        connect (tab_widget_, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
+        connect (tab_widget_, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
         tab_widget_->setTabsClosable (true);
     }
 
@@ -171,6 +177,8 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
     main_window_->setCentralWidget(tab_widget_);
     tab_widget_->show();
     tab_widget_->setTabText(tab_index, tr("Signal Data"));
+
+    file_ctx->setMainVisualisationModel (browser_models_[tab_index]);
     return browser_models_[tab_index];
 }
 

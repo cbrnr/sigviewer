@@ -57,7 +57,6 @@ public:
     int32 getVisibleWidth () const;
     int32 getVisibleHeight () const;
     int32 getVisibleX () const;
-    int32 getVisibleY () const;
 
     void goTo (float32 x);
     void smoothGoTo (float32 x, float32 y);

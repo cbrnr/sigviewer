@@ -30,7 +30,6 @@ private:
     SignalBrowserModel& signal_browser_model_;
 
     unsigned signal_height_;
-    unsigned signal_spacing_;
 
     QMap<int32, QString> channel_nr2label_;
     int32 y_start_;

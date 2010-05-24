@@ -77,6 +77,9 @@ protected:
     QSharedPointer<SignalVisualisationModel> currentVisModel ();
 
     //-------------------------------------------------------------------------
+    QSharedPointer<FileContext> currentFileContext ();
+
+    //-------------------------------------------------------------------------
     QSharedPointer<ApplicationContext> applicationContext ();
 
     //-------------------------------------------------------------------------

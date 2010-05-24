@@ -121,7 +121,7 @@ void EventGraphicsItem::updateToSignalEvent ()
     int32 y_pos = 0;
 
     if (signal_event_->getChannel() == UNDEFINED_CHANNEL)
-        height_ = (signal_browser_model_.getSignalHeight() + signal_browser_model_.getSignalSpacing()) * signal_browser_model_.getShownChannels().size();
+        height_ = (signal_browser_model_.getSignalHeight()) * signal_browser_model_.getShownChannels().size();
     else
     {
         height_ = signal_browser_model_.getSignalHeight();
@@ -189,36 +189,6 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
             setCursor(QCursor(Qt::SizeHorCursor));
             emit mouseMoving (true);
             break;
-        /*case ACTION_SHIFT_TO_CHANNEL:
-            state_ = STATE_SHIFT_TO_CHANNEL;
-            last_shift_shown_nr_
-                = (int32)((rect().y() + rect().height() / 2) /
-                          (signal_browser_model_.getSignalHeight() +
-                           signal_browser_model_.getSignalSpacing()));
-            canvas_view->addEventListener(SmartCanvasView::MOUSE_RELEASE_EVENT |
-                                          SmartCanvasView::MOUSE_MOVE_EVENT,
-                                          this);
-            signal_browser_->getCanvasView()->viewport()
-                                        ->setCursor(QCursor(Qt::SizeVerCursor));
-            break;
-        case ACTION_COPY_SHIFT_TO_CHANNEL:
-            {
-                SignalEvent* event = signal_buffer_.getEvent(id_);
-                SignalEvent new_event(*event);
-                signal_browser_model_.addEvent(new_event);
-                state_ = STATE_SHIFT_TO_CHANNEL;
-                last_shift_shown_nr_
-                    = (int32)((rect().y() + rect().height() / 2) /
-                              (signal_browser_model_.getSignalHeight() +
-                               signal_browser_model_.getSignalSpacing()));
-                canvas_view->addEventListener(
-                                        SmartCanvasView::MOUSE_RELEASE_EVENT |
-                                        SmartCanvasView::MOUSE_MOVE_EVENT,
-                                        this);
-                signal_browser_->getCanvasView()->viewport()
-                                        ->setCursor(QCursor(Qt::SizeVerCursor));
-            }
-            break;*/
         case ACTION_SELECT:
             {
                 addContextMenuEntry ();
@@ -270,17 +240,6 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* mouse_event)
                 emit mouseAtSecond (static_cast<float>(pos().x() + width_)  / (pixel_per_sample * event_manager_->getSampleRate()));
             }
             break;
-        /*case STATE_SHIFT_TO_exportCHANNEL:
-            int32 shown_nr;
-            shown_nr = (int32)(mouse_pos.y() /
-                               (signal_browser_model_.getSignalHeight() +
-                                signal_browser_model_.getSignalSpacing()));
-            if (shown_nr != last_shift_shown_nr_)
-            {
-                event->setChannel(signal_browser_model_.getChannelNr(shown_nr));
-                last_shift_shown_nr_ = shown_nr;
-            }
-            break;*/
     default:
             break;
     }

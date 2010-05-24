@@ -141,8 +141,9 @@ void SignalBrowserView::resizeScene (int32 width, int32 height)
     center.setY (center.y () + static_cast<double>(graphics_view_->height()) / 2.0);
     graphics_view_->centerOn (center);
 
-    y_axis_widget_->changeYStart (left_upper_corner.y());
+//    y_axis_widget_->changeYStart (left_upper_corner.y());
     emit visibleXChanged (graphics_view_->mapToScene (0, 0).x());
+    emit visibleYChanged (graphics_view_->mapToScene(0, 0).y());
 }
 
 //-----------------------------------------------------------------------------
@@ -212,12 +213,6 @@ int32 SignalBrowserView::getVisibleX () const
 }
 
 //-----------------------------------------------------------------------------
-int32 SignalBrowserView::getVisibleY () const
-{
-    return graphics_view_->mapToScene(0,0).y();
-}
-
-//-----------------------------------------------------------------------------
 void SignalBrowserView::goTo (float32 x)
 {
     double y = graphics_view_->mapToScene(0, 0).y();
@@ -247,13 +242,9 @@ void SignalBrowserView::updateWidgets (bool update_view)
 {
     if (update_view)
         graphics_view_->viewport()->update();
-    y_axis_widget_->updateAllChannels();
     x_axis_widget_->update();
     label_widget_->update();
-    qreal y = graphics_view_->mapToScene(0,0).y();
-    if (y < 0)
-        y = 0;
-    emit visibleYChanged (y);
+    emit visibleYChanged (graphics_view_->mapToScene(0,0).y());
 }
 
 //-----------------------------------------------------------------------------
@@ -318,6 +309,10 @@ void SignalBrowserView::setMode (SignalVisualisationMode mode)
         current_info_widget_ = adapt_browser_view_widget_;
         graphics_view_->setDragMode(QGraphicsView::NoDrag);
         break;
+    case MODE_INFO:
+        current_info_widget_ = model_->infoWidget ();
+        graphics_view_->setDragMode(QGraphicsView::NoDrag);
+        break;
     default:
         current_info_widget_ = empty_widget_;
         break;
@@ -337,6 +332,9 @@ void SignalBrowserView::graphicsSceneResized (QResizeEvent* event)
         return;
 
     if (event->size().height() < 1)
+        return;
+
+    if (event->oldSize().height() == event->size().height())
         return;
 
     double signals_per_pagesize = event->oldSize().height() / signal_height;

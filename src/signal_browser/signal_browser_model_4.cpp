@@ -33,7 +33,6 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
   color_manager_ (color_manager),
   signal_browser_view_ (0),
   selected_event_item_ (0),
-  signal_spacing_(1),
   prefered_y_grid_pixel_intervall_(25),
   x_grid_pixel_intervall_(0),
   show_y_grid_(true)
@@ -83,7 +82,6 @@ void SignalBrowserModel::loadSettings()
 
     settings.beginGroup("SignalBrowserModel");
 
-//    signal_spacing_ = settings.value("signal_spacing", signal_spacing_).toInt();
     prefered_y_grid_pixel_intervall_ = settings.value("prefered_y_grid_pixel_intervall",
                                                       prefered_y_grid_pixel_intervall_).toInt();
     show_x_grid_ = settings.value("show_x_grid", show_x_grid_).toBool();
@@ -100,7 +98,6 @@ void SignalBrowserModel::saveSettings()
 
     settings.beginGroup("SignalBrowserModel");
 
-    settings.setValue("signal_spacing", signal_spacing_);
     settings.setValue("prefered_y_grid_pixel_intervall", prefered_y_grid_pixel_intervall_);
     settings.setValue("show_x_grid", show_x_grid_);
     settings.setValue("show_y_grid", show_y_grid_);
@@ -114,7 +111,6 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
 {
     unsigned new_signal_height = signal_browser_view_->getVisibleHeight() /
                                  new_shown_channels.size();
-    //new_signal_height = signal_spacing_;
 
     for (Int2SignalGraphicsItemPtrMap::const_iterator channel = channel2signal_item_.begin();
          channel != channel2signal_item_.end();
@@ -259,7 +255,7 @@ void SignalBrowserModel::update()
          signal_iter++, y_pos += getSignalHeight())
     {
         channel2y_pos_[signal_iter->first] = y_pos;
-        signal_iter->second->setHeight (getSignalHeight() - signal_spacing_);
+        signal_iter->second->setHeight (getSignalHeight() );
         signal_iter->second->setPos (0, y_pos);
         signal_iter->second->setZValue(SIGNAL_Z);
         signal_iter->second->updateYGridIntervall();
@@ -437,13 +433,6 @@ void SignalBrowserModel::unselectEvent ()
 void SignalBrowserModel::shownEventTypesChangedImpl ()
 {
     updateEventItemsImpl ();
-}
-
-
-// get signal spacing
-int32 SignalBrowserModel::getSignalSpacing()
-{
-    return signal_spacing_;
 }
 
 // get prefered y grid pixel intervall

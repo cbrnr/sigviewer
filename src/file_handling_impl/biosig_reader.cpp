@@ -276,6 +276,7 @@ QSharedPointer<BasicHeader> BioSigReader::getBasicHeader ()
 //-----------------------------------------------------------------------------
 void BioSigReader::bufferAllChannels () const
 {
+    unsigned long allocated_memory = 0;
     uint32 length = basic_header_->getNumberOfSamples ();
     biosig_data_type* read_data = new biosig_data_type[length];
 
@@ -308,6 +309,7 @@ void BioSigReader::bufferAllChannels () const
 
         alloc_timer.restart ();
         QSharedPointer<std::vector<float32> > raw_data (new std::vector<float32> (length));
+        allocated_memory += (length * 4);
         alloc_time += alloc_timer.elapsed ();
 //            if (biosig_header_->FLAG.ROW_BASED_CHANNELS == 1)
 //            {
@@ -325,6 +327,8 @@ void BioSigReader::bufferAllChannels () const
     qDebug() << "buffering time = " << timer.elapsed();
     qDebug() << "sread time = " << sread_time;
     qDebug() << "alloc time = " << alloc_time;
+    qDebug() << "alloc memory = " << allocated_memory / 1024 << "kByte";
+    qDebug() << "sizeof (float32) = " << sizeof(float32);
     qDebug() << "copy time = " << copy_time;
 
     buffered_all_channels_ = true;

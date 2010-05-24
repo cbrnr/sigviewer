@@ -40,8 +40,8 @@ void SignalProcessingGuiCommand::evaluateEnabledness ()
 //-----------------------------------------------------------------------------
 void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation ()
 {
-    QSharedPointer<ChannelManager const> channel_manager = currentVisModel()->getChannelManager();
-    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
+    QSharedPointer<ChannelManager const> channel_manager = currentFileContext()->getChannelManager();
+    QSharedPointer<EventManager> event_manager = currentFileContext()->getEventManager();
     QSharedPointer<EventTimeSelectionDialog> event_dialog = getFinishedEventTimeSelectionDialog();
     if (event_dialog.isNull())
         return;
@@ -76,8 +76,8 @@ void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation ()
 //-------------------------------------------------------------------------
 void SignalProcessingGuiCommand::calculatePowerSpectrum ()
 {
-    QSharedPointer<ChannelManager const> channel_manager = currentVisModel()->getChannelManager();
-    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
+    QSharedPointer<ChannelManager const> channel_manager = currentFileContext()->getChannelManager();
+    QSharedPointer<EventManager> event_manager = currentFileContext()->getEventManager();
     QSharedPointer<EventTimeSelectionDialog> event_dialog = getFinishedEventTimeSelectionDialog();
     if (event_dialog.isNull())
         return;
@@ -111,10 +111,10 @@ void SignalProcessingGuiCommand::calculatePowerSpectrum ()
 QSharedPointer<EventTimeSelectionDialog> SignalProcessingGuiCommand::getFinishedEventTimeSelectionDialog ()
 {
     QSharedPointer<EventTimeSelectionDialog> event_dialog (
-            new EventTimeSelectionDialog (currentVisModel()->getShownEventTypes(),
-                                          currentVisModel()->getShownChannels(),
-                                          currentVisModel()->getChannelManager(),
-                                          currentVisModel()->getEventManager()));
+            new EventTimeSelectionDialog (currentFileContext()->getMainVisualisationModel()->getShownEventTypes(),
+                                          currentFileContext()->getMainVisualisationModel()->getShownChannels(),
+                                          currentFileContext()->getMainVisualisationModel()->getChannelManager(),
+                                          currentFileContext()->getMainVisualisationModel()->getEventManager()));
 
     if (event_dialog->exec() == QDialog::Accepted)
         return event_dialog;

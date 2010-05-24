@@ -6,6 +6,10 @@
 namespace BioSig_
 {
 
+QColor const ChannelSelectionDialog::NOT_VISIBLE_COLOR_ (Qt::gray);
+QColor const ChannelSelectionDialog::VISIBLE_COLOR_ (Qt::black);
+
+
 //-----------------------------------------------------------------------------
 ChannelSelectionDialog::ChannelSelectionDialog (QSharedPointer<ChannelManager const>
                                                 channel_manager,
@@ -91,28 +95,24 @@ void ChannelSelectionDialog::on_reset_colors_button__clicked ()
 {
     for (int row = 0; row < ui_.channel_table_->rowCount(); ++row)
         updateColor (row, ColorManager::DEFAULT_CHANNEL_COLOR_);
-    color_manager_->saveSettings ();
 }
 
 
 //-----------------------------------------------------------------------------
 void ChannelSelectionDialog::on_channel_table__cellClicked (int row, int column)
 {
-    if (column == COLOR_INDEX_)
+    QTableWidgetItem* item = ui_.channel_table_->item (row, column);
+    if (column == LABEL_INDEX_)
+        if (item->checkState() == Qt::Checked)
+            item->setCheckState (Qt::Unchecked);
+        else
+            item->setCheckState (Qt::Checked);
+    else if (column == COLOR_INDEX_)
     {
-        QColorDialog color_dialog (ui_.channel_table_->item (row, column)->backgroundColor (), this);
+        QColorDialog color_dialog (item->backgroundColor (), this);
         if (color_dialog.exec () == QDialog::Accepted)
             updateColor (row, color_dialog.selectedColor ());
-        color_manager_->saveSettings ();
     }
-
-/*    int num_selected_items = ui_.channel_table_->selectedItems().count();
-    bool nothing_selected = (num_selected_items == 0);
-    bool all_selected = (num_selected_items == ui_.channel_table_->rowCount());
-
-    ui_.button_box_->button(QDialogButtonBox::Ok)->setDisabled (nothing_selected);
-    ui_.select_all_button_->setDisabled (all_selected);
-    ui_.unselect_all_button_->setDisabled (nothing_selected);*/
 }
 
 //-----------------------------------------------------------------------------
@@ -124,12 +124,19 @@ void ChannelSelectionDialog::on_channel_table__cellChanged (int, int column)
         bool all_hidden = true;
         for (int row = 0; row < ui_.channel_table_->rowCount(); ++row)
         {
-            if (!ui_.channel_table_->item (row, VISIBLE_INDEX_))
+            QTableWidgetItem* item = ui_.channel_table_->item (row, VISIBLE_INDEX_);
+            if (!item)
                 return;
-            if (ui_.channel_table_->item (row, VISIBLE_INDEX_)->checkState() == Qt::Checked)
+            if (item->checkState() == Qt::Checked)
+            {
                 all_hidden = false;
+                item->setForeground (VISIBLE_COLOR_);
+            }
             else
+            {
                 all_visible = false;
+                item->setForeground (NOT_VISIBLE_COLOR_);
+            }
         }
         ui_.select_all_button_->setDisabled (all_visible);
         ui_.unselect_all_button_->setDisabled (all_hidden);
@@ -137,6 +144,16 @@ void ChannelSelectionDialog::on_channel_table__cellChanged (int, int column)
     }
 }
 
+//-----------------------------------------------------------------------------
+void ChannelSelectionDialog::on_button_box__accepted ()
+{
+    for (int row = 0; row < ui_.channel_table_->rowCount(); ++row)
+    {
+        color_manager_->setChannelColor (ui_.channel_table_->item (row, ID_INDEX_)->text().toUInt(),
+                                         ui_.channel_table_->item (row, COLOR_INDEX_)->backgroundColor());
+    }
+    color_manager_->saveSettings ();
+}
 
 //-----------------------------------------------------------------------------
 void ChannelSelectionDialog::updateColor (int row, QColor const& color)
@@ -147,8 +164,6 @@ void ChannelSelectionDialog::updateColor (int row, QColor const& color)
         ui_.channel_table_->item (row, COLOR_INDEX_)->setForeground (Qt::white);
     else
         ui_.channel_table_->item (row, COLOR_INDEX_)->setForeground (Qt::black);
-
-    color_manager_->setChannelColor (ui_.channel_table_->item (row, ID_INDEX_)->text().toUInt(), color);
 }
 
 

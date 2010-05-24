@@ -13,7 +13,8 @@ SignalVisualisationModel::SignalVisualisationModel (std::set<EventType> const& s
       shown_event_types_ (shown_types),
       signal_height_ (10),
       scale_mode_ (MIN_TO_MAX),
-      selected_channel_ (UNDEFINED_CHANNEL)
+      selected_channel_ (UNDEFINED_CHANNEL),
+      info_widget_ (0)
 {
     // nothing to do here
 }
@@ -29,6 +30,12 @@ void SignalVisualisationModel::setMode (SignalVisualisationMode mode)
 SignalVisualisationMode SignalVisualisationModel::getMode () const
 {
     return mode_;
+}
+
+//-----------------------------------------------------------------------------
+void SignalVisualisationModel::setInfoWidget (QWidget* info_widget)
+{
+    info_widget_ = info_widget;
 }
 
 //-----------------------------------------------------------------------------
@@ -118,6 +125,12 @@ ScaleMode SignalVisualisationModel::getAutoScaleMode () const
 void SignalVisualisationModel::setActualEventCreationType (EventType type)
 {
     event_creation_type_ = type;
+}
+
+//-----------------------------------------------------------------------------
+QWidget* SignalVisualisationModel::infoWidget ()
+{
+    return info_widget_;
 }
 
 }

@@ -37,6 +37,7 @@ private:
     static QString const POINTER_MODE_TEXT_;
     static QString const HAND_MODE_TEXT_;
     static QString const SHIFT_MODE_TEXT_;
+    static QString const INFO_MODE_TEXT_;
     static QStringList const MODE_TEXTS_;
 
     static GuiActionFactoryRegistrator registrator_;

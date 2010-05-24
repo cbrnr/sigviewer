@@ -16,13 +16,6 @@
 namespace BioSig_
 {
 
-enum ZoomDimension
-{
-    ZOOM_VERTICAL,
-    ZOOM_HORIZONTAL,
-    ZOOM_BOTH
-};
-
 //-----------------------------------------------------------------------------
 /// SignalVisualisationModel
 ///
@@ -46,6 +39,10 @@ public:
 
     //-------------------------------------------------------------------------
     SignalVisualisationMode getMode () const;
+
+    //-------------------------------------------------------------------------
+    /// the visualisation view takes ownership of the info_widget
+    void setInfoWidget (QWidget* info_widget);
 
     //-------------------------------------------------------------------------
     void setPixelPerSample (float32 pixel_per_sample);
@@ -123,6 +120,9 @@ public:
 
     //-------------------------------------------------------------------------
     virtual SignalVisualisationView const* view () const = 0;
+
+    //-------------------------------------------------------------------------
+    QWidget* infoWidget ();
 public slots:
     void setActualEventCreationType (EventType type);
 
@@ -144,6 +144,7 @@ private:
     unsigned signal_height_;
     ScaleMode scale_mode_;
     ChannelID selected_channel_;
+    QWidget* info_widget_;
 };
 
 

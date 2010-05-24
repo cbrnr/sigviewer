@@ -6,8 +6,6 @@
 #include <QWidget>
 #include <QMap>
 
-class QPixmap;
-
 namespace BioSig_
 {
 
@@ -19,7 +17,7 @@ class YAxisWidget : public QWidget
 public:
     YAxisWidget(QWidget* parent);
 
-    virtual ~YAxisWidget ();
+    virtual ~YAxisWidget () {}
     virtual QSize sizeHint () const;
 
     void addChannel(int32 channel_nr, SignalGraphicsItem const* const signal_item);
@@ -27,22 +25,16 @@ public:
 
 public slots:
     void changeSignalHeight (uint32 signal_height);
-    void changeSignalSpacing (unsigned signal_spacing);
     void changeYStart (int32 y_start);
-    void updateChannel (ChannelID channel_nr);
-    void updateAllChannels ();
+    void updateChannel (ChannelID channel_id);
 
 private:
     virtual void paintEvent (QPaintEvent* event = 0);
-    virtual void showEvent (QShowEvent* event = 0);
-    void repaintPixmap (int32 channel = -1);
+    void paintYAxisLabels (QPainter* painter, float64 offset,
+                              float64 y_zoom, float64 y_grid_pixel_intervall);
 
-    QPixmap* pixmap_;
     unsigned signal_height_;
-    unsigned signal_spacing_;
-    int32 pixmap_drawing_height_;
     int32 y_start_;
-
     QMap<int32, SignalGraphicsItem const*> channel_nr2signal_graphics_item_;
 };
 
