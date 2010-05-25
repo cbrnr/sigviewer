@@ -3,6 +3,7 @@
 #include "../base/exception.h"
 
 #include <QMutexLocker>
+#include <QDebug>
 
 #include <cassert>
 
@@ -126,13 +127,24 @@ void EventManagerImpl::removeEvent (EventID id)
 
 //-----------------------------------------------------------------------------
 std::set<EventID> EventManagerImpl::getEventsAt (unsigned pos,
-                                             unsigned channel_id) const
+                                                 unsigned channel_id) const
 {
     QMutexLocker locker (caller_mutex_);
-    std::set<EventID> bla;
-    pos++;
-    channel_id++;
-    return bla;
+    std::set<EventID> events;
+    QSharedPointer<SignalEvent const> event_ptr;
+    foreach (uint32 position, position_event_map_.keys())
+    {
+        foreach (EventID event, position_event_map_.values (position))
+        {
+            event_ptr = event_map_[event];
+            if (event_ptr->getPosition() <= pos &&
+                event_ptr->getPosition () + event_ptr->getDuration() >= pos &&
+                (event_ptr->getChannel() == channel_id ||
+                 event_ptr->getChannel() == UNDEFINED_CHANNEL))
+                events.insert (event);
+        }
+    }
+    return events;
 }
 
 //-----------------------------------------------------------------------------

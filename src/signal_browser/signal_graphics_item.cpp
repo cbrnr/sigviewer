@@ -20,6 +20,7 @@
 #include <QMenu>
 #include <QPainter>
 #include <QDebug>
+#include <QToolTip>
 
 #include <cmath>
 
@@ -58,6 +59,7 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<EventManager> event_manag
     float64 y_grid_intervall
         = round125(value_range / height_ * signal_browser_model_.getPreferedYGirdPixelIntervall());
     y_grid_pixel_intervall_ = y_zoom_ * y_grid_intervall;
+    setAcceptHoverEvents(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -282,6 +284,22 @@ void SignalGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* event)
     else
         event->ignore();
 }
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent* event)
+{
+    unsigned sample_pos = event->scenePos().x() / signal_browser_model_.getPixelPerSample();
+    std::set<EventID> events = event_manager_->getEventsAt (sample_pos, id_);
+    QString event_string;
+    foreach (EventID event, events)
+        event_string += QString::number (event) + " ";
+
+    if (event_string.size())
+        QToolTip::showText (event->screenPos(), event_string);
+    else
+        QToolTip::hideText();
+}
+
 
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
