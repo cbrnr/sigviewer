@@ -2,6 +2,8 @@
 #include "gui_action_factory.h"
 #include "../application_context_impl.h"
 
+#include <QDebug>
+
 namespace BioSig_
 {
 
@@ -25,20 +27,23 @@ GuiActionCommand::GuiActionCommand (QStringList const& action_ids)
         connectors_.push_back (new ActionConnector (this, *iter));
         connectors_.last ()->connect (action_map_[*iter], SIGNAL(triggered()), SLOT(trigger()));
         connect (connectors_.last (), SIGNAL(triggered(QString const&)), SLOT(trigger(QString const&)));
-
-        if (!connect (ApplicationContextImpl::getInstance(), SIGNAL(stateChanged(ApplicationState)),
-                          SLOT(updateEnablednessToApplicationState(ApplicationState))))
-            throw (GuiActionCommandException (*iter, "connect to signal stateChanged(ApplicationState)"));
-        if (!connect (ApplicationContextImpl::getInstance(), SIGNAL(currentTabSelectionStateChanged(TabSelectionState)),
-                          SLOT(updateEnablednessToTabSelectionState (TabSelectionState))))
-            throw (GuiActionCommandException (*iter, "connect to signal currentTabSelectionStateChanged(TabSelectionState)"));
-        if (!connect (ApplicationContextImpl::getInstance(), SIGNAL(currentTabEditStateChanged(TabEditState)),
-                          SLOT(updateEnablednessToTabEditState (TabEditState))))
-            throw (GuiActionCommandException (*iter, "connect to signal currentTabEditStateChanged(TabEditState)"));
-        if (!connect (ApplicationContextImpl::getInstance(), SIGNAL(currentFileStateChanged(FileState)),
-                          SLOT(updateEnablednessToFileState (FileState))))
-            throw (GuiActionCommandException (*iter, "connect to signal currentFileStateChanged(FileState)"));
     }
+    qDebug () << "GuiActionCommand::GuiActionCommand connecting to ApplicationContextImpl::getInstance() = " << ApplicationContextImpl::getInstance();
+        if (!connect (ApplicationContextImpl::getInstance().data(), SIGNAL(stateChanged(ApplicationState)),
+                          SLOT(updateEnablednessToApplicationState(ApplicationState))))
+            throw (GuiActionCommandException (action_ids.first(), "connect to signal stateChanged(ApplicationState)"));
+        else
+            qDebug () << "GuiActionCommand::GuiActionCommand connect to signal stateChanged(ApplicationState) = true";
+        if (!connect (ApplicationContextImpl::getInstance().data(), SIGNAL(currentTabSelectionStateChanged(TabSelectionState)),
+                          SLOT(updateEnablednessToTabSelectionState (TabSelectionState))))
+            throw (GuiActionCommandException (action_ids.first(), "connect to signal currentTabSelectionStateChanged(TabSelectionState)"));
+        if (!connect (ApplicationContextImpl::getInstance().data(), SIGNAL(currentTabEditStateChanged(TabEditState)),
+                          SLOT(updateEnablednessToTabEditState (TabEditState))))
+            throw (GuiActionCommandException (action_ids.first(), "connect to signal currentTabEditStateChanged(TabEditState)"));
+        if (!connect (ApplicationContextImpl::getInstance().data(), SIGNAL(currentFileStateChanged(FileState)),
+                          SLOT(updateEnablednessToFileState (FileState))))
+            throw (GuiActionCommandException (action_ids.first(), "connect to signal currentFileStateChanged(FileState)"));
+
 }
 
 //-----------------------------------------------------------------------------
@@ -67,6 +72,7 @@ QAction* GuiActionCommand::getQAction (QString const& id)
 //-----------------------------------------------------------------------------
 void GuiActionCommand::updateEnablednessToApplicationState (ApplicationState state)
 {
+    qDebug() << "GuiActionCommand::updateEnablednessToApplicationState " << state;
     app_state_ = state;
     applicationStateChanged ();
     evaluateEnabledness ();
@@ -125,6 +131,13 @@ void GuiActionCommand::setIcon (QString const& action_id, QIcon const& icon)
 }
 
 //-------------------------------------------------------------------------
+void GuiActionCommand::evaluateEnabledness ()
+{
+    qDebug () << "GuiActionCommand::evaluateEnabledness";
+}
+
+
+//-------------------------------------------------------------------------
 QSharedPointer<SignalVisualisationModel> GuiActionCommand::currentVisModel ()
 {
     QSharedPointer<SignalVisualisationModel> model;
@@ -141,13 +154,13 @@ QSharedPointer<SignalVisualisationModel> GuiActionCommand::currentVisModel ()
 //-------------------------------------------------------------------------
 QSharedPointer<FileContext> GuiActionCommand::currentFileContext ()
 {
-    return ApplicationContextImpl::getContext()->getCurrentFileContext();
+    return ApplicationContextImpl::getInstance()->getCurrentFileContext();
 }
 
 //-------------------------------------------------------------------------
 QSharedPointer<ApplicationContext> GuiActionCommand::applicationContext ()
 {
-    return ApplicationContextImpl::getContext ();
+    return ApplicationContextImpl::getInstance();
 }
 
 

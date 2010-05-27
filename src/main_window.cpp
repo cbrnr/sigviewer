@@ -60,6 +60,7 @@ MainWindow::MainWindow ()
     initStatusBar();
     initToolBars();
     initMenus();
+    setUnifiedTitleAndToolBarOnMac (true);
     resize (800, 600);
 }
 

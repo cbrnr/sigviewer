@@ -8,38 +8,35 @@
 namespace BioSig_
 {
 
-QSharedPointer<ApplicationContextImpl> ApplicationContextImpl::instance_;
-
-//-------------------------------------------------------------------------
-QSharedPointer<ApplicationContext> ApplicationContextImpl::getContext ()
-{
-    return instance_;
-}
-
 //-----------------------------------------------------------------------------
-ApplicationContextImpl* ApplicationContextImpl::getInstance ()
+QSharedPointer<ApplicationContextImpl> ApplicationContextImpl::getInstance (bool cleanup)
 {
-    if (instance_.isNull ())
-        instance_ = QSharedPointer<ApplicationContextImpl> (new ApplicationContextImpl);
-
-    return instance_.data ();
+    static QSharedPointer<ApplicationContextImpl> instance (new ApplicationContextImpl);
+    if (cleanup)
+        instance.clear();
+    if (instance.isNull ())
+    {
+        instance = QSharedPointer<ApplicationContextImpl> (new ApplicationContextImpl);
+        qDebug () << "ApplicationContextImpl::getInstance() created new instance = " << instance.data();
+    }
+    return instance;
 }
 
 //-------------------------------------------------------------------------
 void ApplicationContextImpl::init ()
 {
-    if (instance_.isNull())
-        getInstance();
+    qDebug () << "ApplicationContextImpl::init() instance = " << getInstance();
 
-    instance_->color_manager_ = QSharedPointer<ColorManager> (new ColorManager);
-    instance_->main_window_model_ = QSharedPointer<MainWindowModel> (new MainWindowModelImpl (instance_));
-    instance_->setState (APP_STATE_NO_FILE_OPEN);
+    getInstance()->color_manager_ = QSharedPointer<ColorManager> (new ColorManager);
+    getInstance()->main_window_model_ = QSharedPointer<MainWindowModel> (new MainWindowModelImpl (getInstance()));
+    getInstance()->setState (APP_STATE_NO_FILE_OPEN);
 }
 
 //-------------------------------------------------------------------------
 void ApplicationContextImpl::cleanup ()
 {
-    instance_.clear();
+    qDebug () << "ApplicationContextImpl::cleanup()";
+    getInstance (true);
 }
 
 
@@ -106,6 +103,7 @@ QSharedPointer<ColorManager> ApplicationContextImpl::getEventColorManager ()
 //-----------------------------------------------------------------------------
 void ApplicationContextImpl::setState (ApplicationState state)
 {
+    qDebug () << "ApplicationContextImpl::setState " << state << "; this = " << this;
     state_ = state;
     emit stateChanged (state_);
 }

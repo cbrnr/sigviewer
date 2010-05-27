@@ -71,7 +71,7 @@ protected:
     virtual void applicationStateChanged () {}
 
     //-------------------------------------------------------------------------
-    virtual void evaluateEnabledness () {}
+    virtual void evaluateEnabledness ();
 
     //-------------------------------------------------------------------------
     QSharedPointer<SignalVisualisationModel> currentVisModel ();

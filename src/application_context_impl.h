@@ -22,10 +22,7 @@ class ApplicationContextImpl : public QObject, public ApplicationContext
     Q_OBJECT
 public:
     //-------------------------------------------------------------------------
-    static QSharedPointer<ApplicationContext> getContext ();
-
-    //-------------------------------------------------------------------------
-    static ApplicationContextImpl* getInstance ();
+    static QSharedPointer<ApplicationContextImpl> getInstance (bool cleanup = false);
 
     //-------------------------------------------------------------------------
     static void init ();
@@ -68,7 +65,6 @@ signals:
 
 private:
     void setState (ApplicationState state);
-    static QSharedPointer<ApplicationContextImpl> instance_;
     QSharedPointer<ColorManager> color_manager_;
     QSharedPointer<MainWindowModel> main_window_model_;
     QSharedPointer<FileContext> current_file_context_;
