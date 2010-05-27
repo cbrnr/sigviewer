@@ -135,13 +135,13 @@ private:
     QSharedPointer<ColorManager const> color_manager_;
     SignalBrowserView* signal_browser_view_;
 
-    typedef std::map<int32, SignalGraphicsItem*> Int2SignalGraphicsItemPtrMap;
+    typedef QMap<ChannelID, SignalGraphicsItem*> SignalGraphicsItemMap;
     typedef std::map<int32, EventGraphicsItem*> Int2EventGraphicsItemPtrMap;
 
     typedef std::map<int32, int32> Int2IntMap;
 
 
-    Int2SignalGraphicsItemPtrMap channel2signal_item_;
+    SignalGraphicsItemMap channel2signal_item_;
     Int2EventGraphicsItemPtrMap id2event_item_;
 
     Int2IntMap channel2y_pos_;

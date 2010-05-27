@@ -20,7 +20,7 @@ General building steps:
 
 1. install qt4 development packages
 
-2. compile and copy the static biosig library (libbiosig.a, biosig.lib, ...) 
+2. compile (compiler defines: WITHOUT_NETWORK, WITHOUT_CHOLMOD) and copy the static biosig library (libbiosig.a, biosig.lib, ...) 
    and the biosig header file (biosig.h) into the "extern" directory
 
 3. Install libfftw3-dev

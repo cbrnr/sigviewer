@@ -98,7 +98,7 @@ int main(int32 argc, char* argv[])
 {	
     try
     {
-        qDebug () << "Starting SigViewer... ";
+        qDebug () << "Starting SigViewer... (compiled with " << __GNUC__ << "." << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << ")";
         QApplication application(argc,argv);
         initFileHandlingImpl ();
         QTranslator qt_translator(0);

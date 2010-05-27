@@ -112,13 +112,9 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
     unsigned new_signal_height = signal_browser_view_->getVisibleHeight() /
                                  new_shown_channels.size();
 
-    for (Int2SignalGraphicsItemPtrMap::const_iterator channel = channel2signal_item_.begin();
-         channel != channel2signal_item_.end();
-         ++channel)
-    {
-        if (new_shown_channels.count (channel->first) == 0)
-            removeChannel (channel->first);
-    }
+    foreach (ChannelID channel, channel2signal_item_.keys())
+        if (new_shown_channels.count (channel) == 0)
+            removeChannel (channel);
 
     QProgressDialog progress;
     progress.setMaximum (new_shown_channels.size());
@@ -128,21 +124,17 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
 
     setSignalHeight (std::max<unsigned>(50, new_signal_height));
 
-    for (std::set<ChannelID>::const_iterator channel = new_shown_channels.begin();
-         channel != new_shown_channels.end();
-         ++channel)
+    foreach (ChannelID channel, new_shown_channels)
     {
         progress.setValue (progress.value()+1);
-        if (channel2signal_item_.count (*channel) == 0)
-            addChannel (*channel);
+        if (channel2signal_item_.count (channel) == 0)
+            addChannel (channel);
     }
     progress.setValue (progress.maximum ());
 
 
-    for (Int2SignalGraphicsItemPtrMap::const_iterator channel = channel2signal_item_.begin();
-         channel != channel2signal_item_.end();
-         ++channel)
-        channel->second->autoScale (getAutoScaleMode());
+    foreach (SignalGraphicsItem* channel, channel2signal_item_.values())
+        channel->autoScale (getAutoScaleMode());
 }
 
 //-----------------------------------------------------------------------------
@@ -164,29 +156,29 @@ void SignalBrowserModel::addChannel (ChannelID channel_id)
 //-----------------------------------------------------------------------------
 void SignalBrowserModel::removeChannel (ChannelID channel_id)
 {
-    Int2SignalGraphicsItemPtrMap::iterator sig_iter;
+    SignalGraphicsItemMap::iterator sig_iter;
 
     sig_iter = channel2signal_item_.find (channel_id);
     if (sig_iter == channel2signal_item_.end())
          return;
 
-    disconnect (sig_iter->second);
+    disconnect (sig_iter.value());
 
-    signal_browser_view_->removeSignalGraphicsItem (channel_id, sig_iter->second);
+    signal_browser_view_->removeSignalGraphicsItem (channel_id, sig_iter.value());
     channel2signal_item_.erase (sig_iter);
-    delete sig_iter->second;
+    delete sig_iter.value();
 }
 
 //-----------------------------------------------------------------------------
 std::set<ChannelID> SignalBrowserModel::getShownChannels () const
 {
     std::set<ChannelID> shown_channels;
-    for (Int2SignalGraphicsItemPtrMap::const_iterator sig_iter =
+    for (SignalGraphicsItemMap::const_iterator sig_iter =
          channel2signal_item_.begin();
          sig_iter != channel2signal_item_.end();
          ++sig_iter)
     {
-        shown_channels.insert(sig_iter->first);
+        shown_channels.insert(sig_iter.key());
     }
     return shown_channels;
 }
@@ -206,12 +198,12 @@ int32 SignalBrowserModel::getYPosOfChannel (uint32 channel_nr) const
 // zoom in all
 void SignalBrowserModel::zoomInAll()
 {
-    Int2SignalGraphicsItemPtrMap::iterator iter;
+    SignalGraphicsItemMap::iterator iter;
     for (iter = channel2signal_item_.begin();
          iter != channel2signal_item_.end();
          iter++)
     {
-        iter->second->zoomIn();
+        iter.value()->zoomIn();
     }
 
     signal_browser_view_->updateWidgets();
@@ -221,13 +213,13 @@ void SignalBrowserModel::zoomInAll()
 // zoom out all
 void SignalBrowserModel::zoomOutAll()
 {
-    Int2SignalGraphicsItemPtrMap::iterator iter;
+    SignalGraphicsItemMap::iterator iter;
 
     for (iter = channel2signal_item_.begin();
          iter != channel2signal_item_.end();
          iter++)
     {
-        iter->second->zoomOut();
+        iter.value()->zoomOut();
     }
 
     signal_browser_view_->updateWidgets();
@@ -248,21 +240,21 @@ void SignalBrowserModel::update()
     channel2y_pos_.clear();
     channel2y_pos_[UNDEFINED_CHANNEL] = 0;
     int32 y_pos = 0;
-    Int2SignalGraphicsItemPtrMap::iterator signal_iter;
+    SignalGraphicsItemMap::iterator signal_iter;
 
     for (signal_iter = channel2signal_item_.begin();
          signal_iter != channel2signal_item_.end();
          signal_iter++, y_pos += getSignalHeight())
     {
-        channel2y_pos_[signal_iter->first] = y_pos;
-        signal_iter->second->setHeight (getSignalHeight() );
-        signal_iter->second->setPos (0, y_pos);
-        signal_iter->second->setZValue(SIGNAL_Z);
-        signal_iter->second->updateYGridIntervall();
+        channel2y_pos_[signal_iter.key()] = y_pos;
+        signal_iter.value()->setHeight (getSignalHeight() );
+        signal_iter.value()->setPos (0, y_pos);
+        signal_iter.value()->setZValue(SIGNAL_Z);
+        signal_iter.value()->updateYGridIntervall();
 
-        signal_iter->second->enableYGrid(show_y_grid_);
-        signal_iter->second->enableXGrid(show_x_grid_);
-        signal_iter->second->show();
+        signal_iter.value()->enableYGrid(show_y_grid_);
+        signal_iter.value()->enableXGrid(show_x_grid_);
+        signal_iter.value()->show();
     }
 
     updateEventItemsImpl ();
@@ -288,11 +280,11 @@ void SignalBrowserModel::scaleChannel (ChannelID id, float32 lower_value, float3
         progress.setModal (true);
         progress.setLabelText (tr("Scaling..."));
         progress.show ();
-        for (Int2SignalGraphicsItemPtrMap::iterator it =
+        for (SignalGraphicsItemMap::iterator it =
              channel2signal_item_.begin(); it != channel2signal_item_.end();
             ++it)
         {
-            it->second->scale (lower_value, upper_value);
+            it.value()->scale (lower_value, upper_value);
             progress.setValue (progress.value() + 1);
         }
         progress.setValue (progress.maximum ());
@@ -312,11 +304,11 @@ void SignalBrowserModel::scaleChannel (ChannelID id)
         progress.setModal (true);
         progress.setLabelText (tr("Scaling..."));
         progress.show ();
-        for (Int2SignalGraphicsItemPtrMap::iterator it =
+        for (SignalGraphicsItemMap::iterator it =
              channel2signal_item_.begin(); it != channel2signal_item_.end();
             ++it)
         {
-            it->second->autoScale (getAutoScaleMode());
+            it.value()->autoScale (getAutoScaleMode());
             progress.setValue (progress.value() + 1);
         }
         progress.setValue (progress.maximum ());
