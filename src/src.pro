@@ -4,8 +4,8 @@ TARGET = sigviewer
 CONFIG += warn_on \
     link_prl \
     qt \
-    thread
-
+    thread openvg
+#QT += opengl
 OBJECTS_DIR = ../tmp/release
 MOC_DIR = ../tmp/release
 RCC_DIR = ../tmp/release

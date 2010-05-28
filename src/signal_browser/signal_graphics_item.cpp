@@ -59,7 +59,7 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<EventManager> event_manag
     float64 y_grid_intervall
         = round125(value_range / height_ * signal_browser_model_.getPreferedYGirdPixelIntervall());
     y_grid_pixel_intervall_ = y_zoom_ * y_grid_intervall;
-    setAcceptHoverEvents(true);
+    setAcceptHoverEvents(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -203,11 +203,21 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
         drawYGrid (painter, option);
     painter->setPen (color_manager_->getChannelColor (id_));
 
-    for (unsigned index = 0;
-         index < data_block->size() - 1;
-         index++)
+    int sub_sampler = 1;
+    //while (pixel_per_sample * 2 <= 1)
+    //{
+    //    pixel_per_sample *= 2;
+    //    sub_sampler *= 2;
+    //}
+
+    for (int index = 0;
+         index < static_cast<int>(data_block->size()) - sub_sampler;
+         index += sub_sampler)
     {
         new_y = (*data_block)[index+1];
+        //for (int sub_index = index+2; sub_index < index+sub_sampler; sub_index++)
+        //    new_y += (*data_block)[sub_index];
+        //new_y /= sub_sampler;
         painter->drawLine(last_x, y_offset_ - (y_zoom_ * last_y), last_x + pixel_per_sample, y_offset_ - (y_zoom_ * new_y));
 
         last_x += pixel_per_sample;
