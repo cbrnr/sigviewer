@@ -133,7 +133,7 @@ void GuiActionCommand::setIcon (QString const& action_id, QIcon const& icon)
 //-------------------------------------------------------------------------
 void GuiActionCommand::evaluateEnabledness ()
 {
-    qDebug () << "GuiActionCommand::evaluateEnabledness";
+
 }
 
 

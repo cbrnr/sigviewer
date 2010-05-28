@@ -62,7 +62,6 @@ void ZoomGuiCommand::init ()
 //-------------------------------------------------------------------------
 void ZoomGuiCommand::evaluateEnabledness ()
 {
-    qDebug () << "ZoomGuiCommand::evaluateEnabledness";
     QSharedPointer<SignalVisualisationModel> vis_model = currentVisModel();
     bool file_open = getApplicationState () == APP_STATE_FILE_OPEN;
     bool zoom_out_vertical_possible = false;

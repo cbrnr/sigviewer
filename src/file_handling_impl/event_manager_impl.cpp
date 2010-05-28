@@ -5,8 +5,6 @@
 #include <QMutexLocker>
 #include <QDebug>
 
-#include <cassert>
-
 namespace BioSig_
 {
 
@@ -75,7 +73,6 @@ QSharedPointer<SignalEvent> EventManagerImpl::getAndLockEventForEditing (EventID
 //-----------------------------------------------------------------------------
 void EventManagerImpl::updateAndUnlockEvent (EventID id)
 {
-    //QMutexLocker locker (caller_mutex_);
     if (!mutex_map_.contains (id))
         return;
     position_event_map_.remove (temp_event_position_map_[id], id);
@@ -114,6 +111,7 @@ QSharedPointer<SignalEvent const> EventManagerImpl::createEvent (
 //-----------------------------------------------------------------------------
 void EventManagerImpl::removeEvent (EventID id)
 {
+    qDebug () << "EventManagerImpl::removeEvent " << id;
     EventMap::iterator event_iter = event_map_.find (id);
     if (event_iter == event_map_.end())
         return;
@@ -121,8 +119,10 @@ void EventManagerImpl::removeEvent (EventID id)
     position_event_map_.remove (event_map_[id]->getPosition(), id);
     event_map_.remove (id);
     mutex_map_.remove (id);
+    qDebug () << "EventManagerImpl::removeEvent " << id << " emitting";
     emit eventRemoved (id);
     emit changed ();
+    qDebug () << "EventManagerImpl::removeEvent " << id << " finished";
 }
 
 //-----------------------------------------------------------------------------

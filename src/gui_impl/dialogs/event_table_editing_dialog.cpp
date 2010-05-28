@@ -72,6 +72,7 @@ void EventTableEditingDialog::addToTable (QSharedPointer<SignalEvent const> even
 //-------------------------------------------------------------------------
 void EventTableEditingDialog::removeFromTable (EventID event)
 {
+    qDebug () << "EventTableEditingDialog::removeFromTable " << event;
     int row_to_remove = -1;
     for (int row = 0; row < ui_.event_table_->rowCount(); row++)
         if (ui_.event_table_->item (row, ID_INDEX_)->text().toInt()
@@ -79,6 +80,7 @@ void EventTableEditingDialog::removeFromTable (EventID event)
             row_to_remove = row;
     if (row_to_remove != -1)
         ui_.event_table_->removeRow (row_to_remove);
+    qDebug () << "EventTableEditingDialog::removeFromTable " << event << " finished";
 }
 
 //-------------------------------------------------------------------------

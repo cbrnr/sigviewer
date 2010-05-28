@@ -9,7 +9,7 @@ BiosigBasicHeader::BiosigBasicHeader (HDRTYPE* raw_header)
 {
     if (raw_header->EVENT.CodeDesc)
     {
-        for (unsigned index = 0; index < 255; index++)
+        for (unsigned index = 0; index < raw_header->EVENT.LenCodeDesc; index++)
         {
             if (raw_header->EVENT.CodeDesc[index])
                 user_defined_event_map_[index+1] = QString(raw_header->EVENT.CodeDesc[index]);
