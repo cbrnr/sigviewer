@@ -20,7 +20,7 @@
 #include <QPropertyAnimation>
 #include <QDebug>
 #include <QResizeEvent>
-#include <QGLWidget>
+//#include <QGLWidget>
 
 namespace BioSig_
 {
@@ -41,7 +41,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     resize(initial_size.width(), initial_size.height());
     graphics_scene_ = new QGraphicsScene (0,0,initial_size.width(), initial_size.height(), this);
     graphics_view_ = new SignalBrowserGraphicsView (graphics_scene_, this);
-    graphics_view_->setViewport(new QGLWidget);
+  //  graphics_view_->setViewport(new QGLWidget);
     graphics_view_->setAcceptDrops (false);
     graphics_view_->scroll(0,0);
     graphics_view_->horizontalScrollBar()->hide();
