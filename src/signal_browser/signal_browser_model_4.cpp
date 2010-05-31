@@ -5,6 +5,7 @@
 #include "signal_browser_view.h"
 #include "signal_graphics_item.h"
 #include "../gui/color_manager.h"
+#include "../gui/progress_bar.h"
 #include "../base/signal_event.h"
 #include "../base/math_utils.h"
 
@@ -13,7 +14,6 @@
 #include <QDialog>
 #include <QInputDialog>
 #include <QSettings>
-#include <QProgressDialog>
 #include <QDebug>
 
 #include <cmath>
@@ -117,21 +117,14 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
         if (new_shown_channels.count (channel) == 0)
             removeChannel (channel);
 
-    QProgressDialog progress;
-    progress.setMaximum (new_shown_channels.size());
-    progress.setMinimum (0);
-    progress.setModal (true);
-    progress.setLabelText (tr("Buffering channel "));
-
     setSignalHeight (std::max<unsigned>(50, new_signal_height));
 
     foreach (ChannelID channel, new_shown_channels)
     {
-        progress.setValue (progress.value()+1);
+        ProgressBar::instance().increaseValue (1, tr("Creating view..."));
         if (channel2signal_item_.count (channel) == 0)
             addChannel (channel);
     }
-    progress.setValue (progress.maximum ());
 
 
     foreach (SignalGraphicsItem* channel, channel2signal_item_.values())

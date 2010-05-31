@@ -27,6 +27,7 @@
 #include "biosig_reader.h"
 #include "biosig_basic_header.h"
 #include "../file_handling/file_signal_reader_factory.h"
+#include "../gui/progress_bar.h"
 
 #include "../../extern/biosig.h"
 
@@ -35,7 +36,6 @@
 #include <QMutexLocker>
 #include <QDebug>
 #include <QTime>
-#include <QProgressDialog>
 #include <QMessageBox>
 
 #include <cmath>
@@ -281,10 +281,6 @@ void BioSigReader::bufferAllChannels () const
     biosig_data_type* read_data = new biosig_data_type[length];
 
     biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
-    QProgressDialog progress_dialog;
-    progress_dialog.setMaximum (basic_header_->getNumberChannels());
-    progress_dialog.setLabelText(QObject::tr("Loading channels..."));
-    progress_dialog.show ();
     QTime timer;
     timer.start();
     QTime alloc_timer;
@@ -321,9 +317,8 @@ void BioSigReader::bufferAllChannels () const
         QSharedPointer<DataBlock const> data_block (new DataBlock (raw_data,
                                                                    basic_header_->getSampleRate()));
         channel_map_[channel_id] = data_block;
-        progress_dialog.setValue(progress_dialog.value()+1);
+        ProgressBar::instance().increaseValue (1, QObject::tr("Loading data..."));
     }
-    progress_dialog.setValue(progress_dialog.maximum());
     qDebug() << "buffering time = " << timer.elapsed();
     qDebug() << "sread time = " << sread_time;
     qDebug() << "alloc time = " << alloc_time;

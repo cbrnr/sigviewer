@@ -5,7 +5,6 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPixmap>
-#include <QProgressDialog>
 #include <QDebug>
 
 #include <cmath>

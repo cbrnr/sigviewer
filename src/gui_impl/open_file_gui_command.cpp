@@ -11,6 +11,7 @@
 #include "../gui/main_window_model.h"
 #include "../editing_commands/macro_undo_command.h"
 #include "../editing_commands/new_event_undo_command.h"
+#include "../gui/progress_bar.h"
 
 #include <QFileDialog>
 #include <QSettings>
@@ -157,6 +158,7 @@ void OpenFileGuiCommand::openFileImpl (QString file_path, bool instantly)
     if (shown_channels.size() == 0)
         return;
 
+    ProgressBar::instance().initAndShow (channel_manager->getNumberChannels() * 3, tr("Opening ") + file_name);
     QSharedPointer<EventManager> event_manager (new EventManagerImpl (file_signal_reader));
     QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
                                                  channel_manager, file_signal_reader->getBasicHeader()));
@@ -171,6 +173,7 @@ void OpenFileGuiCommand::openFileImpl (QString file_path, bool instantly)
     signal_visualisation_model->setShownChannels (shown_channels);
     signal_visualisation_model->update();
     applicationContext()->addFileContext (file_context);
+    ProgressBar::instance().close();
 }
 
 

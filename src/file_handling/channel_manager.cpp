@@ -1,6 +1,6 @@
 #include "channel_manager.h"
 
-#include <QProgressDialog>
+#include "../gui/progress_bar.h"
 #include <limits>
 
 namespace BioSig_
@@ -56,19 +56,13 @@ float64 ChannelManager::getMaxValue (ChannelID channel_id) const
 //-------------------------------------------------------------------------
 void ChannelManager::initMinMax () const
 {
-    QProgressDialog progress_dialog;
-    progress_dialog.setMaximum (getNumberChannels() * 2);
-    progress_dialog.setLabelText (QObject::tr("Searching Min Max"));
-    progress_dialog.show();
     foreach (ChannelID id, getChannels())
     {
         QSharedPointer<DataBlock const> data = getData (id, 0, getNumberSamples ());
         max_values_[id] = data->getMax ();
-        progress_dialog.setValue(progress_dialog.value() + 1);
         min_values_[id] = data->getMin ();
-        progress_dialog.setValue(progress_dialog.value() + 1);
+        ProgressBar::instance().increaseValue (1, QObject::tr("Searching for Min-Max"));
     }
-    progress_dialog.setValue(progress_dialog.maximum());
     min_max_initialized_ = true;
 }
 
