@@ -115,6 +115,7 @@ signals:
 
 protected:
     virtual void shownEventTypesChangedImpl ();
+    virtual void modeChangedImpl (SignalVisualisationMode mode);
 
 private:
     //-------------------------------------------------------------------------

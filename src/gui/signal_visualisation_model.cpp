@@ -24,6 +24,7 @@ void SignalVisualisationModel::setMode (SignalVisualisationMode mode)
 {
     mode_ = mode;
     emit modeChanged (mode_);
+    modeChangedImpl (mode_);
 }
 
 //-----------------------------------------------------------------------------

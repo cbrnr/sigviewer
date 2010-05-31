@@ -134,6 +134,7 @@ signals:
 protected:
     SignalVisualisationModel (std::set<EventType> const& shown_types);
     virtual void shownEventTypesChangedImpl () = 0;
+    virtual void modeChangedImpl (SignalVisualisationMode) {};
 
 private:
     float32 pixel_per_sample_;

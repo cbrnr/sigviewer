@@ -302,12 +302,24 @@ void SignalGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent* event)
     std::set<EventID> events = event_manager_->getEventsAt (sample_pos, id_);
     QString event_string;
     foreach (EventID event, events)
-        event_string += QString::number (event) + " ";
+    {
+        if (event_string.size())
+            event_string += "<br /><br />";
+        QSharedPointer<SignalEvent const> signal_event = event_manager_->getEvent(event);
+        event_string += "<b>" + event_manager_->getNameOfEvent (event) + "</b><br />";
+        event_string += "Duration: " + QString::number(signal_event->getDurationInSec()) + "s";
+    }
 
     if (event_string.size())
+    {
         QToolTip::showText (event->screenPos(), event_string);
+        setToolTip (event_string);
+    }
     else
+    {
+        setToolTip ("");
         QToolTip::hideText();
+    }
 }
 
 

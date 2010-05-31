@@ -421,7 +421,16 @@ void SignalBrowserModel::shownEventTypesChangedImpl ()
     updateEventItemsImpl ();
 }
 
-// get prefered y grid pixel intervall
+//-------------------------------------------------------------------
+void SignalBrowserModel::modeChangedImpl (SignalVisualisationMode mode)
+{
+    bool tooltips = (mode == MODE_INFO ||
+                     mode == MODE_POINTER);
+    foreach (SignalGraphicsItem* signal_item, channel2signal_item_.values())
+        signal_item->setAcceptHoverEvents (tooltips);
+}
+
+//-------------------------------------------------------------------
 int32 SignalBrowserModel::getPreferedYGirdPixelIntervall()
 {
     return prefered_y_grid_pixel_intervall_;
