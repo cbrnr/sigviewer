@@ -37,6 +37,7 @@ shown_event_types_ (shown_event_types)
     ui_.event_table_->hideColumn (ID_INDEX_);
     qDebug () << connect (event_manager_.data(), SIGNAL(eventRemoved(EventID)), SLOT(removeFromTable (EventID)));
     qDebug () << connect (event_manager_.data(), SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)), SLOT(addToTable(QSharedPointer<SignalEvent const>)));
+    connect (event_manager_.data(), SIGNAL(eventChanged(EventID)), SLOT(updateTable(EventID)));
     ui_.undo_button_->setDefaultAction(GuiActionFactory::getInstance()->getQAction("Undo"));
     ui_.redo_button_->setDefaultAction(GuiActionFactory::getInstance()->getQAction("Redo"));
 }
@@ -80,7 +81,20 @@ void EventTableEditingDialog::removeFromTable (EventID event)
             row_to_remove = row;
     if (row_to_remove != -1)
         ui_.event_table_->removeRow (row_to_remove);
-    qDebug () << "EventTableEditingDialog::removeFromTable " << event << " finished";
+    qDebug () << "EventTableEditingDialog::removeFromTable " << event << " in row " << row_to_remove << " finished";
+}
+
+
+//-------------------------------------------------------------------------
+void EventTableEditingDialog::updateTable (EventID event)
+{
+    QSharedPointer<SignalEvent const> signal_event = event_manager_->getEvent (event);
+    for (int row = 0; row < ui_.event_table_->rowCount(); row++)
+        if (ui_.event_table_->item (row, ID_INDEX_)->text().toInt()
+            == event)
+        {
+            ui_.event_table_->item (row, CHANNEL_INDEX_)->setText (channel_manager_->getChannelLabel(signal_event->getChannel()));
+        }
 }
 
 //-------------------------------------------------------------------------

@@ -18,7 +18,6 @@ public:
 protected:
     virtual void resizeEvent (QResizeEvent* event) {emit resized (event);}
     //virtual void mouseMoveEvent (QMouseEvent* event) {this->moveEvent(event);}//event->ignore();}//emit sceneMouseMoved (mapToScene (event->pos()));}
-
 signals:
     void resized (QResizeEvent*);
     void sceneMouseMoved (QPointF scene_pos);

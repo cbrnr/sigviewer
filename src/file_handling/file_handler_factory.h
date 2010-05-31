@@ -64,6 +64,7 @@ bool FileHandlerFactory<FileHandlerType>::registerHandler (QString const& file_e
 template<typename FileHandlerType>
 void FileHandlerFactory<FileHandlerType>::registerDefaultHandler (QSharedPointer<FileHandlerType> file_handler)
 {
+    qDebug () << "FileHandlerFactory<FileHandlerType>::registerDefaultHandler";
     default_handler_ = file_handler;
 }
 
@@ -74,8 +75,10 @@ QSharedPointer<FileHandlerType> FileHandlerFactory<FileHandlerType>::getHandler 
     QString file_ending = file_path.section('.', -1);
     if (handler_map_.count(file_ending))
         return handler_map_[file_ending]->createInstance (file_path);
-    else
+    else if (!default_handler_.isNull())
         return default_handler_->createInstance (file_path);
+    else
+        return QSharedPointer<FileHandlerType> (0);
 }
 
 //-------------------------------------------------------------------------

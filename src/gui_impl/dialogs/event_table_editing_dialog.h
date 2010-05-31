@@ -23,6 +23,7 @@ public:
 private slots:
     void addToTable (QSharedPointer<SignalEvent const> event);
     void removeFromTable (EventID event);
+    void updateTable (EventID event);
 
     void on_delete_button__clicked ();
     void on_all_events_button__clicked (bool checked);

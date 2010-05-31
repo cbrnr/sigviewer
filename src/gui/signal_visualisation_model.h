@@ -11,7 +11,6 @@
 #include <QObject>
 
 #include <set>
-#include <cassert>
 
 namespace BioSig_
 {
@@ -116,7 +115,7 @@ public:
     ScaleMode getAutoScaleMode () const;
 
     //-------------------------------------------------------------------------
-    virtual void update () = 0;
+    virtual void update () {}
 
     //-------------------------------------------------------------------------
     virtual SignalVisualisationView const* view () const = 0;

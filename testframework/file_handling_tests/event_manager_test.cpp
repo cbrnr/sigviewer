@@ -2,7 +2,6 @@
 
 #include "dummy_file_signal_reader.h"
 #include "file_handling_impl/event_manager_impl.h"
-#include "application_context.h"
 
 using namespace BioSig_;
 

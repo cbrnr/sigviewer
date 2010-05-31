@@ -10,6 +10,8 @@ using namespace BioSig_;
 
 int main (int32 argc, char* argv[])
 {
+    QApplication app (argc, argv);
     QTest::qExec(new EventManagerTest);
     QTest::qExec(new DataBlockTest);
+    QTest::qExec(new FileOpenTest);
 }

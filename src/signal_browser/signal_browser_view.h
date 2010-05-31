@@ -51,7 +51,7 @@ public:
     void addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item, QString const& label);
     void removeSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item);
     void addEventGraphicsItem (EventGraphicsItem* event_graphics_item);
-    void removeEventGraphicsItem (EventGraphicsItem* event_graphics_item, bool update_view = true);
+    void removeEventGraphicsItem (EventGraphicsItem* event_graphics_item);
 
     void resizeScene (int32 width, int32 height);
     int32 getVisibleWidth () const;

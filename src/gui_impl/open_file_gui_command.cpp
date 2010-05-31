@@ -63,9 +63,9 @@ void OpenFileGuiCommand::init ()
 }
 
 //-----------------------------------------------------------------------------
-void OpenFileGuiCommand::openFile (QString file_path)
+void OpenFileGuiCommand::openFile (QString file_path, bool instantly)
 {
-    instance_->openFileImpl (file_path);
+    instance_->openFileImpl (file_path, instantly);
 }
 
 //-------------------------------------------------------------------------
@@ -135,7 +135,7 @@ void OpenFileGuiCommand::showFileInfo ()
 }
 
 //-------------------------------------------------------------------------
-void OpenFileGuiCommand::openFileImpl (QString file_path)
+void OpenFileGuiCommand::openFileImpl (QString file_path, bool instantly)
 {
     file_path = QDir::toNativeSeparators (file_path);
     QSharedPointer<FileSignalReader> file_signal_reader = FileSignalReaderFactory::getInstance()->getHandler (file_path);
@@ -147,9 +147,13 @@ void OpenFileGuiCommand::openFileImpl (QString file_path)
 
     QSharedPointer<ChannelManager> channel_manager (new ChannelManagerImpl (file_signal_reader));
 
-    std::set<ChannelID> shown_channels = GuiHelper::selectChannels (channel_manager,
-                                                                    applicationContext()->getEventColorManager(),
-                                                                    file_name);
+    std::set<ChannelID> shown_channels;
+    if (instantly)
+        shown_channels = channel_manager->getChannels();
+    else
+        shown_channels = GuiHelper::selectChannels (channel_manager,
+                                                    applicationContext()->getEventColorManager(),
+                                                    file_name);
     if (shown_channels.size() == 0)
         return;
 

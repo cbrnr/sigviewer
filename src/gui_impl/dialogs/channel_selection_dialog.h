@@ -19,6 +19,7 @@ namespace BioSig_
 class ChannelSelectionDialog : public QDialog
 {
     Q_OBJECT
+friend class FileOpenTest;
 public:
     ChannelSelectionDialog (QSharedPointer<ChannelManager const> channel_manager,
                             QString const& file_name,
@@ -47,8 +48,9 @@ private:
 
     QSharedPointer<ChannelManager const> channel_manager_;
     QSharedPointer<ColorManager> color_manager_;
+public:
     Ui::ChannelDialog ui_;
-
+private:
     static int const VISIBLE_INDEX_ = 0;
     static int const LABEL_INDEX_ = 0;
     static int const COLOR_INDEX_ = 1;

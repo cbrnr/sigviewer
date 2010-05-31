@@ -14,6 +14,7 @@
 #include <QInputDialog>
 #include <QSettings>
 #include <QProgressDialog>
+#include <QDebug>
 
 #include <cmath>
 #include <algorithm>
@@ -489,14 +490,17 @@ void SignalBrowserModel::addEventItem (QSharedPointer<SignalEvent const> event)
 //-----------------------------------------------------------------------------
 void SignalBrowserModel::removeEventItem (EventID id)
 {
+    qDebug () << "SignalBrowserModel::removeEventItem " << id << " started";
     if (id2event_item_.find (id) == id2event_item_.end())
         return;
 
     EventGraphicsItem* event_item = id2event_item_[id];
+    if (selected_event_item_ == event_item)
+        unselectEvent ();
     id2event_item_.erase (id);
     signal_browser_view_->removeEventGraphicsItem (event_item);
-    unselectEvent ();
     delete event_item;
+    qDebug () << "SignalBrowserModel::removeEventItem "<< id << " finished";
 }
 
 

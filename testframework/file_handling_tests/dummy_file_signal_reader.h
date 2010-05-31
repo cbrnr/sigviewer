@@ -12,7 +12,7 @@ using namespace BioSig_;
 class DummyFileSignalReader : public FileSignalReader
 {
 public:
-    DummyFileSignalReader () {open_ = false;}
+    DummyFileSignalReader () {}
     virtual ~DummyFileSignalReader () {}
     virtual QSharedPointer<FileSignalReader> createInstance (QString const&)
     {
@@ -24,10 +24,6 @@ public:
         QList<QSharedPointer<SignalEvent const> > events;
         return  events;
     }
-
-    virtual bool isOpen()
-    { return open_; }
-    virtual void close() {open_ = false; }
 
     virtual QSharedPointer<DataBlock const> getSignalData (ChannelID,
                                                            unsigned start_sample,
@@ -44,9 +40,6 @@ public:
     {
         return QSharedPointer<BasicHeader> (new DummyBasicHeader);
     }
-
-private:
-    bool open_;
 };
 
 #endif // DUMMY_FILE_SIGNAL_READER_H
