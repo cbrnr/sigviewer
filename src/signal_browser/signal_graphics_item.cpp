@@ -299,6 +299,13 @@ void SignalGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* event)
 void SignalGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent* event)
 {
     unsigned sample_pos = event->scenePos().x() / signal_browser_model_.getPixelPerSample();
+
+    emit mouseMoving (true);
+    emit mouseAtSecond (sample_pos / channel_manager_->getSampleRate());
+
+    if (event_manager_.isNull())
+        return;
+
     std::set<EventID> events = event_manager_->getEventsAt (sample_pos, id_);
     QString event_string;
     foreach (EventID event, events)

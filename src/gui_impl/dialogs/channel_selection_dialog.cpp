@@ -22,7 +22,7 @@ ChannelSelectionDialog::ChannelSelectionDialog (QSharedPointer<ChannelManager co
    color_manager_ (color_manager)
 {
     ui_.setupUi (this);
-    QString window_title (tr("Channel Selection"));
+    QString window_title (tr("Channels"));
     if (file_name.size ())
         window_title.prepend(file_name + " - ");
 
@@ -54,8 +54,7 @@ ChannelSelectionDialog::ChannelSelectionDialog (QSharedPointer<ChannelManager co
         row++;
     }
     ui_.channel_table_->hideColumn (ID_INDEX_);
-
-    adjustSize ();
+    on_show_colors_box__toggled (false);
 }
 
 //-----------------------------------------------------------------------------
@@ -153,6 +152,15 @@ void ChannelSelectionDialog::on_button_box__accepted ()
                                          ui_.channel_table_->item (row, COLOR_INDEX_)->backgroundColor());
     }
     color_manager_->saveSettings ();
+}
+
+//-----------------------------------------------------------------------------
+void ChannelSelectionDialog::on_show_colors_box__toggled (bool on)
+{
+    ui_.channel_table_->setColumnHidden (COLOR_INDEX_, !on);
+    ui_.reset_colors_button_->setVisible (on);
+    if (on)
+        ui_.channel_table_->horizontalHeader()->setDefaultSectionSize ((ui_.channel_table_->width() - 10) / 2);
 }
 
 //-----------------------------------------------------------------------------

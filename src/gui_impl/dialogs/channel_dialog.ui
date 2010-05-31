@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>312</width>
-    <height>331</height>
+    <width>310</width>
+    <height>329</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -99,24 +99,43 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QPushButton" name="select_all_button_">
-       <property name="text">
-        <string>Select All</string>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QPushButton" name="select_all_button_">
+         <property name="text">
+          <string>Select All</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="unselect_all_button_">
+         <property name="text">
+          <string>Unselect All</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
-      <widget class="QPushButton" name="unselect_all_button_">
-       <property name="text">
-        <string>Unselect All</string>
+      <widget class="QGroupBox" name="show_colors_box_">
+       <property name="title">
+        <string>Color Options</string>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="reset_colors_button_">
-       <property name="text">
-        <string>Reset Colors</string>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QPushButton" name="reset_colors_button_">
+          <property name="text">
+           <string>Reset All Colors</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>
