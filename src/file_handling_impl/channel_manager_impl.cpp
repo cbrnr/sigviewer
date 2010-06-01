@@ -32,8 +32,10 @@ QString ChannelManagerImpl::getChannelLabel (ChannelID id) const
 {
     if (id == UNDEFINED_CHANNEL)
         return QObject::tr("All Channels");
-    else
+    else if (reader_->getBasicHeader()->getNumberChannels() > id)
         return reader_->getBasicHeader()->getChannel (id).getLabel();
+    else
+        return QObject::tr("Invalid Channel");
 }
 
 
