@@ -70,12 +70,10 @@ void MainWindow::initStatusBar()
     QStatusBar* status_bar = statusBar();
     status_bar->showMessage(tr("Ready"));
 
-    status_bar_signal_length_label_ = new QLabel(tr("Length: %1 s").arg("----.-"));
-    status_bar_nr_channels_label_ = new QLabel(tr("Channels: %1").arg("---"));
+    status_bar_signal_length_label_ = new QLabel (this);
+    status_bar_nr_channels_label_ = new QLabel (this);
     status_bar_signal_length_label_->setAlignment(Qt::AlignHCenter);
     status_bar_nr_channels_label_->setAlignment(Qt::AlignHCenter);
-    status_bar_signal_length_label_->setMinimumWidth(status_bar_signal_length_label_->sizeHint().width() + 10);
-    status_bar_nr_channels_label_->setMinimumWidth(status_bar_nr_channels_label_->sizeHint().width() + 10);
     status_bar->addPermanentWidget(status_bar_signal_length_label_);
     status_bar->addPermanentWidget(status_bar_nr_channels_label_);
 }
@@ -254,16 +252,6 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 }
 
 //-----------------------------------------------------------------------------
-bool MainWindow::showFileCloseDialog(const QString& file_name)
-{
-    int res;
-    res =  QMessageBox::question(this, tr("Really close?"),
-                tr("Changes in '%1' are not saved!!").arg(file_name) + "\n" +
-                tr("Really close?"), tr("Yes"),  tr("No"));
-    return (res == 0);
-}
-
-//-----------------------------------------------------------------------------
 void MainWindow::setRecentFiles(const QStringList& recent_file_list)
 {
     file_recent_files_menu_->clear();
@@ -278,17 +266,17 @@ void MainWindow::setRecentFiles(const QStringList& recent_file_list)
 //-----------------------------------------------------------------------------
 void MainWindow::setStatusBarSignalLength(float64 length)
 {
-    QString tmp = length < 0 ? "----.-" : QString("%1").arg(length, 0, 'f', 1);
-    status_bar_signal_length_label_->setText(tr("Length: %1 s").arg(tmp));
-    status_bar_signal_length_label_->setMinimumWidth(status_bar_signal_length_label_->sizeHint().width() + 10);
+    if (length > 0)
+        status_bar_signal_length_label_->setText (tr("Length: ") + QString::number(length, 'f', 1) + "s");
+    status_bar_signal_length_label_->setVisible (length > 0);
 }
 
 //-----------------------------------------------------------------------------
 void MainWindow::setStatusBarNrChannels(int32 nr_channels)
 {
-    QString tmp = nr_channels < 0 ? "---" : QString("%1").arg(nr_channels, 3);
-    status_bar_nr_channels_label_->setText(tr("Channels: %1").arg(tmp));
-    status_bar_nr_channels_label_->setMinimumWidth(status_bar_nr_channels_label_->sizeHint().width() + 10);
+    if (nr_channels > 0)
+        status_bar_nr_channels_label_->setText (tr("Channels: ") + QString::number(nr_channels));
+    status_bar_nr_channels_label_->setVisible (nr_channels > 0);
 }
 
 //-----------------------------------------------------------------------------

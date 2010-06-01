@@ -28,7 +28,6 @@ public:
     void setStatusBarSignalLength(float64 length);
     void setStatusBarNrChannels(int32 nr_channels);
 
-    bool showFileCloseDialog(const QString& file_name);
     void setRecentFiles(const QStringList& recent_file_list);
 
 signals:
