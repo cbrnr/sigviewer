@@ -65,10 +65,9 @@ void SignalVisualisationModel::setSignalHeight (unsigned height)
     signal_height_ = height;
     qDebug() << "SignalVisualisationModel::signal_height_ = " << signal_height_;
     if (signal_height_ == 0)
-    {
         signal_height_ = 100;
-    }
     emit signalHeightChanged (signal_height_);
+    update();
 }
 
 //-------------------------------------------------------------------------

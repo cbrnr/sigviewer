@@ -26,6 +26,7 @@ public slots:
 private:
     virtual void paintEvent(QPaintEvent*);
     virtual void contextMenuEvent (QContextMenuEvent* event);
+    virtual void timerEvent (QTimerEvent* event);
 
     float64 intervall_;
     int32 x_start_;
@@ -35,6 +36,7 @@ private:
     float64 time_to_highlight_;
     QRect last_highlight_rect_;
 
+    int highlight_timer_;
 };
 
 }

@@ -15,7 +15,7 @@ public:
 
     virtual void init ();
 
-protected:
+protected slots:
     //-------------------------------------------------------------------------
     virtual void evaluateEnabledness ();
 

@@ -23,6 +23,7 @@ class SignalVisualisationModel : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(float pixel_per_sample_ READ getPixelPerSample WRITE setPixelPerSample)
+    Q_PROPERTY(float signal_height_ READ getSignalHeight WRITE setSignalHeight)
 public:
     //-------------------------------------------------------------------------
     /// virtual destructor

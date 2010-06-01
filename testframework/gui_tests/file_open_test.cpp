@@ -26,7 +26,7 @@ void FileOpenTest::testChannelSelection ()
     QVERIFY2(vis_model->getShownChannels().size() ==
              channel_manager->getNumberChannels(), "All channels are shown!");
 
-    int old_height = vis_model->getSignalHeight();
+    unsigned old_height = vis_model->getSignalHeight();
     float32 old_pixel_per_sample = vis_model->getPixelPerSample();
     GuiActionFactory::getInstance()->getQAction("Zoom In Vertical")->trigger();
     QVERIFY2(vis_model->getSignalHeight() > old_height, "Zoom In Vertical");

@@ -66,8 +66,10 @@ void XAxisWidget::changePixelPerSample (float32 pixel_per_sample, float32 sample
 //-----------------------------------------------------------------------------
 void XAxisWidget::changeHighlightTime (float64 time_to_highlight)
 {
+    highlighting_enabled_ = true;
     time_to_highlight_ = time_to_highlight;// - (x_start_ / pixel_per_sec_);
     update ();
+    highlight_timer_ = startTimer (5000);
 }
 
 //-----------------------------------------------------------------------------
@@ -132,6 +134,17 @@ void XAxisWidget::contextMenuEvent (QContextMenuEvent* event)
     QMenu menu;
     menu.addAction(GuiActionFactory::getInstance()->getQAction("Scale X Axis"));
     menu.exec (event->globalPos());
+}
+
+//-----------------------------------------------------------------------------
+void XAxisWidget::timerEvent (QTimerEvent* event)
+{
+    if (event->timerId() == highlight_timer_)
+    {
+        highlighting_enabled_ = false;
+        killTimer (highlight_timer_);
+        highlight_timer_ = -1;
+    }
 }
 
 

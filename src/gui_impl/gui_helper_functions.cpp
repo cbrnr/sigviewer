@@ -16,13 +16,16 @@ namespace GuiHelper
 
 //-----------------------------------------------------------------------------
 void animateProperty (QObject* target, QByteArray const& property_name,
-                          QVariant const& start_value, QVariant const& end_value)
+                      QVariant const& start_value, QVariant const& end_value,
+                      QObject* call_back_object, char const* call_back_slot)
 {
     QPropertyAnimation* animation = new QPropertyAnimation (target,
                                                             property_name);
     animation->setDuration (400);
     animation->setStartValue (start_value);
     animation->setEndValue (end_value);
+    if (call_back_object && call_back_slot)
+        call_back_object->connect (animation, SIGNAL(finished()), call_back_slot);
     animation->start (animation->DeleteWhenStopped);
 }
 

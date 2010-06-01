@@ -115,7 +115,8 @@ void ZoomGuiCommand::zoomInHorizontal ()
                                  maxPixelPerSample() );
 
     GuiHelper::animateProperty (currentVisModel().data(), "pixel_per_sample_",
-                                pixel_per_sample, new_pixel_per_sample);
+                                pixel_per_sample, new_pixel_per_sample,
+                                this, SLOT(evaluateEnabledness()));
 }
 
 //-----------------------------------------------------------------------------
@@ -126,7 +127,8 @@ void ZoomGuiCommand::zoomOutHorizontal ()
                                  minPixelPerSample ());
 
     GuiHelper::animateProperty (currentVisModel().data(), "pixel_per_sample_",
-                                pixel_per_sample, new_pixel_per_sample);
+                                pixel_per_sample, new_pixel_per_sample,
+                                this, SLOT(evaluateEnabledness()));
 }
 
 
@@ -134,22 +136,22 @@ void ZoomGuiCommand::zoomOutHorizontal ()
 void ZoomGuiCommand::zoomInVertical ()
 {
     unsigned signal_height = currentVisModel()->getSignalHeight();
-    signal_height = std::min<unsigned> (signal_height * ZOOM_FACTOR_,
+    unsigned new_signal_height = std::min<unsigned> (signal_height * ZOOM_FACTOR_,
                               maxSignalHeight());
-    currentVisModel()->setSignalHeight (signal_height);
-    currentVisModel()->update ();
-    evaluateEnabledness ();
+    GuiHelper::animateProperty (currentVisModel().data(), "signal_height_",
+                                signal_height, new_signal_height,
+                                this, SLOT(evaluateEnabledness()));
 }
 
 //-----------------------------------------------------------------------------
 void ZoomGuiCommand::zoomOutVertical ()
 {
     unsigned signal_height = currentVisModel()->getSignalHeight();
-    signal_height = std::max<unsigned> (signal_height / ZOOM_FACTOR_,
+    unsigned new_signal_height = std::max<unsigned> (signal_height / ZOOM_FACTOR_,
                               minSignalHeight());
-    currentVisModel()->setSignalHeight (signal_height);
-    currentVisModel()->update ();
-    evaluateEnabledness ();
+    GuiHelper::animateProperty (currentVisModel().data(), "signal_height_",
+                                signal_height, new_signal_height,
+                                this, SLOT(evaluateEnabledness()));
 }
 
 //-----------------------------------------------------------------------------
@@ -167,9 +169,11 @@ void ZoomGuiCommand::scaleXAxis ()
     float32 new_secs_per_page = QInputDialog::getDouble (0, tr("Scale X Axis"), tr("Seconds"), width / pixel_per_second, minPixelPerSample() / sample_rate, currentVisModel()->getChannelManager()->getDurationInSec());
 
     float32 pixel_per_sample = width / (new_secs_per_page * sample_rate);
-    currentVisModel()->setPixelPerSample (pixel_per_sample);
-    currentVisModel()->update();
-    evaluateEnabledness ();
+
+    GuiHelper::animateProperty (currentVisModel().data(), "pixel_per_sample_",
+                                currentVisModel()->getPixelPerSample(),
+                                pixel_per_sample,
+                                this, SLOT(evaluateEnabledness()));
 }
 
 //-------------------------------------------------------------------------
@@ -191,9 +195,9 @@ void ZoomGuiCommand::setChannelsPerPage ()
     if (new_signal_height == signal_height)
         return;
 
-    currentVisModel()->setSignalHeight (new_signal_height);
-    currentVisModel()->update ();
-    evaluateEnabledness ();
+    GuiHelper::animateProperty (currentVisModel().data(), "signal_height_",
+                                signal_height, new_signal_height,
+                                this, SLOT(evaluateEnabledness()));
 }
 
 //-------------------------------------------------------------------------
