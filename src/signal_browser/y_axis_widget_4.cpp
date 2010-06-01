@@ -1,11 +1,12 @@
 #include "y_axis_widget_4.h"
-
 #include "signal_graphics_item.h"
+#include "../gui/gui_action_factory.h"
 
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPixmap>
 #include <QDebug>
+#include <QContextMenuEvent>
 
 #include <cmath>
 
@@ -83,6 +84,15 @@ void YAxisWidget::paintEvent(QPaintEvent*)
         current_y_start += intervall;
     }
 }
+
+//-----------------------------------------------------------------------------
+void YAxisWidget::contextMenuEvent (QContextMenuEvent* event)
+{
+    QMenu menu;
+    menu.addAction(GuiActionFactory::getInstance()->getQAction("Channels per Page..."));
+    menu.exec (event->globalPos());
+}
+
 
 //-------------------------------------------------------------------
 void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,

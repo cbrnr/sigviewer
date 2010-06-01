@@ -1,8 +1,10 @@
 #include "label_widget.h"
+#include "../gui/gui_action_factory.h"
 
 #include <cmath>
 
 #include <QPainter>
+#include <QContextMenuEvent>
 
 namespace BioSig_
 {
@@ -59,6 +61,14 @@ void LabelWidget::paintEvent(QPaintEvent*)
     {
         p.drawLine(0, float_y, width() - 1, float_y);
     }
+}
+
+//-----------------------------------------------------------------------------
+void LabelWidget::contextMenuEvent (QContextMenuEvent* event)
+{
+    QMenu menu;
+    menu.addAction(GuiActionFactory::getInstance()->getQAction("Channels per Page..."));
+    menu.exec (event->globalPos());
 }
 
 //-----------------------------------------------------------------------------

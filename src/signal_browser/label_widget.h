@@ -25,6 +25,7 @@ public slots:
 
 protected:
     void paintEvent(QPaintEvent* pe);
+    virtual void contextMenuEvent (QContextMenuEvent* event);
 
 private:
     SignalBrowserModel& signal_browser_model_;

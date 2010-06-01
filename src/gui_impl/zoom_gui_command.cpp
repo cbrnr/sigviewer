@@ -13,6 +13,7 @@ QString const ZoomGuiCommand::ZOOM_OUT_VERTICAL_ = "Zoom Out Vertical";
 QString const ZoomGuiCommand::ZOOM_IN_HORIZONTAL_ = "Zoom In Horizontal";
 QString const ZoomGuiCommand::ZOOM_OUT_HORIZONTAL_ = "Zoom Out Horizontal";
 QString const ZoomGuiCommand::SCALE_X_AXIS_ = "Scale X Axis";
+QString const ZoomGuiCommand::CHANNEL_PER_PAGE_ = "Channels per Page...";
 QString const ZoomGuiCommand::AUTO_ZOOM_VERTICAL_ = "Auto Zoom Vertical";
 
 
@@ -21,7 +22,8 @@ QStringList const ZoomGuiCommand::ACTIONS_ = QStringList() << ZoomGuiCommand::ZO
                                            << ZoomGuiCommand::ZOOM_IN_HORIZONTAL_
                                            << ZoomGuiCommand::ZOOM_OUT_HORIZONTAL_
                                            << ZoomGuiCommand::GOTO_
-                                           << ZoomGuiCommand::SCALE_X_AXIS_;
+                                           << ZoomGuiCommand::SCALE_X_AXIS_
+                                           << ZoomGuiCommand::CHANNEL_PER_PAGE_;
 
 
 //-----------------------------------------------------------------------------
@@ -57,6 +59,7 @@ void ZoomGuiCommand::init ()
     resetActionTriggerSlot (ZOOM_IN_HORIZONTAL_, SLOT(zoomInHorizontal()));
     resetActionTriggerSlot (ZOOM_OUT_HORIZONTAL_, SLOT(zoomOutHorizontal()));
     resetActionTriggerSlot (SCALE_X_AXIS_, SLOT(scaleXAxis()));
+    resetActionTriggerSlot (CHANNEL_PER_PAGE_, SLOT(setChannelsPerPage()));
 }
 
 //-------------------------------------------------------------------------
@@ -165,6 +168,30 @@ void ZoomGuiCommand::scaleXAxis ()
     float32 pixel_per_sample = width / (new_secs_per_page * sample_rate);
     currentVisModel()->setPixelPerSample (pixel_per_sample);
     currentVisModel()->update();
+    evaluateEnabledness ();
+}
+
+//-------------------------------------------------------------------------
+void ZoomGuiCommand::setChannelsPerPage ()
+{
+    unsigned signal_height = currentVisModel()->getSignalHeight();
+    float viewport_height = currentVisModel()->getShownHeight();
+    float channels_per_page = viewport_height / signal_height;
+
+    bool ok = false;
+    float new_channels_per_page = QInputDialog::getInt (0, tr("Vertical Zooming"),
+                                                        tr("Channels per Page"),
+                                                        channels_per_page, 1, currentVisModel()->getShownChannels().size(), 1, &ok);
+
+    if (!ok)
+        return;
+
+    unsigned new_signal_height = viewport_height / new_channels_per_page;
+    if (new_signal_height == signal_height)
+        return;
+
+    currentVisModel()->setSignalHeight (new_signal_height);
+    currentVisModel()->update ();
     evaluateEnabledness ();
 }
 

@@ -41,6 +41,9 @@ private slots:
     //-------------------------------------------------------------------------
     void scaleXAxis ();
 
+    //-------------------------------------------------------------------------
+    void setChannelsPerPage ();
+
 private:
     //-------------------------------------------------------------------------
     unsigned maxSignalHeight ();
@@ -64,6 +67,7 @@ private:
     static QString const ZOOM_IN_HORIZONTAL_;
     static QString const ZOOM_OUT_HORIZONTAL_;
     static QString const SCALE_X_AXIS_;
+    static QString const CHANNEL_PER_PAGE_;
     static QString const AUTO_ZOOM_VERTICAL_;
     static QStringList const ACTIONS_;
 
