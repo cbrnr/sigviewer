@@ -15,6 +15,10 @@ namespace GuiHelper
 {
 
 //-----------------------------------------------------------------------------
+void animateProperty (QObject* target, QByteArray const& property_name,
+                      QVariant const& start_value, QVariant const& end_value);
+
+//-----------------------------------------------------------------------------
 QSharedPointer<SignalEvent const> getSelectedEvent (QSharedPointer<SignalVisualisationModel>
                                                     signal_visualisation_model);
 

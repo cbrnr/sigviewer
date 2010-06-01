@@ -22,6 +22,7 @@ namespace BioSig_
 class SignalVisualisationModel : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(float pixel_per_sample_ READ getPixelPerSample WRITE setPixelPerSample)
 public:
     //-------------------------------------------------------------------------
     /// virtual destructor
@@ -44,10 +45,10 @@ public:
     void setInfoWidget (QWidget* info_widget);
 
     //-------------------------------------------------------------------------
-    void setPixelPerSample (float32 pixel_per_sample);
+    void setPixelPerSample (float pixel_per_sample);
 
     //-------------------------------------------------------------------------
-    float32 getPixelPerSample () const;
+    float getPixelPerSample () const;
 
     //-------------------------------------------------------------------------
     virtual void scaleChannel (ChannelID id, float32 lower_value, float32 upper_value) = 0;
@@ -137,7 +138,7 @@ protected:
     virtual void modeChangedImpl (SignalVisualisationMode) {};
 
 private:
-    float32 pixel_per_sample_;
+    float pixel_per_sample_;
     SignalVisualisationMode mode_;
     EventType event_creation_type_;
     std::set<EventType> shown_event_types_;

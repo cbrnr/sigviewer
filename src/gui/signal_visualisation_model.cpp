@@ -40,14 +40,15 @@ void SignalVisualisationModel::setInfoWidget (QWidget* info_widget)
 }
 
 //-----------------------------------------------------------------------------
-void SignalVisualisationModel::setPixelPerSample (float32 pixel_per_sample)
+void SignalVisualisationModel::setPixelPerSample (float pixel_per_sample)
 {
     pixel_per_sample_ = pixel_per_sample;
     emit pixelPerSampleChanged (pixel_per_sample_, getChannelManager()->getSampleRate());
+    update ();
 }
 
 //-----------------------------------------------------------------------------
-float32 SignalVisualisationModel::getPixelPerSample () const
+float SignalVisualisationModel::getPixelPerSample () const
 {
     return pixel_per_sample_;
 }

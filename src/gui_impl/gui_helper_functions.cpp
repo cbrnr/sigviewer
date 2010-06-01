@@ -6,12 +6,25 @@
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QDebug>
+#include <QPropertyAnimation>
 
 namespace BioSig_
 {
 
 namespace GuiHelper
 {
+
+//-----------------------------------------------------------------------------
+void animateProperty (QObject* target, QByteArray const& property_name,
+                          QVariant const& start_value, QVariant const& end_value)
+{
+    QPropertyAnimation* animation = new QPropertyAnimation (target,
+                                                            property_name);
+    animation->setDuration (400);
+    animation->setStartValue (start_value);
+    animation->setEndValue (end_value);
+    animation->start (animation->DeleteWhenStopped);
+}
 
 //-----------------------------------------------------------------------------
 QSharedPointer<SignalEvent const> getSelectedEvent (QSharedPointer<SignalVisualisationModel>

@@ -57,7 +57,6 @@ private:
     //-------------------------------------------------------------------------
     float32 minPixelPerSample ();
 
-
     static float const ZOOM_FACTOR_ = 2;
     static float const MAX_HORIZONTAL_ZOOM_IN_ = 32;
 

@@ -1,4 +1,5 @@
 #include "zoom_gui_command.h"
+#include "gui_helper_functions.h"
 
 #include <QInputDialog>
 #include <QDebug>
@@ -110,22 +111,22 @@ void ZoomGuiCommand::goTo ()
 void ZoomGuiCommand::zoomInHorizontal ()
 {
     float32 pixel_per_sample = currentVisModel()->getPixelPerSample();
-    pixel_per_sample = std::min (pixel_per_sample * ZOOM_FACTOR_,
+    float32 new_pixel_per_sample = std::min (pixel_per_sample * ZOOM_FACTOR_,
                                  maxPixelPerSample() );
-    currentVisModel()->setPixelPerSample (pixel_per_sample);
-    currentVisModel()->update();
-    evaluateEnabledness ();
+
+    GuiHelper::animateProperty (currentVisModel().data(), "pixel_per_sample_",
+                                pixel_per_sample, new_pixel_per_sample);
 }
 
 //-----------------------------------------------------------------------------
 void ZoomGuiCommand::zoomOutHorizontal ()
 {
     float32 pixel_per_sample = currentVisModel()->getPixelPerSample();
-    pixel_per_sample = std::max (pixel_per_sample / ZOOM_FACTOR_,
+    float32 new_pixel_per_sample = std::max (pixel_per_sample / ZOOM_FACTOR_,
                                  minPixelPerSample ());
-    currentVisModel()->setPixelPerSample (pixel_per_sample);
-    currentVisModel()->update();
-    evaluateEnabledness ();
+
+    GuiHelper::animateProperty (currentVisModel().data(), "pixel_per_sample_",
+                                pixel_per_sample, new_pixel_per_sample);
 }
 
 
@@ -221,7 +222,6 @@ float32 ZoomGuiCommand::minPixelPerSample ()
     return static_cast<float32>(currentVisModel()->getShownSignalWidth()) /
            static_cast<float32>(currentVisModel()->getChannelManager()->getNumberSamples ());
 }
-
 
 
 
