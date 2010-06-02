@@ -53,6 +53,7 @@ public:
 
 public slots:
     void setHeight (uint32 height);
+    void setXGridInterval (unsigned interval);
 
 signals:
     void mouseAtSecond (float64 sec);
@@ -72,6 +73,7 @@ private:
     virtual void wheelEvent (QGraphicsSceneWheelEvent * event);
 
     void drawYGrid (QPainter* painter, QStyleOptionGraphicsItem const* option);
+    void drawXGrid (QPainter* painter, QStyleOptionGraphicsItem const* option);
 
     QSharedPointer<EventManager> event_manager_;
     QSharedPointer<CommandExecuter> command_executor_;
@@ -90,7 +92,7 @@ private:
     float64 y_offset_;
     int32 height_;
     uint32 width_;
-
+    unsigned x_grid_interval_;
 
     bool shifting_;
     bool new_event_;

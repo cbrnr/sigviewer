@@ -230,7 +230,9 @@ void SignalBrowserModel::update()
 
     signal_browser_view_->resizeScene (width, height);
 
-    // singanls position
+    float64 pixel_per_sec = getPixelPerSample () * channel_manager_->getSampleRate();
+    x_grid_pixel_intervall_ =  pixel_per_sec * round125 (100.0 / pixel_per_sec);
+
     channel2y_pos_.clear();
     channel2y_pos_[UNDEFINED_CHANNEL] = 0;
     int32 y_pos = 0;
@@ -248,15 +250,12 @@ void SignalBrowserModel::update()
 
         signal_iter.value()->enableYGrid(show_y_grid_);
         signal_iter.value()->enableXGrid(show_x_grid_);
+        signal_iter.value()->setXGridInterval (x_grid_pixel_intervall_);
         signal_iter.value()->show();
     }
 
     updateEventItemsImpl ();
 
-    // update x grid intervall
-    float64 pixel_per_sec = getPixelPerSample () * channel_manager_->getSampleRate();
-
-    x_grid_pixel_intervall_ =  pixel_per_sec * round125 (100.0 / pixel_per_sec);
     signal_browser_view_->setXAxisIntervall (x_grid_pixel_intervall_);
     emit pixelPerSampleChanged (getPixelPerSample (), channel_manager_->getSampleRate());
     signal_browser_view_->update();

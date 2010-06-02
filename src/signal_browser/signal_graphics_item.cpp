@@ -81,6 +81,12 @@ void SignalGraphicsItem::setHeight (uint32 height)
 }
 
 //-----------------------------------------------------------------------------
+void SignalGraphicsItem::setXGridInterval (unsigned interval)
+{
+    x_grid_interval_ = interval;
+}
+
+//-----------------------------------------------------------------------------
 QRectF SignalGraphicsItem::boundingRect () const
 {
     return QRectF (0, 0, width_, height_);
@@ -166,9 +172,8 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 {
     painter->drawRect(boundingRect());
     if (new_event_)
-    {
         painter->fillRect(new_signal_event_->getPosition(), 0, new_signal_event_->getDuration(), height_, new_event_color_);
-    }
+
     QRectF clip (option->exposedRect);
 
     painter->setClipping(true);
@@ -198,7 +203,9 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     float32 last_y = (*data_block)[0];
     float32 new_y = 0;
 
-    painter->translate (0, height_ / 2.0f);  
+    if (draw_x_grid_)
+        drawXGrid (painter, option);
+    painter->translate (0, height_ / 2.0f);
     if (draw_y_grid_)
         drawYGrid (painter, option);
     painter->setPen (color_manager_->getChannelColor (id_));
@@ -462,6 +469,18 @@ void SignalGraphicsItem::drawYGrid (QPainter* painter,
         }
     }
 
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::drawXGrid (QPainter* painter,
+                                    QStyleOptionGraphicsItem const* option)
+{
+    QRectF clip (option->exposedRect);
+    painter->setPen (Qt::lightGray);
+
+    for (int x = clip.x() - (static_cast<int>(clip.x()) % x_grid_interval_);
+         x < clip.x() + clip.width(); x += x_grid_interval_)
+        painter->drawLine (x, 0, x, height_);
 }
 
 
