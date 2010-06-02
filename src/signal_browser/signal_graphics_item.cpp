@@ -204,11 +204,11 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     painter->setPen (color_manager_->getChannelColor (id_));
 
     int sub_sampler = 1;
-    //while (pixel_per_sample * 2 <= 1)
-    //{
-    //    pixel_per_sample *= 2;
-    //    sub_sampler *= 2;
-    //}
+    while (pixel_per_sample * 10 <= 1)
+    {
+        pixel_per_sample *= 2;
+        sub_sampler *= 2;
+    }
 
     for (int index = 0;
          index < static_cast<int>(data_block->size()) - sub_sampler;

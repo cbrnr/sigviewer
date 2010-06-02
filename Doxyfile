@@ -31,7 +31,7 @@ PROJECT_NAME           = SigViewer
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = 0.1
+PROJECT_NUMBER         = 0.4
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
@@ -731,7 +731,7 @@ FILTER_SOURCE_FILES    = NO
 # Note: To get rid of all source code in the generated output, make sure also 
 # VERBATIM_HEADERS is set to NO.
 
-SOURCE_BROWSER         = NO
+SOURCE_BROWSER         = YES
 
 # Setting the INLINE_SOURCES tag to YES will include the body 
 # of functions and classes directly in the documentation.
@@ -1363,7 +1363,7 @@ PERL_PATH              = /usr/bin/perl
 # fallback. It is recommended to install and use dot, since it yields more 
 # powerful graphs.
 
-CLASS_DIAGRAMS         = NO
+CLASS_DIAGRAMS         = YES
 
 # You can define message sequence charts within doxygen comments using the \msc 
 # command. Doxygen will then run the mscgen tool (see 
@@ -1433,7 +1433,7 @@ GROUP_GRAPHS           = YES
 # collaboration diagrams in a style similar to the OMG's Unified Modeling 
 # Language.
 
-UML_LOOK               = NO
+UML_LOOK               = YES
 
 # If set to YES, the inheritance and collaboration graphs will show the 
 # relations between templates and their instances.

@@ -42,7 +42,7 @@ EventGraphicsItem::EventGraphicsItem (SignalBrowserModel& model,
   signal_event_ (signal_event),
   color_manager_ (color_manager)
 {
-    // setAcceptHoverEvents (true);
+    // nothing to do here
 }
 
 //-----------------------------------------------------------------------------
@@ -169,13 +169,12 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
     if (state_ != STATE_NONE)
     {
         event_handling_mutex_.unlock();
-        return; // already in a edit state
+        return;
     }
 
     switch(getMousePressAction(event))
     {
         case ACTION_NONE:
-            //addContextMenuEntry ();
             event->ignore();
             state_ = STATE_NONE;
             break;
@@ -275,36 +274,6 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent*)
 }
 
 //-----------------------------------------------------------------------------
-//void EventGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent * event )
-//{
-//    event->ignore ();
-//    QSharedPointer<EventGraphicsItem> item = signal_browser_model_.getSelectedEventItem();
-//    if (!(item.isNull()))
-//    {
-//        if ((event->scenePos().x() > item->pos().x() && event->scenePos().x() < item->pos().x() + 5)
-//            || (event->scenePos().x() < item->pos().x() + item->width_ && event->scenePos().x() > item->pos().x() + item->width_ - 5))
-//            setCursor(QCursor(Qt::SizeHorCursor));
-//        else
-//            setCursor(QCursor(Qt::ArrowCursor));
-//    }
-//}
-
-////-----------------------------------------------------------------------------
-//void EventGraphicsItem::hoverEnterEvent (QGraphicsSceneHoverEvent* event)
-//{
-//    event->ignore ();
-//    emit hoverEnterSignalEvent (signal_event_);
-//}
-//
-////-----------------------------------------------------------------------------
-//void EventGraphicsItem::hoverLeaveEvent (QGraphicsSceneHoverEvent* event)
-//{
-//    event->ignore ();
-//    emit hoverLeaveSignalEvent (signal_event_);
-//}
-
-
-//-----------------------------------------------------------------------------
 void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event)
 {
     addContextMenuEntry ();
@@ -313,12 +282,11 @@ void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event
 
 
 //-----------------------------------------------------------------------------
-// get mouse press action
 EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneMouseEvent* e)
 {
     EventGraphicsItem* old_selected_item
         = signal_browser_model_.getSelectedEventItem();
-    QPoint mouse_pos (e->scenePos().x(), e->scenePos().y());  //canvas_view->inverseWorldMatrix().map(e->pos());
+    QPoint mouse_pos (e->scenePos().x(), e->scenePos().y());
 
 
     SignalVisualisationMode mode = signal_browser_model_.getMode();
@@ -397,7 +365,5 @@ void EventGraphicsItem::addContextMenuEntry ()
     context_menu_->addEvent(signal_event_->getId());
     context_menu_mutex_.unlock();
 }
-
-
 
 }

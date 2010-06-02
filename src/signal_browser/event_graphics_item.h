@@ -47,12 +47,6 @@ public:
                                     QMenu* channel_menu);
     static bool displaySelectionMenu (QGraphicsSceneMouseEvent* event);
 
-
-    // have to be implemented otherwise
-//    virtual void hoverMoveEvent (QGraphicsSceneHoverEvent * event);
-//    virtual void hoverEnterEvent (QGraphicsSceneHoverEvent* event);
-//    virtual void hoverLeaveEvent (QGraphicsSceneHoverEvent* event);
-
 public slots:
     void updateToSignalEvent ();
 
