@@ -35,8 +35,8 @@ shown_event_types_ (shown_event_types)
     ui_.setupUi (this);
     buildTable ();
     ui_.event_table_->hideColumn (ID_INDEX_);
-    qDebug () << connect (event_manager_.data(), SIGNAL(eventRemoved(EventID)), SLOT(removeFromTable (EventID)));
-    qDebug () << connect (event_manager_.data(), SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)), SLOT(addToTable(QSharedPointer<SignalEvent const>)));
+    connect (event_manager_.data(), SIGNAL(eventRemoved(EventID)), SLOT(removeFromTable (EventID)));
+    connect (event_manager_.data(), SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)), SLOT(addToTable(QSharedPointer<SignalEvent const>)));
     connect (event_manager_.data(), SIGNAL(eventChanged(EventID)), SLOT(updateTable(EventID)));
     ui_.undo_button_->setDefaultAction(GuiActionFactory::getInstance()->getQAction("Undo"));
     ui_.redo_button_->setDefaultAction(GuiActionFactory::getInstance()->getQAction("Redo"));
