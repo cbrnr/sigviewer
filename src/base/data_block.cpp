@@ -224,29 +224,29 @@ DataBlock DataBlock::calculateMean (std::list<QSharedPointer<DataBlock const> > 
 }
 
 //-------------------------------------------------------------------------
-DataBlock DataBlock::calculateStandardDeviation (std::list<QSharedPointer<DataBlock const> > const &data_blocks)
+QSharedPointer<DataBlock> DataBlock::calculateStandardDeviation (std::list<QSharedPointer<DataBlock const> > const &data_blocks)
 {
     return calculateStandardDeviationImpl (data_blocks, calculateMean(data_blocks));
 }
 
 //-------------------------------------------------------------------------
-DataBlock DataBlock::calculateStandardDeviation (std::list<QSharedPointer<DataBlock const> > const &data_blocks,
+QSharedPointer<DataBlock> DataBlock::calculateStandardDeviation (std::list<QSharedPointer<DataBlock const> > const &data_blocks,
                                                  DataBlock const &means)
 {
     return calculateStandardDeviationImpl (data_blocks, means);
 }
 
 //-------------------------------------------------------------------------
-DataBlock DataBlock::calculateStandardDeviationImpl (std::list<QSharedPointer<DataBlock const> >
+QSharedPointer<DataBlock> DataBlock::calculateStandardDeviationImpl (std::list<QSharedPointer<DataBlock const> >
                                                      const & data_blocks,
                                                      DataBlock const& means)
 {
-    DataBlock stddev_block;
+    QSharedPointer<std::vector<float32> > stddev (new std::vector<float32>);
     if (data_blocks.size() == 0)
-        return stddev_block;
+        return QSharedPointer<DataBlock>(0);
 
     std::list<QSharedPointer<DataBlock const> >::const_iterator it = data_blocks.begin();
-    stddev_block.sample_rate_per_unit_ = (*it)->sample_rate_per_unit_;
+    float32 sample_rate = (*it)->sample_rate_per_unit_;
     float32 tmp_stddev = 0;
     for (unsigned index = 0; index < (*(data_blocks.begin()))->size(); index++)
     {
@@ -258,8 +258,9 @@ DataBlock DataBlock::calculateStandardDeviationImpl (std::list<QSharedPointer<Da
             tmp_stddev += pow(((**it)[index] - mean), 2);
             ++it;
         }
-        stddev_block.data_->push_back(sqrt(tmp_stddev / data_blocks.size()));
+        stddev->push_back(sqrt(tmp_stddev / data_blocks.size()));
     }
+    QSharedPointer<DataBlock> stddev_block (new DataBlock (stddev, sample_rate));
     return stddev_block;
 }
 

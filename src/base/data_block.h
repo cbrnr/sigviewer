@@ -76,18 +76,18 @@ public:
     static DataBlock calculateMean (std::list<QSharedPointer<DataBlock const> > const &data_blocks);
 
     //-------------------------------------------------------------------------
-    static DataBlock calculateStandardDeviation (std::list<QSharedPointer<DataBlock const> > const &data_blocks);
+    static QSharedPointer<DataBlock> calculateStandardDeviation (std::list<QSharedPointer<DataBlock const> > const &data_blocks);
 
     //-------------------------------------------------------------------------
-    static DataBlock calculateStandardDeviation (std::list<QSharedPointer<DataBlock const> > const &data_blocks,
+    static QSharedPointer<DataBlock> calculateStandardDeviation (std::list<QSharedPointer<DataBlock const> > const &data_blocks,
                                                  DataBlock const &means);
 
 
 private:
 
     //-------------------------------------------------------------------------
-    static DataBlock calculateStandardDeviationImpl (std::list<QSharedPointer<DataBlock const> > const &data_blocks,
-                                                     DataBlock const &means);
+    static QSharedPointer<DataBlock> calculateStandardDeviationImpl (std::list<QSharedPointer<DataBlock const> > const &data_blocks,
+                                                                 DataBlock const &means);
 
     //-------------------------------------------------------------------------
     // static unsigned getLengthOfSmallestBlock (std::list<DataBlock> const &data_blocks);

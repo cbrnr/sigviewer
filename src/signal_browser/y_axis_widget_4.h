@@ -20,8 +20,8 @@ public:
     virtual ~YAxisWidget () {}
     virtual QSize sizeHint () const;
 
-    void addChannel(int32 channel_nr, SignalGraphicsItem const* const signal_item);
-    void removeChannel(int32 channel_nr);
+    void addChannel(ChannelID channel_nr, SignalGraphicsItem const* const signal_item);
+    void removeChannel(ChannelID channel_nr);
 
 public slots:
     void changeSignalHeight (uint32 signal_height);
@@ -37,7 +37,7 @@ private:
 
     unsigned signal_height_;
     int32 y_start_;
-    QMap<int32, SignalGraphicsItem const*> channel_nr2signal_graphics_item_;
+    QMap<ChannelID, SignalGraphicsItem const*> channel_nr2signal_graphics_item_;
 };
 
 }

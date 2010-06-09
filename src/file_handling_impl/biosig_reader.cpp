@@ -289,11 +289,11 @@ void BioSigReader::bufferAllChannels () const
     int copy_time = 0;
     QTime sread_timer;
     int sread_time = 0;
-    for (ChannelID channel_id_sub = 0; channel_id_sub <  basic_header_->getNumberChannels(); ++channel_id_sub)
+    for (unsigned channel_id_sub = 0; channel_id_sub <  basic_header_->getNumberChannels(); ++channel_id_sub)
         biosig_header_->CHANNEL[channel_id_sub].OnOff = 0;
 
     QString progress_name = QObject::tr("Loading data...");
-    for (ChannelID channel_id = 0; channel_id < basic_header_->getNumberChannels();
+    for (unsigned channel_id = 0; channel_id < basic_header_->getNumberChannels();
          ++channel_id)
     {
         if (channel_id > 0)

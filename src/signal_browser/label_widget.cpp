@@ -41,7 +41,7 @@ void LabelWidget::paintEvent(QPaintEvent*)
     // labels
     float64 float_y_start = y_start_;//floor(static_cast<float64>(y_start) / intervall) * intervall;
     float64 float_y_end = y_end;//ceil(y_end / intervall) * intervall;
-    QMap<int32, QString>::iterator iter = channel_nr2label_.begin();
+    QMap<ChannelID, QString>::iterator iter = channel_nr2label_.begin();
 
     for (float32 float_y = signal_height / 2;
          float_y < float_y_end && iter != channel_nr2label_.end();
@@ -72,7 +72,7 @@ void LabelWidget::contextMenuEvent (QContextMenuEvent* event)
 }
 
 //-----------------------------------------------------------------------------
-void LabelWidget::addChannel(int32 channel_nr, const QString& label)
+void LabelWidget::addChannel(ChannelID channel_nr, const QString& label)
 {
     channel_nr2label_[channel_nr] = label;
     QPixmap dummy(1,1);
@@ -85,14 +85,14 @@ void LabelWidget::addChannel(int32 channel_nr, const QString& label)
 }
 
 //-----------------------------------------------------------------------------
-void LabelWidget::removeChannel(int32 channel_nr)
+void LabelWidget::removeChannel(ChannelID channel_nr)
 {
     channel_nr2label_.erase(channel_nr2label_.find(channel_nr));
     int32 max_width = -1;
     QPixmap dummy(1,1);
     QPainter p(&dummy);
 
-    for (QMap<int32, QString>::iterator iter = channel_nr2label_.begin();
+    for (QMap<ChannelID, QString>::iterator iter = channel_nr2label_.begin();
          iter != channel_nr2label_.end();
          iter++)
     {

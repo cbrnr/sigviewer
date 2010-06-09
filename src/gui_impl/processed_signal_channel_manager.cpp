@@ -20,6 +20,16 @@ void ProcessedSignalChannelManager::addChannel (ChannelID id, QSharedPointer<Dat
 }
 
 //-------------------------------------------------------------------------
+ChannelID ProcessedSignalChannelManager::addExtraChannel (ChannelID id, QSharedPointer<DataBlock const> data_block,
+                                                     QString const& label)
+{
+    id += 0.1f;
+    channels_[id] = data_block;
+    channel_labels_[id] = label;
+    return id;
+}
+
+//-------------------------------------------------------------------------
 std::set<ChannelID> ProcessedSignalChannelManager::getChannels () const
 {
     std::set<ChannelID> channels;

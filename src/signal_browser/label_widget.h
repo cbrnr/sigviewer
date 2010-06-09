@@ -17,8 +17,8 @@ class LabelWidget : public QWidget
 public:
     LabelWidget(SignalBrowserModel& model);
 
-    void addChannel(int32 channel_nr, const QString& label);
-    void removeChannel(int32 channel_nr);
+    void addChannel(ChannelID channel_nr, const QString& label);
+    void removeChannel(ChannelID channel_nr);
 
 public slots:
     void changeYStart (int32 y_start);
@@ -32,7 +32,7 @@ private:
 
     unsigned signal_height_;
 
-    QMap<int32, QString> channel_nr2label_;
+    QMap<ChannelID, QString> channel_nr2label_;
     int32 y_start_;
 };
 

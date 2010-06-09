@@ -19,6 +19,10 @@ public:
                      QString const& label);
 
     //-------------------------------------------------------------------------
+    ChannelID addExtraChannel (ChannelID id, QSharedPointer<DataBlock const> data_block,
+                          QString const& label);
+
+    //-------------------------------------------------------------------------
     virtual ~ProcessedSignalChannelManager () {}
 
     //-------------------------------------------------------------------------

@@ -100,7 +100,7 @@ void ColorManager::loadSettings()
     for (int i = 0; i < size; i++)
     {
         settings.setArrayIndex(i);
-        ChannelID id = settings.value("id").toUInt ();
+        ChannelID id = settings.value("id").toFloat ();
         QColor color = settings.value("color").toString();
         channel_color_map_[id] = color;
     }

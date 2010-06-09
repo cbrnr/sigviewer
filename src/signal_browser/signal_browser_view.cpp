@@ -149,7 +149,7 @@ void SignalBrowserView::resizeScene (int32 width, int32 height)
 }
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item, QString const& label)
+void SignalBrowserView::addSignalGraphicsItem (ChannelID channel_nr, SignalGraphicsItem* graphics_item, QString const& label)
 {
     graphics_scene_->addItem (graphics_item);
     y_axis_widget_->addChannel (channel_nr, graphics_item);
@@ -162,7 +162,7 @@ void SignalBrowserView::addSignalGraphicsItem (int32 channel_nr, SignalGraphicsI
 }
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::removeSignalGraphicsItem (int32 channel_nr, SignalGraphicsItem* graphics_item)
+void SignalBrowserView::removeSignalGraphicsItem (ChannelID channel_nr, SignalGraphicsItem* graphics_item)
 {
     disconnect (graphics_item, 0, x_axis_widget_, 0);
     disconnect (graphics_item, 0, y_axis_widget_, 0);

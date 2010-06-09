@@ -15,8 +15,8 @@ QStringList const MouseModeGuiCommand::MODE_TEXTS_ = QStringList() <<
                                                      MouseModeGuiCommand::NEW_MODE_TEXT_ <<
                                                      MouseModeGuiCommand::POINTER_MODE_TEXT_ <<
                                                      MouseModeGuiCommand::HAND_MODE_TEXT_ <<
-                                                     MouseModeGuiCommand::SHIFT_MODE_TEXT_ <<
-                                                     MouseModeGuiCommand::INFO_MODE_TEXT_;
+                                                     MouseModeGuiCommand::SHIFT_MODE_TEXT_;
+                                                     //<< MouseModeGuiCommand::INFO_MODE_TEXT_;
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator MouseModeGuiCommand::registrator_ ("Mouse Modes",
@@ -31,7 +31,7 @@ MouseModeGuiCommand::MouseModeGuiCommand ()
     action_to_mode_map_[POINTER_MODE_TEXT_] = MODE_POINTER;
     action_to_mode_map_[HAND_MODE_TEXT_] = MODE_HAND;
     action_to_mode_map_[SHIFT_MODE_TEXT_] = MODE_SHIFT_SIGNAL;
-    action_to_mode_map_[INFO_MODE_TEXT_] = MODE_INFO;
+    //action_to_mode_map_[INFO_MODE_TEXT_] = MODE_INFO;
 }
 
 //-----------------------------------------------------------------------------
@@ -56,7 +56,7 @@ void MouseModeGuiCommand::init ()
     getQAction (POINTER_MODE_TEXT_)->setShortcut (QString("Ctrl+2"));
     getQAction (HAND_MODE_TEXT_)->setShortcut (QString("Ctrl+3"));
     getQAction (SHIFT_MODE_TEXT_)->setShortcut (QString("Ctrl+4"));
-    getQAction (INFO_MODE_TEXT_)->setShortcut (QString("Ctrl+5"));
+    //getQAction (INFO_MODE_TEXT_)->setShortcut (QString("Ctrl+5"));
 
     QList<QAction*> actions = getQActions ();
     foreach (QAction* action, actions)

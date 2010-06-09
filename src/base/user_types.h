@@ -69,7 +69,7 @@ typedef uint64_t uint64;
 
 typedef int32 EventID;
 typedef uint16 EventType;
-typedef uint32 ChannelID;
+typedef float ChannelID;
 
 const ChannelID UNDEFINED_CHANNEL = -1;
 const EventID UNDEFINED_EVENT_ID = -1;

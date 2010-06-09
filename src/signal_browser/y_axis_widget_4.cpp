@@ -29,16 +29,16 @@ QSize YAxisWidget::sizeHint () const
 }
 
 //-----------------------------------------------------------------------------
-void YAxisWidget::addChannel(int32 channel_nr, SignalGraphicsItem const* const signal_item)
+void YAxisWidget::addChannel(ChannelID channel_nr, SignalGraphicsItem const* const signal_item)
 {
     if (signal_item)
         channel_nr2signal_graphics_item_[channel_nr] = signal_item;
 }
 
 //-----------------------------------------------------------------------------
-void YAxisWidget::removeChannel(int32 channel_nr)
+void YAxisWidget::removeChannel(ChannelID channel_nr)
 {
-    QMap<int32, SignalGraphicsItem const*>::iterator it = channel_nr2signal_graphics_item_.find(channel_nr);
+    QMap<ChannelID, SignalGraphicsItem const*>::iterator it = channel_nr2signal_graphics_item_.find(channel_nr);
 
     if (it != channel_nr2signal_graphics_item_.end())
     {
