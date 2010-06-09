@@ -296,6 +296,7 @@ void BioSigReader::bufferAllChannels () const
     for (unsigned channel_id = 0; channel_id < basic_header_->getNumberChannels();
          ++channel_id)
     {
+        ProgressBar::instance().increaseValue (1, progress_name);
         if (channel_id > 0)
             biosig_header_->CHANNEL[channel_id-1].OnOff = 0;
         biosig_header_->CHANNEL[channel_id].OnOff = 1;
@@ -319,7 +320,6 @@ void BioSigReader::bufferAllChannels () const
         QSharedPointer<DataBlock const> data_block (new DataBlock (raw_data,
                                                                    basic_header_->getSampleRate()));
         channel_map_[channel_id] = data_block;
-        ProgressBar::instance().increaseValue (1, progress_name);
     }
     qDebug() << "whole buffering time = " << timer.elapsed();
     qDebug() << "sread time = " << sread_time;

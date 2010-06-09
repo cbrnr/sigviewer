@@ -44,6 +44,7 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<EventManager> event_manag
   maximum_ (channel_manager_->getMaxValue (id_)),
   y_zoom_ (1),
   draw_y_grid_ (true),
+  draw_x_grid_ (true),
   y_offset_ (0),
   height_ (model.getSignalHeight()),
   width_ (0),
@@ -477,6 +478,9 @@ void SignalGraphicsItem::drawXGrid (QPainter* painter,
 {
     QRectF clip (option->exposedRect);
     painter->setPen (Qt::lightGray);
+
+    if (clip.width() < 1)
+        return;
 
     for (int x = clip.x() - (static_cast<int>(clip.x()) % x_grid_interval_);
          x < clip.x() + clip.width(); x += x_grid_interval_)
