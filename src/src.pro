@@ -5,7 +5,7 @@ CONFIG += warn_on \
     link_prl \
     qt \
     thread
-#QT += opengl
+macx:QT += opengl
 OBJECTS_DIR = ../tmp/release
 MOC_DIR = ../tmp/release
 RCC_DIR = ../tmp/release
