@@ -19,7 +19,8 @@ ChannelSelectionDialog::ChannelSelectionDialog (QSharedPointer<ChannelManager co
                                                 QWidget* parent)
  : QDialog (parent),
    channel_manager_ (channel_manager),
-   color_manager_ (color_manager)
+   color_manager_ (color_manager),
+   self_setting_ (false)
 {
     ui_.setupUi (this);
     QString window_title (tr("Channels"));
@@ -39,6 +40,7 @@ ChannelSelectionDialog::ChannelSelectionDialog (QSharedPointer<ChannelManager co
         QTableWidgetItem* color_item = new QTableWidgetItem (
                 color.name());
         color_item->setBackground (color);
+        color_item->setFlags (Qt::ItemIsEnabled);
         if (ColorManager::isDark (color))
             color_item->setForeground (Qt::white);
 
@@ -102,28 +104,41 @@ void ChannelSelectionDialog::on_channel_table__cellClicked (int row, int column)
 {
     QTableWidgetItem* item = ui_.channel_table_->item (row, column);
     if (column == LABEL_INDEX_)
+    {
+        self_setting_ = true;
         if (item->checkState() == Qt::Checked)
             item->setCheckState (Qt::Unchecked);
         else
             item->setCheckState (Qt::Checked);
+    }
     else if (column == COLOR_INDEX_)
     {
         QColorDialog color_dialog (item->backgroundColor (), this);
         if (color_dialog.exec () == QDialog::Accepted)
             updateColor (row, color_dialog.selectedColor ());
     }
+    self_setting_ = false;
 }
 
 //-----------------------------------------------------------------------------
-void ChannelSelectionDialog::on_channel_table__cellChanged (int, int column)
+void ChannelSelectionDialog::on_channel_table__cellChanged (int row, int column)
 {
     if (column == VISIBLE_INDEX_)
     {
+        if (!self_setting_)
+        {
+            self_setting_ = true;
+            QTableWidgetItem* item = ui_.channel_table_->item (row, column);
+            if (item->checkState() == Qt::Checked)
+                item->setCheckState (Qt::Unchecked);
+            else
+                item->setCheckState (Qt::Checked);
+        }
         bool all_visible = true;
         bool all_hidden = true;
-        for (int row = 0; row < ui_.channel_table_->rowCount(); ++row)
+        for (int row_index = 0; row_index < ui_.channel_table_->rowCount(); ++row_index)
         {
-            QTableWidgetItem* item = ui_.channel_table_->item (row, VISIBLE_INDEX_);
+            QTableWidgetItem* item = ui_.channel_table_->item (row_index, VISIBLE_INDEX_);
             if (!item)
                 return;
             if (item->checkState() == Qt::Checked)

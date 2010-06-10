@@ -58,6 +58,7 @@ private:
     static int const ID_INDEX_ = 2;
     static QColor const NOT_VISIBLE_COLOR_;
     static QColor const VISIBLE_COLOR_;
+    bool self_setting_;
 };
 
 } // namespace BioSig_
