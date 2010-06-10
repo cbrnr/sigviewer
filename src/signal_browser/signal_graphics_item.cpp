@@ -223,9 +223,6 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
          index += sub_sampler)
     {
         new_y = (*data_block)[index+1];
-        //for (int sub_index = index+2; sub_index < index+sub_sampler; sub_index++)
-        //    new_y += (*data_block)[sub_index];
-        //new_y /= sub_sampler;
         painter->drawLine(last_x, y_offset_ - (y_zoom_ * last_y), last_x + pixel_per_sample, y_offset_ - (y_zoom_ * new_y));
 
         last_x += pixel_per_sample;
@@ -281,11 +278,14 @@ void SignalGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* event)
 
         if (sample_cleaned_pos < new_signal_event_reference_x_)
         {
-            new_event_width += new_signal_event_->getPosition() - sample_cleaned_pos;
+            new_event_width = new_signal_event_reference_x_ - sample_cleaned_pos;
             new_signal_event_->setPosition (sample_cleaned_pos);
         }
         else
+        {
+            new_signal_event_->setPosition (new_signal_event_reference_x_);
             new_event_width = sample_cleaned_pos - new_signal_event_->getPosition();
+        }
 
         if (new_event_width < 0)
             new_event_width = 0;
