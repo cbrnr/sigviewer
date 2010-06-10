@@ -1,6 +1,7 @@
 #include "signal_processing_gui_command.h"
 #include "gui_helper_functions.h"
 #include "processed_signal_channel_manager.h"
+#include "../gui/progress_bar.h"
 
 namespace BioSig_
 {
@@ -90,8 +91,10 @@ void SignalProcessingGuiCommand::calculatePowerSpectrum ()
                                                                                                                num_samples / 2));
     QList<EventID> events (event_manager->getEvents(event_dialog->getSelectedEventType ()));
 
+    ProgressBar::instance().initAndShow (event_dialog->getSelectedChannels ().size(), tr("Fourier Transformation"));
     foreach (ChannelID channel_id, event_dialog->getSelectedChannels ())
     {
+        ProgressBar::instance().increaseValue (1, channel_manager->getChannelLabel(channel_id));
         std::list<QSharedPointer<DataBlock const> > data;
 
         foreach (EventID event_id, events)
@@ -105,6 +108,7 @@ void SignalProcessingGuiCommand::calculatePowerSpectrum ()
         QSharedPointer<DataBlock> mean = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateMean (data)));
         processed_channel_manager->addChannel (channel_id, mean, channel_manager->getChannelLabel(channel_id));
     }
+    ProgressBar::instance().close();
 
     createVisualisation (tr("Power Spectrum"), processed_channel_manager);
 }
