@@ -1,7 +1,7 @@
 #include "event_editing_widget.h"
-#include "../gui/gui_action_factory.h"
-#include "../editing_commands/change_type_undo_command.h"
-#include "../editing_commands/resize_event_undo_command.h"
+#include "../../gui/gui_action_factory.h"
+#include "../../editing_commands/change_type_undo_command.h"
+#include "../../editing_commands/resize_event_undo_command.h"
 
 #include <QMutexLocker>
 #include <QDebug>

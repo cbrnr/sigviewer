@@ -1,6 +1,6 @@
 #include "x_axis_widget_4.h"
 
-#include "../gui/gui_action_factory.h"
+#include "../../gui/gui_action_factory.h"
 
 #include <QPainter>
 #include <QFont>

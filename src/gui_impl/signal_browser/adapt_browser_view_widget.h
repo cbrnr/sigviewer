@@ -1,7 +1,7 @@
 #ifndef ADAPT_BROWSER_VIEW_WIDGET_H
 #define ADAPT_BROWSER_VIEW_WIDGET_H
 
-#include "../gui/signal_visualisation_view.h"
+#include "../../gui/signal_visualisation_view.h"
 #include "ui_adapt_browser_view_widget.h"
 
 #include <QWidget>

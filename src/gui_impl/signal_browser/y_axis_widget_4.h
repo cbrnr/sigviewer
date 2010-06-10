@@ -1,7 +1,7 @@
 #ifndef Y_AXIS_GRAPHICS_ITEM_H
 #define Y_AXIS_GRAPHICS_ITEM_H
 
-#include "../base/user_types.h"
+#include "../../base/user_types.h"
 
 #include <QWidget>
 #include <QMap>

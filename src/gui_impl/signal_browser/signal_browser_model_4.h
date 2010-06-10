@@ -2,12 +2,12 @@
 #ifndef SIGNAL_BROWSER_MODEL_H_q4
 #define SIGNAL_BROWSER_MODEL_H_q4
 
-#include "../tab_context.h"
-#include "../file_handling/channel_manager.h"
-#include "../file_handling/event_manager.h"
-#include "../gui/signal_visualisation_modes.h"
-#include "../gui/signal_visualisation_model.h"
-#include "../gui/color_manager.h"
+#include "../../tab_context.h"
+#include "../../file_handling/channel_manager.h"
+#include "../../file_handling/event_manager.h"
+#include "../../gui/signal_visualisation_modes.h"
+#include "../../gui/signal_visualisation_model.h"
+#include "../../gui/color_manager.h"
 #include "event_graphics_item.h"
 
 #include <QObject>

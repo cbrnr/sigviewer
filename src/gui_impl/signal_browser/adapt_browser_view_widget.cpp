@@ -1,6 +1,6 @@
 #include "adapt_browser_view_widget.h"
-#include "../gui/gui_action_factory.h"
-#include "../base/exception.h"
+#include "../../gui/gui_action_factory.h"
+#include "../../base/exception.h"
 
 namespace BioSig_
 {

@@ -6,8 +6,8 @@
 
 #include "gui_impl/open_file_gui_command.h"
 
-#include "signal_browser/signal_browser_model_4.h"
-#include "signal_browser/signal_browser_view.h"
+#include "gui_impl/signal_browser/signal_browser_model_4.h"
+#include "gui_impl/signal_browser/signal_browser_view.h"
 
 #include <QSettings>
 #include <QDebug>

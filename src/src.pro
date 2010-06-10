@@ -35,7 +35,6 @@ TRANSLATIONS += translations\sigviewer_de.ts \
     translations\sigviewer_es.ts \
     translations\sigviewer_fr.ts
 include(base/base.pri)
-include(signal_browser/signal_browser.pri)
 include(signal_processing/signal_processing.pri)
 include(file_handling_impl/file_handling_impl.pri)
 include(file_handling/file_handling.pri)

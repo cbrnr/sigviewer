@@ -2,11 +2,11 @@
 #define EVENT_GRAPHICS_ITEM_H
 
 
-#include "../base/user_types.h"
-#include "../base/signal_event.h"
-#include "../command_executer.h"
-#include "../file_handling/event_manager.h"
-#include "../gui/color_manager.h"
+#include "../../base/user_types.h"
+#include "../../base/signal_event.h"
+#include "../../command_executer.h"
+#include "../../file_handling/event_manager.h"
+#include "../../gui/color_manager.h"
 
 #include <QGraphicsItem>
 #include <QObject>

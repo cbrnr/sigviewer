@@ -1,13 +1,13 @@
 // signal_browser_model.cpp
 #include "signal_browser_model_4.h"
-#include "../file_handling/event_manager.h"
-#include "../file_handling/channel_manager.h"
+#include "../../file_handling/event_manager.h"
+#include "../../file_handling/channel_manager.h"
 #include "signal_browser_view.h"
 #include "signal_graphics_item.h"
-#include "../gui/color_manager.h"
-#include "../gui/progress_bar.h"
-#include "../base/signal_event.h"
-#include "../base/math_utils.h"
+#include "../../gui/color_manager.h"
+#include "../../gui/progress_bar.h"
+#include "../../base/signal_event.h"
+#include "../../base/math_utils.h"
 
 #include <QTextStream>
 #include <QApplication>
