@@ -4,7 +4,7 @@
 #include "file_context.h"
 #include "base/exception.h"
 
-#include "gui_impl/open_file_gui_command.h"
+#include "gui_impl/commands/open_file_gui_command.h"
 
 #include "gui_impl/signal_browser/signal_browser_model_4.h"
 #include "gui_impl/signal_browser/signal_browser_view.h"

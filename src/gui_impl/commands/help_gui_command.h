@@ -1,8 +1,8 @@
 #ifndef HELP_GUI_COMMAND_H
 #define HELP_GUI_COMMAND_H
 
-#include "../gui/gui_action_command.h"
-#include "../gui/gui_action_factory_registrator.h"
+#include "gui/gui_action_command.h"
+#include "gui/gui_action_factory_registrator.h"
 
 namespace BioSig_
 {
@@ -20,12 +20,16 @@ public:
     //-------------------------------------------------------------------------
     virtual void init ();
 
-public slots:
+private slots:
     //-------------------------------------------------------------------------
     void showAboutDialog ();
 
+    //-------------------------------------------------------------------------
+    void runTests ();
+
 private:
     static QString const ABOUT_;
+    static QString const RUN_TESTS_;
     static QStringList const ACTIONS_;
 
     static GuiActionFactoryRegistrator registrator_;

@@ -1,9 +1,9 @@
 #ifndef SIGNAL_PROCESSING_GUI_COMMAND_H
 #define SIGNAL_PROCESSING_GUI_COMMAND_H
 
-#include "../gui/gui_action_command.h"
-#include "../gui/gui_action_factory_registrator.h"
-#include "dialogs/event_time_selection_dialog.h"
+#include "gui/gui_action_command.h"
+#include "gui/gui_action_factory_registrator.h"
+#include "../dialogs/event_time_selection_dialog.h"
 
 namespace BioSig_
 {

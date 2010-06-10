@@ -1,9 +1,9 @@
 #ifndef CLOSE_FILE_GUI_COMMAND_H
 #define CLOSE_FILE_GUI_COMMAND_H
 
-#include "../gui/gui_action_command.h"
-#include "../gui/gui_action_factory_registrator.h"
-#include "../file_handling/file_signal_reader.h"
+#include "gui/gui_action_command.h"
+#include "gui/gui_action_factory_registrator.h"
+#include "file_handling/file_signal_reader.h"
 
 namespace BioSig_
 {

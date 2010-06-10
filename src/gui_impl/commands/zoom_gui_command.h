@@ -1,8 +1,8 @@
 #ifndef ZOOM_GUI_COMMAND_H
 #define ZOOM_GUI_COMMAND_H
 
-#include "../gui/gui_action_command.h"
-#include "../gui/gui_action_factory_registrator.h"
+#include "gui/gui_action_command.h"
+#include "gui/gui_action_factory_registrator.h"
 
 namespace BioSig_
 {

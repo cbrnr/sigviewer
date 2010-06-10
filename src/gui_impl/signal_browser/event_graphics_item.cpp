@@ -5,7 +5,7 @@
 #include "event_context_menu.h"
 #include "../../base/signal_event.h"
 
-#include "../../signal_browser_mouse_handling.h"
+#include "../signal_browser_mouse_handling.h"
 
 #include <QRectF>
 #include <QStyleOptionGraphicsItem>

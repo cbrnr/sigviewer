@@ -1,9 +1,9 @@
 #ifndef EVENT_EDITING_GUI_COMMAND_H
 #define EVENT_EDITING_GUI_COMMAND_H
 
-#include "../base/user_types.h"
-#include "../gui/gui_action_command.h"
-#include "../gui/gui_action_factory_registrator.h"
+#include "base/user_types.h"
+#include "gui/gui_action_command.h"
+#include "gui/gui_action_factory_registrator.h"
 
 #include <QUndoCommand>
 

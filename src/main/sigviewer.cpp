@@ -26,12 +26,12 @@
 // sigviewer.cpp
 
 #include "../base/user_types.h"
-#include "../main_window.h"
-#include "../main_window_model_impl.h"
+#include "gui_impl/main_window.h"
+#include "gui_impl/main_window_model_impl.h"
 #include "../application_context_impl.h"
 #include "../file_handling_impl/event_table_file_reader.h"
 #include "../gui/gui_action_factory.h"
-#include "../gui_impl/open_file_gui_command.h"
+#include "../gui_impl/commands/open_file_gui_command.h"
 #include "../file_handling_impl/init_file_handling_impl.h"
 
 #include <stdlib.h>

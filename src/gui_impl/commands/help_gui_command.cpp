@@ -1,4 +1,5 @@
 #include "help_gui_command.h"
+#include "tests/tests_dialog.h"
 
 #include <QMessageBox>
 
@@ -7,8 +8,10 @@ namespace BioSig_
 
 //-----------------------------------------------------------------------------
 QString const HelpGuiCommand::ABOUT_ = "About";
+QString const HelpGuiCommand::RUN_TESTS_ = "Run Tests...";
 QStringList const HelpGuiCommand::ACTIONS_ = QStringList() <<
-                                             HelpGuiCommand::ABOUT_;
+                                             HelpGuiCommand::ABOUT_ <<
+                                             HelpGuiCommand::RUN_TESTS_;
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator HelpGuiCommand::registrator_ ("Help",
@@ -25,6 +28,7 @@ HelpGuiCommand::HelpGuiCommand ()
 void HelpGuiCommand::init ()
 {
     resetActionTriggerSlot (ABOUT_, SLOT(showAboutDialog()));
+    resetActionTriggerSlot (RUN_TESTS_, SLOT(runTests()));
 }
 
 //-----------------------------------------------------------------------------
@@ -42,5 +46,11 @@ void HelpGuiCommand::showAboutDialog ()
     about_message_box.exec ();
 }
 
+//-----------------------------------------------------------------------------
+void HelpGuiCommand::runTests ()
+{
+    TestsDialog tests_dialog;
+    tests_dialog.exec ();
+}
 
 } // namespace BioSig_

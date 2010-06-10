@@ -1,8 +1,8 @@
 #ifndef VIEW_OPTIONS_GUI_COMMAND_H
 #define VIEW_OPTIONS_GUI_COMMAND_H
 
-#include "../gui/gui_action_command.h"
-#include "../gui/gui_action_factory_registrator.h"
+#include "gui/gui_action_command.h"
+#include "gui/gui_action_factory_registrator.h"
 
 namespace BioSig_
 {

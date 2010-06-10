@@ -8,7 +8,7 @@
 #include "../../base/signal_event.h"
 #include "../../base/signal_channel.h"
 #include "../../base/math_utils.h"
-#include "../../signal_browser_mouse_handling.h"
+#include "../signal_browser_mouse_handling.h"
 #include "../../gui/color_manager.h"
 #include "../../gui/gui_action_factory.h"
 

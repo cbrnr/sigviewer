@@ -1,5 +1,5 @@
 #include "zoom_gui_command.h"
-#include "gui_helper_functions.h"
+#include "../gui_helper_functions.h"
 
 #include <QInputDialog>
 #include <QDebug>

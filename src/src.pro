@@ -20,7 +20,8 @@ CONFIG(debug) {
     DEFINES -= QT_NO_DEBUG_OUTPUT
 }
 
-INCLUDEPATH += ../extern
+INCLUDEPATH += ../extern \
+               .
 LIBS += -L../extern \
     -lbiosig \
     -lfftw3
@@ -41,17 +42,12 @@ include(file_handling/file_handling.pri)
 include(gui/gui.pri)
 include(gui_impl/gui_impl.pri)
 include(editing_commands/editing_commands.pri)
-HEADERS += main_window.h \
-    main_window_model_impl.h \
-    signal_browser_mouse_handling.h \
-    application_context_impl.h \
+include(tests/tests.pri)
+HEADERS += application_context_impl.h \
     file_context.h \
     tab_context.h \
     command_executer.h
-SOURCES += main_window.cpp \
-    main_window_model_impl.cpp \
-    signal_browser_mouse_handling.cpp \
-    main/sigviewer.cpp \
+SOURCES += main/sigviewer.cpp \
     application_context_impl.cpp \
     file_context.cpp \
     tab_context.cpp

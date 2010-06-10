@@ -1,7 +1,7 @@
 #include "application_context_impl.h"
 #include "base/exception.h"
 
-#include "main_window_model_impl.h"
+#include "gui_impl/main_window_model_impl.h"
 
 #include <QDebug>
 

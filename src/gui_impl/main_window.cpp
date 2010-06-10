@@ -27,7 +27,7 @@
 
 #include "main_window.h"
 #include "gui/gui_action_factory.h"
-#include "gui_impl/open_file_gui_command.h"
+#include "gui_impl/commands/open_file_gui_command.h"
 
 #include <QAction>
 #include <QMessageBox>
@@ -222,6 +222,8 @@ void MainWindow::initMenus()
     tools_menu_->addActions(GuiActionFactory::getInstance()->getQActions("Signal Processing"));
 
     help_menu_ = menuBar()->addMenu(tr("&Help"));
+    help_menu_->addAction (action("Run Tests..."));
+    help_menu_->addSeparator();
     help_menu_->addAction (action("About"));
 }
 
