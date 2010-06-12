@@ -115,7 +115,18 @@ int main(int32 argc, char* argv[])
         ApplicationContextImpl::init();
 
         if (application.arguments().count() > 1)
-            OpenFileGuiCommand::openFile (application.arguments().at(1));
+        {
+            QString file_argument;
+            QStringList app_args = application.arguments();
+            app_args.pop_front();
+            foreach (QString argument, app_args)
+                if (argument != "-test")
+                    file_argument = argument;
+            if (app_args.contains("-test"))
+                GuiActionFactory::getInstance()->getQAction("Run Tests...")->trigger();
+            else if (file_argument.size())
+                OpenFileGuiCommand::openFile (file_argument);
+        }
 
         int result = application.exec();
 

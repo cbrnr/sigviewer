@@ -23,6 +23,7 @@ public:
 
 private slots:
     void on_start_button__clicked ();
+    void on_open_dummy__clicked ();
 
 private:
     void runTests ();

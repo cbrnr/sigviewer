@@ -44,6 +44,7 @@
 #include <QStatusBar>
 #include <QLabel>
 #include <QSettings>
+#include <QApplication>
 
 #include <QUrl>
 
@@ -222,8 +223,11 @@ void MainWindow::initMenus()
     tools_menu_->addActions(GuiActionFactory::getInstance()->getQActions("Signal Processing"));
 
     help_menu_ = menuBar()->addMenu(tr("&Help"));
-    help_menu_->addAction (action("Run Tests..."));
-    help_menu_->addSeparator();
+    if (QApplication::arguments().contains ("-test"))
+    {
+        help_menu_->addAction (action("Run Tests..."));
+        help_menu_->addSeparator();
+    }
     help_menu_->addAction (action("About"));
 }
 

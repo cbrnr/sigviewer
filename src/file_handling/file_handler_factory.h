@@ -56,6 +56,7 @@ bool FileHandlerFactory<FileHandlerType>::registerHandler (QString const& file_e
         return false;
 
     handler_map_[file_ending] = file_handler;
+    qDebug () << "FileHandlerFactory<FileHandlerType>::registerHandler: file_ending = " << file_ending;
     wildcard_file_endings_ << QString("*.") + file_ending;
     return true;
 }
@@ -73,6 +74,7 @@ template<typename FileHandlerType>
 QSharedPointer<FileHandlerType> FileHandlerFactory<FileHandlerType>::getHandler (QString const& file_path)
 {
     QString file_ending = file_path.section('.', -1);
+    qDebug () << "FACTORY " << file_ending;
     if (handler_map_.count(file_ending))
         return handler_map_[file_ending]->createInstance (file_path);
     else if (!default_handler_.isNull())

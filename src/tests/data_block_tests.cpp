@@ -5,6 +5,9 @@
 namespace BioSig_
 {
 
+namespace Tests_
+{
+
 //-----------------------------------------------------------------------------
 DataBlockTests::DataBlockTests ()
     : Test (tr("DataBlock"))
@@ -26,6 +29,8 @@ QString DataBlockTests::run ()
     VERIFY (ten_block.size() == ten_data->size(), "created with 10 elements");
 
     return "";
+}
+
 }
 
 }

@@ -5,7 +5,8 @@
 
 namespace BioSig_
 {
-
+namespace Tests_
+{
 
 //-----------------------------------------------------------------------------
 /// DataBlockTests
@@ -16,7 +17,7 @@ public:
     DataBlockTests ();
     virtual QString run ();
 };
-
+}
 }
 
 #endif // DATA_BLOCK_TESTS_H
