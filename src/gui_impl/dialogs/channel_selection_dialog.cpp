@@ -80,6 +80,7 @@ void ChannelSelectionDialog::setSelected (ChannelID channel_id, bool selected)
 //-----------------------------------------------------------------------------
 void ChannelSelectionDialog::on_unselect_all_button__clicked ()
 {
+    self_setting_ = true;
     for (int row = 0; row < ui_.channel_table_->rowCount(); ++row)
         ui_.channel_table_->item (row, VISIBLE_INDEX_)->setCheckState (Qt::Unchecked);
 }

@@ -47,6 +47,9 @@ private slots:
     //-------------------------------------------------------------------------
     void setScaleModeZeroFitted ();
 
+    //-------------------------------------------------------------------------
+    void toggleAnimations ();
+
 private:
     static QString const CHANNELS_;
     static QString const CHANGE_COLOR_;
@@ -55,6 +58,7 @@ private:
     static QString const AUTO_SCALE_ALL_;
     static QString const SET_AUTO_SCALE_MAX_TO_MAX_;
     static QString const SET_AUTO_SCALE_MIN_TO_MAX_;
+    static QString const ANIMATIONS_;
     static QStringList const ACTIONS_;
 
     static GuiActionFactoryRegistrator registrator_;

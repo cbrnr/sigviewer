@@ -23,7 +23,7 @@ float64 ChannelManager::getMaxValue (std::set<ChannelID> const& channels) const
     if (!min_max_initialized_)
         initMinMax();
 
-    float64 max = -std::numeric_limits<float64>::max();
+    float64 max = std::numeric_limits<float64>::min();
     foreach (ChannelID channel, channels)
         max = std::max (max, max_values_[channel]);
     return max;

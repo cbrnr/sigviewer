@@ -2,6 +2,7 @@
 #define TEST_H
 
 #include "file_handling/event_manager.h"
+#include "gui/application_context.h"
 
 #include <QSharedPointer>
 #include <QObject>
@@ -28,13 +29,25 @@ public:
     QString getName () {return name_;}
     unsigned passed () {return passed_tests_;}
 
+    virtual void init () {};
+
     virtual QString run () = 0;
 
+    virtual void cleanup () {};
 protected:
     void increasePassedTests () {passed_tests_++;}
 
+    //-------------------------------------------------------------------------
     QSharedPointer<EventManager> createEventManagerWithDummyData ();
 
+    //-------------------------------------------------------------------------
+    QSharedPointer<ApplicationContext> applicationContext ();
+
+    //-------------------------------------------------------------------------
+    QAction* action (QString const& action_name);
+
+    //-------------------------------------------------------------------------
+    QSharedPointer<SignalVisualisationModel> currentVisModel ();
 private:
     QString name_;
     unsigned passed_tests_;

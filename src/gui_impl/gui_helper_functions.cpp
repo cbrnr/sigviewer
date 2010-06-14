@@ -6,7 +6,11 @@
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QDebug>
+#if QT_VERSION >= 0x040600
 #include <QPropertyAnimation>
+#endif
+#include <QSettings>
+#include <QMetaObject>
 
 namespace BioSig_
 {
@@ -19,14 +23,36 @@ void animateProperty (QObject* target, QByteArray const& property_name,
                       QVariant const& start_value, QVariant const& end_value,
                       QObject* call_back_object, char const* call_back_slot)
 {
-    QPropertyAnimation* animation = new QPropertyAnimation (target,
-                                                            property_name);
-    animation->setDuration (400);
-    animation->setStartValue (start_value);
-    animation->setEndValue (end_value);
-    if (call_back_object && call_back_slot)
-        call_back_object->connect (animation, SIGNAL(finished()), call_back_slot);
-    animation->start (animation->DeleteWhenStopped);
+    QSettings settings ("SigViewer");
+    settings.beginGroup("Animations");
+    bool animations_activated = settings.value("activated", false).toBool();
+    settings.endGroup();
+#if QT_VERSION < 0x040600
+    animations_activated = false;
+#endif
+    if (animations_activated)
+    {
+#if QT_VERSION >= 0x040600
+        QPropertyAnimation* animation = new QPropertyAnimation (target,
+                                                                property_name);
+        animation->setDuration (400);
+        animation->setStartValue (start_value);
+        animation->setEndValue (end_value);
+        if (call_back_object && call_back_slot)
+            call_back_object->connect (animation, SIGNAL(finished()), call_back_slot);
+        animation->start (animation->DeleteWhenStopped);
+#endif
+    }
+    else
+    {
+        target->setProperty (property_name, end_value);
+        if (call_back_object && call_back_slot)
+        {
+           QAction dummy_action (call_back_object);
+           call_back_object->connect(&dummy_action, SIGNAL(triggered()), call_back_slot);
+           dummy_action.trigger();
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------

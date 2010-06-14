@@ -9,7 +9,7 @@ namespace Tests_
 QString EventManagerTests::run ()
 {
     QSharedPointer<EventManager> event_manager = createEventManagerWithDummyData();
-    VERIFY (event_manager->getAllEvents().size() == 40, "event amount");
+    VERIFY (event_manager->getAllEvents().size() == 44, "event amount");
     foreach (EventID event, event_manager->getAllEvents())
     {
         VERIFY (event_manager->getEvent(event).isNull() == false, "event exists");

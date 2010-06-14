@@ -21,15 +21,20 @@ void TestsDialog::runTests ()
     ui_.progressBar->setMaximum (tests.size ());
     ui_.progressBar->setValue (0);
 
+    unsigned fails = 0;
+
     foreach (QSharedPointer<Test> test, tests)
     {
         QColor color;
         QString test_name = test->getName();
+        test->init();
         QString result = test->run();
+        test->cleanup();
         if (result.size())
         {
             test_name += tr(" failed: ") + result;
             color = QColor (255, 0, 0, 50);
+            fails++;
         }
         else
         {
@@ -40,6 +45,10 @@ void TestsDialog::runTests ()
         ui_.listWidget->item (ui_.listWidget->count() - 1)->setBackgroundColor (color);
         ui_.progressBar->setValue(ui_.progressBar->value()+1);
     }
+    if (fails)
+        ui_.listWidget->addItem(QString::number(fails) + " tests failed!");
+    else
+        ui_.listWidget->addItem("All tests passed!");
 }
 
 //-----------------------------------------------------------------------------
@@ -52,6 +61,7 @@ void TestsDialog::on_start_button__clicked ()
 void TestsDialog::on_open_dummy__clicked ()
 {
     OpenFileGuiCommand::openFile ("blub.sinusdummy", true);
+    close();
 }
 
 

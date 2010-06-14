@@ -3,6 +3,7 @@
 #include "../dialogs/scale_channel_dialog.h"
 
 #include <QColorDialog>
+#include <QSettings>
 
 namespace BioSig_
 {
@@ -15,6 +16,7 @@ QString const AdaptChannelViewGuiCommand::HIDE_ = "Hide Channel";
 QString const AdaptChannelViewGuiCommand::AUTO_SCALE_ALL_ = "Auto Scale All";
 QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MAX_TO_MAX_ = "Zero Line Centered";
 QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MIN_TO_MAX_ = "Zero Line Fitted";
+QString const AdaptChannelViewGuiCommand::ANIMATIONS_ = "Animations";
 QStringList const AdaptChannelViewGuiCommand::ACTIONS_ = QStringList() <<
                                                          AdaptChannelViewGuiCommand::CHANNELS_ <<
                                                          AdaptChannelViewGuiCommand::AUTO_SCALE_ALL_  <<
@@ -22,7 +24,8 @@ QStringList const AdaptChannelViewGuiCommand::ACTIONS_ = QStringList() <<
                                                          AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MIN_TO_MAX_ <<
                                                          AdaptChannelViewGuiCommand::CHANGE_COLOR_ <<
                                                          AdaptChannelViewGuiCommand::SCALE_ <<
-                                                         AdaptChannelViewGuiCommand::HIDE_;
+                                                         AdaptChannelViewGuiCommand::HIDE_ <<
+                                                         AdaptChannelViewGuiCommand::ANIMATIONS_;
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator registrator_ ("Adapt Channel View",
@@ -52,9 +55,15 @@ void AdaptChannelViewGuiCommand::init ()
     scale_mode_action_group->addAction (getQAction(SET_AUTO_SCALE_MIN_TO_MAX_));
     getQAction(SET_AUTO_SCALE_MAX_TO_MAX_)->setCheckable(true);
     getQAction(SET_AUTO_SCALE_MIN_TO_MAX_)->setCheckable(true);
+    getQAction(ANIMATIONS_)->setCheckable(true);
+    QSettings settings ("SigViewer");
+    settings.beginGroup("Animations");
+    getQAction(ANIMATIONS_)->setChecked (settings.value("activated", false).toBool());
+    settings.endGroup();
 
     resetActionTriggerSlot (SET_AUTO_SCALE_MAX_TO_MAX_, SLOT(setScaleModeZeroCentered()));
     resetActionTriggerSlot (SET_AUTO_SCALE_MIN_TO_MAX_, SLOT(setScaleModeZeroFitted()));
+    resetActionTriggerSlot (ANIMATIONS_, SLOT(toggleAnimations()));
 }
 
 //-------------------------------------------------------------------------
@@ -155,7 +164,14 @@ void AdaptChannelViewGuiCommand::setScaleModeZeroFitted ()
     currentVisModel()->scaleChannel(UNDEFINED_CHANNEL);
 }
 
-
+//-------------------------------------------------------------------------
+void AdaptChannelViewGuiCommand::toggleAnimations ()
+{
+    QSettings settings ("SigViewer");
+    settings.beginGroup ("Animations");
+    settings.setValue ("activated", getQAction(ANIMATIONS_)->isChecked ());
+    settings.endGroup ();
+}
 
 
 }

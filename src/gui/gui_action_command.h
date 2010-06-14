@@ -98,7 +98,7 @@ protected:
     void disableIfNoEventSelected (QStringList const &actions);
 
     //-------------------------------------------------------------------------
-    void disableIfNoFileIsOpened (QStringList const &actions);
+    bool disableIfNoFileIsOpened (QStringList const &actions);
 
 private:
     QMap<QString, QAction*> action_map_;

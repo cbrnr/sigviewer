@@ -39,7 +39,7 @@ protected:
     virtual void closeEvent(QCloseEvent* close_event);
     virtual void dropEvent (QDropEvent* event);
     virtual void dragEnterEvent(QDragEnterEvent *event);
-
+    virtual void resizeEvent (QResizeEvent* event);
 private slots:
     void toggleStatusBar (bool visible);
     void toggleAllToolbars ();
