@@ -1,3 +1,17 @@
+Version 0.4.0
+(+) new zooming (animated)
+(*) working on mac os x
+(+) export to GDF
+(+) export to PNG (demo)
+(+) generate event power spectrum
+(+) calculate event mean includes standard deviation
+(+) color settings for signal channels
+(+) mode-specific widgets (for editing selected events)
+(+) new context menu for channels
+(*) improved dialogs (event table, event type selection, etc.)
+(B) fixed many bugs
+(*) refactoring and many code clean-ups
+
 Version 0.3.0
 (*) removed all Qt3 stuff, now complete ported to Qt4
 (+) dropping of files into SigViewer opens the file
@@ -7,7 +21,7 @@ Version 0.3.0
 (+) Undo/Redo for any editing of events
 (+) insert event (Shortcut CTRL+I ... creates new event at the same place of the selected event)
 (+) event browsing (Ctrl+Right, Ctrl+Left: goto the next/previous event of same type of selected event)
-(+) fit view to selected event (x-
+(+) fit view to selected event
 (+) hide events of other Type (events vom typ, die ungleich dem typ des gerade ausgewählten events sind, werden ausgeblendet)
 (+) x-highlighting on x-axis when editing or creating an event
 (+) new context menu for events

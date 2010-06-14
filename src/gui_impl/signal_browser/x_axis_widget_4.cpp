@@ -133,6 +133,11 @@ void XAxisWidget::contextMenuEvent (QContextMenuEvent* event)
 {
     QMenu menu;
     menu.addAction(GuiActionFactory::getInstance()->getQAction("Scale X Axis"));
+    menu.addSeparator();
+    QAction* visibility_action = menu.addAction("X Axis");
+    visibility_action->setCheckable (true);
+    visibility_action->setChecked (true);
+    connect (visibility_action, SIGNAL(triggered(bool)), SLOT(setVisible(bool)));
     menu.exec (event->globalPos());
 }
 

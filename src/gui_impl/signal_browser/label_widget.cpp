@@ -68,6 +68,11 @@ void LabelWidget::contextMenuEvent (QContextMenuEvent* event)
 {
     QMenu menu;
     menu.addAction(GuiActionFactory::getInstance()->getQAction("Channels per Page..."));
+    menu.addSeparator();
+    QAction* visibility_action = menu.addAction("Labels");
+    visibility_action->setCheckable (true);
+    visibility_action->setChecked (true);
+    connect (visibility_action, SIGNAL(triggered(bool)), SLOT(setVisible(bool)));
     menu.exec (event->globalPos());
 }
 
