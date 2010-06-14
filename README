@@ -40,13 +40,11 @@ Building Installation Packages
 Debian / Ubuntu / Kubuntu:
   1. build/compile SigViewer
 
-  2. run the script build-deb.sh with your processor architecture
-     as parameter e.g.:
+  2. run the script build-deb.sh
      
-        ./build-deb.sh i386
-
+        ./build-deb.sh
      or
 
-        ./build-deb.sh amd64
+        ./build-deb.sh
   
   3. the deb file is automatically generated
