@@ -45,7 +45,7 @@ public:
 
     //-------------------------------------------------------------------------
     /// see base class
-    virtual std::set<EventID> getEventsAt (unsigned pos, unsigned channel_id) const;
+    virtual std::set<EventID> getEventsAt (unsigned pos, ChannelID channel_id) const;
 
     //-------------------------------------------------------------------------
     /// see base class

@@ -55,7 +55,7 @@ public:
     //-------------------------------------------------------------------------
     ///
     /// @return set of event_id of events at the given position
-    virtual std::set<EventID> getEventsAt (unsigned pos, unsigned channel_id) const = 0;
+    virtual std::set<EventID> getEventsAt (unsigned pos, ChannelID channel_id) const = 0;
 
     //-------------------------------------------------------------------------
     /// @return sample rate of events

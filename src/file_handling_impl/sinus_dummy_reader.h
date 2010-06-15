@@ -31,7 +31,6 @@ public:
     //-------------------------------------------------------------------------
     virtual QSharedPointer<BasicHeader> getBasicHeader ();
 private:
-    static SinusDummyReader prototype_instance_;
     QMap<ChannelID, QSharedPointer<DataBlock const> > data_;
     QList<QSharedPointer<SignalEvent const> > events_;
     QSharedPointer<BasicHeader> header_;

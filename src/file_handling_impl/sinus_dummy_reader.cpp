@@ -13,8 +13,6 @@ using namespace std;
 namespace BioSig_
 {
 
-SinusDummyReader SinusDummyReader::prototype_instance_ (true);
-
 SinusDummyReader::SinusDummyReader ()
 {
     header_ = QSharedPointer<BasicHeader> (new SinusDummyHeader);

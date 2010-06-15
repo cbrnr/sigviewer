@@ -127,7 +127,7 @@ void EventManagerImpl::removeEvent (EventID id)
 
 //-----------------------------------------------------------------------------
 std::set<EventID> EventManagerImpl::getEventsAt (unsigned pos,
-                                                 unsigned channel_id) const
+                                                 ChannelID channel_id) const
 {
     QMutexLocker locker (caller_mutex_);
     std::set<EventID> events;

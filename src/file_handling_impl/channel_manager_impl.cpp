@@ -16,7 +16,7 @@ ChannelManagerImpl::ChannelManagerImpl (QSharedPointer<FileSignalReader> file_si
 std::set<ChannelID> ChannelManagerImpl::getChannels () const
 {
     std::set<ChannelID> channels;
-    for (ChannelID id = 0; id < reader_->getBasicHeader()->getNumberChannels(); ++id)
+    for (ChannelID id = 0; id < static_cast<int>(reader_->getBasicHeader()->getNumberChannels()); ++id)
         channels.insert(id);
     return channels;
 }
@@ -32,7 +32,7 @@ QString ChannelManagerImpl::getChannelLabel (ChannelID id) const
 {
     if (id == UNDEFINED_CHANNEL)
         return QObject::tr("All Channels");
-    else if (reader_->getBasicHeader()->getNumberChannels() > id)
+    else if (static_cast<int>(reader_->getBasicHeader()->getNumberChannels()) > id)
         return reader_->getBasicHeader()->getChannel (id).getLabel();
     else
         return QObject::tr("Invalid Channel");
