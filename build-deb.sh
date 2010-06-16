@@ -18,7 +18,7 @@ architecture=`dpkg-architecture -l | grep DEB_BUILD_ARCH= | sed -e '/DEB_BUILD_A
 
 sed -e '/Architecture: /s/<architecture-via-script>/'$architecture'/' ./deb_building_stuff/deb_control_template >./$dir/sigviewer/DEBIAN/control
 
-dpkg -b ./$dir/sigviewer sigviewer_$architecture.deb
+dpkg -b ./$dir/sigviewer sigviewer_0_4_0_$architecture.deb
 
 rm $dir/sigviewer/usr/bin/*
 rm $dir/sigviewer/DEBIAN/*
