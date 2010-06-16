@@ -2,6 +2,8 @@
 #define SIGNAL_VISUALISATION_VIEW_H
 
 #include <QPainter>
+#include <QSharedPointer>
+#include <QImage>
 
 namespace BioSig_
 {

@@ -17,7 +17,6 @@
 #include <QSettings>
 #include <QToolBox>
 #include <QMenu>
-#include <QPropertyAnimation>
 #include <QDebug>
 #include <QResizeEvent>
 

@@ -31,7 +31,9 @@ void CloseFileGuiCommand::init ()
     getQAction(CLOSE_FILE_)->setShortcut (QKeySequence::Close);
     getQAction(CLOSE_FILE_)->setIcon (QIcon(":/images/icons/fileclose.png"));
 
+#if QT_VERSION >= 0x040600
     getQAction(EXIT_APPLICATION_)->setShortcut (QKeySequence::Quit);
+#endif
     getQAction(EXIT_APPLICATION_)->setIcon (QIcon(":/images/icons/exit.png"));
 
     resetActionTriggerSlot(CLOSE_FILE_, SLOT(closeFile()));
