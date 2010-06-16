@@ -15,6 +15,9 @@ cp ./deb_building_stuff/sigviewer128.png ./$dir/sigviewer/usr/share/pixmaps/
 cp ./deb_building_stuff/sigviewer.desktop ./$dir/sigviewer/usr/share/applications/
 
 architecture=`dpkg-architecture -l | grep DEB_BUILD_ARCH= | sed -e '/DEB_BUILD_ARCH=/s/DEB_BUILD_ARCH=//'`
+filesizestring=`ls -s bin/sigviewer`
+filesize=`ls -s bin/sigviewer | sed -e '/$filesizestring/s/bin\/sigviewer//'`
+echo 'filesize = '$filesize
 
 sed -e '/Architecture: /s/<architecture-via-script>/'$architecture'/' ./deb_building_stuff/deb_control_template >./$dir/sigviewer/DEBIAN/control
 

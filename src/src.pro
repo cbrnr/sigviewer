@@ -20,6 +20,10 @@ CONFIG(debug) {
     DEFINES -= QT_NO_DEBUG_OUTPUT
 }
 
+CONFIG(release) {
+    CONFIG -= debug
+}
+
 INCLUDEPATH += ../extern \
                .
 LIBS += -L../extern \
