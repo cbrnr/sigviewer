@@ -20,7 +20,10 @@ EventTimeSelectionDialog::EventTimeSelectionDialog (std::set<EventType> const& s
     ui_.setupUi (this);
 
     foreach (ChannelID channel_id, shown_channels)
-        ui_.list_widget_->addItem (QString::number(channel_id) + " - " + channel_manager->getChannelLabel(channel_id));
+    {
+        QListWidgetItem* item = new QListWidgetItem (channel_manager->getChannelLabel(channel_id), ui_.list_widget_);
+        item->setData (Qt::UserRole, channel_id);
+    }
 
     foreach (EventType event_type, shown_event_types_)
     {
@@ -29,6 +32,7 @@ EventTimeSelectionDialog::EventTimeSelectionDialog (std::set<EventType> const& s
     }
 
     ui_.button_box_->button(QDialogButtonBox::Ok)->setEnabled (false);
+    updateOkEnabled ();
 }
 
 //-----------------------------------------------------------------------------
@@ -37,10 +41,7 @@ std::set<ChannelID> EventTimeSelectionDialog::getSelectedChannels () const
     std::set<ChannelID> channels;
 
     foreach (QListWidgetItem* list_item, ui_.list_widget_->selectedItems())
-    {
-        ChannelID id = list_item->text().section (" - ", 0, 0).toUInt();
-        channels.insert (id);
-    }
+        channels.insert (list_item->data(Qt::UserRole).toInt());
 
     return channels;
 }
@@ -61,6 +62,20 @@ float EventTimeSelectionDialog::getSecondsBeforeEvent () const
 float EventTimeSelectionDialog::getLengthInSeconds () const
 {
     return ui_.length_spinbox_->value();
+}
+
+//-----------------------------------------------------------------------------
+void EventTimeSelectionDialog::on_unselect_all_button__clicked ()
+{
+    for (int row = 0; row < ui_.list_widget_->count(); ++row)
+        ui_.list_widget_->item (row)->setSelected (false);
+}
+
+//-----------------------------------------------------------------------------
+void EventTimeSelectionDialog::on_select_all_button__clicked ()
+{
+    for (int row = 0; row < ui_.list_widget_->count(); ++row)
+        ui_.list_widget_->item (row)->setSelected (true);
 }
 
 //-----------------------------------------------------------------------------
@@ -123,10 +138,13 @@ void EventTimeSelectionDialog::updateOkEnabled ()
 {
     unsigned num_selected_items = ui_.list_widget_->selectedItems().count();
     bool nothing_selected = (num_selected_items == 0);
+    bool all_selected = (num_selected_items == ui_.list_widget_->count());
     bool length_is_zero = (ui_.length_spinbox_->value() == 0);
 
     ui_.button_box_->button(QDialogButtonBox::Ok)->setDisabled (nothing_selected
                                                                 || length_is_zero);
+    ui_.unselect_all_button_->setDisabled (nothing_selected);
+    ui_.select_all_button_->setDisabled (all_selected);
 }
 
 

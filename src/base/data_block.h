@@ -11,6 +11,10 @@
 
 namespace BioSig_ {
 
+//-------------------------------------------------------------------------
+/// DataBlock
+///
+/// basic class to store channel data and sections of it
 class DataBlock
 {
 public:
@@ -33,6 +37,7 @@ public:
     float32 const& operator[] (uint32 index) const;
 
     //-------------------------------------------------------------------------
+    /// length of the block
     uint32 size () const;
 
     //-------------------------------------------------------------------------
