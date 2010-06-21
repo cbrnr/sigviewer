@@ -95,6 +95,9 @@ protected:
     TabEditState getTabEditState () const {return tab_edit_state_;}
 
     //-------------------------------------------------------------------------
+    bool disableIfNoEventsPossible (QStringList const &actions);
+
+    //-------------------------------------------------------------------------
     void disableIfNoEventSelected (QStringList const &actions);
 
     //-------------------------------------------------------------------------

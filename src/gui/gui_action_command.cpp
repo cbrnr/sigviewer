@@ -165,6 +165,25 @@ QSharedPointer<ApplicationContext> GuiActionCommand::applicationContext ()
 
 
 //-------------------------------------------------------------------------
+bool GuiActionCommand::disableIfNoEventsPossible (QStringList const &actions)
+{
+    bool no_events_possible = false;
+    if (!currentVisModel().isNull())
+    {
+        if (currentVisModel()->getEventManager().isNull())
+            no_events_possible = true;
+    }
+    else
+        no_events_possible = true;
+
+
+    foreach (QString action, actions)
+        action_map_[action]->setDisabled (no_events_possible);
+
+    return no_events_possible;
+}
+
+//-------------------------------------------------------------------------
 void GuiActionCommand::disableIfNoEventSelected (QStringList const &actions)
 {
     bool no_event_selected = app_state_ == APP_STATE_NO_FILE_OPEN ||

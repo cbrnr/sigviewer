@@ -204,19 +204,13 @@ void EventEditingGuiCommand::showEventTableDialog ()
 //-------------------------------------------------------------------------
 void EventEditingGuiCommand::evaluateEnabledness ()
 {
-    bool events_possible = false;
-    bool event_selected = false;
-    bool event_one_channel_selected = false;
+    if (disableIfNoFileIsOpened (ACTIONS_))
+        return;
+    if (disableIfNoEventsPossible (ACTIONS_))
+        return;
 
-    if (getApplicationState () == APP_STATE_FILE_OPEN)
-    {
-        events_possible = true;
-        event_selected = (getTabSelectionState() == TAB_STATE_EVENT_SELECTED_ALL_CHANNELS ||
-                          getTabSelectionState() == TAB_STATE_EVENT_SELECTED_ONE_CHANNEL);
-        event_one_channel_selected = (getTabSelectionState() == TAB_STATE_EVENT_SELECTED_ONE_CHANNEL);
-    }
+    bool event_one_channel_selected = (getTabSelectionState() == TAB_STATE_EVENT_SELECTED_ONE_CHANNEL);
 
-    getQAction(SHOW_EVENT_TABLE_DIALOG_)->setEnabled(events_possible);
     getQAction(COPY_TO_CHANNELS_)->setEnabled(event_one_channel_selected);
     getQAction(TO_ALL_CHANNEL_)->setEnabled(event_one_channel_selected);
     disableIfNoEventSelected (QStringList() << INSERT_OVER_ <<

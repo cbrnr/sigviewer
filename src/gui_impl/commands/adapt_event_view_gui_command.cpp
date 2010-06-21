@@ -100,6 +100,9 @@ void AdaptEventViewGuiCommand::evaluateEnabledness ()
 {
     if (disableIfNoFileIsOpened (ACTIONS_))
         return;
+    if (disableIfNoEventsPossible (ACTIONS_))
+        return;
+
     disableIfNoEventSelected (QStringList() << HIDE_EVENTS_OF_OTHER_TYPE_
                               << FIT_TO_EVENT_);
 
