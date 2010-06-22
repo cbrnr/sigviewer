@@ -9,7 +9,7 @@ enum SignalVisualisationMode
     MODE_NEW,
     MODE_POINTER,
     MODE_HAND,
-    MODE_SHIFT_SIGNAL,
+    MODE_VIEW_OPTIONS,
     MODE_INFO
 };
 

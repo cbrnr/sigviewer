@@ -36,7 +36,7 @@ private:
     static QString const NEW_MODE_TEXT_;
     static QString const POINTER_MODE_TEXT_;
     static QString const HAND_MODE_TEXT_;
-    static QString const SHIFT_MODE_TEXT_;
+    static QString const VIEW_OPTIONS_TEXT_;
     static QString const INFO_MODE_TEXT_;
     static QStringList const MODE_TEXTS_;
 

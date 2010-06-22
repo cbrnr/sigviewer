@@ -101,7 +101,7 @@ void MainWindow::initToolBars()
     mouse_mode_toolbar_->addAction (action("New Event"));
     mouse_mode_toolbar_->addAction (action("Edit Event"));
     mouse_mode_toolbar_->addAction (action("Scroll"));
-    mouse_mode_toolbar_->addAction (action("Shift Signal"));
+    mouse_mode_toolbar_->addAction (action("View Options"));
 
 
     view_toolbar_ = addToolBar(tr("View"));
@@ -196,7 +196,7 @@ void MainWindow::initMenus()
     mouse_mode_menu_->addAction (action("New Event"));
     mouse_mode_menu_->addAction (action("Edit Event"));
     mouse_mode_menu_->addAction (action("Scroll"));
-    mouse_mode_menu_->addAction (action("Shift Signal"));
+    mouse_mode_menu_->addAction (action("View Options"));
 
     QAction* toggle_status_bar = new QAction (tr("Statusbar"), this);
     toggle_status_bar->setCheckable (true);

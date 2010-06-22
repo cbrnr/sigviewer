@@ -26,7 +26,7 @@ SignalBrowserMouseHandling::Action SignalBrowserMouseHandling::getAction(QGraphi
 
     // shift channel
     if ((e->button() == Qt::MidButton && e->modifiers().testFlag(Qt::ShiftModifier)) ||
-        (mode == MODE_SHIFT_SIGNAL && e->button() == Qt::LeftButton))
+        (mode == MODE_VIEW_OPTIONS && e->button() == Qt::LeftButton))
     {
         return SHIFT_CHANNEL_ACTION;
     }

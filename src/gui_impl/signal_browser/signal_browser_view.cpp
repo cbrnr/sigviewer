@@ -307,7 +307,7 @@ void SignalBrowserView::setMode (SignalVisualisationMode mode)
         graphics_view_->setDragMode(QGraphicsView::ScrollHandDrag);
         current_info_widget_ = empty_widget_;
         break;
-    case MODE_SHIFT_SIGNAL:
+    case MODE_VIEW_OPTIONS:
         current_info_widget_ = adapt_browser_view_widget_;
         graphics_view_->setDragMode(QGraphicsView::NoDrag);
         break;
