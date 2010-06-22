@@ -1,93 +1,91 @@
 Version 0.4.0
-(+) new zooming (animated)
-(*) working on mac os x
-(+) export to GDF
-(+) export to PNG (demo)
-(+) generate event power spectrum
-(+) calculate event mean includes standard deviation
-(+) color settings for signal channels
-(+) mode-specific widgets (for editing selected events)
-(+) new context menu for channels
-(*) improved dialogs (event table, event type selection, etc.)
-(B) fixed many bugs
-(*) refactoring and many code clean-ups
+(*) Works on Mac OS X (again)
+(+) Animated zoom
+(+) Export to GDF
+(+) Export to PNG
+(+) Calculate power spectrum averaged over an event type
+(+) Calculate mean and standard deviation averaged over an event type
+(+) Color settings for signal channels
+(+) Mode-specific widgets (for editing selected events)
+(+) New context menu for channels
+(*) Improved dialogs (event table, event type selection)
+(B) Fixed many bugs
+(*) Refactoring and code clean-ups
 
 Version 0.3.0
-(*) removed all Qt3 stuff, now complete ported to Qt4
-(+) dropping of files into SigViewer opens the file
-(+) opening files via commandline parameter
-(+) Event Toolbar (for editing selected events)
-(+) Calculate Mean (alpha version.. :) )
-(+) Undo/Redo for any editing of events
-(+) insert event (Shortcut CTRL+I ... creates new event at the same place of the selected event)
-(+) event browsing (Ctrl+Right, Ctrl+Left: goto the next/previous event of same type of selected event)
-(+) fit view to selected event
-(+) hide events of other Type (events vom typ, die ungleich dem typ des gerade ausgewählten events sind, werden ausgeblendet)
-(+) x-highlighting on x-axis when editing or creating an event
-(+) new context menu for events
-(+) simple hiding/revealing of label and axis widgets
-(-) scrolling during creation of events is now possible (will be readded as soon as possible)
-(B) fixed many bugs
-(*) refactoring and many code clean-ups... :) (especially decoupling of classes)
+(*) Removed all Qt3 stuff, now completely ported to Qt4
+(+) Dropping files on SigViewer opens the file
+(+) Open files via command line parameter
+(+) Event toolbar (for editing selected events)
+(+) Calculate mean (alpha version)
+(+) Undo/redo for editing events
+(+) Insert event (Ctrl+I), creates new event over the selected event
+(+) Event browsing (Ctrl+Right, Ctrl+Left), go to next/previous event of same type as selected event
+(+) Fit view to selected event
+(+) Hie events of other type
+(+) Highlighting on x-axis when editing or creating an event
+(+) New context menu for events
+(+) Simple hiding/showing label and axis widgets
+(-) Scrolling during creation of events is not possible (will be added as soon as possible)
+(B) Fixed many bugs
+(*) Refactoring and code clean-ups (especially decoupling of classes)
 
 Version 0.2.6
 (+) Qt Creator support
-(+) added signal buffer options: (whole subsampling selection, disable initial min-max search)
-(B) fixed many bugs related to loading files, especially slow loading under Windows network shares is resolved
-(*) cleaned up code in biosig_reader.cpp
+(+) Added signal buffer options (whole subsampling selection, disable initial min-max search)
+(B) Fixed many bugs related to loading files, especially slow loading under Windows network shares is resolved
+(*) Cleaned up code in biosig_reader.cpp
 
 Version 0.2.5
-(+) added preferences dialog
-(*) removed some Qt3 stuff, but still not everything
+(+) Added preferences dialog
+(*) Removed some Qt3 stuff, but still not everything
 
 Version 0.2.4
-(+) update biosig4c++ to support more file formats
+(+) Update biosig4c++ to support more file formats
 
 Version 0.2.3
-(+) improve support for BCI2000 1.1 data format
+(+) Improve support for BCI2000 1.1 data format
 
 Version 0.2.2
-(B) fixed export and import of EVT files
-(B) fixed missing file name in window title
-(+) added new file formats (BCI2000, MIT/Physiobank)
-(+) improved handling of some file formats (EDF+, GDF1, BrainVision, AINF)
+(B) Fixed export and import of EVT files
+(B) Fixed missing file name in window title
+(+) Added new file formats (BCI2000, MIT/Physiobank)
+(+) Improved handling of some file formats (EDF+, GDF1, BrainVision, AINF)
 
 Version 0.2.1
-(B) fixed CNT and VHDR errors
+(B) Fixed CNT and VHDR errors
 
 Version 0.2.0
-(+) added support for biosig4c++, loading and saving is now done with this library. Therefore, many new formats are supported (GDF, BKR, CNT, EDF, ...)
-(B) channel selection is now working
-(+) scrolling during creation of events is now possible
-(*) the standard zoom setting is now auto
-(*) zero level on the y-axis is now in the middle of the channel window
-(+) should now compile and work on big endian machines (e.g. PPC) 
+(+) Added support for biosig4c++, loading and saving is now done with this library. Therefore, many new formats are supported (GDF, BKR, CNT, EDF, ...)
+(B) Channel selection works
+(+) Scrolling during creation of events is now possible
+(*) Standard zoom setting is now auto
+(*) Zero level on the y-axis is now in the middle of the channel window
+(+) Should now compile and work on big endian machines (e.g. PPC) 
 
 Version 0.1.7
-(B) fix export of evt files with a sampling rate higher than 256Hz
+(B) Fix export of EVT files with a sampling rate higher than 256Hz
 
 Version 0.1.6
-(B) fix serious bug where SigViewer crashed when opening a file (probably due to a Windows update)
+(B) Fix serious bug where SigViewer crashed when opening a file (probably due to a Windows update)
 
 Version 0.1.5
-(B) remove bug where SigViewer crashed when exiting
+(B) Remove bug where SigViewer crashed when exiting
 
 Version 0.1.4
-(B)	remove bug in SignalBuffer
+(B) Remove bug in SignalBuffer
 
 Version 0.1.3
-(+) y axis
-(*) remove SettingsManager and use QSettings instead
+(+) Added y-axis
+(*) Removed SettingsManager and use QSettings instead
 
 Version 0.1.2
-(+) status bar with lenght, number of channels and number of trials
-(+) export events to '.evt'-files
-(B) removed signal shift bug
-(B) channel selection has no effect on scale
-(+) after open show all channels
+(+) Status bar with length, number of channels and number of trials
+(+) Export events to EVT files
+(B) Removed signal shift bug
+(B) Channel selection has no effect on scale
+(+) After opening a file, show all channels
 
 Version 0.1.1
-(*) use QString and Qt-container instead of STL-stuff
-(B) no line wrap in LogDialog
-
-Version 0.1
+(*) Use QString and Qt container instead of STL stuff
+(B) No line wrap in LogDialog
