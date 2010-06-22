@@ -322,6 +322,7 @@ void SignalGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent* event)
             event_string += "<br /><br />";
         QSharedPointer<SignalEvent const> signal_event = event_manager_->getEvent(event);
         event_string += "<b>" + event_manager_->getNameOfEvent (event) + "</b><br />";
+        event_string += "Start: " + QString::number(signal_event->getPositionInSec()) + "s; ";
         event_string += "Duration: " + QString::number(signal_event->getDurationInSec()) + "s";
     }
 
