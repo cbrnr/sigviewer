@@ -21,6 +21,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <QToolTip>
+#include <QSet>
 
 #include <cmath>
 
@@ -315,15 +316,19 @@ void SignalGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent* event)
         return;
 
     std::set<EventID> events = event_manager_->getEventsAt (sample_pos, id_);
+    std::set<EventType> shown_types = signal_browser_model_.getShownEventTypes();
     QString event_string;
     foreach (EventID event, events)
     {
-        if (event_string.size())
-            event_string += "<br /><br />";
         QSharedPointer<SignalEvent const> signal_event = event_manager_->getEvent(event);
-        event_string += "<b>" + event_manager_->getNameOfEvent (event) + "</b><br />";
-        event_string += "Start: " + QString::number(signal_event->getPositionInSec()) + "s; ";
-        event_string += "Duration: " + QString::number(signal_event->getDurationInSec()) + "s";
+        if (shown_types.count(signal_event->getType()))
+        {
+            if (event_string.size())
+                event_string += "<br /><br />";
+            event_string += "<b>" + event_manager_->getNameOfEvent (event) + "</b><br />";
+            event_string += "Start: " + QString::number(signal_event->getPositionInSec()) + "s; ";
+            event_string += "Duration: " + QString::number(signal_event->getDurationInSec()) + "s";
+        }
     }
 
     if (event_string.size())
