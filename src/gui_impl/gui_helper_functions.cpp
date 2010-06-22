@@ -26,6 +26,7 @@ void animateProperty (QObject* target, QByteArray const& property_name,
     QSettings settings ("SigViewer");
     settings.beginGroup("Animations");
     bool animations_activated = settings.value("activated", false).toBool();
+    int animation_duration = settings.value("duration", 200).toInt();
     settings.endGroup();
 #if QT_VERSION < 0x040600
     animations_activated = false;
@@ -35,7 +36,7 @@ void animateProperty (QObject* target, QByteArray const& property_name,
 #if QT_VERSION >= 0x040600
         QPropertyAnimation* animation = new QPropertyAnimation (target,
                                                                 property_name);
-        animation->setDuration (400);
+        animation->setDuration (animation_duration);
         animation->setStartValue (start_value);
         animation->setEndValue (end_value);
         if (call_back_object && call_back_slot)
