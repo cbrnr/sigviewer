@@ -136,13 +136,15 @@ void EventTimeSelectionDialog::on_length_spinbox__valueChanged (double)
 //-------------------------------------------------------------------------
 void EventTimeSelectionDialog::updateOkEnabled ()
 {
-    unsigned num_selected_items = ui_.list_widget_->selectedItems().count();
+    int num_selected_items = ui_.list_widget_->selectedItems().count();
     bool nothing_selected = (num_selected_items == 0);
     bool all_selected = (num_selected_items == ui_.list_widget_->count());
     bool length_is_zero = (ui_.length_spinbox_->value() == 0);
+    bool no_event_selected = (ui_.event_combo_box_->currentIndex() == -1);
 
     ui_.button_box_->button(QDialogButtonBox::Ok)->setDisabled (nothing_selected
-                                                                || length_is_zero);
+                                                                || length_is_zero
+                                                                || no_event_selected);
     ui_.unselect_all_button_->setDisabled (nothing_selected);
     ui_.select_all_button_->setDisabled (all_selected);
 }
