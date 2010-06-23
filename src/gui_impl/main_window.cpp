@@ -206,7 +206,9 @@ void MainWindow::initMenus()
     view_menu_ = menuBar()->addMenu(tr("&View"));
     view_menu_->addMenu (view_toolbar_views_menu_);
     view_menu_->addAction(toggle_status_bar);
-    view_menu_->addAction(action("Animations"));
+    QMenu* animations_menu = view_menu_->addMenu(tr("Animations"));
+    animations_menu->addAction(action("Animations"));
+    animations_menu->addAction(action("Set Animation Duration"));
     view_menu_->addSeparator();
     view_menu_->addAction(action("Channels..."));
     view_menu_->addAction(action("Events..."));

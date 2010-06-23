@@ -27,10 +27,6 @@ signals:
     //-------------------------------------------------------------------------
     void labelsVisibilityChanged (bool visible);
 
-private slots:
-    void on_animation_duration_spinbox__valueChanged (int i);
-
-
 private:
     //-------------------------------------------------------------------------
     virtual void showEvent (QShowEvent* event);

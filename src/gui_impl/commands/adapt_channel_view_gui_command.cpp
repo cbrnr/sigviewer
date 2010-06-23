@@ -4,6 +4,7 @@
 
 #include <QColorDialog>
 #include <QSettings>
+#include <QInputDialog>
 
 namespace BioSig_
 {
@@ -17,6 +18,7 @@ QString const AdaptChannelViewGuiCommand::AUTO_SCALE_ALL_ = "Auto Scale All";
 QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MAX_TO_MAX_ = "Zero Line Centered";
 QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MIN_TO_MAX_ = "Zero Line Fitted";
 QString const AdaptChannelViewGuiCommand::ANIMATIONS_ = "Animations";
+QString const AdaptChannelViewGuiCommand::SET_ANIMATION_DURATION_ = "Set Animation Duration";
 QStringList const AdaptChannelViewGuiCommand::ACTIONS_ = QStringList() <<
                                                          AdaptChannelViewGuiCommand::CHANNELS_ <<
                                                          AdaptChannelViewGuiCommand::AUTO_SCALE_ALL_  <<
@@ -25,7 +27,8 @@ QStringList const AdaptChannelViewGuiCommand::ACTIONS_ = QStringList() <<
                                                          AdaptChannelViewGuiCommand::CHANGE_COLOR_ <<
                                                          AdaptChannelViewGuiCommand::SCALE_ <<
                                                          AdaptChannelViewGuiCommand::HIDE_ <<
-                                                         AdaptChannelViewGuiCommand::ANIMATIONS_;
+                                                         AdaptChannelViewGuiCommand::ANIMATIONS_ <<
+                                                         AdaptChannelViewGuiCommand::SET_ANIMATION_DURATION_;
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator registrator_ ("Adapt Channel View",
@@ -64,6 +67,7 @@ void AdaptChannelViewGuiCommand::init ()
     resetActionTriggerSlot (SET_AUTO_SCALE_MAX_TO_MAX_, SLOT(setScaleModeZeroCentered()));
     resetActionTriggerSlot (SET_AUTO_SCALE_MIN_TO_MAX_, SLOT(setScaleModeZeroFitted()));
     resetActionTriggerSlot (ANIMATIONS_, SLOT(toggleAnimations()));
+    resetActionTriggerSlot (SET_ANIMATION_DURATION_, SLOT(setAnimationDuration()));
 }
 
 //-------------------------------------------------------------------------
@@ -86,7 +90,10 @@ void AdaptChannelViewGuiCommand::selectShownChannels ()
 //-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::evaluateEnabledness ()
 {
-    disableIfNoFileIsOpened (ACTIONS_);
+    QStringList disabled_actions_if_no_file = ACTIONS_;
+    disabled_actions_if_no_file.removeAll(ANIMATIONS_);
+    disabled_actions_if_no_file.removeAll(SET_ANIMATION_DURATION_);
+    disableIfNoFileIsOpened (disabled_actions_if_no_file);
     if (!currentVisModel().isNull())
     {
         getQAction (SET_AUTO_SCALE_MAX_TO_MAX_)->setChecked (currentVisModel()->getAutoScaleMode()
@@ -170,6 +177,19 @@ void AdaptChannelViewGuiCommand::toggleAnimations ()
     QSettings settings ("SigViewer");
     settings.beginGroup ("Animations");
     settings.setValue ("activated", getQAction(ANIMATIONS_)->isChecked ());
+    settings.endGroup ();
+}
+
+//-------------------------------------------------------------------------
+void AdaptChannelViewGuiCommand::setAnimationDuration ()
+{
+    QSettings settings ("SigViewer");
+    settings.beginGroup ("Animations");
+
+    bool ok = false;
+    int new_duration = QInputDialog::getInt(0, tr("Set Animation Duration"), tr("Milliseconds:"), settings.value("duration", 200).toInt(), 0, 1000, 100, &ok);
+    if (ok)
+        settings.setValue ("duration", new_duration);
     settings.endGroup ();
 }
 

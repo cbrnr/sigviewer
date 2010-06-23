@@ -50,6 +50,9 @@ private slots:
     //-------------------------------------------------------------------------
     void toggleAnimations ();
 
+    //-------------------------------------------------------------------------
+    void setAnimationDuration ();
+
 private:
     static QString const CHANNELS_;
     static QString const CHANGE_COLOR_;
@@ -59,6 +62,7 @@ private:
     static QString const SET_AUTO_SCALE_MAX_TO_MAX_;
     static QString const SET_AUTO_SCALE_MIN_TO_MAX_;
     static QString const ANIMATIONS_;
+    static QString const SET_ANIMATION_DURATION_;
     static QStringList const ACTIONS_;
 
     static GuiActionFactoryRegistrator registrator_;
