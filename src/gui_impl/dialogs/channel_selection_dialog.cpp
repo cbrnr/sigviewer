@@ -72,9 +72,9 @@ bool ChannelSelectionDialog::isSelected (ChannelID channel_id)
 void ChannelSelectionDialog::setSelected (ChannelID channel_id, bool selected)
 {
     Qt::CheckState state = selected ? Qt::Checked : Qt::Unchecked;
-    foreach (QTableWidgetItem* id_item, ui_.channel_table_->findItems (QString::number(channel_id), Qt::MatchExactly))
-        if (id_item->column() == ID_INDEX_)
-            ui_.channel_table_->item (id_item->row (), VISIBLE_INDEX_)->setCheckState (state);
+    for (int row = 0; row < ui_.channel_table_->rowCount(); row++)
+        if (QString::number(channel_id) == ui_.channel_table_->item(row, ID_INDEX_)->text())
+            ui_.channel_table_->item(row, VISIBLE_INDEX_)->setCheckState(state);
 }
 
 //-----------------------------------------------------------------------------

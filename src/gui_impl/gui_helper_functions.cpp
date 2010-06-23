@@ -202,15 +202,14 @@ std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager const> channel
     if (!vis_model.isNull())
         pre_selected_channels = vis_model->getShownChannels ();
 
-    bool empty_selection = pre_selected_channels.size () == 0;
+    bool empty_selection = (pre_selected_channels.size () == 0);
 
     foreach (ChannelID channel_id, channel_manager->getChannels())
     {
-        bool show_channel = empty_selection ||
-                            (pre_selected_channels.count(channel_id) > 0);
+        bool show_channel = (empty_selection ||
+                            (pre_selected_channels.count(channel_id) > 0));
 
-        if (show_channel)
-            channel_dialog.setSelected (channel_id, show_channel);
+        channel_dialog.setSelected (channel_id, show_channel);
     }
 
     channel_dialog.exec();
