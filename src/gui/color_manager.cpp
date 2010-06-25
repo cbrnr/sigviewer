@@ -7,8 +7,7 @@ namespace BioSig_
 {
 
 QColor const ColorManager::DEFAULT_EVENT_COLOR_ = QColor (200, 0, 0, 25);
-QColor const ColorManager::DEFAULT_CHANNEL_COLOR_ = Qt::darkBlue;
-
+const char* ColorManager::DEFAULT_CHANNEL_COLOR_SETTING_ = "Default Channel Color";
 
 // constructor
 ColorManager::ColorManager ()
@@ -28,7 +27,25 @@ QColor ColorManager::getChannelColor (ChannelID channel_id) const
     if (channel_color_map_.contains (channel_id))
         return channel_color_map_[channel_id];
     else
-        return DEFAULT_CHANNEL_COLOR_;
+        return default_channel_color_;
+}
+
+//-----------------------------------------------------------------------------
+QColor ColorManager::getDefaultChannelColor () const
+{
+    return default_channel_color_;
+}
+
+//-----------------------------------------------------------------------------
+void ColorManager::setDefaultChannelColor (QColor const& color)
+{
+    default_channel_color_ = color;
+    QSettings settings ("SigViewer");
+    settings.beginGroup ("ColorManager");
+    settings.setValue (DEFAULT_CHANNEL_COLOR_SETTING_, color);
+    settings.endGroup ();
+
+    default_channel_color_ = color;
 }
 
 //-----------------------------------------------------------------------------
@@ -85,6 +102,13 @@ void ColorManager::loadSettings()
 
     QSettings settings("SigViewer");
     settings.beginGroup("ColorManager");
+
+    default_channel_color_ = Qt::darkBlue;
+    if (settings.contains (DEFAULT_CHANNEL_COLOR_SETTING_))
+        default_channel_color_ = settings.value (DEFAULT_CHANNEL_COLOR_SETTING_).value<QColor>();
+    else
+        settings.setValue (DEFAULT_CHANNEL_COLOR_SETTING_, default_channel_color_);
+
     int size = settings.beginReadArray("event");
     for (int i = 0; i < size; i++)
     {

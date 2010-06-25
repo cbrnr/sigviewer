@@ -96,7 +96,7 @@ void ChannelSelectionDialog::on_select_all_button__clicked ()
 void ChannelSelectionDialog::on_reset_colors_button__clicked ()
 {
     for (int row = 0; row < ui_.channel_table_->rowCount(); ++row)
-        updateColor (row, ColorManager::DEFAULT_CHANNEL_COLOR_);
+        updateColor (row, color_manager_->getDefaultChannelColor());
 }
 
 
@@ -175,8 +175,17 @@ void ChannelSelectionDialog::on_show_colors_box__toggled (bool on)
 {
     ui_.channel_table_->setColumnHidden (COLOR_INDEX_, !on);
     ui_.reset_colors_button_->setVisible (on);
+    ui_.set_default_color_button_->setVisible (on);
     if (on)
         ui_.channel_table_->horizontalHeader()->setDefaultSectionSize ((ui_.channel_table_->width() - 10) / 2);
+}
+
+//-----------------------------------------------------------------------------
+void ChannelSelectionDialog::on_set_default_color_button__clicked ()
+{
+    QColor new_default_color = QColorDialog::getColor (color_manager_->getDefaultChannelColor());
+    if (new_default_color.isValid())
+        color_manager_->setDefaultChannelColor (new_default_color);
 }
 
 //-----------------------------------------------------------------------------

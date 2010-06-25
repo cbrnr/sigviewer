@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>319</width>
-    <height>329</height>
+    <width>345</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -115,6 +115,12 @@
      </item>
      <item>
       <widget class="QGroupBox" name="show_colors_box_">
+       <property name="minimumSize">
+        <size>
+         <width>162</width>
+         <height>99</height>
+        </size>
+       </property>
        <property name="title">
         <string>Color Options</string>
        </property>
@@ -129,6 +135,13 @@
          <widget class="QPushButton" name="reset_colors_button_">
           <property name="text">
            <string>Reset All Colors</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="set_default_color_button_">
+          <property name="text">
+           <string>Set Default Color</string>
           </property>
          </widget>
         </item>

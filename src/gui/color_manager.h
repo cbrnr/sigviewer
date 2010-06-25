@@ -6,6 +6,7 @@
 
 #include <QMap>
 #include <QColor>
+#include <QPixmap>
 
 namespace BioSig_
 {
@@ -18,12 +19,13 @@ public:
     ~ColorManager ();
 
     static QColor const DEFAULT_EVENT_COLOR_;
-    static QColor const DEFAULT_CHANNEL_COLOR_;
 
     void loadSettings();
     void saveSettings();
 
     QColor getChannelColor (ChannelID channel_id) const;
+    QColor getDefaultChannelColor () const;
+    void setDefaultChannelColor (QColor const& color);
     void setChannelColor (ChannelID channel_id, QColor const& color);
 
     QColor getEventColor (EventType type) const;
@@ -31,6 +33,9 @@ public:
 
     static bool isDark (QColor const& color);
 private:
+    static const char* DEFAULT_CHANNEL_COLOR_SETTING_;
+    QColor default_channel_color_;
+
     typedef QMap<EventType, QColor> EventColorMap;
     typedef QMap<ChannelID, QColor> ChannelColorMap;
 
