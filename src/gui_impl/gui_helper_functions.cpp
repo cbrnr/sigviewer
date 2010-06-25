@@ -130,9 +130,9 @@ std::set<EventType> selectEventTypes (std::set<EventType> const& preselected_typ
                                       event_manager, preselected_type,
                                       color_manager,
                                       enable_color_editing, 0);
-    dialog.exec();
+    int result = dialog.exec();
     selected_types = dialog.getSelectedTypes ();
-    if (enable_color_editing)
+    if (enable_color_editing && result == QDialog::Accepted)
         dialog.storeColors ();
     return selected_types;
 }

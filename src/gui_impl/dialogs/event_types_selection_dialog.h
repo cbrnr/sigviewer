@@ -40,6 +40,8 @@ private slots:
     void on_existing_events_button__toggled (bool checked);
     void on_select_all_button__clicked ();
     void on_unselect_all_button__clicked ();
+    void on_show_colors_box__toggled (bool on);
+
 
 private:
     //-------------------------------------------------------------------------

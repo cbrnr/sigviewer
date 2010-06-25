@@ -217,6 +217,23 @@ void EventTypesSelectionDialog::on_unselect_all_button__clicked ()
     selected_types_.clear ();
 }
 
+//-----------------------------------------------------------------------------
+void EventTypesSelectionDialog::on_show_colors_box__toggled (bool on)
+{
+    ui_.tree_widget_->setColumnHidden (COLOR_COLUMN_INDEX_, !on);
+    ui_.tree_widget_->setColumnHidden (ALPHA_COLUMN_INDEX_, !on);
+    ui_.reset_colors_button_->setVisible (on);
+
+    if (on)
+    {
+        int width = ui_.tree_widget_->width ();
+        ui_.tree_widget_->setColumnWidth (NAME_COLUMN_INDEX_, width / 2);
+        ui_.tree_widget_->setColumnWidth (COLOR_COLUMN_INDEX_, width / 4);
+        ui_.tree_widget_->setColumnWidth (ALPHA_COLUMN_INDEX_, width / 4 - 20);
+    }
+}
+
+
 //-------------------------------------------------------------------------
 void EventTypesSelectionDialog::handleSelected (QTreeWidgetItem* item)
 {
