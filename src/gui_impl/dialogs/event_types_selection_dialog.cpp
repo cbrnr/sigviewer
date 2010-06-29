@@ -50,6 +50,7 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
     {
         ui_.tree_widget_->setColumnHidden (COLOR_COLUMN_INDEX_, true);
         ui_.tree_widget_->setColumnHidden (ALPHA_COLUMN_INDEX_, true);
+        ui_.show_colors_box_->setVisible (false);
     }
 
     ui_.tree_widget_->setColumnHidden (ID_COLUMN_INDEX_, true);

@@ -24,8 +24,8 @@ CONFIG(release) {
     CONFIG -= debug
 }
 
-INCLUDEPATH += ../extern \
-               .
+INCLUDEPATH += ../extern
+
 LIBS += -L../extern \
     -lbiosig \
     -lfftw3
