@@ -24,6 +24,7 @@ class SignalVisualisationModel : public QObject
     Q_OBJECT
     Q_PROPERTY(float pixel_per_sample_ READ getPixelPerSample WRITE setPixelPerSample)
     Q_PROPERTY(float signal_height_ READ getSignalHeight WRITE setSignalHeight)
+    Q_PROPERTY(int sample_position_ READ getShownPosition WRITE goToSample)
 public:
     //-------------------------------------------------------------------------
     /// virtual destructor
@@ -136,7 +137,7 @@ signals:
 protected:
     SignalVisualisationModel (std::set<EventType> const& shown_types);
     virtual void shownEventTypesChangedImpl () = 0;
-    virtual void modeChangedImpl (SignalVisualisationMode) {};
+    virtual void modeChangedImpl (SignalVisualisationMode) {}
 
 private:
     float pixel_per_sample_;
@@ -144,6 +145,7 @@ private:
     EventType event_creation_type_;
     std::set<EventType> shown_event_types_;
     unsigned signal_height_;
+    unsigned sample_position_;
     ScaleMode scale_mode_;
     ChannelID selected_channel_;
     QWidget* info_widget_;

@@ -38,9 +38,12 @@ void animateProperty (QObject* target, QByteArray const& property_name,
                                                                 property_name);
         animation->setDuration (animation_duration);
         animation->setStartValue (start_value);
+        animation->setEasingCurve(QEasingCurve::InOutCubic);
         animation->setEndValue (end_value);
         if (call_back_object && call_back_slot)
+        {
             call_back_object->connect (animation, SIGNAL(finished()), call_back_slot);
+        }
         animation->start (animation->DeleteWhenStopped);
 #endif
     }

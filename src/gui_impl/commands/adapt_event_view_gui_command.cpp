@@ -141,10 +141,11 @@ void AdaptEventViewGuiCommand::gotoAndSelectEvent (bool forward)
         event_id = previous_event_;
 
     QSharedPointer<SignalEvent const> event = event_manager->getEvent (event_id);
-
     if (!event.isNull())
     {
-        currentVisModel()->goToSample (event->getPosition ());
+        GuiHelper::animateProperty(currentVisModel().data(), "sample_position_",
+                                   currentVisModel()->getShownPosition(),
+                                   event->getPosition());
         currentVisModel()->selectEvent (event->getId());
     }
     //setNextAndPreviousEvent ();
