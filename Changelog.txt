@@ -1,3 +1,11 @@
+Version 0.4.1
+(*) Speeded up animations (now duration is settable via the View menu)
+(*) Renamed "Shift Signal Mode" to "View Options Mode"
+(+) Animated event browsing
+(+) Reset event colors
+(+) Setting default channel color
+(B) fixed bugs (3021230, 3020031, 3019593, 3019592)
+
 Version 0.4.0
 (*) Works on Mac OS X (again)
 (+) Animated zoom

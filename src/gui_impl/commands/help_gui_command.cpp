@@ -35,7 +35,7 @@ void HelpGuiCommand::init ()
 void HelpGuiCommand::showAboutDialog ()
 {
     QMessageBox about_message_box (tr("About SigViewer"),
-                                   tr("<b><nobr>SigViewer Version 0.4.0</nobr></b><br>\
+                                   tr("<b><nobr>SigViewer Version 0.4.1</nobr></b><br>\
                                        <br>\
                                        Christoph Eibel, Thomas Brunner, Clemens Brunner, Alois Schl&ouml;gl, Oliver Terbu<br>\
                                        <br>\
