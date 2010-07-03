@@ -235,6 +235,33 @@ void EventTypesSelectionDialog::on_show_colors_box__toggled (bool on)
 }
 
 
+//-----------------------------------------------------------------------------
+void EventTypesSelectionDialog::on_reset_colors_button__clicked ()
+{
+    QColor color = color_manager_->DEFAULT_EVENT_COLOR_;
+    color.setAlpha (255);
+
+    QTreeWidgetItemIterator color_iterator (ui_.tree_widget_, QTreeWidgetItemIterator::NoChildren);
+    while (*color_iterator)
+    {
+        (*color_iterator)->setBackgroundColor (COLOR_COLUMN_INDEX_, color);
+        (*color_iterator)->setTextColor (COLOR_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
+        (*color_iterator)->setText (COLOR_COLUMN_INDEX_, color.name());
+        ++color_iterator;
+    }
+    color = color_manager_->DEFAULT_EVENT_COLOR_;
+
+    QTreeWidgetItemIterator alpha_iterator (ui_.tree_widget_, QTreeWidgetItemIterator::NoChildren);
+    while (*alpha_iterator)
+    {
+        (*alpha_iterator)->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
+        (*alpha_iterator)->setTextColor(ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
+        (*alpha_iterator)->setTextAlignment(ALPHA_COLUMN_INDEX_, Qt::AlignHCenter);
+        (*alpha_iterator)->setText(ALPHA_COLUMN_INDEX_, QString("%1").arg(color.alpha()));
+        ++alpha_iterator;
+    }
+}
+
 //-------------------------------------------------------------------------
 void EventTypesSelectionDialog::handleSelected (QTreeWidgetItem* item)
 {

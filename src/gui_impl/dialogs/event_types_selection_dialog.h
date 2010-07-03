@@ -41,6 +41,7 @@ private slots:
     void on_select_all_button__clicked ();
     void on_unselect_all_button__clicked ();
     void on_show_colors_box__toggled (bool on);
+    void on_reset_colors_button__clicked ();
 
 
 private:
