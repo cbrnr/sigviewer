@@ -25,6 +25,7 @@ CONFIG(release) {
 }
 
 INCLUDEPATH += ../extern
+INCLUDEPATH += .
 
 LIBS += -L../extern \
     -lbiosig \
