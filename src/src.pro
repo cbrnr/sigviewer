@@ -12,6 +12,10 @@ RCC_DIR = ../tmp/release
 UI_DIR = ../tmp/release
 DEFINES += QT_NO_DEBUG_OUTPUT
 
+CONFIG(release) {
+    CONFIG -= debug
+}
+
 CONFIG(debug) {
     OBJECTS_DIR = ../tmp/debug
     MOC_DIR = ../tmp/debug
@@ -20,14 +24,11 @@ CONFIG(debug) {
     DEFINES -= QT_NO_DEBUG_OUTPUT
 }
 
-CONFIG(release) {
-    CONFIG -= debug
-}
-
 INCLUDEPATH += ../extern
 INCLUDEPATH += .
 
 LIBS += -L../extern \
+    -L../../trunk/extern \
     -lbiosig \
     -lfftw3
 win32:LIBS += -lws2_32
