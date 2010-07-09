@@ -1,10 +1,11 @@
 Package: sigviewer
-Version: 0.4.0
+Version: 0.4.1
 Section: science
 Priority: extra
 Architecture: <architecture-via-script>
 Depends: libqtcore4 (>=4.6), libqtgui4 (>=4.6)
-Installed-Size: 1652
+Replaces: sigviewer (<< 0.4.1)
+Installed-Size: <bin-size-via-script>
 Maintainer: Christoph Eibel <christoph.eibel@student.tugraz.at>
 Homepage: http://sigviewer.sourceforge.net
 Description: SigViewer is a powerful viewing application for biosignals, originally designed to display electroencephalographic (EEG) data.

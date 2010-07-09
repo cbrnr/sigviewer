@@ -1,14 +1,11 @@
 #!/bin/sh
 dir=.deb-build
 
-mkdir $dir
-mkdir $dir/sigviewer
-mkdir $dir/sigviewer/usr
-mkdir $dir/sigviewer/usr/bin
-mkdir $dir/sigviewer/usr/share
-mkdir $dir/sigviewer/usr/share/pixmaps
-mkdir $dir/sigviewer/usr/share/applications
-mkdir $dir/sigviewer/DEBIAN
+mkdir -p $dir/sigviewer/usr/bin
+mkdir -p $dir/sigviewer/usr/share
+mkdir -p $dir/sigviewer/usr/share/pixmaps
+mkdir -p $dir/sigviewer/usr/share/applications
+mkdir -p $dir/sigviewer/DEBIAN
 
 cp ./bin/sigviewer ./$dir/sigviewer/usr/bin/
 cp ./deb_building_stuff/sigviewer128.png ./$dir/sigviewer/usr/share/pixmaps/
@@ -16,22 +13,11 @@ cp ./deb_building_stuff/sigviewer.desktop ./$dir/sigviewer/usr/share/application
 
 architecture=`dpkg-architecture -l | grep DEB_BUILD_ARCH= | sed -e '/DEB_BUILD_ARCH=/s/DEB_BUILD_ARCH=//'`
 filesizestring=`ls -s bin/sigviewer`
-filesize=`ls -s bin/sigviewer | sed -e '/$filesizestring/s/bin\/sigviewer//'`
-echo 'filesize = '$filesize
+set -- $filesizestring
+filesize=$1
 
-sed -e '/Architecture: /s/<architecture-via-script>/'$architecture'/' ./deb_building_stuff/deb_control_template >./$dir/sigviewer/DEBIAN/control
+sed -e '/Architecture: /s/<architecture-via-script>/'$architecture'/' ./deb_building_stuff/deb_control_template | sed -e '/Installed-Size: /s/<bin-size-via-script>/'$filesize'/' >./$dir/sigviewer/DEBIAN/control
 
-dpkg -b ./$dir/sigviewer sigviewer_0_4_0_$architecture.deb
+dpkg -b ./$dir/sigviewer sigviewer_0_4_1_$architecture.deb
 
-rm $dir/sigviewer/usr/bin/*
-rm $dir/sigviewer/DEBIAN/*
-rm $dir/sigviewer/usr/share/pixmaps/*
-rm $dir/sigviewer/usr/share/applications/*
-rmdir $dir/sigviewer/usr/share/pixmaps
-rmdir $dir/sigviewer/usr/share/applications
-rmdir $dir/sigviewer/usr/share
-rmdir $dir/sigviewer/usr/bin
-rmdir $dir/sigviewer/usr
-rmdir $dir/sigviewer/DEBIAN
-rmdir $dir/sigviewer
-rmdir $dir
+rm -r $dir
