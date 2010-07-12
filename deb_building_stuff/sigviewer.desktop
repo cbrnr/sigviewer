@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=SigViewer
 Version=1.0
-Comment=Viewer for biosignals such as EEG, EMG, and ECG. http://sigviewer.sourceforge.net/
+Comment=Viewer for biosignals such as EEG, EMG, and ECG. http://sigviewer.sf.net
 Exec=/usr/bin/sigviewer
 Icon=sigviewer128.png
 Type=Application
