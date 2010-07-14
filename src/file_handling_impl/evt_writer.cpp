@@ -69,10 +69,10 @@ QSharedPointer<FileSignalWriter> EVTWriter::createInstance (QString const& new_f
 }
 
 //-----------------------------------------------------------------------------
-QString EVTWriter::save(QSharedPointer<EventManager> event_manager,
-                        QString const&,
+QString EVTWriter::save(QSharedPointer<FileContext const> file_context,
                         std::set<EventType> const& types)
 {
+    QSharedPointer<EventManager const> event_manager = file_context->getEventManager();
     unsigned number_events = event_manager->getNumberOfEvents ();
 
     HDRTYPE* header = constructHDR (0, number_events);

@@ -66,6 +66,12 @@ void FileContext::setMainVisualisationModel (QSharedPointer<SignalVisualisationM
 }
 
 //-----------------------------------------------------------------------------
+QSharedPointer<EventManager const> FileContext::getEventManager () const
+{
+    return event_manager_;
+}
+
+//-----------------------------------------------------------------------------
 QSharedPointer<EventManager> FileContext::getEventManager ()
 {
     return event_manager_;

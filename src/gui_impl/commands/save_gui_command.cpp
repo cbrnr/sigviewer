@@ -168,7 +168,7 @@ void SaveGuiCommand::exportToGDF ()
 
     QSharedPointer<EventManager> event_mgr = currentVisModel()->getEventManager();
 
-    QString error = writer->save (event_mgr, applicationContext()->getCurrentFileContext()->getFilePathAndName(), event_mgr->getAllPossibleEventTypes());
+    QString error = writer->save (applicationContext()->getCurrentFileContext(), event_mgr->getAllPossibleEventTypes());
 
     if (error.size() == 0)
     {
@@ -205,8 +205,7 @@ void SaveGuiCommand::exportEvents ()
 
     qDebug() << new_file_path;
 
-    file_signal_writer->save (currentVisModel()->getEventManager(),
-                              current_file_path, types);
+    file_signal_writer->save (applicationContext()->getCurrentFileContext(), types);
 }
 
 //-------------------------------------------------------------------------

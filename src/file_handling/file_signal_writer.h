@@ -4,9 +4,10 @@
 #define FILE_SIGNAL_WRITER_H
 
 #include "file_signal_reader.h"
+#include "file_context.h"
 #include "event_manager.h"
 #include "channel_manager.h"
-#include "../base/signal_event.h"
+#include "base/signal_event.h"
 
 
 
@@ -30,12 +31,11 @@ public:
     virtual bool supportsSavingEvents () const {return false;}
 
     //-------------------------------------------------------------------------
-    virtual QString saveEventsToSignalFile (QSharedPointer<EventManager>,
+    virtual QString saveEventsToSignalFile (QSharedPointer<EventManager const>,
                                             std::set<EventType> const& types) = 0;
 
     //-------------------------------------------------------------------------
-    virtual QString save (QSharedPointer<EventManager> event_manager,
-                          QString const& source_file_path,
+    virtual QString save (QSharedPointer<FileContext const> file_context,
                           std::set<EventType> const& types) = 0;
 
 protected: 

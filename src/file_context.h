@@ -53,6 +53,9 @@ public:
     void setMainVisualisationModel (QSharedPointer<SignalVisualisationModel> signal_vis_model);
 
     //-------------------------------------------------------------------------
+    QSharedPointer<EventManager const> getEventManager () const;
+
+    //-------------------------------------------------------------------------
     QSharedPointer<EventManager> getEventManager ();
 
     //-------------------------------------------------------------------------

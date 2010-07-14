@@ -78,7 +78,7 @@ bool BioSigWriter::supportsSavingEvents () const
 }
 
 //-----------------------------------------------------------------------------
-QString BioSigWriter::saveEventsToSignalFile (QSharedPointer<EventManager> event_manager,
+QString BioSigWriter::saveEventsToSignalFile (QSharedPointer<EventManager const> event_manager,
                                               std::set<EventType> const& types)
 {
     if (file_formats_support_event_saving_.count(target_type_) == 0)
@@ -126,10 +126,10 @@ QString BioSigWriter::saveEventsToSignalFile (QSharedPointer<EventManager> event
 
 
 //-----------------------------------------------------------------------------
-QString BioSigWriter::save (QSharedPointer<EventManager> event_manager,
-                            QString const& source_file_path,
+QString BioSigWriter::save (QSharedPointer<FileContext const> file_context,
                             std::set<EventType> const& types)
 {
+    QString source_file_path = file_context->getFilePathAndName();
     HDRTYPE* read_header = sopen (source_file_path.toStdString().c_str(), "r", NULL);
     uint32 read_data_size = read_header->NS * read_header->NRec * read_header->SPR;
     biosig_data_type* read_data = new biosig_data_type[read_data_size];
@@ -150,7 +150,7 @@ QString BioSigWriter::save (QSharedPointer<EventManager> event_manager,
     destructHDR (write_header);
 
     if (file_formats_support_event_saving_.count(target_type_))
-        saveEventsToSignalFile (event_manager, types);
+        saveEventsToSignalFile (file_context->getEventManager (), types);
 
     return "";
 }

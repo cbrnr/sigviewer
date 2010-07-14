@@ -27,12 +27,11 @@ public:
     virtual ~EVTWriter();
 
     //-------------------------------------------------------------------------
-    virtual QString saveEventsToSignalFile (QSharedPointer<EventManager>,
+    virtual QString saveEventsToSignalFile (QSharedPointer<EventManager const>,
                                             std::set<EventType> const&) {return "not implemented!";}
 
     //-------------------------------------------------------------------------
-    virtual QString save (QSharedPointer<EventManager> event_manager,
-                          QString const& source_file_path,
+    virtual QString save (QSharedPointer<FileContext const> file_context,
                           std::set<EventType> const& types);
 
 private:
