@@ -6,14 +6,11 @@
 
   ;Name and file
   Name "SigViewer"
-  OutFile "sigviewer-0.4.0-win32.exe"
+  OutFile "sigviewer-0.4.1-win32.exe"
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\SigViewer"
   
-  ;Get installation folder from registry if available
-  InstallDirRegKey HKCU "Software\SigViewer" ""
-
 ;Interface Settings
 
   !define MUI_HEADERIMAGE
@@ -46,8 +43,13 @@ Section "SigViewer" SecSigViewer
   File "bin\QtCore4.dll"
   File "bin\QtGui4.dll"
   
-  ;Store installation folder
-  WriteRegStr HKCU "Software\SigViewer" "" $INSTDIR
+  ;Store uninstall information in Add/Remove Programs
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "DisplayName" "SigViewer"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "DisplayVersion" "0.4.1"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "Publisher" "Graz University of Technology"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "DisplayIcon" "$\"$INSTDIR\sigviewer.exe$\""
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "EstimatedSize" "15000"
   
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -96,6 +98,6 @@ Section "Uninstall"
   
   RMDir /r $SMPROGRAMS\SigViewer
 
-  DeleteRegKey /ifempty HKCU "Software\SigViewer"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer"
 
 SectionEnd
