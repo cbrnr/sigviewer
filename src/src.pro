@@ -1,36 +1,38 @@
 TEMPLATE = app
-DESTDIR = ../bin
+DESTDIR = $$_PRO_FILE_PWD_/../bin
 TARGET = sigviewer
+CONFIG(debug, debug|release) {
+    message(DEBUG)
+    TARGET = sigviewer_debug
+    DEFINES -= QT_NO_DEBUG_OUTPUT
+    OBJECTS_DIR = $$_PRO_FILE_PWD_/../tmp/debug
+    MOC_DIR = $$_PRO_FILE_PWD_/../tmp/debug
+    RCC_DIR = $$_PRO_FILE_PWD_/../tmp/debug
+    UI_DIR = $$_PRO_FILE_PWD_/../tmp/debug
+}
+CONFIG(release, debug|release) {
+    message(RELEASE)
+    TARGET = sigviewer
+    DEFINES += QT_NO_DEBUG_OUTPUT
+    OBJECTS_DIR = $$_PRO_FILE_PWD_/../tmp/release
+    MOC_DIR = $$_PRO_FILE_PWD_/../tmp/release
+    RCC_DIR = $$_PRO_FILE_PWD_/../tmp/release
+    UI_DIR = $$_PRO_FILE_PWD_/../tmp/release
+}
+
 CONFIG += warn_on \
     link_prl \
     qt \
     thread
 macx:QT += opengl
-OBJECTS_DIR = ../tmp/release
-MOC_DIR = ../tmp/release
-RCC_DIR = ../tmp/release
-UI_DIR = ../tmp/release
-DEFINES += QT_NO_DEBUG_OUTPUT
 
-CONFIG(release) {
-    CONFIG -= debug
-}
-
-CONFIG(debug) {
-    OBJECTS_DIR = ../tmp/debug
-    MOC_DIR = ../tmp/debug
-    RCC_DIR = ../tmp/debug
-    UI_DIR = ../tmp/debug
-    DEFINES -= QT_NO_DEBUG_OUTPUT
-}
-
-INCLUDEPATH += ../extern
-INCLUDEPATH += .
-
-LIBS += -L../extern \
-    -L../../trunk/extern \
+INCLUDEPATH += $$_PRO_FILE_PWD_/../extern
+INCLUDEPATH += $$_PRO_FILE_PWD_/.
+LIBS += -L$$_PRO_FILE_PWD_/../extern \
     -lbiosig \
-    -lfftw3
+    -lfftw3 \
+    -lgdf
+
 win32:LIBS += -lws2_32
 
 macx:LIBS += -lz
