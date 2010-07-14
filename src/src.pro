@@ -3,7 +3,7 @@ DESTDIR = $$_PRO_FILE_PWD_/../bin
 TARGET = sigviewer
 CONFIG(debug, debug|release) {
     message(DEBUG)
-    TARGET = sigviewer_debug
+    DESTDIR = $$_PRO_FILE_PWD_/../bin/debug
     DEFINES -= QT_NO_DEBUG_OUTPUT
     OBJECTS_DIR = $$_PRO_FILE_PWD_/../tmp/debug
     MOC_DIR = $$_PRO_FILE_PWD_/../tmp/debug
@@ -12,7 +12,7 @@ CONFIG(debug, debug|release) {
 }
 CONFIG(release, debug|release) {
     message(RELEASE)
-    TARGET = sigviewer
+    DESTDIR = $$_PRO_FILE_PWD_/../bin/release
     DEFINES += QT_NO_DEBUG_OUTPUT
     OBJECTS_DIR = $$_PRO_FILE_PWD_/../tmp/release
     MOC_DIR = $$_PRO_FILE_PWD_/../tmp/release
