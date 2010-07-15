@@ -25,14 +25,13 @@
 
 // sigviewer.cpp
 
-#include "../base/user_types.h"
+#include "../base/sigviewer_user_types.h"
 #include "gui_impl/main_window.h"
 #include "gui_impl/main_window_model_impl.h"
 #include "../application_context_impl.h"
 #include "../file_handling_impl/event_table_file_reader.h"
 #include "../gui/gui_action_factory.h"
 #include "../gui_impl/commands/open_file_gui_command.h"
-#include "../file_handling_impl/init_file_handling_impl.h"
 
 #include <stdlib.h>
 
@@ -100,7 +99,6 @@ int main(int32 argc, char* argv[])
     {
         qDebug () << "Starting SigViewer... (compiled with " << __GNUC__ << "." << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << ")";
         QApplication application(argc,argv);
-        initFileHandlingImpl ();
         QTranslator qt_translator(0);
         qt_translator.load(QString("qt_") + QLocale::languageToString(QLocale::c().language()) +
                            QString(getenv("QTDIR")) + "/translations");

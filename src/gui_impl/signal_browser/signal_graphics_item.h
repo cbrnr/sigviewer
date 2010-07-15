@@ -1,7 +1,7 @@
 #ifndef SIGNALGRAPHICSITEM_H
 #define SIGNALGRAPHICSITEM_H
 
-#include "../../base/user_types.h"
+#include "../../base/sigviewer_user_types.h"
 #include "../../command_executer.h"
 #include "../../file_handling/event_manager.h"
 #include "../../file_handling/channel_manager.h"

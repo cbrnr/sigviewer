@@ -3,7 +3,7 @@
 #ifndef SIGNAL_EVENT_H
 #define SIGNAL_EVENT_H
 
-#include "user_types.h"
+#include "sigviewer_user_types.h"
 
 namespace BioSig_
 {

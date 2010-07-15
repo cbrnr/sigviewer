@@ -7,10 +7,11 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-class GDFWriter : public FileSignalWriter
+class GDFFileSignalWriter : public FileSignalWriter
 {
 public:
-    GDFWriter();
+    //-------------------------------------------------------------------------
+    GDFFileSignalWriter ();
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<FileSignalWriter> createInstance (QString const& file_path);
@@ -23,11 +24,13 @@ public:
                                             std::set<EventType> const& types);
 
     //-------------------------------------------------------------------------
-    virtual QString save (QSharedPointer<EventManager> event_manager,
-                          QString const& source_file_path,
+    virtual QString save (QSharedPointer<FileContext const> file_context,
                           std::set<EventType> const& types);
 private:
-    Q_DISABLE_COPY(GDFWriter)
+    GDFFileSignalWriter (QString const& file_path);
+
+    QString new_file_path_;
+    Q_DISABLE_COPY(GDFFileSignalWriter)
 };
 
 }

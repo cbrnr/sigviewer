@@ -1,7 +1,7 @@
 #ifndef SINUS_DUMMY_READER_H
 #define SINUS_DUMMY_READER_H
 
-#include "../file_handling/file_signal_reader.h"
+#include "file_handling/file_signal_reader.h"
 #include "base/data_block.h"
 
 #include <QMap>
@@ -13,7 +13,6 @@ class SinusDummyReader : public FileSignalReader
 {
 public:
     SinusDummyReader ();
-    SinusDummyReader (bool prototype_instance);
 
     virtual ~SinusDummyReader();
 

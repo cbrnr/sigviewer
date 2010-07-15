@@ -1,7 +1,7 @@
 #ifndef MAIN_WINDOW_MODEL_IMPL_H
 #define MAIN_WINDOW_MODEL_IMPL_H
 
-#include "base/user_types.h"
+#include "base/sigviewer_user_types.h"
 #include "file_context.h"
 #include "tab_context.h"
 #include "file_handling/event_manager.h"

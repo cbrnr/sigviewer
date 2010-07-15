@@ -1,7 +1,7 @@
 #ifndef SELECT_SHOWN_CHANNELS_DIALOG_H
 #define SELECT_SHOWN_CHANNELS_DIALOG_H
 
-#include "../base/user_types.h"
+#include "../base/sigviewer_user_types.h"
 #include "../file_handling/channel_manager.h"
 
 #include <QDialog>

@@ -3,7 +3,7 @@
 #ifndef EVENT_TABLE_FILE_READER
 #define EVENT_TABLE_FILE_READER
 
-#include "../base/user_types.h"
+#include "../base/sigviewer_user_types.h"
 
 #include <QStringList>
 #include <QMap>

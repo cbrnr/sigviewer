@@ -2,7 +2,7 @@
 #ifndef SIGNAL_BROWSER_VIEW_H
 #define SIGNAL_BROWSER_VIEW_H
 
-#include "../../base/user_types.h"
+#include "../../base/sigviewer_user_types.h"
 #include "../../command_executer.h"
 #include "../../gui/signal_visualisation_model.h"
 #include "../../gui/signal_visualisation_view.h"

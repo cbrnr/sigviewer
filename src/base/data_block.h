@@ -1,7 +1,7 @@
 #ifndef DATA_BLOCK_H
 #define DATA_BLOCK_H
 
-#include "user_types.h"
+#include "sigviewer_user_types.h"
 
 #include <list>
 #include <vector>

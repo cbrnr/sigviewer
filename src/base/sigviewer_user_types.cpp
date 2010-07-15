@@ -1,6 +1,6 @@
 // user_types.cpp
 
-#include "user_types.h"
+#include "sigviewer_user_types.h"
 
 #include <stdlib.h>
 

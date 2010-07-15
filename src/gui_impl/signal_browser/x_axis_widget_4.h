@@ -1,7 +1,7 @@
 #ifndef X_AXIS_WIDGET_H
 #define X_AXIS_WIDGET_H
 
-#include "../../base/user_types.h"
+#include "../../base/sigviewer_user_types.h"
 
 #include <QWidget>
 

@@ -28,7 +28,7 @@
 #ifndef SIGNAL_CHANNEL_H
 #define SIGNAL_CHANNEL_H
 
-#include "user_types.h"
+#include "sigviewer_user_types.h"
 #include "../../extern/biosig.h"
 
 #include <QString>

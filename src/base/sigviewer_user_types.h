@@ -24,10 +24,13 @@
 */
 
 
-// user_types.h
+// sigviewer_user_types.h
 
-#ifndef USER_TYPES_H
-#define USER_TYPES_H
+#ifndef SIGVIEWER_USER_TYPES_H
+#define SIGVIEWER_USER_TYPES_H
+
+namespace BioSig_
+{
 
 enum ScaleMode
 {
@@ -52,9 +55,14 @@ typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 #endif
 
+}
+
 #ifdef __GNUG__
 #include <inttypes.h>
 #endif
+
+namespace BioSig_
+{
 
 typedef int8_t   int8;
 typedef uint8_t  uint8;
@@ -75,4 +83,6 @@ const ChannelID UNDEFINED_CHANNEL = -1;
 const EventID UNDEFINED_EVENT_ID = -1;
 const EventType UNDEFINED_EVENT_TYPE = -1;
 
-#endif
+}
+
+#endif // SIGVIEWER_USER_TYPES_H

@@ -1,7 +1,7 @@
 #ifndef CHANNEL_MANAGER_INTERFACE_H
 #define CHANNEL_MANAGER_INTERFACE_H
 
-#include "../base/user_types.h"
+#include "../base/sigviewer_user_types.h"
 #include "../base/data_block.h"
 
 #include <QSharedPointer>

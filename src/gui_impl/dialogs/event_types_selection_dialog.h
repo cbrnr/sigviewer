@@ -1,7 +1,7 @@
 #ifndef EVENT_TYPES_SELECTION_DIALOG_H
 #define EVENT_TYPES_SELECTION_DIALOG_H
 
-#include "../../base/user_types.h"
+#include "../../base/sigviewer_user_types.h"
 #include "../../file_handling/event_manager.h"
 #include "../../gui/color_manager.h"
 #include "ui_event_type_selection_dialog.h"

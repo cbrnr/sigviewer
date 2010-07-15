@@ -1,5 +1,5 @@
 #include "sinus_dummy_reader.h"
-#include "../file_handling/file_signal_reader_factory.h"
+#include "file_handler_factory_registrator.h"
 #include "sinus_dummy_header.h"
 #include "base/signal_channel.h"
 
@@ -13,6 +13,10 @@ using namespace std;
 namespace BioSig_
 {
 
+//-----------------------------------------------------------------------------
+FILE_SIGNAL_READER_REGISTRATION(sinusdummy, SinusDummyReader);
+
+//-----------------------------------------------------------------------------
 SinusDummyReader::SinusDummyReader ()
 {
     header_ = QSharedPointer<BasicHeader> (new SinusDummyHeader);
@@ -57,14 +61,6 @@ SinusDummyReader::SinusDummyReader ()
     header_->setVersion(QObject::tr("2"));
 
 
-}
-
-SinusDummyReader::SinusDummyReader (bool)
-{
-    if (!QApplication::arguments().contains("-test"))
-        return;
-    qDebug () << "register SinusDummyReader";
-    FileSignalReaderFactory::getInstance()->registerHandler ("sinusdummy", QSharedPointer<SinusDummyReader>(new SinusDummyReader ()));
 }
 
 SinusDummyReader::~SinusDummyReader()

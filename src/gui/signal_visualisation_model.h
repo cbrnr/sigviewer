@@ -1,7 +1,7 @@
 #ifndef SIGNAL_VISUALISATION_MODEL_H
 #define SIGNAL_VISUALISATION_MODEL_H
 
-#include "../base/user_types.h"
+#include "../base/sigviewer_user_types.h"
 #include "../base/signal_event.h"
 #include "../file_handling/channel_manager.h"
 #include "../file_handling/event_manager.h"

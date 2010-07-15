@@ -3,7 +3,7 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include "base/user_types.h"
+#include "base/sigviewer_user_types.h"
 
 #include <QMainWindow>
 #include <QIcon>

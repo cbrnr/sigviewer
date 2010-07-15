@@ -1,7 +1,7 @@
 #ifndef EVENT_TIME_SELECTION_DIALOG_H
 #define EVENT_TIME_SELECTION_DIALOG_H
 
-#include "../../base/user_types.h"
+#include "../../base/sigviewer_user_types.h"
 #include "../../file_handling/event_manager.h"
 #include "../../file_handling/channel_manager.h"
 #include "ui_event_time_selection_dialog.h"

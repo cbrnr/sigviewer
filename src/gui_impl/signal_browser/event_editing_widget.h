@@ -1,7 +1,7 @@
 #ifndef EVENT_EDITING_WIDGET_H
 #define EVENT_EDITING_WIDGET_H
 
-#include "../../base/user_types.h"
+#include "../../base/sigviewer_user_types.h"
 #include "../../file_handling/event_manager.h"
 #include "../../command_executer.h"
 #include "ui_event_editing_widget.h"

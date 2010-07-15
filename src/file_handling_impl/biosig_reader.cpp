@@ -26,10 +26,10 @@
 
 #include "biosig_reader.h"
 #include "biosig_basic_header.h"
-#include "../file_handling/file_signal_reader_factory.h"
-#include "../gui/progress_bar.h"
+#include "file_handler_factory_registrator.h"
+#include "gui/progress_bar.h"
 
-#include "../../extern/biosig.h"
+#include "biosig.h"
 
 #include <QTextStream>
 #include <QTranslator>
@@ -46,7 +46,19 @@ using namespace std;
 namespace BioSig_
 {
 
-BioSigReader BioSigReader::prototype_instance_ (true);
+//-----------------------------------------------------------------------------
+FILE_SIGNAL_READER_REGISTRATION(gdf, BioSigReader);
+FILE_SIGNAL_READER_REGISTRATION(evt, BioSigReader);
+FILE_SIGNAL_READER_REGISTRATION(bdf, BioSigReader);
+FILE_SIGNAL_READER_REGISTRATION(bkr, BioSigReader);
+FILE_SIGNAL_READER_REGISTRATION(cnt, BioSigReader);
+FILE_SIGNAL_READER_REGISTRATION(edf, BioSigReader);
+FILE_SIGNAL_READER_REGISTRATION(eeg, BioSigReader);
+
+FILE_SIGNAL_READER_REGISTRATION(acq, BioSigReader);
+FILE_SIGNAL_READER_REGISTRATION(ahdr, BioSigReader);
+FILE_SIGNAL_READER_REGISTRATION(vhdr, BioSigReader);
+FILE_SIGNAL_READER_REGISTRATION(scp, BioSigReader);
 
 //-----------------------------------------------------------------------------
 BioSigReader::BioSigReader() :
@@ -58,30 +70,6 @@ BioSigReader::BioSigReader() :
     qDebug () << "Constructed BioSigReader";
     // nothing to do here
 }
-
-//-----------------------------------------------------------------------------
-BioSigReader::BioSigReader (bool) :
-       basic_header_ (0),
-       biosig_header_ (0),
-       buffered_all_channels_ (false)
-{
-    qDebug () << "BioSigReader constructing prototypes";
-    FileSignalReaderFactory::getInstance()->registerHandler ("gdf", QSharedPointer<BioSigReader>(new BioSigReader ()));
-    FileSignalReaderFactory::getInstance()->registerHandler ("evt", QSharedPointer<BioSigReader>(new BioSigReader ()));
-    FileSignalReaderFactory::getInstance()->registerHandler ("bdf", QSharedPointer<BioSigReader>(new BioSigReader ()));
-    FileSignalReaderFactory::getInstance()->registerHandler ("bkr", QSharedPointer<BioSigReader>(new BioSigReader ()));
-    FileSignalReaderFactory::getInstance()->registerHandler ("cnt", QSharedPointer<BioSigReader>(new BioSigReader ()));
-    FileSignalReaderFactory::getInstance()->registerHandler ("edf", QSharedPointer<BioSigReader>(new BioSigReader ()));
-    FileSignalReaderFactory::getInstance()->registerHandler ("eeg", QSharedPointer<BioSigReader>(new BioSigReader ()));
-
-    FileSignalReaderFactory::getInstance()->registerHandler ("acq", QSharedPointer<BioSigReader>(new BioSigReader ()));	// Biopac
-    FileSignalReaderFactory::getInstance()->registerHandler ("ahdr", QSharedPointer<BioSigReader>(new BioSigReader ()));	// BrainVision file format
-    FileSignalReaderFactory::getInstance()->registerHandler ("vhdr", QSharedPointer<BioSigReader>(new BioSigReader ()));	// BrainVision file format
-    FileSignalReaderFactory::getInstance()->registerHandler ("scp", QSharedPointer<BioSigReader>(new BioSigReader ()));	// SCP-ECG: EN1064, ISO 11073-91064
-
-    FileSignalReaderFactory::getInstance()->registerDefaultHandler (QSharedPointer<BioSigReader>(new BioSigReader ()));
-}
-
 
 //-----------------------------------------------------------------------------
 BioSigReader::~BioSigReader()

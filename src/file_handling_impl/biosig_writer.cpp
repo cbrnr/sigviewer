@@ -25,7 +25,7 @@
 
 
 #include "biosig_writer.h"
-#include "../file_handling/file_signal_writer_factory.h"
+#include "file_handler_factory_registrator.h"
 
 #include <QFile>
 #include <QMutexLocker>
@@ -35,22 +35,14 @@
 namespace BioSig_
 {
 
-//-----------------------------------------------------------------------------
-BioSigWriter BioSigWriter::prototype_instance_ (true);
-
+FILE_SIGNAL_WRITER_REGISTRATION(gdf, BioSigWriter);
 
 //-----------------------------------------------------------------------------
-BioSigWriter::BioSigWriter(FileFormat target_type)
- : target_type_ (target_type)
+BioSigWriter::BioSigWriter ()
+ : target_type_ (GDF)
 {
     file_formats_support_event_saving_.insert(GDF1);
     file_formats_support_event_saving_.insert(GDF);
-}
-
-//-----------------------------------------------------------------------------
-BioSigWriter::BioSigWriter (bool)
-{
-    FileSignalWriterFactory::getInstance()->registerHandler("gdf", QSharedPointer<BioSigWriter>(new BioSigWriter (GDF)));
 }
 
 //-----------------------------------------------------------------------------
@@ -66,7 +58,7 @@ BioSigWriter::BioSigWriter (FileFormat target_type, QString new_file_path) :
 QSharedPointer<FileSignalWriter> BioSigWriter::createInstance (QString const&
                                                                file_path)
 {
-    QSharedPointer<BioSigWriter> writer (new BioSigWriter (target_type_));
+    QSharedPointer<BioSigWriter> writer (new BioSigWriter);
     writer->new_file_path_ = file_path;
     return writer;
 }

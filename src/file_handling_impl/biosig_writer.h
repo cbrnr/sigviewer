@@ -12,14 +12,12 @@
 namespace BioSig_ 
 {
 
+//-----------------------------------------------------------------------------
 class BioSigWriter : public FileSignalWriter
 {
 public:
     //-------------------------------------------------------------------------
-    BioSigWriter (FileFormat target_type);
-
-    //-------------------------------------------------------------------------
-    BioSigWriter (bool prototype_instance);
+    BioSigWriter ();
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<FileSignalWriter> createInstance (QString const& file_path);
@@ -41,8 +39,6 @@ public:
 private:
     //-------------------------------------------------------------------------
     BioSigWriter (FileFormat target_type, QString new_file_path);
-
-    static BioSigWriter prototype_instance_;
 
     FileFormat target_type_;
     QString new_file_path_;

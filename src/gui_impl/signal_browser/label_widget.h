@@ -1,7 +1,7 @@
 #ifndef LABEL_WIDGET_H
 #define LABEL_WIDGET_H
 
-#include "../../base/user_types.h"
+#include "../../base/sigviewer_user_types.h"
 #include "signal_browser_model_4.h"
 
 #include <QMap>

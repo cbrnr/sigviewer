@@ -14,7 +14,6 @@ class BioSigReader : public FileSignalReader
 {
 public:
     BioSigReader ();
-    BioSigReader (bool prototype_instance);
 
     virtual ~BioSigReader();
 
@@ -41,9 +40,6 @@ private:
 
     //-------------------------------------------------------------------------
     void bufferAllEvents () const;
-
-    //-------------------------------------------------------------------------
-    static BioSigReader prototype_instance_;
 
     // not allowed
     BioSigReader(const BioSigReader& src);
