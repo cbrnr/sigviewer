@@ -30,8 +30,8 @@ INCLUDEPATH += $$_PRO_FILE_PWD_/../extern
 INCLUDEPATH += $$_PRO_FILE_PWD_/.
 LIBS += -L$$_PRO_FILE_PWD_/../extern \
     -lbiosig \
-    -lfftw3 #\
-    #-lgdf
+    -lfftw3 \
+    -lgdf
 
 win32:LIBS += -lws2_32
 

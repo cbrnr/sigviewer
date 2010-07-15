@@ -59,6 +59,9 @@ public:
     QSharedPointer<EventManager> getEventManager ();
 
     //-------------------------------------------------------------------------
+    QSharedPointer<ChannelManager const> getChannelManager () const;
+
+    //-------------------------------------------------------------------------
     QSharedPointer<ChannelManager> getChannelManager ();
 
     //-------------------------------------------------------------------------

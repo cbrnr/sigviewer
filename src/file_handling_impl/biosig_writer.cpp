@@ -35,7 +35,7 @@
 namespace BioSig_
 {
 
-FILE_SIGNAL_WRITER_REGISTRATION(gdf, BioSigWriter);
+//FILE_SIGNAL_WRITER_REGISTRATION(gdf, BioSigWriter);
 
 //-----------------------------------------------------------------------------
 BioSigWriter::BioSigWriter ()

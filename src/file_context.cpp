@@ -78,6 +78,12 @@ QSharedPointer<EventManager> FileContext::getEventManager ()
 }
 
 //-----------------------------------------------------------------------------
+QSharedPointer<ChannelManager const> FileContext::getChannelManager () const
+{
+    return channel_manager_;
+}
+
+//-----------------------------------------------------------------------------
 QSharedPointer<ChannelManager> FileContext::getChannelManager ()
 {
     return channel_manager_;
