@@ -47,51 +47,6 @@
 
 using namespace BioSig_;
 
-void myMessageOutput( QtMsgType type, const char* msg )
-{
-    static bool first_call = true;
-    static bool log_file_open = false;
-    static QFile log_file( "sigviewer.log" );
-    static QTextStream log_file_text_stream;
-    if ( first_call )
-    {
-        first_call = false;
-        log_file_open = log_file.open( QFile::WriteOnly );
-        if ( log_file_open )
-        {
-            log_file_text_stream.setDevice( &log_file );
-        }
-    }
-
-    if ( log_file_open )
-    {
-        switch ( type ) {
-        case QtDebugMsg:
-            log_file_text_stream << "Debug: " << msg << "\n";
-            break;
-        case QtWarningMsg:
-            log_file_text_stream << "Warning: " << msg << "\n";
-            break;
-        case QtCriticalMsg:
-            log_file_text_stream << "Critical: " << msg << "\n";
-            break;
-        case QtFatalMsg:
-            log_file_text_stream << "Fatal: " << msg << "\n";
-            abort();
-        }
-        log_file_text_stream.flush();
-    }
-}
-
-void removeLogFile()
-{
-    QFile log_file( "sigviewer.log" );
-    if ( log_file.exists() )
-    {
-        log_file.remove();
-    }
-}
-
 // main
 int main(int32 argc, char* argv[])
 {
@@ -99,15 +54,6 @@ int main(int32 argc, char* argv[])
     {
         qDebug () << "Starting SigViewer... (compiled with " << __GNUC__ << "." << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << ")";
         QApplication application(argc,argv);
-        QTranslator qt_translator(0);
-        qt_translator.load(QString("qt_") + QLocale::languageToString(QLocale::c().language()) +
-                           QString(getenv("QTDIR")) + "/translations");
-        application.installTranslator(&qt_translator);
-
-        QTranslator sigviewer_translator(0);
-        sigviewer_translator.load(QString("sigviewer_") + QLocale::languageToString(QLocale::c().language()),
-                                  application.applicationDirPath());
-        application.installTranslator(&sigviewer_translator);
 
         GuiActionFactory::getInstance()->initAllCommands ();
         ApplicationContextImpl::init();

@@ -35,6 +35,13 @@ public:
                                             std::set<EventType> const& types) = 0;
 
     //-------------------------------------------------------------------------
+    virtual QString save (QSharedPointer<FileContext const> file_context)
+    {
+        QSharedPointer<EventManager const> event_manager = file_context->getEventManager();
+        return save (file_context, event_manager->getAllPossibleEventTypes ());
+    }
+
+    //-------------------------------------------------------------------------
     virtual QString save (QSharedPointer<FileContext const> file_context,
                           std::set<EventType> const& types) = 0;
 

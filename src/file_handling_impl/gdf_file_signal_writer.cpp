@@ -34,6 +34,8 @@ QSharedPointer<FileSignalWriter> GDFFileSignalWriter::createInstance (QString co
 QString GDFFileSignalWriter::saveEventsToSignalFile (QSharedPointer<EventManager const>,
                                         std::set<EventType> const&)
 {
+
+
     return "NOT IMPLEMENTED YET!!!";
 }
 
@@ -60,7 +62,7 @@ QString GDFFileSignalWriter::save (QSharedPointer<FileContext const> file_contex
         writer.getSignalHeader()->digmin[channel_index] = channel_manager->getMinValue (channel_index);
         writer.getSignalHeader()->digmax[channel_index] = channel_manager->getMaxValue (channel_index);
         QString label = channel_manager->getChannelLabel (channel_index);
-        for (unsigned label_character_index = 0; label_character_index < 16 && label_character_index < label.size(); label_character_index++)
+        for (int label_character_index = 0; label_character_index < 16 && label_character_index < label.size(); label_character_index++)
             writer.getSignalHeader()->label[channel_index][label_character_index] = label.at(label_character_index).toAscii();
     }
 

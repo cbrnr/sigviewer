@@ -50,12 +50,17 @@ include(file_handling/file_handling.pri)
 include(gui/gui.pri)
 include(gui_impl/gui_impl.pri)
 include(editing_commands/editing_commands.pri)
+#include(console/console.pri)
+#include(console_impl/console_impl.pri)
+include(commands/commands.pri)
 include(tests/tests.pri)
 HEADERS += application_context_impl.h \
     file_context.h \
     tab_context.h \
-    command_executer.h
+    command_executer.h \
+    main/command_line_interpreter.h
 SOURCES += main/sigviewer.cpp \
     application_context_impl.cpp \
     file_context.cpp \
-    tab_context.cpp
+    tab_context.cpp \
+    main/command_line_interpreter.cpp
