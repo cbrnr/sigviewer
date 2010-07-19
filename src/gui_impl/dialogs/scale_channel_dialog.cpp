@@ -71,6 +71,8 @@ void ScaleChannelDialog::on_channels__currentIndexChanged (int index)
     }
     ui_.upper_spinbox_->setValue (upper_value);
     ui_.lower_spinbox_->setValue (lower_value);
+    ui_.upper_spinbox_->setSuffix (QString(" ") + channel_manager_->getChannelYUnitString (selected_channel_));
+    ui_.lower_spinbox_->setSuffix (QString(" ") + channel_manager_->getChannelYUnitString (selected_channel_));
 }
 
 

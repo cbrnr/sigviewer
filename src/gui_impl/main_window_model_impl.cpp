@@ -8,6 +8,7 @@
 
 #include "gui_impl/signal_browser/signal_browser_model_4.h"
 #include "gui_impl/signal_browser/signal_browser_view.h"
+#include "gui_impl/event_table/event_table_widget.h"
 
 #include <QSettings>
 #include <QDebug>
@@ -230,9 +231,11 @@ int MainWindowModelImpl::createSignalVisualisationImpl (QSharedPointer<ChannelMa
     SignalBrowserView* view = new SignalBrowserView (model, event_manager, tab_context, main_window_->rect(), tab_widget_);
 
     int tab_index = tab_widget_->addTab (view, tr("Signal"));
+    int event_tab_index = tab_widget_->addTab (new EventTableWidget (tab_widget_), tr("Events"));
 
     model->setSignalBrowserView (view);
     browser_models_[tab_index] = model;
+    browser_models_[event_tab_index] = QSharedPointer<SignalBrowserModel>(0);
 
     if (!event_manager.isNull())
     {

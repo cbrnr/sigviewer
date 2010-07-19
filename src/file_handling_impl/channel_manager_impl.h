@@ -30,6 +30,8 @@ public:
     //-------------------------------------------------------------------------
     virtual QString getChannelLabel (ChannelID id) const;
 
+    //-------------------------------------------------------------------------
+    virtual QString getChannelYUnitString (ChannelID id) const;
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<DataBlock const> getData (ChannelID id,

@@ -38,6 +38,16 @@ QString ChannelManagerImpl::getChannelLabel (ChannelID id) const
         return QObject::tr("Invalid Channel");
 }
 
+//-------------------------------------------------------------------------
+QString ChannelManagerImpl::getChannelYUnitString (ChannelID id) const
+{
+    if (id != UNDEFINED_CHANNEL)
+        return reader_->getBasicHeader()->getChannel(id).getPhysicalDim();
+    else
+        return "";
+   // reader_->getBasicHeader()->get
+}
+
 
 //-----------------------------------------------------------------------------
 QSharedPointer<DataBlock const> ChannelManagerImpl::getData (ChannelID id, unsigned start_pos, unsigned length) const

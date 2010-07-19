@@ -18,7 +18,7 @@ public:
     virtual void closeCurrentFileTabs () = 0;
 
     //-------------------------------------------------------------------------
-virtual QSharedPointer<SignalVisualisationModel> createSignalVisualisation (QString const& title, QSharedPointer<ChannelManager> channel_manager) = 0;
+    virtual QSharedPointer<SignalVisualisationModel> createSignalVisualisation (QString const& title, QSharedPointer<ChannelManager> channel_manager) = 0;
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<SignalVisualisationModel> createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx) = 0;

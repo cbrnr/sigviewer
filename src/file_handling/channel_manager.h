@@ -32,6 +32,9 @@ public:
     virtual QString getChannelLabel (ChannelID id) const = 0;
 
     //-------------------------------------------------------------------------
+    virtual QString getChannelYUnitString (ChannelID id) const = 0;
+
+    //-------------------------------------------------------------------------
     /// @param channel_id the id of the channel
     /// @param start_pos starting sample
     /// @param length length given in samples

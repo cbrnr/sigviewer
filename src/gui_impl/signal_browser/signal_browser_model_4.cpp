@@ -34,7 +34,7 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
   color_manager_ (color_manager),
   signal_browser_view_ (0),
   selected_event_item_ (0),
-  prefered_y_grid_pixel_intervall_(25),
+  prefered_y_grid_pixel_intervall_(15),
   x_grid_pixel_intervall_(0),
   show_y_grid_(true)
 {
@@ -83,8 +83,8 @@ void SignalBrowserModel::loadSettings()
 
     settings.beginGroup("SignalBrowserModel");
 
-    prefered_y_grid_pixel_intervall_ = settings.value("prefered_y_grid_pixel_intervall",
-                                                      prefered_y_grid_pixel_intervall_).toInt();
+    //prefered_y_grid_pixel_intervall_ = settings.value("prefered_y_grid_pixel_intervall",
+    //                                                  prefered_y_grid_pixel_intervall_).toInt();
     show_x_grid_ = settings.value("show_x_grid", show_x_grid_).toBool();
     show_y_grid_ = settings.value("show_y_grid", show_y_grid_).toBool();
 
@@ -99,7 +99,7 @@ void SignalBrowserModel::saveSettings()
 
     settings.beginGroup("SignalBrowserModel");
 
-    settings.setValue("prefered_y_grid_pixel_intervall", prefered_y_grid_pixel_intervall_);
+    //settings.setValue("prefered_y_grid_pixel_intervall", prefered_y_grid_pixel_intervall_);
     settings.setValue("show_x_grid", show_x_grid_);
     settings.setValue("show_y_grid", show_y_grid_);
 

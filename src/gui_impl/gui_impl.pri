@@ -14,3 +14,4 @@ FORMS += gui_impl/info_widgets/power_spectrum_info_widget.ui
 include(dialogs/dialogs.pri)
 include(signal_browser/signal_browser.pri)
 include(commands/commands.pri)
+include(event_table/event_table.pri)

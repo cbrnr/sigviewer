@@ -77,6 +77,7 @@ public:
     void setRecordsPosition (uint32 records_position);
     void setSampleRate (float32 sample_rate);
     float32 getSampleRate () const;
+    //QString getPhys
 
     //-------------------------------------------------------------------------
     virtual uint32 getNumberOfSamples () const = 0;

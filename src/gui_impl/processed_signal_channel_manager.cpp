@@ -53,6 +53,12 @@ QString ProcessedSignalChannelManager::getChannelLabel (ChannelID id) const
 }
 
 //-------------------------------------------------------------------------
+QString ProcessedSignalChannelManager::getChannelYUnitString (ChannelID id) const
+{
+    return "";
+}
+
+//-------------------------------------------------------------------------
 QSharedPointer<DataBlock const> ProcessedSignalChannelManager::getData (ChannelID id,
                                                  unsigned start_pos,
                                                  unsigned length) const

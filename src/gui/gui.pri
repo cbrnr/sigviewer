@@ -7,7 +7,9 @@ HEADERS += gui/gui_action_command.h \
     gui/color_manager.h \
     gui/signal_visualisation_view.h \
     gui/application_context.h \
-    gui/progress_bar.h
+    gui/progress_bar.h \
+    gui/event_table.h \
+    gui/event_view.h
 SOURCES += gui/gui_action_command.cpp \
     gui/color_manager.cpp \
     gui/gui_action_factory.cpp \

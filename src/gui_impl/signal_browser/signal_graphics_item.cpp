@@ -166,6 +166,7 @@ void SignalGraphicsItem::scaleImpl (double abs_min, double abs_max)
         y_offset_ = new_y_offset;
         updateYGridIntervall ();
     }
+    update ();
 }
 
 

@@ -154,7 +154,16 @@ void AdaptChannelViewGuiCommand::hide ()
 //-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::autoScaleAll ()
 {
-    currentVisModel()->scaleChannel(UNDEFINED_CHANNEL);
+    ScaleChannelDialog scale_dialog (UNDEFINED_CHANNEL, currentVisModel()->getShownChannels(),
+                                     currentVisModel()->getChannelManager());
+    if (scale_dialog.exec() == QDialog::Accepted)
+    {
+        currentVisModel()->scaleChannel (scale_dialog.channel(),
+                                         scale_dialog.lowerValue(),
+                                         scale_dialog.upperValue());
+    }
+
+    //currentVisModel()->scaleChannel(UNDEFINED_CHANNEL);
 }
 
 //-------------------------------------------------------------------------
