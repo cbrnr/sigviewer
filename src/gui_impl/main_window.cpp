@@ -108,7 +108,7 @@ void MainWindow::initToolBars()
     view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
     view_toolbar_->addAction(action("Events..."));
     view_toolbar_->addAction(action("Channels..."));
-    view_toolbar_->addAction(action("Auto Scale All"));
+    view_toolbar_->addAction(action("Scale All..."));
     view_toolbar_->addAction(action("Zoom In Vertical"));
     view_toolbar_->addAction(action("Zoom Out Vertical"));
     view_toolbar_->addAction(action("Zoom In Horizontal"));

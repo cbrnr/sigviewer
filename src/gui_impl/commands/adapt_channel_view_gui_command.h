@@ -39,7 +39,7 @@ private slots:
     void hide ();
 
     //-------------------------------------------------------------------------
-    void autoScaleAll ();
+    void scaleAll ();
 
     //-------------------------------------------------------------------------
     void setScaleModeZeroCentered ();
@@ -58,7 +58,7 @@ private:
     static QString const CHANGE_COLOR_;
     static QString const SCALE_;
     static QString const HIDE_;
-    static QString const AUTO_SCALE_ALL_;
+    static QString const SCALE_ALL_;
     static QString const SET_AUTO_SCALE_MAX_TO_MAX_;
     static QString const SET_AUTO_SCALE_MIN_TO_MAX_;
     static QString const ANIMATIONS_;

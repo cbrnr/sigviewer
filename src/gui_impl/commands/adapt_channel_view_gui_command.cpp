@@ -14,14 +14,14 @@ QString const AdaptChannelViewGuiCommand::CHANNELS_ = "Channels...";
 QString const AdaptChannelViewGuiCommand::CHANGE_COLOR_ = "Change Color...";
 QString const AdaptChannelViewGuiCommand::SCALE_ = "Scale...";
 QString const AdaptChannelViewGuiCommand::HIDE_ = "Hide Channel";
-QString const AdaptChannelViewGuiCommand::AUTO_SCALE_ALL_ = "Auto Scale All";
+QString const AdaptChannelViewGuiCommand::SCALE_ALL_ = "Scale All...";
 QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MAX_TO_MAX_ = "Zero Line Centered";
 QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MIN_TO_MAX_ = "Zero Line Fitted";
 QString const AdaptChannelViewGuiCommand::ANIMATIONS_ = "Animations";
 QString const AdaptChannelViewGuiCommand::SET_ANIMATION_DURATION_ = "Set Animation Duration";
 QStringList const AdaptChannelViewGuiCommand::ACTIONS_ = QStringList() <<
                                                          AdaptChannelViewGuiCommand::CHANNELS_ <<
-                                                         AdaptChannelViewGuiCommand::AUTO_SCALE_ALL_  <<
+                                                         AdaptChannelViewGuiCommand::SCALE_ALL_  <<
                                                          AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MAX_TO_MAX_ <<
                                                          AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MIN_TO_MAX_ <<
                                                          AdaptChannelViewGuiCommand::CHANGE_COLOR_ <<
@@ -45,9 +45,9 @@ AdaptChannelViewGuiCommand::AdaptChannelViewGuiCommand ()
 void AdaptChannelViewGuiCommand::init ()
 {
     setIcon (CHANNELS_, QIcon(":/images/channels_22x22.png"));
-    setIcon (AUTO_SCALE_ALL_, QIcon(":/images/icons/autoscale.png"));
+    setIcon (SCALE_ALL_, QIcon(":/images/icons/autoscale.png"));
     resetActionTriggerSlot (CHANNELS_, SLOT(selectShownChannels()));
-    resetActionTriggerSlot (AUTO_SCALE_ALL_, SLOT(autoScaleAll()));
+    resetActionTriggerSlot (SCALE_ALL_, SLOT(scaleAll()));
     resetActionTriggerSlot (CHANGE_COLOR_, SLOT(changeColor()));
     resetActionTriggerSlot (SCALE_, SLOT(scale()));
     resetActionTriggerSlot (HIDE_, SLOT(hide()));
@@ -80,10 +80,8 @@ void AdaptChannelViewGuiCommand::selectShownChannels ()
                                                                         "",
                                                                         sv_model);
     if (previous_shown_channels != new_shown_channels)
-    {
         sv_model->setShownChannels (new_shown_channels);
-        sv_model->update ();
-    }
+    sv_model->update ();
 }
 
 
@@ -119,6 +117,7 @@ void AdaptChannelViewGuiCommand::changeColor ()
     {
         color_manager->setChannelColor (channel, color_dialog.selectedColor());
         color_manager->saveSettings ();
+        currentVisModel()->update();
     }
 }
 
@@ -152,7 +151,7 @@ void AdaptChannelViewGuiCommand::hide ()
 }
 
 //-------------------------------------------------------------------------
-void AdaptChannelViewGuiCommand::autoScaleAll ()
+void AdaptChannelViewGuiCommand::scaleAll ()
 {
     ScaleChannelDialog scale_dialog (UNDEFINED_CHANNEL, currentVisModel()->getShownChannels(),
                                      currentVisModel()->getChannelManager());
