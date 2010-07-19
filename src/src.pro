@@ -31,6 +31,7 @@ INCLUDEPATH += $$_PRO_FILE_PWD_/.
 LIBS += -L$$_PRO_FILE_PWD_/../extern \
     -lbiosig \
     -lfftw3 \
+    -lboost_program_options \
     -lgdf
 
 win32:LIBS += -lws2_32
@@ -57,10 +58,8 @@ include(tests/tests.pri)
 HEADERS += application_context_impl.h \
     file_context.h \
     tab_context.h \
-    command_executer.h \
-    main/command_line_interpreter.h
+    command_executer.h
 SOURCES += main/sigviewer.cpp \
     application_context_impl.cpp \
     file_context.cpp \
-    tab_context.cpp \
-    main/command_line_interpreter.cpp
+    tab_context.cpp

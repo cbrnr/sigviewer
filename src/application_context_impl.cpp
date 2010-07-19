@@ -23,13 +23,17 @@ QSharedPointer<ApplicationContextImpl> ApplicationContextImpl::getInstance (bool
 }
 
 //-------------------------------------------------------------------------
-void ApplicationContextImpl::init ()
+void ApplicationContextImpl::init (std::set<ApplicationMode> activated_modes)
 {
     qDebug () << "ApplicationContextImpl::init() instance = " << getInstance();
 
-    getInstance()->color_manager_ = QSharedPointer<ColorManager> (new ColorManager);
-    getInstance()->main_window_model_ = QSharedPointer<MainWindowModel> (new MainWindowModelImpl (getInstance()));
+    getInstance()->activated_modes_ = activated_modes;
     getInstance()->setState (APP_STATE_NO_FILE_OPEN);
+    if (activated_modes.count (APPLICATION_NON_GUI_MODE) == 0)
+    {
+        getInstance()->color_manager_ = QSharedPointer<ColorManager> (new ColorManager);
+        getInstance()->main_window_model_ = QSharedPointer<MainWindowModel> (new MainWindowModelImpl (getInstance()));
+    }
 }
 
 //-------------------------------------------------------------------------
@@ -44,6 +48,12 @@ void ApplicationContextImpl::cleanup ()
 ApplicationContextImpl::~ApplicationContextImpl ()
 {
     qDebug () << "deleting ApplicationContextImpl";
+}
+
+//-------------------------------------------------------------------------
+bool ApplicationContextImpl::modeActivated (ApplicationMode mode) const
+{
+    return activated_modes_.count (mode) > 0;
 }
 
 //-------------------------------------------------------------------------

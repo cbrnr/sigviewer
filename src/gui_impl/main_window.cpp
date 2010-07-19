@@ -52,7 +52,7 @@ namespace BioSig_
 {
 
 //----------------------------------------------------------------------------
-MainWindow::MainWindow ()
+MainWindow::MainWindow (QSharedPointer<ApplicationContext> application_context)
  : QMainWindow(0)
 {
     setWindowTitle (tr("SigViewer"));
@@ -60,7 +60,7 @@ MainWindow::MainWindow ()
     setWindowIcon(QIcon(":images/sigviewer16.png"));
     initStatusBar();
     initToolBars();
-    initMenus();
+    initMenus (application_context);
     setUnifiedTitleAndToolBarOnMac (true);
     QSettings settings ("SigViewer");
     resize (settings.value("MainWindow/size", QSize(800, 600)).toSize());
@@ -153,7 +153,7 @@ void MainWindow::toggleAllToolbars ()
 
 
 //-----------------------------------------------------------------------------
-void MainWindow::initMenus()
+void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_context)
 {
     file_recent_files_menu_ = new QMenu(tr("Open &Recent"), this);
     connect(file_recent_files_menu_, SIGNAL(aboutToShow()),
@@ -231,7 +231,7 @@ void MainWindow::initMenus()
     tools_menu_->addActions(GuiActionFactory::getInstance()->getQActions("Signal Processing"));
 
     help_menu_ = menuBar()->addMenu(tr("&Help"));
-    if (QApplication::arguments().contains ("-test"))
+    if (application_context->modeActivated (APPLICATION_TEST_MODE))
     {
         help_menu_->addAction (action("Run Tests..."));
         help_menu_->addSeparator();

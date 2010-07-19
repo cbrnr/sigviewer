@@ -32,6 +32,7 @@
 #include "../file_handling_impl/event_table_file_reader.h"
 #include "../gui/gui_action_factory.h"
 #include "../gui_impl/commands/open_file_gui_command.h"
+#include "commands/convert_file_command.h"
 
 #include <stdlib.h>
 
@@ -43,34 +44,66 @@
 #include <QTextStream>
 #include <QDebug>
 
+#include <boost/program_options.hpp>
+
 #include <iostream>
+#include <string>
 
 using namespace BioSig_;
+using namespace boost;
 
-// main
-int main(int32 argc, char* argv[])
+
+namespace BioSig_
 {
+
+    //-------------------------------------------------------------------------
+    /// readCommandlineParameters
+    /// @return a map which may contain the following parameter values:
+    ///         "input-file" -> and std::string containing the input file name
+    ///         "test"       -> if test mode is activated
+    ///         "convert-to-gdf" ->
+    program_options::variables_map readCommandlineParameters (int argc, char* argv[]);
+}
+
+//-----------------------------------------------------------------------------
+// main
+int main (int argc, char* argv[])
+{
+    qDebug () << "Starting SigViewer... (compiled with " << __GNUC__ << "."
+              << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << ")";
+
+
+    program_options::variables_map parameter_map = readCommandlineParameters (argc, argv);
+
+
+    QString input_file_name;
+    std::set<ApplicationMode> app_modes;
+    if (parameter_map.count ("help"))
+        return 1;
+    if (parameter_map.count ("input-file"))
+        input_file_name = QString(parameter_map["input-file"].as<std::string>().c_str ());
+    if (parameter_map.count ("test"))
+        app_modes.insert (APPLICATION_TEST_MODE);
+    if (parameter_map.count ("convert-to-gdf"))
+        app_modes.insert (APPLICATION_NON_GUI_MODE);
+
     try
     {
-        qDebug () << "Starting SigViewer... (compiled with " << __GNUC__ << "." << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << ")";
         QApplication application(argc,argv);
 
         GuiActionFactory::getInstance()->initAllCommands ();
-        ApplicationContextImpl::init();
+        ApplicationContextImpl::init (app_modes);
 
-        if (application.arguments().count() > 1)
+        if (app_modes.count (APPLICATION_TEST_MODE))
+            GuiActionFactory::getInstance()->getQAction("Run Tests...")->trigger ();
+        else if (parameter_map.count ("convert-to-gdf"))
         {
-            QString file_argument;
-            QStringList app_args = application.arguments();
-            app_args.pop_front();
-            foreach (QString argument, app_args)
-                if (argument != "-test")
-                    file_argument = argument;
-            if (app_args.contains("-test"))
-                GuiActionFactory::getInstance()->getQAction("Run Tests...")->trigger();
-            else if (file_argument.size())
-                OpenFileGuiCommand::openFile (file_argument);
+            ConvertFileCommand convert_command (input_file_name, parameter_map["convert-to-gdf"].as<std::string>().c_str());
+            convert_command.execute ();
+            return 0;
         }
+        else if (input_file_name.size())
+            OpenFileGuiCommand::openFile (input_file_name);
 
         int result = application.exec();
 
@@ -82,4 +115,31 @@ int main(int32 argc, char* argv[])
         std::cerr << "exception caught: " << e.what() << std::endl;
     }
     return 0;
+}
+
+
+namespace BioSig_
+{
+    //-----------------------------------------------------------------------------
+    program_options::variables_map readCommandlineParameters (int argc, char* argv[])
+    {
+        program_options::options_description desc ("Allowed options");
+        desc.add_options()
+                ("test,t", "run test mode")
+                ("help,h", "produce help message")
+                ("input-file", program_options::value<std::string>(), "input file")
+                ("convert-to-gdf", program_options::value<std::string>(), "output file name")
+        ;
+        program_options::positional_options_description pos_desc;
+        pos_desc.add ("input-file", 1);
+        program_options::variables_map vm;
+        program_options::store (program_options::command_line_parser (argc, argv).options(desc).positional(pos_desc).run(), vm);
+        program_options::notify (vm);
+
+        if (vm.count("help"))
+            std::cout << desc;
+
+        return vm;
+    }
+
 }

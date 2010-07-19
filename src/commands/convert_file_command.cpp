@@ -3,6 +3,7 @@
 #include "open_file_command.h"
 #include "file_handling/file_signal_writer_factory.h"
 #include "application_context_impl.h"
+#include "gui/progress_bar.h"
 
 namespace BioSig_
 {
@@ -14,7 +15,12 @@ QString ConvertFileCommand::execute ()
     open_file_command.execute ();
 
     QSharedPointer<FileSignalWriter> writer = FileSignalWriterFactory::getInstance()->getHandler (destination_file_path_);
-    return writer->save (ApplicationContextImpl::getInstance()->getCurrentFileContext());
+    ProgressBar::instance().initAndShow (ApplicationContextImpl::getInstance()->getCurrentFileContext()->getChannelManager()->getNumberSamples() +
+                              ApplicationContextImpl::getInstance()->getCurrentFileContext()->getEventManager()->getNumberOfEvents(), "Converting");
+    QString result = writer->save (ApplicationContextImpl::getInstance()->getCurrentFileContext());
+    ProgressBar::instance().close ();
+
+    return result;
 }
 
 }

@@ -20,7 +20,7 @@ int const MainWindowModelImpl::NUMBER_RECENT_FILES_ = 8;
 //-----------------------------------------------------------------------------
 MainWindowModelImpl::MainWindowModelImpl (QSharedPointer<ApplicationContext> application_context)
 : application_context_ (application_context),
-  main_window_ (new MainWindow),
+  main_window_ (new MainWindow (application_context)),
   tab_widget_ (0)
 {
     connect (main_window_, SIGNAL(recentFileActivated(QAction*)), SLOT(recentFileActivated(QAction*)));

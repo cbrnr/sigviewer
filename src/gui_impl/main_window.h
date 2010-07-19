@@ -4,8 +4,10 @@
 #define MAIN_WINDOW_H
 
 #include "base/sigviewer_user_types.h"
+#include "gui/application_context.h"
 
 #include <QMainWindow>
+#include <QSharedPointer>
 #include <QIcon>
 
 class QAction;
@@ -22,8 +24,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow ();
-    virtual ~MainWindow () {};
+    MainWindow (QSharedPointer<ApplicationContext> application_context);
+    virtual ~MainWindow () {}
 
     void setStatusBarSignalLength(float64 length);
     void setStatusBarNrChannels(int32 nr_channels);
@@ -52,7 +54,7 @@ private:
 
     void initActions();
     void initToolBars();
-    void initMenus();
+    void initMenus (QSharedPointer<ApplicationContext> application_context);
     void initStatusBar();
 
     QMenu* file_menu_;

@@ -2,6 +2,7 @@
 #include "file_handling/file_signal_writer_factory.h"
 #include "file_handler_factory_registrator.h"
 #include "gdfwriter.h"
+#include "gui/progress_bar.h"
 
 #include <QDebug>
 
@@ -78,13 +79,16 @@ QString GDFFileSignalWriter::save (QSharedPointer<FileContext const> file_contex
 
     try
     {
+        QString progressbar_string = "Writing samples...";
         for (unsigned sample_index = 0; sample_index < channel_manager->getNumberSamples(); sample_index++)
         {
             foreach (ChannelID channel_id, channel_manager->getChannels())
             {
                 writer.addSample (channel_id, (*(channel_manager->getData (channel_id, sample_index, 1)))[0]);
             }
+            ProgressBar::instance().increaseValue (1, progressbar_string);
         }
+        progressbar_string = "Writing events...";
         QSharedPointer<EventManager const> event_manager = file_context->getEventManager();
         if (!event_manager.isNull())
         {
@@ -92,6 +96,7 @@ QString GDFFileSignalWriter::save (QSharedPointer<FileContext const> file_contex
             {
                 QSharedPointer<SignalEvent const> event = event_manager->getEvent(event_id);
                 writer.addEvent (event->getPosition()+1, event->getType(), event->getChannel()+1, event->getDuration());
+                ProgressBar::instance().increaseValue (1, progressbar_string);
             }
         }
     }

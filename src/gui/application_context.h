@@ -11,6 +11,12 @@
 namespace BioSig_
 {
 
+enum ApplicationMode
+{
+    APPLICATION_TEST_MODE,
+    APPLICATION_NON_GUI_MODE
+};
+
 ///----------------------------------------------------------------------------
 /// ApplicationContext
 class ApplicationContext
@@ -18,6 +24,9 @@ class ApplicationContext
 public:
     //-------------------------------------------------------------------------
     virtual ~ApplicationContext () {}
+
+    //-------------------------------------------------------------------------
+    virtual bool modeActivated (ApplicationMode mode) const = 0;
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<FileContext> getCurrentFileContext () = 0;

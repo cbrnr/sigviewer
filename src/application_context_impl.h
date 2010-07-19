@@ -25,7 +25,7 @@ public:
     static QSharedPointer<ApplicationContextImpl> getInstance (bool cleanup = false);
 
     //-------------------------------------------------------------------------
-    static void init ();
+    static void init (std::set<ApplicationMode> activated_modes);
 
     //-------------------------------------------------------------------------
     static void cleanup ();
@@ -33,6 +33,9 @@ public:
     //-------------------------------------------------------------------------
     ApplicationContextImpl () {}
     virtual ~ApplicationContextImpl ();
+
+    //-------------------------------------------------------------------------
+    virtual bool modeActivated (ApplicationMode mode) const;
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<FileContext> getCurrentFileContext ();
@@ -65,6 +68,7 @@ signals:
 
 private:
     void setState (ApplicationState state);
+    std::set<ApplicationMode> activated_modes_;
     QSharedPointer<ColorManager> color_manager_;
     QSharedPointer<MainWindowModel> main_window_model_;
     QSharedPointer<FileContext> current_file_context_;
