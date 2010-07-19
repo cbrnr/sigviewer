@@ -7,6 +7,7 @@
 #include "../file_handling/event_manager.h"
 #include "signal_visualisation_modes.h"
 #include "signal_visualisation_view.h"
+#include "event_view.h"
 
 #include <QObject>
 
@@ -19,7 +20,7 @@ namespace BioSig_
 /// SignalVisualisationModel
 ///
 /// base class for all
-class SignalVisualisationModel : public QObject
+class SignalVisualisationModel : public QObject, public EventView
 {
     Q_OBJECT
     Q_PROPERTY(float pixel_per_sample_ READ getPixelPerSample WRITE setPixelPerSample)
@@ -100,7 +101,7 @@ public:
     virtual EventID getSelectedEvent () const;
 
     //-------------------------------------------------------------------------
-    std::set<EventType> getShownEventTypes () const;
+    virtual std::set<EventType> getShownEventTypes () const;
 
     //-------------------------------------------------------------------------
     virtual void setShownEventTypes (std::set<EventType> const& event_types);
