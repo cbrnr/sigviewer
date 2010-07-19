@@ -13,18 +13,20 @@
 namespace BioSig_
 {
 
-void OpenFileCommand::execute ()
+//-----------------------------------------------------------------------------
+QString OpenFileCommand::execute ()
 {
     QString file_path = QDir::toNativeSeparators (filename_and_path_);
     QSharedPointer<FileSignalReader> file_signal_reader = FileSignalReaderFactory::getInstance()->getHandler (file_path);
     if (file_signal_reader.isNull())
-        return;
+        return QString ("Can't open file ") + file_path;
 
     QSharedPointer<ChannelManager> channel_manager (new ChannelManagerImpl (file_signal_reader));
     QSharedPointer<EventManager> event_manager (new EventManagerImpl (file_signal_reader));
     QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
                                                  channel_manager, file_signal_reader->getBasicHeader()));
     ApplicationContextImpl::getInstance()->addFileContext (file_context);
+    return "";
 }
 
 }

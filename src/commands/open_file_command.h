@@ -14,7 +14,7 @@ public:
           non_gui_mode_ (true)
     {}
 
-    void execute ();
+    QString execute ();
 
 private:
     void openFileInNonGuiMode ();

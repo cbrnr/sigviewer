@@ -12,7 +12,9 @@ namespace BioSig_
 QString ConvertFileCommand::execute ()
 {
     OpenFileCommand open_file_command (source_file_path_);
-    open_file_command.execute ();
+    QString open_error = open_file_command.execute ();
+    if (open_error.size ())
+        return open_error;
 
     QSharedPointer<FileSignalWriter> writer = FileSignalWriterFactory::getInstance()->getHandler (destination_file_path_);
     ProgressBar::instance().initAndShow (ApplicationContextImpl::getInstance()->getCurrentFileContext()->getChannelManager()->getNumberSamples() +

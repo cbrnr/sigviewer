@@ -72,23 +72,21 @@ int main (int argc, char* argv[])
     qDebug () << "Starting SigViewer... (compiled with " << __GNUC__ << "."
               << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << ")";
 
-
-    program_options::variables_map parameter_map = readCommandlineParameters (argc, argv);
-
-
-    QString input_file_name;
-    std::set<ApplicationMode> app_modes;
-    if (parameter_map.count ("help"))
-        return 1;
-    if (parameter_map.count ("input-file"))
-        input_file_name = QString(parameter_map["input-file"].as<std::string>().c_str ());
-    if (parameter_map.count ("test"))
-        app_modes.insert (APPLICATION_TEST_MODE);
-    if (parameter_map.count ("convert-to-gdf"))
-        app_modes.insert (APPLICATION_NON_GUI_MODE);
-
     try
     {
+        program_options::variables_map parameter_map = readCommandlineParameters (argc, argv);
+
+        QString input_file_name;
+        std::set<ApplicationMode> app_modes;
+        if (parameter_map.count ("help"))
+            return 1;
+        if (parameter_map.count ("input-file"))
+            input_file_name = QString(parameter_map["input-file"].as<std::string>().c_str ());
+        if (parameter_map.count ("test"))
+            app_modes.insert (APPLICATION_TEST_MODE);
+        if (parameter_map.count ("convert-to-gdf"))
+            app_modes.insert (APPLICATION_NON_GUI_MODE);
+
         QApplication application(argc,argv);
 
         GuiActionFactory::getInstance()->initAllCommands ();
@@ -98,8 +96,10 @@ int main (int argc, char* argv[])
             GuiActionFactory::getInstance()->getQAction("Run Tests...")->trigger ();
         else if (parameter_map.count ("convert-to-gdf"))
         {
-            ConvertFileCommand convert_command (input_file_name, parameter_map["convert-to-gdf"].as<std::string>().c_str());
-            convert_command.execute ();
+            ConvertFileCommand convert_command (input_file_name, parameter_map["output-file"].as<std::string>().c_str());
+            QString error = convert_command.execute ();
+            if (error.size ())
+                std::cout << error.toStdString() << std::endl;
             return 0;
         }
         else if (input_file_name.size())
@@ -109,6 +109,10 @@ int main (int argc, char* argv[])
 
         ApplicationContextImpl::cleanup();
         return result;
+    }
+    catch (boost::exception&)
+    {
+        return 0;
     }
     catch (std::exception& e)
     {
@@ -128,13 +132,25 @@ namespace BioSig_
                 ("test,t", "run test mode")
                 ("help,h", "produce help message")
                 ("input-file", program_options::value<std::string>(), "input file")
-                ("convert-to-gdf", program_options::value<std::string>(), "output file name")
+                ("convert-to-gdf,c", "converts the input file into gdf and saves it to the file given by the option '-o'")
+                ("output-file,o", program_options::value<std::string>()->default_value("output.gdf"), "output file name for converted files (default is 'output.gdf')")
         ;
-        program_options::positional_options_description pos_desc;
-        pos_desc.add ("input-file", 1);
+
         program_options::variables_map vm;
-        program_options::store (program_options::command_line_parser (argc, argv).options(desc).positional(pos_desc).run(), vm);
-        program_options::notify (vm);
+        try
+        {
+            program_options::positional_options_description pos_desc;
+            pos_desc.add ("input-file", 1);
+
+            program_options::store (program_options::command_line_parser (argc, argv).options(desc).positional(pos_desc).run(), vm);
+            program_options::notify (vm);
+        }
+        catch (boost::exception&)
+        {
+            std::cerr << "Wrong commandline arguments!" << std::endl << std::endl;
+            std::cout << desc;
+            throw;
+        }
 
         if (vm.count("help"))
             std::cout << desc;
