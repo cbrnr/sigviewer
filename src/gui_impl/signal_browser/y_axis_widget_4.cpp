@@ -109,6 +109,18 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
     painter->setClipping (true);
     painter->setClipRect (0, lower_border - 1, width(), upper_border - lower_border + 2);
 
+    painter->drawLine (0, upper_border,
+                       width() - 1, upper_border);
+    painter->drawLine (width () - 5, offset, width () - 1, offset);
+    painter->drawText (0, offset - 20, width () - 10, 40,
+                       Qt::AlignRight | Qt::AlignVCenter,
+                       QString::number (0));
+    if (y_grid_pixel_intervall < 1)
+        return;
+
+    while (y_grid_pixel_intervall < 15)
+        y_grid_pixel_intervall *= 2;
+
     for (float64 value_y = offset;
          value_y < upper_border;
          value_y += y_grid_pixel_intervall)
@@ -133,8 +145,8 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
                              QString::number ((offset-value_y) / y_zoom));
         }
     }
-    painter->drawLine (0, upper_border,
-                      width() - 1, upper_border);
+  //  painter->drawLine (0, upper_border,
+  //                    width() - 1, upper_border);
 }
 
 

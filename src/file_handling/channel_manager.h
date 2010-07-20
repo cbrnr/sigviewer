@@ -52,6 +52,9 @@ public:
     virtual float32 getSampleRate () const = 0;
 
     //-------------------------------------------------------------------------
+    float64 getValueRange (std::set<ChannelID> const& channels) const;
+
+    //-------------------------------------------------------------------------
     float64 getMinValue (std::set<ChannelID> const& channels) const;
 
     //-------------------------------------------------------------------------

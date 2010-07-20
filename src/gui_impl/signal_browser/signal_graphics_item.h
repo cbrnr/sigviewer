@@ -62,7 +62,7 @@ signals:
     void updatedYGrid (ChannelID channel_id);
 
 private:
-    void scaleImpl (double abs_min, double abs_max);
+    void scaleImpl (double min, double max);
 
     virtual void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
     virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );

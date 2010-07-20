@@ -26,6 +26,9 @@ class SignalVisualisationModel : public QObject, public EventView
     Q_PROPERTY(float pixel_per_sample_ READ getPixelPerSample WRITE setPixelPerSample)
     Q_PROPERTY(float signal_height_ READ getSignalHeight WRITE setSignalHeight)
     Q_PROPERTY(int sample_position_ READ getShownPosition WRITE goToSample)
+    Q_PROPERTY(double yGridValueInterval READ getYGridValueInterval WRITE setYGridValueInterval)
+    Q_PROPERTY(int yGridFragmentation READ getYGridFragmentation WRITE setYGridFragmentation)
+   // Q_PROPERTY(bool yGridVisible READ isYGridVisibile WRITE setYGridVisibile)
 public:
     //-------------------------------------------------------------------------
     /// virtual destructor
@@ -122,11 +125,27 @@ public:
     virtual void update () {}
 
     //-------------------------------------------------------------------------
+    virtual double getYGridValueInterval () const = 0;
+
+    //-------------------------------------------------------------------------
+    virtual int getYGridFragmentation () const = 0;
+
+    //-------------------------------------------------------------------------
     virtual SignalVisualisationView const* view () const = 0;
 
     //-------------------------------------------------------------------------
     QWidget* infoWidget ();
 public slots:
+    //-------------------------------------------------------------------------
+    virtual void setYGridValueInterval (double interval) = 0;
+
+    //-------------------------------------------------------------------------
+    virtual void setYGridFragmentation (int fragmentation) = 0;
+
+    //-------------------------------------------------------------------------
+    // virtual void setYGridValueInterval (double interval, ChannelID channel_id) = 0;
+
+    //-------------------------------------------------------------------------
     void setActualEventCreationType (EventType type);
 
 signals:

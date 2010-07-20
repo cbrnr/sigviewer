@@ -91,12 +91,25 @@ public:
     void zoomInAll();
     void zoomOutAll();
 
-    int32 getPreferedYGirdPixelIntervall();
+    //-------------------------------------------------------------------------
+    virtual double getYGridValueInterval () const;
+
+    //-------------------------------------------------------------------------
+    virtual int getYGridFragmentation () const;
 
     EventGraphicsItem* getSelectedEventItem();
     void updateEventItems ();
 
 public slots:
+    //-------------------------------------------------------------------------
+    virtual void setYGridValueInterval (double interval);
+
+    //-------------------------------------------------------------------------
+    virtual void setYGridFragmentation (int fragmentation);
+
+    //-------------------------------------------------------------------------
+    //virtual void setYGridValueInterval (double interval, ChannelID channel_id);
+
     //-------------------------------------------------------------------------
     /// adds the given event
     virtual void addEventItem (QSharedPointer<SignalEvent const> event);
@@ -148,11 +161,13 @@ private:
     Int2IntMap channel2y_pos_;
     EventGraphicsItem* selected_event_item_;
 
-    int32 prefered_y_grid_pixel_intervall_;
+    double y_grid_value_interval_;
+    int y_grid_fragmentation_;
     float64 x_grid_pixel_intervall_;
 
     bool show_y_grid_;
     bool show_x_grid_;
+    bool initialized_;
 };
 
 } // namespace PortingToQT4_

@@ -95,7 +95,8 @@ void SignalProcessingGuiCommand::calculatePowerSpectrum ()
                                                                                                                num_samples / 2));
     QList<EventID> events (event_manager->getEvents(event_dialog->getSelectedEventType ()));
 
-    ProgressBar::instance().initAndShow (event_dialog->getSelectedChannels ().size(), tr("Fourier Transformation"));
+    ProgressBar::instance().initAndShow (event_dialog->getSelectedChannels ().size(), tr("Fourier Transformation"),
+                                         applicationContext());
     foreach (ChannelID channel_id, event_dialog->getSelectedChannels ())
     {
         ProgressBar::instance().increaseValue (1, channel_manager->getChannelLabel(channel_id));

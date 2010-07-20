@@ -209,7 +209,7 @@ unsigned ZoomGuiCommand::maxSignalHeight ()
 //-------------------------------------------------------------------------
 unsigned ZoomGuiCommand::minSignalHeight ()
 {
-    return std::max<unsigned> (50, currentVisModel()->getShownHeight() / currentVisModel()->getShownChannels().size());
+    return std::max<unsigned> (20, currentVisModel()->getShownHeight() / currentVisModel()->getShownChannels().size());
 }
 
 

@@ -7,6 +7,12 @@ namespace BioSig_
 {
 
 //-------------------------------------------------------------------------
+float64 ChannelManager::getValueRange (std::set<ChannelID> const& channels) const
+{
+    return getMaxValue (channels) - getMinValue (channels);
+}
+
+//-------------------------------------------------------------------------
 float64 ChannelManager::getMinValue (std::set<ChannelID> const& channels) const
 {
     if (!min_max_initialized_)

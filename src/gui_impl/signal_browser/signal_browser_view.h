@@ -63,6 +63,7 @@ public:
     void updateWidgets (bool update_view = true);
 
     virtual QSharedPointer<QImage> renderVisibleScene () const;
+    virtual double getYGridValueInterval () const;
     virtual bool getXAxisVisibility () const;
     virtual bool getYAxisVisibility () const;
     virtual bool getLabelsVisibility () const;
@@ -89,7 +90,7 @@ private:
     void loadSettings ();
     void saveSettings ();
 
-    QSharedPointer<SignalVisualisationModel> model_;
+    QSharedPointer<SignalBrowserModel> model_;
 
     QTimer* scroll_timer_;
     QGraphicsScene* graphics_scene_;

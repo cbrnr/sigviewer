@@ -86,10 +86,11 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
         event_editing_widget_->connect (signal_browser_model.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent const>)), SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent const>)));
     }
 
-    adapt_browser_view_widget_ = new AdaptBrowserViewWidget (this);
+    adapt_browser_view_widget_ = new AdaptBrowserViewWidget (this, model_);
     x_axis_widget_->connect (adapt_browser_view_widget_, SIGNAL(xAxisVisibilityChanged(bool)), SLOT(setVisible(bool)));
     y_axis_widget_->connect (adapt_browser_view_widget_, SIGNAL(yAxisVisibilityChanged(bool)), SLOT(setVisible(bool)));
     label_widget_->connect (adapt_browser_view_widget_, SIGNAL(labelsVisibilityChanged(bool)), SLOT(setVisible(bool)));
+    model_->connect (adapt_browser_view_widget_, SIGNAL(yGridChanged(int)), SLOT(setYGridFragmentation(int)));
 
     connect(horizontal_scrollbar_, SIGNAL(valueChanged(int)),
             graphics_view_->horizontalScrollBar(), SLOT(setValue(int)));
@@ -259,6 +260,12 @@ QSharedPointer<QImage> SignalBrowserView::renderVisibleScene () const
     QPainter painter (image.data());
     graphics_view_->render (&painter, graphics_view_->viewport()->rect(), graphics_view_->viewport()->rect());
     return image;
+}
+
+//-----------------------------------------------------------------------------
+double SignalBrowserView::getYGridValueInterval () const
+{
+    return model_->getYGridValueInterval ();
 }
 
 //-----------------------------------------------------------------------------

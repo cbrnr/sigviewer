@@ -26,29 +26,27 @@
 
 #include "math_utils.h"
 
+#include <QDebug>
 #include <cmath>
 
 namespace BioSig_
 {
 
-// round to 1, 2 or 6
+// round to 1, 2, 3, 4, 5
 float64 round125(float64 value)
 {
     float64 sign = value < 0 ? -1 : 1;
     value = value * sign;
-    float64 tmp = pow(10.0, floor(log10(value)));
+    float64 tmp = pow (10.0, floor ( log10(value)));
+    qDebug () << "tmp = " << tmp << "; value = " << value <<  "; log10(value) = " << log10(value);
     if (tmp < value)
-    {
-        tmp *= 2.0;
-    }
+        tmp *= 2;
     if (tmp < value)
-    {
-        tmp *= 2.5;
-    }
+        tmp *= 1.5;
     if (tmp < value)
-    {
-        tmp *= 2.0;
-    }
+        tmp *= (4.0 / 3.0);
+    if (tmp < value)
+        tmp *= (5.0 / 4.0);
     return sign * tmp;
 }
 

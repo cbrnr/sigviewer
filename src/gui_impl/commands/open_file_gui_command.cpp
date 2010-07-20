@@ -158,7 +158,8 @@ void OpenFileGuiCommand::openFileImpl (QString file_path, bool instantly)
     if (shown_channels.size() == 0)
         return;
 
-    ProgressBar::instance().initAndShow (channel_manager->getNumberChannels() * 3, tr("Opening ") + file_name);
+    ProgressBar::instance().initAndShow (channel_manager->getNumberChannels() * 3, tr("Opening ") + file_name,
+                                         applicationContext());
     QSharedPointer<EventManager> event_manager (new EventManagerImpl (file_signal_reader));
     QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
                                                  channel_manager, file_signal_reader->getBasicHeader()));

@@ -56,11 +56,8 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<EventManager> event_manag
 {
 #if QT_VERSION >= 0x040600
     setFlag (QGraphicsItem::ItemUsesExtendedStyleOption, true);
-#endif    
-    float64 value_range = (fabs(maximum_) + fabs(minimum_));
-    float64 y_grid_intervall
-        = round125(value_range / height_ * signal_browser_model_.getPreferedYGirdPixelIntervall());
-    y_grid_pixel_intervall_ = y_zoom_ * y_grid_intervall;
+#endif
+   // updateYGridIntervall ();
     setAcceptHoverEvents(false);
 }
 
@@ -129,10 +126,8 @@ void SignalGraphicsItem::scale (double lower_value, double upper_value)
 {
     minimum_ = lower_value;
     maximum_ = upper_value;
-    float64 abs_max = fabs(upper_value);
-    float64 abs_min = fabs(lower_value);
 
-    scaleImpl (abs_min, abs_max);
+    scaleImpl (lower_value, upper_value);
 }
 
 
@@ -141,24 +136,30 @@ void SignalGraphicsItem::autoScale (ScaleMode auto_zoom_type)
 {
     minimum_ = channel_manager_->getMinValue (id_);
     maximum_ = channel_manager_->getMaxValue (id_);
-    float64 abs_max = fabs(maximum_);
-    float64 abs_min = fabs(minimum_);
+    double max = maximum_;
+    double min = minimum_;
 
     if (auto_zoom_type == MAX_TO_MAX)
     {
-        if (abs_max > abs_min)
-            abs_min = abs_max;
+        if (fabs(max) > fabs (min))
+            min = max;
         else
-            abs_max = abs_min;
+            max = min;
+        //if (minimum_ < 0)
+            min *= -1;
+       // if (maximum_ < 0)
+         //   max *= -1;
     }
-    scaleImpl (abs_min, abs_max);
+    minimum_ = min;
+    maximum_ = max;
+    scaleImpl (min, max);
 }
 
 //-----------------------------------------------------------------------------
-void SignalGraphicsItem::scaleImpl (double abs_min, double abs_max)
+void SignalGraphicsItem::scaleImpl (double min, double max)
 {
-    float64 new_y_zoom = height_ / (abs_max + abs_min);
-    float64 new_y_offset = ((abs_max - abs_min) / 2) * new_y_zoom;
+    float64 new_y_zoom = height_ / (max - min);
+    float64 new_y_offset = ((max + min) / 2) * new_y_zoom;
     if (y_zoom_ != new_y_zoom ||
         y_offset_ != new_y_offset)
     {
@@ -184,7 +185,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     float32 pixel_per_sample = signal_browser_model_.getPixelPerSample();
 
-    float32 last_x = clip.x () - pixel_per_sample;
+    float32 last_x = clip.x () - 10;
     if (last_x < 0)
         last_x = 0;
     unsigned start_sample = last_x / pixel_per_sample;
@@ -192,7 +193,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
         start_sample--;
 
     unsigned length = ((clip.x() - start_sample * pixel_per_sample)
-                       + clip.width() + pixel_per_sample);
+                       + clip.width() + 20);
     if (last_x + length > width_)
         length = width_ - last_x;
 
@@ -214,11 +215,11 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     painter->setPen (color_manager_->getChannelColor (id_));
 
     int sub_sampler = 1;
-    while (pixel_per_sample * 4 <= 1)
+    /*while (pixel_per_sample * 4 <= 1)
     {
         pixel_per_sample *= 2;
         sub_sampler *= 2;
-    }
+    }*/
 
     for (int index = 0;
          index < static_cast<int>(data_block->size()) - sub_sampler;
@@ -236,11 +237,12 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::updateYGridIntervall ()
 {
-    float64 value_range = (fabs(maximum_) + fabs(minimum_));
-    float64 y_grid_intervall
-        = round125(value_range / height_ * signal_browser_model_.getPreferedYGirdPixelIntervall());
-    y_grid_pixel_intervall_ = y_zoom_ * y_grid_intervall;
-
+    y_grid_pixel_intervall_ = round125 ((maximum_ - minimum_) / signal_browser_model_.getYGridFragmentation ());// / signal_browser_model_.getYGridFragmentation();//.getYGridValueInterval() * y_zoom_;
+    y_grid_pixel_intervall_ *= y_zoom_;
+    //y_grid_pixel_intervall_ /= (maximum_ - minimum_);
+    //y_grid_pixel_intervall_ = round125 (y_grid_pixel_intervall_);
+    //y_grid_pixel_intervall_ /= (maximum_ - minimum_);
+    qDebug () << "y_grid_pixel_intervall_ channel " << id_ << ": " << y_grid_pixel_intervall_;
     emit updatedYGrid (id_);
 }
 
@@ -454,6 +456,9 @@ void SignalGraphicsItem::wheelEvent (QGraphicsSceneWheelEvent* event)
 void SignalGraphicsItem::drawYGrid (QPainter* painter,
                                     QStyleOptionGraphicsItem const* option)
 {
+    if (y_grid_pixel_intervall_ < 1)
+        return;
+
     QRectF clip (option->exposedRect);
     painter->setPen (Qt::lightGray);
 
@@ -483,6 +488,9 @@ void SignalGraphicsItem::drawYGrid (QPainter* painter,
 void SignalGraphicsItem::drawXGrid (QPainter* painter,
                                     QStyleOptionGraphicsItem const* option)
 {
+    if (x_grid_interval_ < 1)
+        return;
+
     QRectF clip (option->exposedRect);
     painter->setPen (Qt::lightGray);
 

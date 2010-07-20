@@ -34,9 +34,10 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
   color_manager_ (color_manager),
   signal_browser_view_ (0),
   selected_event_item_ (0),
-  prefered_y_grid_pixel_intervall_(15),
+  y_grid_value_interval_ (0),
   x_grid_pixel_intervall_(0),
-  show_y_grid_(true)
+  show_y_grid_(true),
+  initialized_ (false)
 {
     if (!event_manager_.isNull ())
     {
@@ -110,14 +111,20 @@ void SignalBrowserModel::saveSettings()
 void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
                                            new_shown_channels)
 {
-    unsigned new_signal_height = signal_browser_view_->getVisibleHeight() /
+    unsigned new_signal_height = getSignalHeight ();
+    if (!initialized_)
+    {
+        new_signal_height = signal_browser_view_->getVisibleHeight() /
                                  new_shown_channels.size();
+        y_grid_value_interval_ = channel_manager_->getValueRange(new_shown_channels) / 5;
+        y_grid_fragmentation_ = 2;
+    }
 
     foreach (ChannelID channel, channel2signal_item_.keys())
         if (new_shown_channels.count (channel) == 0)
             removeChannel (channel);
 
-    setSignalHeight (std::max<unsigned>(50, new_signal_height));
+    setSignalHeight (std::max<unsigned>(20, new_signal_height));
 
     foreach (ChannelID channel, new_shown_channels)
     {
@@ -129,6 +136,8 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
 
     foreach (SignalGraphicsItem* channel, channel2signal_item_.values())
         channel->autoScale (getAutoScaleMode());
+
+    initialized_ = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -332,6 +341,20 @@ QSharedPointer<EventManager> SignalBrowserModel::getEventManager ()
 
 
 //-------------------------------------------------------------------------
+void SignalBrowserModel::setYGridValueInterval (double interval)
+{
+    y_grid_value_interval_ = interval;
+    update ();
+}
+
+//-------------------------------------------------------------------------
+void SignalBrowserModel::setYGridFragmentation (int fragmentation)
+{
+    y_grid_fragmentation_ = fragmentation;
+    update ();
+}
+
+//-------------------------------------------------------------------------
 unsigned SignalBrowserModel::getShownHeight () const
 {
     return signal_browser_view_->getVisibleHeight ();
@@ -430,9 +453,15 @@ void SignalBrowserModel::modeChangedImpl (SignalVisualisationMode mode)
 }
 
 //-------------------------------------------------------------------
-int32 SignalBrowserModel::getPreferedYGirdPixelIntervall()
+double SignalBrowserModel::getYGridValueInterval () const
 {
-    return prefered_y_grid_pixel_intervall_;
+    return y_grid_value_interval_;
+}
+
+//-------------------------------------------------------------------
+int SignalBrowserModel::getYGridFragmentation () const
+{
+    return y_grid_fragmentation_;
 }
 
 //-----------------------------------------------------------------------------

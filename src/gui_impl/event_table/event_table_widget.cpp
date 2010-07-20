@@ -19,9 +19,13 @@ EventTableWidget::EventTableWidget (QSharedPointer<EventManager> event_manager,
                                    QSharedPointer<ChannelManager const> channel_manager,
                                    QWidget *parent) :
     QWidget(parent),
+    precision_ (0),
     event_manager_ (event_manager),
     channel_manager_ (channel_manager)
 {
+    for (float32 sample_rate = event_manager_->getSampleRate(); sample_rate > 10; sample_rate /= 10)
+        precision_++;
+
     ui_.setupUi(this);
     buildTable();
 }
