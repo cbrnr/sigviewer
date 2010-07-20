@@ -117,7 +117,7 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
         new_signal_height = signal_browser_view_->getVisibleHeight() /
                                  new_shown_channels.size();
         y_grid_value_interval_ = channel_manager_->getValueRange(new_shown_channels) / 5;
-        y_grid_fragmentation_ = 2;
+        y_grid_fragmentation_ = 3;
     }
 
     foreach (ChannelID channel, channel2signal_item_.keys())

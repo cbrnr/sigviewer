@@ -33,7 +33,8 @@ private:
     virtual void contextMenuEvent (QContextMenuEvent* event);
 
     void paintYAxisLabels (QPainter* painter, float64 offset,
-                              float64 y_zoom, float64 y_grid_pixel_intervall);
+                              float64 y_zoom, float64 y_grid_pixel_intervall,
+                              QString const& unit_string);
 
     unsigned signal_height_;
     int32 y_start_;

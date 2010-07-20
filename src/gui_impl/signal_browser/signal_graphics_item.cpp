@@ -110,6 +110,12 @@ float64 SignalGraphicsItem::getYGridPixelIntervall() const
 }
 
 //-----------------------------------------------------------------------------
+QString SignalGraphicsItem::getPhysicalDimensionString () const
+{
+    return channel_manager_->getChannelYUnitString (id_);
+}
+
+//-----------------------------------------------------------------------------
 void SignalGraphicsItem::zoomIn()
 {
     y_zoom_ *= 2.0;
@@ -145,10 +151,8 @@ void SignalGraphicsItem::autoScale (ScaleMode auto_zoom_type)
             min = max;
         else
             max = min;
-        //if (minimum_ < 0)
-            min *= -1;
-       // if (maximum_ < 0)
-         //   max *= -1;
+
+        min *= -1;
     }
     minimum_ = min;
     maximum_ = max;
@@ -215,11 +219,11 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     painter->setPen (color_manager_->getChannelColor (id_));
 
     int sub_sampler = 1;
-    /*while (pixel_per_sample * 4 <= 1)
+    while (pixel_per_sample * 4 <= 1)
     {
         pixel_per_sample *= 2;
         sub_sampler *= 2;
-    }*/
+    }
 
     for (int index = 0;
          index < static_cast<int>(data_block->size()) - sub_sampler;

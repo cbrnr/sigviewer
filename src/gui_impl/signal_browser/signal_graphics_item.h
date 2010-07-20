@@ -45,6 +45,7 @@ public:
     float64 getYZoom() const;
     float64 getYOffset() const;
     float64 getYGridPixelIntervall() const;
+    QString getPhysicalDimensionString () const;
 
     void zoomIn();
     void zoomOut();
