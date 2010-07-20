@@ -19,24 +19,23 @@ ScaleChannelDialog::ScaleChannelDialog (ChannelID preselected_channel,
 {
     ui_.setupUi (this);
 
+    if (selected_channel_ == UNDEFINED_CHANNEL)
+        ui_.autoButton->setChecked (true);
+
     ui_.upper_spinbox_->setMaximum (std::numeric_limits<double>::max());
     ui_.upper_spinbox_->setMinimum (-std::numeric_limits<double>::max());
     ui_.lower_spinbox_->setMaximum (std::numeric_limits<double>::max());
     ui_.lower_spinbox_->setMinimum (-std::numeric_limits<double>::max());
-
-    ui_.channels_->addItem (tr("All Channels"), UNDEFINED_CHANNEL);
-    foreach (ChannelID id, shown_channels)
-        ui_.channels_->addItem (channel_manager_->getChannelLabel(id), id);
-
-    int preselected_index = ui_.channels_->findData (preselected_channel, Qt::UserRole, Qt::MatchExactly);
-    ui_.channels_->setCurrentIndex (preselected_index);
+    QString unit_string = channel_manager_->getChannelYUnitString (selected_channel_);
+    if (unit_string.size())
+        ui_.unitLabelLower->setText (QString ("(").append (unit_string).append (")"));
+    ui_.unitLabelUpper->setText (ui_.unitLabelLower->text());
 }
 
 //-----------------------------------------------------------------------------
-ChannelID ScaleChannelDialog::channel () const
+bool ScaleChannelDialog::autoScaling () const
 {
-    return ui_.channels_->itemData (ui_.channels_->currentIndex(),
-                                    Qt::UserRole).toUInt();
+    return ui_.autoButton->isChecked ();
 }
 
 //-----------------------------------------------------------------------------
@@ -55,7 +54,7 @@ float ScaleChannelDialog::lowerValue () const
 //-----------------------------------------------------------------------------
 void ScaleChannelDialog::on_channels__currentIndexChanged (int index)
 {
-    selected_channel_ = ui_.channels_->itemData(index, Qt::UserRole).toUInt();
+    //selected_channel_ = ui_.channels_->itemData(index, Qt::UserRole).toUInt();
 
     double upper_value;
     double lower_value;

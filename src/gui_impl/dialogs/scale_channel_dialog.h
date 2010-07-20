@@ -20,9 +20,7 @@ public:
                                  QSharedPointer<ChannelManager const> channel_manager,
                                  QWidget *parent = 0);
 
-
-    ChannelID channel () const;
-
+    bool autoScaling () const;
     float upperValue () const;
     float lowerValue () const;
 signals:

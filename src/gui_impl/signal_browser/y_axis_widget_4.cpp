@@ -123,7 +123,7 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
     if (y_grid_pixel_intervall < 1)
         return;
 
-    while (y_grid_pixel_intervall < 15)
+    while (y_grid_pixel_intervall < 11)
         y_grid_pixel_intervall *= 2;
 
     for (float64 value_y = offset;

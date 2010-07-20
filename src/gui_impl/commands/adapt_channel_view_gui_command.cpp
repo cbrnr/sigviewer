@@ -131,9 +131,12 @@ void AdaptChannelViewGuiCommand::scale ()
                                      currentVisModel()->getChannelManager());
     if (scale_dialog.exec() == QDialog::Accepted)
     {
-        currentVisModel()->scaleChannel (scale_dialog.channel(),
-                                         scale_dialog.lowerValue(),
-                                         scale_dialog.upperValue());
+        if (scale_dialog.autoScaling())
+            currentVisModel()->scaleChannel(channel);
+        else
+            currentVisModel()->scaleChannel (channel,
+                                             scale_dialog.lowerValue(),
+                                             scale_dialog.upperValue());
     }
 }
 
@@ -157,12 +160,13 @@ void AdaptChannelViewGuiCommand::scaleAll ()
                                      currentVisModel()->getChannelManager());
     if (scale_dialog.exec() == QDialog::Accepted)
     {
-        currentVisModel()->scaleChannel (scale_dialog.channel(),
-                                         scale_dialog.lowerValue(),
-                                         scale_dialog.upperValue());
+        if (scale_dialog.autoScaling())
+            currentVisModel()->scaleChannel(UNDEFINED_CHANNEL);
+        else
+            currentVisModel()->scaleChannel (UNDEFINED_CHANNEL,
+                                             scale_dialog.lowerValue(),
+                                             scale_dialog.upperValue());
     }
-
-    //currentVisModel()->scaleChannel(UNDEFINED_CHANNEL);
 }
 
 //-------------------------------------------------------------------------

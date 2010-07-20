@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>205</width>
-    <height>144</height>
+    <width>179</width>
+    <height>145</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,21 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QComboBox" name="channels_"/>
+    <widget class="QRadioButton" name="autoButton">
+     <property name="text">
+      <string>Auto Scaling</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="fixedButton">
+     <property name="text">
+      <string>Fixed Scaling</string>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -27,7 +41,18 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="upper_spinbox_"/>
+      <widget class="QLabel" name="unitLabelUpper">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="upper_spinbox_">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -41,7 +66,17 @@
       </widget>
      </item>
      <item>
+      <widget class="QLabel" name="unitLabelLower">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QDoubleSpinBox" name="lower_spinbox_">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="minimum">
         <double>-23.000000000000000</double>
        </property>
@@ -92,6 +127,38 @@
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fixedButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>lower_spinbox_</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>135</x>
+     <y>39</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>201</x>
+     <y>98</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fixedButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>upper_spinbox_</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>135</x>
+     <y>39</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>201</x>
+     <y>67</y>
     </hint>
    </hints>
   </connection>
