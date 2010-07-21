@@ -108,18 +108,8 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
     painter->drawLine (0, upper_border,
                        width() - 1, upper_border);
     painter->drawLine (width () - 5, offset, width () - 1, offset);
-    if (unit_string.size() > 4)
-    {
-        painter->rotate(-90);
-        painter->drawText (0,  5, width(), 60,
-                           Qt::AlignLeft | Qt::AlignTop,
-                           unit_string);
-        painter->rotate(90);
-    }
-    else
-        painter->drawText (5,  lower_border, width() - 10, 40,
-                           Qt::AlignLeft | Qt::AlignVCenter,
-                           unit_string);
+
+    paintYUnits (painter, unit_string);
 
     painter->drawText (0, offset - 20, width () - 10, 40,
                        Qt::AlignRight | Qt::AlignVCenter,
@@ -154,6 +144,23 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
                              QString::number ((offset-value_y) / y_zoom));
         }
     }
+}
+
+//-------------------------------------------------------------------
+void YAxisWidget::paintYUnits (QPainter* painter, QString const& unit_string)
+{
+    if (unit_string.size() > 4)
+    {
+        painter->rotate(-90);
+        painter->drawText (0,  5, width(), 60,
+                           Qt::AlignLeft | Qt::AlignTop,
+                           unit_string);
+        painter->rotate(90);
+    }
+    else
+        painter->drawText (5,  -static_cast<int>(signal_height_ / 2), width() - 10, 40,
+                           Qt::AlignLeft | Qt::AlignVCenter,
+                           unit_string);
 }
 
 

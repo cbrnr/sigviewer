@@ -35,6 +35,8 @@ private:
                               float64 y_zoom, float64 y_grid_pixel_intervall,
                               QString const& unit_string);
 
+    void paintYUnits (QPainter* painter, QString const& unit_string);
+
     unsigned signal_height_;
     int32 y_start_;
     QMap<ChannelID, SignalGraphicsItem const*> channel_nr2signal_graphics_item_;
