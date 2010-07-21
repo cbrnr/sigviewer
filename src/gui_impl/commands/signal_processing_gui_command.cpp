@@ -60,9 +60,11 @@ void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation ()
         foreach (EventID event_id, events)
         {
             QSharedPointer<SignalEvent const> event = event_manager->getEvent (event_id);
-            data.push_back (channel_manager->getData (channel_id,
-                                                      event->getPosition(),
-                                                      num_samples));
+            QSharedPointer<DataBlock const> data_block = channel_manager->getData (channel_id,
+                                                                                   event->getPosition(),
+                                                                                   num_samples);
+            if (!data_block.isNull())
+                data.push_back (data_block);
         }
 
         QSharedPointer<DataBlock> mean = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateMean (data)));
@@ -106,9 +108,11 @@ void SignalProcessingGuiCommand::calculatePowerSpectrum ()
         foreach (EventID event_id, events)
         {
             QSharedPointer<SignalEvent const> event = event_manager->getEvent (event_id);
-            data.push_back (channel_manager->getData (channel_id,
-                                                      event->getPosition(),
-                                                      num_samples)->createPowerSpectrum ());
+            QSharedPointer<DataBlock const> data_block = channel_manager->getData (channel_id,
+                                                                                   event->getPosition(),
+                                                                                   num_samples);
+            if (!data_block.isNull())
+                data.push_back (data_block->createPowerSpectrum ());
         }
 
         QSharedPointer<DataBlock> mean = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateMean (data)));

@@ -52,7 +52,10 @@ QString ChannelManagerImpl::getChannelYUnitString (ChannelID id) const
 //-----------------------------------------------------------------------------
 QSharedPointer<DataBlock const> ChannelManagerImpl::getData (ChannelID id, unsigned start_pos, unsigned length) const
 {
-    return reader_->getSignalData(id, start_pos, length);
+    if (((start_pos + length) > getNumberSamples()) || length == 0)
+        return QSharedPointer<DataBlock const> (0);
+    else
+        return reader_->getSignalData (id, start_pos, length);
 }
 
 //-------------------------------------------------------------------------
