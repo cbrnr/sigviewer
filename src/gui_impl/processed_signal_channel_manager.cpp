@@ -14,19 +14,21 @@ ProcessedSignalChannelManager::ProcessedSignalChannelManager (float32 sample_rat
 
 //-------------------------------------------------------------------------
 void ProcessedSignalChannelManager::addChannel (ChannelID id, QSharedPointer<DataBlock const> data_block,
-                 QString const& label)
+                 QString const& label, QString const& y_unit_string)
 {
     channels_[id] = data_block;
     channel_labels_[id] = label;
+    y_unit_strings_[id] = y_unit_string;
 }
 
 //-------------------------------------------------------------------------
 ChannelID ProcessedSignalChannelManager::addExtraChannel (ChannelID id, QSharedPointer<DataBlock const> data_block,
-                                                     QString const& label)
+                                                     QString const& label, QString const& y_unit_string)
 {
     id += 0.1f;
     channels_[id] = data_block;
     channel_labels_[id] = label;
+    y_unit_strings_[id] = y_unit_string;
     return id;
 }
 
@@ -55,7 +57,7 @@ QString ProcessedSignalChannelManager::getChannelLabel (ChannelID id) const
 //-------------------------------------------------------------------------
 QString ProcessedSignalChannelManager::getChannelYUnitString (ChannelID id) const
 {
-    return "";
+    return y_unit_strings_[id];
 }
 
 //-------------------------------------------------------------------------

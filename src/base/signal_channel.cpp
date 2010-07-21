@@ -57,7 +57,8 @@ SignalChannel::SignalChannel(uint32 number,
     char p[MAX_LENGTH_PHYSDIM+1];
     PhysDim(C.PhysDimCode,p);	
     physical_dim_ = QString(p);
-
+    if (physical_dim_.compare("uV") == 0)
+        physical_dim_ = QString (QChar((ushort)0xb5)).append("V");
 }
 
 

@@ -193,7 +193,7 @@ QSharedPointer<DataBlock const> DataBlock::createPowerSpectrum () const
     QSharedPointer<std::vector<float32> > spectrum_data (new std::vector<float32>);
     for (unsigned index = 1; index < out_length + 1; index++)
     {
-        spectrum_data->push_back (pow(data_out[index].real(),2) + pow(data_out[index].imag(), 2));
+        spectrum_data->push_back (log10(pow(data_out[index].real(),2) + pow(data_out[index].imag(), 2)));
     }
     return QSharedPointer<DataBlock const> (new DataBlock (spectrum_data, static_cast<float32>(num_samples) / sample_rate_per_unit_));
 }

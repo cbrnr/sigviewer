@@ -68,9 +68,10 @@ void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation ()
         QSharedPointer<DataBlock> mean = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateMean (data)));
         QSharedPointer<DataBlock> standard_deviation = DataBlock::calculateStandardDeviation(data, *(mean.data()));
 
-        processed_channel_manager->addExtraChannel (new_channel_id, standard_deviation, tr("Standard Deviation\n") + channel_manager->getChannelLabel(channel_id));
+        processed_channel_manager->addExtraChannel (new_channel_id, standard_deviation, tr("Standard Deviation\n") + channel_manager->getChannelLabel(channel_id),
+                                                    channel_manager->getChannelYUnitString(channel_id));
         new_channel_id++;
-        processed_channel_manager->addChannel (new_channel_id, mean, channel_manager->getChannelLabel(channel_id));
+        processed_channel_manager->addChannel (new_channel_id, mean, channel_manager->getChannelLabel(channel_id), channel_manager->getChannelYUnitString(channel_id));
         new_channel_id++;
         //applicationContext()->getEventColorManager()->setChannelColor(stddev_id,
         //                                                              applicationContext()->getEventColorManager()->getChannelColor(channel_id));
@@ -111,7 +112,11 @@ void SignalProcessingGuiCommand::calculatePowerSpectrum ()
         }
 
         QSharedPointer<DataBlock> mean = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateMean (data)));
-        processed_channel_manager->addChannel (channel_id, mean, channel_manager->getChannelLabel(channel_id));
+        QString unit = QString("log(").append(channel_manager->getChannelYUnitString (channel_id))
+                                     .append(QChar(0xb2))
+                                     .append("/Hz)");
+        processed_channel_manager->addChannel (channel_id, mean, channel_manager->getChannelLabel(channel_id),
+                                               unit);
     }
     ProgressBar::instance().close();
 

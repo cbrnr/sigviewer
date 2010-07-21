@@ -18,7 +18,7 @@ public:
     YAxisWidget(QWidget* parent);
 
     virtual ~YAxisWidget () {}
-    virtual QSize sizeHint () const;
+    //virtual QSize sizeHint () const;
 
     void addChannel(ChannelID channel_nr, SignalGraphicsItem const* const signal_item);
     void removeChannel(ChannelID channel_nr);

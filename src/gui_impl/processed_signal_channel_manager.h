@@ -16,11 +16,11 @@ public:
 
     //-------------------------------------------------------------------------
     void addChannel (ChannelID id, QSharedPointer<DataBlock const> data_block,
-                     QString const& label);
+                     QString const& label, QString const& y_unit_string);
 
     //-------------------------------------------------------------------------
     ChannelID addExtraChannel (ChannelID id, QSharedPointer<DataBlock const> data_block,
-                          QString const& label);
+                          QString const& label, QString const& y_unit_string);
 
     //-------------------------------------------------------------------------
     virtual ~ProcessedSignalChannelManager () {}
@@ -56,6 +56,7 @@ private:
     unsigned length_;
     QMap<ChannelID, QSharedPointer<DataBlock const> > channels_;
     QMap<ChannelID, QString> channel_labels_;
+    QMap<ChannelID, QString> y_unit_strings_;
 };
 
 }
