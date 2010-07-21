@@ -17,17 +17,10 @@
    <item>
     <widget class="QRadioButton" name="autoButton">
      <property name="text">
-      <string>Min -&gt; Max Auto Scaling</string>
+      <string>Auto Scaling</string>
      </property>
      <property name="checked">
       <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QRadioButton" name="physButton">
-     <property name="text">
-      <string>Defined Range Auto Scaling (PhysMin -&gt; PhysMax)</string>
      </property>
     </widget>
    </item>

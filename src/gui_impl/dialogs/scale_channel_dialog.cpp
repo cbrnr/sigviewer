@@ -47,7 +47,7 @@ bool ScaleChannelDialog::autoScaling () const
 //-----------------------------------------------------------------------------
 bool ScaleChannelDialog::physAutoScaling () const
 {
-    return ui_.physButton->isChecked();
+    return false;//ui_.physButton->isChecked();
 }
 
 //-----------------------------------------------------------------------------
