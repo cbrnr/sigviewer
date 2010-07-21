@@ -21,18 +21,25 @@ public:
                                  QWidget *parent = 0);
 
     bool autoScaling () const;
+    bool physAutoScaling () const;
     float upperValue () const;
     float lowerValue () const;
 signals:
 
 private slots:
-    void on_channels__currentIndexChanged (int index);
+    void on_fixedButton_toggled (bool checked);
+    void on_autoButton_toggled (bool checked);
+    void on_physButton_toggled (bool checked);
+    void storeAccepted ();
 private:
     ChannelID selected_channel_;
     std::set<ChannelID> const shown_channels_;
     QSharedPointer<ChannelManager const> channel_manager_;
 
     Ui::ScaleChannelDialog ui_;
+
+    static double last_min_;
+    static double last_max_;
 };
 }
 #endif // SCALEC_HANNEL_DIALOG_H

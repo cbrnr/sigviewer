@@ -35,7 +35,9 @@ namespace BioSig_
 enum ScaleMode
 {
         MAX_TO_MAX,
-        MIN_TO_MAX
+        MIN_TO_MAX,
+        PHYS_MIN_TO_MAX,
+        PHYS_MAX_TO_MAX
 };
 
 // operating system dependent

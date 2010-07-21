@@ -1,12 +1,14 @@
 #ifndef CHANNEL_MANAGER_INTERFACE_H
 #define CHANNEL_MANAGER_INTERFACE_H
 
-#include "../base/sigviewer_user_types.h"
-#include "../base/data_block.h"
+#include "base/sigviewer_user_types.h"
+#include "base/data_block.h"
 
 #include <QSharedPointer>
 #include <set>
 #include <map>
+
+#include <boost/tuple/tuple.hpp>
 
 namespace BioSig_
 {
@@ -65,6 +67,9 @@ public:
 
     //-------------------------------------------------------------------------
     float64 getMaxValue (ChannelID channel_id) const;
+
+    //-------------------------------------------------------------------------
+    virtual boost::tuples::tuple<double, double> getPhysMinMax (ChannelID channel_id) const;
 
 protected:
     ChannelManager () : min_max_initialized_ (false) {}

@@ -131,12 +131,9 @@ void AdaptChannelViewGuiCommand::scale ()
                                      currentVisModel()->getChannelManager());
     if (scale_dialog.exec() == QDialog::Accepted)
     {
-        if (scale_dialog.autoScaling())
-            currentVisModel()->scaleChannel(channel);
-        else
-            currentVisModel()->scaleChannel (channel,
-                                             scale_dialog.lowerValue(),
-                                             scale_dialog.upperValue());
+        currentVisModel()->scaleChannel (channel,
+                                         scale_dialog.lowerValue(),
+                                         scale_dialog.upperValue());
     }
 }
 
@@ -161,7 +158,15 @@ void AdaptChannelViewGuiCommand::scaleAll ()
     if (scale_dialog.exec() == QDialog::Accepted)
     {
         if (scale_dialog.autoScaling())
+        {
+            currentVisModel()->setAutoScaleMode (MIN_TO_MAX);
             currentVisModel()->scaleChannel(UNDEFINED_CHANNEL);
+        }
+        else if (scale_dialog.physAutoScaling())
+        {
+            currentVisModel()->setAutoScaleMode (PHYS_MIN_TO_MAX);
+            currentVisModel()->scaleChannel (UNDEFINED_CHANNEL);
+        }
         else
             currentVisModel()->scaleChannel (UNDEFINED_CHANNEL,
                                              scale_dialog.lowerValue(),
@@ -172,14 +177,22 @@ void AdaptChannelViewGuiCommand::scaleAll ()
 //-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::setScaleModeZeroCentered ()
 {
-    currentVisModel()->setAutoScaleMode (MAX_TO_MAX);
+    if (currentVisModel()->getAutoScaleMode() == PHYS_MAX_TO_MAX ||
+        currentVisModel()->getAutoScaleMode() == PHYS_MIN_TO_MAX)
+        currentVisModel()->setAutoScaleMode (PHYS_MAX_TO_MAX);
+    else
+        currentVisModel()->setAutoScaleMode (MAX_TO_MAX);
     currentVisModel()->scaleChannel(UNDEFINED_CHANNEL);
 }
 
 //-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::setScaleModeZeroFitted ()
 {
-    currentVisModel()->setAutoScaleMode (MIN_TO_MAX);
+    if (currentVisModel()->getAutoScaleMode() == PHYS_MAX_TO_MAX ||
+        currentVisModel()->getAutoScaleMode() == PHYS_MIN_TO_MAX)
+        currentVisModel()->setAutoScaleMode (PHYS_MIN_TO_MAX);
+    else
+        currentVisModel()->setAutoScaleMode (MIN_TO_MAX);
     currentVisModel()->scaleChannel(UNDEFINED_CHANNEL);
 }
 

@@ -55,6 +55,14 @@ QSharedPointer<DataBlock const> ChannelManagerImpl::getData (ChannelID id, unsig
     return reader_->getSignalData(id, start_pos, length);
 }
 
+//-------------------------------------------------------------------------
+boost::tuples::tuple<double, double> ChannelManagerImpl::getPhysMinMax (ChannelID channel_id) const
+{
+    double phys_min = reader_->getBasicHeader()->getChannel(channel_id).getPhysicalMinimum();
+    double phys_max = reader_->getBasicHeader()->getChannel(channel_id).getPhysicalMaximum();
+    return boost::tuples::tuple<double, double> (phys_min, phys_max);
+}
+
 //-----------------------------------------------------------------------------
 float32 ChannelManagerImpl::getDurationInSec () const
 {

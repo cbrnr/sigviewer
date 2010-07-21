@@ -59,9 +59,20 @@ float64 ChannelManager::getMaxValue (ChannelID channel_id) const
         return std::numeric_limits<float64>::max();
 }
 
+
+//-------------------------------------------------------------------------
+boost::tuples::tuple<double, double> ChannelManager::getPhysMinMax (ChannelID channel_id) const
+{
+    initMinMax();
+    return boost::tuples::tuple<double, double> (min_values_[channel_id],
+                                                 max_values_[channel_id]);
+}
+
 //-------------------------------------------------------------------------
 void ChannelManager::initMinMax () const
 {
+    if (min_max_initialized_)
+        return;
     foreach (ChannelID id, getChannels())
     {
         QSharedPointer<DataBlock const> data = getData (id, 0, getNumberSamples ());

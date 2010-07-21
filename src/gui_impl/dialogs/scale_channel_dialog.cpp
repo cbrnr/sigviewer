@@ -7,6 +7,9 @@
 namespace BioSig_
 {
 
+double ScaleChannelDialog::last_min_ = 0;
+double ScaleChannelDialog::last_max_ = 0;
+
 //-----------------------------------------------------------------------------
 ScaleChannelDialog::ScaleChannelDialog (ChannelID preselected_channel,
                                         std::set<ChannelID> const& shown_channels,
@@ -20,7 +23,9 @@ ScaleChannelDialog::ScaleChannelDialog (ChannelID preselected_channel,
     ui_.setupUi (this);
 
     if (selected_channel_ == UNDEFINED_CHANNEL)
-        ui_.autoButton->setChecked (true);
+        setWindowTitle (tr("Scale All Channels"));
+    else
+        setWindowTitle (tr("Scale Channel ").append(channel_manager_->getChannelLabel(preselected_channel)));
 
     ui_.upper_spinbox_->setMaximum (std::numeric_limits<double>::max());
     ui_.upper_spinbox_->setMinimum (-std::numeric_limits<double>::max());
@@ -30,12 +35,19 @@ ScaleChannelDialog::ScaleChannelDialog (ChannelID preselected_channel,
     if (unit_string.size())
         ui_.unitLabelLower->setText (QString ("(").append (unit_string).append (")"));
     ui_.unitLabelUpper->setText (ui_.unitLabelLower->text());
+    connect (this, SIGNAL(accepted()), SLOT(storeAccepted()));
 }
 
 //-----------------------------------------------------------------------------
 bool ScaleChannelDialog::autoScaling () const
 {
     return ui_.autoButton->isChecked ();
+}
+
+//-----------------------------------------------------------------------------
+bool ScaleChannelDialog::physAutoScaling () const
+{
+    return ui_.physButton->isChecked();
 }
 
 //-----------------------------------------------------------------------------
@@ -52,26 +64,57 @@ float ScaleChannelDialog::lowerValue () const
 
 
 //-----------------------------------------------------------------------------
-void ScaleChannelDialog::on_channels__currentIndexChanged (int index)
+void ScaleChannelDialog::on_fixedButton_toggled (bool checked)
 {
-    //selected_channel_ = ui_.channels_->itemData(index, Qt::UserRole).toUInt();
+    if (!checked)
+        return;
+    double upper_value = last_max_;
+    double lower_value = last_min_;
 
-    double upper_value;
-    double lower_value;
-    if (selected_channel_ == UNDEFINED_CHANNEL)
-    {
-        upper_value = channel_manager_->getMaxValue (shown_channels_);
-        lower_value = channel_manager_->getMinValue (shown_channels_);
-    }
-    else
+    ui_.upper_spinbox_->setValue (upper_value);
+    ui_.lower_spinbox_->setValue (lower_value);
+}
+
+//-----------------------------------------------------------------------------
+void ScaleChannelDialog::on_autoButton_toggled (bool checked)
+{
+    if (!checked)
+        return;
+    double upper_value = 0;
+    double lower_value = 0;
+    if (selected_channel_ != UNDEFINED_CHANNEL)
     {
         upper_value = channel_manager_->getMaxValue (selected_channel_);
         lower_value = channel_manager_->getMinValue (selected_channel_);
     }
     ui_.upper_spinbox_->setValue (upper_value);
     ui_.lower_spinbox_->setValue (lower_value);
-    ui_.upper_spinbox_->setSuffix (QString(" ") + channel_manager_->getChannelYUnitString (selected_channel_));
-    ui_.lower_spinbox_->setSuffix (QString(" ") + channel_manager_->getChannelYUnitString (selected_channel_));
+}
+
+//-----------------------------------------------------------------------------
+void ScaleChannelDialog::on_physButton_toggled (bool checked)
+{
+    if (!checked)
+        return;
+    double upper_value = 0;
+    double lower_value = 0;
+    if (selected_channel_ != UNDEFINED_CHANNEL)
+    {
+        upper_value = channel_manager_->getPhysMinMax (selected_channel_).get<1>();
+        lower_value = channel_manager_->getPhysMinMax (selected_channel_).get<0>();
+    }
+    ui_.upper_spinbox_->setValue (upper_value);
+    ui_.lower_spinbox_->setValue (lower_value);
+}
+
+//-----------------------------------------------------------------------------
+void ScaleChannelDialog::storeAccepted ()
+{
+    if (ui_.fixedButton->isChecked())
+    {
+        last_max_ = ui_.upper_spinbox_->value();
+        last_min_ = ui_.lower_spinbox_->value();
+    }
 }
 
 

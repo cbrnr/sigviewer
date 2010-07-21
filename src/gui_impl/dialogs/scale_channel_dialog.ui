@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>179</width>
-    <height>145</height>
+    <width>202</width>
+    <height>170</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,10 +17,17 @@
    <item>
     <widget class="QRadioButton" name="autoButton">
      <property name="text">
-      <string>Auto Scaling</string>
+      <string>Min - Max Auto Scaling</string>
      </property>
      <property name="checked">
       <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="physButton">
+     <property name="text">
+      <string>Defined Range Auto Scaling</string>
      </property>
     </widget>
    </item>
