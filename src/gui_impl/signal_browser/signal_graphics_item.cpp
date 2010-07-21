@@ -253,11 +253,8 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::updateYGridIntervall ()
 {
-    y_grid_pixel_intervall_ = round125 ((maximum_ - minimum_) / signal_browser_model_.getYGridFragmentation ());// / signal_browser_model_.getYGridFragmentation();//.getYGridValueInterval() * y_zoom_;
+    y_grid_pixel_intervall_ = round125 ((maximum_ - minimum_) / signal_browser_model_.getYGridFragmentation ());
     y_grid_pixel_intervall_ *= y_zoom_;
-    //y_grid_pixel_intervall_ /= (maximum_ - minimum_);
-    //y_grid_pixel_intervall_ = round125 (y_grid_pixel_intervall_);
-    //y_grid_pixel_intervall_ /= (maximum_ - minimum_);
     qDebug () << "y_grid_pixel_intervall_ channel " << id_ << ": " << y_grid_pixel_intervall_;
     emit updatedYGrid (id_);
 }

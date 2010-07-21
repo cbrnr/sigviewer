@@ -1,11 +1,11 @@
 #ifndef SIGNALGRAPHICSITEM_H
 #define SIGNALGRAPHICSITEM_H
 
-#include "../../base/sigviewer_user_types.h"
-#include "../../command_executer.h"
-#include "../../file_handling/event_manager.h"
-#include "../../file_handling/channel_manager.h"
-#include "../../gui/color_manager.h"
+#include "base/sigviewer_user_types.h"
+#include "command_executer.h"
+#include "file_handling/event_manager.h"
+#include "file_handling/channel_manager.h"
+#include "gui/color_manager.h"
 
 #include <QGraphicsItem>
 #include <QSharedPointer>

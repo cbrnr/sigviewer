@@ -63,7 +63,6 @@ public:
     void updateWidgets (bool update_view = true);
 
     virtual QSharedPointer<QImage> renderVisibleScene () const;
-    virtual double getYGridValueInterval () const;
     virtual bool getXAxisVisibility () const;
     virtual bool getYAxisVisibility () const;
     virtual bool getLabelsVisibility () const;
@@ -86,6 +85,7 @@ private slots:
     void graphicsSceneResized (QResizeEvent* event);
 
 private:
+    void initWidgets (QSharedPointer<EventManager> event_manager, QSharedPointer<CommandExecuter> command_executer);
     void createLayout ();
     void loadSettings ();
     void saveSettings ();

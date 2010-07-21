@@ -34,7 +34,6 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
   color_manager_ (color_manager),
   signal_browser_view_ (0),
   selected_event_item_ (0),
-  y_grid_value_interval_ (0),
   x_grid_pixel_intervall_(0),
   show_y_grid_(true),
   initialized_ (false)
@@ -116,7 +115,6 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
     {
         new_signal_height = signal_browser_view_->getVisibleHeight() /
                                  new_shown_channels.size();
-        y_grid_value_interval_ = channel_manager_->getValueRange(new_shown_channels) / 5;
         y_grid_fragmentation_ = 3;
     }
 
@@ -339,14 +337,6 @@ QSharedPointer<EventManager> SignalBrowserModel::getEventManager ()
     return event_manager_;
 }
 
-
-//-------------------------------------------------------------------------
-void SignalBrowserModel::setYGridValueInterval (double interval)
-{
-    y_grid_value_interval_ = interval;
-    update ();
-}
-
 //-------------------------------------------------------------------------
 void SignalBrowserModel::setYGridFragmentation (int fragmentation)
 {
@@ -450,12 +440,6 @@ void SignalBrowserModel::modeChangedImpl (SignalVisualisationMode mode)
                      mode == MODE_POINTER);
     foreach (SignalGraphicsItem* signal_item, channel2signal_item_.values())
         signal_item->setAcceptHoverEvents (tooltips);
-}
-
-//-------------------------------------------------------------------
-double SignalBrowserModel::getYGridValueInterval () const
-{
-    return y_grid_value_interval_;
 }
 
 //-------------------------------------------------------------------

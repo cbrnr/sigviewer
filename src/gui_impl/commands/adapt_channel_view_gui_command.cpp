@@ -13,6 +13,7 @@ namespace BioSig_
 QString const AdaptChannelViewGuiCommand::CHANNELS_ = "Channels...";
 QString const AdaptChannelViewGuiCommand::CHANGE_COLOR_ = "Change Color...";
 QString const AdaptChannelViewGuiCommand::SCALE_ = "Scale...";
+QString const AdaptChannelViewGuiCommand::APPLY_SCALE_TO_OTHER_CHANNELS_ = "Apply Scale to Other Channels";
 QString const AdaptChannelViewGuiCommand::HIDE_ = "Hide Channel";
 QString const AdaptChannelViewGuiCommand::SCALE_ALL_ = "Scale All...";
 QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MAX_TO_MAX_ = "Zero Line Centered";
@@ -135,6 +136,16 @@ void AdaptChannelViewGuiCommand::scale ()
                                          scale_dialog.lowerValue(),
                                          scale_dialog.upperValue());
     }
+}
+
+//-------------------------------------------------------------------------
+void AdaptChannelViewGuiCommand::applyScaleToOtherChannels ()
+{
+    ChannelID channel = currentVisModel()->getSelectedChannel();
+    if (channel == UNDEFINED_CHANNEL)
+        return;
+
+    // TODO: implement!
 }
 
 //-------------------------------------------------------------------------

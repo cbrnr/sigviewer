@@ -19,6 +19,7 @@
 #include <QMenu>
 #include <QDebug>
 #include <QResizeEvent>
+#include <QGraphicsLinearLayout>
 
 #ifdef Q_OS_MACX
 #include <QGLWidget>
@@ -40,9 +41,9 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
 {
     scroll_timer_ = new QTimer (this);
     connect (scroll_timer_, SIGNAL(timeout()), this, SLOT(scroll()));
-    resize(initial_size.width(), initial_size.height());
+    resize (initial_size.width(), initial_size.height());
     graphics_scene_ = new QGraphicsScene (0,0,initial_size.width(), initial_size.height(), this);
-    graphics_view_ = new SignalBrowserGraphicsView (graphics_scene_, this);
+    graphics_view_ = new SignalBrowserGraphicsView (graphics_scene_);
 #ifdef Q_OS_MACX
     graphics_view_->setViewport(new QGLWidget);
 #endif
@@ -55,67 +56,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     graphics_view_->setViewportUpdateMode(QGraphicsView::MinimalViewportUpdate);
     graphics_view_->setDragMode(QGraphicsView::ScrollHandDrag);
 
-    y_axis_widget_ = new YAxisWidget (this);
-    hideable_widgets_["Y Axis"] = y_axis_widget_;
-    y_axis_widget_->resize(70, height());
-    y_axis_widget_->setMinimumSize(70, 0);
-
-    x_axis_widget_ = new XAxisWidget (this);
-    hideable_widgets_["X Axis"] = x_axis_widget_;
-    x_axis_widget_->resize(width()-300, 30);
-    x_axis_widget_->setMinimumSize(0, 30);
-
-    horizontal_scrollbar_ = new QScrollBar (Qt::Horizontal, this);
-    vertical_scrollbar_ = new QScrollBar (Qt::Vertical, this);
-
-    label_widget_ = new LabelWidget (*signal_browser_model);
-    hideable_widgets_["Channel Labels"] = label_widget_;
-
-    current_info_widget_ = empty_widget_;
-    if (event_manager.isNull())
-    {
-        event_creation_widget_ = 0;
-        event_editing_widget_ = 0;
-    }
-    else
-    {
-        event_creation_widget_ = new EventCreationWidget (signal_browser_model, event_manager);
-        event_editing_widget_ = new EventEditingWidget (event_manager, command_executer);
-        event_creation_widget_->connect (signal_browser_model.data(), SIGNAL(shownEventTypesChanged(std::set<EventType> const&)), SLOT(updateShownEventTypes (std::set<EventType> const&)));
-        event_editing_widget_->connect (signal_browser_model.data(), SIGNAL(shownEventTypesChanged(std::set<EventType> const&)), SLOT(updateShownEventTypes (std::set<EventType> const&)));
-        event_editing_widget_->connect (signal_browser_model.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent const>)), SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent const>)));
-    }
-
-    adapt_browser_view_widget_ = new AdaptBrowserViewWidget (this, model_);
-    x_axis_widget_->connect (adapt_browser_view_widget_, SIGNAL(xAxisVisibilityChanged(bool)), SLOT(setVisible(bool)));
-    y_axis_widget_->connect (adapt_browser_view_widget_, SIGNAL(yAxisVisibilityChanged(bool)), SLOT(setVisible(bool)));
-    label_widget_->connect (adapt_browser_view_widget_, SIGNAL(labelsVisibilityChanged(bool)), SLOT(setVisible(bool)));
-    model_->connect (adapt_browser_view_widget_, SIGNAL(yGridChanged(int)), SLOT(setYGridFragmentation(int)));
-
-    connect(horizontal_scrollbar_, SIGNAL(valueChanged(int)),
-            graphics_view_->horizontalScrollBar(), SLOT(setValue(int)));
-    connect(graphics_view_->horizontalScrollBar(), SIGNAL(valueChanged(int)),
-            horizontal_scrollbar_, SLOT(setValue(int)));
-    connect(graphics_view_->horizontalScrollBar(), SIGNAL(rangeChanged(int,int)),
-            this, SLOT(horizontalScrollBarRangeChaned(int,int)));
-    connect(horizontal_scrollbar_, SIGNAL(valueChanged(int)),
-            this, SLOT(horizontalSrollbarMoved(int)));
-
-    connect(vertical_scrollbar_, SIGNAL(valueChanged(int)),
-            graphics_view_->verticalScrollBar(), SLOT(setValue(int)));
-    connect(graphics_view_->verticalScrollBar(), SIGNAL(valueChanged(int)),
-            vertical_scrollbar_, SLOT(setValue(int)));
-    connect(graphics_view_->verticalScrollBar(), SIGNAL(rangeChanged(int,int)),
-            this, SLOT(verticalScrollBarRangeChaned(int,int)));
-    connect(vertical_scrollbar_, SIGNAL(valueChanged(int)),
-            this, SLOT(verticalSrollbarMoved(int)));
-
-    connect(this, SIGNAL(visibleXChanged(int32)), x_axis_widget_, SLOT(changeXStart(int32)));
-    connect(signal_browser_model.data(), SIGNAL(pixelPerSampleChanged(float32,float32)), x_axis_widget_, SLOT(changePixelPerSample(float32,float32)));
-    label_widget_->connect (this, SIGNAL(visibleYChanged(int32)), SLOT(changeYStart (int32)));
-    connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
-    connect(signal_browser_model.data(), SIGNAL(signalHeightChanged(uint32)), y_axis_widget_, SLOT(changeSignalHeight(uint32)));
-    connect(signal_browser_model.data(), SIGNAL(modeChanged(SignalVisualisationMode)), SLOT(setMode(SignalVisualisationMode)));
+    initWidgets (event_manager, command_executer);
 
     graphics_view_->resize(width() - label_widget_->width() - y_axis_widget_->width() + (vertical_scrollbar_->width()*2), height() - x_axis_widget_->height() + horizontal_scrollbar_->height());
 
@@ -260,12 +201,6 @@ QSharedPointer<QImage> SignalBrowserView::renderVisibleScene () const
     QPainter painter (image.data());
     graphics_view_->render (&painter, graphics_view_->viewport()->rect(), graphics_view_->viewport()->rect());
     return image;
-}
-
-//-----------------------------------------------------------------------------
-double SignalBrowserView::getYGridValueInterval () const
-{
-    return model_->getYGridValueInterval ();
 }
 
 //-----------------------------------------------------------------------------
@@ -417,6 +352,72 @@ void SignalBrowserView::scroll ()
     if ((scroll_x_left_ && graphics_view_->mapToScene(0,0).x() <= scroll_x_destination_)
         || (!scroll_x_left_ && graphics_view_->mapToScene(0,0).x() >= scroll_x_destination_))
         scroll_timer_->stop();
+}
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager, QSharedPointer<CommandExecuter> command_executer)
+{
+    y_axis_widget_ = new YAxisWidget (this);
+    hideable_widgets_["Y Axis"] = y_axis_widget_;
+    y_axis_widget_->resize(70, height());
+    y_axis_widget_->setMinimumSize(70, 0);
+
+    x_axis_widget_ = new XAxisWidget (this);
+    hideable_widgets_["X Axis"] = x_axis_widget_;
+    x_axis_widget_->resize(width()-300, 30);
+    x_axis_widget_->setMinimumSize(0, 30);
+
+    horizontal_scrollbar_ = new QScrollBar (Qt::Horizontal, this);
+    vertical_scrollbar_ = new QScrollBar (Qt::Vertical, this);
+
+    label_widget_ = new LabelWidget (*model_);
+    hideable_widgets_["Channel Labels"] = label_widget_;
+
+    current_info_widget_ = empty_widget_;
+    if (event_manager.isNull())
+    {
+        event_creation_widget_ = 0;
+        event_editing_widget_ = 0;
+    }
+    else
+    {
+        event_creation_widget_ = new EventCreationWidget (model_, event_manager);
+        event_editing_widget_ = new EventEditingWidget (event_manager, command_executer);
+        event_creation_widget_->connect (model_.data(), SIGNAL(shownEventTypesChanged(std::set<EventType> const&)), SLOT(updateShownEventTypes (std::set<EventType> const&)));
+        event_editing_widget_->connect (model_.data(), SIGNAL(shownEventTypesChanged(std::set<EventType> const&)), SLOT(updateShownEventTypes (std::set<EventType> const&)));
+        event_editing_widget_->connect (model_.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent const>)), SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent const>)));
+    }
+
+    adapt_browser_view_widget_ = new AdaptBrowserViewWidget (this, model_);
+    x_axis_widget_->connect (adapt_browser_view_widget_, SIGNAL(xAxisVisibilityChanged(bool)), SLOT(setVisible(bool)));
+    y_axis_widget_->connect (adapt_browser_view_widget_, SIGNAL(yAxisVisibilityChanged(bool)), SLOT(setVisible(bool)));
+    label_widget_->connect (adapt_browser_view_widget_, SIGNAL(labelsVisibilityChanged(bool)), SLOT(setVisible(bool)));
+    model_->connect (adapt_browser_view_widget_, SIGNAL(yGridChanged(int)), SLOT(setYGridFragmentation(int)));
+
+    connect(horizontal_scrollbar_, SIGNAL(valueChanged(int)),
+            graphics_view_->horizontalScrollBar(), SLOT(setValue(int)));
+    connect(graphics_view_->horizontalScrollBar(), SIGNAL(valueChanged(int)),
+            horizontal_scrollbar_, SLOT(setValue(int)));
+    connect(graphics_view_->horizontalScrollBar(), SIGNAL(rangeChanged(int,int)),
+            this, SLOT(horizontalScrollBarRangeChaned(int,int)));
+    connect(horizontal_scrollbar_, SIGNAL(valueChanged(int)),
+            this, SLOT(horizontalSrollbarMoved(int)));
+
+    connect(vertical_scrollbar_, SIGNAL(valueChanged(int)),
+            graphics_view_->verticalScrollBar(), SLOT(setValue(int)));
+    connect(graphics_view_->verticalScrollBar(), SIGNAL(valueChanged(int)),
+            vertical_scrollbar_, SLOT(setValue(int)));
+    connect(graphics_view_->verticalScrollBar(), SIGNAL(rangeChanged(int,int)),
+            this, SLOT(verticalScrollBarRangeChaned(int,int)));
+    connect(vertical_scrollbar_, SIGNAL(valueChanged(int)),
+            this, SLOT(verticalSrollbarMoved(int)));
+
+    connect(this, SIGNAL(visibleXChanged(int32)), x_axis_widget_, SLOT(changeXStart(int32)));
+    connect(model_.data(), SIGNAL(pixelPerSampleChanged(float32,float32)), x_axis_widget_, SLOT(changePixelPerSample(float32,float32)));
+    label_widget_->connect (this, SIGNAL(visibleYChanged(int32)), SLOT(changeYStart (int32)));
+    connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
+    connect(model_.data(), SIGNAL(signalHeightChanged(uint32)), y_axis_widget_, SLOT(changeSignalHeight(uint32)));
+    connect(model_.data(), SIGNAL(modeChanged(SignalVisualisationMode)), SLOT(setMode(SignalVisualisationMode)));
 }
 
 //-----------------------------------------------------------------------------

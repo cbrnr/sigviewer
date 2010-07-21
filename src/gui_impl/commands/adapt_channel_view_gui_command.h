@@ -36,6 +36,9 @@ private slots:
     void scale ();
 
     //-------------------------------------------------------------------------
+    void applyScaleToOtherChannels ();
+
+    //-------------------------------------------------------------------------
     void hide ();
 
     //-------------------------------------------------------------------------
@@ -57,6 +60,7 @@ private:
     static QString const CHANNELS_;
     static QString const CHANGE_COLOR_;
     static QString const SCALE_;
+    static QString const APPLY_SCALE_TO_OTHER_CHANNELS_;
     static QString const HIDE_;
     static QString const SCALE_ALL_;
     static QString const SET_AUTO_SCALE_MAX_TO_MAX_;

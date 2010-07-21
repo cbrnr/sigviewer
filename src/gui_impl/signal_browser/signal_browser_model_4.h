@@ -92,9 +92,6 @@ public:
     void zoomOutAll();
 
     //-------------------------------------------------------------------------
-    virtual double getYGridValueInterval () const;
-
-    //-------------------------------------------------------------------------
     virtual int getYGridFragmentation () const;
 
     EventGraphicsItem* getSelectedEventItem();
@@ -102,13 +99,7 @@ public:
 
 public slots:
     //-------------------------------------------------------------------------
-    virtual void setYGridValueInterval (double interval);
-
-    //-------------------------------------------------------------------------
     virtual void setYGridFragmentation (int fragmentation);
-
-    //-------------------------------------------------------------------------
-    //virtual void setYGridValueInterval (double interval, ChannelID channel_id);
 
     //-------------------------------------------------------------------------
     /// adds the given event
@@ -161,7 +152,6 @@ private:
     Int2IntMap channel2y_pos_;
     EventGraphicsItem* selected_event_item_;
 
-    double y_grid_value_interval_;
     int y_grid_fragmentation_;
     float64 x_grid_pixel_intervall_;
 
