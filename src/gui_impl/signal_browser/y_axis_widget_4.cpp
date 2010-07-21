@@ -23,26 +23,10 @@ YAxisWidget::YAxisWidget (QWidget* parent)
 }
 
 //-----------------------------------------------------------------------------
-//QSize YAxisWidget::sizeHint () const
-//{
-//    return QSize (70, 0);
-//}
-
-//-----------------------------------------------------------------------------
 void YAxisWidget::addChannel(ChannelID channel_nr, SignalGraphicsItem const* const signal_item)
 {
     if (signal_item)
-    {
         channel_nr2signal_graphics_item_[channel_nr] = signal_item;
-//        QPixmap dummy(1,1);
-//        QPainter p(&dummy);
-//        QRect bounding = p.boundingRect(0, 0, 500, 500,
-//                                        Qt::AlignHCenter | Qt::AlignVCenter, signal_item->getPhysicalDimensionString());
-
-//        int32 max_width = minimumWidth() - 30;
-//        max_width = bounding.width() > max_width ? bounding.width() : max_width;
-//        setMinimumWidth(30 + max_width);
-    }
 }
 
 //-----------------------------------------------------------------------------
