@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>202</width>
+    <width>339</width>
     <height>170</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    <item>
     <widget class="QRadioButton" name="autoButton">
      <property name="text">
-      <string>Min - Max Auto Scaling</string>
+      <string>Min -&gt; Max Auto Scaling</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -27,7 +27,7 @@
    <item>
     <widget class="QRadioButton" name="physButton">
      <property name="text">
-      <string>Defined Range Auto Scaling</string>
+      <string>Defined Range Auto Scaling (PhysMin -&gt; PhysMax)</string>
      </property>
     </widget>
    </item>
