@@ -158,8 +158,8 @@ void YAxisWidget::paintYUnits (QPainter* painter, QString const& unit_string)
         painter->rotate(90);
     }
     else
-        painter->drawText (5,  -static_cast<int>(signal_height_ / 2), width() - 10, 40,
-                           Qt::AlignLeft | Qt::AlignVCenter,
+        painter->drawText (5,  0, width() - 10, 40,
+                           Qt::AlignLeft | Qt::AlignTop,
                            unit_string);
 }
 
