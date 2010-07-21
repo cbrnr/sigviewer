@@ -100,7 +100,6 @@ void EventTableEditingDialog::updateTable (EventID event)
 //-------------------------------------------------------------------------
 void EventTableEditingDialog::on_delete_button__clicked ()
 {
-    qDebug () << "EventTableEditingDialog::on_delete_button__clicked ";
     std::set<EventID> events_to_delete;
     QList<QSharedPointer<QUndoCommand> > delete_commands;
     foreach (QTableWidgetItem* item, ui_.event_table_->selectedItems())

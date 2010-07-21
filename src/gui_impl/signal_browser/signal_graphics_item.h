@@ -6,8 +6,9 @@
 #include "file_handling/event_manager.h"
 #include "file_handling/channel_manager.h"
 #include "gui/color_manager.h"
+#include "gui/signal_view_settings.h"
 
-#include <QGraphicsItem>
+#include <QGraphicsObject>
 #include <QSharedPointer>
 #include <QObject>
 
@@ -20,14 +21,15 @@ class SignalEvent;
 class SignalBrowserModel;
 class EventGraphicsItem;
 
-class SignalGraphicsItem : public QObject, public QGraphicsItem
+class SignalGraphicsItem : public QGraphicsObject
 {
     Q_OBJECT
 #if QT_VERSION >= 0x040600
     Q_INTERFACES(QGraphicsItem)
 #endif
 public:
-    SignalGraphicsItem(QSharedPointer<EventManager> event_manager,
+    SignalGraphicsItem(QSharedPointer<SignalViewSettings const> signal_view_settings,
+                       QSharedPointer<EventManager> event_manager,
                        QSharedPointer<CommandExecuter> command_executor,
                        QSharedPointer<ChannelManager> channel_manager,
                        QSharedPointer<ColorManager const> color_manager,
@@ -76,6 +78,7 @@ private:
     void drawYGrid (QPainter* painter, QStyleOptionGraphicsItem const* option);
     void drawXGrid (QPainter* painter, QStyleOptionGraphicsItem const* option);
 
+    QSharedPointer<SignalViewSettings const> signal_view_settings_;
     QSharedPointer<EventManager> event_manager_;
     QSharedPointer<CommandExecuter> command_executor_;
     QSharedPointer<ChannelManager> channel_manager_;

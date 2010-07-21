@@ -67,7 +67,6 @@ public:
     virtual bool getYAxisVisibility () const;
     virtual bool getLabelsVisibility () const;
 public slots:
-    void setXAxisIntervall (float64 intervall);
     void setMode (SignalVisualisationMode mode);
 
 signals:

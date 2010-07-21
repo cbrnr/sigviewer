@@ -117,10 +117,8 @@ void AdaptEventViewGuiCommand::fitViewToEvent ()
 
     float32 width = currentVisModel()->getShownSignalWidth ();
     float32 desired_pixel_per_sample = width / event->getDuration ();
-    float32 pixel_per_sample = desired_pixel_per_sample;
 
-    currentVisModel()->setPixelPerSample (pixel_per_sample);
-    currentVisModel()->update ();
+    currentSignalViewSettings()->setPixelsPerSample (desired_pixel_per_sample);
     currentVisModel()->goToSample (event->getPosition ());
 }
 

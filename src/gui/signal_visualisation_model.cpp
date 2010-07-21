@@ -6,8 +6,10 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-SignalVisualisationModel::SignalVisualisationModel (std::set<EventType> const& shown_types)
-    : pixel_per_sample_ (1),
+SignalVisualisationModel::SignalVisualisationModel (std::set<EventType> const& shown_types,
+                                                    QSharedPointer<ChannelManager> channel_manager)
+    : signal_view_settings_ (new SignalViewSettings (channel_manager)),
+      //pixel_per_sample_ (1),
       mode_ (MODE_HAND),
       event_creation_type_ (1),
       shown_event_types_ (shown_types),
@@ -37,20 +39,6 @@ SignalVisualisationMode SignalVisualisationModel::getMode () const
 void SignalVisualisationModel::setInfoWidget (QWidget* info_widget)
 {
     info_widget_ = info_widget;
-}
-
-//-----------------------------------------------------------------------------
-void SignalVisualisationModel::setPixelPerSample (float pixel_per_sample)
-{
-    pixel_per_sample_ = pixel_per_sample;
-    emit pixelPerSampleChanged (pixel_per_sample_, getChannelManager()->getSampleRate());
-    update ();
-}
-
-//-----------------------------------------------------------------------------
-float SignalVisualisationModel::getPixelPerSample () const
-{
-    return pixel_per_sample_;
 }
 
 //-------------------------------------------------------------------------

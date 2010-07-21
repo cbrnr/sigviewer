@@ -152,6 +152,18 @@ QSharedPointer<SignalVisualisationModel> GuiActionCommand::currentVisModel ()
 }
 
 //-------------------------------------------------------------------------
+QSharedPointer<SignalViewSettings> GuiActionCommand::currentSignalViewSettings ()
+{
+    QSharedPointer<SignalViewSettings> settings;
+
+    QSharedPointer<SignalVisualisationModel> vis_model = currentVisModel();
+    if (!vis_model.isNull())
+        settings = vis_model->getSignalViewSettings();
+
+    return settings;
+}
+
+//-------------------------------------------------------------------------
 QSharedPointer<FileContext> GuiActionCommand::currentFileContext ()
 {
     return ApplicationContextImpl::getInstance()->getCurrentFileContext();

@@ -40,9 +40,6 @@ public:
     virtual ~SignalBrowserModel() {}
 
     //-------------------------------------------------------------------------
-    virtual void update ();
-
-    //-------------------------------------------------------------------------
     virtual void scaleChannel (ChannelID id, float32 lower_value, float32 upper_value);
 
     //-------------------------------------------------------------------------
@@ -98,6 +95,9 @@ public:
     void updateEventItems ();
 
 public slots:
+    //-------------------------------------------------------------------------
+    virtual void update ();
+
     //-------------------------------------------------------------------------
     virtual void setYGridFragmentation (int fragmentation);
 

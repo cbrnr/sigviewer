@@ -2,13 +2,14 @@
 #define EVENT_GRAPHICS_ITEM_H
 
 
-#include "../../base/sigviewer_user_types.h"
-#include "../../base/signal_event.h"
-#include "../../command_executer.h"
-#include "../../file_handling/event_manager.h"
-#include "../../gui/color_manager.h"
+#include "base/sigviewer_user_types.h"
+#include "base/signal_event.h"
+#include "command_executer.h"
+#include "file_handling/event_manager.h"
+#include "gui/color_manager.h"
+#include "gui/signal_view_settings.h"
 
-#include <QGraphicsItem>
+#include <QGraphicsObject>
 #include <QObject>
 #include <QSharedPointer>
 #include <QColor>
@@ -23,7 +24,7 @@ namespace BioSig_
 class SignalBrowserModel;
 class EventContextMenu;
 
-class EventGraphicsItem : public QObject, public QGraphicsItem
+class EventGraphicsItem : public QGraphicsObject
 {
     Q_OBJECT
 #if QT_VERSION >= 0x040600
@@ -31,6 +32,7 @@ class EventGraphicsItem : public QObject, public QGraphicsItem
 #endif
 public:
     EventGraphicsItem(SignalBrowserModel& model,
+                      QSharedPointer<SignalViewSettings const> signal_view_settings,
                       QSharedPointer<SignalEvent const> signal_event,
                       QSharedPointer<EventManager> event_manager,
                       QSharedPointer<CommandExecuter> command_executer,
@@ -90,6 +92,7 @@ private:
     void addContextMenuEntry ();
 
     SignalBrowserModel& signal_browser_model_;
+    QSharedPointer<SignalViewSettings const> signal_view_settings_;
     QSharedPointer<EventManager> event_manager_;
     QSharedPointer<CommandExecuter> command_executer_;
     QColor color_;

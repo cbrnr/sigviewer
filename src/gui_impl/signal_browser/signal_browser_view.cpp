@@ -222,12 +222,6 @@ bool SignalBrowserView::getLabelsVisibility () const
 }
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::setXAxisIntervall (float64 intervall)
-{
-    x_axis_widget_->changeIntervall (intervall);
-}
-
-//-----------------------------------------------------------------------------
 void SignalBrowserView::setMode (SignalVisualisationMode mode)
 {
     if (current_info_widget_)
@@ -362,7 +356,7 @@ void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager,
     y_axis_widget_->resize(70, height());
     y_axis_widget_->setMinimumSize(70, 0);
 
-    x_axis_widget_ = new XAxisWidget (this);
+    x_axis_widget_ = new XAxisWidget (model_->getSignalViewSettings(), this);
     hideable_widgets_["X Axis"] = x_axis_widget_;
     x_axis_widget_->resize(width()-300, 30);
     x_axis_widget_->setMinimumSize(0, 30);
@@ -413,7 +407,7 @@ void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager,
             this, SLOT(verticalSrollbarMoved(int)));
 
     connect(this, SIGNAL(visibleXChanged(int32)), x_axis_widget_, SLOT(changeXStart(int32)));
-    connect(model_.data(), SIGNAL(pixelPerSampleChanged(float32,float32)), x_axis_widget_, SLOT(changePixelPerSample(float32,float32)));
+    connect(model_->getSignalViewSettings().data(), SIGNAL(pixelsPerSampleChanged()), x_axis_widget_, SLOT(update()));
     label_widget_->connect (this, SIGNAL(visibleYChanged(int32)), SLOT(changeYStart (int32)));
     connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
     connect(model_.data(), SIGNAL(signalHeightChanged(uint32)), y_axis_widget_, SLOT(changeSignalHeight(uint32)));

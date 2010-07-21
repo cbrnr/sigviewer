@@ -30,11 +30,13 @@ EventContextMenu* EventGraphicsItem::context_menu_ = 0;
 
 //-----------------------------------------------------------------------------
 EventGraphicsItem::EventGraphicsItem (SignalBrowserModel& model,
+                                      QSharedPointer<SignalViewSettings const> signal_view_settings,
                                       QSharedPointer<SignalEvent const> signal_event,
                                       QSharedPointer<EventManager> event_manager,
                                       QSharedPointer<CommandExecuter> command_executer,
                                       QSharedPointer<ColorManager const> color_manager)
 : signal_browser_model_ (model),
+  signal_view_settings_ (signal_view_settings),
   event_manager_ (event_manager),
   command_executer_ (command_executer),
   state_ (STATE_NONE),
@@ -110,7 +112,7 @@ bool EventGraphicsItem::displaySelectionMenu (QGraphicsSceneMouseEvent* event)
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::updateToSignalEvent ()
 {
-    float64 pixel_per_sample = signal_browser_model_.getPixelPerSample();
+    float64 pixel_per_sample = signal_view_settings_->getPixelsPerSample();
     QRectF old_rect;
     if (scene ())
         old_rect = this->sceneBoundingRect();
@@ -203,7 +205,7 @@ void EventGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event)
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* mouse_event)
 {
-    float32 pixel_per_sample = signal_browser_model_.getPixelPerSample();
+    float32 pixel_per_sample = signal_view_settings_->getPixelsPerSample();
     int32 mouse_pos_rounded = 0.5 + (mouse_event->scenePos().x() / pixel_per_sample);
     mouse_pos_rounded *= pixel_per_sample;
 
@@ -247,7 +249,7 @@ void EventGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* mouse_event)
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent*)
 {
-    float32 pixel_per_sample = signal_browser_model_.getPixelPerSample();
+    float32 pixel_per_sample = signal_view_settings_->getPixelsPerSample();
     switch(state_)
     {
         case STATE_MOVE_BEGIN:

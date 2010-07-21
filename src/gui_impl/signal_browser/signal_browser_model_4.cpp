@@ -27,7 +27,8 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
                                        QSharedPointer<ChannelManager> channel_manager,
                                        QSharedPointer<TabContext> tab_context,
                                        QSharedPointer<ColorManager const> color_manager)
-: SignalVisualisationModel (std::set<EventType> ()),
+: SignalVisualisationModel (std::set<EventType> (),
+                            channel_manager),
   channel_manager_ (channel_manager),
   event_manager_ (event_manager),
   tab_context_ (tab_context),
@@ -49,6 +50,7 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
            {
                id2event_item_[*event_id_iter] = new EventGraphicsItem (
                        *this,
+                       getSignalViewSettings(),
                        event_manager_->getEvent (*event_id_iter),
                        event_manager_,
                        tab_context_,
@@ -56,6 +58,7 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
            }
        }
     }
+    connect (getSignalViewSettings().data(), SIGNAL(pixelsPerSampleChanged()), SLOT(update()));
 }
 
 //-----------------------------------------------------------------------------
@@ -142,7 +145,8 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
 void SignalBrowserModel::addChannel (ChannelID channel_id)
 {
     SignalGraphicsItem* signal_item
-        = new SignalGraphicsItem (event_manager_,
+        = new SignalGraphicsItem (getSignalViewSettings(),
+                                  event_manager_,
                                   tab_context_,
                                   channel_manager_,
                                   color_manager_,
@@ -230,14 +234,14 @@ void SignalBrowserModel::zoomOutAll()
 void SignalBrowserModel::update()
 {
     int32 width = channel_manager_->getNumberSamples()
-                  * getPixelPerSample();
+                  * getSignalViewSettings()->getPixelsPerSample();
 
     int32 height = getSignalHeight() *
                    channel2signal_item_.size();
 
     signal_browser_view_->resizeScene (width, height);
 
-    float64 pixel_per_sec = getPixelPerSample () * channel_manager_->getSampleRate();
+    double pixel_per_sec = getSignalViewSettings()->getPixelsPerSample() * getSignalViewSettings()->getSampleRate();
     x_grid_pixel_intervall_ =  pixel_per_sec * round125 (100.0 / pixel_per_sec);
 
     channel2y_pos_.clear();
@@ -262,9 +266,6 @@ void SignalBrowserModel::update()
     }
 
     updateEventItemsImpl ();
-
-    signal_browser_view_->setXAxisIntervall (x_grid_pixel_intervall_);
-    emit pixelPerSampleChanged (getPixelPerSample (), channel_manager_->getSampleRate());
     signal_browser_view_->update();
     signal_browser_view_->updateWidgets();
 }
@@ -359,16 +360,16 @@ unsigned SignalBrowserModel::getShownSignalWidth () const
 //-------------------------------------------------------------------------
 unsigned SignalBrowserModel::getShownPosition () const
 {
-    return signal_browser_view_->getVisibleX () / getPixelPerSample ();
+    return signal_browser_view_->getVisibleX () / getSignalViewSettings()->getPixelsPerSample();
 }
 
 //-------------------------------------------------------------------------
 void SignalBrowserModel::goToSample (unsigned sample)
 {
     float32 position = 0;
-    while (position < getPixelPerSample() * sample)
-        position += getPixelPerSample ();
-    position -= getPixelPerSample ();
+    while (position < getSignalViewSettings()->getPixelsPerSample() * sample)
+        position += getSignalViewSettings()->getPixelsPerSample();
+    position -= getSignalViewSettings()->getPixelsPerSample();
 
     signal_browser_view_->goTo (position);
 }
@@ -492,7 +493,7 @@ void SignalBrowserModel::updateEventItemsImpl ()
 void SignalBrowserModel::addEventItem (QSharedPointer<SignalEvent const> event)
 {
     EventGraphicsItem* event_item = new EventGraphicsItem(
-            *this, event, event_manager_,
+            *this, getSignalViewSettings(), event, event_manager_,
             tab_context_, color_manager_);
 
     id2event_item_[event->getId()] = event_item;
@@ -504,7 +505,6 @@ void SignalBrowserModel::addEventItem (QSharedPointer<SignalEvent const> event)
 //-----------------------------------------------------------------------------
 void SignalBrowserModel::removeEventItem (EventID id)
 {
-    qDebug () << "SignalBrowserModel::removeEventItem " << id << " started";
     if (id2event_item_.find (id) == id2event_item_.end())
         return;
 
@@ -514,7 +514,6 @@ void SignalBrowserModel::removeEventItem (EventID id)
     id2event_item_.erase (id);
     signal_browser_view_->removeEventGraphicsItem (event_item);
     delete event_item;
-    qDebug () << "SignalBrowserModel::removeEventItem "<< id << " finished";
 }
 
 

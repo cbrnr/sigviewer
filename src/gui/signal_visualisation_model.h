@@ -1,13 +1,14 @@
 #ifndef SIGNAL_VISUALISATION_MODEL_H
 #define SIGNAL_VISUALISATION_MODEL_H
 
-#include "../base/sigviewer_user_types.h"
-#include "../base/signal_event.h"
-#include "../file_handling/channel_manager.h"
-#include "../file_handling/event_manager.h"
+#include "base/sigviewer_user_types.h"
+#include "base/signal_event.h"
+#include "file_handling/channel_manager.h"
+#include "file_handling/event_manager.h"
 #include "signal_visualisation_modes.h"
 #include "signal_visualisation_view.h"
 #include "event_view.h"
+#include "signal_view_settings.h"
 
 #include <QObject>
 
@@ -23,15 +24,21 @@ namespace BioSig_
 class SignalVisualisationModel : public QObject, public EventView
 {
     Q_OBJECT
-    Q_PROPERTY(float pixel_per_sample_ READ getPixelPerSample WRITE setPixelPerSample)
     Q_PROPERTY(float signal_height_ READ getSignalHeight WRITE setSignalHeight)
     Q_PROPERTY(int sample_position_ READ getShownPosition WRITE goToSample)
     Q_PROPERTY(int yGridFragmentation READ getYGridFragmentation WRITE setYGridFragmentation)
-   // Q_PROPERTY(bool yGridVisible READ isYGridVisibile WRITE setYGridVisibile)
 public:
     //-------------------------------------------------------------------------
     /// virtual destructor
     virtual ~SignalVisualisationModel () {}
+
+    //-------------------------------------------------------------------------
+    QSharedPointer<SignalViewSettings> getSignalViewSettings ()
+                    {return signal_view_settings_;}
+
+    //-------------------------------------------------------------------------
+    QSharedPointer<SignalViewSettings const> getSignalViewSettings () const
+                    {return signal_view_settings_;}
 
     //-------------------------------------------------------------------------
     virtual std::set<ChannelID> getShownChannels () const = 0;
@@ -50,12 +57,6 @@ public:
     void setInfoWidget (QWidget* info_widget);
 
     //-------------------------------------------------------------------------
-    void setPixelPerSample (float pixel_per_sample);
-
-    //-------------------------------------------------------------------------
-    float getPixelPerSample () const;
-
-    //-------------------------------------------------------------------------
     virtual void scaleChannel (ChannelID id, float32 lower_value, float32 upper_value) = 0;
 
     //-------------------------------------------------------------------------
@@ -63,12 +64,6 @@ public:
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<ChannelManager const> getChannelManager () const = 0;
-
-    //-------------------------------------------------------------------------
-    virtual QSharedPointer<EventManager const> getEventManager () const = 0;
-
-    //-------------------------------------------------------------------------
-    virtual QSharedPointer<EventManager> getEventManager () = 0;
 
     //-------------------------------------------------------------------------
     unsigned getSignalHeight () const;
@@ -121,9 +116,6 @@ public:
     ScaleMode getAutoScaleMode () const;
 
     //-------------------------------------------------------------------------
-    virtual void update () {}
-
-    //-------------------------------------------------------------------------
     virtual int getYGridFragmentation () const = 0;
 
     //-------------------------------------------------------------------------
@@ -136,21 +128,23 @@ public slots:
     virtual void setYGridFragmentation (int fragmentation) = 0;
 
     //-------------------------------------------------------------------------
+    virtual void update () {}
+
+    //-------------------------------------------------------------------------
     void setActualEventCreationType (EventType type);
 
 signals:
-    void pixelPerSampleChanged (float32 pixel_per_sample, float32 sample_rate);
     void shownEventTypesChanged (std::set<EventType> const& shown_event_types);
     void signalHeightChanged (uint32 signal_height);
     void modeChanged (SignalVisualisationMode mode);
 
 protected:
-    SignalVisualisationModel (std::set<EventType> const& shown_types);
+    SignalVisualisationModel (std::set<EventType> const& shown_types, QSharedPointer<ChannelManager> channel_manager);
     virtual void shownEventTypesChangedImpl () = 0;
     virtual void modeChangedImpl (SignalVisualisationMode) {}
 
 private:
-    float pixel_per_sample_;
+    QSharedPointer<SignalViewSettings> signal_view_settings_;
     SignalVisualisationMode mode_;
     EventType event_creation_type_;
     std::set<EventType> shown_event_types_;

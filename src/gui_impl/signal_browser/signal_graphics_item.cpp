@@ -1,16 +1,16 @@
 #include "signal_graphics_item.h"
 #include "event_graphics_item.h"
 #include "signal_browser_model_4.h"
-#include "../../editing_commands/new_event_undo_command.h"
+#include "editing_commands/new_event_undo_command.h"
 #include "y_axis_widget_4.h"
-#include "../../file_handling/channel_manager.h"
-#include "../../command_executer.h"
-#include "../../base/signal_event.h"
-#include "../../base/signal_channel.h"
-#include "../../base/math_utils.h"
+#include "file_handling/channel_manager.h"
+#include "command_executer.h"
+#include "base/signal_event.h"
+#include "base/signal_channel.h"
+#include "base/math_utils.h"
 #include "../signal_browser_mouse_handling.h"
-#include "../../gui/color_manager.h"
-#include "../../gui/gui_action_factory.h"
+#include "gui/color_manager.h"
+#include "gui/gui_action_factory.h"
 
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
@@ -29,13 +29,15 @@ namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<EventManager> event_manager,
+SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const> signal_view_settings,
+                                        QSharedPointer<EventManager> event_manager,
                                         QSharedPointer<CommandExecuter> command_executor,
                                         QSharedPointer<ChannelManager> channel_manager,
                                         QSharedPointer<ColorManager const> color_manager,
                                         ChannelID id,
                                         SignalBrowserModel& model)
-: event_manager_ (event_manager),
+: signal_view_settings_ (signal_view_settings),
+  event_manager_ (event_manager),
   command_executor_ (command_executor),
   channel_manager_ (channel_manager),
   color_manager_ (color_manager),
@@ -57,7 +59,6 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<EventManager> event_manag
 #if QT_VERSION >= 0x040600
     setFlag (QGraphicsItem::ItemUsesExtendedStyleOption, true);
 #endif
-   // updateYGridIntervall ();
     setAcceptHoverEvents(false);
 }
 
@@ -75,7 +76,7 @@ void SignalGraphicsItem::setHeight (uint32 height)
    y_zoom_ = y_zoom_ * height / height_;
    y_offset_ = y_offset_* height / height_;
    height_ = height;
-   width_ = channel_manager_->getNumberSamples() * signal_browser_model_.getPixelPerSample();
+   width_ = channel_manager_->getNumberSamples() * signal_view_settings_->getPixelsPerSample();
    updateYGridIntervall ();
 }
 
@@ -199,7 +200,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     painter->setClipping(true);
     painter->setClipRect(clip);
 
-    float32 pixel_per_sample = signal_browser_model_.getPixelPerSample();
+    float32 pixel_per_sample = signal_view_settings_->getPixelsPerSample();
 
     float32 last_x = clip.x () - 10;
     if (last_x < 0)
@@ -255,7 +256,6 @@ void SignalGraphicsItem::updateYGridIntervall ()
 {
     y_grid_pixel_intervall_ = round125 ((maximum_ - minimum_) / signal_browser_model_.getYGridFragmentation ());
     y_grid_pixel_intervall_ *= y_zoom_;
-    qDebug () << "y_grid_pixel_intervall_ channel " << id_ << ": " << y_grid_pixel_intervall_;
     emit updatedYGrid (id_);
 }
 
@@ -286,7 +286,7 @@ void SignalGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* event)
     }
     else if (new_event_)
     {
-        float32 pixel_per_sample = signal_browser_model_.getPixelPerSample ();
+        float32 pixel_per_sample = signal_view_settings_->getPixelsPerSample ();
         int32 sample_cleaned_pos = event->scenePos().x() / pixel_per_sample + 0.5;
         sample_cleaned_pos *= pixel_per_sample;
         int32 new_event_width = new_signal_event_->getDuration ();
@@ -323,7 +323,7 @@ void SignalGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* event)
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent* event)
 {
-    unsigned sample_pos = event->scenePos().x() / signal_browser_model_.getPixelPerSample();
+    unsigned sample_pos = event->scenePos().x() / signal_view_settings_->getPixelsPerSample ();
 
     emit mouseMoving (true);
     emit mouseAtSecond (sample_pos / channel_manager_->getSampleRate());
@@ -382,7 +382,7 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
             if (signal_browser_model_.getShownEventTypes ().size() == 0)
                 break;
 
-            float32 pixel_per_sample = signal_browser_model_.getPixelPerSample ();
+            float32 pixel_per_sample = signal_view_settings_->getPixelsPerSample ();
             int32 sample_cleaned_pos = event->scenePos().x() / pixel_per_sample + 0.5;
             sample_cleaned_pos *= pixel_per_sample;
             new_event_ = true;
@@ -412,7 +412,7 @@ void SignalGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent* event)
     if (new_event_)
     {
         emit mouseMoving (false);
-        NewEventUndoCommand* new_event_command = new NewEventUndoCommand (event_manager_, new_signal_event_, 1.0 / signal_browser_model_.getPixelPerSample());
+        NewEventUndoCommand* new_event_command = new NewEventUndoCommand (event_manager_, new_signal_event_, 1.0 / signal_view_settings_->getPixelsPerSample());
         command_executor_->executeCommand (new_event_command);
     }
 

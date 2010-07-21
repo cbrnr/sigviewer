@@ -257,7 +257,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
 //-----------------------------------------------------------------------------
 QSharedPointer<BasicHeader> BioSigReader::getBasicHeader ()
 {
-    QMutexLocker lock (&mutex_);
+    //QMutexLocker lock (&mutex_);
     return basic_header_;
 }
 

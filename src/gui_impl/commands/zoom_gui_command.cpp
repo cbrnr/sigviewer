@@ -66,6 +66,7 @@ void ZoomGuiCommand::init ()
 //-------------------------------------------------------------------------
 void ZoomGuiCommand::evaluateEnabledness ()
 {
+    QSharedPointer<SignalViewSettings> vis = currentSignalViewSettings ();
     QSharedPointer<SignalVisualisationModel> vis_model = currentVisModel();
     bool file_open = getApplicationState () == APP_STATE_FILE_OPEN;
     bool zoom_out_vertical_possible = false;
@@ -73,12 +74,12 @@ void ZoomGuiCommand::evaluateEnabledness ()
     bool zoom_out_horizontal_possible = false;
     bool zoom_in_horizontal_possible = false;
 
-    if (file_open && !vis_model.isNull())
+    if (file_open && !vis.isNull())
     {
         zoom_out_vertical_possible = (vis_model->getSignalHeight() * vis_model->getShownChannels().size() > vis_model->getShownHeight());
         zoom_in_vertical_possible = (vis_model->getSignalHeight() < vis_model->getShownHeight());
-        zoom_out_horizontal_possible = vis_model->getPixelPerSample() > minPixelPerSample();
-        zoom_in_horizontal_possible = vis_model->getPixelPerSample() < maxPixelPerSample();
+        zoom_out_horizontal_possible = vis->getPixelsPerSample() > minPixelPerSample();
+        zoom_in_horizontal_possible = vis->getPixelsPerSample() < maxPixelPerSample();
     }
 
     getQAction (ZOOM_OUT_VERTICAL_)->setEnabled (zoom_out_vertical_possible);
@@ -110,11 +111,11 @@ void ZoomGuiCommand::goTo ()
 //-----------------------------------------------------------------------------
 void ZoomGuiCommand::zoomInHorizontal ()
 {
-    float32 pixel_per_sample = currentVisModel()->getPixelPerSample();
+    float32 pixel_per_sample = currentSignalViewSettings()->getPixelsPerSample();
     float32 new_pixel_per_sample = std::min (pixel_per_sample * ZOOM_FACTOR_,
                                  maxPixelPerSample() );
 
-    GuiHelper::animateProperty (currentVisModel().data(), "pixel_per_sample_",
+    GuiHelper::animateProperty (currentSignalViewSettings().data(), "pixelsPerSample",
                                 pixel_per_sample, new_pixel_per_sample,
                                 this, SLOT(evaluateEnabledness()));
 }
@@ -122,11 +123,11 @@ void ZoomGuiCommand::zoomInHorizontal ()
 //-----------------------------------------------------------------------------
 void ZoomGuiCommand::zoomOutHorizontal ()
 {
-    float32 pixel_per_sample = currentVisModel()->getPixelPerSample();
+    float32 pixel_per_sample = currentSignalViewSettings()->getPixelsPerSample();
     float32 new_pixel_per_sample = std::max (pixel_per_sample / ZOOM_FACTOR_,
                                  minPixelPerSample ());
 
-    GuiHelper::animateProperty (currentVisModel().data(), "pixel_per_sample_",
+    GuiHelper::animateProperty (currentSignalViewSettings().data(), "pixelsPerSample",
                                 pixel_per_sample, new_pixel_per_sample,
                                 this, SLOT(evaluateEnabledness()));
 }
@@ -164,14 +165,14 @@ void ZoomGuiCommand::autoZoomVertical ()
 void ZoomGuiCommand::scaleXAxis ()
 {
     float32 sample_rate = currentVisModel()->getChannelManager()->getSampleRate();
-    float32 pixel_per_second = currentVisModel()->getPixelPerSample() * sample_rate;
+    float32 pixel_per_second = currentSignalViewSettings()->getPixelsPerSample() * sample_rate;
     float32 width = currentVisModel()->getShownSignalWidth();
     float32 new_secs_per_page = QInputDialog::getDouble (0, tr("Scale X Axis"), tr("Seconds"), width / pixel_per_second, minPixelPerSample() / sample_rate, currentVisModel()->getChannelManager()->getDurationInSec());
 
     float32 pixel_per_sample = width / (new_secs_per_page * sample_rate);
 
     GuiHelper::animateProperty (currentVisModel().data(), "pixel_per_sample_",
-                                currentVisModel()->getPixelPerSample(),
+                                currentSignalViewSettings()->getPixelsPerSample(),
                                 pixel_per_sample,
                                 this, SLOT(evaluateEnabledness()));
 }

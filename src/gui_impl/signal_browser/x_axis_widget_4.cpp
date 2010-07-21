@@ -1,6 +1,7 @@
 #include "x_axis_widget_4.h"
 
-#include "../../gui/gui_action_factory.h"
+#include "gui/gui_action_factory.h"
+#include "base/math_utils.h"
 
 #include <QPainter>
 #include <QFont>
@@ -10,14 +11,18 @@
 #include <QScrollBar>
 #include <QMenu>
 #include <QHBoxLayout>
+#include <QDebug>
+
 #include <cmath>
 
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-XAxisWidget::XAxisWidget (QWidget* parent)
+XAxisWidget::XAxisWidget (QSharedPointer<SignalViewSettings const> signal_view_settings,
+                          QWidget* parent)
   : QWidget (parent),
+    signal_view_settings_ (signal_view_settings),
     intervall_ (10),
     x_start_ (0),
     pixel_per_sec_ (2),
@@ -42,13 +47,6 @@ QSize XAxisWidget::sizeHint () const
 }
 
 //-----------------------------------------------------------------------------
-void XAxisWidget::changeIntervall (float64 intervall)
-{
-    intervall_ = intervall;
-    update ();
-}
-
-//-----------------------------------------------------------------------------
 void XAxisWidget::changeXStart(int32 x_start)
 {
     x_start_ = x_start;
@@ -56,18 +54,10 @@ void XAxisWidget::changeXStart(int32 x_start)
 }
 
 //-----------------------------------------------------------------------------
-void XAxisWidget::changePixelPerSample (float32 pixel_per_sample, float32 sample_rate)
-{
-    pixel_per_sec_ = pixel_per_sample * sample_rate;
-    update ();
-}
-
-
-//-----------------------------------------------------------------------------
 void XAxisWidget::changeHighlightTime (float64 time_to_highlight)
 {
     highlighting_enabled_ = true;
-    time_to_highlight_ = time_to_highlight;// - (x_start_ / pixel_per_sec_);
+    time_to_highlight_ = time_to_highlight;
     update ();
     highlight_timer_ = startTimer (5000);
 }
@@ -83,11 +73,13 @@ void XAxisWidget::enableHighlightTime (bool highlighting_enabled)
 //-----------------------------------------------------------------------------
 void XAxisWidget::paintEvent(QPaintEvent*)
 {
-    if (intervall_ < 1)
+    pixel_per_sec_ = signal_view_settings_->getPixelsPerSample() * signal_view_settings_->getSampleRate();
+    intervall_ = pixel_per_sec_ * round125 (100.0 / pixel_per_sec_);
+
+    if (intervall_ < 1 )
     {
         return; // invalid intervall
     }
-
     int32 x_end = x_start_ + width();
     int32 font_height = height() - 5;
 

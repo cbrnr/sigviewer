@@ -3,12 +3,13 @@
 
 #include "application_context.h"
 
-#include "../base/application_states.h"
-#include "../base/tab_states.h"
-#include "../base/file_states.h"
-#include "../base/exception.h"
+#include "base/application_states.h"
+#include "base/tab_states.h"
+#include "base/file_states.h"
+#include "base/exception.h"
 
-#include "../gui/signal_visualisation_model.h"
+#include "signal_visualisation_model.h"
+#include "signal_view_settings.h"
 
 #include <QObject>
 #include <QAction>
@@ -75,6 +76,9 @@ protected:
 
     //-------------------------------------------------------------------------
     QSharedPointer<SignalVisualisationModel> currentVisModel ();
+
+    //-------------------------------------------------------------------------
+    QSharedPointer<SignalViewSettings> currentSignalViewSettings ();
 
     //-------------------------------------------------------------------------
     QSharedPointer<FileContext> currentFileContext ();
