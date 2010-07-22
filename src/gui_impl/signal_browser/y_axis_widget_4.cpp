@@ -74,7 +74,7 @@ void YAxisWidget::paintEvent(QPaintEvent*)
     {
         if (current_y_start >= y_start_ - intervall &&
             current_y_start <= y_start_ + height ())
-            paintYAxisLabels (&painter, signal->getYOffset(), signal->getYZoom(), signal->getYGridPixelIntervall(),
+            paintYAxisLabels (&painter, signal->getYOffset(),signal->getYGridPixelIntervall(),
                               signal->getValueRangeFragment(),
                               signal->getPhysicalDimensionString());
         painter.translate (0, intervall);
@@ -98,9 +98,9 @@ void YAxisWidget::contextMenuEvent (QContextMenuEvent* event)
 
 //-------------------------------------------------------------------
 void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
-                                       float64 y_zoom, float64 y_grid_pixel_intervall,
-                                       double value_range_fragment,
-                                       QString const& unit_string)
+                                    float64 y_grid_pixel_intervall,
+                                    double value_range_fragment,
+                                    QString const& unit_string)
 {
     int upper_border = signal_height_ / 2;
     int lower_border = -static_cast<int>(signal_height_ / 2);

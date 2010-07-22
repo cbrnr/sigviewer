@@ -26,8 +26,9 @@ CONFIG += warn_on \
     thread
 macx:QT += opengl
 
-INCLUDEPATH += $$_PRO_FILE_PWD_/../extern
-INCLUDEPATH += $$_PRO_FILE_PWD_/.
+INCLUDEPATH += $$_PRO_FILE_PWD_/../extern \
+               $$_PRO_FILE_PWD_/../extern/libgdf \
+               $$_PRO_FILE_PWD_/.
 LIBS += -L$$_PRO_FILE_PWD_/../extern \
     -lbiosig \
     -lfftw3 \
