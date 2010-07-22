@@ -88,18 +88,12 @@ public:
     void zoomInAll();
     void zoomOutAll();
 
-    //-------------------------------------------------------------------------
-    virtual int getYGridFragmentation () const;
-
     EventGraphicsItem* getSelectedEventItem();
     void updateEventItems ();
 
 public slots:
     //-------------------------------------------------------------------------
     virtual void update ();
-
-    //-------------------------------------------------------------------------
-    virtual void setYGridFragmentation (int fragmentation);
 
     //-------------------------------------------------------------------------
     /// adds the given event
@@ -152,7 +146,6 @@ private:
     Int2IntMap channel2y_pos_;
     EventGraphicsItem* selected_event_item_;
 
-    int y_grid_fragmentation_;
     float64 x_grid_pixel_intervall_;
 
     bool show_y_grid_;

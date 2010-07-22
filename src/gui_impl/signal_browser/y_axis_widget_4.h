@@ -33,6 +33,7 @@ private:
 
     void paintYAxisLabels (QPainter* painter, float64 offset,
                               float64 y_zoom, float64 y_grid_pixel_intervall,
+                              double value_range_fragment,
                               QString const& unit_string);
 
     void paintYUnits (QPainter* painter, QString const& unit_string);

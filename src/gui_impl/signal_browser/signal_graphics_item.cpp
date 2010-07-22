@@ -60,6 +60,7 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
     setFlag (QGraphicsItem::ItemUsesExtendedStyleOption, true);
 #endif
     setAcceptHoverEvents(false);
+    connect (signal_view_settings.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateYGridIntervall()));
 }
 
 //-----------------------------------------------------------------------------
@@ -111,6 +112,13 @@ float64 SignalGraphicsItem::getYGridPixelIntervall() const
 }
 
 //-----------------------------------------------------------------------------
+double SignalGraphicsItem::getValueRangeFragment() const
+{
+    return value_range_fragment_;
+}
+
+
+//-----------------------------------------------------------------------------
 QString SignalGraphicsItem::getPhysicalDimensionString () const
 {
     return channel_manager_->getChannelYUnitString (id_);
@@ -120,12 +128,14 @@ QString SignalGraphicsItem::getPhysicalDimensionString () const
 void SignalGraphicsItem::zoomIn()
 {
     y_zoom_ *= 2.0;
+    updateYGridIntervall ();
 }
 
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::zoomOut()
 {
     y_zoom_ /= 2.0;
+    updateYGridIntervall ();
 }
 
 //-----------------------------------------------------------------------------
@@ -254,9 +264,11 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::updateYGridIntervall ()
 {
-    y_grid_pixel_intervall_ = round125 ((maximum_ - minimum_) / signal_browser_model_.getYGridFragmentation ());
-    y_grid_pixel_intervall_ *= y_zoom_;
+    double value_range = (maximum_ - minimum_) / y_zoom_;
+    value_range_fragment_ = round125 (value_range / signal_view_settings_->getGridFragmentation (Qt::Vertical));
+    y_grid_pixel_intervall_ = static_cast<double>(height_) * value_range_fragment_ / value_range;
     emit updatedYGrid (id_);
+    update ();
 }
 
 //-----------------------------------------------------------------------------

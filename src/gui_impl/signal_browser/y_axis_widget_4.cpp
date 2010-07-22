@@ -1,6 +1,7 @@
 #include "y_axis_widget_4.h"
 #include "signal_graphics_item.h"
 #include "gui/gui_action_factory.h"
+#include "base/math_utils.h"
 
 #include <QPaintEvent>
 #include <QPainter>
@@ -74,6 +75,7 @@ void YAxisWidget::paintEvent(QPaintEvent*)
         if (current_y_start >= y_start_ - intervall &&
             current_y_start <= y_start_ + height ())
             paintYAxisLabels (&painter, signal->getYOffset(), signal->getYZoom(), signal->getYGridPixelIntervall(),
+                              signal->getValueRangeFragment(),
                               signal->getPhysicalDimensionString());
         painter.translate (0, intervall);
         current_y_start += intervall;
@@ -97,6 +99,7 @@ void YAxisWidget::contextMenuEvent (QContextMenuEvent* event)
 //-------------------------------------------------------------------
 void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
                                        float64 y_zoom, float64 y_grid_pixel_intervall,
+                                       double value_range_fragment,
                                        QString const& unit_string)
 {
     int upper_border = signal_height_ / 2;
@@ -118,7 +121,12 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
         return;
 
     while (y_grid_pixel_intervall < 11)
+    {
         y_grid_pixel_intervall *= 2;
+        value_range_fragment *= 2;
+    }
+
+    double value = 0;
 
     for (float64 value_y = offset;
          value_y < upper_border;
@@ -129,19 +137,23 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
             painter->drawLine (width () - 5, value_y, width () - 1, value_y);
             painter->drawText(0, value_y - 20, width () - 10, 40,
                              Qt::AlignRight | Qt::AlignVCenter,
-                             QString::number ((offset-value_y) / y_zoom));
+                             QString::number (value));
         }
+        value -= value_range_fragment;
     }
+
+    value = 0;
     for (float64 value_y = offset - y_grid_pixel_intervall;
          value_y > lower_border;
          value_y -= y_grid_pixel_intervall)
     {
+        value += value_range_fragment;
         if (value_y < signal_height_ / 2)
         {
             painter->drawLine (width () - 5, value_y, width () - 1, value_y);
             painter->drawText(0, value_y - 20, width () - 10, 40,
                              Qt::AlignRight | Qt::AlignVCenter,
-                             QString::number ((offset-value_y) / y_zoom));
+                             QString::number (value));
         }
     }
 }

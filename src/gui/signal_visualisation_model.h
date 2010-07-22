@@ -26,7 +26,6 @@ class SignalVisualisationModel : public QObject, public EventView
     Q_OBJECT
     Q_PROPERTY(float signal_height_ READ getSignalHeight WRITE setSignalHeight)
     Q_PROPERTY(int sample_position_ READ getShownPosition WRITE goToSample)
-    Q_PROPERTY(int yGridFragmentation READ getYGridFragmentation WRITE setYGridFragmentation)
 public:
     //-------------------------------------------------------------------------
     /// virtual destructor
@@ -116,17 +115,11 @@ public:
     ScaleMode getAutoScaleMode () const;
 
     //-------------------------------------------------------------------------
-    virtual int getYGridFragmentation () const = 0;
-
-    //-------------------------------------------------------------------------
     virtual SignalVisualisationView const* view () const = 0;
 
     //-------------------------------------------------------------------------
     QWidget* infoWidget ();
 public slots:
-    //-------------------------------------------------------------------------
-    virtual void setYGridFragmentation (int fragmentation) = 0;
-
     //-------------------------------------------------------------------------
     virtual void update () {}
 

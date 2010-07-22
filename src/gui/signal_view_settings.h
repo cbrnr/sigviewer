@@ -5,6 +5,7 @@
 #include "file_handling/channel_manager.h"
 
 #include <QObject>
+#include <QMap>
 
 #include <set>
 
@@ -31,11 +32,17 @@ public:
     float getSampleRate () const {return channel_manager_->getSampleRate();}
 
     //-------------------------------------------------------------------------
+    int getGridFragmentation (Qt::Orientation orientation) const {return grid_fragmentation_[orientation];}
+
+    //-------------------------------------------------------------------------
     /// @return a set of ids of the shown channels
     //std::set<ChannelID> getShownChannels () const {return shown_channels_;}
 public slots:
     //-------------------------------------------------------------------------
     void setPixelsPerSample (float pixel_per_sample);
+
+    //-------------------------------------------------------------------------
+    void setGridFragmentation (Qt::Orientation orientation, int fragmentation);
 
     //-------------------------------------------------------------------------
     /// @param channels a set of ids of channels that should be visible
@@ -48,10 +55,12 @@ public slots:
 
 signals:
     void pixelsPerSampleChanged ();
+    void gridFragmentationChanged ();
 
 private:
     //std::set<ChannelID> shown_channels_;
     float pixels_per_sample_;
+    QMap<Qt::Orientation, int> grid_fragmentation_;
     QSharedPointer<ChannelManager> channel_manager_;
 };
 

@@ -85,9 +85,6 @@ void SignalBrowserModel::loadSettings()
     QSettings settings("SigViewer");
 
     settings.beginGroup("SignalBrowserModel");
-
-    //prefered_y_grid_pixel_intervall_ = settings.value("prefered_y_grid_pixel_intervall",
-    //                                                  prefered_y_grid_pixel_intervall_).toInt();
     show_x_grid_ = settings.value("show_x_grid", show_x_grid_).toBool();
     show_y_grid_ = settings.value("show_y_grid", show_y_grid_).toBool();
 
@@ -101,8 +98,6 @@ void SignalBrowserModel::saveSettings()
     QSettings settings("SigViewer");
 
     settings.beginGroup("SignalBrowserModel");
-
-    //settings.setValue("prefered_y_grid_pixel_intervall", prefered_y_grid_pixel_intervall_);
     settings.setValue("show_x_grid", show_x_grid_);
     settings.setValue("show_y_grid", show_y_grid_);
 
@@ -115,11 +110,7 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
 {
     unsigned new_signal_height = getSignalHeight ();
     if (!initialized_)
-    {
-        new_signal_height = signal_browser_view_->getVisibleHeight() /
-                                 new_shown_channels.size();
-        y_grid_fragmentation_ = 3;
-    }
+        new_signal_height = signal_browser_view_->getVisibleHeight() / new_shown_channels.size();
 
     foreach (ChannelID channel, channel2signal_item_.keys())
         if (new_shown_channels.count (channel) == 0)
@@ -339,13 +330,6 @@ QSharedPointer<EventManager> SignalBrowserModel::getEventManager ()
 }
 
 //-------------------------------------------------------------------------
-void SignalBrowserModel::setYGridFragmentation (int fragmentation)
-{
-    y_grid_fragmentation_ = fragmentation;
-    update ();
-}
-
-//-------------------------------------------------------------------------
 unsigned SignalBrowserModel::getShownHeight () const
 {
     return signal_browser_view_->getVisibleHeight ();
@@ -441,12 +425,6 @@ void SignalBrowserModel::modeChangedImpl (SignalVisualisationMode mode)
                      mode == MODE_POINTER);
     foreach (SignalGraphicsItem* signal_item, channel2signal_item_.values())
         signal_item->setAcceptHoverEvents (tooltips);
-}
-
-//-------------------------------------------------------------------
-int SignalBrowserModel::getYGridFragmentation () const
-{
-    return y_grid_fragmentation_;
 }
 
 //-----------------------------------------------------------------------------

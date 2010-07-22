@@ -40,13 +40,13 @@ public:
 
     virtual QRectF boundingRect () const;
 
-    void updateYGridIntervall();
     void enableYGrid(bool enabled);
     void enableXGrid(bool enabled);
 
     float64 getYZoom() const;
     float64 getYOffset() const;
     float64 getYGridPixelIntervall() const;
+    double getValueRangeFragment () const;
     QString getPhysicalDimensionString () const;
 
     void zoomIn();
@@ -55,6 +55,7 @@ public:
     void autoScale (ScaleMode auto_zoom_type);
 
 public slots:
+    void updateYGridIntervall();
     void setHeight (uint32 height);
     void setXGridInterval (unsigned interval);
 
@@ -91,6 +92,7 @@ private:
 
     float64 y_zoom_;
     float64 y_grid_pixel_intervall_;
+    double value_range_fragment_;
     bool draw_y_grid_;
     bool draw_x_grid_;
     float64 y_offset_;
