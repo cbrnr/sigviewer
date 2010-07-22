@@ -37,16 +37,17 @@ float64 round125(float64 value)
 {
     float64 sign = value < 0 ? -1 : 1;
     value = value * sign;
-    float64 tmp = pow (10.0, floor ( log10(value)));
-    qDebug () << "tmp = " << tmp << "; value = " << value <<  "; log10(value) = " << log10(value);
+    float64 tmp = pow (10.0, floor (log10(value)));
     if (tmp < value)
-        tmp *= 2;
+        tmp *= 2.0;
     if (tmp < value)
         tmp *= 1.5;
     if (tmp < value)
         tmp *= (4.0 / 3.0);
     if (tmp < value)
         tmp *= (5.0 / 4.0);
+    if (tmp < value)
+        tmp *= (7.5 / 5.0);
     return sign * tmp;
 }
 
