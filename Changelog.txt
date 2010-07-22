@@ -1,3 +1,13 @@
+Version 0.4.2
+(+) Convert to GDF (using libgdf)
+(+) Command-line options (e.g. --convert-to-gdf, --help)
+(+) Improved y-grid drawing
+(+) Improved y-grid labels (displaying units)
+(+) Improved y-scaling
+(*) Power-spectrum is now displayed in log10
+(B) Fug fixes (instant viewport update after color changing and scaling, no chrash if signal processing leads to overflow)
+(*) Refactoring and code cleanups
+
 Version 0.4.1
 (*) Speeded up animations (now duration is settable via the View menu)
 (*) Renamed "Shift Signal Mode" to "View Options Mode"

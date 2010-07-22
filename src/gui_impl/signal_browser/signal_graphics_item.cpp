@@ -127,23 +127,20 @@ QString SignalGraphicsItem::getPhysicalDimensionString () const
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::zoomIn()
 {
-    y_zoom_ *= 2.0;
-    updateYGridIntervall ();
+    double mid_line_value = (maximum_ + minimum_) / 2;
+    scaleImpl ((mid_line_value + minimum_) / 2.0, (maximum_ + mid_line_value) / 2.0);
 }
 
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::zoomOut()
 {
-    y_zoom_ /= 2.0;
-    updateYGridIntervall ();
+    double mid_line_value = (maximum_ + minimum_) / 2;
+    scaleImpl ((2 * minimum_) - mid_line_value, (2 * maximum_) - mid_line_value);
 }
 
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::scale (double lower_value, double upper_value)
 {
-    minimum_ = lower_value;
-    maximum_ = upper_value;
-
     scaleImpl (lower_value, upper_value);
 }
 
@@ -177,14 +174,14 @@ void SignalGraphicsItem::autoScale (ScaleMode auto_zoom_type)
         if (max < 0)
             max *= -1;
     }
-    minimum_ = min;
-    maximum_ = max;
     scaleImpl (min, max);
 }
 
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::scaleImpl (double min, double max)
 {
+    minimum_ = min;
+    maximum_ = max;
     float64 new_y_zoom = height_ / (max - min);
     float64 new_y_offset = ((max + min) / 2) * new_y_zoom;
     if (y_zoom_ != new_y_zoom ||
@@ -264,8 +261,9 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::updateYGridIntervall ()
 {
-    double value_range = (maximum_ - minimum_) / y_zoom_;
+    double value_range = (maximum_ - minimum_) ;/// y_zoom_;
     value_range_fragment_ = round125 (value_range / signal_view_settings_->getGridFragmentation (Qt::Vertical));
+    qDebug () << "y_zoom_ = " << y_zoom_ << "; value_range_fragment_ =  " << value_range_fragment_;
     y_grid_pixel_intervall_ = static_cast<double>(height_) * value_range_fragment_ / value_range;
     emit updatedYGrid (id_);
     update ();
@@ -459,11 +457,9 @@ void SignalGraphicsItem::wheelEvent (QGraphicsSceneWheelEvent* event)
     if (event->modifiers().testFlag(Qt::ControlModifier))
     {
         if (event->delta() > 0)
-            y_zoom_ *= event->delta() / 60;
+            zoomIn();
         else if (event->delta() < 0)
-            y_zoom_ /= -(event->delta()) / 60;
-        update ();
-        emit shifting (id_);
+            zoomOut();
     }
     else if (event->modifiers().testFlag(Qt::ShiftModifier))
     {

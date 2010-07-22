@@ -25,7 +25,7 @@ filesize=$1
 sed -e '/Architecture: /s/<architecture-via-script>/'$architecture'/' ./deb_building_stuff/deb_control_template | sed -e '/Installed-Size: /s/<bin-size-via-script>/'$filesize'/' >./$dir/sigviewer/DEBIAN/control
 
 # build the SigViewer package
-dpkg -b ./$dir/sigviewer sigviewer-0.4.1-$architecture.deb
+dpkg -b ./$dir/sigviewer sigviewer-0.4.2-$architecture.deb
 
 # delete all temporary build directories
 rm -r $dir
