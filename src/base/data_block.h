@@ -72,7 +72,7 @@ public:
     float32 getMax () const;
 
     //-------------------------------------------------------------------------
-    DataBlock getBandpassFilteredBlock (float32 lower_hz_boundary, float32 upper_hz_boundary) const;
+    // DataBlock getBandpassFilteredBlock (float32 lower_hz_boundary, float32 upper_hz_boundary) const;
 
     //-------------------------------------------------------------------------
     QSharedPointer<DataBlock const> createPowerSpectrum () const;

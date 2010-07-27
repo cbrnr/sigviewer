@@ -135,50 +135,50 @@ float32 DataBlock::getMax () const
         return 0;
 }
 
-//-----------------------------------------------------------------------------
-DataBlock DataBlock::getBandpassFilteredBlock (float32 lower_hz_boundary, float32 upper_hz_boundary) const
-{
-    // calculate frequency spectrum
-    /*unsigned num_samples = length_;
-    double* data_in = new double[num_samples];
-    for (unsigned x = 0; x < num_samples; x++)
-        data_in[x] = data_->at(start_index_ + x);
+////-----------------------------------------------------------------------------
+//DataBlock DataBlock::getBandpassFilteredBlock (float32 lower_hz_boundary, float32 upper_hz_boundary) const
+//{
+//    // calculate frequency spectrum
+//    /*unsigned num_samples = length_;
+//    double* data_in = new double[num_samples];
+//    for (unsigned x = 0; x < num_samples; x++)
+//        data_in[x] = data_->at(start_index_ + x);
 
-    Complex* data_out = fftwpp::FFTWComplex((num_samples / 2) + 1);
+//    Complex* data_out = fftwpp::FFTWComplex((num_samples / 2) + 1);
 
-    fftwpp::rcfft1d forward (num_samples, data_in, data_out);
-    forward.fft0Normalized (data_in, data_out);
+//    fftwpp::rcfft1d forward (num_samples, data_in, data_out);
+//    forward.fft0Normalized (data_in, data_out);
 
-    float32 hz_step_size = (static_cast<float32>(sample_rate_per_unit_) / 2.0) / (static_cast<float32>(num_samples) / 2.0);
+//    float32 hz_step_size = (static_cast<float32>(sample_rate_per_unit_) / 2.0) / (static_cast<float32>(num_samples) / 2.0);
 
-    float32 frequency = 0;
-    for (unsigned index = 1; index < (num_samples / 2); index++)
-    {
-        frequency += hz_step_size;
-        if (frequency < lower_hz_boundary || frequency > upper_hz_boundary)
-        {
-            //data_out[index] =
-            //data_out[index].imag() = 0;
-            //data_out[index].real() = 0;
-            data_out[index] = 0;
-        }
-    }
+//    float32 frequency = 0;
+//    for (unsigned index = 1; index < (num_samples / 2); index++)
+//    {
+//        frequency += hz_step_size;
+//        if (frequency < lower_hz_boundary || frequency > upper_hz_boundary)
+//        {
+//            //data_out[index] =
+//            //data_out[index].imag() = 0;
+//            //data_out[index].real() = 0;
+//            data_out[index] = 0;
+//        }
+//    }
 
-    fftwpp::crfft1d backward (num_samples, data_out, data_in);
-    backward.fft (data_out, data_in);
+//    fftwpp::crfft1d backward (num_samples, data_out, data_in);
+//    backward.fft (data_out, data_in);
 
-    QSharedPointer<std::vector<float32> > band_passed_data (new std::vector<float32>);
-    for (unsigned x = 0; x < num_samples; x++)
-        band_passed_data->push_back (data_in[x]);// = data_in[x] = data_[x];
+//    QSharedPointer<std::vector<float32> > band_passed_data (new std::vector<float32>);
+//    for (unsigned x = 0; x < num_samples; x++)
+//        band_passed_data->push_back (data_in[x]);// = data_in[x] = data_[x];
 
-    DataBlock band_passed_block (band_passed_data, sample_rate_per_unit_);
+//    DataBlock band_passed_block (band_passed_data, sample_rate_per_unit_);
 
-    delete[] data_in;
-    fftwpp::FFTWdelete(data_out);
+//    delete[] data_in;
+//    fftwpp::FFTWdelete(data_out);
 
-    return band_passed_block;*/
-    return DataBlock ();
-}
+//    return band_passed_block;*/
+//    return DataBlock ();
+//}
 
 //-----------------------------------------------------------------------------
 QSharedPointer<DataBlock const> DataBlock::createPowerSpectrum () const
