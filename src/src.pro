@@ -30,7 +30,7 @@ INCLUDEPATH += $$_PRO_FILE_PWD_/../extern \
                $$_PRO_FILE_PWD_/.
 LIBS += -L$$_PRO_FILE_PWD_/../extern \
     -lbiosig \
-    -lfftw3 \
+    #-lfftw3 \
     -lboost_program_options \
     -lgdf
 

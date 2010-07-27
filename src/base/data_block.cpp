@@ -1,6 +1,9 @@
 #include "data_block.h"
 
-#include "../signal_processing/fftw++.h"
+#include "signal_processing/fftw++.h"
+#include "signal_processing/FFTReal.h"
+
+#include <QDebug>
 
 #include <algorithm>
 #include <cmath>
@@ -136,14 +139,14 @@ float32 DataBlock::getMax () const
 DataBlock DataBlock::getBandpassFilteredBlock (float32 lower_hz_boundary, float32 upper_hz_boundary) const
 {
     // calculate frequency spectrum
-    unsigned num_samples = length_;
+    /*unsigned num_samples = length_;
     double* data_in = new double[num_samples];
     for (unsigned x = 0; x < num_samples; x++)
         data_in[x] = data_->at(start_index_ + x);
 
-    Complex* data_out = FFTWComplex((num_samples / 2) + 1);
+    Complex* data_out = fftwpp::FFTWComplex((num_samples / 2) + 1);
 
-    rcfft1d forward (num_samples, data_in, data_out);
+    fftwpp::rcfft1d forward (num_samples, data_in, data_out);
     forward.fft0Normalized (data_in, data_out);
 
     float32 hz_step_size = (static_cast<float32>(sample_rate_per_unit_) / 2.0) / (static_cast<float32>(num_samples) / 2.0);
@@ -161,7 +164,7 @@ DataBlock DataBlock::getBandpassFilteredBlock (float32 lower_hz_boundary, float3
         }
     }
 
-    crfft1d backward (num_samples, data_out, data_in);
+    fftwpp::crfft1d backward (num_samples, data_out, data_in);
     backward.fft (data_out, data_in);
 
     QSharedPointer<std::vector<float32> > band_passed_data (new std::vector<float32>);
@@ -171,31 +174,61 @@ DataBlock DataBlock::getBandpassFilteredBlock (float32 lower_hz_boundary, float3
     DataBlock band_passed_block (band_passed_data, sample_rate_per_unit_);
 
     delete[] data_in;
-    FFTWdelete(data_out);
+    fftwpp::FFTWdelete(data_out);
 
-    return band_passed_block;
+    return band_passed_block;*/
+    return DataBlock ();
 }
 
 //-----------------------------------------------------------------------------
 QSharedPointer<DataBlock const> DataBlock::createPowerSpectrum () const
 {
     unsigned num_samples = length_;
-    double* data_in = new double[num_samples];
-    for (unsigned x = 0; x < num_samples; x++)
-        data_in[x] = data_->at(start_index_ + x);
 
-    unsigned out_length = (num_samples / 2);
-    Complex* data_out = FFTWComplex(out_length + 1);
+    unsigned num_points = 1;
+    while (num_points < num_samples)
+        num_points *= 2;
 
-    rcfft1d forward (num_samples, data_in, data_out);
-    forward.fft0Normalized (data_in, data_out);
+    FFTReal::flt_t* in = new FFTReal::flt_t [num_points];
+    FFTReal::flt_t* out = new FFTReal::flt_t [num_points];
+    for (unsigned x = 0; x < num_points; x++)
+    {
+        if (num_points < num_samples && ((x < (num_points - num_samples) / 2) ||
+                                         (x > (num_points - ((num_points - num_samples / 2))))))
+            in[x] = 0;
+        else
+          in[x] = data_->at(start_index_+x-((num_points - num_samples) / 2));
+    }
+    FFTReal fft_object (num_points);
+    fft_object.do_fft(out, in);
+    fft_object.rescale (out);
 
     QSharedPointer<std::vector<float32> > spectrum_data (new std::vector<float32>);
-    for (unsigned index = 1; index < out_length + 1; index++)
+    for (unsigned index = 0; index < num_points / 2; index++)
     {
-        spectrum_data->push_back (log10(pow(data_out[index].real(),2) + pow(data_out[index].imag(), 2)));
+        spectrum_data->push_back (log10(pow(out[index], 2) + pow(out[(num_points/2)+index], 2)));
     }
+    delete[] in;
+    delete[] out;
     return QSharedPointer<DataBlock const> (new DataBlock (spectrum_data, static_cast<float32>(num_samples) / sample_rate_per_unit_));
+
+//    double* data_in = new double[num_samples * 2];
+//    for (unsigned x = 0; x < num_samples; x++)
+//        data_in[x] = data_->at(start_index_ + x);
+
+//    unsigned out_length = (num_samples / 2);
+
+//    Complex* data_out = fftwpp::FFTWComplex(out_length * 4);
+
+//    fftwpp::rcfft1d forward (num_samples, data_in, data_out);
+//    forward.fft0Normalized (data_in, data_out);
+
+//    QSharedPointer<std::vector<float32> > spectrum_data (new std::vector<float32>);
+//    for (unsigned index = 1; index < out_length + 1; index++)
+//    {
+//        spectrum_data->push_back (log10(pow(data_out[index].real(),2) + pow(data_out[index].imag(), 2)));
+//    }
+//    return QSharedPointer<DataBlock const> (new DataBlock (spectrum_data, static_cast<float32>(num_samples) / sample_rate_per_unit_));
 }
 
 //-----------------------------------------------------------------------------
