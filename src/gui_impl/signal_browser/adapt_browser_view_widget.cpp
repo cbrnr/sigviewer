@@ -26,7 +26,10 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
         throw (Exception ("connect failed: y_axis_checkbox_"));
     if (!connect (ui_.labels_checkbox_, SIGNAL(toggled(bool)), SIGNAL(labelsVisibilityChanged(bool))))
         throw (Exception ("connect failed: labels_checkbox_"));
-
+    ui_.xGridCheckbox->setVisible(false);
+    ui_.xGridSlider->setVisible(false);
+    ui_.xGridFragmentationLabel->setVisible(false);
+    ui_.yGridCheckbox->setVisible(false);
     ui_.zero_centered_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Zero Line Centered"));
     ui_.zero_fitted_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Zero Line Fitted"));
 }

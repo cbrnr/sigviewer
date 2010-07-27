@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>916</width>
-    <height>60</height>
+    <height>73</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -31,7 +31,7 @@
     </widget>
    </item>
    <item row="0" column="3">
-    <widget class="QCheckBox" name="checkBox">
+    <widget class="QCheckBox" name="yGridCheckbox">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -105,7 +105,7 @@
     </spacer>
    </item>
    <item row="1" column="3">
-    <widget class="QCheckBox" name="checkBox_2">
+    <widget class="QCheckBox" name="xGridCheckbox">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -152,7 +152,7 @@
     </widget>
    </item>
    <item row="1" column="6">
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel" name="xGridFragmentationLabel">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -165,7 +165,7 @@
     </widget>
    </item>
    <item row="1" column="7">
-    <widget class="QSlider" name="horizontalSlider">
+    <widget class="QSlider" name="xGridSlider">
      <property name="enabled">
       <bool>false</bool>
      </property>
