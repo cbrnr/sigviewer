@@ -3,10 +3,11 @@ Version 0.4.2
 (+) Command-line options (e.g. --convert-to-gdf, --help)
 (+) Improved y-grid drawing
 (+) Improved y-grid labels (displaying units)
-(+) Improved y-scaling
+(+) Improved y-scaling, new dialog
 (*) Power-spectrum is now displayed in log10
 (B) Fug fixes (instant viewport update after color changing and scaling, no chrash if signal processing leads to overflow)
 (*) Refactoring and code cleanups
+(*) switched from FFTW to FFTReal
 
 Version 0.4.1
 (*) Speeded up animations (now duration is settable via the View menu)
