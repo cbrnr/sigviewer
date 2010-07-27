@@ -1,6 +1,5 @@
 #include "data_block.h"
 
-#include "signal_processing/fftw++.h"
 #include "signal_processing/FFTReal.h"
 
 #include <QDebug>

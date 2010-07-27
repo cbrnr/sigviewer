@@ -2,7 +2,7 @@
 #define BIOSIG_BASIC_HEADER_H
 
 #include "../file_handling/basic_header.h"
-#include "../../extern/biosig.h"
+#include "biosig.h"
 
 namespace BioSig_
 {

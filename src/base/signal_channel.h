@@ -29,7 +29,7 @@
 #define SIGNAL_CHANNEL_H
 
 #include "sigviewer_user_types.h"
-#include "../../extern/biosig.h"
+#include "biosig.h"
 
 #include <QString>
 #include <QMutex>
