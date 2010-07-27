@@ -92,22 +92,6 @@ void ScaleChannelDialog::on_autoButton_toggled (bool checked)
 }
 
 //-----------------------------------------------------------------------------
-void ScaleChannelDialog::on_physButton_toggled (bool checked)
-{
-    if (!checked)
-        return;
-    double upper_value = 0;
-    double lower_value = 0;
-    if (selected_channel_ != UNDEFINED_CHANNEL)
-    {
-        upper_value = channel_manager_->getPhysMinMax (selected_channel_).get<1>();
-        lower_value = channel_manager_->getPhysMinMax (selected_channel_).get<0>();
-    }
-    ui_.upper_spinbox_->setValue (upper_value);
-    ui_.lower_spinbox_->setValue (lower_value);
-}
-
-//-----------------------------------------------------------------------------
 void ScaleChannelDialog::storeAccepted ()
 {
     if (ui_.fixedButton->isChecked())

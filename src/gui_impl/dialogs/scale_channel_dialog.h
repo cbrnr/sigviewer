@@ -29,7 +29,6 @@ signals:
 private slots:
     void on_fixedButton_toggled (bool checked);
     void on_autoButton_toggled (bool checked);
-    void on_physButton_toggled (bool checked);
     void storeAccepted ();
 private:
     ChannelID selected_channel_;
