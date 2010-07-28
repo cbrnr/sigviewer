@@ -27,6 +27,7 @@ class EventContextMenu;
 class EventGraphicsItem : public QGraphicsObject
 {
     Q_OBJECT
+    Q_PROPERTY(qreal opacity WRITE setOpacity READ opacity)
 #if QT_VERSION >= 0x040600
     Q_INTERFACES(QGraphicsItem)
 #endif

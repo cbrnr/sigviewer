@@ -1,13 +1,14 @@
 // signal_browser_model.cpp
 #include "signal_browser_model_4.h"
-#include "../../file_handling/event_manager.h"
-#include "../../file_handling/channel_manager.h"
+#include "file_handling/event_manager.h"
+#include "file_handling/channel_manager.h"
 #include "signal_browser_view.h"
 #include "signal_graphics_item.h"
-#include "../../gui/color_manager.h"
-#include "../../gui/progress_bar.h"
-#include "../../base/signal_event.h"
-#include "../../base/math_utils.h"
+#include "gui/color_manager.h"
+#include "gui/progress_bar.h"
+#include "base/signal_event.h"
+#include "base/math_utils.h"
+#include "gui_impl/gui_helper_functions.h"
 
 #include <QTextStream>
 #include <QApplication>
@@ -490,10 +491,18 @@ void SignalBrowserModel::removeEventItem (EventID id)
     if (selected_event_item_ == event_item)
         unselectEvent ();
     id2event_item_.erase (id);
+    items_to_delete_.push_back (event_item);
+    GuiHelper::animateProperty (event_item, "opacity", 1.0, 0.0, this, SLOT(removeEventItemImpl()));
+}
+
+//-----------------------------------------------------------------------------
+void SignalBrowserModel::removeEventItemImpl ()
+{
+    EventGraphicsItem* event_item = items_to_delete_.front();
+    items_to_delete_.pop_front();
     signal_browser_view_->removeEventGraphicsItem (event_item);
     delete event_item;
 }
-
 
 //-----------------------------------------------------------------------------
 // set event changed

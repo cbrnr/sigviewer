@@ -14,6 +14,7 @@
 #include <QMap>
 #include <QSharedPointer>
 #include <QPointF>
+#include <QList>
 
 #include <map>
 #include <set>
@@ -115,7 +116,13 @@ protected:
     virtual void shownEventTypesChangedImpl ();
     virtual void modeChangedImpl (SignalVisualisationMode mode);
 
+private slots:
+    //-------------------------------------------------------------------------
+    /// implementation of removeEventItem which really deletes the item
+    void removeEventItemImpl ();
+
 private:
+
     //-------------------------------------------------------------------------
     void addChannel (ChannelID channel_nr);
 
@@ -151,6 +158,7 @@ private:
     bool show_y_grid_;
     bool show_x_grid_;
     bool initialized_;
+    QList<EventGraphicsItem*> items_to_delete_;
 };
 
 } // namespace PortingToQT4_
