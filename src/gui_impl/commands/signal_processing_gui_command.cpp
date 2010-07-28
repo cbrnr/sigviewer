@@ -93,9 +93,12 @@ void SignalProcessingGuiCommand::calculatePowerSpectrum ()
         return;
 
     unsigned num_samples = channel_manager->getSampleRate() * event_dialog->getLengthInSeconds ();
+    unsigned fft_samples = 1;
+    while (fft_samples < num_samples)
+        fft_samples *= 2;
 
-    QSharedPointer<ProcessedSignalChannelManager> processed_channel_manager (new ProcessedSignalChannelManager(static_cast<float32>(num_samples) / channel_manager->getSampleRate(),
-                                                                                                               num_samples / 2));
+    QSharedPointer<ProcessedSignalChannelManager> processed_channel_manager (new ProcessedSignalChannelManager(static_cast<float32>(fft_samples) / channel_manager->getSampleRate(),
+                                                                                                               fft_samples / 2));
     QList<EventID> events (event_manager->getEvents(event_dialog->getSelectedEventType ()));
 
     ProgressBar::instance().initAndShow (event_dialog->getSelectedChannels ().size(), tr("Fourier Transformation"),

@@ -184,50 +184,58 @@ QSharedPointer<DataBlock const> DataBlock::createPowerSpectrum () const
 {
     unsigned num_samples = length_;
 
-    unsigned num_points = 1;
-    while (num_points < num_samples)
-        num_points *= 2;
+    unsigned fft_samples = 1;
+    while (fft_samples < num_samples)
+        fft_samples *= 2;
 
-    FFTReal::flt_t* in = new FFTReal::flt_t [num_points];
-    FFTReal::flt_t* out = new FFTReal::flt_t [num_points];
-    for (unsigned x = 0; x < num_points; x++)
+    FFTReal::flt_t* in = new FFTReal::flt_t [fft_samples];
+    FFTReal::flt_t* out = new FFTReal::flt_t [fft_samples];
+    double factor = 0;
+    for (unsigned x = 0; x < fft_samples; x++)
     {
-        if (num_points < num_samples && ((x < (num_points - num_samples) / 2) ||
-                                         (x > (num_points - ((num_points - num_samples / 2))))))
+        if (((x < ((fft_samples - num_samples)) / 2) ||
+             (x > (fft_samples - (((fft_samples - num_samples) / 2))))))
             in[x] = 0;
         else
-          in[x] = data_->at(start_index_+x-((num_points - num_samples) / 2));
+        {
+            if (x * 2 < fft_samples)
+                factor += (2.0 / num_samples);
+            else
+                factor -= (2.0 / num_samples);
+
+            in[x] = data_->at(start_index_+x-((fft_samples - num_samples) / 2)) * factor;
+        }
     }
-    FFTReal fft_object (num_points);
+    FFTReal fft_object (fft_samples);
     fft_object.do_fft(out, in);
     fft_object.rescale (out);
 
     QSharedPointer<std::vector<float32> > spectrum_data (new std::vector<float32>);
-    for (unsigned index = 0; index < num_points / 2; index++)
+    for (unsigned index = 0; index < fft_samples ; index++)
     {
-        spectrum_data->push_back (log10(pow(out[index], 2) + pow(out[(num_points/2)+index], 2)));
+        spectrum_data->push_back (log10(pow(out[index], 2) + pow(out[(fft_samples/2)+index], 2)));
     }
     delete[] in;
     delete[] out;
-    return QSharedPointer<DataBlock const> (new DataBlock (spectrum_data, static_cast<float32>(num_samples) / sample_rate_per_unit_));
+    return QSharedPointer<DataBlock const> (new DataBlock (spectrum_data, static_cast<float32>(fft_samples) / sample_rate_per_unit_));
+/*
+    double* data_in = new double[num_samples * 2];
+    for (unsigned x = 0; x < num_samples; x++)
+        data_in[x] = data_->at(start_index_ + x);
 
-//    double* data_in = new double[num_samples * 2];
-//    for (unsigned x = 0; x < num_samples; x++)
-//        data_in[x] = data_->at(start_index_ + x);
+    unsigned out_length = (num_samples / 2);
 
-//    unsigned out_length = (num_samples / 2);
+    Complex* data_out = fftwpp::FFTWComplex(out_length * 4);
 
-//    Complex* data_out = fftwpp::FFTWComplex(out_length * 4);
+    fftwpp::rcfft1d forward (num_samples, data_in, data_out);
+    forward.fft0Normalized (data_in, data_out);
 
-//    fftwpp::rcfft1d forward (num_samples, data_in, data_out);
-//    forward.fft0Normalized (data_in, data_out);
-
-//    QSharedPointer<std::vector<float32> > spectrum_data (new std::vector<float32>);
-//    for (unsigned index = 1; index < out_length + 1; index++)
-//    {
-//        spectrum_data->push_back (log10(pow(data_out[index].real(),2) + pow(data_out[index].imag(), 2)));
-//    }
-//    return QSharedPointer<DataBlock const> (new DataBlock (spectrum_data, static_cast<float32>(num_samples) / sample_rate_per_unit_));
+    QSharedPointer<std::vector<float32> > spectrum_data (new std::vector<float32>);
+    for (unsigned index = 1; index < out_length + 1; index++)
+    {
+        spectrum_data->push_back (log10(pow(data_out[index].real(),2) + pow(data_out[index].imag(), 2)));
+    }
+    return QSharedPointer<DataBlock const> (new DataBlock (spectrum_data, static_cast<float32>(num_samples) / sample_rate_per_unit_));*/
 }
 
 //-----------------------------------------------------------------------------
