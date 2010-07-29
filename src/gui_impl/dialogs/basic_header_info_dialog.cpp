@@ -202,21 +202,21 @@ void BasicHeaderInfoDialog::buildTree()
         tmp_item = new QTreeWidgetItem(filter_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
         tmp_item->setText(0, tr("Highpass"));
-        tmp_item->setText(1, isnan(channel->getHighpass()) ? tr("unknown") :
-            (channel->getHighpass() < 0 ? "" :
-                               QString::number(channel->getHighpass())));
+        //tmp_item->setText(1, isnan(channel->getHighpass()) ? tr("unknown") :
+        //    (channel->getHighpass() < 0 ? "" :
+        //                       QString::number(channel->getHighpass())));
         tmp_item->setText(2, tr("Hz"));
         tmp_item = new QTreeWidgetItem(filter_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
         tmp_item->setText(0, tr("Lowpass"));
-        tmp_item->setText(1, isnan(channel->getLowpass()) ? tr("unknown") :
-                        (channel->getLowpass() < 0 ? "" :
-                                    QString::number(channel->getLowpass())));
+       // tmp_item->setText(1, channel->getLowpass() ? tr("unknown") :
+        //                (channel->getLowpass() < 0 ? "" :
+         //                           QString::number(channel->getLowpass())));
         tmp_item->setText(2, tr("Hz"));
         tmp_item = new QTreeWidgetItem(filter_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
         tmp_item->setText(0, tr("Notch"));
-        tmp_item->setText(1, isnan(channel->getNotch()) ? tr("unknown") : (channel->getNotch() ? tr("yes") : tr("no")));
+        //tmp_item->setText(1, isnan(channel->getNotch()) ? tr("unknown") : (channel->getNotch() ? tr("yes") : tr("no")));
     }
 }
 

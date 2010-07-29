@@ -211,7 +211,7 @@ QSharedPointer<DataBlock const> DataBlock::createPowerSpectrum () const
     fft_object.rescale (out);
 
     QSharedPointer<std::vector<float32> > spectrum_data (new std::vector<float32>);
-    for (unsigned index = 0; index < fft_samples ; index++)
+    for (unsigned index = 0; index < (fft_samples / 2) ; index++)
     {
         spectrum_data->push_back (log10(pow(out[index], 2) + pow(out[(fft_samples/2)+index], 2)));
     }
