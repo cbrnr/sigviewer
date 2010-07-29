@@ -32,8 +32,8 @@ QString ChannelManagerImpl::getChannelLabel (ChannelID id) const
 {
     if (id == UNDEFINED_CHANNEL)
         return QObject::tr("All Channels");
-    else if (static_cast<int>(reader_->getBasicHeader()->getNumberChannels()) > id)
-        return reader_->getBasicHeader()->getChannel (id).getLabel();
+    else if (!reader_->getBasicHeader()->getChannel (id).isNull())
+        return reader_->getBasicHeader()->getChannel (id)->getLabel();
     else
         return QObject::tr("Invalid Channel");
 }
@@ -42,7 +42,7 @@ QString ChannelManagerImpl::getChannelLabel (ChannelID id) const
 QString ChannelManagerImpl::getChannelYUnitString (ChannelID id) const
 {
     if (id != UNDEFINED_CHANNEL)
-        return reader_->getBasicHeader()->getChannel(id).getPhysicalDim();
+        return reader_->getBasicHeader()->getChannel(id)->getPhysicalDim();
     else
         return "";
    // reader_->getBasicHeader()->get
@@ -56,14 +56,6 @@ QSharedPointer<DataBlock const> ChannelManagerImpl::getData (ChannelID id, unsig
         return QSharedPointer<DataBlock const> (0);
     else
         return reader_->getSignalData (id, start_pos, length);
-}
-
-//-------------------------------------------------------------------------
-boost::tuples::tuple<double, double> ChannelManagerImpl::getPhysMinMax (ChannelID channel_id) const
-{
-    double phys_min = reader_->getBasicHeader()->getChannel(channel_id).getPhysicalMinimum();
-    double phys_max = reader_->getBasicHeader()->getChannel(channel_id).getPhysicalMaximum();
-    return boost::tuples::tuple<double, double> (phys_min, phys_max);
 }
 
 //-----------------------------------------------------------------------------

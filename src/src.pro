@@ -53,6 +53,7 @@ include(editing_commands/editing_commands.pri)
 #include(console/console.pri)
 #include(console_impl/console_impl.pri)
 include(commands/commands.pri)
+#include(tobiss_integration/tobiss_integration.pri)
 include(tests/tests.pri)
 HEADERS += application_context_impl.h \
     file_context.h \

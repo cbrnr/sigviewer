@@ -3,46 +3,26 @@
 #ifndef BASIC_HEADER_H
 #define BASIC_HEADER_H
 
-#include "../base/signal_channel.h"
+#include "base/signal_channel.h"
 
-#include <QVector>
 #include <QString>
 #include <QDateTime>
-#include <QObject>
-#include <QMutex>
 #include <QMap>
 
 namespace BioSig_
 {
 
 //-----------------------------------------------------------------------------
-/// BasicHeader definition (common for all file formats)
-///
-/// waldesel: remove all setter methods and move them into the implementations
-///           of BasicHeader
-class BasicHeader : public QObject
+/// @class BasicHeader (common for all file formats)
+/// @brief base class for any biosignal file header
+class BasicHeader
 {
 public:
-    enum Sex
-    {
-        UNDEFINED_SEX = 0,
-        MALE = 1,
-        FEMALE = 2
-    };
+    virtual ~BasicHeader() {}
 
-    enum
-    {
-        UNDEFINED_AGE = -1
-    };
+    //-------------------------------------------------------------------------
+    QString getFileTypeString () const;
 
-    BasicHeader ();
-    virtual ~BasicHeader();
-
-    // basic
-    const QString& getType() const;
-    void setType (QString const &type);
-    const QString& getVersion() const;
-    void setVersion (QString const &version);
     const QDateTime& getRecordingTime() const;
     const QString& getReference() const;
     bool isTriggered() const;
@@ -50,39 +30,27 @@ public:
     void setNumberRecords (int64 number_records);
     float64 getRecordDuration() const;
     void setRecordDuration (float64 record_duration);
-    uint32 getRecordSize() const;
-    void setRecordSize (uint32 record_size);
 
-    // file
+
     uint32 getFileSize() const;
     void setFileSize (uint32 file_size);
 
-    // patient
-    const QString& getPatientName() const;
-    int32 getPatientAge() const;
-    Sex getPatientSex() const;
-    const QString& getPatientHandedness() const;
-    const QString& getPatientMedication() const;
-    const QString& getPatientClassification() const;
-    uint64 getDoctorId() const;
-    uint64 getHospitalId() const;
 
-    // channels
-    uint32 getNumberChannels() const;
-    void setNumberChannels (uint32 number_channels);
-    const SignalChannel& getChannel(uint32 channel_nr) const;
-    SignalChannel *getChannelPointer(uint32 channel_nr) const;
-    void addChannel (SignalChannel *channel);
-    uint32 getRecordsPosition() const;
-    void setRecordsPosition (uint32 records_position);
-    void setSampleRate (float32 sample_rate);
-    float32 getSampleRate () const;
-    //QString getPhys
+    virtual QMap<QString, QString> getPatientInfo () const
+    {return QMap<QString, QString> ();}
+
+    //-------------------------------------------------------------------------
+    float getSampleRate () const;
+
+    //-------------------------------------------------------------------------
+    QSharedPointer<SignalChannel const> getChannel (ChannelID id) const;
+
+    //-------------------------------------------------------------------------
+    unsigned getNumberChannels() const;
 
     //-------------------------------------------------------------------------
     virtual uint32 getNumberOfSamples () const = 0;
 
-    // events
     //-------------------------------------------------------------------------
     virtual QMap<unsigned, QString> getNamesOfUserSpecificEvents () const = 0;
 
@@ -91,49 +59,33 @@ public:
     double getEventSamplerate() const;
     void setEventSamplerate (double event_sample_rate);
 
-    void resetBasicHeader();
+
 protected:
-    typedef QVector<SignalChannel*> SignalChannelPtrVector;
-
-
-
-    // basic
-    QString type_;
-    QString version_;
     QDateTime recording_time_;
     QString reference_;
     bool triggered_;
     int64 number_records_;
     float64 record_duration_;
-    uint32 record_size_;
 
     // file
     uint32 file_size_;
-
-    // patient
-    QString patient_name_;
-    int32 patient_age_;
-    Sex patient_sex_;
-    QString patient_handedness_;
-    QString patient_medication_;
-    QString patient_classification_;
-    uint64 doctor_id_;
-    uint64 hospital_id_;
-
-    // channels
-    uint32 number_channels_;
-    SignalChannelPtrVector channel_vector_;
-    uint32 records_position_;
-    float32 sample_rate_;
 
     // events
     uint32 number_events_;
     double event_sample_rate_;
     
-    // moved to reader-implementationsn
-    // uint32 event_table_position_; 
-    
-    mutable QMutex mutex_;
+    //-------------------------------------------------------------------------
+    void setFileTypeString (QString const& file_type_string);
+
+    //-------------------------------------------------------------------------
+    void setSampleRate (float sample_rate);
+
+    //-------------------------------------------------------------------------
+    void addChannel (ChannelID id, QSharedPointer<SignalChannel const> channel);
+private:
+    QString file_type_string_;
+    float sample_rate_;
+    QMap<ChannelID, QSharedPointer<SignalChannel const> > channels_;
 };
 
 } // namespace BioSig_

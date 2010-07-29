@@ -1,9 +1,10 @@
 // basic_header_info_dialog.cpp
 
 #include "basic_header_info_dialog.h"
-#include "../../file_handling/basic_header.h"
+#include "file_handling/basic_header.h"
 
-#include <math.h>
+#include <cmath>
+
 #include <QTreeWidget>
 #include <QDateTime>
 #include <QPushButton>
@@ -86,15 +87,10 @@ void BasicHeaderInfoDialog::buildTree()
     info_tree_widget_->setItemExpanded(root_item, true);    
 
     tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-    tmp_item->setText(0, tr("Type"));
-    tmp_item->setText(1, basic_header_->getType());
+    tmp_item->setText(0, tr("File Type"));
+    tmp_item->setText(1, basic_header_->getFileTypeString());
+
     tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-    tmp_item->setText(0, tr("Version"));
-    tmp_item->setText(1, basic_header_->getVersion());
-    tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Recording Time"));
     tmp_item->setText(1, basic_header_->getRecordingTime().toString("dd.MM.yyyy hh:mm:ss"));
     tmp_item = new QTreeWidgetItem(root_item);
@@ -124,42 +120,13 @@ void BasicHeaderInfoDialog::buildTree()
     root_item->setText(0, tr("Patient"));
     root_item->setIcon(0, QIcon(":/images/patient_16x16.png"));
     info_tree_widget_->setItemExpanded(root_item, true);
-    tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-    tmp_item->setText(0, tr("Name"));
-    tmp_item->setText(1, basic_header_->getPatientName());
-    tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-    tmp_item->setText(0, tr("Age"));
-    tmp_item->setText(1, basic_header_->getPatientHandedness());
-    tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-    tmp_item->setText(0, tr("Sex"));
-    tmp_item->setText(1, basic_header_->getPatientAge() == -1 ? "" : 
-                                QString::number(basic_header_->getPatientAge()));
-    tmp_item->setText(2, tr("years"));
-    tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-    tmp_item->setText(0, tr("Handedness"));
-    tmp_item->setText(1, basic_header_->getPatientHandedness());
-    tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-    tmp_item->setText(0, tr("Medication"));
-    tmp_item->setText(1, basic_header_->getPatientMedication());
-    tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-    tmp_item->setText(0, tr("Classification"));
-    tmp_item->setText(1, basic_header_->getPatientClassification());
-    tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-    tmp_item->setText(0, tr("Doctor ID"));
-    tmp_item->setText(1, basic_header_->getDoctorId() == 0 ? "" :
-                                QString::number(basic_header_->getDoctorId()));
-    tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-    tmp_item->setText(0, tr("Hospital ID"));
-    tmp_item->setText(2, basic_header_->getHospitalId() == 0 ? "" :
-                                QString::number(basic_header_->getHospitalId()));
+    QMap<QString, QString> patient_info = basic_header_->getPatientInfo();
+    foreach (QString key, patient_info.keys())
+    {
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, key);
+        tmp_item->setText(1, patient_info[key]);
+    }
 
     // events
     root_item = new QTreeWidgetItem(info_tree_widget_);
@@ -187,73 +154,69 @@ void BasicHeaderInfoDialog::buildTree()
          channel_nr++)
     {
         QTreeWidgetItem* channel_item;
-        const SignalChannel& channel = basic_header_->getChannel(channel_nr);
+        QSharedPointer<SignalChannel const> channel = basic_header_->getChannel (channel_nr);
         channel_item = new QTreeWidgetItem(root_item);
         channel_item->setText(0, QString("(%1) %2").arg(channel_nr + 1)
-                                            .arg(channel.getLabel()));
+                                            .arg(channel->getLabel()));
 
         // channel basic
         tmp_item = new QTreeWidgetItem(channel_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
         tmp_item->setText(0, tr("Label"));
-        tmp_item->setText(1, channel.getLabel());
+        tmp_item->setText(1, channel->getLabel());
         tmp_item = new QTreeWidgetItem(channel_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
         tmp_item->setText(0, tr("Sample Rate"));
-        tmp_item->setText(1, QString::number(channel.getSamplesPerRecord() /
+        tmp_item->setText(1, QString::number(channel->getSamplesPerRecord() /
                                           basic_header_->getRecordDuration())); 
         tmp_item->setText(2, tr("Hz"));
         tmp_item = new QTreeWidgetItem(channel_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
         tmp_item->setText(0, tr("Physical Dimension"));
-        tmp_item->setText(1, channel.getPhysicalDim());
+        tmp_item->setText(1, channel->getPhysicalDim());
         tmp_item = new QTreeWidgetItem(channel_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
         tmp_item->setText(0, tr("Physical Maximum"));
-        tmp_item->setText(1, QString::number(channel.getPhysicalMaximum())); 
+        tmp_item->setText(1, QString::number(channel->getPhysicalMaximum()));
         tmp_item = new QTreeWidgetItem(channel_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
         tmp_item->setText(0, tr("Physical Minimum"));
-        tmp_item->setText(1, QString::number(channel.getPhysicalMinimum()));
+        tmp_item->setText(1, QString::number(channel->getPhysicalMinimum()));
         tmp_item = new QTreeWidgetItem(channel_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
         tmp_item->setText(0, tr("Digital Maximum"));
-        tmp_item->setText(1, QString::number(channel.getDigitalMaximum()));
+        tmp_item->setText(1, QString::number(channel->getDigitalMaximum()));
         tmp_item = new QTreeWidgetItem(channel_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
         tmp_item->setText(0, tr("Digital Minimum"));
-        tmp_item->setText(1, QString::number(channel.getDigitalMinimum()));
+        tmp_item->setText(1, QString::number(channel->getDigitalMinimum()));
         tmp_item = new QTreeWidgetItem(channel_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
         tmp_item->setText(0, tr("Data Type"));
-        tmp_item->setText(1, channel.typeString());
+        tmp_item->setText(1, channel->typeString());
 
         // filter
         QTreeWidgetItem* filter_item;
         filter_item = new QTreeWidgetItem(channel_item);
         filter_item->setText(0, tr("Filter"));
-    // AS: this contains no useful information - suggested to remove  
-        // tmp_item = new QTreeWidgetItem(filter_item);
-        // tmp_item->setText(0, tr("Label"));
-        // tmp_item->setText(1, channel.getFilterLabel());
         tmp_item = new QTreeWidgetItem(filter_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
         tmp_item->setText(0, tr("Highpass"));
-        tmp_item->setText(1, isnan(channel.getHighpass()) ? tr("unknown") :
-            (channel.getHighpass() < 0 ? "" :
-                               QString::number(channel.getHighpass())));
+        tmp_item->setText(1, isnan(channel->getHighpass()) ? tr("unknown") :
+            (channel->getHighpass() < 0 ? "" :
+                               QString::number(channel->getHighpass())));
         tmp_item->setText(2, tr("Hz"));
         tmp_item = new QTreeWidgetItem(filter_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
         tmp_item->setText(0, tr("Lowpass"));
-        tmp_item->setText(1, isnan(channel.getLowpass()) ? tr("unknown") : 
-                        (channel.getLowpass() < 0 ? "" :
-                                    QString::number(channel.getLowpass())));
+        tmp_item->setText(1, isnan(channel->getLowpass()) ? tr("unknown") :
+                        (channel->getLowpass() < 0 ? "" :
+                                    QString::number(channel->getLowpass())));
         tmp_item->setText(2, tr("Hz"));
         tmp_item = new QTreeWidgetItem(filter_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
         tmp_item->setText(0, tr("Notch"));
-        tmp_item->setText(1, isnan(channel.getNotch()) ? tr("unknown") : (channel.getNotch() ? tr("yes") : tr("no")));
+        tmp_item->setText(1, isnan(channel->getNotch()) ? tr("unknown") : (channel->getNotch() ? tr("yes") : tr("no")));
     }
 }
 

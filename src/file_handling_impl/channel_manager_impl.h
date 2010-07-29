@@ -39,9 +39,6 @@ public:
                                                      unsigned length) const;
 
     //-------------------------------------------------------------------------
-    virtual boost::tuples::tuple<double, double> getPhysMinMax (ChannelID channel_id) const;
-
-    //-------------------------------------------------------------------------
     virtual float32 getDurationInSec () const;
 
     //-------------------------------------------------------------------------

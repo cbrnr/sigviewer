@@ -35,14 +35,8 @@ namespace BioSig_
 enum ScaleMode
 {
         MAX_TO_MAX,
-        MIN_TO_MAX,
-        PHYS_MIN_TO_MAX,
-        PHYS_MAX_TO_MAX
+        MIN_TO_MAX
 };
-
-// operating system dependent
-extern const char* DIR_SEPARATOR;
-extern const char* HOME_DIRECTORY;
 
 // standard types
 // compiler specific types

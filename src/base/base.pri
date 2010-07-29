@@ -11,5 +11,4 @@ SOURCES += base/data_block.cpp \
     base/exception.cpp \
     base/math_utils.cpp \
     base/signal_channel.cpp \
-    base/signal_event.cpp \
-    base/sigviewer_user_types.cpp
+    base/signal_event.cpp

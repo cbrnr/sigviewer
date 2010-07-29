@@ -19,7 +19,7 @@ FILE_SIGNAL_READER_REGISTRATION(sinusdummy, SinusDummyReader);
 //-----------------------------------------------------------------------------
 SinusDummyReader::SinusDummyReader ()
 {
-    header_ = QSharedPointer<BasicHeader> (new SinusDummyHeader);
+    QSharedPointer<SinusDummyHeader> header (new SinusDummyHeader);
 
     for (int i = 0; i < 10; i++)
     {
@@ -29,13 +29,11 @@ SinusDummyReader::SinusDummyReader ()
         QSharedPointer<DataBlock const> data_block (new DataBlock (data, 100));
         data_.insert(i, data_block);
 
-        CHANNEL_STRUCT channel_struct;
-        channel_struct.Label[0] = '1' + i;
-        channel_struct.Label[1] = 0;
-        SignalChannel* channel = new SignalChannel(i,
+        QSharedPointer<SignalChannel> channel (new SignalChannel(i,
                                                    1,
-                                                   channel_struct);
-        header_->addChannel(channel);
+                                                   QString::number(i)));
+        header->addDummyChannel(i, channel);
+        header_ = header;
     }
 
     for (int i = 0; i < 40; i++)
@@ -51,16 +49,9 @@ SinusDummyReader::SinusDummyReader ()
 
     header_->setEventSamplerate(100);
     header_->setFileSize(1000);
-    header_->setNumberChannels(10);
     header_->setNumberEvents(events_.size());
     header_->setNumberRecords(10000);
     header_->setRecordDuration(0.01);
-    header_->setRecordSize(1);
-    header_->setSampleRate(100);
-    header_->setType(QObject::tr("sinus dummy type"));
-    header_->setVersion(QObject::tr("2"));
-
-
 }
 
 SinusDummyReader::~SinusDummyReader()

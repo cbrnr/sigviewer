@@ -1,6 +1,7 @@
 #include "channel_manager.h"
 
-#include "../gui/progress_bar.h"
+#include "gui/progress_bar.h"
+
 #include <limits>
 
 namespace BioSig_
@@ -57,15 +58,6 @@ float64 ChannelManager::getMaxValue (ChannelID channel_id) const
         return max_values_[channel_id];
     else
         return std::numeric_limits<float64>::max();
-}
-
-
-//-------------------------------------------------------------------------
-boost::tuples::tuple<double, double> ChannelManager::getPhysMinMax (ChannelID channel_id) const
-{
-    initMinMax();
-    return boost::tuples::tuple<double, double> (min_values_[channel_id],
-                                                 max_values_[channel_id]);
 }
 
 //-------------------------------------------------------------------------

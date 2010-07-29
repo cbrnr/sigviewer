@@ -16,6 +16,12 @@ public:
     virtual uint32 getNumberOfSamples () const {return 10000;}
 
     //-------------------------------------------------------------------------
+    void addDummyChannel (ChannelID id, QSharedPointer<SignalChannel const> channel)
+    {
+        addChannel (id, channel);
+    }
+
+    //-------------------------------------------------------------------------
     virtual QMap<unsigned, QString> getNamesOfUserSpecificEvents () const
     {return QMap<unsigned, QString>();}
 };

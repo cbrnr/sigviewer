@@ -8,8 +8,6 @@
 #include <set>
 #include <map>
 
-#include <boost/tuple/tuple.hpp>
-
 namespace BioSig_
 {
 
@@ -67,9 +65,6 @@ public:
 
     //-------------------------------------------------------------------------
     float64 getMaxValue (ChannelID channel_id) const;
-
-    //-------------------------------------------------------------------------
-    virtual boost::tuples::tuple<double, double> getPhysMinMax (ChannelID channel_id) const;
 
     //-------------------------------------------------------------------------
     void setXAxisUnitLabel (QString const& label) {x_axis_unit_label_ = label;}

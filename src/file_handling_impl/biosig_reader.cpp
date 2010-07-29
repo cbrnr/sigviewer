@@ -202,8 +202,6 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     delete c_file_name;
     c_file_name = 0;
 
-    basic_header_->setType(GetFileTypeString(biosig_header_->TYPE));
-
     uint16_t NS=0;  // count number of selected channels - status channels are already converted to event table
     for (uint16_t k=0; k<biosig_header_->NS; k++)
     {
@@ -214,43 +212,37 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     if ((biosig_header_->Calib) && (biosig_header_->Calib->nrow==NS))
 	NS = biosig_header_->Calib->ncol;
 #endif
-    basic_header_->setNumberChannels(NS);
-
-    basic_header_->setVersion (QString::number(biosig_header_->VERSION));
     basic_header_->setNumberRecords (biosig_header_->NRec);
-    basic_header_->setRecordSize (biosig_header_->SPR);
-    basic_header_->setRecordsPosition (biosig_header_->HeadLen);
 
     basic_header_->setRecordDuration (biosig_header_->SPR / biosig_header_->SampleRate);
-    basic_header_->setSampleRate (biosig_header_->SampleRate);
     basic_header_->setNumberEvents(biosig_header_->EVENT.N);
     if (biosig_header_->EVENT.SampleRate)
         basic_header_->setEventSamplerate(biosig_header_->EVENT.SampleRate);
     else
         basic_header_->setEventSamplerate(biosig_header_->SampleRate);
 
-#ifdef CHOLMOD_H
-    if (biosig_header_->Calib==NULL) {
-#endif
-    uint16_t chan=0;
-    for (uint16_t channel_index = 0; channel_index < biosig_header_->NS; ++channel_index)
-    if (biosig_header_->CHANNEL[channel_index].OnOff)	// show only selected channels - status channels are not shown.
-    {
-        SignalChannel* channel = new SignalChannel(chan++,
-                                                   biosig_header_->SPR,
-                                                   biosig_header_->CHANNEL[channel_index]);
-        basic_header_->addChannel(channel);
-    }
-#ifdef CHOLMOD_H
-    } else 
-    for (uint16_t channel_index = 0; channel_index < biosig_header_->Calib->ncol; ++channel_index)
-    {
-        SignalChannel* channel = new SignalChannel(channel_index, 
-                                                   biosig_header_->SPR,
-                                                   biosig_header_->rerefCHANNEL[channel_index]);
-        basic_header_->addChannel(channel);
-    }
-#endif
+//#ifdef CHOLMOD_H
+//    if (biosig_header_->Calib==NULL) {
+//#endif
+//    uint16_t chan=0;
+//    for (uint16_t channel_index = 0; channel_index < biosig_header_->NS; ++channel_index)
+//    if (biosig_header_->CHANNEL[channel_index].OnOff)	// show only selected channels - status channels are not shown.
+//    {
+//        SignalChannel* channel = new SignalChannel(chan++,
+//                                                   biosig_header_->SPR,
+//                                                   biosig_header_->CHANNEL[channel_index]);
+//        basic_header_->addChannel(channel);
+//    }
+//#ifdef CHOLMOD_H
+//    } else
+//    for (uint16_t channel_index = 0; channel_index < biosig_header_->Calib->ncol; ++channel_index)
+//    {
+//        SignalChannel* channel = new SignalChannel(channel_index,
+//                                                   biosig_header_->SPR,
+//                                                   biosig_header_->rerefCHANNEL[channel_index]);
+//        basic_header_->addChannel(channel);
+//    }
+//#endif
     return "";
 }
 

@@ -32,35 +32,41 @@
 namespace BioSig_
 {
 
-// constructor
-SignalChannel::SignalChannel(uint32 number, 
-                             uint32 samples_per_record,
-                             CHANNEL_STRUCT C)
-: number_(number),
-  label_(QString(C.Label).trimmed()),
-  samples_per_record_(samples_per_record),
-  physical_maximum_(C.PhysMax),
-  digital_maximum_(C.DigMax),
-  physical_minimum_(C.PhysMin),
-  digital_minimum_(C.DigMin),
-  data_type_(C.GDFTYP),
-  data_offset_(1/8),
-  filter_label_("filter"),
-  lowpass_(C.LowPass),
-  highpass_(C.HighPass),
-  notch_(C.Notch)
-{
-    scale_ = (C.PhysMax - C.PhysMin) /
-             (C.DigMax - C.DigMin);
-    offset_ = C.PhysMin - C.DigMin * scale_;
-    
-    char p[MAX_LENGTH_PHYSDIM+1];
-    PhysDim(C.PhysDimCode,p);	
-    physical_dim_ = QString(p);
-    if (physical_dim_.compare("uV") == 0)
-        physical_dim_ = QString (QChar((ushort)0xb5)).append("V");
-}
+////-----------------------------------------------------------------------------
+//SignalChannel::SignalChannel(uint32 number,
+//                             uint32 samples_per_record,
+//                             CHANNEL_STRUCT C)
+//: number_(number),
+//  label_(QString(C.Label).trimmed()),
+//  samples_per_record_(samples_per_record),
+//  physical_maximum_(C.PhysMax),
+//  digital_maximum_(C.DigMax),
+//  physical_minimum_(C.PhysMin),
+//  digital_minimum_(C.DigMin),
+//  data_type_(C.GDFTYP),
+//  lowpass_(C.LowPass),
+//  highpass_(C.HighPass),
+//  notch_(C.Notch)
+//{
+//    char p[MAX_LENGTH_PHYSDIM+1];
+//    PhysDim(C.PhysDimCode,p);
+//    physical_dim_ = QString(p);
+//    if (physical_dim_.compare("uV") == 0)
+//        physical_dim_ = QString (QChar((ushort)0xb5)).append("V");
+//}
 
+//-----------------------------------------------------------------------------
+SignalChannel::SignalChannel (unsigned number,
+                              unsigned samples_per_record,
+                              QString const& label,
+                              QString const& phys_y_dimension_label) :
+    number_ (number),
+    label_ (label),
+    samples_per_record_ (samples_per_record),
+    phys_y_dimension_label_ (phys_y_dimension_label)
+{
+
+}
 
 // get number
 uint32 SignalChannel::getNumber() const
@@ -78,24 +84,6 @@ const QString& SignalChannel::getLabel() const
 uint32 SignalChannel::getSamplesPerRecord() const
 {
     return samples_per_record_;
-}
-
-// get scale
-float64 SignalChannel::getScale() const
-{
-    return scale_;
-}
-
-// get offset
-float64 SignalChannel::getOffset() const
-{
-    return offset_;
-}
-
-// get filter label
-const QString& SignalChannel::getFilterLabel() const
-{
-    return filter_label_;
 }
 
 // get lowpass
@@ -119,7 +107,7 @@ bool SignalChannel::getNotch() const
 // get physical dim
 const QString& SignalChannel::getPhysicalDim() const
 {
-    return physical_dim_;
+    return phys_y_dimension_label_;
 }
 
 // get physical max
@@ -145,19 +133,6 @@ float64 SignalChannel::getDigitalMinimum() const
 {
     return digital_minimum_;
 }
-
-// get data type
-uint16 SignalChannel::getDataType() const
-{
-    return data_type_;
-}
-
-// get data offset
-uint32 SignalChannel::getDataOffset() const
-{
-    return data_offset_;
-}
-
 
 // type string
 QString SignalChannel::typeString() const

@@ -148,22 +148,14 @@ void SignalGraphicsItem::scale (double lower_value, double upper_value)
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::autoScale (ScaleMode auto_zoom_type)
 {
-    if (auto_zoom_type == PHYS_MIN_TO_MAX)
-    {
-        boost::tuples::tuple<double, double> phys_min_max = channel_manager_->getPhysMinMax(id_);
-        minimum_ = phys_min_max.get<0>();
-        maximum_ = phys_min_max.get<1>();
-    }
-    else
-    {
-        minimum_ = channel_manager_->getMinValue (id_);
-        maximum_ = channel_manager_->getMaxValue (id_);
-    }
+
+    minimum_ = channel_manager_->getMinValue (id_);
+    maximum_ = channel_manager_->getMaxValue (id_);
+
     double max = maximum_;
     double min = minimum_;
 
-    if (auto_zoom_type == MAX_TO_MAX ||
-        auto_zoom_type == PHYS_MAX_TO_MAX)
+    if (auto_zoom_type == MAX_TO_MAX)
     {
         if (fabs(max) >= fabs (min))
             min = max;
