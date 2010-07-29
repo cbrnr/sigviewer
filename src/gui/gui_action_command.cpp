@@ -72,7 +72,6 @@ QAction* GuiActionCommand::getQAction (QString const& id)
 //-----------------------------------------------------------------------------
 void GuiActionCommand::updateEnablednessToApplicationState (ApplicationState state)
 {
-    qDebug() << "GuiActionCommand::updateEnablednessToApplicationState " << state;
     app_state_ = state;
     applicationStateChanged ();
     evaluateEnabledness ();

@@ -9,7 +9,7 @@ namespace BioSig_
 ChannelManagerImpl::ChannelManagerImpl (QSharedPointer<FileSignalReader> file_signal_reader)
     : reader_ (file_signal_reader)
 {
-
+    setXAxisUnitLabel ("s");
 }
 
 //-------------------------------------------------------------------------

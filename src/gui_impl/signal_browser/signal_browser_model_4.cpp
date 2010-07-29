@@ -112,7 +112,7 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
 {
     unsigned new_channel_height = getSignalViewSettings()->getChannelHeight();
     if (!initialized_)
-        new_channel_height = signal_browser_view_->getVisibleHeight() / new_shown_channels.size();
+        new_channel_height = signal_browser_view_->getViewportHeight() / new_shown_channels.size();
 
     foreach (ChannelID channel, channel2signal_item_.keys())
         if (new_shown_channels.count (channel) == 0)
@@ -127,9 +127,11 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
             addChannel (channel);
     }
 
-
     foreach (SignalGraphicsItem* channel, channel2signal_item_.values())
         channel->autoScale (getAutoScaleMode());
+
+    if (!initialized_)
+        goToSample (0);
 
     initialized_ = true;
 }
@@ -329,18 +331,6 @@ QSharedPointer<EventManager const> SignalBrowserModel::getEventManager () const
 QSharedPointer<EventManager> SignalBrowserModel::getEventManager ()
 {
     return event_manager_;
-}
-
-//-------------------------------------------------------------------------
-unsigned SignalBrowserModel::getShownHeight () const
-{
-    return signal_browser_view_->getVisibleHeight ();
-}
-
-//-------------------------------------------------------------------------
-unsigned SignalBrowserModel::getShownSignalWidth () const
-{
-    return signal_browser_view_->getVisibleWidth ();
 }
 
 //-------------------------------------------------------------------------

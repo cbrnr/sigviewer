@@ -57,14 +57,6 @@ public:
 
     //-------------------------------------------------------------------------
     /// see base class
-    virtual unsigned getShownHeight () const;
-
-    //-------------------------------------------------------------------------
-    /// see base class
-    virtual unsigned getShownSignalWidth () const;
-
-    //-------------------------------------------------------------------------
-    /// see base class
     virtual unsigned getShownPosition () const;
 
     //-------------------------------------------------------------------------

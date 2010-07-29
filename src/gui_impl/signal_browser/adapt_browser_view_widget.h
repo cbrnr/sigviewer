@@ -37,6 +37,9 @@ private slots:
     void on_channelsPerPageSpinbox_valueChanged (int value);
 
     //-------------------------------------------------------------------------
+    void on_secsPerPageSpinbox_valueChanged (double value);
+
+    //-------------------------------------------------------------------------
     void updateValues ();
 
     //-------------------------------------------------------------------------

@@ -115,7 +115,7 @@ void AdaptEventViewGuiCommand::fitViewToEvent ()
 {
     QSharedPointer<SignalEvent const> event = GuiHelper::getSelectedEvent (currentVisModel());
 
-    float32 width = currentVisModel()->getShownSignalWidth ();
+    float32 width = currentVisModel()->view()->getViewportWidth();
     float32 desired_pixel_per_sample = width / event->getDuration ();
 
     currentSignalViewSettings()->setPixelsPerSample (desired_pixel_per_sample);
@@ -146,7 +146,6 @@ void AdaptEventViewGuiCommand::gotoAndSelectEvent (bool forward)
                                    event->getPosition());
         currentVisModel()->selectEvent (event->getId());
     }
-    //setNextAndPreviousEvent ();
 }
 
 //-------------------------------------------------------------------------

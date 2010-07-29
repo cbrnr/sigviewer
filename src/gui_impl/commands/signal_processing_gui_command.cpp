@@ -51,6 +51,7 @@ void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation ()
 
     QSharedPointer<ProcessedSignalChannelManager> processed_channel_manager (new ProcessedSignalChannelManager(channel_manager->getSampleRate(),
                                                                                                                num_samples));
+    processed_channel_manager->setXAxisUnitLabel(channel_manager->getXAxisUnitLabel());
     ChannelID new_channel_id = 0;
     QList<EventID> events (event_manager->getEvents(event_dialog->getSelectedEventType ()));
     foreach (ChannelID channel_id, event_dialog->getSelectedChannels ())
@@ -99,6 +100,7 @@ void SignalProcessingGuiCommand::calculatePowerSpectrum ()
 
     QSharedPointer<ProcessedSignalChannelManager> processed_channel_manager (new ProcessedSignalChannelManager(static_cast<float32>(fft_samples) / channel_manager->getSampleRate(),
                                                                                                                fft_samples / 2));
+    processed_channel_manager->setXAxisUnitLabel ("Hz");
     QList<EventID> events (event_manager->getEvents(event_dialog->getSelectedEventType ()));
 
     ProgressBar::instance().initAndShow (event_dialog->getSelectedChannels ().size(), tr("Fourier Transformation"),

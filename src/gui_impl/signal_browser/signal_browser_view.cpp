@@ -13,7 +13,6 @@
 #include <QGridLayout>
 #include <QScrollBar>
 #include <QPointF>
-#include <QTimer>
 #include <QSettings>
 #include <QToolBox>
 #include <QMenu>
@@ -39,8 +38,6 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
   model_ (signal_browser_model),
   empty_widget_ (new QWidget)
 {
-    scroll_timer_ = new QTimer (this);
-    connect (scroll_timer_, SIGNAL(timeout()), this, SLOT(scroll()));
     resize (initial_size.width(), initial_size.height());
     graphics_scene_ = new QGraphicsScene (0,0,initial_size.width(), initial_size.height(), this);
     graphics_view_ = new SignalBrowserGraphicsView (graphics_scene_);
@@ -66,7 +63,8 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     loadSettings();
 
     createLayout();
-    connect (graphics_view_, SIGNAL(resized(QResizeEvent*)), SLOT(graphicsSceneResized(QResizeEvent*)));
+    connect (graphics_view_, SIGNAL(resized(QResizeEvent*)), SLOT(graphicsViewResized(QResizeEvent*)));
+    horizontal_scrollbar_->setValue(0);
 }
 
 //-----------------------------------------------------------------------------
@@ -137,19 +135,6 @@ void SignalBrowserView::removeEventGraphicsItem (EventGraphicsItem* event_graphi
     qDebug () << "SignalBrowserView::removeEventGraphicsItem " << event_graphics_item->getId() << " finished";
 }
 
-
-//-----------------------------------------------------------------------------
-int32 SignalBrowserView::getVisibleWidth () const
-{
-    return graphics_view_->viewport()->width();
-}
-
-//-----------------------------------------------------------------------------
-int32 SignalBrowserView::getVisibleHeight () const
-{
-    return graphics_view_->viewport()->height();
-}
-
 //-----------------------------------------------------------------------------
 int32 SignalBrowserView::getVisibleX () const
 {
@@ -164,21 +149,6 @@ void SignalBrowserView::goTo (float32 x)
     y += static_cast<double>(graphics_view_->height()) / 2.0;
     graphics_view_->centerOn(x, y);
     graphics_scene_->update(0, 0, graphics_scene_->width(), graphics_scene_->height());
-}
-
-//-----------------------------------------------------------------------------
-void SignalBrowserView::smoothGoTo (float32 x, float32)
-{
-    scroll_timer_->setInterval (1);
-    scroll_x_halfway_ = x + graphics_view_->mapToScene(0,0).x();
-    scroll_x_halfway_ /= 2;
-    scroll_x_step_ = 10;
-    if (scroll_x_halfway_ > x)
-        scroll_x_left_ = true;
-    else
-        scroll_x_left_ = false;
-    scroll_x_destination_ = x;
-    scroll_timer_->start();
 }
 
 //-----------------------------------------------------------------------------
@@ -228,6 +198,12 @@ int SignalBrowserView::getViewportHeight () const
 }
 
 //-----------------------------------------------------------------------------
+int SignalBrowserView::getViewportWidth () const
+{
+    return graphics_view_->viewport()->width();
+}
+
+//-----------------------------------------------------------------------------
 void SignalBrowserView::setMode (SignalVisualisationMode mode)
 {
     if (current_info_widget_)
@@ -269,21 +245,18 @@ void SignalBrowserView::setMode (SignalVisualisationMode mode)
 }
 
 //-----------------------------------------------------------------------------
-void SignalBrowserView::graphicsSceneResized (QResizeEvent* event)
+void SignalBrowserView::graphicsViewResized (QResizeEvent* event)
 {
     unsigned channel_height = model_->getSignalViewSettings()->getChannelHeight();
     if (!channel_height)
         return;
 
-    if (event->size().height() < 1)
+    if (event->size().height() < 1 || event->oldSize().height() < 1)
         return;
 
-    if (event->oldSize().height() == event->size().height())
+    channel_height *=  static_cast<double>(event->size().height()) / event->oldSize().height();
+    if (channel_height < 10)
         return;
-
-    double channels_per_pagesize = event->oldSize().height() / channel_height;
-
-    channel_height = event->size().height() / channels_per_pagesize;
     model_->getSignalViewSettings()->setChannelHeight (channel_height);
 }
 
@@ -333,24 +306,6 @@ void SignalBrowserView::dropEvent (QDropEvent* event)
 void SignalBrowserView::dragEnterEvent(QDragEnterEvent *event)
 {
     event->ignore();
-}
-
-//-----------------------------------------------------------------------------
-void SignalBrowserView::scroll ()
-{
-    if ((scroll_x_left_ && graphics_view_->mapToScene(0,0).x() >= scroll_x_halfway_)
-        || (!scroll_x_left_ && graphics_view_->mapToScene(0,0).x() <= scroll_x_halfway_))
-        scroll_x_step_ += 10;
-    else
-        scroll_x_step_ -= 10;
-
-    if (scroll_x_step_ < 0)
-        scroll_x_step_ = 1;
-
-    horizontal_scrollbar_->setValue (horizontal_scrollbar_->value() + (scroll_x_left_ ? -scroll_x_step_ : scroll_x_step_));
-    if ((scroll_x_left_ && graphics_view_->mapToScene(0,0).x() <= scroll_x_destination_)
-        || (!scroll_x_left_ && graphics_view_->mapToScene(0,0).x() >= scroll_x_destination_))
-        scroll_timer_->stop();
 }
 
 //-----------------------------------------------------------------------------

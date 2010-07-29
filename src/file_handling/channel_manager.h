@@ -71,6 +71,12 @@ public:
     //-------------------------------------------------------------------------
     virtual boost::tuples::tuple<double, double> getPhysMinMax (ChannelID channel_id) const;
 
+    //-------------------------------------------------------------------------
+    void setXAxisUnitLabel (QString const& label) {x_axis_unit_label_ = label;}
+
+    //-------------------------------------------------------------------------
+    QString getXAxisUnitLabel () const {return x_axis_unit_label_;}
+
 protected:
     ChannelManager () : min_max_initialized_ (false) {}
 
@@ -81,6 +87,8 @@ private:
     mutable bool min_max_initialized_;
     mutable std::map<ChannelID, float64> max_values_;
     mutable std::map<ChannelID, float64> min_values_;
+
+    QString x_axis_unit_label_;
 };
 
 } // namespace BioSig_

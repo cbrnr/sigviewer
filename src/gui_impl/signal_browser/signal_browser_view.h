@@ -54,12 +54,9 @@ public:
     void removeEventGraphicsItem (EventGraphicsItem* event_graphics_item);
 
     void resizeScene (int32 width, int32 height);
-    int32 getVisibleWidth () const;
-    int32 getVisibleHeight () const;
     int32 getVisibleX () const;
 
     void goTo (float32 x);
-    void smoothGoTo (float32 x, float32 y);
     void updateWidgets (bool update_view = true);
 
     virtual QSharedPointer<QImage> renderVisibleScene () const;
@@ -67,6 +64,7 @@ public:
     virtual bool getYAxisVisibility () const;
     virtual bool getLabelsVisibility () const;
     virtual int getViewportHeight () const;
+    virtual int getViewportWidth () const;
 
 public slots:
     void setMode (SignalVisualisationMode mode);
@@ -82,8 +80,7 @@ private slots:
     void verticalScrollBarRangeChaned (int min, int max);
     virtual void dropEvent (QDropEvent* event);
     virtual void dragEnterEvent(QDragEnterEvent *event);
-    void scroll ();
-    void graphicsSceneResized (QResizeEvent* event);
+    void graphicsViewResized (QResizeEvent* event);
 
 private:
     void initWidgets (QSharedPointer<EventManager> event_manager, QSharedPointer<CommandExecuter> command_executer);
@@ -93,7 +90,6 @@ private:
 
     QSharedPointer<SignalBrowserModel> model_;
 
-    QTimer* scroll_timer_;
     QGraphicsScene* graphics_scene_;
     SignalBrowserGraphicsView* graphics_view_;
 

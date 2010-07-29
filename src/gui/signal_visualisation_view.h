@@ -18,6 +18,7 @@ public:
     virtual bool getLabelsVisibility () const = 0;
 
     virtual int getViewportHeight () const = 0;
+    virtual int getViewportWidth () const = 0;
 };
 
 }

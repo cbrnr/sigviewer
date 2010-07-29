@@ -64,14 +64,6 @@ public:
     virtual QSharedPointer<ChannelManager const> getChannelManager () const = 0;
 
     //-------------------------------------------------------------------------
-    /// @return the height of the signal viewport
-    virtual unsigned getShownHeight () const = 0;
-
-    //-------------------------------------------------------------------------
-    /// @return the amount of pixels whon of the signal
-    virtual unsigned getShownSignalWidth () const = 0;
-
-    //-------------------------------------------------------------------------
     /// @return the number of sample which is shown on the left side
     virtual unsigned getShownPosition () const = 0;
 

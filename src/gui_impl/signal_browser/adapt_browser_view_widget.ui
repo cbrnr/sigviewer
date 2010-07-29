@@ -205,9 +205,9 @@
     </widget>
    </item>
    <item row="1" column="5">
-    <widget class="QLabel" name="label_3">
+    <widget class="QLabel" name="xUnitsPerPageLabel">
      <property name="text">
-      <string>s / Page:</string>
+      <string> / Page:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -215,7 +215,14 @@
     </widget>
    </item>
    <item row="1" column="6">
-    <widget class="QDoubleSpinBox" name="secsPerPageSpinbox"/>
+    <widget class="QDoubleSpinBox" name="secsPerPageSpinbox">
+     <property name="decimals">
+      <number>1</number>
+     </property>
+     <property name="minimum">
+      <double>0.100000000000000</double>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

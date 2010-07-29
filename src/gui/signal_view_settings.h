@@ -22,7 +22,6 @@ class SignalViewSettings : public QObject
     Q_OBJECT
     Q_PROPERTY(float pixelsPerSample READ getPixelsPerSample WRITE setPixelsPerSample)
     Q_PROPERTY(int channelHeight READ getChannelHeight WRITE setChannelHeight)
-
 public:
     //-------------------------------------------------------------------------
     SignalViewSettings (QSharedPointer<ChannelManager const> channel_manager);
