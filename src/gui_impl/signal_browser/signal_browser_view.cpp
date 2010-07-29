@@ -60,17 +60,10 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
     graphics_view_->setMinimumSize(0, 0);
     graphics_view_->setFrameStyle(QFrame::NoFrame);
     setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    loadSettings();
 
     createLayout();
     connect (graphics_view_, SIGNAL(resized(QResizeEvent*)), SLOT(graphicsViewResized(QResizeEvent*)));
     horizontal_scrollbar_->setValue(0);
-}
-
-//-----------------------------------------------------------------------------
-SignalBrowserView::~SignalBrowserView ()
-{
-    saveSettings ();
 }
 
 //-----------------------------------------------------------------------------
@@ -312,12 +305,10 @@ void SignalBrowserView::dragEnterEvent(QDragEnterEvent *event)
 void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager, QSharedPointer<CommandExecuter> command_executer)
 {
     y_axis_widget_ = new YAxisWidget (this);
-    hideable_widgets_["Y Axis"] = y_axis_widget_;
     y_axis_widget_->resize(70, height());
     y_axis_widget_->setMinimumSize(70, 0);
 
     x_axis_widget_ = new XAxisWidget (model_->getSignalViewSettings(), this);
-    hideable_widgets_["X Axis"] = x_axis_widget_;
     x_axis_widget_->resize(width()-300, 30);
     x_axis_widget_->setMinimumSize(0, 30);
 
@@ -325,7 +316,6 @@ void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager,
     vertical_scrollbar_ = new QScrollBar (Qt::Vertical, this);
 
     label_widget_ = new LabelWidget (*model_);
-    hideable_widgets_["Channel Labels"] = label_widget_;
 
     current_info_widget_ = empty_widget_;
     if (event_manager.isNull())
@@ -390,41 +380,6 @@ void SignalBrowserView::createLayout()
     layout_->addWidget(horizontal_scrollbar_, 4, 2);
     layout_->addWidget(label_widget_, 2, 3);
     layout_->addWidget(vertical_scrollbar_, 2, 4);
-}
-
-//-----------------------------------------------------------------------------
-void SignalBrowserView::loadSettings ()
-{
-    QSettings settings("SigViewer");
-    settings.beginGroup("SignalBrowserView");
-
-    for (std::map<std::string, QWidget*>::iterator widget_iterator =
-         hideable_widgets_.begin();
-         widget_iterator != hideable_widgets_.end();
-         ++widget_iterator)
-    {
-        widget_iterator->second->setVisible (settings.value(widget_iterator->first.c_str()).toBool());
-    }
-
-    settings.endGroup();
-}
-
-//-----------------------------------------------------------------------------
-void SignalBrowserView::saveSettings ()
-{
-    QSettings settings("SigViewer");
-    settings.beginGroup("SignalBrowserView");
-
-    for (std::map<std::string, QWidget*>::const_iterator widget_iterator =
-         hideable_widgets_.begin();
-         widget_iterator != hideable_widgets_.end();
-         ++widget_iterator)
-    {
-        settings.setValue(widget_iterator->first.c_str(),
-                          widget_iterator->second->isVisibleTo (this));
-    }
-
-    settings.endGroup();
 }
 
 } // namespace BioSig_

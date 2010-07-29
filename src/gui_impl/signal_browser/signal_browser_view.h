@@ -46,7 +46,7 @@ public:
                        QSharedPointer<CommandExecuter> command_executer,
                        QRect const& initial_size,
                        QWidget* parent = 0);
-    virtual ~SignalBrowserView ();
+    virtual ~SignalBrowserView () {}
 
     void addSignalGraphicsItem (ChannelID channel_nr, SignalGraphicsItem* graphics_item, QString const& label);
     void removeSignalGraphicsItem (ChannelID channel_nr, SignalGraphicsItem* graphics_item);
@@ -85,8 +85,6 @@ private slots:
 private:
     void initWidgets (QSharedPointer<EventManager> event_manager, QSharedPointer<CommandExecuter> command_executer);
     void createLayout ();
-    void loadSettings ();
-    void saveSettings ();
 
     QSharedPointer<SignalBrowserModel> model_;
 
@@ -105,11 +103,6 @@ private:
     QWidget* empty_widget_;
 
     QGridLayout* layout_;
-    float32 scroll_x_destination_;
-    float32 scroll_x_halfway_;
-    int32 scroll_x_step_;
-    bool scroll_x_left_;
-    std::map<std::string, QWidget*> hideable_widgets_;
 };
 
 } // namespace BioSig_
