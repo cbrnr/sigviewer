@@ -66,6 +66,8 @@ public:
     virtual bool getXAxisVisibility () const;
     virtual bool getYAxisVisibility () const;
     virtual bool getLabelsVisibility () const;
+    virtual int getViewportHeight () const;
+
 public slots:
     void setMode (SignalVisualisationMode mode);
 

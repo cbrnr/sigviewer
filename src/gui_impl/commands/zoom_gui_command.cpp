@@ -76,8 +76,8 @@ void ZoomGuiCommand::evaluateEnabledness ()
 
     if (file_open && !vis.isNull())
     {
-        zoom_out_vertical_possible = (vis_model->getSignalHeight() * vis_model->getShownChannels().size() > vis_model->getShownHeight());
-        zoom_in_vertical_possible = (vis_model->getSignalHeight() < vis_model->getShownHeight());
+        zoom_out_vertical_possible = (vis_model->getSignalViewSettings()->getChannelHeight() * vis_model->getShownChannels().size() > vis_model->getShownHeight());
+        zoom_in_vertical_possible = (static_cast<unsigned>(vis_model->getSignalViewSettings()->getChannelHeight()) < vis_model->getShownHeight());
         zoom_out_horizontal_possible = vis->getPixelsPerSample() > minPixelPerSample();
         zoom_in_horizontal_possible = vis->getPixelsPerSample() < maxPixelPerSample();
     }
@@ -136,22 +136,22 @@ void ZoomGuiCommand::zoomOutHorizontal ()
 //-----------------------------------------------------------------------------
 void ZoomGuiCommand::zoomInVertical ()
 {
-    unsigned signal_height = currentVisModel()->getSignalHeight();
-    unsigned new_signal_height = std::min<unsigned> (signal_height * ZOOM_FACTOR_,
-                              maxSignalHeight());
-    GuiHelper::animateProperty (currentVisModel().data(), "signal_height_",
-                                signal_height, new_signal_height,
+    unsigned channel_height = currentVisModel()->getSignalViewSettings()->getChannelHeight();
+    unsigned new_channel_height = std::min<unsigned> (channel_height * ZOOM_FACTOR_,
+                                    maxChannelHeight());
+    GuiHelper::animateProperty (currentVisModel()->getSignalViewSettings().data(), "channelHeight",
+                                channel_height, new_channel_height,
                                 this, SLOT(evaluateEnabledness()));
 }
 
 //-----------------------------------------------------------------------------
 void ZoomGuiCommand::zoomOutVertical ()
 {
-    unsigned signal_height = currentVisModel()->getSignalHeight();
-    unsigned new_signal_height = std::max<unsigned> (signal_height / ZOOM_FACTOR_,
-                              minSignalHeight());
-    GuiHelper::animateProperty (currentVisModel().data(), "signal_height_",
-                                signal_height, new_signal_height,
+    unsigned channel_height = currentVisModel()->getSignalViewSettings()->getChannelHeight();
+    unsigned new_channel_height = std::max<unsigned> (channel_height / ZOOM_FACTOR_,
+                              minChannelHeight());
+    GuiHelper::animateProperty (currentVisModel()->getSignalViewSettings().data(), "channelHeight",
+                                channel_height, new_channel_height,
                                 this, SLOT(evaluateEnabledness()));
 }
 
@@ -180,9 +180,9 @@ void ZoomGuiCommand::scaleXAxis ()
 //-------------------------------------------------------------------------
 void ZoomGuiCommand::setChannelsPerPage ()
 {
-    unsigned signal_height = currentVisModel()->getSignalHeight();
+    unsigned channel_height = currentVisModel()->getSignalViewSettings()->getChannelHeight();
     float viewport_height = currentVisModel()->getShownHeight();
-    float channels_per_page = viewport_height / signal_height;
+    float channels_per_page = viewport_height / channel_height;
 
     bool ok = false;
     float new_channels_per_page = QInputDialog::getInt (0, tr("Vertical Zooming"),
@@ -192,23 +192,23 @@ void ZoomGuiCommand::setChannelsPerPage ()
     if (!ok)
         return;
 
-    unsigned new_signal_height = viewport_height / new_channels_per_page;
-    if (new_signal_height == signal_height)
+    unsigned new_channel_height = viewport_height / new_channels_per_page;
+    if (new_channel_height == channel_height)
         return;
 
-    GuiHelper::animateProperty (currentVisModel().data(), "signal_height_",
-                                signal_height, new_signal_height,
+    GuiHelper::animateProperty (currentVisModel()->getSignalViewSettings().data(), "channelHeight",
+                                channel_height, new_channel_height,
                                 this, SLOT(evaluateEnabledness()));
 }
 
 //-------------------------------------------------------------------------
-unsigned ZoomGuiCommand::maxSignalHeight ()
+unsigned ZoomGuiCommand::maxChannelHeight ()
 {
     return currentVisModel()->getShownHeight();
 }
 
 //-------------------------------------------------------------------------
-unsigned ZoomGuiCommand::minSignalHeight ()
+unsigned ZoomGuiCommand::minChannelHeight ()
 {
     return std::max<unsigned> (20, currentVisModel()->getShownHeight() / currentVisModel()->getShownChannels().size());
 }

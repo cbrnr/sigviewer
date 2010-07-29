@@ -46,10 +46,10 @@ private slots:
 
 private:
     //-------------------------------------------------------------------------
-    unsigned maxSignalHeight ();
+    unsigned maxChannelHeight ();
 
     //-------------------------------------------------------------------------
-    unsigned minSignalHeight ();
+    unsigned minChannelHeight ();
 
     //-------------------------------------------------------------------------
     float32 maxPixelPerSample ();

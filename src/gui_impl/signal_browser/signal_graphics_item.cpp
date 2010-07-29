@@ -49,7 +49,7 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
   draw_y_grid_ (true),
   draw_x_grid_ (true),
   y_offset_ (0),
-  height_ (model.getSignalHeight()),
+  height_ (signal_view_settings->getChannelHeight()),
   width_ (0),
   shifting_ (false),
   new_event_ (false),
@@ -71,7 +71,7 @@ SignalGraphicsItem::~SignalGraphicsItem ()
 
 
 //-----------------------------------------------------------------------------
-void SignalGraphicsItem::setHeight (uint32 height)
+void SignalGraphicsItem::setHeight (unsigned height)
 {
    this->prepareGeometryChange();
    y_zoom_ = y_zoom_ * height / height_;

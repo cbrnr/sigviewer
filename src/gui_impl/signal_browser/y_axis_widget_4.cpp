@@ -17,7 +17,7 @@ namespace BioSig_
 //-----------------------------------------------------------------------------
 YAxisWidget::YAxisWidget (QWidget* parent)
   : QWidget (parent),
-    signal_height_ (0),
+    channel_height_ (0),
     y_start_ (0)
 {
     // nothing to do here
@@ -43,9 +43,9 @@ void YAxisWidget::removeChannel(ChannelID channel_nr)
 }
 
 //-----------------------------------------------------------------------------
-void YAxisWidget::changeSignalHeight (uint32 signal_height)
+void YAxisWidget::changeSignalHeight (unsigned signal_height)
 {
-    signal_height_ = signal_height;
+    channel_height_ = signal_height;
     update ();
 }
 
@@ -67,8 +67,8 @@ void YAxisWidget::paintEvent(QPaintEvent*)
 {
     QPainter painter (this);
 
-    float64 intervall = signal_height_;
-    painter.translate (0, ((static_cast<float32>(signal_height_) / 2)) - y_start_);
+    float64 intervall = channel_height_;
+    painter.translate (0, ((static_cast<float32>(channel_height_) / 2)) - y_start_);
     int32 current_y_start = 0;
     foreach (SignalGraphicsItem const* signal, channel_nr2signal_graphics_item_.values())
     {
@@ -102,8 +102,8 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
                                     double value_range_fragment,
                                     QString const& unit_string)
 {
-    int upper_border = signal_height_ / 2;
-    int lower_border = -static_cast<int>(signal_height_ / 2);
+    int upper_border = channel_height_ / 2;
+    int lower_border = -static_cast<int>(channel_height_ / 2);
 
     painter->setClipping (true);
     painter->setClipRect (0, lower_border - 1, width(), upper_border - lower_border + 2);
@@ -132,7 +132,7 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
          value_y < upper_border;
          value_y += y_grid_pixel_intervall)
     {
-        if (value_y > -static_cast<int>(signal_height_ / 2))
+        if (value_y > -static_cast<int>(channel_height_ / 2))
         {
             painter->drawLine (width () - 5, value_y, width () - 1, value_y);
             painter->drawText(0, value_y - 20, width () - 10, 40,
@@ -148,7 +148,7 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
          value_y -= y_grid_pixel_intervall)
     {
         value += value_range_fragment;
-        if (value_y < signal_height_ / 2)
+        if (value_y < channel_height_ / 2)
         {
             painter->drawLine (width () - 5, value_y, width () - 1, value_y);
             painter->drawText(0, value_y - 20, width () - 10, 40,

@@ -33,6 +33,14 @@ private slots:
     //-------------------------------------------------------------------------
     void on_yGridSlider_valueChanged (int value);
 
+    //-------------------------------------------------------------------------
+    void on_channelsPerPageSpinbox_valueChanged (int value);
+
+    //-------------------------------------------------------------------------
+    void updateValues ();
+
+    //-------------------------------------------------------------------------
+    void selfUpdatingFinished ();
 private:
     //-------------------------------------------------------------------------
     virtual void showEvent (QShowEvent* event);
@@ -40,6 +48,8 @@ private:
     SignalVisualisationView const* signal_visualisation_view_;
     QSharedPointer<SignalViewSettings> settings_;
     Ui::AdaptBrowserViewWidget ui_;
+    bool self_updating_;
+    bool updating_values_;
 };
 
 }

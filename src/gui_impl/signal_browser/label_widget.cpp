@@ -28,7 +28,7 @@ void LabelWidget::changeYStart (int32 y_start)
 //-----------------------------------------------------------------------------
 void LabelWidget::paintEvent(QPaintEvent*)
 {
-    float64 signal_height = signal_browser_model_.getSignalHeight();
+    float64 signal_height = signal_browser_model_.getSignalViewSettings()->getChannelHeight();
     int32 y_end = y_start_ + height();
 
     if (signal_height < 1)

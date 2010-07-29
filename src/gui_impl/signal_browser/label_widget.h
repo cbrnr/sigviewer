@@ -30,8 +30,6 @@ protected:
 private:
     SignalBrowserModel& signal_browser_model_;
 
-    unsigned signal_height_;
-
     QMap<ChannelID, QString> channel_nr2label_;
     int32 y_start_;
 };

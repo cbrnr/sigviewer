@@ -13,7 +13,6 @@ SignalVisualisationModel::SignalVisualisationModel (std::set<EventType> const& s
       mode_ (MODE_HAND),
       event_creation_type_ (1),
       shown_event_types_ (shown_types),
-      signal_height_ (10),
       scale_mode_ (MIN_TO_MAX),
       selected_channel_ (UNDEFINED_CHANNEL),
       info_widget_ (0)
@@ -39,23 +38,6 @@ SignalVisualisationMode SignalVisualisationModel::getMode () const
 void SignalVisualisationModel::setInfoWidget (QWidget* info_widget)
 {
     info_widget_ = info_widget;
-}
-
-//-------------------------------------------------------------------------
-unsigned SignalVisualisationModel::getSignalHeight () const
-{
-    return signal_height_;
-}
-
-//-------------------------------------------------------------------------
-void SignalVisualisationModel::setSignalHeight (unsigned height)
-{
-    signal_height_ = height;
-    qDebug() << "SignalVisualisationModel::signal_height_ = " << signal_height_;
-    if (signal_height_ == 0)
-        signal_height_ = 100;
-    emit signalHeightChanged (signal_height_);
-    update();
 }
 
 //-------------------------------------------------------------------------

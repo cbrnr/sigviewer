@@ -6,6 +6,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QSharedPointer>
 
 #include <set>
 
@@ -20,13 +21,20 @@ class SignalViewSettings : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(float pixelsPerSample READ getPixelsPerSample WRITE setPixelsPerSample)
+    Q_PROPERTY(int channelHeight READ getChannelHeight WRITE setChannelHeight)
 
 public:
     //-------------------------------------------------------------------------
-    SignalViewSettings (QSharedPointer<ChannelManager> channel_manager);
+    SignalViewSettings (QSharedPointer<ChannelManager const> channel_manager);
+
+    //-------------------------------------------------------------------------
+    QSharedPointer<ChannelManager const> getChannelManager () const {return channel_manager_;}
 
     //-------------------------------------------------------------------------
     float getPixelsPerSample () const {return pixels_per_sample_;}
+
+    //-------------------------------------------------------------------------
+    int getChannelHeight () const {return channel_heigth_in_pixels_;}
 
     //-------------------------------------------------------------------------
     float getSampleRate () const {return channel_manager_->getSampleRate();}
@@ -42,6 +50,9 @@ public slots:
     void setPixelsPerSample (float pixel_per_sample);
 
     //-------------------------------------------------------------------------
+    void setChannelHeight (int channel_heigth_in_pixels);
+
+    //-------------------------------------------------------------------------
     void setGridFragmentation (Qt::Orientation orientation, int fragmentation);
 
     //-------------------------------------------------------------------------
@@ -55,13 +66,16 @@ public slots:
 
 signals:
     void pixelsPerSampleChanged ();
+    void channelHeightChanged ();
+    void channelHeightChanged (unsigned channel_height_in_pixel);
     void gridFragmentationChanged ();
 
 private:
     //std::set<ChannelID> shown_channels_;
     float pixels_per_sample_;
+    int channel_heigth_in_pixels_;
     QMap<Qt::Orientation, int> grid_fragmentation_;
-    QSharedPointer<ChannelManager> channel_manager_;
+    QSharedPointer<ChannelManager const> channel_manager_;
 };
 
 }

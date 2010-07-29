@@ -60,6 +60,7 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
        }
     }
     connect (getSignalViewSettings().data(), SIGNAL(pixelsPerSampleChanged()), SLOT(update()));
+    connect (getSignalViewSettings().data(), SIGNAL(channelHeightChanged()), SLOT(update()));
 }
 
 //-----------------------------------------------------------------------------
@@ -109,15 +110,15 @@ void SignalBrowserModel::saveSettings()
 void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
                                            new_shown_channels)
 {
-    unsigned new_signal_height = getSignalHeight ();
+    unsigned new_channel_height = getSignalViewSettings()->getChannelHeight();
     if (!initialized_)
-        new_signal_height = signal_browser_view_->getVisibleHeight() / new_shown_channels.size();
+        new_channel_height = signal_browser_view_->getVisibleHeight() / new_shown_channels.size();
 
     foreach (ChannelID channel, channel2signal_item_.keys())
         if (new_shown_channels.count (channel) == 0)
             removeChannel (channel);
 
-    setSignalHeight (std::max<unsigned>(20, new_signal_height));
+    getSignalViewSettings()->setChannelHeight (std::max<unsigned>(20, new_channel_height));
 
     foreach (ChannelID channel, new_shown_channels)
     {
@@ -145,7 +146,7 @@ void SignalBrowserModel::addChannel (ChannelID channel_id)
                                   channel_id,
                                   *this);
 
-    signal_item->connect (this, SIGNAL(signalHeightChanged(uint32)), SLOT(setHeight(uint32)));
+    signal_item->connect (getSignalViewSettings().data(), SIGNAL(channelHeightChanged(uint)), SLOT(setHeight(uint)));
     channel2signal_item_[channel_id] = signal_item;
     signal_browser_view_->addSignalGraphicsItem (channel_id, signal_item, channel_manager_->getChannelLabel(channel_id));
 }
@@ -222,13 +223,13 @@ void SignalBrowserModel::zoomOutAll()
     signal_browser_view_->updateWidgets();
 }
 
-// update layout
+//-----------------------------------------------------------------------------
 void SignalBrowserModel::update()
 {
     int32 width = channel_manager_->getNumberSamples()
                   * getSignalViewSettings()->getPixelsPerSample();
 
-    int32 height = getSignalHeight() *
+    int32 height = getSignalViewSettings()->getChannelHeight() *
                    channel2signal_item_.size();
 
     signal_browser_view_->resizeScene (width, height);
@@ -243,10 +244,10 @@ void SignalBrowserModel::update()
 
     for (signal_iter = channel2signal_item_.begin();
          signal_iter != channel2signal_item_.end();
-         signal_iter++, y_pos += getSignalHeight())
+         signal_iter++, y_pos += getSignalViewSettings()->getChannelHeight())
     {
         channel2y_pos_[signal_iter.key()] = y_pos;
-        signal_iter.value()->setHeight (getSignalHeight() );
+        signal_iter.value()->setHeight (getSignalViewSettings()->getChannelHeight());
         signal_iter.value()->setPos (0, y_pos);
         signal_iter.value()->setZValue(SIGNAL_Z);
         signal_iter.value()->updateYGridIntervall();

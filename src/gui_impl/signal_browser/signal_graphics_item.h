@@ -56,7 +56,7 @@ public:
 
 public slots:
     void updateYGridIntervall();
-    void setHeight (uint32 height);
+    void setHeight (unsigned height);
     void setXGridInterval (unsigned interval);
 
 signals:

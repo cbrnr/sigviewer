@@ -1,7 +1,7 @@
 #ifndef Y_AXIS_GRAPHICS_ITEM_H
 #define Y_AXIS_GRAPHICS_ITEM_H
 
-#include "../../base/sigviewer_user_types.h"
+#include "base/sigviewer_user_types.h"
 
 #include <QWidget>
 #include <QMap>
@@ -23,7 +23,7 @@ public:
     void removeChannel(ChannelID channel_nr);
 
 public slots:
-    void changeSignalHeight (uint32 signal_height);
+    void changeSignalHeight (unsigned signal_height);
     void changeYStart (int32 y_start);
     void updateChannel (ChannelID channel_id);
 
@@ -38,7 +38,7 @@ private:
 
     void paintYUnits (QPainter* painter, QString const& unit_string);
 
-    unsigned signal_height_;
+    unsigned channel_height_;
     int32 y_start_;
     QMap<ChannelID, SignalGraphicsItem const*> channel_nr2signal_graphics_item_;
 };

@@ -16,6 +16,8 @@ public:
     virtual bool getXAxisVisibility () const = 0;
     virtual bool getYAxisVisibility () const = 0;
     virtual bool getLabelsVisibility () const = 0;
+
+    virtual int getViewportHeight () const = 0;
 };
 
 }

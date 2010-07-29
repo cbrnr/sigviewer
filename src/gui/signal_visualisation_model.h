@@ -24,7 +24,6 @@ namespace BioSig_
 class SignalVisualisationModel : public QObject, public EventView
 {
     Q_OBJECT
-    Q_PROPERTY(float signal_height_ READ getSignalHeight WRITE setSignalHeight)
     Q_PROPERTY(int sample_position_ READ getShownPosition WRITE goToSample)
 public:
     //-------------------------------------------------------------------------
@@ -63,12 +62,6 @@ public:
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<ChannelManager const> getChannelManager () const = 0;
-
-    //-------------------------------------------------------------------------
-    unsigned getSignalHeight () const;
-
-    //-------------------------------------------------------------------------
-    void setSignalHeight (unsigned height);
 
     //-------------------------------------------------------------------------
     /// @return the height of the signal viewport
@@ -141,7 +134,6 @@ private:
     SignalVisualisationMode mode_;
     EventType event_creation_type_;
     std::set<EventType> shown_event_types_;
-    unsigned signal_height_;
     unsigned sample_position_;
     ScaleMode scale_mode_;
     ChannelID selected_channel_;

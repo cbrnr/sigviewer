@@ -123,10 +123,10 @@ void EventGraphicsItem::updateToSignalEvent ()
     int32 y_pos = 0;
 
     if (signal_event_->getChannel() == UNDEFINED_CHANNEL)
-        height_ = (signal_browser_model_.getSignalHeight()) * signal_browser_model_.getShownChannels().size();
+        height_ = (signal_view_settings_->getChannelHeight()) * signal_browser_model_.getShownChannels().size();
     else
     {
-        height_ = signal_browser_model_.getSignalHeight();
+        height_ = signal_view_settings_->getChannelHeight();
         y_pos = signal_browser_model_.getYPosOfChannel(signal_event_->getChannel());
     }
 

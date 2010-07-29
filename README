@@ -11,8 +11,7 @@ SigViewer depends on the following external libraries:
 
 - QT 4 (qt4-core and qt4-gui)
   http://www.qtsoftware.com
-- FFTW 3
-  http://www.fftw.org
+- libgdf
 - biosig4c++
   http://biosig.sourceforge.net
 

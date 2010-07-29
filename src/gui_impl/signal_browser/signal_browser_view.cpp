@@ -222,6 +222,12 @@ bool SignalBrowserView::getLabelsVisibility () const
 }
 
 //-----------------------------------------------------------------------------
+int SignalBrowserView::getViewportHeight () const
+{
+    return graphics_view_->viewport()->height();
+}
+
+//-----------------------------------------------------------------------------
 void SignalBrowserView::setMode (SignalVisualisationMode mode)
 {
     if (current_info_widget_)
@@ -265,8 +271,8 @@ void SignalBrowserView::setMode (SignalVisualisationMode mode)
 //-----------------------------------------------------------------------------
 void SignalBrowserView::graphicsSceneResized (QResizeEvent* event)
 {
-    unsigned signal_height = model_->getSignalHeight ();
-    if (!signal_height)
+    unsigned channel_height = model_->getSignalViewSettings()->getChannelHeight();
+    if (!channel_height)
         return;
 
     if (event->size().height() < 1)
@@ -275,11 +281,10 @@ void SignalBrowserView::graphicsSceneResized (QResizeEvent* event)
     if (event->oldSize().height() == event->size().height())
         return;
 
-    double signals_per_pagesize = event->oldSize().height() / signal_height;
+    double channels_per_pagesize = event->oldSize().height() / channel_height;
 
-    signal_height = event->size().height() / signals_per_pagesize;
-    model_->setSignalHeight (signal_height);
-    model_->update ();
+    channel_height = event->size().height() / channels_per_pagesize;
+    model_->getSignalViewSettings()->setChannelHeight (channel_height);
 }
 
 //-----------------------------------------------------------------------------
@@ -409,7 +414,7 @@ void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager,
     connect(model_->getSignalViewSettings().data(), SIGNAL(pixelsPerSampleChanged()), x_axis_widget_, SLOT(update()));
     label_widget_->connect (this, SIGNAL(visibleYChanged(int32)), SLOT(changeYStart (int32)));
     connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
-    connect(model_.data(), SIGNAL(signalHeightChanged(uint32)), y_axis_widget_, SLOT(changeSignalHeight(uint32)));
+    connect(model_->getSignalViewSettings().data(), SIGNAL(channelHeightChanged(uint)), y_axis_widget_, SLOT(changeSignalHeight(uint)));
     connect(model_.data(), SIGNAL(modeChanged(SignalVisualisationMode)), SLOT(setMode(SignalVisualisationMode)));
 }
 
