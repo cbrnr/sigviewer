@@ -2,11 +2,11 @@
 #ifndef SIGNAL_BROWSER_VIEW_H
 #define SIGNAL_BROWSER_VIEW_H
 
-#include "../../base/sigviewer_user_types.h"
-#include "../../command_executer.h"
-#include "../../gui/signal_visualisation_model.h"
-#include "../../gui/signal_visualisation_view.h"
-#include "../../file_handling/event_manager.h"
+#include "base/sigviewer_user_types.h"
+#include "command_executer.h"
+#include "gui/signal_visualisation_model.h"
+#include "gui/signal_visualisation_view.h"
+#include "file_handling/event_manager.h"
 
 #include "signal_browser_graphics_view.h"
 
@@ -28,7 +28,6 @@ namespace BioSig_
 class LabelWidget;
 class YAxisWidget;
 class XAxisWidget;
-class SignalBrowserModel;
 class SignalGraphicsItem;
 class EventGraphicsItem;
 class EventEditingWidget;
@@ -41,7 +40,7 @@ class SignalBrowserView : public QFrame, public SignalVisualisationView
     Q_OBJECT
 
 public:
-    SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_browser_model,
+    SignalBrowserView (QSharedPointer<SignalVisualisationModel> signal_browser_model,
                        QSharedPointer<EventManager> event_manager,
                        QSharedPointer<CommandExecuter> command_executer,
                        QRect const& initial_size,
@@ -86,7 +85,7 @@ private:
     void initWidgets (QSharedPointer<EventManager> event_manager, QSharedPointer<CommandExecuter> command_executer);
     void createLayout ();
 
-    QSharedPointer<SignalBrowserModel> model_;
+    QSharedPointer<SignalVisualisationModel> model_;
 
     QGraphicsScene* graphics_scene_;
     SignalBrowserGraphicsView* graphics_view_;

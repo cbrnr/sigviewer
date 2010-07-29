@@ -1,5 +1,4 @@
 #include "signal_browser_view.h"
-#include "signal_browser_model_4.h"
 #include "signal_graphics_item.h"
 #include "event_graphics_item.h"
 #include "y_axis_widget_4.h"
@@ -29,7 +28,7 @@ namespace BioSig_
 
 //-----------------------------------------------------------------------------
 // constructor
-SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_browser_model,
+SignalBrowserView::SignalBrowserView (QSharedPointer<SignalVisualisationModel> signal_browser_model,
                                       QSharedPointer<EventManager> event_manager,
                                       QSharedPointer<CommandExecuter> command_executer,
                                       QRect const& initial_size,
@@ -55,9 +54,6 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalBrowserModel> signal_
 
     initWidgets (event_manager, command_executer);
 
-    graphics_view_->resize(width() - label_widget_->width() - y_axis_widget_->width() + (vertical_scrollbar_->width()*2), height() - x_axis_widget_->height() + horizontal_scrollbar_->height());
-
-    graphics_view_->setMinimumSize(0, 0);
     graphics_view_->setFrameStyle(QFrame::NoFrame);
     setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
@@ -315,7 +311,7 @@ void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager,
     horizontal_scrollbar_ = new QScrollBar (Qt::Horizontal, this);
     vertical_scrollbar_ = new QScrollBar (Qt::Vertical, this);
 
-    label_widget_ = new LabelWidget (*model_);
+    label_widget_ = new LabelWidget (model_->getSignalViewSettings());
 
     current_info_widget_ = empty_widget_;
     if (event_manager.isNull())

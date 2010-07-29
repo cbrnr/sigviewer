@@ -1,11 +1,12 @@
 #ifndef LABEL_WIDGET_H
 #define LABEL_WIDGET_H
 
-#include "../../base/sigviewer_user_types.h"
-#include "signal_browser_model_4.h"
+#include "base/sigviewer_user_types.h"
+#include "gui/signal_view_settings.h"
 
 #include <QMap>
 #include <QWidget>
+#include <QSharedPointer>
 
 namespace BioSig_
 {
@@ -15,7 +16,7 @@ class LabelWidget : public QWidget
 {
     Q_OBJECT
 public:
-    LabelWidget(SignalBrowserModel& model);
+    LabelWidget (QSharedPointer<SignalViewSettings const> signal_view_settings);
 
     void addChannel(ChannelID channel_nr, const QString& label);
     void removeChannel(ChannelID channel_nr);
@@ -28,7 +29,7 @@ protected:
     virtual void contextMenuEvent (QContextMenuEvent* event);
 
 private:
-    SignalBrowserModel& signal_browser_model_;
+    QSharedPointer<SignalViewSettings const> signal_view_settings_;
 
     QMap<ChannelID, QString> channel_nr2label_;
     int32 y_start_;

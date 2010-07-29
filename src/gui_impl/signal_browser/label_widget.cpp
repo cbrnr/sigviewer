@@ -9,9 +9,9 @@
 namespace BioSig_
 {
 
-// constructor
-LabelWidget::LabelWidget(SignalBrowserModel& model)
-: signal_browser_model_(model),
+//-----------------------------------------------------------------------------
+LabelWidget::LabelWidget (QSharedPointer<SignalViewSettings const> signal_view_settings)
+: signal_view_settings_ (signal_view_settings),
   y_start_ (0)
 {
     // nothing to do here
@@ -28,7 +28,7 @@ void LabelWidget::changeYStart (int32 y_start)
 //-----------------------------------------------------------------------------
 void LabelWidget::paintEvent(QPaintEvent*)
 {
-    float64 signal_height = signal_browser_model_.getSignalViewSettings()->getChannelHeight();
+    float64 signal_height = signal_view_settings_->getChannelHeight();
     int32 y_end = y_start_ + height();
 
     if (signal_height < 1)
