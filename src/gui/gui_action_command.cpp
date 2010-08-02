@@ -18,6 +18,7 @@ public:
 
 //-----------------------------------------------------------------------------
 GuiActionCommand::GuiActionCommand (QStringList const& action_ids)
+    : tab_edit_state_ (TAB_STATE_NO_REDO_NO_UNDO)
 {
     for (QStringList::const_iterator iter = action_ids.begin();
          iter != action_ids.end();

@@ -31,9 +31,6 @@ public:
     EventTableFileReader();
     ~EventTableFileReader();
 
-    void setLogStream(QTextStream* log_stream);
-
-
     StringIterator getGroupIdBegin() const;
     StringIterator getGroupIdEnd() const;
     QString getEventGroupName(const QString& group_id);
@@ -56,21 +53,19 @@ private:
         QString group_id;
     };
 
-    typedef QList<uint16> IntList;
-    typedef QMap<uint16, EventItem> Int2EventItemMap;
+    typedef QMap<EventType, EventItem> Int2EventItemMap;
     typedef QMap<QString, QString> String2StringMap;
 
     // not allowed
     EventTableFileReader(const EventTableFileReader& src);
     const EventTableFileReader& operator=(const EventTableFileReader& src);
 
-    IntList event_types_;
+    QList<EventType> event_types_;
     QStringList event_group_ids_;
     Int2EventItemMap event_type2name_;
     String2StringMap group_id2name_;
 
     QString event_file_path_;
-    QTextStream* log_stream_;
 };
 
 } // namespace SigViewer_

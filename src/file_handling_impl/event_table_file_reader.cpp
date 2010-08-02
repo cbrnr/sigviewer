@@ -12,7 +12,6 @@ namespace SigViewer_
 
 // constructor
 EventTableFileReader::EventTableFileReader()
-: log_stream_(0)
 {
     load (":/eventcodes.txt");
 }
@@ -23,32 +22,15 @@ EventTableFileReader::~EventTableFileReader()
     // nothing
 }
 
-// set log stream
-void EventTableFileReader::setLogStream(QTextStream* log_stream)
-{
-    log_stream_ = log_stream;
-}
-
 // load
 bool EventTableFileReader::load(const QString& file_name)
 {
     event_file_path_ = file_name;
     QFile file(file_name);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        if (log_stream_)
-        {
-            *log_stream_ << "EventTableFileReader::load '" << file_name
-                         << "' Error: open file\n";
-        }
         return false;
-    }
 
     // load event type table
-    if (log_stream_)
-    {
-        *log_stream_ << "EventTableFileReader::load '" << file_name << "'\n";
-    }
     QTextStream file_stream(&file); 
     QString group_id;
     while (true)
