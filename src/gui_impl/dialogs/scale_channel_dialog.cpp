@@ -35,6 +35,11 @@ ScaleChannelDialog::ScaleChannelDialog (ChannelID preselected_channel,
     if (unit_string.size())
         ui_.unitLabelLower->setText (QString ("(").append (unit_string).append (")"));
     ui_.unitLabelUpper->setText (ui_.unitLabelLower->text());
+    if (selected_channel_ != UNDEFINED_CHANNEL)
+    {
+        ui_.upper_spinbox_->setValue (channel_manager_->getMaxValue (selected_channel_));
+        ui_.lower_spinbox_->setValue (channel_manager_->getMinValue (selected_channel_));
+    }
     connect (this, SIGNAL(accepted()), SLOT(storeAccepted()));
 }
 
