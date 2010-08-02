@@ -5,7 +5,7 @@
 #include <QPoint>
 #include <QMouseEvent>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class SignalBrowserGraphicsView : public QGraphicsView

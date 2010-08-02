@@ -5,7 +5,7 @@
 
 #include <QDebug>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class EventTableItem : public QTableWidgetItem

@@ -10,7 +10,7 @@
 
 #include <map>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -90,6 +90,6 @@ QStringList FileHandlerFactory<FileHandlerType>::getAllFileEndingsWithWildcards 
     return wildcard_file_endings_;
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif

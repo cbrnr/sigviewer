@@ -29,7 +29,7 @@
 
 #include <biosig.h>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -209,4 +209,4 @@ QString EVTWriter::save(QSharedPointer<FileContext const> file_context,
 }
 
 
-} // namespace BioSig_
+} // namespace SigViewer_

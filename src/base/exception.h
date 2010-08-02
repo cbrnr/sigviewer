@@ -4,7 +4,7 @@
 #include <exception>
 #include <string>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class Exception : public std::exception

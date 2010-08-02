@@ -17,7 +17,7 @@
 #include <QSettings>
 #include <QMessageBox>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -194,4 +194,4 @@ QString OpenFileGuiCommand::showOpenDialog (QString const& path, QString const& 
                                         path, extension_selection);
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_

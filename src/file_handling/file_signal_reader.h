@@ -12,7 +12,7 @@
 class QTextStream;
 class QString;
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -45,6 +45,6 @@ private:
     const FileSignalReader& operator=(const FileSignalReader&);
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif

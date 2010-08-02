@@ -5,7 +5,7 @@
 
 #include <QDebug>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -119,4 +119,4 @@ void ApplicationContextImpl::setState (ApplicationState state)
 }
 
 
-} // namespace BioSig_
+} // namespace SigViewer_

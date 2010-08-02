@@ -20,7 +20,7 @@
 #include <cmath>
 #include <algorithm>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -524,4 +524,4 @@ EventGraphicsItem* SignalBrowserModel::getSelectedEventItem()
     return selected_event_item_;
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_

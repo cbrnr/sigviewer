@@ -4,7 +4,7 @@
 
 #include <limits>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 double ScaleChannelDialog::last_min_ = 0;

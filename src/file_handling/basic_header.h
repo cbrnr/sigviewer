@@ -9,7 +9,7 @@
 #include <QDateTime>
 #include <QMap>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -88,6 +88,6 @@ private:
     QMap<ChannelID, QSharedPointer<SignalChannel const> > channels_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif

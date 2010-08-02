@@ -29,7 +29,7 @@
 
 #include <QMutexLocker>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 ////-----------------------------------------------------------------------------
@@ -177,4 +177,4 @@ QString SignalChannel::typeString() const
     return "?";
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_

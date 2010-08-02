@@ -11,7 +11,7 @@
 
 #define max(a,b) ((a) > (b) ? (a) : (b))
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -312,5 +312,5 @@ void EventTypesSelectionDialog::handleAlpha (QTreeWidgetItem* item)
 
 
 
-} //namespace BioSig_
+} //namespace SigViewer_
 

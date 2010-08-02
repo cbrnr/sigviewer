@@ -20,7 +20,7 @@
 
 class QAction;
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class MainWindow;
@@ -96,7 +96,7 @@ private:
 
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif
 

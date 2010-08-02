@@ -8,7 +8,7 @@
 
 #include <QSharedPointer>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 enum ApplicationMode

@@ -9,7 +9,7 @@
 
 #include <QSharedPointer>
 
-namespace BioSig_ {
+namespace SigViewer_ {
 
 //-------------------------------------------------------------------------
 /// DataBlock

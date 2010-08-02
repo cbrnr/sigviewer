@@ -4,7 +4,7 @@
 #include "signal_visualisation_model.h"
 #include "../file_context.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class MainWindowModel

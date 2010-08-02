@@ -7,7 +7,7 @@
 #include <QWidget>
 #include <QSharedPointer>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class XAxisWidget : public QWidget

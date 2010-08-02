@@ -10,7 +10,7 @@
 #include <QObject>
 #include <QSharedPointer>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -76,6 +76,6 @@ private:
     ApplicationState state_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // APPLICATION_CONTEXT_IMPL_H

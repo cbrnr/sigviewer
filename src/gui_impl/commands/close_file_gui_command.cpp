@@ -3,7 +3,7 @@
 #include <QApplication>
 #include <QMessageBox>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -87,4 +87,4 @@ void CloseFileGuiCommand::evaluateEnabledness ()
     disableIfNoFileIsOpened (QStringList() << CLOSE_FILE_);
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_

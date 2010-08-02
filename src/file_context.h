@@ -11,7 +11,7 @@
 #include <QString>
 #include <QSharedPointer>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 
@@ -98,6 +98,6 @@ private:
     QSharedPointer<SignalVisualisationModel> main_signal_vis_model_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // FILE_CONTEXT_H

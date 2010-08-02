@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class ProgressBar

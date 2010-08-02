@@ -1,6 +1,6 @@
 #include "macro_undo_command.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -24,4 +24,4 @@ void MacroUndoCommand::redo ()
         commands_[index]->redo ();
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_

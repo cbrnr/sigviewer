@@ -18,7 +18,7 @@
 
 class QMutex;
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class SignalBrowserModel;

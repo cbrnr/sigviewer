@@ -7,7 +7,7 @@
 #include <QSharedPointer>
 #include <QUndoCommand>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class ResizeEventUndoCommand : public QUndoCommand

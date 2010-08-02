@@ -8,7 +8,7 @@
 #include <QStringList>
 #include <QActionGroup>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class MouseModeGuiCommand : public GuiActionCommand

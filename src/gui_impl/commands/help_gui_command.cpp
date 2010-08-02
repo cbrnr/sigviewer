@@ -3,7 +3,7 @@
 
 #include <QMessageBox>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -53,4 +53,4 @@ void HelpGuiCommand::runTests ()
     tests_dialog.exec ();
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_

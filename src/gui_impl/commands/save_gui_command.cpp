@@ -9,7 +9,7 @@
 #include <QFile>
 #include <QPainter>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 QString const SaveGuiCommand::SAVE_AS_ = "Save as...";

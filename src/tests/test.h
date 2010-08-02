@@ -8,7 +8,7 @@
 #include <QObject>
 #include <QString>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 namespace Tests_

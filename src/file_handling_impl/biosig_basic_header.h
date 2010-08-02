@@ -4,7 +4,7 @@
 #include "../file_handling/basic_header.h"
 #include "biosig.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class BiosigBasicHeader : public BasicHeader
@@ -38,6 +38,6 @@ private:
     QMap<QString, QString> patient_info_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // BIOSIG_BASIC_HEADER_H

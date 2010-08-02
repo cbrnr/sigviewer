@@ -48,7 +48,7 @@
 
 #include <QUrl>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //----------------------------------------------------------------------------
@@ -312,4 +312,4 @@ QAction* MainWindow::action (QString const& action_id)
     return GuiActionFactory::getInstance()->getQAction (action_id);
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_

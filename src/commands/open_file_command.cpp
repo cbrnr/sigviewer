@@ -10,7 +10,7 @@
 #include <QDir>
 #include <QSettings>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

@@ -8,7 +8,7 @@
 
 #include <set>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 namespace GuiHelper

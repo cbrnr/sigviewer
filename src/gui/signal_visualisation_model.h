@@ -14,7 +14,7 @@
 
 #include <set>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -133,6 +133,6 @@ private:
 };
 
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // SIGNAL_VISUALISATION_MODEL_H

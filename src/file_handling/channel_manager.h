@@ -8,7 +8,7 @@
 #include <set>
 #include <map>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -86,6 +86,6 @@ private:
     QString x_axis_unit_label_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // CHANNEL_MANAGER_INTERFACE_H

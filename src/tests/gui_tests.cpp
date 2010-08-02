@@ -2,7 +2,7 @@
 #include "gui_impl/commands/open_file_gui_command.h"
 #include "gui/application_context.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 namespace Tests_
 {

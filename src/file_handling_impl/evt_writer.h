@@ -7,7 +7,7 @@
 
 #include <QFile>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 // EVT writer
@@ -46,6 +46,6 @@ private:
     const EVTWriter& operator=(const EVTWriter& src);
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif

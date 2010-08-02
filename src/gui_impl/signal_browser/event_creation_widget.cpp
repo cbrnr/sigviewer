@@ -2,7 +2,7 @@
 
 #include <QMutexLocker>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

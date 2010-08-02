@@ -8,7 +8,7 @@
 
 #include <memory>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 // file signal reader Factory as singleton
@@ -21,6 +21,6 @@ private:
      static std::auto_ptr<FileSignalWriterFactory> instance_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif

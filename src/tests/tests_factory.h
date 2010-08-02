@@ -10,7 +10,7 @@
 #include <QSharedPointer>
 #include <QList>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 namespace TestsFactory_

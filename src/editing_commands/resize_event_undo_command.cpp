@@ -1,7 +1,7 @@
 #include "resize_event_undo_command.h"
 #include "../file_handling/event_manager.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

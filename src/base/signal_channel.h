@@ -33,7 +33,7 @@
 #include <QString>
 #include <QMutex>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -101,6 +101,6 @@ private:
     bool notch_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef SIGNAL_BROWSER_MODES_H
 #define SIGNAL_BROWSER_MODES_H
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 enum SignalVisualisationMode

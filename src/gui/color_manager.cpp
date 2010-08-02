@@ -3,7 +3,7 @@
 #include <QSettings>
 #include <QDebug>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 QColor const ColorManager::DEFAULT_EVENT_COLOR_ = QColor (200, 0, 0, 25);
@@ -168,4 +168,4 @@ void ColorManager::saveSettings()
     settings.endGroup();
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_

@@ -13,7 +13,7 @@
 
 class QTextStream;
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 
@@ -73,6 +73,6 @@ private:
     QTextStream* log_stream_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif

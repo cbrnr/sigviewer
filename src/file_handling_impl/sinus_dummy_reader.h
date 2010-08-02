@@ -6,7 +6,7 @@
 
 #include <QMap>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class SinusDummyReader : public FileSignalReader
@@ -35,6 +35,6 @@ private:
     QSharedPointer<BasicHeader> header_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // SINUS_DUMMY_READER_H

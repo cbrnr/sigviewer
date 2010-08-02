@@ -19,7 +19,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 // move mouse range

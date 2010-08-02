@@ -9,7 +9,7 @@
 #include <QList>
 #include <QSharedPointer>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

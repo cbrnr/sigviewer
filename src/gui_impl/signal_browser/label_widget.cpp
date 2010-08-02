@@ -6,7 +6,7 @@
 #include <QPainter>
 #include <QContextMenuEvent>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -111,5 +111,5 @@ void LabelWidget::removeChannel(ChannelID channel_nr)
     setMinimumWidth(10 + max_width);
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_
 

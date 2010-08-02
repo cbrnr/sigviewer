@@ -5,7 +5,7 @@
 #include "gui/gui_action_factory_registrator.h"
 #include "../dialogs/event_time_selection_dialog.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class SignalProcessingGuiCommand : public GuiActionCommand
@@ -44,6 +44,6 @@ private:
     static GuiActionFactoryRegistrator registrator_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // SIGNAL_PROCESSING_GUI_COMMAND_H

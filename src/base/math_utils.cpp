@@ -29,7 +29,7 @@
 #include <QDebug>
 #include <cmath>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 // round to 1, 2, 3, 4, 5
@@ -51,4 +51,4 @@ float64 round125(float64 value)
     return sign * tmp;
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_

@@ -4,7 +4,7 @@
 #include <QUndoCommand>
 #include <QSharedPointer>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class MacroUndoCommand : public QUndoCommand

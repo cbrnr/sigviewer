@@ -6,7 +6,7 @@
 #include <QHBoxLayout>
 #include <QSettings>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -66,4 +66,4 @@ std::set<ChannelID> SelectShownChannelsDialog::getSelectedChannels () const
     return selected_channels;
 }
 
-} //namespace BioSig_
+} //namespace SigViewer_

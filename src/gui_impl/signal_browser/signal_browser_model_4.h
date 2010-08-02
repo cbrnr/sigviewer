@@ -19,7 +19,7 @@
 #include <map>
 #include <set>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class SignalBrowserView;

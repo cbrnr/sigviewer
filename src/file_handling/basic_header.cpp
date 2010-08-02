@@ -4,7 +4,7 @@
 
 #include <QMutexLocker>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -126,4 +126,4 @@ void BasicHeader::addChannel (ChannelID id, QSharedPointer<SignalChannel const> 
     channels_[id] = channel;
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_

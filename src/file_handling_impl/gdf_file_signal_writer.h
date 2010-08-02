@@ -3,7 +3,7 @@
 
 #include "file_handling/file_signal_writer.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

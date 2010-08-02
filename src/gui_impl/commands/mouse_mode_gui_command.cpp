@@ -1,7 +1,7 @@
 #include "mouse_mode_gui_command.h"
 #include "gui/signal_visualisation_model.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 

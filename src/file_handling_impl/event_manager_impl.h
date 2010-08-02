@@ -9,7 +9,7 @@
 #include <QMap>
 #include <QMutex>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class EventManagerImpl : public EventManager

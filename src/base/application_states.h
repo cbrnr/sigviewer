@@ -1,7 +1,7 @@
 #ifndef APPLICATION_STATES_H
 #define APPLICATION_STATES_H
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 enum ApplicationState

@@ -7,7 +7,7 @@
 #include <QSharedPointer>
 #include <QString>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class GuiActionFactoryRegistrator
@@ -19,6 +19,6 @@ public:
     }
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // GUI_ACTION_FACTORY_REGISTRATOR_H

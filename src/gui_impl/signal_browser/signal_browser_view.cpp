@@ -23,7 +23,7 @@
 #include <QGLWidget>
 #endif
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -378,4 +378,4 @@ void SignalBrowserView::createLayout()
     layout_->addWidget(vertical_scrollbar_, 2, 4);
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_

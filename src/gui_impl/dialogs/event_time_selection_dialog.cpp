@@ -4,7 +4,7 @@
 #include <QPushButton>
 #include <limits>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

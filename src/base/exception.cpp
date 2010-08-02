@@ -1,6 +1,6 @@
 #include "exception.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

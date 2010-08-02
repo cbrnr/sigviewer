@@ -8,7 +8,7 @@
 #include <QMap>
 #include <QMenu>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class GuiActionFactory
@@ -37,6 +37,6 @@ private:
     CommandMap action_to_command_map_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // GUI_ACTION_FACTORY_H

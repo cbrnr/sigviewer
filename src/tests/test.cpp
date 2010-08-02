@@ -4,7 +4,7 @@
 #include "application_context_impl.h"
 #include "gui/gui_action_factory.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 namespace Tests_

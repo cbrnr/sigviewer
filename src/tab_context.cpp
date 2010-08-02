@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -78,4 +78,4 @@ void TabContext::setEditState (TabEditState state)
 }
 
 
-} // namespace BioSig_
+} // namespace SigViewer_

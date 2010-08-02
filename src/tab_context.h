@@ -8,7 +8,7 @@
 #include <QUndoStack>
 #include <QUndoCommand>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class TabContext : public QObject, public CommandExecuter

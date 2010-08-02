@@ -4,7 +4,7 @@
 #include "file_handling/file_signal_writer_factory.h"
 #include "file_handling/file_signal_reader_factory.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 #define FILE_SIGNAL_WRITER_REGISTRATION(file_ending, writer) \
@@ -45,6 +45,6 @@ public:
 
 } // namespace Registrators_
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // FILE_HANDLER_FACTORY_REGISTRATOR_H

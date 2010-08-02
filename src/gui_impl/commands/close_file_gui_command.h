@@ -5,7 +5,7 @@
 #include "gui/gui_action_factory_registrator.h"
 #include "file_handling/file_signal_reader.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -60,7 +60,7 @@ private:
 
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 
 #endif // CLOSE_FILE_GUI_COMMAND_H

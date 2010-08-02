@@ -3,7 +3,7 @@
 #include "../processed_signal_channel_manager.h"
 #include "gui/progress_bar.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

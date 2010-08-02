@@ -1,7 +1,7 @@
 #ifndef TAB_STATES_H
 #define TAB_STATES_H
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 enum TabSelectionState
@@ -21,6 +21,6 @@ enum TabEditState
     TAB_STATE_CAN_REDO_UNDO
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // TAB_STATES_H

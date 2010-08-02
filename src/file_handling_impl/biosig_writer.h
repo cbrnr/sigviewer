@@ -9,7 +9,7 @@
 #include <QMutex>
 #include <set>
 
-namespace BioSig_ 
+namespace SigViewer_ 
 {
 
 //-----------------------------------------------------------------------------

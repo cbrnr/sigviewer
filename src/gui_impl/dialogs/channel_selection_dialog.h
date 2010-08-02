@@ -12,7 +12,7 @@
 #include <QDialog>
 #include <QSharedPointer>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -62,6 +62,6 @@ private:
     bool self_setting_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif

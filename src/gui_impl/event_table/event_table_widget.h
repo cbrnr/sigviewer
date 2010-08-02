@@ -8,7 +8,7 @@
 
 #include <QWidget>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class EventTableWidget : public QWidget

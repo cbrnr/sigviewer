@@ -6,7 +6,7 @@
 #include <QAction>
 #include <QDebug>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

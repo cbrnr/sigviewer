@@ -8,7 +8,7 @@
 
 #include <QDialog>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class EventTableEditingDialog : public QDialog

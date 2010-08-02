@@ -6,7 +6,7 @@
 #include <QWidget>
 #include <QMap>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class SignalGraphicsItem;

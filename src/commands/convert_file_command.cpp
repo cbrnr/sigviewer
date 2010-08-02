@@ -5,7 +5,7 @@
 #include "application_context_impl.h"
 #include "gui/progress_bar.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

@@ -8,7 +8,7 @@
 #include <QColor>
 #include <QPixmap>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 // color manager
@@ -48,6 +48,6 @@ private:
     EventTableFileReader event_table_file_reader_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif

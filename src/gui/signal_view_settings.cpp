@@ -1,6 +1,6 @@
 #include "signal_view_settings.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

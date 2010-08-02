@@ -6,7 +6,7 @@
 #include <QWheelEvent>
 #include <QGraphicsSceneMouseEvent>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 SignalBrowserMouseHandling::Action SignalBrowserMouseHandling::getAction(QGraphicsSceneMouseEvent* e, SignalVisualisationMode mode)
@@ -61,4 +61,4 @@ SignalBrowserMouseHandling::Action SignalBrowserMouseHandling::getAction(QGraphi
     return NO_ACTION;
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_

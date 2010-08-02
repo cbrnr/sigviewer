@@ -22,7 +22,7 @@ class QGridLayout;
 class QScrollBar;
 class QCursor;
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class LabelWidget;
@@ -104,7 +104,7 @@ private:
     QGridLayout* layout_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // SIGNAL_BROWSER_VIEW_H
 

@@ -10,7 +10,7 @@
 
 #include <cmath>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-------------------------------------------------------------------------

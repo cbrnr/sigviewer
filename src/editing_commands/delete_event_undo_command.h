@@ -7,7 +7,7 @@
 #include <QUndoCommand>
 #include <QSharedPointer>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class DeleteEventUndoCommand : public QUndoCommand

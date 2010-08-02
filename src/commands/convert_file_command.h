@@ -3,7 +3,7 @@
 
 #include <QString>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class ConvertFileCommand

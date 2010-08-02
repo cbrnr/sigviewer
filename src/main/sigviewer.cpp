@@ -49,11 +49,11 @@
 #include <iostream>
 #include <string>
 
-using namespace BioSig_;
+using namespace SigViewer_;
 using namespace boost;
 
 
-namespace BioSig_
+namespace SigViewer_
 {
 
     //-------------------------------------------------------------------------
@@ -122,7 +122,7 @@ int main (int argc, char* argv[])
 }
 
 
-namespace BioSig_
+namespace SigViewer_
 {
     //-----------------------------------------------------------------------------
     program_options::variables_map readCommandlineParameters (int argc, char* argv[])

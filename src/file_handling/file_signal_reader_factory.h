@@ -10,7 +10,7 @@
 #include <map>
 #include <memory>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-------------------------------------------------------------------------
@@ -24,6 +24,6 @@ private:
     static std::auto_ptr<FileSignalReaderFactory> instance_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif

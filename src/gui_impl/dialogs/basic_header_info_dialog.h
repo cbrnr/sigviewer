@@ -11,7 +11,7 @@
 class QTreeWidget;
 class QPushButton;
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 // basic header info dialog
@@ -37,6 +37,6 @@ private:
     QPushButton* close_button_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif

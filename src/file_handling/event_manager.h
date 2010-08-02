@@ -12,7 +12,7 @@
 
 #include <set>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -105,6 +105,6 @@ signals:
     void changed ();
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // EVENT_MANAGER_INTERFACE_H

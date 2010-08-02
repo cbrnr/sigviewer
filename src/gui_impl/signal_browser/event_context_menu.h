@@ -11,7 +11,7 @@
 #include <QObject>
 #include <QIcon>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

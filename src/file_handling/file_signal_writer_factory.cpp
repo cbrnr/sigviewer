@@ -1,6 +1,6 @@
 #include "file_signal_writer_factory.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 // instance
@@ -16,4 +16,4 @@ FileSignalWriterFactory* FileSignalWriterFactory::getInstance()
     return instance_.get();
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_

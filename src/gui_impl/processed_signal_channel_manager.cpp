@@ -1,7 +1,7 @@
 #include "processed_signal_channel_manager.h"
 #include <QString>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-------------------------------------------------------------------------

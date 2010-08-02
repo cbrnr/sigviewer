@@ -1,6 +1,6 @@
 #include "undo_redo_gui_command.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -68,4 +68,4 @@ void UndoRedoGuiCommand::evaluateEnabledness ()
 
 
 
-} // namespace BioSig_
+} // namespace SigViewer_

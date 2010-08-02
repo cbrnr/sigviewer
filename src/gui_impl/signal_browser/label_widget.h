@@ -8,7 +8,7 @@
 #include <QWidget>
 #include <QSharedPointer>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -35,6 +35,6 @@ private:
     int32 y_start_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif

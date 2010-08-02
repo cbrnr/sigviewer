@@ -13,7 +13,7 @@
 #include <QHeaderView>
 #include <QSettings>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 // constructor
@@ -220,4 +220,4 @@ void BasicHeaderInfoDialog::buildTree()
     }
 }
 
-} //namespace BioSig_
+} //namespace SigViewer_

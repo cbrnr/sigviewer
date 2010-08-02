@@ -3,7 +3,7 @@
 
 #include <QUndoCommand>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class CommandExecuter

@@ -6,7 +6,7 @@
 
 #include <QStringList>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-------------------------------------------------------------------------
@@ -69,6 +69,6 @@ private:
     static GuiActionFactoryRegistrator registrator_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // FIT_VIEW_GUI_COMMAND_H

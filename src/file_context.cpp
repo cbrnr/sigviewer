@@ -3,7 +3,7 @@
 #include <QDir>
 #include <QDebug>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -110,4 +110,4 @@ void FileContext::setAsChanged ()
 }
 
 
-} // namespace BioSig_
+} // namespace SigViewer_

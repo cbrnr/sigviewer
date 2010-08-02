@@ -7,7 +7,7 @@
 #include "editing_commands/new_event_undo_command.h"
 #include "editing_commands/macro_undo_command.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

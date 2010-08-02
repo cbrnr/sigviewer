@@ -32,7 +32,7 @@
 #include <QMessageBox>
 #include <QDebug>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //FILE_SIGNAL_WRITER_REGISTRATION(gdf, BioSigWriter);

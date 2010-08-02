@@ -11,7 +11,7 @@
 
 #include <set>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class EventEditingWidget : public QWidget

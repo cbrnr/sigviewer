@@ -43,7 +43,7 @@
 
 using namespace std;
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

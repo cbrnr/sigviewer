@@ -14,7 +14,7 @@
 
 class QPoint;
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class SignalEvent;

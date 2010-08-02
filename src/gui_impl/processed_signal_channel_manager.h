@@ -5,7 +5,7 @@
 
 #include <QMap>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class ProcessedSignalChannelManager : public ChannelManager

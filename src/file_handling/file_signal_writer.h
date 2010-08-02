@@ -13,7 +13,7 @@
 
 class QTextStream;
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 // abstract signal writer
@@ -54,6 +54,6 @@ private:
     const FileSignalWriter& operator=(const FileSignalWriter&);
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif

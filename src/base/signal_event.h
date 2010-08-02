@@ -5,7 +5,7 @@
 
 #include "sigviewer_user_types.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 // SignalEvent
@@ -57,6 +57,6 @@ private:
     uint32 duration_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif

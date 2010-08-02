@@ -1,6 +1,6 @@
 #include "gui_action_factory.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 GuiActionFactory* GuiActionFactory::instance_ = 0;
@@ -57,4 +57,4 @@ void GuiActionFactory::initAllCommands ()
 
 
 
-} // namespace BioSig_
+} // namespace SigViewer_

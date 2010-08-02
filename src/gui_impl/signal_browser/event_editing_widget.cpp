@@ -6,7 +6,7 @@
 #include <QMutexLocker>
 #include <QDebug>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

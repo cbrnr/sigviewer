@@ -2,7 +2,7 @@
 
 #include "signal_event.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 // constructor
@@ -151,4 +151,4 @@ void SignalEvent::setDuration(uint32 duration)
     duration_ = duration;
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_

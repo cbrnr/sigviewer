@@ -3,7 +3,7 @@
 
 #include "../file_handling/basic_header.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class SinusDummyHeader : public BasicHeader
@@ -26,6 +26,6 @@ public:
     {return QMap<unsigned, QString>();}
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // SINUS_DUMMY_HEADER_H

@@ -7,7 +7,7 @@
 #include <QRegExp>
 #include <QTextStream>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 // constructor
@@ -182,4 +182,4 @@ QString EventTableFileReader::getEventGroupName(const QString& group_id)
                                       : "";
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_

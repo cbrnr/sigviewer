@@ -25,7 +25,7 @@
 
 #include "file_signal_reader_factory.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-------------------------------------------------------------------------
@@ -41,4 +41,4 @@ FileSignalReaderFactory* FileSignalReaderFactory::getInstance ()
     return instance_.get();
 }
 
-} // namespace BioSig_
+} // namespace SigViewer_

@@ -1,6 +1,6 @@
 #include "new_event_undo_command.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

@@ -31,12 +31,12 @@
 
 #include "sigviewer_user_types.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 // round to 1, 2 or 5
 float64 round125(float64 value);
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif

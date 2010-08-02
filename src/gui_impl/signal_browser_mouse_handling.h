@@ -12,7 +12,7 @@
     class QGraphicsSceneMouseEvent;
 
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 // signal browser mouse action
@@ -39,6 +39,6 @@ public:
 
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif

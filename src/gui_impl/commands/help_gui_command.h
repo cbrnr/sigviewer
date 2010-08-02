@@ -4,7 +4,7 @@
 #include "gui/gui_action_command.h"
 #include "gui/gui_action_factory_registrator.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class HelpGuiCommand : public GuiActionCommand
@@ -36,6 +36,6 @@ private:
 
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // HELP_GUI_COMMAND_H

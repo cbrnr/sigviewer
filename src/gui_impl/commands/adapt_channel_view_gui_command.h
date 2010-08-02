@@ -4,7 +4,7 @@
 #include "gui/gui_action_command.h"
 #include "gui/gui_action_factory_registrator.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

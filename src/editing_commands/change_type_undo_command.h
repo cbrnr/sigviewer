@@ -8,7 +8,7 @@
 #include <QSharedPointer>
 #include <QObject>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class ChangeTypeUndoCommand : public QUndoCommand

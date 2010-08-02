@@ -1,6 +1,6 @@
 #include "event_manager_tests.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 namespace Tests_

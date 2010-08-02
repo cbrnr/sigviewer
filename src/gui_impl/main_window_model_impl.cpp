@@ -13,7 +13,7 @@
 #include <QSettings>
 #include <QDebug>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 int const MainWindowModelImpl::NUMBER_RECENT_FILES_ = 8;
@@ -252,4 +252,4 @@ int MainWindowModelImpl::createSignalVisualisationImpl (QSharedPointer<ChannelMa
 }
 
 
-} // namespace BioSig_
+} // namespace SigViewer_

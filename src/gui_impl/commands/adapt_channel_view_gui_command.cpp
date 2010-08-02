@@ -6,7 +6,7 @@
 #include <QSettings>
 #include <QInputDialog>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------

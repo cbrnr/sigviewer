@@ -29,7 +29,7 @@
 #ifndef SIGVIEWER_USER_TYPES_H
 #define SIGVIEWER_USER_TYPES_H
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 enum ScaleMode
@@ -57,7 +57,7 @@ typedef unsigned __int64 uint64_t;
 #include <inttypes.h>
 #endif
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 typedef int8_t   int8;

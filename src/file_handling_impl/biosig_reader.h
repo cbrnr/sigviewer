@@ -8,7 +8,7 @@
 #include <QMutex>
 #include <QMap>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class BioSigReader : public FileSignalReader
@@ -60,6 +60,6 @@ private:
     mutable QList<QSharedPointer<SignalEvent const> > events_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif /*CNT_READER_H_*/

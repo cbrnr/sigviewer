@@ -13,7 +13,7 @@ class QTreeWidget;
 class QPushButton;
 class QTreeWidgetItem;
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -77,7 +77,7 @@ private:
     Ui::EventTypeSelectionDialog ui_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // EVENT_TYPES_SELECTION_DIALOG_H
 

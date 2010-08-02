@@ -2,7 +2,7 @@
 
 #include "base/data_block.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 namespace Tests_

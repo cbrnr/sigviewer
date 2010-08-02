@@ -2,7 +2,7 @@
 
 #include <ctime>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -115,4 +115,4 @@ void BiosigBasicHeader::readPatientInfo (HDRTYPE const* raw_header)
 }
 
 
-} // namespace BioSig_
+} // namespace SigViewer_

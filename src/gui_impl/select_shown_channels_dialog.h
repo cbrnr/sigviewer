@@ -11,7 +11,7 @@
 class QListWidget;
 class QPushButton;
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class SelectShownChannelsDialog : public QDialog
@@ -35,6 +35,6 @@ private:
     QPushButton* cancel_button_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // SELECT_SHOWN_CHANNELS_DIALOG_H

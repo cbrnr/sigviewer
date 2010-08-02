@@ -7,7 +7,7 @@
 
 #include <QUndoStack>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 namespace Tests_

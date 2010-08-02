@@ -12,7 +12,7 @@
 #include <QSettings>
 #include <QMetaObject>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 namespace GuiHelper

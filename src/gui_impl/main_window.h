@@ -15,7 +15,7 @@ class QComboBox;
 class QMenu;
 class QLabel;
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 // main window
@@ -76,7 +76,7 @@ private:
     QAction* toggle_all_toolbars_;
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif
 

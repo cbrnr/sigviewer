@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <QColorDialog>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 QColor const ChannelSelectionDialog::NOT_VISIBLE_COLOR_ (Qt::gray);
@@ -200,4 +200,4 @@ void ChannelSelectionDialog::updateColor (int row, QColor const& color)
 }
 
 
-} //namespace BioSig_
+} //namespace SigViewer_

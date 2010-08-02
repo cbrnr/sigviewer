@@ -15,7 +15,7 @@
 #include <QAction>
 #include <QStringList>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class ActionConnector;

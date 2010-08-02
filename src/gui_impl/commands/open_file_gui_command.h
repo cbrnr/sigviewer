@@ -5,7 +5,7 @@
 #include "gui/gui_action_factory_registrator.h"
 #include "file_handling/file_signal_reader.h"
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
@@ -62,6 +62,6 @@ private:
     QString showOpenDialog (QString const& path, QString const& extensions);
 };
 
-} // namespace BioSig_
+} // namespace SigViewer_
 
 #endif // OPEN_FILE_GUI_COMMAND_H

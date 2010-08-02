@@ -5,7 +5,7 @@
 #include <QSharedPointer>
 #include <QImage>
 
-namespace BioSig_
+namespace SigViewer_
 {
 
 class SignalVisualisationView
