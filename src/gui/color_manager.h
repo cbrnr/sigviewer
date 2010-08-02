@@ -18,9 +18,6 @@ public:
     ColorManager ();
     ~ColorManager ();
 
-    static QColor const DEFAULT_EVENT_COLOR_;
-
-    void loadSettings();
     void saveSettings();
 
     QColor getChannelColor (ChannelID channel_id) const;
@@ -34,6 +31,9 @@ public:
 
     static bool isDark (QColor const& color);
 private:
+    Q_DISABLE_COPY(ColorManager)
+
+    void loadSettings();
     void loadDefaultEventColors ();
 
     static const char* DEFAULT_CHANNEL_COLOR_SETTING_;
@@ -41,10 +41,6 @@ private:
 
     typedef QMap<EventType, QColor> EventColorMap;
     typedef QMap<ChannelID, QColor> ChannelColorMap;
-
-    // not allowed
-    ColorManager(const ColorManager& src);
-    const ColorManager& operator=(const ColorManager& src);
 
     EventColorMap event_type2color_;
     EventColorMap default_event_colors_;

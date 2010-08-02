@@ -1,7 +1,8 @@
 #include "event_editing_widget.h"
-#include "../../gui/gui_action_factory.h"
-#include "../../editing_commands/change_type_undo_command.h"
-#include "../../editing_commands/resize_event_undo_command.h"
+#include "gui/gui_action_factory.h"
+#include "editing_commands/change_type_undo_command.h"
+#include "editing_commands/resize_event_undo_command.h"
+#include "base/math_utils.h"
 
 #include <QMutexLocker>
 #include <QDebug>
@@ -24,9 +25,7 @@ EventEditingWidget::EventEditingWidget (QSharedPointer<EventManager> event_manag
     ui_.next_button_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Goto and Select Next Event"));
     ui_.fit_button_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Fit View to Selected Event"));
 
-    unsigned precision = 0;
-    for (float32 sample_rate = event_manager_->getSampleRate(); sample_rate > 10; sample_rate /= 10)
-        precision++;
+    unsigned precision = MathUtils_::sampleRateToDecimalPrecision(event_manager_->getSampleRate());
     ui_.begin_spinbox_->setDecimals (precision);
     ui_.begin_spinbox_->setMaximum (static_cast<double>(event_manager_->getMaxEventPosition()) / event_manager_->getSampleRate ());
     ui_.duration_spinbox_->setDecimals (precision);

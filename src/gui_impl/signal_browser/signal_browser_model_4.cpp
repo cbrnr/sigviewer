@@ -237,7 +237,7 @@ void SignalBrowserModel::update()
     signal_browser_view_->resizeScene (width, height);
 
     double pixel_per_sec = getSignalViewSettings()->getPixelsPerSample() * channel_manager_->getSampleRate();
-    x_grid_pixel_intervall_ =  pixel_per_sec * round125 (100.0 / pixel_per_sec);
+    x_grid_pixel_intervall_ =  pixel_per_sec * MathUtils_::round125 (100.0 / pixel_per_sec);
 
     channel2y_pos_.clear();
     channel2y_pos_[UNDEFINED_CHANNEL] = 0;

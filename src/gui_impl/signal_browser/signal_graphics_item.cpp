@@ -254,7 +254,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 void SignalGraphicsItem::updateYGridIntervall ()
 {
     double value_range = (maximum_ - minimum_) ;/// y_zoom_;
-    value_range_fragment_ = round125 (value_range / signal_view_settings_->getGridFragmentation (Qt::Vertical));
+    value_range_fragment_ = MathUtils_::round125 (value_range / signal_view_settings_->getGridFragmentation (Qt::Vertical));
     qDebug () << "y_zoom_ = " << y_zoom_ << "; value_range_fragment_ =  " << value_range_fragment_;
     y_grid_pixel_intervall_ = static_cast<double>(height_) * value_range_fragment_ / value_range;
     emit updatedYGrid (id_);

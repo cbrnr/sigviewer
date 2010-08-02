@@ -1,7 +1,8 @@
 #include "event_table_editing_dialog.h"
-#include "../../gui/gui_action_factory.h"
-#include "../../editing_commands/delete_event_undo_command.h"
-#include "../../editing_commands/macro_undo_command.h"
+#include "gui/gui_action_factory.h"
+#include "editing_commands/delete_event_undo_command.h"
+#include "editing_commands/macro_undo_command.h"
+#include "base/math_utils.h"
 
 #include <QDebug>
 
@@ -26,12 +27,9 @@ EventTableEditingDialog::EventTableEditingDialog (QSharedPointer<EventManager> e
 event_manager_ (event_manager),
 channel_manager_ (channel_manager),
 command_executer_ (command_executer),
-precision_ (0),
+precision_ (MathUtils_::sampleRateToDecimalPrecision(event_manager->getSampleRate())),
 shown_event_types_ (shown_event_types)
 {
-    for (float32 sample_rate = event_manager_->getSampleRate(); sample_rate > 10; sample_rate /= 10)
-        precision_++;
-
     ui_.setupUi (this);
     buildTable ();
     ui_.event_table_->hideColumn (ID_INDEX_);

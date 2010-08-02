@@ -74,7 +74,7 @@ void XAxisWidget::enableHighlightTime (bool highlighting_enabled)
 void XAxisWidget::paintEvent(QPaintEvent*)
 {
     pixel_per_sec_ = signal_view_settings_->getPixelsPerSample() * signal_view_settings_->getSampleRate();
-    intervall_ = pixel_per_sec_ * round125 (100.0 / pixel_per_sec_);
+    intervall_ = pixel_per_sec_ * MathUtils_::round125 (100.0 / pixel_per_sec_);
 
     if (intervall_ < 1 )
     {
