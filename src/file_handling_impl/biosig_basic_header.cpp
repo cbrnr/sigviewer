@@ -57,7 +57,7 @@ void BiosigBasicHeader::readChannelsInfo (HDRTYPE const* raw_header)
         QString phys_y_dim_label = QString (p).trimmed();
         if (phys_y_dim_label.compare("uV") == 0)
             phys_y_dim_label = QString (QChar((ushort)0xb5)).append("V");
-        QSharedPointer<SignalChannel> channel (new SignalChannel(channel_index, raw_header->CHANNEL[channel_index].SPR, label,
+        QSharedPointer<SignalChannel> channel (new SignalChannel(channel_index, label,
                                                                  phys_y_dim_label));
         addChannel (channel_index, channel);
     }

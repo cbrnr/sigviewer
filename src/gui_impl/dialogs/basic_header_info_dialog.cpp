@@ -165,11 +165,11 @@ void BasicHeaderInfoDialog::buildTree()
         tmp_item->setText(0, tr("Label"));
         tmp_item->setText(1, channel->getLabel());
         tmp_item = new QTreeWidgetItem(channel_item);
-        // tmp_item ->setTextAlignment(1, Qt::AlignRight);
+
         tmp_item->setText(0, tr("Sample Rate"));
-        tmp_item->setText(1, QString::number(channel->getSamplesPerRecord() /
-                                          basic_header_->getRecordDuration())); 
+        tmp_item->setText(1, QString::number(basic_header_->getSampleRate()));
         tmp_item->setText(2, tr("Hz"));
+
         tmp_item = new QTreeWidgetItem(channel_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
         tmp_item->setText(0, tr("Physical Dimension"));

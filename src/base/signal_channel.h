@@ -44,7 +44,6 @@ class SignalChannel
 public:
     //-------------------------------------------------------------------------
     SignalChannel (unsigned number,
-                   unsigned samples_per_record,
                    QString const& label,
                    QString const& phys_y_dimension_label = "");
 
@@ -52,7 +51,6 @@ public:
     QString typeString() const;
     uint32 getNumber() const;
     const QString& getLabel() const;
-    uint32 getSamplesPerRecord() const;
     float64 getLowpass() const;
     float64 getHighpass() const;
     bool getNotch() const;
@@ -88,7 +86,6 @@ private:
     
     uint32 number_;
     QString label_;
-    uint32 samples_per_record_;
     QString phys_y_dimension_label_;
     uint16  physical_dimcode_;
     float64 physical_maximum_;

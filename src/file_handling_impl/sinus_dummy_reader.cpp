@@ -30,7 +30,6 @@ SinusDummyReader::SinusDummyReader ()
         data_.insert(i, data_block);
 
         QSharedPointer<SignalChannel> channel (new SignalChannel(i,
-                                                   1,
                                                    QString::number(i)));
         header->addDummyChannel(i, channel);
         header_ = header;

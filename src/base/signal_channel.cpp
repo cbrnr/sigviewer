@@ -27,114 +27,81 @@
 
 #include "signal_channel.h"
 
-#include <QMutexLocker>
-
 namespace SigViewer_
 {
 
-////-----------------------------------------------------------------------------
-//SignalChannel::SignalChannel(uint32 number,
-//                             uint32 samples_per_record,
-//                             CHANNEL_STRUCT C)
-//: number_(number),
-//  label_(QString(C.Label).trimmed()),
-//  samples_per_record_(samples_per_record),
-//  physical_maximum_(C.PhysMax),
-//  digital_maximum_(C.DigMax),
-//  physical_minimum_(C.PhysMin),
-//  digital_minimum_(C.DigMin),
-//  data_type_(C.GDFTYP),
-//  lowpass_(C.LowPass),
-//  highpass_(C.HighPass),
-//  notch_(C.Notch)
-//{
-//    char p[MAX_LENGTH_PHYSDIM+1];
-//    PhysDim(C.PhysDimCode,p);
-//    physical_dim_ = QString(p);
-//    if (physical_dim_.compare("uV") == 0)
-//        physical_dim_ = QString (QChar((ushort)0xb5)).append("V");
-//}
-
 //-----------------------------------------------------------------------------
 SignalChannel::SignalChannel (unsigned number,
-                              unsigned samples_per_record,
                               QString const& label,
                               QString const& phys_y_dimension_label) :
     number_ (number),
     label_ (label),
-    samples_per_record_ (samples_per_record),
     phys_y_dimension_label_ (phys_y_dimension_label)
 {
 
 }
 
-// get number
+//-----------------------------------------------------------------------------
 uint32 SignalChannel::getNumber() const
 {
     return number_;
 }
 
-// get label
+//-----------------------------------------------------------------------------
 const QString& SignalChannel::getLabel() const
 {
     return label_;
 }
 
-// get samples per record
-uint32 SignalChannel::getSamplesPerRecord() const
-{
-    return samples_per_record_;
-}
-
-// get lowpass
+//-----------------------------------------------------------------------------
 float64 SignalChannel::getLowpass() const
 {
     return lowpass_;
 }
 
-// get highpass
+//-----------------------------------------------------------------------------
 float64 SignalChannel::getHighpass() const
 {
     return highpass_;
 }
 
-// get notch
+//-----------------------------------------------------------------------------
 bool SignalChannel::getNotch() const
 {
     return notch_;
 }
 
-// get physical dim
+//-----------------------------------------------------------------------------
 const QString& SignalChannel::getPhysicalDim() const
 {
     return phys_y_dimension_label_;
 }
 
-// get physical max
+//-----------------------------------------------------------------------------
 float64 SignalChannel::getPhysicalMaximum() const
 {
     return physical_maximum_;
 }
 
-// get digital maximum
+//-----------------------------------------------------------------------------
 float64 SignalChannel::getDigitalMaximum() const
 {
     return digital_maximum_;
 }
 
-// get physical minumum
+//-----------------------------------------------------------------------------
 float64 SignalChannel::getPhysicalMinimum() const
 {
     return physical_minimum_;
 }
 
-// get digital minumum
+//-----------------------------------------------------------------------------
 float64 SignalChannel::getDigitalMinimum() const
 {
     return digital_minimum_;
 }
 
-// type string
+//-----------------------------------------------------------------------------
 QString SignalChannel::typeString() const
 {
     if (data_type_ > UBITN)
