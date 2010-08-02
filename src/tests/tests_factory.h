@@ -6,6 +6,7 @@
 #include "data_block_tests.h"
 #include "editing_commands_tests.h"
 #include "gui_tests.h"
+#include "color_manager_tests.h"
 
 #include <QSharedPointer>
 #include <QList>
@@ -21,6 +22,7 @@ QList<QSharedPointer<Tests_::Test> > allTests ()
 {
     QList<QSharedPointer<Tests_::Test> > tests;
     tests.append (QSharedPointer<Tests_::Test>(new Tests_::DataBlockTests));
+    tests.append (QSharedPointer<Tests_::Test>(new Tests_::ColorManagerTests));
     tests.append (QSharedPointer<Tests_::Test>(new Tests_::EventManagerTests));
     tests.append (QSharedPointer<Tests_::Test>(new Tests_::EditingCommandsTests));
     tests.append (QSharedPointer<Tests_::Test>(new Tests_::GuiTests));

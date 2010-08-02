@@ -1,6 +1,9 @@
 TEMPLATE = app
 DESTDIR = $$_PRO_FILE_PWD_/../bin
 TARGET = sigviewer
+
+QT += xml
+
 CONFIG(debug, debug|release) {
     message(DEBUG)
     DESTDIR = $$_PRO_FILE_PWD_/../bin/debug

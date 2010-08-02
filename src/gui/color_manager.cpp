@@ -2,20 +2,23 @@
 
 #include <QSettings>
 #include <QDebug>
+#include <QDomDocument>
+#include <QFile>
 
 namespace SigViewer_
 {
 
-QColor const ColorManager::DEFAULT_EVENT_COLOR_ = QColor (200, 0, 0, 25);
 const char* ColorManager::DEFAULT_CHANNEL_COLOR_SETTING_ = "Default Channel Color";
 
-// constructor
+//-----------------------------------------------------------------------------
 ColorManager::ColorManager ()
 {
     qDebug() << "constructing event color manager";
+    loadDefaultEventColors ();
     loadSettings();
 }
 
+//-----------------------------------------------------------------------------
 ColorManager::~ColorManager ()
 {
     qDebug() << "destructing event color manager";
@@ -60,11 +63,15 @@ QColor ColorManager::getEventColor (EventType type) const
 {
     EventColorMap::const_iterator it = event_type2color_.find(type);
     if (it == event_type2color_.end())
-    {
-        return DEFAULT_EVENT_COLOR_;
-    }
+        return default_event_colors_[type];
     else
         return *it;
+}
+
+//-----------------------------------------------------------------------------
+QColor ColorManager::getDefaultEventColor (EventType type) const
+{
+    return default_event_colors_[type];
 }
 
 //-----------------------------------------------------------------------------
@@ -97,7 +104,7 @@ void ColorManager::loadSettings()
          it != event_table_file_reader_.eventTypesEnd();
          it++)
     {
-        event_type2color_[*it] = QColor(0xff, 0, 0, 50);
+        event_type2color_[*it] = default_event_colors_[*it];
     }
 
     QSettings settings("SigViewer");
@@ -166,6 +173,54 @@ void ColorManager::saveSettings()
     settings.endArray();
 
     settings.endGroup();
+}
+
+//-----------------------------------------------------------------------------
+void ColorManager::loadDefaultEventColors ()
+{
+    QFile color_settings_file (":/color_settings.xml");
+    QDomDocument color_doc;
+    QString error_msg;
+    int error_line;
+    color_doc.setContent (&color_settings_file, true, &error_msg, &error_line);
+    QDomElement root = color_doc.documentElement();
+
+    QDomNodeList default_elements = root.elementsByTagName("default");
+    if (default_elements.size() != 1)
+        return;
+    QDomElement default_node = default_elements.at(0).toElement();
+    QColor default_color;
+    default_color.setAlpha (default_node.attribute("alpha").toUInt());
+    default_color.setRed (default_node.attribute("red").toUInt());
+    default_color.setGreen (default_node.attribute("green").toUInt());
+    default_color.setBlue (default_node.attribute("blue").toUInt());
+
+    default_event_colors_[UNDEFINED_EVENT_TYPE] = default_color;
+
+    QDomNodeList event_elements = root.elementsByTagName("event");
+    for (int index = 0; index < event_elements.size(); index++)
+    {
+        QDomElement element = event_elements.at(index).toElement();
+        QColor event_color = default_color;
+        if (element.hasAttribute("red"))
+            event_color.setRed(element.attribute("red").toUInt());
+        if (element.hasAttribute("green"))
+            event_color.setGreen(element.attribute("green").toUInt());
+        if (element.hasAttribute("blue"))
+            event_color.setBlue(element.attribute("blue").toUInt());
+        if (element.hasAttribute("alpha"))
+            event_color.setAlpha(element.attribute("alpha").toUInt());
+        default_event_colors_[element.attribute("type").toInt(0, 16)] = event_color;
+    }
+
+    EventTableFileReader::IntIterator it;
+    for (it = event_table_file_reader_.eventTypesBegin();
+         it != event_table_file_reader_.eventTypesEnd();
+         it++)
+    {
+        if (!default_event_colors_.contains(*it))
+            default_event_colors_[*it] = default_color;
+    }
 }
 
 } // namespace SigViewer_

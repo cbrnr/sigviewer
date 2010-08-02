@@ -48,5 +48,6 @@
         <file>images/icons/goto.png</file>
         <file>images/icons/autoscale.png</file>
         <file>images/icons/zoom_fit_event_horizontal.png</file>
+        <file>color_settings.xml</file>
     </qresource>
 </RCC>

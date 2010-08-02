@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE eventcolorsettings>
+<eventcolorsettings>
+    <default red="200" green="0" blue="0" alpha="30" />
+    <event type="0x0300" red="0" blue="200" />               <!-- Start of Trial -->
+    <event type="0x0301" red="0" green="200"/>               <!-- Left - cue onset -->
+    <event type="0x0302" blue="200" />                       <!-- Right - cue onset -->
+    <event type="0x0303" red="0" green="200" blue="200" />   <!-- Foot - cue onset -->
+    <event type="0x0304" green="200" />                      <!-- Tongue - cue onset -->
+</eventcolorsettings>
+
