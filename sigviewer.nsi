@@ -42,6 +42,7 @@ Section "SigViewer" SecSigViewer
   File "bin\release\libgcc_s_dw2-1.dll"
   File "bin\release\QtCore4.dll"
   File "bin\release\QtGui4.dll"
+  File "bin\release\QtXml4.dll"
   
   ;Store uninstall information in Add/Remove Programs
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "DisplayName" "SigViewer"
