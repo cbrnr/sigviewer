@@ -16,6 +16,9 @@ class DataBlockTests : public Test
 public:
     DataBlockTests ();
     virtual QString run ();
+
+private:
+    QString testMean ();
 };
 }
 }
