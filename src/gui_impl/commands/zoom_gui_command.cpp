@@ -134,7 +134,9 @@ void ZoomGuiCommand::zoomOutHorizontal ()
 void ZoomGuiCommand::zoomInVertical ()
 {
     unsigned channel_height = currentVisModel()->getSignalViewSettings()->getChannelHeight();
-    unsigned new_channel_height = std::min<unsigned> (channel_height * ZOOM_FACTOR_,
+    unsigned channels_per_page = currentVisModel()->view()->getViewportHeight() / channel_height;
+    unsigned new_channel_height = currentVisModel()->view()->getViewportHeight() / (channels_per_page - 1);
+    new_channel_height = std::min<unsigned> (new_channel_height,
                                     maxChannelHeight());
     GuiHelper::animateProperty (currentVisModel()->getSignalViewSettings().data(), "channelHeight",
                                 channel_height, new_channel_height,
@@ -145,7 +147,9 @@ void ZoomGuiCommand::zoomInVertical ()
 void ZoomGuiCommand::zoomOutVertical ()
 {
     unsigned channel_height = currentSignalViewSettings()->getChannelHeight();
-    unsigned new_channel_height = std::max<unsigned> (channel_height / ZOOM_FACTOR_,
+    unsigned channels_per_page = currentVisModel()->view()->getViewportHeight() / channel_height;
+    unsigned new_channel_height = currentVisModel()->view()->getViewportHeight() / (channels_per_page + 1);
+    new_channel_height = std::max<unsigned> (new_channel_height,
                               minChannelHeight());
     GuiHelper::animateProperty (currentVisModel()->getSignalViewSettings().data(), "channelHeight",
                                 channel_height, new_channel_height,
