@@ -298,7 +298,7 @@ QSharedPointer<DataBlock> DataBlock::calculateStandardDeviationImpl (std::list<Q
             tmp_stddev += pow(((**it)[index] - mean), 2);
             ++it;
         }
-        stddev->push_back(sqrt(tmp_stddev / data_blocks.size()));
+        stddev->push_back(sqrt(tmp_stddev / (data_blocks.size())));
     }
     QSharedPointer<DataBlock> stddev_block (new DataBlock (stddev, sample_rate));
     return stddev_block;
