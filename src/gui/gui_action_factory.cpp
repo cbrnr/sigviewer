@@ -30,7 +30,14 @@ void GuiActionFactory::registerCommand (QString const& name, QSharedPointer<GuiA
 //-----------------------------------------------------------------------------
 QList<QAction*> GuiActionFactory::getQActions (QString const& command_name) const
 {
-    if (!command_map_.contains (command_name))
+    if (command_name.size() == 0)
+    {
+        QList<QAction*> actions;
+        foreach (QSharedPointer<GuiActionCommand> command, command_map_.values())
+            actions.append (command->getQActions());
+        return actions;
+    }
+    else if (!command_map_.contains (command_name))
         return QList<QAction*>();
     else
         return command_map_[command_name]->getQActions ();

@@ -86,8 +86,7 @@ void ZoomGuiCommand::evaluateEnabledness ()
     getQAction (ZOOM_IN_VERTICAL_)->setEnabled (zoom_in_vertical_possible);
     getQAction (ZOOM_OUT_HORIZONTAL_)->setEnabled (zoom_out_horizontal_possible);
     getQAction (ZOOM_IN_HORIZONTAL_)->setEnabled (zoom_in_horizontal_possible);
-    getQAction (GOTO_)->setEnabled (file_open);
-    getQAction (SCALE_X_AXIS_)->setEnabled (file_open);
+    disableIfNoFileIsOpened (QStringList() << GOTO_ << SCALE_X_AXIS_ << CHANNEL_PER_PAGE_);
 }
 
 //-------------------------------------------------------------------------

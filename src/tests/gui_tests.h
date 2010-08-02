@@ -18,6 +18,7 @@ public:
 private:
     QString testZooming ();
     QString testEventEditing ();
+    QString testEnablednessNoOpenFile ();
 
     bool animations_triggered_;
 };

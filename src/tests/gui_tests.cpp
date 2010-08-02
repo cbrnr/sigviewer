@@ -21,6 +21,8 @@ void GuiTests::init ()
 //-----------------------------------------------------------------------------
 QString GuiTests::run ()
 {
+    RUN_SUB_TEST (testEnablednessNoOpenFile())
+
     OpenFileGuiCommand::openFile ("blub.sinusdummy", true);
     VERIFY (applicationContext()->getCurrentFileContext().isNull() != true, "open file");
 
@@ -33,6 +35,8 @@ QString GuiTests::run ()
 
     action("Close")->trigger();
     VERIFY (applicationContext()->getCurrentFileContext().isNull() == true, "closed file");
+
+    RUN_SUB_TEST (testEnablednessNoOpenFile())
     return "";
 }
 
@@ -82,6 +86,24 @@ QString GuiTests::testEventEditing ()
 
     applicationContext()->getCurrentFileContext()->setState(FILE_STATE_UNCHANGED);
 
+    return "";
+}
+
+//-----------------------------------------------------------------------------
+QString GuiTests::testEnablednessNoOpenFile ()
+{
+    QStringList enabled_on_startup;
+    enabled_on_startup << "Animations"
+                       << "Open..."
+                       << "Set Animation Duration"
+                       << "About"
+                       << "Run Tests..."
+                       << "Exit";
+    QList<QAction*> actions = GuiActionFactory::getInstance()->getQActions();
+    foreach (QAction* action, actions)
+    {
+        VERIFY (((action->isEnabled() && enabled_on_startup.contains(action->text())) || ((action->isEnabled() == false) && (!enabled_on_startup.contains(action->text())))), QString("Action not disabled: ").append(action->text()))
+    }
     return "";
 }
 

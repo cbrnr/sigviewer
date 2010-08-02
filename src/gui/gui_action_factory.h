@@ -22,7 +22,7 @@ public:
 
     //-------------------------------------------------------------------------
     /// the caller must not delete
-    QList<QAction*> getQActions (QString const& command_name) const;
+    QList<QAction*> getQActions (QString const& command_name = "") const;
 
     //-------------------------------------------------------------------------
     /// the caller must not delete
