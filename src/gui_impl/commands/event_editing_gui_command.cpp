@@ -1,6 +1,6 @@
 #include "event_editing_gui_command.h"
-#include "../gui_helper_functions.h"
-#include "../dialogs/event_table_editing_dialog.h"
+#include "gui_impl/gui_helper_functions.h"
+#include "gui_impl/dialogs/event_table_editing_dialog.h"
 #include "editing_commands/delete_event_undo_command.h"
 #include "editing_commands/change_type_undo_command.h"
 #include "editing_commands/change_channel_undo_command.h"

@@ -2,9 +2,9 @@
 #define EVENT_TABLE_EDITING_DIALOG_H
 
 #include "ui_event_table_dialog.h"
-#include "../../file_handling/event_manager.h"
-#include "../../file_handling/channel_manager.h"
-#include "../../command_executer.h"
+#include "file_handling/event_manager.h"
+#include "file_handling/channel_manager.h"
+#include "command_executer.h"
 
 #include <QDialog>
 

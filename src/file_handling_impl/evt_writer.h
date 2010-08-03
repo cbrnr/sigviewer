@@ -3,7 +3,7 @@
 #ifndef EVT_WRITER_H
 #define EVT_WRITER_H
 
-#include "../file_handling/file_signal_writer.h"
+#include "file_handling/file_signal_writer.h"
 
 #include <QFile>
 
@@ -42,8 +42,7 @@ private:
     QString new_file_path_;
 
     // not allowed
-    EVTWriter(const EVTWriter& src);
-    const EVTWriter& operator=(const EVTWriter& src);
+    Q_DISABLE_COPY(EVTWriter)
 };
 
 } // namespace SigViewer_

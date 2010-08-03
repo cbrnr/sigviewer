@@ -2,14 +2,13 @@
 #define FILE_SIGNAL_READER_H
 
 #include "basic_header.h"
-#include "../base/signal_event.h"
-#include "../base/data_block.h"
+#include "base/signal_event.h"
+#include "base/data_block.h"
 
 #include <QVector>
 #include <QPointer>
 #include <QSharedPointer>
 
-class QTextStream;
 class QString;
 
 namespace SigViewer_
@@ -40,9 +39,7 @@ protected:
     FileSignalReader () {}
 
 private:
-    // not allowed
-    FileSignalReader(const FileSignalReader&);
-    const FileSignalReader& operator=(const FileSignalReader&);
+    Q_DISABLE_COPY(FileSignalReader)
 };
 
 } // namespace SigViewer_

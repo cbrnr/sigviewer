@@ -1,7 +1,7 @@
 #include "open_file_gui_command.h"
-#include "../gui_helper_functions.h"
+#include "gui_impl/gui_helper_functions.h"
 
-#include "../dialogs/basic_header_info_dialog.h"
+#include "gui_impl/dialogs/basic_header_info_dialog.h"
 #include "gui/signal_visualisation_model.h"
 #include "file_handling/file_signal_reader_factory.h"
 #include "file_handling_impl/event_manager_impl.h"

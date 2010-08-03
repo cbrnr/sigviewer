@@ -1,5 +1,4 @@
 #include "processed_signal_channel_manager.h"
-#include <QString>
 
 namespace SigViewer_
 {

@@ -1,7 +1,7 @@
 #ifndef PROCESSED_SIGNAL_CHANNEL_MANAGER_H
 #define PROCESSED_SIGNAL_CHANNEL_MANAGER_H
 
-#include "../file_handling/channel_manager.h"
+#include "file_handling/channel_manager.h"
 
 #include <QMap>
 

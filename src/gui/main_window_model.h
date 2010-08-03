@@ -2,7 +2,7 @@
 #define MAIN_WINDOW_MODEL_H
 
 #include "signal_visualisation_model.h"
-#include "../file_context.h"
+#include "file_context.h"
 
 namespace SigViewer_
 {

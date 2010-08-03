@@ -1,6 +1,6 @@
 #include "event_context_menu.h"
 #include "signal_browser_model_4.h"
-#include "../../gui/gui_action_factory.h"
+#include "gui/gui_action_factory.h"
 
 #include <QGraphicsSceneContextMenuEvent>
 #include <QAction>

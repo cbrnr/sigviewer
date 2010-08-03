@@ -1,4 +1,4 @@
-#include "gui_helper_functions.h"
+#include "gui_impl/gui_helper_functions.h"
 #include "dialogs/channel_selection_dialog.h"
 #include "select_shown_channels_dialog.h"
 #include "dialogs/event_types_selection_dialog.h"

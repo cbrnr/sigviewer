@@ -1,6 +1,6 @@
 #include "gui_action_command.h"
 #include "gui_action_factory.h"
-#include "../application_context_impl.h"
+#include "application_context_impl.h"
 
 #include <QDebug>
 

@@ -1,8 +1,8 @@
 #ifndef EVENT_MANAGER_H
 #define EVENT_MANAGER_H
 
-#include "../base/sigviewer_user_types.h"
-#include "../base/signal_event.h"
+#include "base/sigviewer_user_types.h"
+#include "base/signal_event.h"
 
 #include <QString>
 #include <QObject>

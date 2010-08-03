@@ -2,8 +2,8 @@
 #define EVENT_CONTEXT_MENU_H
 
 #include "event_graphics_item.h"
-#include "../../file_handling/event_manager.h"
-#include "../../gui/signal_visualisation_model.h"
+#include "file_handling/event_manager.h"
+#include "gui/signal_visualisation_model.h"
 
 #include <QVector>
 #include <QSharedPointer>

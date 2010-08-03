@@ -1,8 +1,8 @@
 #ifndef RESIZE_EVENT_UNDO_COMMAND_H
 #define RESIZE_EVENT_UNDO_COMMAND_H
 
-#include "../base/signal_event.h"
-#include "../file_handling/event_manager.h"
+#include "base/signal_event.h"
+#include "file_handling/event_manager.h"
 
 #include <QSharedPointer>
 #include <QUndoCommand>

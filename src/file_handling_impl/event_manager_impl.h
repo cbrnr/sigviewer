@@ -1,8 +1,8 @@
 #ifndef EVENT_MANAGER_IMPL_H
 #define EVENT_MANAGER_IMPL_H
 
-#include "../file_handling/event_manager.h"
-#include "../file_handling/file_signal_reader.h"
+#include "file_handling/event_manager.h"
+#include "file_handling/file_signal_reader.h"
 #include "event_table_file_reader.h"
 
 #include <QSharedPointer>
@@ -86,10 +86,6 @@ public:
 
     //-------------------------------------------------------------------------
     virtual EventID getPreviousEventOfSameType (EventID id) const;
-
-    //-------------------------------------------------------------------------
-    /// fills the given eventvector with all events
-    void getAllEvents (FileSignalReader::SignalEventVector& event_vector) const;
 
 private:
     QSharedPointer<FileSignalReader> reader_;

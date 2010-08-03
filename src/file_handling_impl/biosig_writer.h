@@ -1,7 +1,7 @@
 #ifndef BIOIGWRITER_H_
 #define BIOIGWRITER_H_
 
-#include "../file_handling/file_signal_writer.h"
+#include "file_handling/file_signal_writer.h"
 
 #include <biosig.h>
 

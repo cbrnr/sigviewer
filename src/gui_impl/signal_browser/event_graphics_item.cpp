@@ -1,11 +1,11 @@
 #include "event_graphics_item.h"
 
 #include "signal_browser_model_4.h"
-#include "../../editing_commands/resize_event_undo_command.h"
+#include "editing_commands/resize_event_undo_command.h"
 #include "event_context_menu.h"
-#include "../../base/signal_event.h"
+#include "base/signal_event.h"
 
-#include "../signal_browser_mouse_handling.h"
+#include "gui_impl/signal_browser_mouse_handling.h"
 
 #include <QRectF>
 #include <QStyleOptionGraphicsItem>

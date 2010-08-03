@@ -1,6 +1,6 @@
 #include "adapt_channel_view_gui_command.h"
-#include "../gui_helper_functions.h"
-#include "../dialogs/scale_channel_dialog.h"
+#include "gui_impl/gui_helper_functions.h"
+#include "gui_impl/dialogs/scale_channel_dialog.h"
 
 #include <QColorDialog>
 #include <QSettings>

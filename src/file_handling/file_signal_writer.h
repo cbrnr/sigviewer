@@ -9,10 +9,6 @@
 #include "channel_manager.h"
 #include "base/signal_event.h"
 
-
-
-class QTextStream;
-
 namespace SigViewer_
 {
 
@@ -20,8 +16,6 @@ namespace SigViewer_
 class FileSignalWriter
 {
 public:
-    typedef FileSignalReader::SignalEventVector SignalEventVector;
-
     virtual ~FileSignalWriter() {}
 
     //-------------------------------------------------------------------------
@@ -49,9 +43,7 @@ protected:
     FileSignalWriter () {}
 
 private:
-    // not allowed
-    FileSignalWriter(const FileSignalWriter&);
-    const FileSignalWriter& operator=(const FileSignalWriter&);
+    Q_DISABLE_COPY(FileSignalWriter)
 };
 
 } // namespace SigViewer_

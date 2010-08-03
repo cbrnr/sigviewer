@@ -3,7 +3,7 @@
 #ifndef BASIC_HEADER_INFO_DIALOG_H
 #define BASIC_HEADER_INFO_DIALOG_H
 
-#include "../../file_handling/basic_header.h"
+#include "file_handling/basic_header.h"
 
 #include <QDialog>
 #include <QSharedPointer>

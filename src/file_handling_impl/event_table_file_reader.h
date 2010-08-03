@@ -3,7 +3,7 @@
 #ifndef EVENT_TABLE_FILE_READER
 #define EVENT_TABLE_FILE_READER
 
-#include "../base/sigviewer_user_types.h"
+#include "base/sigviewer_user_types.h"
 
 #include <QStringList>
 #include <QMap>
@@ -56,9 +56,7 @@ private:
     typedef QMap<EventType, EventItem> Int2EventItemMap;
     typedef QMap<QString, QString> String2StringMap;
 
-    // not allowed
-    EventTableFileReader(const EventTableFileReader& src);
-    const EventTableFileReader& operator=(const EventTableFileReader& src);
+    Q_DISABLE_COPY(EventTableFileReader)
 
     QList<EventType> event_types_;
     QStringList event_group_ids_;

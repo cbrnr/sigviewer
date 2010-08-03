@@ -1,5 +1,3 @@
-// event_table_file_reader.cpp
-
 #include "event_table_file_reader.h"
 
 #include <QFile>

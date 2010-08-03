@@ -1,10 +1,10 @@
 #ifndef EVENT_CREATION_WIDGET_H
 #define EVENT_CREATION_WIDGET_H
 
-#include "../../base/sigviewer_user_types.h"
+#include "base/sigviewer_user_types.h"
 #include "ui_event_creation_widget.h"
-#include "../../gui/signal_visualisation_model.h"
-#include "../../file_handling/event_manager.h"
+#include "gui/signal_visualisation_model.h"
+#include "file_handling/event_manager.h"
 
 #include <QWidget>
 #include <QMutex>

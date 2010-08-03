@@ -3,9 +3,9 @@
 #ifndef CHANNEL_SELECTION_DIALOG_H
 #define CHANNEL_SELECTION_DIALOG_H
 
-#include "../../base/sigviewer_user_types.h"
-#include "../../file_handling/channel_manager.h"
-#include "../../gui/color_manager.h"
+#include "base/sigviewer_user_types.h"
+#include "file_handling/channel_manager.h"
+#include "gui/color_manager.h"
 
 #include "ui_channel_dialog.h"
 

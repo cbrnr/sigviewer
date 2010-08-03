@@ -1,7 +1,7 @@
 #ifndef FILE_HANDLER_FACTORY_H
 #define FILE_HANDLER_FACTORY_H
 
-#include "../base/exception.h"
+#include "base/exception.h"
 
 #include <QSharedPointer>
 #include <QString>

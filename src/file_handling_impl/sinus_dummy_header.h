@@ -1,7 +1,7 @@
 #ifndef SINUS_DUMMY_HEADER_H
 #define SINUS_DUMMY_HEADER_H
 
-#include "../file_handling/basic_header.h"
+#include "file_handling/basic_header.h"
 
 namespace SigViewer_
 {

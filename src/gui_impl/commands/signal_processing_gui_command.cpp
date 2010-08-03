@@ -1,6 +1,6 @@
 #include "signal_processing_gui_command.h"
-#include "../gui_helper_functions.h"
-#include "../processed_signal_channel_manager.h"
+#include "gui_impl/gui_helper_functions.h"
+#include "gui_impl/processed_signal_channel_manager.h"
 #include "gui/progress_bar.h"
 
 namespace SigViewer_

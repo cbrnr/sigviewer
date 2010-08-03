@@ -1,8 +1,8 @@
 #ifndef CHANNEL_MANAGER_IMPL_H
 #define CHANNEL_MANAGER_IMPL_H
 
-#include "../file_handling/channel_manager.h"
-#include "../file_handling/file_signal_reader.h"
+#include "file_handling/channel_manager.h"
+#include "file_handling/file_signal_reader.h"
 
 #include <QSharedPointer>
 

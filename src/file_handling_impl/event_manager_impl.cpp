@@ -1,6 +1,6 @@
 #include "event_manager_impl.h"
-#include "../file_handling/file_signal_reader.h"
-#include "../base/exception.h"
+#include "file_handling/file_signal_reader.h"
+#include "base/exception.h"
 
 #include <QMutexLocker>
 #include <QDebug>
@@ -275,21 +275,5 @@ EventID EventManagerImpl::getPreviousEventOfSameType (EventID id) const
 
     return UNDEFINED_EVENT_ID;
 }
-
-//-----------------------------------------------------------------------------
-void EventManagerImpl::getAllEvents (FileSignalReader::SignalEventVector&
-                                 event_vector) const
-{
-    QMutexLocker locker (caller_mutex_);
-    for (EventMap::ConstIterator event_iter = event_map_.begin ();
-         event_iter != event_map_.end ();
-         ++event_iter)
-    {
-        event_vector.push_back (*(event_iter.value ()));
-    }
-}
-
-
-
 
 }

@@ -42,9 +42,7 @@ private:
     //-------------------------------------------------------------------------
     void bufferAllEvents () const;
 
-    // not allowed
-    BioSigReader(const BioSigReader& src);
-    const BioSigReader& operator=(const BioSigReader& src);
+    Q_DISABLE_COPY(BioSigReader)
 
     QString loadFixedHeader(const QString& file_name);
 
