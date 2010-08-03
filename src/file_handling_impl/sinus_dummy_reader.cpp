@@ -47,10 +47,7 @@ SinusDummyReader::SinusDummyReader ()
     }
 
     header_->setEventSamplerate(100);
-    header_->setFileSize(1000);
     header_->setNumberEvents(events_.size());
-    header_->setNumberRecords(10000);
-    header_->setRecordDuration(0.01);
 }
 
 SinusDummyReader::~SinusDummyReader()

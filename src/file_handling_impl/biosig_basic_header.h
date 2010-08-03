@@ -11,17 +11,13 @@ class BiosigBasicHeader : public BasicHeader
 {
 public:
     //-------------------------------------------------------------------------
-    BiosigBasicHeader (HDRTYPE* raw_header);
+    BiosigBasicHeader (HDRTYPE* raw_header, QString const& file_path);
 
     //-------------------------------------------------------------------------
     virtual uint32 getNumberOfSamples () const;
 
     //-------------------------------------------------------------------------
-    virtual QMap<QString, QString> getPatientInfo () const;
-
-    //-------------------------------------------------------------------------
     virtual QMap<unsigned, QString> getNamesOfUserSpecificEvents () const;
-
 
 private:
     //-------------------------------------------------------------------------
@@ -30,12 +26,12 @@ private:
     //-------------------------------------------------------------------------
     void readPatientInfo (HDRTYPE const* raw_header);
 
+    //-------------------------------------------------------------------------
+    void readRecordingInfo (HDRTYPE const* raw_header);
 
     unsigned number_samples_;
     QMap<unsigned, QString> user_defined_event_map_;
     QMap<unsigned, QSharedPointer<SignalChannel> > channels_;
-
-    QMap<QString, QString> patient_info_;
 };
 
 } // namespace SigViewer_

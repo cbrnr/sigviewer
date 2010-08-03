@@ -169,7 +169,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     biosig_header_ = sopen(c_file_name, "r", biosig_header_ );
 
     basic_header_ = QSharedPointer<BasicHeader>
-                    (new BiosigBasicHeader (biosig_header_));
+                    (new BiosigBasicHeader (biosig_header_, file_name));
 
     /// waldesel: REMOVE OLD STUFF from here downwards
     ///           and move it into BiosigBasicHeader!!!
@@ -212,9 +212,6 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     if ((biosig_header_->Calib) && (biosig_header_->Calib->nrow==NS))
 	NS = biosig_header_->Calib->ncol;
 #endif
-    basic_header_->setNumberRecords (biosig_header_->NRec);
-
-    basic_header_->setRecordDuration (biosig_header_->SPR / biosig_header_->SampleRate);
     basic_header_->setNumberEvents(biosig_header_->EVENT.N);
     if (biosig_header_->EVENT.SampleRate)
         basic_header_->setEventSamplerate(biosig_header_->EVENT.SampleRate);

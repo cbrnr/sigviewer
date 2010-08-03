@@ -11,58 +11,6 @@ QString BasicHeader::getFileTypeString () const
     return file_type_string_;
 }
 
-
-// get recording time
-const QDateTime& BasicHeader::getRecordingTime() const
-{
-    return recording_time_;
-}
-
-// get reference
-const QString& BasicHeader::getReference() const
-{
-    return reference_;
-}
-
-// triggered
-bool BasicHeader::isTriggered() const
-{
-    return triggered_;
-}
-
-// get number of records
-int64 BasicHeader::getNumberRecords() const
-{
-    return number_records_;
-}
-
-void BasicHeader::setNumberRecords (int64 number_records)
-{
-    number_records_ = number_records;
-}
-
-// get record duration
-float64 BasicHeader::getRecordDuration() const
-{
-    return record_duration_;
-}
-
-void BasicHeader::setRecordDuration (float64 record_duration)
-{
-    record_duration_ = record_duration;
-}
-
-// get file-size
-uint32 BasicHeader::getFileSize() const
-{
-    return file_size_;
-}
-
-void BasicHeader::setFileSize(uint32 file_size)
-{
-    file_size_ = file_size;
-}
-
 //-----------------------------------------------------------------------------
 float32 BasicHeader::getSampleRate () const
 {

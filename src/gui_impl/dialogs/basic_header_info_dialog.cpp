@@ -12,6 +12,7 @@
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QSettings>
+#include <QFileInfo>
 
 namespace SigViewer_
 {
@@ -90,19 +91,27 @@ void BasicHeaderInfoDialog::buildTree()
     tmp_item->setText(0, tr("File Type"));
     tmp_item->setText(1, basic_header_->getFileTypeString());
 
-    tmp_item = new QTreeWidgetItem(root_item);
-    tmp_item->setText(0, tr("Recording Time"));
-    tmp_item->setText(1, basic_header_->getRecordingTime().toString("dd.MM.yyyy hh:mm:ss"));
-    tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-    tmp_item->setText(0, tr("Triggered"));
-    tmp_item->setText(1, basic_header_->isTriggered() ? tr("yes") : tr("no"));          
-    tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-    tmp_item->setText(0, tr("Recording"));
-    tmp_item->setText(1, QString::number(basic_header_->getRecordDuration() * 
-                                      basic_header_->getNumberRecords()));     
-    tmp_item->setText(2, tr("seconds"));
+
+    QMap<QString, QString> recording_info = basic_header_->getRecordingInfo();
+    foreach (QString key, recording_info.keys())
+    {
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, key);
+        tmp_item->setText(1, recording_info[key]);
+    }
+//    tmp_item = new QTreeWidgetItem(root_item);
+//    tmp_item->setText(0, tr("Recording Time"));
+//    tmp_item->setText(1, basic_header_->getRecordingTime().toString("dd.MM.yyyy hh:mm:ss"));
+//    tmp_item = new QTreeWidgetItem(root_item);
+//    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
+//    tmp_item->setText(0, tr("Triggered"));
+//    tmp_item->setText(1, basic_header_->isTriggered() ? tr("yes") : tr("no"));
+//    tmp_item = new QTreeWidgetItem(root_item);
+//    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
+//    tmp_item->setText(0, tr("Recording"));
+//    tmp_item->setText(1, QString::number(basic_header_->getRecordDuration() *
+//                                      basic_header_->getNumberRecords()));
+//    tmp_item->setText(2, tr("seconds"));
 
     // file
     root_item = new QTreeWidgetItem(info_tree_widget_);
@@ -110,9 +119,9 @@ void BasicHeaderInfoDialog::buildTree()
     root_item->setIcon(0, QIcon(":/images/file_16x16.png"));
     info_tree_widget_->setItemExpanded(root_item, true);
     tmp_item = new QTreeWidgetItem(root_item);
-    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Size"));
-    tmp_item->setText(1, QString::number(basic_header_->getFileSize() / 1024));
+    QFileInfo file_info (basic_header_->getFilePath());
+    tmp_item->setText(1, QString::number(file_info.size() / 1024));
     tmp_item->setText(0, tr("kByte"));
 
     // patient

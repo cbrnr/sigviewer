@@ -6,8 +6,9 @@ namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
-BiosigBasicHeader::BiosigBasicHeader (HDRTYPE* raw_header)
-    : number_samples_ (raw_header->NRec * raw_header->SPR)
+BiosigBasicHeader::BiosigBasicHeader (HDRTYPE* raw_header, QString const& file_path)
+    : BasicHeader (file_path),
+      number_samples_ (raw_header->NRec * raw_header->SPR)
 {
     if (raw_header->EVENT.CodeDesc)
     {
@@ -24,18 +25,13 @@ BiosigBasicHeader::BiosigBasicHeader (HDRTYPE* raw_header)
     setSampleRate (raw_header->SampleRate);
     readChannelsInfo (raw_header);
     readPatientInfo (raw_header);
+    readRecordingInfo (raw_header);
 }
 
 //-----------------------------------------------------------------------------
 uint32 BiosigBasicHeader::getNumberOfSamples () const
 {
     return number_samples_;
-}
-
-//-----------------------------------------------------------------------------
-QMap<QString, QString> BiosigBasicHeader::getPatientInfo () const
-{
-    return patient_info_;
 }
 
 //-----------------------------------------------------------------------------
@@ -69,49 +65,61 @@ void BiosigBasicHeader::readPatientInfo (HDRTYPE const* raw_header)
     switch (raw_header->Patient.Handedness)
     {
     case 1:
-        patient_info_["Handedness"] = "Right"; break;
+        addPatientInfo ("Handedness", "Right"); break;
     case 2:
-        patient_info_["Handedness"] = "Left"; break;
+        addPatientInfo ("Handedness", "Left"); break;
     case 3:
-        patient_info_["Handedness"] = "Equal"; break;
+        addPatientInfo ("Handedness", "Equal"); break;
     }
 
     switch (raw_header->Patient.Sex)
     {
     case 1:
-        patient_info_["Sex"] = "Male"; break;
+        addPatientInfo ("Sex", "Male"); break;
     case 2:
-        patient_info_["Sex"] = "Female"; break;
+        addPatientInfo ("Sex", "Female"); break;
     }
 
     switch (raw_header->Patient.Smoking)
     {
     case 1:
-        patient_info_["Smoking"] = "No"; break;
+        addPatientInfo ("Smoking", "No"); break;
     case 2:
-        patient_info_["Smoking"] = "Yes"; break;
+        addPatientInfo ("Smoking", "Yes"); break;
     }
     switch (raw_header->Patient.Smoking)
     {
     case 1:
-        patient_info_["Smoking"] = "No"; break;
+        addPatientInfo ("Smoking", "No"); break;
     case 2:
-        patient_info_["Smoking"] = "Yes"; break;
+        addPatientInfo ("Smoking", "Yes"); break;
     }
 
+    QString patient_id;
     for (unsigned i = 0; i < MAX_LENGTH_PID && raw_header->Patient.Id[i]; i++)
-        patient_info_["Id"][i] = raw_header->Patient.Id[i];
+        patient_id.append (raw_header->Patient.Id[i]);
+    addPatientInfo ("Id", patient_id.trimmed());
 
     if (raw_header->Patient.Birthday)
     {
         time_t birthday_t = mktime(gdf_time2tm_time (raw_header->Patient.Birthday));
-        patient_info_["Birthday"] = QString (ctime(&birthday_t)).trimmed();
+        addPatientInfo ("Birthday", QString (ctime(&birthday_t)).trimmed());
     }
 
     if (raw_header->Patient.Weight)
-        patient_info_["Weight"] = QString::number(raw_header->Patient.Weight).append("kg");
+        addPatientInfo ("Weight", QString::number(raw_header->Patient.Weight).append("kg"));
     if (raw_header->Patient.Height)
-        patient_info_["Height"] = QString::number(raw_header->Patient.Height).append("cm");
+        addPatientInfo ("Height", QString::number(raw_header->Patient.Height).append("cm"));
+}
+
+//-------------------------------------------------------------------------
+void BiosigBasicHeader::readRecordingInfo (HDRTYPE const* raw_header)
+{
+    if (raw_header->T0)
+    {
+        time_t recording_t = mktime(gdf_time2tm_time (raw_header->T0));
+        addRecordingInfo("Recording Time", QString (ctime(&recording_t)).trimmed());
+    }
 }
 
 

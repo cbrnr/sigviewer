@@ -18,26 +18,23 @@ namespace SigViewer_
 class BasicHeader
 {
 public:
+    //-------------------------------------------------------------------------
     virtual ~BasicHeader() {}
 
     //-------------------------------------------------------------------------
     QString getFileTypeString () const;
 
-    const QDateTime& getRecordingTime() const;
-    const QString& getReference() const;
-    bool isTriggered() const;
-    int64 getNumberRecords() const;
-    void setNumberRecords (int64 number_records);
-    float64 getRecordDuration() const;
-    void setRecordDuration (float64 record_duration);
+    //-------------------------------------------------------------------------
+    QString getFilePath () const {return file_path_;}
 
-
-    uint32 getFileSize() const;
-    void setFileSize (uint32 file_size);
-
-
+    //-------------------------------------------------------------------------
     virtual QMap<QString, QString> getPatientInfo () const
-    {return QMap<QString, QString> ();}
+    {return patient_info_;}
+
+    //-------------------------------------------------------------------------
+    /// may include recording time, triggered, etc.
+    virtual QMap<QString, QString> getRecordingInfo () const
+    {return recording_info_;}
 
     //-------------------------------------------------------------------------
     float getSampleRate () const;
@@ -52,7 +49,8 @@ public:
     virtual uint32 getNumberOfSamples () const = 0;
 
     //-------------------------------------------------------------------------
-    virtual QMap<unsigned, QString> getNamesOfUserSpecificEvents () const = 0;
+    virtual QMap<unsigned, QString> getNamesOfUserSpecificEvents () const
+    {return QMap<unsigned, QString>();}
 
     uint32 getNumberEvents() const;
     void setNumberEvents (uint32 number_events);
@@ -61,31 +59,43 @@ public:
 
 
 protected:
-    QDateTime recording_time_;
-    QString reference_;
-    bool triggered_;
-    int64 number_records_;
-    float64 record_duration_;
-
-    // file
-    uint32 file_size_;
+    //-------------------------------------------------------------------------
+    BasicHeader (QString const& file_path) : file_path_ (file_path) {}
 
     // events
     uint32 number_events_;
     double event_sample_rate_;
     
     //-------------------------------------------------------------------------
+    /// optional
     void setFileTypeString (QString const& file_type_string);
 
     //-------------------------------------------------------------------------
+    /// required
     void setSampleRate (float sample_rate);
 
     //-------------------------------------------------------------------------
+    /// required
     void addChannel (ChannelID id, QSharedPointer<SignalChannel const> channel);
+
+    //-------------------------------------------------------------------------
+    /// optional
+    void addRecordingInfo (QString const& info_label, QString const& value)
+    {recording_info_[info_label] = value;}
+
+    //-------------------------------------------------------------------------
+    /// optional
+    void addPatientInfo (QString const& info_label, QString const& value)
+    {patient_info_[info_label] = value;}
+
 private:
+    QString const file_path_;
     QString file_type_string_;
     float sample_rate_;
     QMap<ChannelID, QSharedPointer<SignalChannel const> > channels_;
+    QMap<QString, QString> recording_info_;
+    QMap<QString, QString> patient_info_;
+
 };
 
 } // namespace SigViewer_
