@@ -1,5 +1,6 @@
 #include "help_gui_command.h"
 #include "tests/tests_dialog.h"
+#include "ui_about_dialog.h"
 
 #include <QMessageBox>
 
@@ -34,20 +35,10 @@ void HelpGuiCommand::init ()
 //-----------------------------------------------------------------------------
 void HelpGuiCommand::showAboutDialog ()
 {
-    QMessageBox about_message_box (tr("About SigViewer"),
-                                   tr("<b><nobr>SigViewer Version 0.4.2</nobr></b><br>\
-                                       <br>\
-                                       Christoph Eibel (Programmer), Clemens Brunner (Coordinater), Martin Billinger (libgdf), Alois Schl&ouml;gl (libbiosig), Laurent de Soras (FFTReal)<br>\
-                                       <br>\
-                                       <nobr>Graz University of Technology</nobr>\
-                                       <br>\
-                                       <nobr>Laboratory of Brain-Computer Interfaces</nobr>\
-                                       <br>\
-                                       <nobr><a href=\"http://bci.tugraz.at\">bci.tugraz.at</a></nobr>"),
-                                   QMessageBox::NoIcon,
-                                   QMessageBox::Ok, QMessageBox::NoButton, QMessageBox::NoButton);
-    about_message_box.setIconPixmap (QPixmap (":/images/sigviewer128.png"));
-    about_message_box.exec ();
+    QDialog dialog;
+    Ui::aboutDialog ui;
+    ui.setupUi (&dialog);
+    dialog.exec();
 }
 
 //-----------------------------------------------------------------------------
