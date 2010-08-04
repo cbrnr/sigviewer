@@ -278,7 +278,8 @@ void EventGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent*)
 //-----------------------------------------------------------------------------
 void EventGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event)
 {
-    addContextMenuEntry ();
+    if (signal_browser_model_.getMode() != MODE_VIEW_OPTIONS)
+        addContextMenuEntry ();
     event->ignore();
 }
 
