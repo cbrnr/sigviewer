@@ -113,6 +113,8 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
     unsigned new_channel_height = getSignalViewSettings()->getChannelHeight();
     if (!initialized_)
         new_channel_height = signal_browser_view_->getViewportHeight() / new_shown_channels.size();
+    else
+        new_channel_height *= static_cast<float>(getShownChannels().size()) / new_shown_channels.size();
 
     foreach (ChannelID channel, channel2signal_item_.keys())
         if (new_shown_channels.count (channel) == 0)
