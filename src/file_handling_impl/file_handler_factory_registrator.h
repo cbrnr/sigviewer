@@ -17,6 +17,11 @@ namespace SigViewer_
     FileSignalReaderFactoryRegistrator file_reader_registrator ## reader ## file_ending (#file_ending, QSharedPointer<FileSignalReader> (new reader)); \
     }
 
+#define FILE_SIGNAL_READER_DEFAULT_REGISTRATION(reader) \
+    namespace Registrators_ { \
+    FileSignalReaderFactoryRegistrator file_reader_registrator ## reader (QSharedPointer<FileSignalReader> (new reader)); \
+    }
+
 
 namespace Registrators_
 {
@@ -40,6 +45,10 @@ public:
                                         QSharedPointer<FileSignalReader> reader)
     {
         FileSignalReaderFactory::getInstance()->registerHandler (file_ending, reader);
+    }
+    FileSignalReaderFactoryRegistrator (QSharedPointer<FileSignalReader> reader)
+    {
+        FileSignalReaderFactory::getInstance()->registerDefaultHandler (reader);
     }
 };
 

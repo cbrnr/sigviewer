@@ -59,7 +59,9 @@ FILE_SIGNAL_READER_REGISTRATION(acq, BioSigReader);
 FILE_SIGNAL_READER_REGISTRATION(ahdr, BioSigReader);
 FILE_SIGNAL_READER_REGISTRATION(vhdr, BioSigReader);
 FILE_SIGNAL_READER_REGISTRATION(scp, BioSigReader);
-FILE_SIGNAL_READER_REGISTRATION(dat, BioSigReader);
+//FILE_SIGNAL_READER_REGISTRATION(dat, BioSigReader);
+
+FILE_SIGNAL_READER_DEFAULT_REGISTRATION(BioSigReader);
 
 //-----------------------------------------------------------------------------
 BioSigReader::BioSigReader() :
