@@ -96,6 +96,7 @@ int main (int argc, char* argv[])
             GuiActionFactory::getInstance()->getQAction("Run Tests...")->trigger ();
         else if (parameter_map.count ("convert-to-gdf"))
         {
+            std::cout << "Attention: Converting to GDF is in testing phase. Meta-data will not be converted." << std::endl;
             ConvertFileCommand convert_command (input_file_name, parameter_map["output-file"].as<std::string>().c_str());
             QString error = convert_command.execute ();
             if (error.size ())

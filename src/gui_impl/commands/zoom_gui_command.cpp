@@ -137,8 +137,8 @@ void ZoomGuiCommand::zoomInVertical ()
     if (channels_per_page <= 1)
         return;
     unsigned new_channel_height = currentVisModel()->view()->getViewportHeight() / (channels_per_page - 1);
-    if (new_channel_height == channel_height)
-        new_channel_height += 25;
+    if (new_channel_height < channel_height  + 10)
+        new_channel_height += 10;
     new_channel_height = std::min<unsigned> (new_channel_height,
                                     maxChannelHeight());
     GuiHelper::animateProperty (currentVisModel()->getSignalViewSettings().data(), "channelHeight",

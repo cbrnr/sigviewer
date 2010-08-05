@@ -149,6 +149,7 @@ void SaveGuiCommand::exportToPNG ()
 //-----------------------------------------------------------------------------
 void SaveGuiCommand::exportToGDF ()
 {
+    QMessageBox::information (0, "Information", "Attention: Converting to GDF is in testing phase. Meta-data will not be converted.");
     QString extensions = "*.gdf";
     QString current_file_path = applicationContext()->getCurrentFileContext()->getFilePathAndName();
     QString current_file_name = applicationContext()->getCurrentFileContext()->getFileName();
