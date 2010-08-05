@@ -29,3 +29,5 @@ dpkg -b ./$dir/sigviewer sigviewer-0.4.2-$architecture.deb
 
 # delete all temporary build directories
 rm -r $dir
+
+tar czvf extern-$architecture.tar.gz --exclude=".*" extern
