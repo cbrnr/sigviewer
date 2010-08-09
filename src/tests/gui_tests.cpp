@@ -24,17 +24,17 @@ QString GuiTests::run ()
     RUN_SUB_TEST (testEnablednessNoOpenFile())
 
     OpenFileGuiCommand::openFile ("blub.sinusdummy", true);
-    VERIFY (applicationContext()->getCurrentFileContext().isNull() != true, "open file");
+    VERIFY (applicationContext()->getCurrentFileContext().isNull() != true, "open file")
 
-    RUN_SUB_TEST (testZooming ());
-    RUN_SUB_TEST (testEventEditing ());
+    RUN_SUB_TEST (testZooming ())
+    RUN_SUB_TEST (testEventEditing ())
 
     currentVisModel()->selectChannel(1);
     action("Hide Channel")->trigger();
-    VERIFY (currentVisModel()->getShownChannels().count(1) == 0, "hide channel");
+    VERIFY (currentVisModel()->getShownChannels().count(1) == 0, "hide channel")
 
     action("Close")->trigger();
-    VERIFY (applicationContext()->getCurrentFileContext().isNull() == true, "closed file");
+    VERIFY (applicationContext()->getCurrentFileContext().isNull() == true, "closed file")
 
     RUN_SUB_TEST (testEnablednessNoOpenFile())
     return "";

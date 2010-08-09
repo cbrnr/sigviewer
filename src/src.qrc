@@ -49,5 +49,6 @@
         <file>images/icons/autoscale.png</file>
         <file>images/icons/zoom_fit_event_horizontal.png</file>
         <file>color_settings.xml</file>
+        <file>version.txt</file>
     </qresource>
 </RCC>

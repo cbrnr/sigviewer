@@ -1,10 +1,10 @@
 Package: sigviewer
-Version: 0.4.2
+Version: <version>
 Section: science
 Priority: extra
 Architecture: <architecture-via-script>
 Depends: libqtcore4 (>=4.6), libqtgui4 (>=4.6), libqt4-xml (>=4.6)
-Replaces: sigviewer (<< 0.4.2)
+Replaces: sigviewer (<< <version>)
 Installed-Size: <bin-size-via-script>
 Maintainer: Christoph Eibel <christoph.eibel@student.tugraz.at>
 Homepage: http://sigviewer.sourceforge.net

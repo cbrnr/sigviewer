@@ -7,6 +7,8 @@
   ;Name and file
   Name "SigViewer"
   OutFile "sigviewer-0.4.2-win32.exe"
+  VIProductVersion "0.4.1.9"
+
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\SigViewer"
@@ -95,6 +97,7 @@ Section "Uninstall"
   Delete "$INSTDIR\libgcc_s_dw2-1.dll"
   Delete "$INSTDIR\QtCore4.dll"
   Delete "$INSTDIR\QtGui4.dll"
+  Delete "$INSTDIR\QtXml4.dll"
   RMDir "$INSTDIR"
   
   RMDir /r $SMPROGRAMS\SigViewer
