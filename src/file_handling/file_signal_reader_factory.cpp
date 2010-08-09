@@ -4,16 +4,12 @@ namespace SigViewer_
 {
 
 //-------------------------------------------------------------------------
-std::auto_ptr<FileSignalReaderFactory> FileSignalReaderFactory::instance_;
-
-//-------------------------------------------------------------------------
 FileSignalReaderFactory* FileSignalReaderFactory::getInstance ()
 {
-    if (!instance_.get())
-    {
-        instance_.reset(new FileSignalReaderFactory);
-    }
-    return instance_.get();
+    static std::auto_ptr<FileSignalReaderFactory> instance;
+    if (!instance.get())
+        instance.reset(new FileSignalReaderFactory);
+    return instance.get();
 }
 
 } // namespace SigViewer_

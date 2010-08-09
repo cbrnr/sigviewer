@@ -16,9 +16,6 @@ class FileSignalWriterFactory : public FileHandlerFactory<FileSignalWriter>
 {
 public:
     static FileSignalWriterFactory* getInstance();
-
-private:
-     static std::auto_ptr<FileSignalWriterFactory> instance_;
 };
 
 } // namespace SigViewer_

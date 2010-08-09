@@ -3,17 +3,13 @@
 namespace SigViewer_
 {
 
-// instance
-std::auto_ptr<FileSignalWriterFactory> FileSignalWriterFactory::instance_;
-
 // get instance
 FileSignalWriterFactory* FileSignalWriterFactory::getInstance()
 {
-    if (!instance_.get())
-    {
-        instance_.reset(new FileSignalWriterFactory);
-    }
-    return instance_.get();
+    static std::auto_ptr<FileSignalWriterFactory> instance;
+    if (!instance.get())
+        instance.reset(new FileSignalWriterFactory);
+    return instance.get();
 }
 
 } // namespace SigViewer_
