@@ -1,13 +1,13 @@
 ;Include Modern UI
 
   !include "MUI.nsh"
+  !define VERSION 0.4.2
 
 ;General
 
   ;Name and file
   Name "SigViewer"
-  OutFile "sigviewer-0.4.2-win32.exe"
-  VIProductVersion "0.4.1.9"
+  OutFile "sigviewer-${VERSION}-win32.exe"
 
 
   ;Default installation folder
@@ -49,7 +49,7 @@ Section "SigViewer" SecSigViewer
   ;Store uninstall information in Add/Remove Programs
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "DisplayName" "SigViewer"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "DisplayVersion" "0.4.2"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "DisplayVersion" "${VERSION}"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "Publisher" "Graz University of Technology"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "DisplayIcon" "$\"$INSTDIR\sigviewer.exe$\""
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "EstimatedSize" "15000"
