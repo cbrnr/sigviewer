@@ -5,7 +5,6 @@
 #include "file_handling_impl/channel_manager_impl.h"
 #include "file_handling_impl/event_manager_impl.h"
 #include "file_context.h"
-#include "application_context_impl.h"
 
 #include <QDir>
 #include <QSettings>
@@ -25,7 +24,7 @@ QString OpenFileCommand::execute ()
     QSharedPointer<EventManager> event_manager (new EventManagerImpl (file_signal_reader));
     QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
                                                  channel_manager, file_signal_reader->getBasicHeader()));
-    ApplicationContextImpl::getInstance()->addFileContext (file_context);
+    application_context_->addFileContext (file_context);
     return "";
 }
 

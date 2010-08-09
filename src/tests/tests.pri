@@ -6,11 +6,13 @@ HEADERS += tests/tests_dialog.h \
     tests/event_manager_tests.h \
     tests/editing_commands_tests.h \
     tests/gui_tests.h \
-    tests/color_manager_tests.h
+    tests/color_manager_tests.h \
+    tests/file_handling_tests.h
 SOURCES += tests/tests_dialog.cpp \
     tests/data_block_tests.cpp \
     tests/event_manager_tests.cpp \
     tests/test.cpp \
     tests/editing_commands_tests.cpp \
     tests/gui_tests.cpp \
-    tests/color_manager_tests.cpp
+    tests/color_manager_tests.cpp \
+    tests/file_handling_tests.cpp

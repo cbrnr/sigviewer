@@ -73,14 +73,12 @@ QString EVTWriter::save(QSharedPointer<FileContext const> file_context,
                         std::set<EventType> const& types)
 {
     QSharedPointer<EventManager const> event_manager = file_context->getEventManager();
-    unsigned number_events = event_manager->getNumberOfEvents ();
-
-    HDRTYPE* header = constructHDR (0, number_events);
-
     QList<EventID> events;
     foreach (EventType type, types)
         events.append(event_manager->getEvents(type));
+    unsigned number_events = events.size();
 
+    HDRTYPE* header = constructHDR (0, number_events);
     header->TYPE = GDF;
     header->VERSION = 2.0;
     header->SampleRate = event_manager->getSampleRate();

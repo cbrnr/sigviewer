@@ -151,4 +151,20 @@ void SignalEvent::setDuration(uint32 duration)
     duration_ = duration;
 }
 
+//-----------------------------------------------------------------------------
+bool SignalEvent::equals (SignalEvent const& event) const
+{
+    if (duration_ != event.duration_)
+        return false;
+    if (type_ != event.type_)
+        return false;
+    if (position_ != event.position_)
+        return false;
+    if (sample_rate_ != event.sample_rate_)
+        return false;
+    if (channel_ != event.channel_)
+        return false;
+    return true;
+}
+
 } // namespace SigViewer_

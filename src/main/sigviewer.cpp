@@ -97,7 +97,7 @@ int main (int argc, char* argv[])
         else if (parameter_map.count ("convert-to-gdf"))
         {
             std::cout << "Attention: Converting to GDF is in testing phase. Meta-data will not be converted." << std::endl;
-            ConvertFileCommand convert_command (input_file_name, parameter_map["output-file"].as<std::string>().c_str());
+            ConvertFileCommand convert_command (ApplicationContextImpl::getInstance(), input_file_name, parameter_map["output-file"].as<std::string>().c_str());
             QString error = convert_command.execute ();
             if (error.size ())
                 std::cout << error.toStdString() << std::endl;

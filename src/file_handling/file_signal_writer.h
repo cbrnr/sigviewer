@@ -32,7 +32,10 @@ public:
     virtual QString save (QSharedPointer<FileContext const> file_context)
     {
         QSharedPointer<EventManager const> event_manager = file_context->getEventManager();
-        return save (file_context, event_manager->getAllPossibleEventTypes ());
+        if (event_manager.isNull())
+            return save (file_context, std::set<EventType> ());
+        else
+            return save (file_context, event_manager->getAllPossibleEventTypes ());
     }
 
     //-------------------------------------------------------------------------
