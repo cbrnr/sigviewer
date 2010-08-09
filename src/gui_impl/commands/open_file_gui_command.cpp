@@ -187,7 +187,8 @@ QString OpenFileGuiCommand::showOpenDialog (QString const& path, QString const& 
          it != ext_list.end();
          it++)
     {
-        extension_selection += ";; " + *it +" (" + *it + ")";
+        if (it->size ())
+            extension_selection += ";; " + *it +" (" + *it + ")";
     }
     extension_selection += ";; *.* (*.*)";
     return QFileDialog::getOpenFileName (0, tr("Chose signal file to open"),
