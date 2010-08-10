@@ -21,8 +21,6 @@
 
 */
 
-
-
 // sigviewer.cpp
 
 #include "base/sigviewer_user_types.h"
@@ -71,7 +69,7 @@ int main (int argc, char* argv[])
 {
     qDebug () << "Starting SigViewer... (compiled with " << __GNUC__ << "."
               << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << ")";
-
+    QApplication application (argc,argv);
     try
     {
         program_options::variables_map parameter_map = readCommandlineParameters (argc, argv);
@@ -86,8 +84,6 @@ int main (int argc, char* argv[])
             app_modes.insert (APPLICATION_TEST_MODE);
         if (parameter_map.count ("convert-to-gdf"))
             app_modes.insert (APPLICATION_NON_GUI_MODE);
-
-        QApplication application(argc,argv);
 
         GuiActionFactory::getInstance()->initAllCommands ();
         ApplicationContextImpl::init (app_modes);

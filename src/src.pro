@@ -2,7 +2,7 @@ TEMPLATE = app
 DESTDIR = $$_PRO_FILE_PWD_/../bin
 TARGET = sigviewer
 
-QT += xml
+QT += core gui xml
 
 CONFIG(debug, debug|release) {
     message(DEBUG)
