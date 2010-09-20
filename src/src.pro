@@ -27,18 +27,21 @@ CONFIG += warn_on \
     link_prl \
     qt \
     thread
+
 macx:QT += opengl
 
 INCLUDEPATH += $$_PRO_FILE_PWD_/../extern/include \
                $$_PRO_FILE_PWD_/.
 LIBS += -L$$_PRO_FILE_PWD_/../extern/lib \
     -lbiosig \
-    -lboost_program_options \
     -lgdf
 
-win32:LIBS += -lws2_32
+unix:LIBS += /usr/lib/libboost_program_options.a
 
-macx:LIBS += -lz
+
+win32:LIBS += -lws2_32 -lboost_program_options
+macx:LIBS += -lz -lboost_program_options
+
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc
 ICON = sigviewer.icns
