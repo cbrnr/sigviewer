@@ -230,16 +230,9 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
         drawYGrid (painter, option);
     painter->setPen (color_manager_->getChannelColor (id_));
 
-    int sub_sampler = 1;
-    while (pixel_per_sample * 4 <= 1)
-    {
-        pixel_per_sample *= 2;
-        sub_sampler *= 2;
-    }
-
     for (int index = 0;
-         index < static_cast<int>(data_block->size()) - sub_sampler;
-         index += sub_sampler)
+         index < static_cast<int>(data_block->size()) - 1;
+         index++)
     {
         new_y = (*data_block)[index+1];
         painter->drawLine(last_x, y_offset_ - (y_zoom_ * last_y), last_x + pixel_per_sample, y_offset_ - (y_zoom_ * new_y));

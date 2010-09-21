@@ -197,10 +197,10 @@ std::set<ChannelID> selectShownChannels (ChannelID hide_channel,
 //-----------------------------------------------------------------------------
 std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager const> channel_manager,
                                     QSharedPointer<ColorManager> color_manager,
-                                    QString const& file_name,
+                                    QSharedPointer<BasicHeader> header,
                                     QSharedPointer<SignalVisualisationModel> vis_model)
 {
-    ChannelSelectionDialog channel_dialog (channel_manager, file_name, color_manager);
+    ChannelSelectionDialog channel_dialog (channel_manager, header, color_manager);
     std::set<ChannelID> pre_selected_channels;
     if (!vis_model.isNull())
         pre_selected_channels = vis_model->getShownChannels ();

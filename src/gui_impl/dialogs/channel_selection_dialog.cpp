@@ -13,19 +13,28 @@ QColor const ChannelSelectionDialog::VISIBLE_COLOR_ (Qt::black);
 //-----------------------------------------------------------------------------
 ChannelSelectionDialog::ChannelSelectionDialog (QSharedPointer<ChannelManager const>
                                                 channel_manager,
-                                                QString const& file_name,
+                                                QSharedPointer<BasicHeader> header,
                                                 QSharedPointer<ColorManager>
                                                 color_manager,
                                                 QWidget* parent)
  : QDialog (parent),
    channel_manager_ (channel_manager),
    color_manager_ (color_manager),
+   header_ (header),
    self_setting_ (false)
 {
     ui_.setupUi (this);
     QString window_title (tr("Channels"));
-    if (file_name.size ())
-        window_title.prepend(file_name + " - ");
+    if (header_.isNull())
+        ui_.downsampling_groupbox_->setVisible (false);
+    else
+    {
+        window_title.prepend (header->getFilePath() + " - ");
+        ui_.downsampling_groupbox_->setVisible (true);
+        ui_.sr_file_label_->setText (QString::number (header_->getDownSamplingFactor() * header_->getSampleRate()).append(" Hz"));
+        ui_.sr_load_label_->setText (QString::number (header_->getSampleRate()).append(" Hz"));
+        ui_.downsample_factor_spinbox_->setValue (header_->getDownSamplingFactor());
+    }
 
     setWindowTitle (window_title);
     ui_.channel_table_->setRowCount (channel_manager_->getNumberChannels());
@@ -187,6 +196,14 @@ void ChannelSelectionDialog::on_set_default_color_button__clicked ()
     if (new_default_color.isValid())
         color_manager_->setDefaultChannelColor (new_default_color);
 }
+
+//-----------------------------------------------------------------------------
+void ChannelSelectionDialog::on_downsample_factor_spinbox__valueChanged (int value)
+{
+    header_->setDownSamplingFactor (value);
+    ui_.sr_load_label_->setText (QString::number (header_->getSampleRate() ).append(" Hz"));
+}
+
 
 //-----------------------------------------------------------------------------
 void ChannelSelectionDialog::updateColor (int row, QColor const& color)

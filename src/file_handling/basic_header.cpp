@@ -31,7 +31,7 @@ void BasicHeader::setNumberEvents (uint32 number_events)
 // get event samplerate
 double BasicHeader::getEventSamplerate() const
 {
-    return event_sample_rate_;
+    return sample_rate_;
 }
 
 void BasicHeader::setEventSamplerate (double event_sample_rate)
@@ -61,9 +61,10 @@ void BasicHeader::setFileTypeString (QString const& file_type_string)
 }
 
 //-------------------------------------------------------------------------
-void BasicHeader::setSampleRate (float sample_rate)
+void BasicHeader::setSampleRate (float sample_rate, int downsampling_factor)
 {
     sample_rate_ = sample_rate;
+    downsampling_factor_ = downsampling_factor;
 }
 
 //-------------------------------------------------------------------------

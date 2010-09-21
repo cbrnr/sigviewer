@@ -213,9 +213,9 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
 #endif
     basic_header_->setNumberEvents(biosig_header_->EVENT.N);
     if (biosig_header_->EVENT.SampleRate)
-        basic_header_->setEventSamplerate(biosig_header_->EVENT.SampleRate);
+        basic_header_->setEventSamplerate(biosig_header_->EVENT.SampleRate / basic_header_->getDownSamplingFactor());
     else
-        basic_header_->setEventSamplerate(biosig_header_->SampleRate);
+        basic_header_->setEventSamplerate(biosig_header_->SampleRate / basic_header_->getDownSamplingFactor());
 
 //#ifdef CHOLMOD_H
 //    if (biosig_header_->Calib==NULL) {
@@ -253,7 +253,7 @@ QSharedPointer<BasicHeader> BioSigReader::getBasicHeader ()
 void BioSigReader::bufferAllChannels () const
 {
     unsigned long allocated_memory = 0;
-    uint32 length = basic_header_->getNumberOfSamples ();
+    uint32 length = biosig_header_->NRec * biosig_header_->SPR;
     biosig_data_type* read_data = new biosig_data_type[length];
 
     biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
@@ -278,7 +278,7 @@ void BioSigReader::bufferAllChannels () const
         biosig_header_->CHANNEL[channel_id].OnOff = 1;
 
         alloc_timer.restart ();
-        QSharedPointer<std::vector<float32> > raw_data (new std::vector<float32>);
+        QSharedPointer<std::vector<float32> > raw_data (new std::vector<float32> (basic_header_->getNumberOfSamples()));
         allocated_memory += (length * 4);
         alloc_time += alloc_timer.elapsed ();
 
@@ -291,7 +291,18 @@ void BioSigReader::bufferAllChannels () const
 //                raw_data[index] = read_data[length + (index * channel_id)];
 //            }
         copy_timer.restart();
-        raw_data->insert (raw_data->begin(), read_data, read_data + length);
+
+        double value = 0;
+        for (unsigned data_index = 0; data_index < length; data_index++)
+        {
+            value += read_data[data_index];
+            if (((data_index + 1) % basic_header_->getDownSamplingFactor()) == 0)
+            {
+                value /= basic_header_->getDownSamplingFactor();
+                raw_data->operator []((data_index + 1) / basic_header_->getDownSamplingFactor()) = value;
+                value = 0;
+            }
+        }
         copy_time += copy_timer.elapsed();
         QSharedPointer<DataBlock const> data_block (new DataBlock (raw_data,
                                                                    basic_header_->getSampleRate()));
@@ -316,16 +327,16 @@ void BioSigReader::bufferAllEvents () const
     unsigned number_events = biosig_header_->EVENT.N;
     for (unsigned index = 0; index < number_events; index++)
     {
-        QSharedPointer<SignalEvent> event (new SignalEvent (biosig_header_->EVENT.POS[index],
+        QSharedPointer<SignalEvent> event (new SignalEvent (biosig_header_->EVENT.POS[index] / basic_header_->getDownSamplingFactor(),
                                                             biosig_header_->EVENT.TYP[index],
-                                                            biosig_header_->EVENT.SampleRate));
+                                                            biosig_header_->EVENT.SampleRate / basic_header_->getDownSamplingFactor()));
         if (biosig_header_->EVENT.CHN)
         {
             if (biosig_header_->EVENT.CHN[index] == 0)
                 event->setChannel (UNDEFINED_CHANNEL);
             else
                 event->setChannel (biosig_header_->EVENT.CHN[index] - 1);
-            event->setDuration (biosig_header_->EVENT.DUR[index]);
+            event->setDuration (biosig_header_->EVENT.DUR[index] / basic_header_->getDownSamplingFactor());
         }
         events_.append (event);
     }

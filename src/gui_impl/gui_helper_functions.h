@@ -3,6 +3,7 @@
 
 #include "base/sigviewer_user_types.h"
 #include "file_handling/channel_manager.h"
+#include "file_handling/basic_header.h"
 #include "gui/signal_visualisation_model.h"
 #include "gui/color_manager.h"
 
@@ -48,7 +49,7 @@ std::set<ChannelID> selectShownChannels (ChannelID hide_channel,
 //-----------------------------------------------------------------------------
 std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager const> channel_manager,
                                     QSharedPointer<ColorManager> color_manager,
-                                    QString const& file_name = "",
+                                    QSharedPointer<BasicHeader> header,
                                     QSharedPointer<SignalVisualisationModel> vis_model
                                     = QSharedPointer<SignalVisualisationModel>(0));
 

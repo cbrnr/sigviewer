@@ -70,6 +70,10 @@ int main (int argc, char* argv[])
     qDebug () << "Starting SigViewer... (compiled with " << __GNUC__ << "."
               << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << ")";
     QApplication application (argc,argv);
+    QApplication::setOrganizationName ("BCI Lab");
+    QApplication::setOrganizationDomain("http://bci.tugraz.at");
+    QApplication::setApplicationName ("SigViewer");
+
     try
     {
         program_options::variables_map parameter_map = readCommandlineParameters (argc, argv);

@@ -40,6 +40,16 @@ public:
     float getSampleRate () const;
 
     //-------------------------------------------------------------------------
+    void setDownSamplingFactor (int downsampling_factor)
+    {sample_rate_ *= downsampling_factor_;
+     sample_rate_ /= downsampling_factor;
+     downsampling_factor_ = downsampling_factor;}
+
+    //-------------------------------------------------------------------------
+    int getDownSamplingFactor () const
+    {return downsampling_factor_;}
+
+    //-------------------------------------------------------------------------
     QSharedPointer<SignalChannel const> getChannel (ChannelID id) const;
 
     //-------------------------------------------------------------------------
@@ -72,7 +82,7 @@ protected:
 
     //-------------------------------------------------------------------------
     /// required
-    void setSampleRate (float sample_rate);
+    void setSampleRate (float sample_rate, int downsampling_factor = 1);
 
     //-------------------------------------------------------------------------
     /// required
@@ -92,6 +102,7 @@ private:
     QString const file_path_;
     QString file_type_string_;
     float sample_rate_;
+    int downsampling_factor_;
     QMap<ChannelID, QSharedPointer<SignalChannel const> > channels_;
     QMap<QString, QString> recording_info_;
     QMap<QString, QString> patient_info_;

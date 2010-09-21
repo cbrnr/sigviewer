@@ -5,6 +5,7 @@
 
 #include "base/sigviewer_user_types.h"
 #include "file_handling/channel_manager.h"
+#include "file_handling/basic_header.h"
 #include "gui/color_manager.h"
 
 #include "ui_channel_dialog.h"
@@ -22,7 +23,7 @@ class ChannelSelectionDialog : public QDialog
 friend class FileOpenTest;
 public:
     ChannelSelectionDialog (QSharedPointer<ChannelManager const> channel_manager,
-                            QString const& file_name,
+                            QSharedPointer<BasicHeader> header,
                             QSharedPointer<ColorManager> color_manager,
                             QWidget* parent = 0);
 
@@ -38,6 +39,7 @@ private slots:
    void on_button_box__accepted ();
    void on_show_colors_box__toggled (bool on);
    void on_set_default_color_button__clicked ();
+   void on_downsample_factor_spinbox__valueChanged (int value);
 
 private:
     void updateColor (int row, QColor const& color);
@@ -50,6 +52,7 @@ private:
 
     QSharedPointer<ChannelManager const> channel_manager_;
     QSharedPointer<ColorManager> color_manager_;
+    QSharedPointer<BasicHeader> header_;
 public:
     Ui::ChannelDialog ui_;
 private:

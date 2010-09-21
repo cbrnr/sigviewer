@@ -154,7 +154,7 @@ void OpenFileGuiCommand::openFileImpl (QString file_path, bool instantly)
     else
         shown_channels = GuiHelper::selectChannels (channel_manager,
                                                     applicationContext()->getEventColorManager(),
-                                                    file_name);
+                                                    file_signal_reader->getBasicHeader());
     if (shown_channels.size() == 0)
         return;
 

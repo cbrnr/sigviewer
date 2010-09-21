@@ -78,7 +78,7 @@ void AdaptChannelViewGuiCommand::selectShownChannels ()
     std::set<ChannelID> previous_shown_channels = sv_model->getShownChannels ();
     std::set<ChannelID> new_shown_channels = GuiHelper::selectChannels (sv_model->getChannelManager(),
                                                                         applicationContext()->getEventColorManager(),
-                                                                        "",
+                                                                        QSharedPointer<BasicHeader>(0),
                                                                         sv_model);
     if (previous_shown_channels != new_shown_channels)
         sv_model->setShownChannels (new_shown_channels);
