@@ -40,6 +40,7 @@
 #include <QLocale>
 #include <QFile>
 #include <QTextStream>
+#include <QSettings>
 #include <QDebug>
 
 #include <boost/program_options.hpp>
@@ -88,6 +89,14 @@ int main (int argc, char* argv[])
             app_modes.insert (APPLICATION_TEST_MODE);
         if (parameter_map.count ("convert-to-gdf"))
             app_modes.insert (APPLICATION_NON_GUI_MODE);
+        if (parameter_map.count ("event-codes"))
+        {
+            if (parameter_map["event-codes"].as<std::string>().size ())
+            {
+                QSettings settings;
+                settings.setValue ("eventcodes_file", parameter_map["event-codes"].as<std::string>().c_str ());
+            }
+        }
 
         GuiActionFactory::getInstance()->initAllCommands ();
         ApplicationContextImpl::init (app_modes);
@@ -135,6 +144,7 @@ namespace SigViewer_
                 ("input-file", program_options::value<std::string>(), "input file")
                 ("convert-to-gdf,c", "converts the input file into gdf and saves it to the file given by the option '-o'")
                 ("output-file,o", program_options::value<std::string>()->default_value("output.gdf"), "output file name for converted files (default is 'output.gdf')")
+                ("event-codes,e", program_options::value<std::string>()->default_value(""), "event codes textfile")
         ;
 
         program_options::variables_map vm;

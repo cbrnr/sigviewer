@@ -4,6 +4,7 @@
 #include <QTextStream>
 #include <QRegExp>
 #include <QTextStream>
+#include <QSettings>
 
 namespace SigViewer_
 {
@@ -11,7 +12,9 @@ namespace SigViewer_
 // constructor
 EventTableFileReader::EventTableFileReader()
 {
-    load (":/eventcodes.txt");
+    QSettings settings;
+    QString event_codes_file = settings.value ("eventcodes_file", ":/eventcodes.txt").toString();
+    load (event_codes_file);
 }
 
 // destructor
