@@ -9,7 +9,7 @@ Welcome to SigViewer's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    introduction
    using

@@ -1,37 +1,39 @@
 Using SigViewer
 ===============
 
-Opening Files
--------------
-SigViewer uses the BioSig library for loading files.
+.. |View Options Icon| image:: ../../src/images/icons/configure.png
+.. |New Event Icon| image:: ../../src/images/new_22x22.png
+.. |Edit Event Icon| image:: ../../src/images/pointer_22x22.png
+.. |Scroll Icon| image:: ../../src/images/hand_22x22.png
+.. |Open Icon| image:: ../../src/images/icons/fileopen.png
 
-.. figure:: open-dialog.png
-   :scale: 100 %
-   :alt: Open File Dialog
-   
-   This dialog is shown when a file is opened.
-
-
-Supported File Formats
-^^^^^^^^^^^^^^^^^^^^^^
-GDF 1, GDF 2, etc.
+Basics
+------
 
 
+Modes
+^^^^^
 
-Editing Events
---------------
+SigViewer supports different mouse modes. Each mode leads to different
+behavior of the mouse in the signal view widget.
+
+|New Event Icon| New Event
+  Inserting new events. 
+
+|Edit Event Icon| Edit Event
+  Selecting and editing events.
+
+|Scroll Icon| Scroll
+  Scrolling the viewport.
+
+|View Options Icon| View Options
+  Adapting the viewport.
 
 
-==============  ======== ================= ============
-Action          Shortcut Context Menu      Main Menu
-==============  ======== ================= ============
-Delete Event    Del      Delete            Edit->Delete
-Change Channel  -        Change Channel... -
-==============  ======== ================= ============
+.. include:: using_open_files.rst
+.. include:: using_adapting_signal_view.rst
+.. include:: using_editing_events.rst
 
-Delete Events
-^^^^^^^^^^^^^
-An event marker can be deleted via its context-menu.
 
 
 
