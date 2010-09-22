@@ -36,12 +36,6 @@ LIBS += -L$$_PRO_FILE_PWD_/../extern/lib \
     -lbiosig \
     -lgdf
 
-unix:LIBS += /usr/lib/libboost_program_options.a
-
-
-win32:LIBS += -lws2_32 -lboost_program_options
-macx:LIBS += -lz -lboost_program_options
-
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc
 ICON = sigviewer.icns

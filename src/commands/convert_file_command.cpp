@@ -10,6 +10,9 @@ namespace SigViewer_
 //-----------------------------------------------------------------------------
 QString ConvertFileCommand::execute ()
 {
+    if (destination_file_path_.size() == 0)
+        return "Error: no output-file defined";
+
     OpenFileCommand open_file_command (application_context_, source_file_path_);
     QString open_error = open_file_command.execute ();
     if (open_error.size ())

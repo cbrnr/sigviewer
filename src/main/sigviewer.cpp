@@ -24,6 +24,7 @@
 // sigviewer.cpp
 
 #include "base/sigviewer_user_types.h"
+#include "base/exception.h"
 #include "gui_impl/main_window.h"
 #include "gui_impl/main_window_model_impl.h"
 #include "application_context_impl.h"
@@ -43,13 +44,10 @@
 #include <QSettings>
 #include <QDebug>
 
-#include <boost/program_options.hpp>
-
 #include <iostream>
 #include <string>
 
 using namespace SigViewer_;
-using namespace boost;
 
 
 namespace SigViewer_
@@ -61,7 +59,7 @@ namespace SigViewer_
     ///         "input-file" -> and std::string containing the input file name
     ///         "test"       -> if test mode is activated
     ///         "convert-to-gdf" ->
-    program_options::variables_map readCommandlineParameters (int argc, char* argv[]);
+    QMap<QString, QString> readCommandlineParameters (QStringList const& parameters);
 }
 
 //-----------------------------------------------------------------------------
@@ -77,23 +75,23 @@ int main (int argc, char* argv[])
 
     try
     {
-        program_options::variables_map parameter_map = readCommandlineParameters (argc, argv);
+        QMap<QString, QString> parameter_map = readCommandlineParameters (application.arguments());
 
         QString input_file_name;
         std::set<ApplicationMode> app_modes;
         if (parameter_map.count ("help"))
             return 1;
-        if (parameter_map.count ("input-file"))
-            input_file_name = QString(parameter_map["input-file"].as<std::string>().c_str ());
-        if (parameter_map.count ("test"))
+        if (parameter_map.contains ("input-file"))
+            input_file_name = parameter_map["input-file"];
+        if (parameter_map.contains ("test"))
             app_modes.insert (APPLICATION_TEST_MODE);
-        if (parameter_map.count ("convert-to-gdf"))
+        if (parameter_map.contains ("convert-to-gdf"))
             app_modes.insert (APPLICATION_NON_GUI_MODE);
-        if (parameter_map.count ("event-codes"))
+        if (parameter_map.contains ("event-codes"))
         {
             QSettings settings;
-            if (parameter_map["event-codes"].as<std::string>().size ())
-                settings.setValue ("eventcodes_file", parameter_map["event-codes"].as<std::string>().c_str ());
+            if (parameter_map["event-codes"].size ())
+                settings.setValue ("eventcodes_file", parameter_map["event-codes"]);
             else
                 settings.remove ("eventcodes_file");
         }
@@ -103,10 +101,10 @@ int main (int argc, char* argv[])
 
         if (app_modes.count (APPLICATION_TEST_MODE))
             GuiActionFactory::getInstance()->getQAction("Run Tests...")->trigger ();
-        else if (parameter_map.count ("convert-to-gdf"))
+        else if (parameter_map.contains ("convert-to-gdf"))
         {
             std::cout << "Attention: Converting to GDF is in testing phase. Meta-data will not be converted." << std::endl;
-            ConvertFileCommand convert_command (ApplicationContextImpl::getInstance(), input_file_name, parameter_map["output-file"].as<std::string>().c_str());
+            ConvertFileCommand convert_command (ApplicationContextImpl::getInstance(), input_file_name, parameter_map["output-file"]);
             QString error = convert_command.execute ();
             if (error.size ())
                 std::cout << error.toStdString() << std::endl;
@@ -120,10 +118,6 @@ int main (int argc, char* argv[])
         ApplicationContextImpl::cleanup();
         return result;
     }
-    catch (boost::exception&)
-    {
-        return 0;
-    }
     catch (std::exception& e)
     {
         std::cerr << "exception caught: " << e.what() << std::endl;
@@ -135,38 +129,43 @@ int main (int argc, char* argv[])
 namespace SigViewer_
 {
     //-----------------------------------------------------------------------------
-    program_options::variables_map readCommandlineParameters (int argc, char* argv[])
+    QMap<QString, QString> readCommandlineParameters (QStringList const& parameters)
     {
-        program_options::options_description desc ("Allowed options");
-        desc.add_options()
-                ("test,t", "run test mode")
-                ("help,h", "produce help message")
-                ("input-file", program_options::value<std::string>(), "input file")
-                ("convert-to-gdf,c", "converts the input file into gdf and saves it to the file given by the option '-o'")
-                ("output-file,o", program_options::value<std::string>()->default_value("output.gdf"), "output file name for converted files (default is 'output.gdf')")
-                ("event-codes,e", program_options::value<std::string>()->default_value(""), "event codes textfile")
-        ;
-
-        program_options::variables_map vm;
-        try
+        QMap<QString, QString> map;
+        for (int i = 1; i < parameters.size(); i++)
         {
-            program_options::positional_options_description pos_desc;
-            pos_desc.add ("input-file", 1);
-
-            program_options::store (program_options::command_line_parser (argc, argv).options(desc).positional(pos_desc).run(), vm);
-            program_options::notify (vm);
+            if (parameters[i] == "--test" || parameters[i] == "-t")
+                map.insert ("test", "");
+            else if (parameters[i] == "--output-file" || parameters[i] == "-o")
+            {
+                i++;
+                if (i < parameters.size())
+                    map.insert ("output-file", parameters[i]);
+            }
+            else if (parameters[i] == "--event-codes" || parameters[i] == "-e")
+            {
+                i++;
+                if (i < parameters.size())
+                    map.insert ("event-codes", parameters[i]);
+                else
+                    throw Exception ("event-codes parameter missing!");
+            }
+            else if (parameters[i] == "--input-file")
+            {
+                i++;
+                if (i < parameters.size())
+                    map.insert ("input-file", parameters[i]);
+            }
+            else if (parameters[i] == "--convert-to-gdf" || parameters[i] == "-c")
+                map.insert ("convert-to-gdf", "");
+            else
+            {
+                if (map.contains("input-file"))
+                    throw Exception ("Only 1 file can be opened!");
+                map.insert ("input-file", parameters[i]);
+            }
         }
-        catch (boost::exception&)
-        {
-            std::cerr << "Wrong commandline arguments!" << std::endl << std::endl;
-            std::cout << desc;
-            throw;
-        }
-
-        if (vm.count("help"))
-            std::cout << desc;
-
-        return vm;
+        return map;
     }
 
 }
