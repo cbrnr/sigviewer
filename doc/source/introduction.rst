@@ -7,7 +7,6 @@ originally designed to display electroencephalographic (EEG) data.
 
 .. _supported-file-formats:
 
-
 Supported File Formats
 ^^^^^^^^^^^^^^^^^^^^^^
 Generally, all file formats which can be read by the biosig library can be handeled by SigViewer.

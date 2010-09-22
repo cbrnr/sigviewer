@@ -179,7 +179,7 @@ htmlhelp_basename = 'SigViewerdoc'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'SigViewer.tex', u'SigViewer Documentation',
-   u'Christoph Eibel', 'manual'),
+   u'BCI Lab, Institute for Knowledge Discovery, TU Graz', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -212,5 +212,5 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'sigviewer', u'SigViewer Documentation',
-     [u'Christoph Eibel'], 1)
+     [u'BCI Lab, Institute for Knowledge Discovery, TU Graz, Austria'], 1)
 ]

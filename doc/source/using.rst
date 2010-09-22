@@ -6,6 +6,9 @@ Using SigViewer
 .. |Edit Event Icon| image:: ../../src/images/pointer_22x22.png
 .. |Scroll Icon| image:: ../../src/images/hand_22x22.png
 .. |Open Icon| image:: ../../src/images/icons/fileopen.png
+.. |Delete Event Icon| image:: ../../src/images/icons/editdelete.png
+.. |Change Channel Icon| image:: ../../src/images/change_channel_22x22.png
+.. |Change Type Icon| image:: ../../src/images/change_type_22x22.png
 
 Basics
 ------
