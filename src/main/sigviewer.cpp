@@ -91,11 +91,11 @@ int main (int argc, char* argv[])
             app_modes.insert (APPLICATION_NON_GUI_MODE);
         if (parameter_map.count ("event-codes"))
         {
+            QSettings settings;
             if (parameter_map["event-codes"].as<std::string>().size ())
-            {
-                QSettings settings;
                 settings.setValue ("eventcodes_file", parameter_map["event-codes"].as<std::string>().c_str ());
-            }
+            else
+                settings.remove ("eventcodes_file");
         }
 
         GuiActionFactory::getInstance()->initAllCommands ();
