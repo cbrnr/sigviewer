@@ -167,8 +167,8 @@ void SignalBrowserModel::removeChannel (ChannelID channel_id)
     disconnect (sig_iter.value());
 
     signal_browser_view_->removeSignalGraphicsItem (channel_id, sig_iter.value());
-    channel2signal_item_.erase (sig_iter);
     delete sig_iter.value();
+    channel2signal_item_.erase (sig_iter);
 }
 
 //-----------------------------------------------------------------------------
