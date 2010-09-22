@@ -132,7 +132,12 @@ namespace SigViewer_
     QMap<QString, QString> readCommandlineParameters (QStringList const& parameters)
     {
         QMap<QString, QString> map;
-        for (int i = 1; i < parameters.size(); i++)
+        int start_index = 0;
+        if (QApplication::applicationFilePath().contains (parameters[0]))
+            start_index = 1;
+
+        std::cout << QApplication::applicationFilePath().toStdString() << " - " << parameters[0].toStdString() << " - " << start_index << std::endl;
+        for (int i = start_index; i < parameters.size(); i++)
         {
             if (parameters[i] == "--test" || parameters[i] == "-t")
                 map.insert ("test", "");
@@ -149,12 +154,6 @@ namespace SigViewer_
                     map.insert ("event-codes", parameters[i]);
                 else
                     throw Exception ("event-codes parameter missing!");
-            }
-            else if (parameters[i] == "--input-file")
-            {
-                i++;
-                if (i < parameters.size())
-                    map.insert ("input-file", parameters[i]);
             }
             else if (parameters[i] == "--convert-to-gdf" || parameters[i] == "-c")
                 map.insert ("convert-to-gdf", "");

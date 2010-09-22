@@ -19,7 +19,7 @@ The chapter :ref:`supported-file-formats` gives an overview of supported file fo
 
 Initial Downsampling
 ^^^^^^^^^^^^^^^^^^^^
-Will be available in the next release 0.4.3
+Will be available in the next release 0.4.3.
 
 
 
