@@ -10,6 +10,17 @@ Using SigViewer
 Basics
 ------
 
+Commandline Arguments
+^^^^^^^^^^^^^^^^^^^^^
+Usage: ``sigviewer [OPTION] [FILE]``
+
+Options:
+ 
+-t, --test	starts SigViewer in testing mode
+-c, --convert-to-gdf	converts the input file into gdf and saves it to the file given by the option '-o'
+-o FILE, --output-file FILE	output file name for converted file
+
+Remark: Converting to GDF is in an experimental state!!!
 
 Modes
 ^^^^^
