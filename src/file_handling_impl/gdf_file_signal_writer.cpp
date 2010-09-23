@@ -5,9 +5,10 @@
 
 #include "biosig.h"
 
-#include <libgdf/gdfwriter.h>
+#include "GDF/Writer.h"
 
 #include <QDebug>
+#include <QMessageBox>
 
 namespace SigViewer_
 {
@@ -84,36 +85,46 @@ QString GDFFileSignalWriter::save (QSharedPointer<FileContext const> file_contex
                                    std::set<EventType> const&)
 {
     qDebug () << "GDFFileSignalWriter::save";
-    GDFWriter writer (new_file_path_.toStdString());
+    gdf::Writer writer;
+    writer.getMainHeader ().set_recording_id (file_context->getFileName().append(" converted to GDF2").toStdString());
+    // GDFWriter writer (new_file_path_.toStdString());
 
     QSharedPointer<ChannelManager const> channel_manager = file_context->getChannelManager();
-    writer.addSignal (16, channel_manager->getSampleRate(), channel_manager->getNumberChannels());
-    writer.forceRecordDuration (true, channel_manager->getNumberSamples(), channel_manager->getSampleRate());
 
-    writer.createHeader ();
-
-    writer.setEventMode (3, channel_manager->getSampleRate());
-    for (unsigned channel_index = 0;
-         channel_index < channel_manager->getNumberChannels();
-         channel_index++)
+    foreach (ChannelID channel, channel_manager->getChannels())
     {
-        writer.getSignalHeader()->physmin[channel_index] = channel_manager->getMinValue (channel_index);
-        writer.getSignalHeader()->physmax[channel_index] = channel_manager->getMaxValue (channel_index);
-        writer.getSignalHeader()->digmin[channel_index] = channel_manager->getMinValue (channel_index);
-        writer.getSignalHeader()->digmax[channel_index] = channel_manager->getMaxValue (channel_index);
-        QString label = channel_manager->getChannelLabel (channel_index);
-        for (int label_character_index = 0; label_character_index < 16 && label_character_index < label.size(); label_character_index++)
-            writer.getSignalHeader()->label[channel_index][label_character_index] = label.at(label_character_index).toAscii();
+        writer.createSignal (channel);
+        writer.getSignalHeader(channel).set_label (channel_manager->getChannelLabel (channel).toStdString());
+        writer.getSignalHeader(channel).set_datatype (gdf::FLOAT64);
+        writer.getSignalHeader(channel).set_samplerate (channel_manager->getSampleRate());
+        writer.getSignalHeader(channel).set_digmin (-1);
+        writer.getSignalHeader(channel).set_digmax (1);
+        writer.getSignalHeader(channel).set_physmin (channel_manager->getMinValue (channel));
+        writer.getSignalHeader(channel).set_physmax (channel_manager->getMaxValue (channel));
     }
 
     try
     {
-        writer.open ();
+        writer.setEventMode (3);
+        writer.open (new_file_path_.toStdString(), gdf::writer_ev_memory | gdf::writer_overwrite);
     }
-    catch (StrException& exc)
+    catch (gdf::exception::header_issues &exception)
     {
-        qDebug () << "EXCEPTION OPEN: " << exc.msg.c_str();
-        return exc.msg.c_str();
+        QString errors;
+        if (exception.warnings.size () > 0)
+        {
+            foreach (std::string error, exception.errors)
+                errors.append (error.c_str());
+
+            QMessageBox::warning (0, "Warning", errors);
+        }
+        if (exception.errors.size () > 0)
+        {
+            foreach (std::string error, exception.errors)
+                errors.append (error.c_str());
+
+            return errors;
+        }
     }
 
     try
@@ -123,7 +134,7 @@ QString GDFFileSignalWriter::save (QSharedPointer<FileContext const> file_contex
         {
             foreach (ChannelID channel_id, channel_manager->getChannels())
             {
-                writer.addSample (channel_id, (*(channel_manager->getData (channel_id, sample_index, 1)))[0]);
+                writer.addSamplePhys (channel_id, (*(channel_manager->getData (channel_id, sample_index, 1)))[0]);
             }
             ProgressBar::instance().increaseValue (1, progressbar_string);
         }
@@ -139,21 +150,12 @@ QString GDFFileSignalWriter::save (QSharedPointer<FileContext const> file_contex
             }
         }
     }
-    catch (StrException& exc)
+    catch (std::exception & exception)
     {
-        qDebug () << "EXCEPTION ADD SAMPLE: " << exc.msg.c_str();
-        return exc.msg.c_str();
+        return exception.what();
     }
 
-    try
-    {
-        writer.close ();
-    }
-    catch (StrException& exc)
-    {
-        qDebug () << "EXCEPTION CLOSE: " << exc.msg.c_str();
-        return exc.msg.c_str();
-    }
+    writer.close();
 
     return "";
 }

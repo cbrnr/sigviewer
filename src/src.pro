@@ -34,7 +34,7 @@ INCLUDEPATH += $$_PRO_FILE_PWD_/../extern/include \
                $$_PRO_FILE_PWD_/.
 LIBS += -L$$_PRO_FILE_PWD_/../extern/lib \
     -lbiosig \
-    -lgdf
+    -lGDF-r9
 
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc

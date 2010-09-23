@@ -133,7 +133,7 @@ namespace SigViewer_
     {
         QMap<QString, QString> map;
         int start_index = 0;
-        if (QApplication::applicationFilePath().contains (parameters[0]))
+        if (QApplication::applicationFilePath().contains (parameters[0].right (parameters[0].size() - 2)))
             start_index = 1;
 
         std::cout << QApplication::applicationFilePath().toStdString() << " - " << parameters[0].toStdString() << " - " << start_index << std::endl;
@@ -160,7 +160,7 @@ namespace SigViewer_
             else
             {
                 if (map.contains("input-file"))
-                    throw Exception ("Only 1 file can be opened!");
+                    throw Exception (map["input-file"].toStdString() + "Only 1 file can be opened!");
                 map.insert ("input-file", parameters[i]);
             }
         }
