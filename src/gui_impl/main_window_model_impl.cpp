@@ -175,9 +175,13 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
     connect (file_ctx.data(), SIGNAL(fileNameChanged(QString const&)), SLOT(resetCurrentFileName(QString const&)));
 
     int tab_index = createSignalVisualisationImpl (file_ctx->getChannelManager(), file_ctx->getEventManager());
+    QString tab_title ("Signal Data");
+    if (file_ctx->getHeader()->getDownSamplingFactor() > 1)
+        tab_title.append (" (downsampled)");
+
     main_window_->setCentralWidget(tab_widget_);
     tab_widget_->show();
-    tab_widget_->setTabText(tab_index, tr("Signal Data"));
+    tab_widget_->setTabText(tab_index, tab_title);
 
     file_ctx->setMainVisualisationModel (browser_models_[tab_index]);
     return browser_models_[tab_index];

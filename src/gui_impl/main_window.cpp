@@ -210,8 +210,9 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     animations_menu->addAction(action("Animations"));
     animations_menu->addAction(action("Set Animation Duration"));
     view_menu_->addSeparator();
-    view_menu_->addAction(action("Channels..."));
     view_menu_->addAction(action("Events..."));
+    view_menu_->addAction(action("Channels..."));
+    view_menu_->addAction(action("Scale All..."));
     view_menu_->addSeparator();
     view_menu_->addAction(action("Zoom In Vertical"));
     view_menu_->addAction(action("Zoom Out Vertical"));
