@@ -24,11 +24,12 @@ BiosigBasicHeader::BiosigBasicHeader (HDRTYPE* raw_header, QString const& file_p
 
     int factor = 1;
     float sampling_rate = raw_header->SampleRate;
-    while (sampling_rate > 512)
-    {
-        factor += 1;
-        sampling_rate = raw_header->SampleRate / factor;
-    }
+    /// FIXXME: deactivated for 0.4.3 release
+//    while (sampling_rate > 512)
+//    {
+//        factor += 1;
+//        sampling_rate = raw_header->SampleRate / factor;
+//    }
     setSampleRate (sampling_rate, factor);
     readChannelsInfo (raw_header);
     readPatientInfo (raw_header);

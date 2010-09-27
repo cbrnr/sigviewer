@@ -29,7 +29,8 @@
 #include "file_handler_factory_registrator.h"
 #include "gui/progress_bar.h"
 
-#include "signal_processing/notch_filter8.h"
+/// FIXXME: deactivated for 0.4.3 release
+#include "signal_processing/SPUC/chebyshev.h"
 
 #include "biosig.h"
 
@@ -43,7 +44,6 @@
 #include <cmath>
 #include <cassert>
 #include <algorithm>
-#include <iostream>
 
 using namespace std;
 
@@ -258,7 +258,8 @@ void BioSigReader::bufferAllChannels () const
 {
     uint32 length = biosig_header_->NRec * biosig_header_->SPR;
     biosig_data_type* read_data = new biosig_data_type[length];
-    biosig_data_type* filtered_data = new biosig_data_type[length];
+    /// FIXXME: deactivated for 0.4.3 release
+//    biosig_data_type* filtered_data = new biosig_data_type[length];
 
     biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
 
@@ -267,10 +268,14 @@ void BioSigReader::bufferAllChannels () const
 
     QString progress_name = QObject::tr("Loading data...");
 
+    /// FIXXME: deactivated for 0.4.3 release
+//    SPUC::chebyshev<double> low_pass_filter (1.0 / basic_header_->getDownSamplingFactor(), 8, 0.1);
+
     for (unsigned channel_id = 0; channel_id < basic_header_->getNumberChannels();
          ++channel_id)
     {
-
+        /// FIXXME: deactivated for 0.4.3 release
+//        low_pass_filter.reset();
         ProgressBar::instance().increaseValue (1, progress_name);
         if (channel_id > 0)
             biosig_header_->CHANNEL[channel_id-1].OnOff = 0;
@@ -280,28 +285,25 @@ void BioSigReader::bufferAllChannels () const
 
         sread (read_data, 0, length / biosig_header_->SPR, biosig_header_);
 
-        std::swap (read_data, filtered_data);
-        for (int filter_index = 0; filter_index < basic_header_->getFilters().size(); filter_index++)
-        {
-            std::swap (read_data, filtered_data);
-            basic_header_->getFilters()[filter_index]->filter (read_data, filtered_data, length);
-        }
+        /// FIXXME: deactivated for 0.4.3 release
+//        std::swap (read_data, filtered_data);
+//        for (int filter_index = 0; filter_index < basic_header_->getFilters().size(); filter_index++)
+//        {
+//            std::swap (read_data, filtered_data);
+//            basic_header_->getFilters()[filter_index]->filter (read_data, filtered_data, length);
+//        }
+//        double value = 0;
 
-//            if (biosig_header_->FLAG.ROW_BASED_CHANNELS == 1)
-//            {
-//                raw_data[index] = read_data[length + (index * channel_id)];
-//            }
-
-        double value = 0;
         for (unsigned data_index = 0; data_index < length; data_index++)
         {
-            value += filtered_data[data_index];
-            if (((data_index + 1) % basic_header_->getDownSamplingFactor()) == 0)
-            {
-                value /= basic_header_->getDownSamplingFactor();
-                raw_data->operator []((data_index + 1) / basic_header_->getDownSamplingFactor()) = value;
-                value = 0;
-            }
+            raw_data->operator [](data_index) = read_data[data_index];
+            /// FIXXME: deactivated for 0.4.3 release
+//            value = low_pass_filter.clock (filtered_data[data_index]);
+//            if (((data_index + 1) % basic_header_->getDownSamplingFactor()) == 0)
+//            {
+//                raw_data->operator []((data_index + 1) / basic_header_->getDownSamplingFactor()) = value;
+//                value = 0;
+//            }
         }
 
         QSharedPointer<DataBlock const> data_block (new DataBlock (raw_data,
@@ -313,7 +315,8 @@ void BioSigReader::bufferAllChannels () const
     if (buffered_all_events_)
         doClose();
     delete read_data;
-    delete filtered_data;
+    /// FIXXME: deactivated for 0.4.3 release
+//    delete filtered_data;
 }
 
 //-------------------------------------------------------------------------

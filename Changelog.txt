@@ -1,3 +1,8 @@
+Version 0.4.3
+(*) switched to new libgdf
+(*) removed dependency on boost-library (only headers are needed)
+(B) Bug fix (fixed chrash on Win XP when deselecting channels)
+
 Version 0.4.2
 (+) Convert to GDF (using libgdf)
 (+) Command-line options (e.g. --convert-to-gdf, --help)
@@ -5,7 +10,7 @@ Version 0.4.2
 (+) Improved y-grid labels (displaying units)
 (+) Improved y-scaling, new dialog
 (*) Power-spectrum is now displayed in log10
-(B) Fug fixes (instant viewport update after color changing and scaling, no chrash if signal processing leads to overflow)
+(B) Bug fixes (instant viewport update after color changing and scaling, no chrash if signal processing leads to overflow)
 (*) Refactoring and code cleanups
 (*) switched from FFTW to FFTReal
 
