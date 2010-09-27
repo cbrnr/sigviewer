@@ -4,8 +4,10 @@
 #define BASIC_HEADER_H
 
 #include "base/signal_channel.h"
+#include "base/filter.h"
 
 #include <QString>
+#include <QList>
 #include <QDateTime>
 #include <QMap>
 
@@ -38,6 +40,14 @@ public:
 
     //-------------------------------------------------------------------------
     float getSampleRate () const;
+
+    //-------------------------------------------------------------------------
+    QList<QSharedPointer<Filter const> > getFilters () const
+    {return filters_;}
+
+    //-------------------------------------------------------------------------
+    void addFilter (QSharedPointer<Filter> filter)
+    {filters_.append (filter);}
 
     //-------------------------------------------------------------------------
     void setDownSamplingFactor (int downsampling_factor)
@@ -99,6 +109,7 @@ protected:
     {patient_info_[info_label] = value;}
 
 private:
+    QList<QSharedPointer<Filter const> > filters_;
     QString const file_path_;
     QString file_type_string_;
     float sample_rate_;

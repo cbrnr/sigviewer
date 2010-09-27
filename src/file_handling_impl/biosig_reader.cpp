@@ -29,6 +29,8 @@
 #include "file_handler_factory_registrator.h"
 #include "gui/progress_bar.h"
 
+#include "signal_processing/notch_filter8.h"
+
 #include "biosig.h"
 
 #include <QTextStream>
@@ -40,6 +42,8 @@
 
 #include <cmath>
 #include <cassert>
+#include <algorithm>
+#include <iostream>
 
 using namespace std;
 
@@ -252,50 +256,46 @@ QSharedPointer<BasicHeader> BioSigReader::getBasicHeader ()
 //-----------------------------------------------------------------------------
 void BioSigReader::bufferAllChannels () const
 {
-    unsigned long allocated_memory = 0;
     uint32 length = biosig_header_->NRec * biosig_header_->SPR;
     biosig_data_type* read_data = new biosig_data_type[length];
+    biosig_data_type* filtered_data = new biosig_data_type[length];
 
     biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
-    QTime timer;
-    timer.start();
-    QTime alloc_timer;
-    int alloc_time = 0;
-    QTime copy_timer;
-    int copy_time = 0;
-    QTime sread_timer;
-    int sread_time = 0;
+
     for (unsigned channel_id_sub = 0; channel_id_sub <  basic_header_->getNumberChannels(); ++channel_id_sub)
         biosig_header_->CHANNEL[channel_id_sub].OnOff = 0;
 
     QString progress_name = QObject::tr("Loading data...");
+
     for (unsigned channel_id = 0; channel_id < basic_header_->getNumberChannels();
          ++channel_id)
     {
+
         ProgressBar::instance().increaseValue (1, progress_name);
         if (channel_id > 0)
             biosig_header_->CHANNEL[channel_id-1].OnOff = 0;
         biosig_header_->CHANNEL[channel_id].OnOff = 1;
 
-        alloc_timer.restart ();
         QSharedPointer<std::vector<float32> > raw_data (new std::vector<float32> (basic_header_->getNumberOfSamples()));
-        allocated_memory += (length * 4);
-        alloc_time += alloc_timer.elapsed ();
 
-        sread_timer.restart();
         sread (read_data, 0, length / biosig_header_->SPR, biosig_header_);
-        sread_time += sread_timer.elapsed();
+
+        std::swap (read_data, filtered_data);
+        for (int filter_index = 0; filter_index < basic_header_->getFilters().size(); filter_index++)
+        {
+            std::swap (read_data, filtered_data);
+            basic_header_->getFilters()[filter_index]->filter (read_data, filtered_data, length);
+        }
 
 //            if (biosig_header_->FLAG.ROW_BASED_CHANNELS == 1)
 //            {
 //                raw_data[index] = read_data[length + (index * channel_id)];
 //            }
-        copy_timer.restart();
 
         double value = 0;
         for (unsigned data_index = 0; data_index < length; data_index++)
         {
-            value += read_data[data_index];
+            value += filtered_data[data_index];
             if (((data_index + 1) % basic_header_->getDownSamplingFactor()) == 0)
             {
                 value /= basic_header_->getDownSamplingFactor();
@@ -303,22 +303,17 @@ void BioSigReader::bufferAllChannels () const
                 value = 0;
             }
         }
-        copy_time += copy_timer.elapsed();
+
         QSharedPointer<DataBlock const> data_block (new DataBlock (raw_data,
                                                                    basic_header_->getSampleRate()));
         channel_map_[channel_id] = data_block;
     }
-    qDebug() << "whole buffering time = " << timer.elapsed();
-    qDebug() << "sread time = " << sread_time;
-    qDebug() << "alloc time = " << alloc_time;
-    qDebug() << "alloc memory = " << allocated_memory / 1024 << "kByte";
-    qDebug() << "sizeof (float32) = " << sizeof(float32);
-    qDebug() << "copy time = " << copy_time;
 
     buffered_all_channels_ = true;
     if (buffered_all_events_)
         doClose();
     delete read_data;
+    delete filtered_data;
 }
 
 //-------------------------------------------------------------------------

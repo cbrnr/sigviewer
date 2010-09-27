@@ -1,7 +1,10 @@
 #include "channel_selection_dialog.h"
+#include "signal_processing/notch_filter8.h"
+
 
 #include <QDebug>
 #include <QColorDialog>
+#include <QInputDialog>
 
 namespace SigViewer_
 {
@@ -25,12 +28,19 @@ ChannelSelectionDialog::ChannelSelectionDialog (QSharedPointer<ChannelManager co
 {
     ui_.setupUi (this);
     QString window_title (tr("Channels"));
+
+    /// FIXXME: deactivated for 0.4.3 release
+    //ui_.tabs->removeTab (2);
+    //ui_.tabs->removeTab (1);
     if (header_.isNull())
-        ui_.downsampling_groupbox_->setVisible (false);
+    {
+        ui_.downsampling_tab->setVisible (false);
+        ui_.filters_tab->setVisible (false);
+    }
     else
     {
         window_title.prepend (header->getFilePath() + " - ");
-        ui_.downsampling_groupbox_->setVisible (true);
+        ui_.downsampling_tab->setVisible (true);
         ui_.sr_file_label_->setText (QString::number (header_->getDownSamplingFactor() * header_->getSampleRate()).append(" Hz"));
         ui_.sr_load_label_->setText (QString::number (header_->getSampleRate()).append(" Hz"));
         ui_.downsample_factor_spinbox_->setValue (header_->getDownSamplingFactor());
@@ -66,6 +76,7 @@ ChannelSelectionDialog::ChannelSelectionDialog (QSharedPointer<ChannelManager co
     }
     ui_.channel_table_->hideColumn (ID_INDEX_);
     on_show_colors_box__toggled (false);
+    ui_.tabs->setCurrentIndex (0);
 }
 
 //-----------------------------------------------------------------------------
@@ -203,6 +214,21 @@ void ChannelSelectionDialog::on_downsample_factor_spinbox__valueChanged (int val
     header_->setDownSamplingFactor (value);
     ui_.sr_load_label_->setText (QString::number (header_->getSampleRate() ).append(" Hz"));
 }
+
+//-----------------------------------------------------------------------------
+void ChannelSelectionDialog::on_add_filter_button__clicked ()
+{
+    bool ok = false;
+
+    double frequency = QInputDialog::getDouble (0, "Notch", "Frequency", 0, 0, header_->getSampleRate(), 1, &ok);
+    if (!ok)
+        return;
+
+    QSharedPointer<Filter> notch_filter (new NotchFilter8 (header_->getSampleRate() * header_->getDownSamplingFactor(), frequency));
+    ui_.chosen_filter_list_->addItem (QString ("Notch ").append(QString::number(frequency)).append("Hz"));
+    header_->addFilter (notch_filter);
+}
+
 
 
 //-----------------------------------------------------------------------------

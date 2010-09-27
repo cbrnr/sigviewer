@@ -6,7 +6,8 @@ HEADERS += base/application_states.h \
     base/signal_channel.h \
     base/signal_event.h \
     base/tab_states.h \
-    base/sigviewer_user_types.h
+    base/sigviewer_user_types.h \
+    base/filter.h
 SOURCES += base/data_block.cpp \
     base/exception.cpp \
     base/math_utils.cpp \

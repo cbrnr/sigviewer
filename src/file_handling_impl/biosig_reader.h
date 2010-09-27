@@ -40,6 +40,9 @@ private:
     void bufferAllChannels () const;
 
     //-------------------------------------------------------------------------
+    void applyFilters (double* &in, double* &out, int length) const;
+
+    //-------------------------------------------------------------------------
     void bufferAllEvents () const;
 
     Q_DISABLE_COPY(BioSigReader)
