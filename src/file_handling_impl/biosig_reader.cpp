@@ -30,7 +30,7 @@
 #include "gui/progress_bar.h"
 
 /// FIXXME: deactivated for 0.4.3 release
-#include "signal_processing/SPUC/chebyshev.h"
+// #include "signal_processing/SPUC/chebyshev.h"
 
 #include "biosig.h"
 
