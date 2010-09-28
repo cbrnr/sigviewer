@@ -43,6 +43,7 @@
 #include <QTextStream>
 #include <QSettings>
 #include <QDebug>
+#include <QDir>
 
 #include <iostream>
 #include <string>
@@ -133,7 +134,8 @@ namespace SigViewer_
     {
         QMap<QString, QString> map;
         int start_index = 0;
-        if (QApplication::applicationFilePath().contains (parameters[0].right (parameters[0].size() - 2)))
+
+        if (QDir::toNativeSeparators(QApplication::applicationFilePath()).contains (QDir::toNativeSeparators(parameters[0].mid (2, parameters[0].size() - 2))))
             start_index = 1;
 
         std::cout << QApplication::applicationFilePath().toStdString() << " - " << parameters[0].toStdString() << " - " << start_index << std::endl;

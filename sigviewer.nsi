@@ -1,7 +1,7 @@
 ;Include Modern UI
 
   !include "MUI.nsh"
-  !define VERSION 0.4.2
+  !define VERSION 0.4.3
 
 ;General
 
