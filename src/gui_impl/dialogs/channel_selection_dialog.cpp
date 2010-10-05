@@ -223,11 +223,21 @@ void ChannelSelectionDialog::on_add_filter_button__clicked ()
         return;
 
     QSharedPointer<Filter> notch_filter (new NotchFilter8 (header_->getSampleRate() * header_->getDownSamplingFactor(), frequency));
+    int header_filter_index = header_->addFilter (notch_filter);
     ui_.chosen_filter_list_->addItem (QString ("Notch ").append(QString::number(frequency)).append("Hz"));
-    header_->addFilter (notch_filter);
+    ui_.chosen_filter_list_->item (ui_.chosen_filter_list_->count() - 1)->setData (Qt::UserRole, header_filter_index);
 }
 
-
+//-----------------------------------------------------------------------------
+void ChannelSelectionDialog::on_remove_filter_button__clicked ()
+{
+    foreach (QListWidgetItem* item, ui_.chosen_filter_list_->selectedItems())
+    {
+        header_->removeFilter (item->data(Qt::UserRole).toInt());
+        ui_.chosen_filter_list_->takeItem (ui_.chosen_filter_list_->row (item));
+        delete item;
+    }
+}
 
 //-----------------------------------------------------------------------------
 void ChannelSelectionDialog::updateColor (int row, QColor const& color)

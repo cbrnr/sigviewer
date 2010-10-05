@@ -41,6 +41,7 @@ private slots:
    void on_set_default_color_button__clicked ();
    void on_downsample_factor_spinbox__valueChanged (int value);
    void on_add_filter_button__clicked ();
+   void on_remove_filter_button__clicked ();
 
 private:
     void updateColor (int row, QColor const& color);

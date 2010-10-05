@@ -52,7 +52,10 @@ public:
 
     //-------------------------------------------------------------------------
     void removeFilter (int filter_index)
-    {if (filters_.size() > filter_index && filter_index >= 0) filters_.removeAt (filter_index);}
+    {
+        if (filters_.size() > filter_index && filter_index >= 0)
+            filters_.removeAt (filter_index);
+    }
 
     //-------------------------------------------------------------------------
     void setDownSamplingFactor (int downsampling_factor)
