@@ -46,8 +46,13 @@ public:
     {return filters_;}
 
     //-------------------------------------------------------------------------
-    void addFilter (QSharedPointer<Filter> filter)
-    {filters_.append (filter);}
+    ///
+    /// @return index of the added filter
+    int addFilter (QSharedPointer<Filter> filter, int before_index = -1);
+
+    //-------------------------------------------------------------------------
+    void removeFilter (int filter_index)
+    {if (filters_.size() > filter_index && filter_index >= 0) filters_.removeAt (filter_index);}
 
     //-------------------------------------------------------------------------
     void setDownSamplingFactor (int downsampling_factor)

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Event Table</string>
   </property>
   <property name="windowFilePath">
    <string>Events</string>

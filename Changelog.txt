@@ -1,5 +1,5 @@
 Version 0.4.3
-(*) switched to new libgdf
+(*) switched to new libgdf (http://libgdf.sourceforge.net, svn revision 9)
 (*) removed dependency on boost-library (only headers are needed)
 (B) Bug fix (fixed chrash on Win XP when deselecting channels)
 

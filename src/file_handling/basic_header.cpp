@@ -17,7 +17,23 @@ float32 BasicHeader::getSampleRate () const
     return sample_rate_;
 }
 
-// get number of events
+//-----------------------------------------------------------------------------
+int BasicHeader::addFilter (QSharedPointer<Filter> filter, int before_index)
+{
+    if ((before_index < 0) || (before_index >= filters_.size ()))
+    {
+        filters_.append (filter);
+        return filters_.size() - 1;
+    }
+    else
+    {
+        filters_.insert (before_index, filter);
+        return before_index;
+    }
+}
+
+
+//-----------------------------------------------------------------------------
 uint32 BasicHeader::getNumberEvents() const
 {
     return number_events_;

@@ -6,6 +6,7 @@
 #include "biosig.h"
 
 #include "GDF/Writer.h"
+#include "GDF/Modifier.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -39,45 +40,37 @@ QSharedPointer<FileSignalWriter> GDFFileSignalWriter::createInstance (QString co
 QString GDFFileSignalWriter::saveEventsToSignalFile (QSharedPointer<EventManager const> event_manager,
                                         std::set<EventType> const& types)
 {
-    // FIXXXME: REMOVE AS SOON AS LIBGDF SUPPORTS SAVING EVENTS TO EXISTING FILES
+    gdf::Modifier modifier;
+    modifier.open (new_file_path_.toStdString());
+    gdf::EventHeader* event_header = modifier.getEventHeader();
+    float32 event_sampling_rate = event_header->getSamplingRate();
+    event_header->clear();
+
     QList<EventID> events;
     foreach (EventType type, types)
         events.append(event_manager->getEvents(type));
 
-    unsigned number_events = events.size();
-    qDebug () << "number_events = " <<number_events;
-    qDebug () << "event_manager->getNumberOfEvents() = " << event_manager->getNumberOfEvents();
-    HDRTYPE* header = constructHDR (0, number_events);
-
-    qDebug () << "GDFFileSignalWriter::saveEventsToSignalFile to " << new_file_path_;
-    header = sopen (new_file_path_.toStdString().c_str(), "r", header);
-    header->EVENT.SampleRate = event_manager->getSampleRate();
-    header->EVENT.N = number_events;
-    header->EVENT.TYP = (typeof(header->EVENT.TYP)) realloc(header->EVENT.TYP,number_events * sizeof(typeof(*header->EVENT.TYP)));
-    header->EVENT.POS = (typeof(header->EVENT.POS)) realloc(header->EVENT.POS,number_events * sizeof(typeof(*header->EVENT.POS)));
-    header->EVENT.CHN = (typeof(header->EVENT.CHN)) realloc(header->EVENT.CHN,number_events * sizeof(typeof(*header->EVENT.CHN)));
-    header->EVENT.DUR = (typeof(header->EVENT.DUR)) realloc(header->EVENT.DUR,number_events * sizeof(typeof(*header->EVENT.DUR)));
-
-    for (unsigned index = 0; index < number_events; index++)
+    for (int index = 0; index < events.size(); index++)
     {
+        gdf::Mode3Event gdf_event;
         QSharedPointer<SignalEvent const> event = event_manager->getEvent(events[index]);
         if (event->getChannel() == UNDEFINED_CHANNEL)
-            header->EVENT.CHN[index] = 0;
+            gdf_event.channel = 0;
         else
-            header->EVENT.CHN[index] = event->getChannel() + 1;
-        header->EVENT.DUR[index] = event->getDuration();
-        header->EVENT.TYP[index] = event->getType ();
-        header->EVENT.POS[index] = event->getPosition();
+            gdf_event.channel = event->getChannel() + 1;
+
+        gdf_event.duration = event->getDurationInSec() * event_sampling_rate;
+        gdf_event.type = event->getType();
+        gdf_event.position = event->getPositionInSec() * event_sampling_rate;
+
+        event_header->addEvent (gdf_event);
     }
 
-    int error = sflush_gdf_event_table (header);
+    event_header->sort ();
+    modifier.saveChanges ();
+    modifier.close ();
 
-    sclose (header);
-    destructHDR (header);
-    if (error)
-        return "Events not saved!!!! (biosig error)";
-    else
-        return "";
+    return "";
 }
 
 //-------------------------------------------------------------------------
