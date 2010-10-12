@@ -31,6 +31,8 @@
 
 /// FIXXME: deactivated for 0.4.3 release
 #include "signal_processing/SPUC/chebyshev.h"
+#include <boost/math/special_functions/fpclassify.hpp>
+
 
 #include "biosig.h"
 
@@ -276,7 +278,7 @@ void BioSigReader::bufferAllChannels () const
     {
         /// FIXXME: deactivated for 0.4.3 release
         low_pass_filter.reset();
-        ProgressBar::instance().increaseValue (1, progress_name);
+        //ProgressBar::instance().increaseValue (1, progress_name);
         if (channel_id > 0)
             biosig_header_->CHANNEL[channel_id-1].OnOff = 0;
         biosig_header_->CHANNEL[channel_id].OnOff = 1;
@@ -284,6 +286,10 @@ void BioSigReader::bufferAllChannels () const
         QSharedPointer<std::vector<float32> > raw_data (new std::vector<float32> (basic_header_->getNumberOfSamples()));
 
         sread (read_data, 0, length / biosig_header_->SPR, biosig_header_);
+
+        for (int index = 0; index < length; index++)
+            if (!boost::math::isfinite (read_data[index]))
+                read_data[index] = 0;
 
         /// FIXXME: deactivated for 0.4.3 release
         std::swap (read_data, filtered_data);

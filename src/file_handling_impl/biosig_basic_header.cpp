@@ -1,6 +1,7 @@
 #include "biosig_basic_header.h"
 
 #include <ctime>
+#include <cmath>
 
 namespace SigViewer_
 {
@@ -39,7 +40,7 @@ BiosigBasicHeader::BiosigBasicHeader (HDRTYPE* raw_header, QString const& file_p
 //-----------------------------------------------------------------------------
 uint32 BiosigBasicHeader::getNumberOfSamples () const
 {
-    return number_samples_ / getDownSamplingFactor();
+    return ceil(static_cast<double>(number_samples_) / getDownSamplingFactor());
 }
 
 //-----------------------------------------------------------------------------

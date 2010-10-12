@@ -45,6 +45,8 @@ QString GDFFileSignalWriter::saveEventsToSignalFile (QSharedPointer<EventManager
     gdf::EventHeader* event_header = modifier.getEventHeader();
     float32 event_sampling_rate = event_header->getSamplingRate();
     event_header->clear();
+    event_header->setMode (3);
+    uint8 mode = event_header->getMode();
 
     QList<EventID> events;
     foreach (EventType type, types)
