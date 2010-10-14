@@ -10,7 +10,7 @@ namespace SigViewer_
 //-----------------------------------------------------------------------------
 EventTimeSelectionDialog::EventTimeSelectionDialog (std::set<EventType> const& shown_event_types,
                                                     std::set<ChannelID> const& shown_channels,
-                                                    QSharedPointer<ChannelManager const> channel_manager,
+                                                    ChannelManager const& channel_manager,
                                                     QSharedPointer<EventManager const> event_manager)
     : shown_event_types_ (shown_event_types),
       shown_channels_ (shown_channels),
@@ -21,7 +21,7 @@ EventTimeSelectionDialog::EventTimeSelectionDialog (std::set<EventType> const& s
 
     foreach (ChannelID channel_id, shown_channels)
     {
-        QListWidgetItem* item = new QListWidgetItem (channel_manager->getChannelLabel(channel_id), ui_.list_widget_);
+        QListWidgetItem* item = new QListWidgetItem (channel_manager.getChannelLabel(channel_id), ui_.list_widget_);
         item->setData (Qt::UserRole, channel_id);
     }
 

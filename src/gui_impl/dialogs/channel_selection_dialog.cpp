@@ -14,7 +14,7 @@ QColor const ChannelSelectionDialog::VISIBLE_COLOR_ (Qt::black);
 
 
 //-----------------------------------------------------------------------------
-ChannelSelectionDialog::ChannelSelectionDialog (QSharedPointer<ChannelManager const>
+ChannelSelectionDialog::ChannelSelectionDialog (ChannelManager const&
                                                 channel_manager,
                                                 QSharedPointer<BasicHeader> header,
                                                 QSharedPointer<ColorManager>
@@ -45,13 +45,13 @@ ChannelSelectionDialog::ChannelSelectionDialog (QSharedPointer<ChannelManager co
     }
 
     setWindowTitle (window_title);
-    ui_.channel_table_->setRowCount (channel_manager_->getNumberChannels());
+    ui_.channel_table_->setRowCount (channel_manager_.getNumberChannels());
 
     int row = 0;
-    foreach (ChannelID id, channel_manager_->getChannels())
+    foreach (ChannelID id, channel_manager_.getChannels())
     {
         QTableWidgetItem* label_item = new QTableWidgetItem (
-                channel_manager_->getChannelLabel (id));
+                channel_manager_.getChannelLabel (id));
 
         QColor color = color_manager_->getChannelColor (id);
         QTableWidgetItem* color_item = new QTableWidgetItem (

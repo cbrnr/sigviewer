@@ -38,7 +38,7 @@ public:
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<SignalVisualisationModel> createSignalVisualisation (QString const& title,
-                                                                                QSharedPointer<ChannelManager> channel_manager);
+                                                                                ChannelManager const& channel_manager);
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<SignalVisualisationModel> createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx);
@@ -74,7 +74,7 @@ private:
     void saveSettings();
 
     //-------------------------------------------------------------------------
-    int createSignalVisualisationImpl (QSharedPointer<ChannelManager> channel_manager,
+    int createSignalVisualisationImpl (ChannelManager const& channel_manager,
                                        QSharedPointer<EventManager> event_manager);
 
     //-------------------------------------------------------------------------

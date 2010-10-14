@@ -35,7 +35,7 @@ private:
     QSharedPointer<EventTimeSelectionDialog> getFinishedEventTimeSelectionDialog ();
 
     //-------------------------------------------------------------------------
-    void createVisualisation (QString const& title, QSharedPointer<ChannelManager> channel_manager);
+    void createVisualisation (QString const& title, ChannelManager const& channel_manager);
 
     static QString const MEAN_;
     static QString const POWER_SPECTRUM_;

@@ -4,15 +4,16 @@
 #include "file_handling/channel_manager.h"
 
 #include <QMap>
+#include <QObject>
 
 namespace SigViewer_
 {
 
-class ProcessedSignalChannelManager : public ChannelManager
+class ProcessedSignalChannelManager : public ChannelManager, public QObject
 {
 public:
     //-------------------------------------------------------------------------
-    ProcessedSignalChannelManager (float32 sample_rate, unsigned length);
+    ProcessedSignalChannelManager (float32 sample_rate, unsigned length, QObject* parent);
 
     //-------------------------------------------------------------------------
     void addChannel (ChannelID id, QSharedPointer<DataBlock const> data_block,

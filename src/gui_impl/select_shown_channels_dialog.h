@@ -20,7 +20,7 @@ class SelectShownChannelsDialog : public QDialog
 public:
     SelectShownChannelsDialog (QString const& dialog_title,
                                std::set<ChannelID> const& channels,
-                               QSharedPointer<ChannelManager const> channel_manager);
+                               ChannelManager const& channel_manager);
 
     std::set<ChannelID> getSelectedChannels () const;
 

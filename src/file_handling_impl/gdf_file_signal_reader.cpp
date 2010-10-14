@@ -22,9 +22,9 @@ GDFFileSignalReader::~GDFFileSignalReader()
 }
 
 //-------------------------------------------------------------------------------------------------
-QSharedPointer<FileSignalReader> GDFFileSignalReader::createInstance (QString const& file_path)
+FileSignalReader* GDFFileSignalReader::createInstance (QString const& file_path)
 {
-
+    return 0;
 }
 
 //-------------------------------------------------------------------------------------------------

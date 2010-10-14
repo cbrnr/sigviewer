@@ -4,7 +4,7 @@ namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
-SignalViewSettings::SignalViewSettings (QSharedPointer<ChannelManager const> channel_manager)
+SignalViewSettings::SignalViewSettings (ChannelManager const& channel_manager)
     : pixels_per_sample_ (1),
       channel_heigth_in_pixels_ (20),
       channel_manager_ (channel_manager)

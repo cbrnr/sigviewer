@@ -20,7 +20,7 @@ public:
     BioSigWriter ();
 
     //-------------------------------------------------------------------------
-    virtual QSharedPointer<FileSignalWriter> createInstance (QString const& file_path);
+    virtual FileSignalWriter* createInstance (QString const& file_path);
 
     //-------------------------------------------------------------------------
     virtual ~BioSigWriter() {}

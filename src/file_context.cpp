@@ -9,7 +9,7 @@ namespace SigViewer_
 //-----------------------------------------------------------------------------
 FileContext::FileContext (QString const& file_path_and_name,
                           QSharedPointer<EventManager> event_manager,
-                          QSharedPointer<ChannelManager> channel_manager,
+                          ChannelManager* channel_manager,
                           QSharedPointer<BasicHeader> header)
     : state_ (FILE_STATE_UNCHANGED),
       file_path_and_name_ (file_path_and_name),
@@ -24,6 +24,7 @@ FileContext::FileContext (QString const& file_path_and_name,
 FileContext::~FileContext ()
 {
     qDebug () << "deleting FileContext";
+    delete channel_manager_;
 }
 
 
@@ -78,15 +79,15 @@ QSharedPointer<EventManager> FileContext::getEventManager ()
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<ChannelManager const> FileContext::getChannelManager () const
+ChannelManager const& FileContext::getChannelManager () const
 {
-    return channel_manager_;
+    return *channel_manager_;
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<ChannelManager> FileContext::getChannelManager ()
+ChannelManager& FileContext::getChannelManager ()
 {
-    return channel_manager_;
+    return *channel_manager_;
 }
 
 //-------------------------------------------------------------------------

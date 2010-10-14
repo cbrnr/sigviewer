@@ -96,12 +96,12 @@ void ZoomGuiCommand::goTo ()
                 currentVisModel();
     bool ok;
     double sec = QInputDialog::getDouble (0, tr("Go to..."), tr("Second: "), 0, 0,
-                             vis_model->getChannelManager()->getDurationInSec(), 1, &ok);
+                             vis_model->getChannelManager().getDurationInSec(), 1, &ok);
     if (!ok)
         return;
 
 
-    vis_model->goToSample (sec * vis_model->getChannelManager()->getSampleRate ());
+    vis_model->goToSample (sec * vis_model->getChannelManager().getSampleRate ());
 }
 
 //-----------------------------------------------------------------------------
@@ -170,10 +170,10 @@ void ZoomGuiCommand::autoZoomVertical ()
 //-------------------------------------------------------------------------
 void ZoomGuiCommand::scaleXAxis ()
 {
-    float32 sample_rate = currentVisModel()->getChannelManager()->getSampleRate();
+    float32 sample_rate = currentVisModel()->getChannelManager().getSampleRate();
     float32 pixel_per_second = currentSignalViewSettings()->getPixelsPerSample() * sample_rate;
     float32 width = currentVisModel()->view()->getViewportWidth();
-    float32 new_secs_per_page = QInputDialog::getDouble (0, tr("Scale X Axis"), tr("Seconds"), width / pixel_per_second, minPixelPerSample() / sample_rate, currentVisModel()->getChannelManager()->getDurationInSec());
+    float32 new_secs_per_page = QInputDialog::getDouble (0, tr("Scale X Axis"), tr("Seconds"), width / pixel_per_second, minPixelPerSample() / sample_rate, currentVisModel()->getChannelManager().getDurationInSec());
 
     float32 pixel_per_sample = width / (new_secs_per_page * sample_rate);
 
@@ -231,7 +231,7 @@ float32 ZoomGuiCommand::maxPixelPerSample ()
 float32 ZoomGuiCommand::minPixelPerSample ()
 {
     return static_cast<float32>(currentVisModel()->view()->getViewportWidth()) /
-           static_cast<float32>(currentVisModel()->getChannelManager()->getNumberSamples ());
+           static_cast<float32>(currentVisModel()->getChannelManager().getNumberSamples ());
 }
 
 

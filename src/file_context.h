@@ -26,9 +26,13 @@ class FileContext : public QObject
     Q_OBJECT
 public:
     //-------------------------------------------------------------------------
+    ///
+    /// @param channel_manager the FileContext takes ownership of the given
+    ///                        ChannelManager and destroys it if the FileContext
+    ///                        is deleted
     FileContext (QString const & file_path_and_name,
                  QSharedPointer<EventManager> event_manager,
-                 QSharedPointer<ChannelManager> channel_manager,
+                 ChannelManager* channel_manager,
                  QSharedPointer<BasicHeader> header);
 
     //-------------------------------------------------------------------------
@@ -59,10 +63,10 @@ public:
     QSharedPointer<EventManager> getEventManager ();
 
     //-------------------------------------------------------------------------
-    QSharedPointer<ChannelManager const> getChannelManager () const;
+    ChannelManager const & getChannelManager () const;
 
     //-------------------------------------------------------------------------
-    QSharedPointer<ChannelManager> getChannelManager ();
+    ChannelManager& getChannelManager ();
 
     //-------------------------------------------------------------------------
     QSharedPointer<BasicHeader> getHeader () {return basic_header_;}
@@ -93,7 +97,7 @@ private:
     FileState state_;
     QString file_path_and_name_;
     QSharedPointer<EventManager> event_manager_;
-    QSharedPointer<ChannelManager> channel_manager_;
+    ChannelManager* channel_manager_;
     QSharedPointer<BasicHeader> basic_header_;
     QSharedPointer<SignalVisualisationModel> main_signal_vis_model_;
 };

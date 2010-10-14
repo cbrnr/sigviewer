@@ -17,7 +17,7 @@ Q_OBJECT
 public:
     explicit ScaleChannelDialog (ChannelID preselected_channel,
                                  std::set<ChannelID> const& shown_channels,
-                                 QSharedPointer<ChannelManager const> channel_manager,
+                                 ChannelManager const& channel_manager,
                                  QWidget *parent = 0);
 
     bool autoScaling () const;
@@ -33,7 +33,7 @@ private slots:
 private:
     ChannelID selected_channel_;
     std::set<ChannelID> const shown_channels_;
-    QSharedPointer<ChannelManager const> channel_manager_;
+    ChannelManager const& channel_manager_;
 
     Ui::ScaleChannelDialog ui_;
 

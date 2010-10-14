@@ -28,7 +28,7 @@ public:
     void registerDefaultHandler (QSharedPointer<FileHandlerType> file_handler);
 
     //-------------------------------------------------------------------------
-    QSharedPointer<FileHandlerType> getHandler (QString const& file_path);
+    FileHandlerType* getHandler (QString const& file_path);
 
     //-------------------------------------------------------------------------
     QStringList getAllFileEndingsWithWildcards () const;
@@ -71,7 +71,7 @@ void FileHandlerFactory<FileHandlerType>::registerDefaultHandler (QSharedPointer
 
 //-------------------------------------------------------------------------
 template<typename FileHandlerType>
-QSharedPointer<FileHandlerType> FileHandlerFactory<FileHandlerType>::getHandler (QString const& file_path)
+FileHandlerType* FileHandlerFactory<FileHandlerType>::getHandler (QString const& file_path)
 {
     QString file_ending = file_path.section('.', -1);
     qDebug () << "FACTORY " << file_ending;
@@ -80,7 +80,7 @@ QSharedPointer<FileHandlerType> FileHandlerFactory<FileHandlerType>::getHandler 
     else if (!default_handler_.isNull())
         return default_handler_->createInstance (file_path);
     else
-        return QSharedPointer<FileHandlerType> (0);
+        return 0;
 }
 
 //-------------------------------------------------------------------------

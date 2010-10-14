@@ -6,10 +6,17 @@ namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
-ChannelManagerImpl::ChannelManagerImpl (QSharedPointer<FileSignalReader> file_signal_reader)
+ChannelManagerImpl::ChannelManagerImpl (FileSignalReader* file_signal_reader)
     : reader_ (file_signal_reader)
 {
     setXAxisUnitLabel ("s");
+}
+
+
+//-----------------------------------------------------------------------------
+ChannelManagerImpl::~ChannelManagerImpl ()
+{
+    delete reader_;
 }
 
 //-------------------------------------------------------------------------

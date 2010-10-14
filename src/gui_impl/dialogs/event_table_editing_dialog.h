@@ -16,7 +16,7 @@ class EventTableEditingDialog : public QDialog
     Q_OBJECT
 public:
     EventTableEditingDialog (QSharedPointer<EventManager> event_manager,
-                             QSharedPointer<ChannelManager const> channel_manager,
+                             ChannelManager const& channel_manager,
                              QSharedPointer<CommandExecuter> command_executer,
                              std::set<EventType> const& shown_event_types);
 
@@ -33,7 +33,7 @@ private:
     void buildTable ();
 
     QSharedPointer<EventManager> event_manager_;
-    QSharedPointer<ChannelManager const> channel_manager_;
+    ChannelManager const& channel_manager_;
     QSharedPointer<CommandExecuter> command_executer_;
 
     static int const ID_INDEX_ = 0;

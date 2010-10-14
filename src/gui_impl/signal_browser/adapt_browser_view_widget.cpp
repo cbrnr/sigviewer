@@ -36,9 +36,9 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
     ui_.yGridCheckbox->setVisible(false);
     ui_.zero_centered_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Zero Line Centered"));
     ui_.zero_fitted_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Zero Line Fitted"));
-    ui_.channelsPerPageSpinbox->setMaximum (settings->getChannelManager()->getNumberChannels());
-    ui_.secsPerPageSpinbox->setMaximum (settings_->getChannelManager()->getDurationInSec());
-    ui_.xUnitsPerPageLabel->setText (settings_->getChannelManager()->getXAxisUnitLabel() + ui_.xUnitsPerPageLabel->text());
+    ui_.channelsPerPageSpinbox->setMaximum (settings->getChannelManager().getNumberChannels());
+    ui_.secsPerPageSpinbox->setMaximum (settings_->getChannelManager().getDurationInSec());
+    ui_.xUnitsPerPageLabel->setText (settings_->getChannelManager().getXAxisUnitLabel() + ui_.xUnitsPerPageLabel->text());
 
     connect (settings_.data(), SIGNAL(channelHeightChanged()), SLOT(updateValues()));
     connect (settings_.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateValues()));
@@ -81,7 +81,7 @@ void AdaptBrowserViewWidget::on_secsPerPageSpinbox_valueChanged (double value)
 
     self_updating_ = true;
     float new_pixels_per_sample = signal_visualisation_view_->getViewportWidth() /
-                                (value * settings_->getChannelManager()->getSampleRate());
+                                (value * settings_->getChannelManager().getSampleRate());
 
     GuiHelper::animateProperty (settings_.data(), "pixelsPerSample", settings_->getPixelsPerSample(),
                                 new_pixels_per_sample, this, SLOT(selfUpdatingFinished()));
@@ -101,7 +101,7 @@ void AdaptBrowserViewWidget::updateValues ()
                                           settings_->getChannelHeight());
     ui_.secsPerPageSpinbox->setValue ((signal_visualisation_view_->getViewportWidth() /
                                        settings_->getPixelsPerSample()) /
-                                      settings_->getChannelManager()->getSampleRate());
+                                      settings_->getChannelManager().getSampleRate());
     updating_values_ = false;
 }
 

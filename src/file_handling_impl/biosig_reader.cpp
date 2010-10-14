@@ -83,9 +83,9 @@ BioSigReader::~BioSigReader()
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<FileSignalReader> BioSigReader::createInstance (QString const& file_path)
+FileSignalReader* BioSigReader::createInstance (QString const& file_path)
 {
-    QSharedPointer<BioSigReader> reader (new BioSigReader);
+    BioSigReader* reader (new BioSigReader);
     if (file_path.section('.', -1) == "evt")
         reader->buffered_all_channels_ = true;
     QString error = reader->open (file_path);
@@ -93,7 +93,7 @@ QSharedPointer<FileSignalReader> BioSigReader::createInstance (QString const& fi
     {
         qDebug () << error;
         QMessageBox::critical(0, QObject::tr("Error"), error);
-        return QSharedPointer<FileSignalReader> (0);
+        return 0;
     }
     else
         return reader;

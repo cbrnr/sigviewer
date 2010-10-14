@@ -15,7 +15,7 @@ namespace SigViewer_
 class EventManagerImpl : public EventManager
 {
 public:
-    EventManagerImpl (QSharedPointer<FileSignalReader> reader);
+    EventManagerImpl (FileSignalReader const& reader);
 
     virtual ~EventManagerImpl ();
 
@@ -88,9 +88,9 @@ public:
     virtual EventID getPreviousEventOfSameType (EventID id) const;
 
 private:
-    QSharedPointer<FileSignalReader> reader_;
     EventTableFileReader event_table_reader_;
 
+    unsigned const max_event_position_;
     double sample_rate_;
     QMutex* caller_mutex_;
 

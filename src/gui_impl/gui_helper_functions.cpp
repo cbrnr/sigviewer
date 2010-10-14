@@ -150,7 +150,7 @@ ChannelID selectChannel (ChannelID preselected_channel_id,
 
     channel_list.append (QObject::tr("All Channels"));
 
-    QSharedPointer<ChannelManager const> channel_manager = signal_visualisation_model->getChannelManager();
+    ChannelManager const& channel_manager = signal_visualisation_model->getChannelManager();
 
     std::set<ChannelID> shown_channels = signal_visualisation_model->getShownChannels ();
 
@@ -163,7 +163,7 @@ ChannelID selectChannel (ChannelID preselected_channel_id,
 
         channel_list.append(
                 QString("(%1) ").arg(*channel_iter + 1) +
-                channel_manager->getChannelLabel (*channel_iter));
+                channel_manager.getChannelLabel (*channel_iter));
     }
 
     bool ok = false;
@@ -195,7 +195,7 @@ std::set<ChannelID> selectShownChannels (ChannelID hide_channel,
 
 
 //-----------------------------------------------------------------------------
-std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager const> channel_manager,
+std::set<ChannelID> selectChannels (ChannelManager const& channel_manager,
                                     QSharedPointer<ColorManager> color_manager,
                                     QSharedPointer<BasicHeader> header,
                                     QSharedPointer<SignalVisualisationModel> vis_model)
@@ -207,7 +207,7 @@ std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager const> channel
 
     bool empty_selection = (pre_selected_channels.size () == 0);
 
-    foreach (ChannelID channel_id, channel_manager->getChannels())
+    foreach (ChannelID channel_id, channel_manager.getChannels())
     {
         bool show_channel = (empty_selection ||
                             (pre_selected_channels.count(channel_id) > 0));
@@ -221,7 +221,7 @@ std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager const> channel
         return pre_selected_channels;
 
     std::set<ChannelID> selected_channels;
-    foreach (ChannelID channel_id, channel_manager->getChannels())
+    foreach (ChannelID channel_id, channel_manager.getChannels())
     {
         if (channel_dialog.isSelected (channel_id))
             selected_channels.insert (channel_id);

@@ -47,7 +47,7 @@ std::set<ChannelID> selectShownChannels (ChannelID hide_channel,
                                          QSharedPointer<SignalVisualisationModel> vis_model);
 
 //-----------------------------------------------------------------------------
-std::set<ChannelID> selectChannels (QSharedPointer<ChannelManager const> channel_manager,
+std::set<ChannelID> selectChannels (ChannelManager const& channel_manager,
                                     QSharedPointer<ColorManager> color_manager,
                                     QSharedPointer<BasicHeader> header,
                                     QSharedPointer<SignalVisualisationModel> vis_model

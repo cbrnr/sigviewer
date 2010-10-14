@@ -22,7 +22,7 @@ public:
     //-------------------------------------------------------------------------
     EventTimeSelectionDialog (std::set<EventType> const& shown_event_types,
                               std::set<ChannelID> const& shown_channels,
-                              QSharedPointer<ChannelManager const> channel_manager,
+                              ChannelManager const& channel_manager,
                               QSharedPointer<EventManager const> event_manager);
 
     //-------------------------------------------------------------------------

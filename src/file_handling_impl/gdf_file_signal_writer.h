@@ -14,7 +14,7 @@ public:
     GDFFileSignalWriter ();
 
     //-------------------------------------------------------------------------
-    virtual QSharedPointer<FileSignalWriter> createInstance (QString const& file_path);
+    virtual FileSignalWriter* createInstance (QString const& file_path);
 
     //-------------------------------------------------------------------------
     virtual bool supportsSavingEvents () const {return true;}

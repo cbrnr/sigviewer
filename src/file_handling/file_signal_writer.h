@@ -19,7 +19,7 @@ public:
     virtual ~FileSignalWriter() {}
 
     //-------------------------------------------------------------------------
-    virtual QSharedPointer<FileSignalWriter> createInstance (QString const& file_path) = 0;
+    virtual FileSignalWriter* createInstance (QString const& file_path) = 0;
 
     //-------------------------------------------------------------------------
     virtual bool supportsSavingEvents () const {return false;}

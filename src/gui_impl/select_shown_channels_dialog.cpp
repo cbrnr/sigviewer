@@ -12,7 +12,7 @@ namespace SigViewer_
 //-----------------------------------------------------------------------------
 SelectShownChannelsDialog::SelectShownChannelsDialog (QString const& dialog_title,
                                                       std::set<ChannelID> const& channels,
-                                                      QSharedPointer<ChannelManager const> channel_manager)
+                                                      ChannelManager const& channel_manager)
     : channels_ (channels)
 {
     setWindowTitle (dialog_title);
@@ -26,7 +26,7 @@ SelectShownChannelsDialog::SelectShownChannelsDialog (QString const& dialog_titl
          channel_iter != channels_.end ();
          ++channel_iter)
     {
-        QString label = channel_manager->getChannelLabel(*channel_iter);
+        QString label = channel_manager.getChannelLabel(*channel_iter);
         channel_list_widget_->addItem(QString("(%1) %2").arg (*channel_iter + 1)
                                                 .arg(label));
     }

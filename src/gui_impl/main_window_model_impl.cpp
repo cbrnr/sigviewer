@@ -130,7 +130,7 @@ void MainWindowModelImpl::storeAndInitTabContext (QSharedPointer<TabContext> con
 }
 
 //-------------------------------------------------------------------------
-QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisualisation (QString const& title, QSharedPointer<ChannelManager> channel_manager)
+QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisualisation (QString const& title, ChannelManager const& channel_manager)
 {
     int tab_index = createSignalVisualisationImpl (channel_manager, QSharedPointer<EventManager>(0));
     tab_widget_->setTabText(tab_index, title);
@@ -167,10 +167,10 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
     // waldesel:
     // --begin
     //   to be replaced as soon as new zooming is implemented
-    main_window_->setStatusBarSignalLength (file_ctx->getChannelManager()->getDurationInSec());
+    main_window_->setStatusBarSignalLength (file_ctx->getChannelManager().getDurationInSec());
     // --end
 
-    main_window_->setStatusBarNrChannels (file_ctx->getChannelManager()->getNumberChannels());
+    main_window_->setStatusBarNrChannels (file_ctx->getChannelManager().getNumberChannels());
     resetCurrentFileName (file_ctx->getFileName());
     connect (file_ctx.data(), SIGNAL(fileNameChanged(QString const&)), SLOT(resetCurrentFileName(QString const&)));
 
@@ -222,8 +222,8 @@ void MainWindowModelImpl::resetCurrentFileName (QString const& file_name)
 }
 
 //-------------------------------------------------------------------------
-int MainWindowModelImpl::createSignalVisualisationImpl (QSharedPointer<ChannelManager> channel_manager,
-                                                                        QSharedPointer<EventManager> event_manager)
+int MainWindowModelImpl::createSignalVisualisationImpl (ChannelManager const& channel_manager,
+                                                        QSharedPointer<EventManager> event_manager)
 {
     QSharedPointer<TabContext> tab_context (new TabContext);
 

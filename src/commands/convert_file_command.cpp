@@ -18,8 +18,8 @@ QString ConvertFileCommand::execute ()
     if (open_error.size ())
         return open_error;
 
-    QSharedPointer<FileSignalWriter> writer = FileSignalWriterFactory::getInstance()->getHandler (destination_file_path_);
-    ProgressBar::instance().initAndShow (application_context_->getCurrentFileContext()->getChannelManager()->getNumberSamples() +
+    QSharedPointer<FileSignalWriter> writer (FileSignalWriterFactory::getInstance()->getHandler (destination_file_path_));
+    ProgressBar::instance().initAndShow (application_context_->getCurrentFileContext()->getChannelManager().getNumberSamples() +
                                          application_context_->getCurrentFileContext()->getEventManager()->getNumberOfEvents(), "Converting",
                                          application_context_);
     QString result = writer->save (application_context_->getCurrentFileContext());

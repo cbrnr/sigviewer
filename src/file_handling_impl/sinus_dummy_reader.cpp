@@ -54,10 +54,10 @@ SinusDummyReader::~SinusDummyReader()
 {}
 
 //-------------------------------------------------------------------------
-QSharedPointer<FileSignalReader> SinusDummyReader::createInstance (QString const&)
+FileSignalReader* SinusDummyReader::createInstance (QString const&)
 {
     qDebug () << "creating SinusDummyReader";
-    return QSharedPointer<FileSignalReader> (new SinusDummyReader);
+    return new SinusDummyReader;
 }
 
 //-------------------------------------------------------------------------

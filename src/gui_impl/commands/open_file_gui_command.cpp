@@ -107,9 +107,9 @@ void OpenFileGuiCommand::importEvents ()
         open_path = QDir::homePath ();
     QString file_path = showOpenDialog (open_path, extensions);
 
-    QSharedPointer<FileSignalReader> file_signal_reader = FileSignalReaderFactory::getInstance()->getHandler (file_path);
+    FileSignalReader* file_signal_reader = FileSignalReaderFactory::getInstance()->getHandler (file_path);
 
-    if (file_signal_reader.isNull())
+    if (file_signal_reader == 0)
         return;
 
     QList<QSharedPointer<SignalEvent const> > events = file_signal_reader->getEvents ();
@@ -123,6 +123,7 @@ void OpenFileGuiCommand::importEvents ()
     }
     MacroUndoCommand* macro_command = new MacroUndoCommand (creation_commands);
     applicationContext()->getCurrentCommandExecuter()->executeCommand (macro_command);
+    delete file_signal_reader;
 }
 
 //-------------------------------------------------------------------------
@@ -139,28 +140,31 @@ void OpenFileGuiCommand::showFileInfo ()
 void OpenFileGuiCommand::openFileImpl (QString file_path, bool instantly)
 {
     file_path = QDir::toNativeSeparators (file_path);
-    QSharedPointer<FileSignalReader> file_signal_reader = FileSignalReaderFactory::getInstance()->getHandler (file_path);
+    FileSignalReader* file_signal_reader = FileSignalReaderFactory::getInstance()->getHandler (file_path);
 
-    if (file_signal_reader.isNull())
+    if (file_signal_reader == 0)
         return;
 
     QString file_name = file_path.section (QDir::separator(), -1);
 
-    QSharedPointer<ChannelManager> channel_manager (new ChannelManagerImpl (file_signal_reader));
+    ChannelManager* channel_manager (new ChannelManagerImpl (file_signal_reader));
 
     std::set<ChannelID> shown_channels;
     if (instantly)
         shown_channels = channel_manager->getChannels();
     else
-        shown_channels = GuiHelper::selectChannels (channel_manager,
+        shown_channels = GuiHelper::selectChannels (*channel_manager,
                                                     applicationContext()->getEventColorManager(),
                                                     file_signal_reader->getBasicHeader());
     if (shown_channels.size() == 0)
+    {
+        delete channel_manager;
         return;
+    }
 
     ProgressBar::instance().initAndShow (channel_manager->getNumberChannels() * 3, tr("Opening ") + file_name,
                                          applicationContext());
-    QSharedPointer<EventManager> event_manager (new EventManagerImpl (file_signal_reader));
+    QSharedPointer<EventManager> event_manager (new EventManagerImpl (*file_signal_reader));
     QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
                                                  channel_manager, file_signal_reader->getBasicHeader()));
 

@@ -22,7 +22,7 @@ class ChannelSelectionDialog : public QDialog
     Q_OBJECT
 friend class FileOpenTest;
 public:
-    ChannelSelectionDialog (QSharedPointer<ChannelManager const> channel_manager,
+    ChannelSelectionDialog (ChannelManager const& channel_manager,
                             QSharedPointer<BasicHeader> header,
                             QSharedPointer<ColorManager> color_manager,
                             QWidget* parent = 0);
@@ -52,7 +52,7 @@ private:
     ChannelSelectionDialog(const ChannelSelectionDialog&);
     const ChannelSelectionDialog& operator=(const ChannelSelectionDialog&);
 
-    QSharedPointer<ChannelManager const> channel_manager_;
+    ChannelManager const& channel_manager_;
     QSharedPointer<ColorManager> color_manager_;
     QSharedPointer<BasicHeader> header_;
 public:

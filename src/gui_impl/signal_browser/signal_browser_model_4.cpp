@@ -25,7 +25,7 @@ namespace SigViewer_
 
 //-----------------------------------------------------------------------------
 SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manager,
-                                       QSharedPointer<ChannelManager> channel_manager,
+                                       ChannelManager const& channel_manager,
                                        QSharedPointer<TabContext> tab_context,
                                        QSharedPointer<ColorManager const> color_manager)
 : SignalVisualisationModel (std::set<EventType> (),
@@ -152,7 +152,7 @@ void SignalBrowserModel::addChannel (ChannelID channel_id)
 
     signal_item->connect (getSignalViewSettings().data(), SIGNAL(channelHeightChanged(uint)), SLOT(setHeight(uint)));
     channel2signal_item_[channel_id] = signal_item;
-    signal_browser_view_->addSignalGraphicsItem (channel_id, signal_item, channel_manager_->getChannelLabel(channel_id));
+    signal_browser_view_->addSignalGraphicsItem (channel_id, signal_item, channel_manager_.getChannelLabel(channel_id));
 }
 
 //-----------------------------------------------------------------------------
@@ -230,7 +230,7 @@ void SignalBrowserModel::zoomOutAll()
 //-----------------------------------------------------------------------------
 void SignalBrowserModel::update()
 {
-    int32 width = channel_manager_->getNumberSamples()
+    int32 width = channel_manager_.getNumberSamples()
                   * getSignalViewSettings()->getPixelsPerSample();
 
     int32 height = getSignalViewSettings()->getChannelHeight() *
@@ -238,7 +238,7 @@ void SignalBrowserModel::update()
 
     signal_browser_view_->resizeScene (width, height);
 
-    double pixel_per_sec = getSignalViewSettings()->getPixelsPerSample() * channel_manager_->getSampleRate();
+    double pixel_per_sec = getSignalViewSettings()->getPixelsPerSample() * channel_manager_.getSampleRate();
     x_grid_pixel_intervall_ =  pixel_per_sec * MathUtils_::round125 (100.0 / pixel_per_sec);
 
     channel2y_pos_.clear();
@@ -318,7 +318,7 @@ void SignalBrowserModel::scaleChannel (ChannelID id)
 }
 
 //-------------------------------------------------------------------------
-QSharedPointer<ChannelManager const> SignalBrowserModel::getChannelManager () const
+ChannelManager const& SignalBrowserModel::getChannelManager () const
 {
     return channel_manager_;
 }

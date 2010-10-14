@@ -4,8 +4,6 @@
 #include "file_handling/channel_manager.h"
 #include "file_handling/file_signal_reader.h"
 
-#include <QSharedPointer>
-
 namespace SigViewer_
 {
 
@@ -17,9 +15,13 @@ namespace SigViewer_
 class ChannelManagerImpl : public ChannelManager
 {
 public:
-    ChannelManagerImpl (QSharedPointer<FileSignalReader> file_signal_reader);
+    //---------------------------------------------------------------------------------------------
+    /// @param file_signal_reader the ChannelManagerImpl takes ownership of the given FileSignalReader
+    ///                           and destroys it if the ChannelManagerImpl is destructed
+    ChannelManagerImpl (FileSignalReader* file_signal_reader);
 
-    virtual ~ChannelManagerImpl () {}
+    //---------------------------------------------------------------------------------------------
+    virtual ~ChannelManagerImpl ();
 
     //-------------------------------------------------------------------------
     virtual std::set<ChannelID> getChannels () const;
@@ -48,7 +50,7 @@ public:
     virtual float32 getSampleRate () const;
 
 private:
-    QSharedPointer<FileSignalReader> reader_;
+    FileSignalReader* reader_;
 };
 
 }

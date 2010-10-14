@@ -25,7 +25,7 @@ public:
 
     virtual ~FileSignalReader() {}
 
-    virtual QSharedPointer<FileSignalReader> createInstance (QString const& file_path) = 0;
+    virtual FileSignalReader* createInstance (QString const& file_path) = 0;
 
     virtual QSharedPointer<DataBlock const> getSignalData (ChannelID channel_id,
                                                            unsigned start_sample,
@@ -34,6 +34,8 @@ public:
     virtual QList<QSharedPointer<SignalEvent const> > getEvents () const = 0;
 
     virtual QSharedPointer<BasicHeader> getBasicHeader () = 0;
+
+    virtual QSharedPointer<BasicHeader const> getBasicHeader () const = 0;
 
 protected:
     FileSignalReader () {}

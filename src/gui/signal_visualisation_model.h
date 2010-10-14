@@ -61,7 +61,7 @@ public:
     virtual void scaleChannel (ChannelID id) = 0;
 
     //-------------------------------------------------------------------------
-    virtual QSharedPointer<ChannelManager const> getChannelManager () const = 0;
+    virtual ChannelManager const& getChannelManager () const = 0;
 
     //-------------------------------------------------------------------------
     /// @return the number of sample which is shown on the left side
@@ -117,7 +117,7 @@ signals:
     void modeChanged (SignalVisualisationMode mode);
 
 protected:
-    SignalVisualisationModel (std::set<EventType> const& shown_types, QSharedPointer<ChannelManager> channel_manager);
+    SignalVisualisationModel (std::set<EventType> const& shown_types, ChannelManager const& channel_manager);
     virtual void shownEventTypesChangedImpl () = 0;
     virtual void modeChangedImpl (SignalVisualisationMode) {}
 

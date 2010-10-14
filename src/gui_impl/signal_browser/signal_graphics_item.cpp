@@ -32,7 +32,7 @@ namespace SigViewer_
 SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const> signal_view_settings,
                                         QSharedPointer<EventManager> event_manager,
                                         QSharedPointer<CommandExecuter> command_executor,
-                                        QSharedPointer<ChannelManager> channel_manager,
+                                        ChannelManager const& channel_manager,
                                         QSharedPointer<ColorManager const> color_manager,
                                         ChannelID id,
                                         SignalBrowserModel& model)
@@ -43,8 +43,8 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
   color_manager_ (color_manager),
   id_ (id),
   signal_browser_model_(model),
-  minimum_ (channel_manager_->getMinValue (id_)),
-  maximum_ (channel_manager_->getMaxValue (id_)),
+  minimum_ (channel_manager_.getMinValue (id_)),
+  maximum_ (channel_manager_.getMaxValue (id_)),
   y_zoom_ (1),
   draw_y_grid_ (true),
   draw_x_grid_ (true),
@@ -77,7 +77,7 @@ void SignalGraphicsItem::setHeight (unsigned height)
    y_zoom_ = y_zoom_ * height / height_;
    y_offset_ = y_offset_* height / height_;
    height_ = height;
-   width_ = channel_manager_->getNumberSamples() * signal_view_settings_->getPixelsPerSample();
+   width_ = channel_manager_.getNumberSamples() * signal_view_settings_->getPixelsPerSample();
    updateYGridIntervall ();
 }
 
@@ -121,7 +121,7 @@ double SignalGraphicsItem::getValueRangeFragment() const
 //-----------------------------------------------------------------------------
 QString SignalGraphicsItem::getPhysicalDimensionString () const
 {
-    return channel_manager_->getChannelYUnitString (id_);
+    return channel_manager_.getChannelYUnitString (id_);
 }
 
 //-----------------------------------------------------------------------------
@@ -149,8 +149,8 @@ void SignalGraphicsItem::scale (double lower_value, double upper_value)
 void SignalGraphicsItem::autoScale (ScaleMode auto_zoom_type)
 {
 
-    minimum_ = channel_manager_->getMinValue (id_);
-    maximum_ = channel_manager_->getMaxValue (id_);
+    minimum_ = channel_manager_.getMinValue (id_);
+    maximum_ = channel_manager_.getMaxValue (id_);
 
     double max = maximum_;
     double min = minimum_;
@@ -214,10 +214,10 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
         length = width_ - last_x;
 
     length /= pixel_per_sample;
-    if (length < channel_manager_->getNumberSamples() - start_sample)
+    if (length < channel_manager_.getNumberSamples() - start_sample)
         length++;
 
-    QSharedPointer<DataBlock const> data_block = channel_manager_->getData (id_, start_sample, length);
+    QSharedPointer<DataBlock const> data_block = channel_manager_.getData (id_, start_sample, length);
 
     last_x = start_sample * pixel_per_sample;
     float32 last_y = (*data_block)[0];
@@ -309,7 +309,7 @@ void SignalGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* event)
         update (update_start, 0, update_end - update_start, height_);
 
         emit mouseAtSecond (sample_cleaned_pos / pixel_per_sample *
-                                   channel_manager_->getSampleRate());
+                                   channel_manager_.getSampleRate());
     }
     else
         event->ignore();
@@ -321,7 +321,7 @@ void SignalGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent* event)
     unsigned sample_pos = event->scenePos().x() / signal_view_settings_->getPixelsPerSample ();
 
     emit mouseMoving (true);
-    emit mouseAtSecond (sample_pos / channel_manager_->getSampleRate());
+    emit mouseAtSecond (sample_pos / channel_manager_.getSampleRate());
 
     if (event_manager_.isNull())
         return;
@@ -421,7 +421,7 @@ void SignalGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent* event)
 void SignalGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * event)
 {
     signal_browser_model_.selectChannel (id_);
-    QMenu* context_menu = new QMenu (channel_manager_->getChannelLabel(id_));
+    QMenu* context_menu = new QMenu (channel_manager_.getChannelLabel(id_));
     context_menu->addAction(GuiActionFactory::getInstance()->getQAction("Change Color..."));
     context_menu->addAction(GuiActionFactory::getInstance()->getQAction("Scale..."));
     if (signal_browser_model_.getShownChannels().size() > 1)

@@ -19,7 +19,7 @@ public:
     virtual ~BioSigReader();
 
     //-------------------------------------------------------------------------
-    QSharedPointer<FileSignalReader> createInstance (QString const& file_path);
+    FileSignalReader* createInstance (QString const& file_path);
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<DataBlock const> getSignalData (ChannelID channel_id,
@@ -31,6 +31,9 @@ public:
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<BasicHeader> getBasicHeader ();
+
+    //-------------------------------------------------------------------------
+    virtual QSharedPointer<BasicHeader const> getBasicHeader () const {return basic_header_;}
 
 private:
     //-------------------------------------------------------------------------

@@ -31,7 +31,7 @@ public:
     SignalGraphicsItem(QSharedPointer<SignalViewSettings const> signal_view_settings,
                        QSharedPointer<EventManager> event_manager,
                        QSharedPointer<CommandExecuter> command_executor,
-                       QSharedPointer<ChannelManager> channel_manager,
+                       ChannelManager const& channel_manager,
                        QSharedPointer<ColorManager const> color_manager,
                        ChannelID id,
                        SignalBrowserModel& model);
@@ -82,7 +82,7 @@ private:
     QSharedPointer<SignalViewSettings const> signal_view_settings_;
     QSharedPointer<EventManager> event_manager_;
     QSharedPointer<CommandExecuter> command_executor_;
-    QSharedPointer<ChannelManager> channel_manager_;
+    ChannelManager const& channel_manager_;
     QSharedPointer<ColorManager const> color_manager_;
     ChannelID id_;
     SignalBrowserModel& signal_browser_model_;

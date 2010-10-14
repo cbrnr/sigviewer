@@ -12,8 +12,10 @@ namespace Tests_
 
 QSharedPointer<EventManager> Test::createEventManagerWithDummyData ()
 {
-    QSharedPointer<FileSignalReader> reader = FileSignalReaderFactory::getInstance()->getHandler("blub.sinusdummy");
-    return QSharedPointer<EventManager> (new EventManagerImpl(reader));
+    FileSignalReader* reader = FileSignalReaderFactory::getInstance()->getHandler("blub.sinusdummy");
+    QSharedPointer<EventManager> evt_mgr (new EventManagerImpl(*reader));
+    delete reader;
+    return evt_mgr;
 }
 
 //-------------------------------------------------------------------------

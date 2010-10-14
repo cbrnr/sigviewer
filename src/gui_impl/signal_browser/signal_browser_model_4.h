@@ -33,7 +33,7 @@ class SignalBrowserModel : public SignalVisualisationModel
 public:
     //-------------------------------------------------------------------------
     SignalBrowserModel(QSharedPointer<EventManager> event_manager,
-                       QSharedPointer<ChannelManager> channel_manager,
+                       ChannelManager const& channel_manager,
                        QSharedPointer<TabContext> tab_context,
                        QSharedPointer<ColorManager const> color_manager);
 
@@ -47,7 +47,7 @@ public:
     virtual void scaleChannel (ChannelID id);
 
     //-------------------------------------------------------------------------
-    virtual QSharedPointer<ChannelManager const> getChannelManager () const;
+    virtual ChannelManager const& getChannelManager () const;
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<EventManager const> getEventManager () const;
@@ -127,7 +127,7 @@ private:
     //-------------------------------------------------------------------------
     static uint8 const SIGNAL_Z = 4;
 
-    QSharedPointer<ChannelManager> channel_manager_;
+    ChannelManager const& channel_manager_;
     QSharedPointer<EventManager> event_manager_;
     QSharedPointer<TabContext> tab_context_;
     QSharedPointer<ColorManager const> color_manager_;

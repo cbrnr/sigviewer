@@ -8,6 +8,7 @@
 #include <QPaintEngine>
 #include <QFile>
 #include <QPainter>
+#include <QPointer>
 
 namespace SigViewer_
 {
@@ -79,14 +80,14 @@ void SaveGuiCommand::saveAs ()
         }
         if (QFile::copy (old_file_path_and_name, new_file_path))
         {
-            QSharedPointer<FileSignalWriter> writer = FileSignalWriterFactory::getInstance()->getHandler(new_file_path);
+            FileSignalWriter* writer (FileSignalWriterFactory::getInstance()->getHandler(new_file_path));
 
             bool can_save_events = false;
-            if (!writer.isNull())
+            if (writer)
                 can_save_events = writer->supportsSavingEvents ();
 
             QSharedPointer<EventManager> event_mgr = file_context->getEventManager();
-            if (!writer.isNull() && can_save_events)
+            if (writer && can_save_events)
             {
                 QString error = writer->saveEventsToSignalFile (event_mgr, event_mgr->getAllPossibleEventTypes());
                 if (error.size())
@@ -96,6 +97,7 @@ void SaveGuiCommand::saveAs ()
             }
             else if (event_mgr->getNumberOfEvents() > 0)
                 QMessageBox::information(0, "", "Events not stored to " + new_file_path + "\n If you want to store events export the file to GDF or export the events into a EVT file!");
+            delete writer;
         }
         else
             QMessageBox::critical(0, "Saving.... failed!", "Could not save " + file_name + " to " + new_file_path);
@@ -107,14 +109,14 @@ void SaveGuiCommand::save ()
 {
     QString file_path = applicationContext()->getCurrentFileContext()->getFilePathAndName();
     QString file_name = applicationContext()->getCurrentFileContext()->getFileName();
-    QSharedPointer<FileSignalWriter> writer = FileSignalWriterFactory::getInstance()->getHandler (file_path);
+    FileSignalWriter* writer = FileSignalWriterFactory::getInstance()->getHandler (file_path);
 
     bool can_save_events = false;
 
-    if (!writer.isNull())
+    if (writer)
         can_save_events = writer->supportsSavingEvents();
 
-    if (!writer.isNull() && can_save_events)
+    if (writer && can_save_events)
     {
         QSharedPointer<EventManager> event_mgr = currentVisModel()->getEventManager();
         QString error = writer->saveEventsToSignalFile(event_mgr, event_mgr->getAllPossibleEventTypes());
@@ -130,6 +132,7 @@ void SaveGuiCommand::save ()
         if (pressed_button == QMessageBox::Yes)
             exportToGDF ();
     }
+    delete writer;
 }
 
 //-----------------------------------------------------------------------------
@@ -160,8 +163,8 @@ void SaveGuiCommand::exportToGDF ()
     if (new_file_path.size() == 0)
         return;
 
-    QSharedPointer<FileSignalWriter> writer = FileSignalWriterFactory::getInstance()->getHandler (new_file_path);
-    if (writer.isNull())
+    FileSignalWriter* writer = FileSignalWriterFactory::getInstance()->getHandler (new_file_path);
+    if (writer == 0)
     {
         QMessageBox::critical (0, tr("Error"), tr("Export failed!"));
         return;
@@ -170,7 +173,6 @@ void SaveGuiCommand::exportToGDF ()
     QSharedPointer<EventManager> event_mgr = currentVisModel()->getEventManager();
 
     QString error = writer->save (applicationContext()->getCurrentFileContext(), event_mgr->getAllPossibleEventTypes());
-
     if (error.size() == 0)
     {
         QMessageBox::StandardButton pressed_button = QMessageBox::question(0, current_file_name, current_file_name + tr(" has been converted into GDF and stored in:\n") + new_file_path
@@ -182,6 +184,7 @@ void SaveGuiCommand::exportToGDF ()
     else
         QMessageBox::critical (0, current_file_name, tr("Exporting to GDF failed!\n") + error);
 
+    delete writer;
 }
 
 //-------------------------------------------------------------------------
@@ -201,12 +204,13 @@ void SaveGuiCommand::exportEvents ()
     if (new_file_path.size() == 0)
         return;
 
-    QSharedPointer<FileSignalWriter> file_signal_writer = FileSignalWriterFactory::getInstance()
+    FileSignalWriter* file_signal_writer = FileSignalWriterFactory::getInstance()
                                            ->getHandler(new_file_path);
 
     qDebug() << new_file_path;
 
     file_signal_writer->save (applicationContext()->getCurrentFileContext(), types);
+    delete file_signal_writer;
 }
 
 //-------------------------------------------------------------------------

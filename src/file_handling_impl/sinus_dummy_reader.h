@@ -17,7 +17,7 @@ public:
     virtual ~SinusDummyReader();
 
     //-------------------------------------------------------------------------
-    QSharedPointer<FileSignalReader> createInstance (QString const& file_path);
+    FileSignalReader* createInstance (QString const& file_path);
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<DataBlock const> getSignalData (ChannelID channel_id,
@@ -29,6 +29,9 @@ public:
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<BasicHeader> getBasicHeader ();
+
+    //-------------------------------------------------------------------------
+    virtual QSharedPointer<BasicHeader const> getBasicHeader () const {return header_;}
 private:
     QMap<ChannelID, QSharedPointer<DataBlock const> > data_;
     QList<QSharedPointer<SignalEvent const> > events_;

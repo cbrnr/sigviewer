@@ -21,7 +21,7 @@ public:
 
 //-------------------------------------------------------------------------
 EventTableEditingDialog::EventTableEditingDialog (QSharedPointer<EventManager> event_manager,
-                                                  QSharedPointer<ChannelManager const> channel_manager,
+                                                  ChannelManager const& channel_manager,
                                                   QSharedPointer<CommandExecuter> command_executer,
                                                   std::set<EventType> const& shown_event_types) :
 event_manager_ (event_manager),
@@ -48,7 +48,7 @@ void EventTableEditingDialog::addToTable (QSharedPointer<SignalEvent const> even
 
     QTableWidgetItem* position_item = new EventTableItem (event->getPositionInSec(), precision_);
     QTableWidgetItem* duration_item = new EventTableItem (event->getDurationInSec(), precision_);
-    QTableWidgetItem* channel_item = new QTableWidgetItem (channel_manager_->getChannelLabel(event->getChannel()));
+    QTableWidgetItem* channel_item = new QTableWidgetItem (channel_manager_.getChannelLabel(event->getChannel()));
     QTableWidgetItem* type_item = new QTableWidgetItem (event_manager_->getNameOfEvent(event->getId()));
     QTableWidgetItem* id_item = new EventTableItem (event->getId());
 
@@ -91,7 +91,7 @@ void EventTableEditingDialog::updateTable (EventID event)
         if (ui_.event_table_->item (row, ID_INDEX_)->text().toInt()
             == event)
         {
-            ui_.event_table_->item (row, CHANNEL_INDEX_)->setText (channel_manager_->getChannelLabel(signal_event->getChannel()));
+            ui_.event_table_->item (row, CHANNEL_INDEX_)->setText (channel_manager_.getChannelLabel(signal_event->getChannel()));
         }
 }
 

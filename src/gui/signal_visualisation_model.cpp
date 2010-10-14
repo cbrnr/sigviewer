@@ -7,7 +7,7 @@ namespace SigViewer_
 
 //-----------------------------------------------------------------------------
 SignalVisualisationModel::SignalVisualisationModel (std::set<EventType> const& shown_types,
-                                                    QSharedPointer<ChannelManager> channel_manager)
+                                                    ChannelManager const& channel_manager)
     : signal_view_settings_ (new SignalViewSettings (channel_manager)),
       //pixel_per_sample_ (1),
       mode_ (MODE_HAND),

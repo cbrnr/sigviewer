@@ -191,7 +191,7 @@ void EventEditingGuiCommand::insertEventOverSelectedEvent ()
 void EventEditingGuiCommand::showEventTableDialog ()
 {
     QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager ();
-    QSharedPointer<ChannelManager const> channel_manager = currentVisModel()->getChannelManager ();
+    ChannelManager const& channel_manager = currentVisModel()->getChannelManager ();
     QSharedPointer<CommandExecuter> command_executer = applicationContext()->getCurrentCommandExecuter();
 
     EventTableEditingDialog event_dialog (event_manager,

@@ -4,8 +4,9 @@ namespace SigViewer_
 {
 
 //-------------------------------------------------------------------------
-ProcessedSignalChannelManager::ProcessedSignalChannelManager (float32 sample_rate, unsigned length)
-    : sample_rate_ (sample_rate),
+ProcessedSignalChannelManager::ProcessedSignalChannelManager (float32 sample_rate, unsigned length, QObject* parent)
+    : QObject (parent),
+      sample_rate_ (sample_rate),
       length_ (length)
 {
     // nothing to do here

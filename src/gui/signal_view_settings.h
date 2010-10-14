@@ -6,7 +6,6 @@
 
 #include <QObject>
 #include <QMap>
-#include <QSharedPointer>
 
 #include <set>
 
@@ -24,10 +23,10 @@ class SignalViewSettings : public QObject
     Q_PROPERTY(int channelHeight READ getChannelHeight WRITE setChannelHeight)
 public:
     //-------------------------------------------------------------------------
-    SignalViewSettings (QSharedPointer<ChannelManager const> channel_manager);
+    SignalViewSettings (ChannelManager const& channel_manager);
 
     //-------------------------------------------------------------------------
-    QSharedPointer<ChannelManager const> getChannelManager () const {return channel_manager_;}
+    ChannelManager const& getChannelManager () const {return channel_manager_;}
 
     //-------------------------------------------------------------------------
     float getPixelsPerSample () const {return pixels_per_sample_;}
@@ -36,7 +35,7 @@ public:
     int getChannelHeight () const {return channel_heigth_in_pixels_;}
 
     //-------------------------------------------------------------------------
-    float getSampleRate () const {return channel_manager_->getSampleRate();}
+    float getSampleRate () const {return channel_manager_.getSampleRate();}
 
     //-------------------------------------------------------------------------
     int getGridFragmentation (Qt::Orientation orientation) const {return grid_fragmentation_[orientation];}
@@ -74,7 +73,7 @@ private:
     float pixels_per_sample_;
     int channel_heigth_in_pixels_;
     QMap<Qt::Orientation, int> grid_fragmentation_;
-    QSharedPointer<ChannelManager const> channel_manager_;
+    ChannelManager const& channel_manager_;
 };
 
 }

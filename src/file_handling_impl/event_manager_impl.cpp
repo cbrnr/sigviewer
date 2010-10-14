@@ -9,11 +9,11 @@ namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
-EventManagerImpl::EventManagerImpl (QSharedPointer<FileSignalReader> reader)
-    : reader_ (reader),
+EventManagerImpl::EventManagerImpl (FileSignalReader const& reader)
+    : max_event_position_ (reader.getBasicHeader()->getNumberOfSamples()),
       caller_mutex_ (new QMutex)
 {
-    QList<QSharedPointer<SignalEvent const> > signal_events = reader_->getEvents ();
+    QList<QSharedPointer<SignalEvent const> > signal_events = reader.getEvents ();
     next_free_id_ = 0;
     for (int index = 0; index < signal_events.size(); index++)
     {
@@ -29,8 +29,8 @@ EventManagerImpl::EventManagerImpl (QSharedPointer<FileSignalReader> reader)
 
         next_free_id_++;
     }
-    sample_rate_ = reader_->getBasicHeader()->getEventSamplerate();
-    QMap<unsigned, QString> event_names = reader_->getBasicHeader()->getNamesOfUserSpecificEvents();
+    sample_rate_ = reader.getBasicHeader()->getEventSamplerate();
+    QMap<unsigned, QString> event_names = reader.getBasicHeader()->getNamesOfUserSpecificEvents();
     for (QMap<unsigned, QString>::iterator name_iter = event_names.begin();
          name_iter != event_names.end();
          ++name_iter)
@@ -157,8 +157,7 @@ double EventManagerImpl::getSampleRate () const
 //-------------------------------------------------------------------------
 unsigned EventManagerImpl::getMaxEventPosition () const
 {
-    QMutexLocker locker (caller_mutex_);
-    return reader_->getBasicHeader ()->getNumberOfSamples ();
+    return max_event_position_;
 }
 
 

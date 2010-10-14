@@ -63,9 +63,9 @@ EVTWriter::~EVTWriter()
 
 
 //-------------------------------------------------------------------------
-QSharedPointer<FileSignalWriter> EVTWriter::createInstance (QString const& new_file_path)
+FileSignalWriter* EVTWriter::createInstance (QString const& new_file_path)
 {
-  return QSharedPointer<FileSignalWriter> (new EVTWriter (new_file_path));
+  return new EVTWriter (new_file_path);
 }
 
 //-----------------------------------------------------------------------------

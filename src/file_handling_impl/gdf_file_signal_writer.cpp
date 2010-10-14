@@ -30,9 +30,9 @@ GDFFileSignalWriter::GDFFileSignalWriter (QString const& file_path)
 }
 
 //-------------------------------------------------------------------------
-QSharedPointer<FileSignalWriter> GDFFileSignalWriter::createInstance (QString const& file_path)
+FileSignalWriter* GDFFileSignalWriter::createInstance (QString const& file_path)
 {
-    return QSharedPointer<FileSignalWriter> (new GDFFileSignalWriter (file_path));
+    return new GDFFileSignalWriter (file_path);
 }
 
 
@@ -84,18 +84,18 @@ QString GDFFileSignalWriter::save (QSharedPointer<FileContext const> file_contex
     writer.getMainHeader ().set_recording_id (file_context->getFileName().append(" converted to GDF2").toStdString());
     // GDFWriter writer (new_file_path_.toStdString());
 
-    QSharedPointer<ChannelManager const> channel_manager = file_context->getChannelManager();
+    ChannelManager const& channel_manager = file_context->getChannelManager();
 
-    foreach (ChannelID channel, channel_manager->getChannels())
+    foreach (ChannelID channel, channel_manager.getChannels())
     {
         writer.createSignal (channel);
-        writer.getSignalHeader(channel).set_label (channel_manager->getChannelLabel (channel).toStdString());
+        writer.getSignalHeader(channel).set_label (channel_manager.getChannelLabel (channel).toStdString());
         writer.getSignalHeader(channel).set_datatype (gdf::FLOAT64);
-        writer.getSignalHeader(channel).set_samplerate (channel_manager->getSampleRate());
+        writer.getSignalHeader(channel).set_samplerate (channel_manager.getSampleRate());
         writer.getSignalHeader(channel).set_digmin (-1);
         writer.getSignalHeader(channel).set_digmax (1);
-        writer.getSignalHeader(channel).set_physmin (channel_manager->getMinValue (channel));
-        writer.getSignalHeader(channel).set_physmax (channel_manager->getMaxValue (channel));
+        writer.getSignalHeader(channel).set_physmin (channel_manager.getMinValue (channel));
+        writer.getSignalHeader(channel).set_physmax (channel_manager.getMaxValue (channel));
     }
 
     try
@@ -125,11 +125,11 @@ QString GDFFileSignalWriter::save (QSharedPointer<FileContext const> file_contex
     try
     {
         QString progressbar_string = "Writing samples...";
-        for (unsigned sample_index = 0; sample_index < channel_manager->getNumberSamples(); sample_index++)
+        for (unsigned sample_index = 0; sample_index < channel_manager.getNumberSamples(); sample_index++)
         {
-            foreach (ChannelID channel_id, channel_manager->getChannels())
+            foreach (ChannelID channel_id, channel_manager.getChannels())
             {
-                writer.addSamplePhys (channel_id, (*(channel_manager->getData (channel_id, sample_index, 1)))[0]);
+                writer.addSamplePhys (channel_id, (*(channel_manager.getData (channel_id, sample_index, 1)))[0]);
             }
             ProgressBar::instance().increaseValue (1, progressbar_string);
         }
