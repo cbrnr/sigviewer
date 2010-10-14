@@ -2,6 +2,9 @@
 #define GDF_FILE_SIGNAL_READER_H
 
 #include "file_handling/file_signal_reader.h"
+#include "gdf_basic_header.h"
+
+#include "GDF/Reader.h"
 
 namespace SigViewer_
 {
@@ -31,10 +34,19 @@ public:
     virtual QSharedPointer<BasicHeader> getBasicHeader ();
 
     //-------------------------------------------------------------------------
-    virtual QSharedPointer<BasicHeader const> getBasicHeader () const {return QSharedPointer<BasicHeader const>(0);}
+    virtual QSharedPointer<BasicHeader const> getBasicHeader () const {return header_;}
 
 
 private:
+    //-------------------------------------------------------------------------
+    QString open (QString const& file_path);
+
+    Q_DISABLE_COPY(GDFFileSignalReader)
+
+
+    gdf::Reader* reader_;
+    QSharedPointer<GDFBasicHeader> header_;
+    mutable QMap<ChannelID, QSharedPointer<DataBlock const> > channel_map_;
 };
 
 } // namespace

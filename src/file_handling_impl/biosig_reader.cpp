@@ -53,7 +53,7 @@ namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
-FILE_SIGNAL_READER_REGISTRATION(gdf, BioSigReader);
+//FILE_SIGNAL_READER_REGISTRATION(gdf, BioSigReader);
 FILE_SIGNAL_READER_REGISTRATION(edf, BioSigReader);
 FILE_SIGNAL_READER_REGISTRATION(bdf, BioSigReader);
 FILE_SIGNAL_READER_REGISTRATION(dat, BioSigReader);
