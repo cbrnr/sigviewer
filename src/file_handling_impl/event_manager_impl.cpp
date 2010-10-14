@@ -26,6 +26,8 @@ EventManagerImpl::EventManagerImpl (FileSignalReader const& reader)
                                    new QMutex));
 
         position_event_map_.insertMulti (signal_events[index]->getPosition (), next_free_id_);
+        if (!event_table_reader_.entryExists (signal_events[index]->getType()))
+            event_table_reader_.addEntry (signal_events[index]->getType());
 
         next_free_id_++;
     }
@@ -193,10 +195,13 @@ unsigned EventManagerImpl::getNumberOfEvents () const
 
 
 //-----------------------------------------------------------------------------
-std::set<EventType> EventManagerImpl::getAllPossibleEventTypes () const
+std::set<EventType> EventManagerImpl::getEventTypes (QString group_id) const
 {
     QMutexLocker locker (caller_mutex_);
-    return event_table_reader_.getAllEventTypes ();
+    if (group_id.size ())
+        return event_table_reader_.getEventsOfGroup (group_id);
+    else
+        return event_table_reader_.getAllEventTypes ();
 }
 
 //-------------------------------------------------------------------------

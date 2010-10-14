@@ -9,12 +9,18 @@
 namespace SigViewer_
 {
 
-// constructor
+//-------------------------------------------------------------------------------------------------
+QString const EventTableFileReader::UNKNOWN_GROUP_ID = "Unknown Group";
+
+
+//-------------------------------------------------------------------------------------------------
 EventTableFileReader::EventTableFileReader()
 {
     QSettings settings;
     QString event_codes_file = settings.value ("eventcodes_file", ":/eventcodes.txt").toString();
     load (event_codes_file);
+    event_group_ids_.append (UNKNOWN_GROUP_ID);
+    group_id2name_[UNKNOWN_GROUP_ID] = UNKNOWN_GROUP_ID;
 }
 
 // destructor
@@ -144,6 +150,39 @@ QString EventTableFileReader::getEventGroupId(uint16 event_type_id) const
                                         : "";
 }
 
+//-------------------------------------------------------------------------------------------------
+bool EventTableFileReader::entryExists (EventType type) const
+{
+    return event_types_.contains (type);
+}
+
+//-------------------------------------------------------------------------------------------------
+void EventTableFileReader::addEntry (EventType type, QString const& name, QString group_id)
+{
+    if (event_types_.contains (type))
+        return;
+    event_types_.append (type);
+
+    if (!event_group_ids_.contains (group_id))
+        group_id = UNKNOWN_GROUP_ID;
+
+    EventItem item;
+    item.group_id = group_id;
+
+    if (name.size())
+        item.name = name;
+    else
+    {
+        item.name = QString::number (type, 16);
+        while (item.name.size() < 4)
+            item.name.prepend ("0");
+        item.name.prepend("0x");
+    }
+
+    event_type2name_[type] = item;
+}
+
+
 //-------------------------------------------------------------------
 std::set<EventType> EventTableFileReader::getAllEventTypes () const
 {
@@ -158,7 +197,7 @@ std::set<EventType> EventTableFileReader::getAllEventTypes () const
 }
 
 // get event group name
-QString EventTableFileReader::getEventGroupName(const QString& group_id)
+QString EventTableFileReader::getEventGroupName(const QString& group_id) const
 {
     String2StringMap::const_iterator it = group_id2name_.find(group_id);
     return it != group_id2name_.end() ? it.value()

@@ -7,8 +7,6 @@
 #include <QPointer>
 #include <QDebug>
 
-#include <iostream>
-
 namespace SigViewer_
 {
 

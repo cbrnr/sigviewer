@@ -35,7 +35,7 @@ public:
         if (event_manager.isNull())
             return save (file_context, std::set<EventType> ());
         else
-            return save (file_context, event_manager->getAllPossibleEventTypes ());
+            return save (file_context, event_manager->getEventTypes (""));
     }
 
     //-------------------------------------------------------------------------

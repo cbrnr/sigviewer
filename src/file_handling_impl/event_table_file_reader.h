@@ -33,7 +33,7 @@ public:
 
     StringIterator getGroupIdBegin() const;
     StringIterator getGroupIdEnd() const;
-    QString getEventGroupName(const QString& group_id);
+    QString getEventGroupName(const QString& group_id) const;
 
     IntIterator eventTypesBegin();
     IntIterator eventTypesEnd();
@@ -43,9 +43,19 @@ public:
     std::set<EventType> getEventsOfGroup (QString const& group_id) const;
     QString getEventGroupId (EventType event_type_id) const;
 
+    //---------------------------------------------------------------------------------------------
+    /// @return true if an the eventtablefilereader has an entry of this type;
+    ///         false if not
+    bool entryExists (EventType type) const;
+
+    //---------------------------------------------------------------------------------------------
+    void addEntry (EventType type, QString const& name = "", QString group_id = "");
+
     std::set<uint16> getAllEventTypes () const;
 private:
     bool load(const QString& file_name);
+
+    static QString const UNKNOWN_GROUP_ID;
 
     struct EventItem
     {

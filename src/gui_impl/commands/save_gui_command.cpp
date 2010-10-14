@@ -89,7 +89,7 @@ void SaveGuiCommand::saveAs ()
             QSharedPointer<EventManager> event_mgr = file_context->getEventManager();
             if (writer && can_save_events)
             {
-                QString error = writer->saveEventsToSignalFile (event_mgr, event_mgr->getAllPossibleEventTypes());
+                QString error = writer->saveEventsToSignalFile (event_mgr, event_mgr->getEventTypes());
                 if (error.size())
                     QMessageBox::critical(0, new_file_path, error);
                 else
@@ -119,7 +119,7 @@ void SaveGuiCommand::save ()
     if (writer && can_save_events)
     {
         QSharedPointer<EventManager> event_mgr = currentVisModel()->getEventManager();
-        QString error = writer->saveEventsToSignalFile(event_mgr, event_mgr->getAllPossibleEventTypes());
+        QString error = writer->saveEventsToSignalFile(event_mgr, event_mgr->getEventTypes());
         if (error.size())
             QMessageBox::critical (0, tr("Error"), error);
         else
@@ -172,7 +172,7 @@ void SaveGuiCommand::exportToGDF ()
 
     QSharedPointer<EventManager> event_mgr = currentVisModel()->getEventManager();
 
-    QString error = writer->save (applicationContext()->getCurrentFileContext(), event_mgr->getAllPossibleEventTypes());
+    QString error = writer->save (applicationContext()->getCurrentFileContext(), event_mgr->getEventTypes());
     if (error.size() == 0)
     {
         QMessageBox::StandardButton pressed_button = QMessageBox::question(0, current_file_name, current_file_name + tr(" has been converted into GDF and stored in:\n") + new_file_path

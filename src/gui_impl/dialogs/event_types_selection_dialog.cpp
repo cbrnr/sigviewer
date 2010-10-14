@@ -36,7 +36,6 @@ EventTypesSelectionDialog::EventTypesSelectionDialog (QString const& caption,
 //-----------------------------------------------------------------------------
 void EventTypesSelectionDialog::buildTree (bool only_existing_events)
 {
-    EventTableFileReader event_table_file_reader;
     ui_.tree_widget_->setRootIsDecorated(true);
     QStringList header_labels;
     header_labels << tr("Event Type") << tr("Color") << tr("Alpha") << tr("Type Id");
@@ -60,17 +59,14 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
         existing_types.insert (event_manager_->getEvent (event_id)->getType ());
 
     QMap<QString, QTreeWidgetItem*> group_id2list_item;
-    EventTableFileReader::StringIterator group_it;
 
-    for (group_it = event_table_file_reader.getGroupIdBegin();
-         group_it != event_table_file_reader.getGroupIdEnd();
-         group_it++)
+    foreach (QString group_id, event_manager_->getEventTypeGroupIDs())
     {
-        QString group_name =
-            event_table_file_reader.getEventGroupName(*group_it);
+        QString group_name = group_id;
+           // TODO: event_table_file_reader.getEventGroupName(*group_it);
 
         bool show_group = !only_existing_events;
-        foreach (EventType group_type, event_table_file_reader.getEventsOfGroup(*group_it))
+        foreach (EventType group_type, event_manager_->getEventTypes (group_id))
             if (existing_types.count(group_type) && only_existing_events)
                 show_group = true;
 
@@ -82,55 +78,47 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
                                   Qt::ItemIsEnabled);
             group_item->setText (NAME_COLUMN_INDEX_, group_name);
             group_item->setExpanded (true);
-            group_id2list_item[*group_it] = group_item;
+            group_id2list_item[group_id] = group_item;
+
+            foreach (EventType event_type, event_manager_->getEventTypes (group_id))
+            {
+                if (only_existing_events && !existing_types.count(event_type))
+                    continue;
+
+                QString event_name
+                    = event_manager_->getNameOfEventType (event_type);
+
+                QTreeWidgetItem* event_item
+                    = new QTreeWidgetItem (group_item);
+
+                event_item->setFlags (Qt::ItemIsUserCheckable |
+                                      Qt::ItemIsEnabled);
+
+                QColor color = color_manager_->getEventColor(event_type);
+                if (selected_types_.count(event_type))
+                    event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Checked);
+                else
+                    event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Unchecked);
+
+                event_item->setText (NAME_COLUMN_INDEX_, event_name);
+
+                color.setAlpha (255);
+
+                event_item->setBackgroundColor (COLOR_COLUMN_INDEX_, color);
+                event_item->setTextColor (COLOR_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
+                event_item->setTextAlignment (COLOR_COLUMN_INDEX_, Qt::AlignHCenter);
+                event_item->setText (COLOR_COLUMN_INDEX_, color.name());
+
+                color = color_manager_->getEventColor(event_type);
+
+                event_item->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
+                event_item->setTextColor(ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
+                event_item->setTextAlignment(ALPHA_COLUMN_INDEX_, Qt::AlignHCenter);
+                event_item->setText(ALPHA_COLUMN_INDEX_, QString("%1").arg(color.alpha()));
+
+                event_item->setText (ID_COLUMN_INDEX_, QString::number(event_type));
+            }
         }
-    }
-
-    // build events
-    EventTableFileReader::IntIterator event_type_it;
-
-    for (event_type_it = event_table_file_reader.eventTypesBegin();
-         event_type_it != event_table_file_reader.eventTypesEnd();
-         event_type_it++)
-    {
-        if (only_existing_events && !existing_types.count(*event_type_it))
-            continue;
-
-        QString group_name
-            = event_table_file_reader.getEventGroupId(*event_type_it);
-
-        QString event_name
-            = event_manager_->getNameOfEventType (*event_type_it);
-
-        QTreeWidgetItem* event_item
-            = new QTreeWidgetItem(group_id2list_item[group_name]);
-
-        event_item->setFlags (Qt::ItemIsUserCheckable |
-                              Qt::ItemIsEnabled);
-
-        QColor color = color_manager_->getEventColor(*event_type_it);
-        if (selected_types_.count(*event_type_it))
-            event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Checked);
-        else
-            event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Unchecked);
-
-        event_item->setText (NAME_COLUMN_INDEX_, event_name);
-
-        color.setAlpha (255);
-
-        event_item->setBackgroundColor (COLOR_COLUMN_INDEX_, color);
-        event_item->setTextColor (COLOR_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
-        event_item->setTextAlignment (COLOR_COLUMN_INDEX_, Qt::AlignHCenter);
-        event_item->setText (COLOR_COLUMN_INDEX_, color.name());
-
-        color = color_manager_->getEventColor(*event_type_it);
-
-        event_item->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
-        event_item->setTextColor(ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
-        event_item->setTextAlignment(ALPHA_COLUMN_INDEX_, Qt::AlignHCenter);
-        event_item->setText(ALPHA_COLUMN_INDEX_, QString("%1").arg(color.alpha()));
-
-        event_item->setText (ID_COLUMN_INDEX_, QString::number(*event_type_it));
     }
 }
 
@@ -207,7 +195,7 @@ void EventTypesSelectionDialog::on_select_all_button__clicked ()
 {
     for (int index = 0; index < ui_.tree_widget_->topLevelItemCount(); index++)
         ui_.tree_widget_->topLevelItem(index)->setCheckState(CHECKBOX_COLUMN_INDEX_, Qt::Checked);
-    selected_types_ = event_manager_->getAllPossibleEventTypes ();
+    selected_types_ = event_manager_->getEventTypes ();
 }
 
 //-----------------------------------------------------------------------------

@@ -76,7 +76,7 @@ void SignalBrowserModel::setSignalBrowserView (SignalBrowserView* signal_browser
 {
     signal_browser_view_ = signal_browser_view;
     if (!event_manager_.isNull())
-        setShownEventTypes (event_manager_->getAllPossibleEventTypes());
+        setShownEventTypes (event_manager_->getEventTypes());
 
 }
 

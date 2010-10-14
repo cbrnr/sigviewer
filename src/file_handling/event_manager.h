@@ -81,9 +81,10 @@ public:
     virtual unsigned getNumberOfEvents () const = 0;
 
     //-------------------------------------------------------------------------
-    /// @return set of event_id of all possible event types (even those of
-    ///         which no event exists at the moment
-    virtual std::set<EventType> getAllPossibleEventTypes () const = 0;
+    virtual std::set<EventType> getEventTypes () const {return getEventTypes ("");}
+
+    //-------------------------------------------------------------------------
+    virtual std::set<EventType> getEventTypes (QString group_id) const = 0;
 
     //-------------------------------------------------------------------------
     virtual std::set<QString> getEventTypeGroupIDs () const = 0;

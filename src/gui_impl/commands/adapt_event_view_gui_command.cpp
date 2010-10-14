@@ -77,7 +77,7 @@ void AdaptEventViewGuiCommand::hideEventsOfOtherType ()
 //-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::showAllEvents ()
 {
-    std::set<EventType> shown_types = currentVisModel()->getEventManager()->getAllPossibleEventTypes();
+    std::set<EventType> shown_types = currentVisModel()->getEventManager()->getEventTypes();
     currentVisModel()->setShownEventTypes (shown_types);
 }
 

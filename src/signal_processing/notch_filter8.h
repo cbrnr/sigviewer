@@ -7,7 +7,6 @@
 
 #include <vector>
 #include <boost/circular_buffer.hpp>
-#include <iostream>
 
 namespace SigViewer_
 {
@@ -29,7 +28,6 @@ private:
             template<typename T>
             void filterImpl (T const& in, T& out, int in_out_size) const
             {
-                std::cout << freq_;
                 double temp = 0;
                 double sum = 0;
                 boost::circular_buffer<double> buffer(8);
