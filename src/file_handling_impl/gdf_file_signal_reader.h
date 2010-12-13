@@ -47,6 +47,7 @@ private:
     gdf::Reader* reader_;
     QSharedPointer<GDFBasicHeader> header_;
     mutable QMap<ChannelID, QSharedPointer<DataBlock const> > channel_map_;
+    mutable QList<QSharedPointer<SignalEvent const> > events_;
 };
 
 } // namespace

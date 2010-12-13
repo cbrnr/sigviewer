@@ -50,8 +50,11 @@ SinusDummyReader::SinusDummyReader ()
     header_->setNumberEvents(events_.size());
 }
 
+//-------------------------------------------------------------------------
 SinusDummyReader::~SinusDummyReader()
-{}
+{
+    qDebug () << "deleting SinusDummyReader";
+}
 
 //-------------------------------------------------------------------------
 FileSignalReader* SinusDummyReader::createInstance (QString const&)

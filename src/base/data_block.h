@@ -31,6 +31,9 @@ public:
     DataBlock (DataBlock const &src);
 
     //-------------------------------------------------------------------------
+    ~DataBlock ();
+
+    //-------------------------------------------------------------------------
     QSharedPointer<DataBlock> createSubBlock (uint32 start, uint32 length) const;
 
     //-------------------------------------------------------------------------
@@ -105,6 +108,8 @@ private:
     std::string label_;
     std::string x_unit_label_;
     std::string y_unit_label_;
+
+    static unsigned instance_count_;
 };
 
 }

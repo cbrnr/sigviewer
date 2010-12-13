@@ -23,15 +23,9 @@ BiosigBasicHeader::BiosigBasicHeader (HDRTYPE* raw_header, QString const& file_p
 
     setFileTypeString (QString (GetFileTypeString(raw_header->TYPE)).append(" v").append(QString::number(raw_header->VERSION)));
 
-    int factor = 1;
     float sampling_rate = raw_header->SampleRate;
-    /// FIXXME: deactivated for 0.4.3 release
-//    while (sampling_rate > 512)
-//    {
-//        factor += 1;
-//        sampling_rate = raw_header->SampleRate / factor;
-//    }
-    setSampleRate (sampling_rate, factor);
+
+    setSampleRate (sampling_rate);
     readChannelsInfo (raw_header);
     readPatientInfo (raw_header);
     readRecordingInfo (raw_header);

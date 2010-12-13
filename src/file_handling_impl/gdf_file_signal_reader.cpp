@@ -24,6 +24,7 @@ GDFFileSignalReader::~GDFFileSignalReader()
         reader_->close ();
         delete reader_;
     }
+    qDebug () << "deleting GDFFileSignalReader";
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -48,16 +49,25 @@ QSharedPointer<DataBlock const> GDFFileSignalReader::getSignalData (ChannelID ch
 {
     if (!channel_map_.contains (channel_id))
     {
-        double* buffer = new double[header_->getNumberOfSamples()];
-        reader_->getSignal (channel_id, buffer, 0, header_->getNumberOfSamples());
+        unsigned whole_channel_length = header_->getNumberOfSamples();
+        QSharedPointer<std::vector<float32> > raw_data (new std::vector<float32> (whole_channel_length));
 
-        QSharedPointer<std::vector<float32> > raw_data (new std::vector<float32> (length));
-        for (unsigned index = 0; index <= header_->getNumberOfSamples(); index++)
-            raw_data->operator [](index) = buffer[index];
+        double* buffer = new double[header_->getDownSamplingFactor ()];
 
-        QSharedPointer<DataBlock const> data (new DataBlock (raw_data, reader_->getSignalHeader_readonly(channel_id).get_samplerate()));
+        double sample = 0;
+        for (unsigned index = 0; index < whole_channel_length; index++)
+        {
+            sample = 0;
+            reader_->getSignal (channel_id, buffer, index * header_->getDownSamplingFactor (), (index + 1) * header_->getDownSamplingFactor ());
+            for (int sub_index = 0; sub_index < header_->getDownSamplingFactor(); sub_index++)
+                sample += buffer[sub_index];
+            raw_data->operator [](index) = sample / header_->getDownSamplingFactor();
+        }
 
-        delete buffer;
+        QSharedPointer<DataBlock const> data (new DataBlock (raw_data, reader_->getSignalHeader_readonly(channel_id).get_samplerate()
+                                                                       / header_->getDownSamplingFactor ()));
+
+        delete[] buffer;
         channel_map_[channel_id] = data;
     }
     return channel_map_[channel_id]->createSubBlock (start_sample, length);
@@ -66,7 +76,20 @@ QSharedPointer<DataBlock const> GDFFileSignalReader::getSignalData (ChannelID ch
 //-------------------------------------------------------------------------------------------------
 QList<QSharedPointer<SignalEvent const> > GDFFileSignalReader::getEvents () const
 {
-    return QList<QSharedPointer<SignalEvent const> > ();
+    qDebug () << "Number events " << reader_->getEventHeader()->getNumEvents() << "; Event Mode = " << reader_->getEventHeader()->getMode();
+    if (events_.size ())
+        return events_;
+
+    for (unsigned index = 0; index < reader_->getEventHeader()->getNumEvents(); index++)
+    {
+        gdf::Mode3Event gdf_event;
+        reader_->getEventHeader()->getEvent (index, gdf_event);
+        QSharedPointer<SignalEvent const> event (new SignalEvent (gdf_event.position / header_->getDownSamplingFactor(), gdf_event.type, reader_->getEventHeader()->getSamplingRate() / header_->getDownSamplingFactor(),
+                                                            gdf_event.channel - 1, gdf_event.duration / header_->getDownSamplingFactor()));
+        events_.push_back (event);
+    }
+
+    return events_;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -81,6 +104,7 @@ QString GDFFileSignalReader::open (QString const& file_path)
     if (reader_)
         delete reader_;
     reader_ = new gdf::Reader ();
+    reader_->enableCache (false);
     try
     {
         reader_->open (file_path.toStdString());

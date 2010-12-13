@@ -5,8 +5,8 @@
 
 #include "biosig.h"
 
-#include "GDF/Writer.h"
-#include "GDF/Modifier.h"
+#include <GDF/Writer.h>
+#include <GDF/Modifier.h>
 
 #include <QDebug>
 #include <QMessageBox>
@@ -46,7 +46,7 @@ QString GDFFileSignalWriter::saveEventsToSignalFile (QSharedPointer<EventManager
     float32 event_sampling_rate = event_header->getSamplingRate();
     event_header->clear();
     event_header->setMode (3);
-    uint8 mode = event_header->getMode();
+    event_header->setSamplingRate (event_sampling_rate);
 
     QList<EventID> events;
     foreach (EventType type, types)

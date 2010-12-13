@@ -9,6 +9,9 @@
 
 namespace SigViewer_ {
 
+unsigned DataBlock::instance_count_ = 0;
+
+
 //-----------------------------------------------------------------------------
 DataBlock::DataBlock ()
     : length_ (0),
@@ -25,7 +28,7 @@ DataBlock::DataBlock (QSharedPointer<std::vector<float32> > data,
       start_index_ (0),
       sample_rate_per_unit_ (sample_rate_per_unit)
 {
-    // nothing to do here
+    instance_count_++;
 }
 
 //-----------------------------------------------------------------------------
@@ -37,9 +40,19 @@ DataBlock::DataBlock (DataBlock const &src)
       x_unit_label_ (src.x_unit_label_),
       y_unit_label_ (src.y_unit_label_)
 {
-    // nothing to do here
+    instance_count_++;
 }
 
+//-------------------------------------------------------------------------
+DataBlock::~DataBlock ()
+{
+    instance_count_--;
+    qDebug () << "DataBlock::instance_count_ = " << instance_count_;
+    if (length_ >= 10000)
+    {
+        qDebug () << "deleting DataBlock";
+    }
+}
 
 //-------------------------------------------------------------------------
 QSharedPointer<DataBlock> DataBlock::createSubBlock (uint32 start,
