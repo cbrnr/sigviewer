@@ -152,7 +152,7 @@
      </widget>
      <widget class="QWidget" name="filters_tab">
       <property name="enabled">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
       <attribute name="title">
        <string>Filters</string>
@@ -195,7 +195,7 @@
        <item row="1" column="0">
         <widget class="QPushButton" name="remove_filter_button_">
          <property name="enabled">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="text">
           <string>Remove Filter</string>

@@ -1,6 +1,8 @@
 #include "gdf_file_signal_reader.h"
 #include "file_handler_factory_registrator.h"
 
+#include "GDF/EventConverter.h"
+
 #include <QMessageBox>
 
 namespace SigViewer_
@@ -80,10 +82,15 @@ QList<QSharedPointer<SignalEvent const> > GDFFileSignalReader::getEvents () cons
     if (events_.size ())
         return events_;
 
-    for (unsigned index = 0; index < reader_->getEventHeader()->getNumEvents(); index++)
+    std::vector<gdf::Mode3Event> mode_3_events;
+    if (reader_->getEventHeader()->getMode() == 1)
+        mode_3_events = gdf::convertMode1EventsIntoMode3Events (reader_->getEventHeader()->getMode1Events());
+    else
+        mode_3_events = reader_->getEventHeader()->getMode3Events();
+
+    for (unsigned index = 0; index < mode_3_events.size (); index++)
     {
-        gdf::Mode3Event gdf_event;
-        reader_->getEventHeader()->getEvent (index, gdf_event);
+        gdf::Mode3Event& gdf_event = mode_3_events[index];
         QSharedPointer<SignalEvent const> event (new SignalEvent (gdf_event.position / header_->getDownSamplingFactor(), gdf_event.type, reader_->getEventHeader()->getSamplingRate() / header_->getDownSamplingFactor(),
                                                             gdf_event.channel - 1, gdf_event.duration / header_->getDownSamplingFactor()));
         events_.push_back (event);
