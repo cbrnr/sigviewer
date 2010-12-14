@@ -2,6 +2,7 @@
 #include "gui_impl/gui_helper_functions.h"
 #include "gui_impl/processed_signal_channel_manager.h"
 #include "gui/progress_bar.h"
+#include "base/fixed_data_block.h"
 
 namespace SigViewer_
 {
@@ -68,8 +69,8 @@ void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation ()
                 data.push_back (data_block);
         }
 
-        QSharedPointer<DataBlock> mean = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateMean (data)));
-        QSharedPointer<DataBlock> standard_deviation = DataBlock::calculateStandardDeviation(data, *(mean.data()));
+        QSharedPointer<DataBlock> mean = FixedDataBlock::calculateMean (data);
+        QSharedPointer<DataBlock> standard_deviation = FixedDataBlock::calculateStandardDeviation (data, mean);
 
         processed_channel_manager->addExtraChannel (new_channel_id, standard_deviation, tr("Standard Deviation\n") + channel_manager.getChannelLabel(channel_id),
                                                     channel_manager.getChannelYUnitString(channel_id));
@@ -117,10 +118,10 @@ void SignalProcessingGuiCommand::calculatePowerSpectrum ()
                                                                                    event->getPosition(),
                                                                                    num_samples);
             if (!data_block.isNull())
-                data.push_back (data_block->createPowerSpectrum ());
+                data.push_back (FixedDataBlock::createPowerSpectrum(data_block));
         }
 
-        QSharedPointer<DataBlock> mean = QSharedPointer<DataBlock> (new DataBlock (DataBlock::calculateMean (data)));
+        QSharedPointer<DataBlock> mean = FixedDataBlock::calculateMean (data);
         QString unit = QString("log(").append(channel_manager.getChannelYUnitString (channel_id))
                                      .append(QChar(0xb2))
                                      .append("/Hz)");

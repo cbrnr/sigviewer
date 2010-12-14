@@ -19,25 +19,19 @@ class DataBlock
 {
 public:
     //-------------------------------------------------------------------------
-    DataBlock ();
+    virtual ~DataBlock ();
 
     //-------------------------------------------------------------------------
-    /// @param sample_rate_per_unit as a data_block must not represent data which
-    ///                             is associated to time, the sample_rate is given
-    ///                             in "per unit" (e.g. "s" or "hz", etc.)
-    DataBlock (QSharedPointer<std::vector<float32> > data, float32 sample_rate_per_unit);
+    virtual QSharedPointer<DataBlock> createSubBlock (uint32 start, uint32 length) const = 0;
 
     //-------------------------------------------------------------------------
-    DataBlock (DataBlock const &src);
+    virtual float32 const& operator[] (uint32 index) const = 0;
 
     //-------------------------------------------------------------------------
-    ~DataBlock ();
+    virtual float32 getMin () const = 0;
 
     //-------------------------------------------------------------------------
-    QSharedPointer<DataBlock> createSubBlock (uint32 start, uint32 length) const;
-
-    //-------------------------------------------------------------------------
-    float32 const& operator[] (uint32 index) const;
+    virtual float32 getMax () const = 0;
 
     //-------------------------------------------------------------------------
     /// length of the block
@@ -63,48 +57,17 @@ public:
     //-------------------------------------------------------------------------
     std::string getYUnitLabel () const;
 
-
     //-------------------------------------------------------------------------
     float32 getSampleRatePerUnit () const;
 
-
-    //-------------------------------------------------------------------------
-    float32 getMin () const;
-
-    //-------------------------------------------------------------------------
-    float32 getMax () const;
-
-    //-------------------------------------------------------------------------
-    // DataBlock getBandpassFilteredBlock (float32 lower_hz_boundary, float32 upper_hz_boundary) const;
-
-    //-------------------------------------------------------------------------
-    QSharedPointer<DataBlock const> createPowerSpectrum () const;
-
-    //-------------------------------------------------------------------------
-    static DataBlock calculateMean (std::list<QSharedPointer<DataBlock const> > const &data_blocks);
-
-    //-------------------------------------------------------------------------
-    static QSharedPointer<DataBlock> calculateStandardDeviation (std::list<QSharedPointer<DataBlock const> > const &data_blocks);
-
-    //-------------------------------------------------------------------------
-    static QSharedPointer<DataBlock> calculateStandardDeviation (std::list<QSharedPointer<DataBlock const> > const &data_blocks,
-                                                 DataBlock const &means);
-
+protected:
+    // protected constructors here:
+    DataBlock (unsigned length, float32 sample_rate_per_unit);
 
 private:
-
-    //-------------------------------------------------------------------------
-    static QSharedPointer<DataBlock> calculateStandardDeviationImpl (std::list<QSharedPointer<DataBlock const> > const &data_blocks,
-                                                                 DataBlock const &means);
-
-    //-------------------------------------------------------------------------
-    // static unsigned getLengthOfSmallestBlock (std::list<DataBlock> const &data_blocks);
-
-    QSharedPointer<std::vector<float32> > data_;
     uint32 length_;
-    uint32 start_index_;
-
     float32 sample_rate_per_unit_;
+
     std::string label_;
     std::string x_unit_label_;
     std::string y_unit_label_;

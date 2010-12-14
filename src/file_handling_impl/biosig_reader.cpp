@@ -28,6 +28,7 @@
 #include "biosig_basic_header.h"
 #include "file_handler_factory_registrator.h"
 #include "gui/progress_bar.h"
+#include "base/fixed_data_block.h"
 
 #include <boost/math/special_functions/fpclassify.hpp>
 
@@ -287,8 +288,8 @@ void BioSigReader::bufferAllChannels () const
             raw_data->operator [](data_index) = sample;
         }
 
-        QSharedPointer<DataBlock const> data_block (new DataBlock (raw_data,
-                                                                   basic_header_->getSampleRate()));
+        QSharedPointer<DataBlock const> data_block (new FixedDataBlock (raw_data,
+                                                                        basic_header_->getSampleRate()));
         channel_map_[channel_id] = data_block;
     }
 

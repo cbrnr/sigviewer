@@ -1,5 +1,6 @@
 #include "gdf_file_signal_reader.h"
 #include "file_handler_factory_registrator.h"
+#include "base/fixed_data_block.h"
 
 #include "GDF/EventConverter.h"
 
@@ -66,7 +67,7 @@ QSharedPointer<DataBlock const> GDFFileSignalReader::getSignalData (ChannelID ch
             raw_data->operator [](index) = sample / header_->getDownSamplingFactor();
         }
 
-        QSharedPointer<DataBlock const> data (new DataBlock (raw_data, reader_->getSignalHeader_readonly(channel_id).get_samplerate()
+        QSharedPointer<DataBlock const> data (new FixedDataBlock (raw_data, reader_->getSignalHeader_readonly(channel_id).get_samplerate()
                                                                        / header_->getDownSamplingFactor ()));
 
         delete[] buffer;

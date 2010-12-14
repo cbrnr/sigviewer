@@ -2,6 +2,7 @@
 #include "file_handler_factory_registrator.h"
 #include "sinus_dummy_header.h"
 #include "base/signal_channel.h"
+#include "base/fixed_data_block.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -26,7 +27,7 @@ SinusDummyReader::SinusDummyReader ()
         QSharedPointer<vector<float32> > data (new vector<float32>);
         for (float sample_index = 0; sample_index < 10000; sample_index++)
             data->push_back (sin(sample_index / ((i*i+1))));
-        QSharedPointer<DataBlock const> data_block (new DataBlock (data, 100));
+        QSharedPointer<DataBlock const> data_block (new FixedDataBlock (data, 100));
         data_.insert(i, data_block);
 
         QSharedPointer<SignalChannel> channel (new SignalChannel(i,
