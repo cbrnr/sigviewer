@@ -2,10 +2,12 @@
 #define GDF_DATA_BLOCK_H
 
 #include "base/data_block.h"
+#include "gdf_channel_cache.h"
 
 #include "GDF/Reader.h"
 
 #include <QVector>
+#include <QSharedPointer>
 
 namespace SigViewer_
 {
@@ -40,6 +42,9 @@ private:
     Q_DISABLE_COPY (GDFDataBlock);
 
     //---------------------------------------------------------------------------------------------
+    void loadCache (unsigned index) const;
+
+    //---------------------------------------------------------------------------------------------
     mutable float32 current_value_;
     gdf::Reader* reader_;
     ChannelID channel_;
@@ -47,6 +52,8 @@ private:
     int downsampling_factor_;
     mutable float32 current_min_;
     mutable float32 current_max_;
+
+    QSharedPointer<GDFChannelCache> cache_;
 };
 
 } // namespace SigViewer_

@@ -29,12 +29,19 @@ ChannelSelectionDialog::ChannelSelectionDialog (ChannelManager const&
     ui_.setupUi (this);
     QString window_title (tr("Channels"));
 
-    window_title.prepend (header->getFilePath() + " - ");
-    ui_.tabs->removeTab (1);
-    ui_.downsampling_tab->setVisible (true);
-    ui_.sr_file_label_->setText (QString::number (header_->getDownSamplingFactor() * header_->getSampleRate()).append(" Hz"));
-    ui_.sr_load_label_->setText (QString::number (header_->getSampleRate()).append(" Hz"));
-    ui_.downsample_factor_spinbox_->setValue (header_->getDownSamplingFactor());
+    if (header.isNull())
+    {
+        while (ui_.tabs->count() > 1)
+            ui_.tabs->removeTab (1);
+    }
+    else
+    {
+        window_title.prepend (header->getFilePath() + " - ");
+        ui_.tabs->removeTab (1);
+        ui_.sr_file_label_->setText (QString::number (header_->getDownSamplingFactor() * header_->getSampleRate()).append(" Hz"));
+        ui_.sr_load_label_->setText (QString::number (header_->getSampleRate()).append(" Hz"));
+        ui_.downsample_factor_spinbox_->setValue (header_->getDownSamplingFactor());
+    }
 
     setWindowTitle (window_title);
     ui_.channel_table_->setRowCount (channel_manager_.getNumberChannels());
