@@ -1,6 +1,6 @@
 #include "gdf_file_signal_writer.h"
 #include "file_handling/file_signal_writer_factory.h"
-#include "file_handler_factory_registrator.h"
+#include "../file_handler_factory_registrator.h"
 #include "gui/progress_bar.h"
 
 #include "biosig.h"

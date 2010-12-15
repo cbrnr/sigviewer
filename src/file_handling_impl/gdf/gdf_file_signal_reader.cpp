@@ -1,5 +1,5 @@
 #include "gdf_file_signal_reader.h"
-#include "file_handler_factory_registrator.h"
+#include "../file_handler_factory_registrator.h"
 #include "gdf_data_block.h"
 
 #include "GDF/EventConverter.h"
