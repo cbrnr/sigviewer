@@ -2,7 +2,7 @@
 #define GDF_DATA_BLOCK_H
 
 #include "base/data_block.h"
-#include "gdf_channel_cache.h"
+#include "gdf_signal_cache.h"
 
 #include "GDF/Reader.h"
 
@@ -17,7 +17,7 @@ class GDFDataBlock : public DataBlock
 {
 public:
     //---------------------------------------------------------------------------------------------
-    GDFDataBlock (gdf::Reader* reader, ChannelID channel, int downsampling_factor);
+    GDFDataBlock (QSharedPointer<GDFSignalCache> cache, ChannelID channel, unsigned length, float32 sample_rate, int downsampling_factor);
 
     //---------------------------------------------------------------------------------------------
     virtual ~GDFDataBlock ();
@@ -42,18 +42,13 @@ private:
     Q_DISABLE_COPY (GDFDataBlock);
 
     //---------------------------------------------------------------------------------------------
-    void loadCache (unsigned index) const;
-
-    //---------------------------------------------------------------------------------------------
-    mutable float32 current_value_;
-    gdf::Reader* reader_;
     ChannelID channel_;
     unsigned start_sample_;
     int downsampling_factor_;
     mutable float32 current_min_;
     mutable float32 current_max_;
 
-    QSharedPointer<GDFChannelCache> cache_;
+    QSharedPointer<GDFSignalCache> cache_;
 };
 
 } // namespace SigViewer_

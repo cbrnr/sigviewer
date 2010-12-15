@@ -190,6 +190,9 @@ void SignalGraphicsItem::scaleImpl (double min, double max)
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget*)
 {
+    if (option->exposedRect.width() < 1)
+        return;
+
     painter->drawRect(boundingRect());
     if (new_event_)
         painter->fillRect(new_signal_event_->getPosition(), 0, new_signal_event_->getDuration(), height_, new_event_color_);
@@ -248,7 +251,7 @@ void SignalGraphicsItem::updateYGridIntervall ()
 {
     double value_range = (maximum_ - minimum_) ;/// y_zoom_;
     value_range_fragment_ = MathUtils_::round125 (value_range / signal_view_settings_->getGridFragmentation (Qt::Vertical));
-    qDebug () << "y_zoom_ = " << y_zoom_ << "; value_range_fragment_ =  " << value_range_fragment_;
+    // qDebug () << "y_zoom_ = " << y_zoom_ << "; value_range_fragment_ =  " << value_range_fragment_;
     y_grid_pixel_intervall_ = static_cast<double>(height_) * value_range_fragment_ / value_range;
     emit updatedYGrid (id_);
     update ();

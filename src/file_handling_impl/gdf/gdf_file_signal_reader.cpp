@@ -67,8 +67,11 @@ QSharedPointer<DataBlock const> GDFFileSignalReader::getSignalData (ChannelID ch
 //            raw_data->operator [](index) = sample / header_->getDownSamplingFactor();
 //        }
 
-        qDebug () << "header_->getDownSamplingFactor() = " << header_->getDownSamplingFactor();
-        QSharedPointer<DataBlock const> data (new GDFDataBlock (reader_, channel_id, header_->getDownSamplingFactor()));//reader_->getSignalHeader_readonly(channel_id).get_samplerate()
+        // qDebug () << "header_->getDownSamplingFactor() = " << header_->getDownSamplingFactor();
+        QSharedPointer<DataBlock const> data (new GDFDataBlock (cache_, channel_id,
+                                                                reader_->getSignalHeader_readonly(channel_id).get_samples_per_record() * reader_->getMainHeader_readonly().get_num_datarecords(),
+                                                                reader_->getSignalHeader_readonly(channel_id).get_samplerate(),
+                                                                header_->getDownSamplingFactor()));//reader_->getSignalHeader_readonly(channel_id).get_samplerate()
                                                                        /// header_->getDownSamplingFactor ()));
         channel_map_[channel_id] = data;
 
@@ -123,6 +126,7 @@ QString GDFFileSignalReader::open (QString const& file_path)
         return QString (exc.what ());
     }
     header_ = QSharedPointer<GDFBasicHeader> (new GDFBasicHeader (file_path, reader_->getHeaderAccess_readonly()));
+    cache_ = QSharedPointer<GDFSignalCache> (new GDFSignalCache (reader_));
     return "";
 }
 

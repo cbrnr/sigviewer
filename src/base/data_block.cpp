@@ -23,7 +23,7 @@ DataBlock::DataBlock (unsigned length, float32 sample_rate_per_unit)
 DataBlock::~DataBlock ()
 {
     instance_count_--;
-    qDebug () << "DataBlock::instance_count_ = " << instance_count_ << " deleting";
+    // qDebug () << "DataBlock::instance_count_ = " << instance_count_ << " deleting";
 }
 
 //-----------------------------------------------------------------------------

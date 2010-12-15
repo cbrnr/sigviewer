@@ -3,6 +3,7 @@
 
 #include "file_handling/file_signal_reader.h"
 #include "gdf_basic_header.h"
+#include "gdf_signal_cache.h"
 
 #include "GDF/Reader.h"
 
@@ -45,6 +46,7 @@ private:
 
 
     gdf::Reader* reader_;
+    QSharedPointer<GDFSignalCache> cache_;
     QSharedPointer<GDFBasicHeader> header_;
     mutable QMap<ChannelID, QSharedPointer<DataBlock const> > channel_map_;
     mutable QList<QSharedPointer<SignalEvent const> > events_;
