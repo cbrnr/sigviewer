@@ -8,6 +8,7 @@ GDFBasicHeader::GDFBasicHeader (QString const& file_path,
                                 gdf::GDFHeaderAccess const& header_access) : BasicHeader (file_path),
     header_access_ (header_access)
 {
+    setDownSamplingFactor (1);
     setSampleRate (header_access_.getSignalHeader_readonly(0).get_samplerate());
     for (unsigned index = 0; index < header_access_.getNumSignals(); index++)
     {

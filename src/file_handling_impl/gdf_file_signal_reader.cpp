@@ -1,6 +1,6 @@
 #include "gdf_file_signal_reader.h"
 #include "file_handler_factory_registrator.h"
-#include "base/fixed_data_block.h"
+#include "gdf_data_block.h"
 
 #include "GDF/EventConverter.h"
 
@@ -52,26 +52,27 @@ QSharedPointer<DataBlock const> GDFFileSignalReader::getSignalData (ChannelID ch
 {
     if (!channel_map_.contains (channel_id))
     {
-        unsigned whole_channel_length = header_->getNumberOfSamples();
-        QSharedPointer<std::vector<float32> > raw_data (new std::vector<float32> (whole_channel_length));
+//        unsigned whole_channel_length = header_->getNumberOfSamples();
+//        QSharedPointer<std::vector<float32> > raw_data (new std::vector<float32> (whole_channel_length));
 
-        double* buffer = new double[header_->getDownSamplingFactor ()];
+//        double* buffer = new double[header_->getDownSamplingFactor ()];
 
-        double sample = 0;
-        for (unsigned index = 0; index < whole_channel_length; index++)
-        {
-            sample = 0;
-            reader_->getSignal (channel_id, buffer, index * header_->getDownSamplingFactor (), (index + 1) * header_->getDownSamplingFactor ());
-            for (int sub_index = 0; sub_index < header_->getDownSamplingFactor(); sub_index++)
-                sample += buffer[sub_index];
-            raw_data->operator [](index) = sample / header_->getDownSamplingFactor();
-        }
+//        double sample = 0;
+//        for (unsigned index = 0; index < whole_channel_length; index++)
+//        {
+//            sample = 0;
+//            reader_->getSignal (channel_id, buffer, index * header_->getDownSamplingFactor (), (index + 1) * header_->getDownSamplingFactor ());
+//            for (int sub_index = 0; sub_index < header_->getDownSamplingFactor(); sub_index++)
+//                sample += buffer[sub_index];
+//            raw_data->operator [](index) = sample / header_->getDownSamplingFactor();
+//        }
 
-        QSharedPointer<DataBlock const> data (new FixedDataBlock (raw_data, reader_->getSignalHeader_readonly(channel_id).get_samplerate()
-                                                                       / header_->getDownSamplingFactor ()));
-
-        delete[] buffer;
+        qDebug () << "header_->getDownSamplingFactor() = " << header_->getDownSamplingFactor();
+        QSharedPointer<DataBlock const> data (new GDFDataBlock (reader_, channel_id, header_->getDownSamplingFactor()));//reader_->getSignalHeader_readonly(channel_id).get_samplerate()
+                                                                       /// header_->getDownSamplingFactor ()));
         channel_map_[channel_id] = data;
+
+//        delete[] buffer;
     }
     return channel_map_[channel_id]->createSubBlock (start_sample, length);
 }
