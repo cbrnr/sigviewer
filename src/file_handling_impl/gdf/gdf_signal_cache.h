@@ -6,6 +6,9 @@
 #include "GDF/Reader.h"
 
 #include <QVector>
+#include <QMutex>
+#include <QMap>
+#include <QThread>
 
 namespace SigViewer_
 {
@@ -17,18 +20,22 @@ public:
     GDFSignalCache (gdf::Reader* reader);
     virtual ~GDFSignalCache ();
 
-    virtual float32 getSample (ChannelID channel, unsigned sample_index) const;
+    virtual float32 getSample (ChannelID channel, unsigned sample_index);
 
 private:
-    bool hasSampleIndex (ChannelID channel, unsigned sample_index) const;
-    void rebuildCache (ChannelID channel, unsigned sample_index) const;
+    bool hasSampleIndex (unsigned cache_index, ChannelID channel, unsigned sample_index) const;
+    void rebuildCache (unsigned cache_index, ChannelID channel, unsigned sample_index);
+    unsigned createNewThreadCacheIndex ();
 
 
-    mutable gdf::Reader* reader_;
-    mutable QVector<double*> channel_buffers_;
+    gdf::Reader* reader_;
     static unsigned const CACHE_SIZE_PER_CHANNEL_;
 
-    mutable QVector<unsigned> start_;
+    QList<QVector<double*> > channel_buffers_;
+    QVector<QVector<unsigned> > start_;
+    QVector<QVector<unsigned> > cyclic_start_;
+    QMap<QThread*, unsigned> thread_cache_index_map_;
+    QMutex rebuild_mutex_;
 };
 
 }

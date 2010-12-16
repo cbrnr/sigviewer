@@ -39,6 +39,13 @@ public:
     //-------------------------------------------------------------------------
     virtual float32 getMax () const;
 
+    //-------------------------------------------------------------------------
+    void addDownSampledVersion (QSharedPointer<DataBlock>, unsigned) {}
+
+    //-------------------------------------------------------------------------
+    std::pair<QSharedPointer<DataBlock>, unsigned> getNearbyDownsampledBlock (unsigned downsampling_factor) const
+    {return std::pair<QSharedPointer<DataBlock>, unsigned>(createSubBlock(0, size ()), 1);}
+
     //---------------------------------------------------------------------------------------------
     static QSharedPointer<DataBlock const> createPowerSpectrum (QSharedPointer<DataBlock const> data_block);
 

@@ -3,16 +3,16 @@
 #include <QDebug>
 
 #include <cmath>
+#include <limits>
 
 namespace SigViewer_
 {
 
 //-------------------------------------------------------------------------------------------------
-GDFDataBlock::GDFDataBlock (QSharedPointer<GDFSignalCache> cache, ChannelID channel, unsigned length, float32 sample_rate, int downsampling_factor)
+GDFDataBlock::GDFDataBlock (QSharedPointer<GDFSignalCache> cache, ChannelID channel, unsigned length, float32 sample_rate)
     : DataBlock (length, sample_rate),
       channel_ (channel),
       start_sample_ (0),
-      downsampling_factor_ (downsampling_factor),
       current_min_ (-200),
       current_max_ (200),
       cache_ (cache)
@@ -22,12 +22,12 @@ GDFDataBlock::GDFDataBlock (QSharedPointer<GDFSignalCache> cache, ChannelID chan
 
 //-------------------------------------------------------------------------------------------------
 GDFDataBlock::GDFDataBlock (GDFDataBlock const& src, unsigned start_sample, unsigned length)
-    : DataBlock (length, src.getSampleRatePerUnit()),
+    : DataBlock (src, length),
       channel_ (src.channel_),
       start_sample_ (start_sample),
-      downsampling_factor_ (src.downsampling_factor_),
       current_min_ (src.current_min_),
       current_max_ (src.current_max_),
+      downsampled_map_ (src.downsampled_map_),
       cache_ (src.cache_)
 {
 
@@ -49,11 +49,8 @@ QSharedPointer<DataBlock> GDFDataBlock::createSubBlock (uint32 start, uint32 len
 //-------------------------------------------------------------------------------------------------
 float32 const& GDFDataBlock::operator[] (uint32 index) const
 {
-    return cache_->getSample (channel_, start_sample_ + index);
-//    if (!cache_->hasSampleIndex (start_sample_ + index))
-//        loadCache (start_sample_ + index);
-//    current_value_ = cache_->operator [](start_sample_ + index);
-//    return current_value_;
+    current_value_ = cache_->getSample (channel_, start_sample_ + index);
+    return current_value_;
 }
 
 //-------------------------------------------------------------------------
@@ -67,6 +64,30 @@ float32 GDFDataBlock::getMax () const
 {
     return current_max_;
 }
+
+//-------------------------------------------------------------------------
+void GDFDataBlock::addDownSampledVersion (QSharedPointer<DataBlock> data, unsigned downsampling_factor)
+{
+    downsampled_map_[downsampling_factor] = data;
+}
+
+//-------------------------------------------------------------------------
+std::pair<QSharedPointer<DataBlock>, unsigned> GDFDataBlock::getNearbyDownsampledBlock (unsigned downsampling_factor) const
+{
+    unsigned nearest_factor = 1;
+    bool search = true;
+    for (nearest_factor = downsampling_factor + 1; search && (nearest_factor > 1); --nearest_factor)
+        if (downsampled_map_.contains (nearest_factor - 1))
+            search = false;
+
+    if ((nearest_factor <= downsampling_factor) && (nearest_factor > 1))
+    {
+        return std::pair<QSharedPointer<DataBlock>, unsigned> (downsampled_map_[nearest_factor]->createSubBlock(start_sample_ / nearest_factor, size() / nearest_factor), nearest_factor);
+    }
+    else
+        return std::pair<QSharedPointer<DataBlock>, unsigned> (createSubBlock (0, size ()), 1);
+}
+
 
 
 } // namespace SigViewer_

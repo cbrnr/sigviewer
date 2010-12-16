@@ -4,15 +4,20 @@
 #include "file_handling/file_signal_reader.h"
 #include "gdf_basic_header.h"
 #include "gdf_signal_cache.h"
+#include "gdf_data_block.h"
+#include "down_sampling_thread.h"
 
 #include "GDF/Reader.h"
+
+#include <QObject>
 
 namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
-class GDFFileSignalReader : public FileSignalReader
+class GDFFileSignalReader : public QObject, public FileSignalReader
 {
+    Q_OBJECT
 public:
     //-------------------------------------------------------------------------
     GDFFileSignalReader ();
@@ -37,7 +42,6 @@ public:
     //-------------------------------------------------------------------------
     virtual QSharedPointer<BasicHeader const> getBasicHeader () const {return header_;}
 
-
 private:
     //-------------------------------------------------------------------------
     QString open (QString const& file_path);
@@ -46,9 +50,11 @@ private:
 
 
     gdf::Reader* reader_;
+    mutable DownSamplingThread* downsampling_thread_;
+
     QSharedPointer<GDFSignalCache> cache_;
     QSharedPointer<GDFBasicHeader> header_;
-    mutable QMap<ChannelID, QSharedPointer<DataBlock const> > channel_map_;
+    mutable QMap<ChannelID, QSharedPointer<GDFDataBlock> > channel_map_;
     mutable QList<QSharedPointer<SignalEvent const> > events_;
 };
 

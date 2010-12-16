@@ -20,7 +20,7 @@ FixedDataBlock::FixedDataBlock (QSharedPointer<std::vector<float32> > data,
 
 //---------------------------------------------------------------------------------------------
 FixedDataBlock::FixedDataBlock (FixedDataBlock const& base, unsigned new_start, unsigned new_length)
-    : DataBlock (new_length, base.getSampleRatePerUnit ()),
+    : DataBlock (base, new_length),
       data_ (base.data_),
       start_index_ (new_start)
 {

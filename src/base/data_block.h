@@ -8,6 +8,7 @@
 #include <string>
 
 #include <QSharedPointer>
+#include <QMap>
 
 namespace SigViewer_ {
 
@@ -32,6 +33,12 @@ public:
 
     //-------------------------------------------------------------------------
     virtual float32 getMax () const = 0;
+
+    //-------------------------------------------------------------------------
+    virtual void addDownSampledVersion (QSharedPointer<DataBlock> data, unsigned downsampling_factor) = 0;
+
+    //-------------------------------------------------------------------------
+    virtual std::pair<QSharedPointer<DataBlock>, unsigned> getNearbyDownsampledBlock (unsigned downsampling_factor) const = 0;
 
     //-------------------------------------------------------------------------
     /// length of the block
@@ -63,6 +70,7 @@ public:
 protected:
     // protected constructors here:
     DataBlock (unsigned length, float32 sample_rate_per_unit);
+    DataBlock (DataBlock const& src, unsigned new_length);
 
 private:
     uint32 length_;

@@ -19,6 +19,16 @@ DataBlock::DataBlock (unsigned length, float32 sample_rate_per_unit)
     instance_count_++;
 }
 
+//-----------------------------------------------------------------------------
+DataBlock::DataBlock (DataBlock const& src, unsigned new_length)
+    : length_ (new_length),
+      sample_rate_per_unit_ (src.sample_rate_per_unit_),
+      label_ (src.label_)
+{
+
+}
+
+
 //-------------------------------------------------------------------------
 DataBlock::~DataBlock ()
 {

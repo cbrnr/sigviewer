@@ -17,7 +17,7 @@ class GDFDataBlock : public DataBlock
 {
 public:
     //---------------------------------------------------------------------------------------------
-    GDFDataBlock (QSharedPointer<GDFSignalCache> cache, ChannelID channel, unsigned length, float32 sample_rate, int downsampling_factor);
+    GDFDataBlock (QSharedPointer<GDFSignalCache> cache, ChannelID channel, unsigned length, float32 sample_rate);
 
     //---------------------------------------------------------------------------------------------
     virtual ~GDFDataBlock ();
@@ -34,6 +34,12 @@ public:
     //-------------------------------------------------------------------------
     virtual float32 getMax () const;
 
+    //-------------------------------------------------------------------------
+    void addDownSampledVersion (QSharedPointer<DataBlock> data, unsigned downsampling_factor);
+
+    //-------------------------------------------------------------------------
+    std::pair<QSharedPointer<DataBlock>, unsigned> getNearbyDownsampledBlock (unsigned downsampling_factor) const;
+
 private:
     //---------------------------------------------------------------------------------------------
     GDFDataBlock (GDFDataBlock const& src, unsigned start_sample, unsigned length);
@@ -44,11 +50,13 @@ private:
     //---------------------------------------------------------------------------------------------
     ChannelID channel_;
     unsigned start_sample_;
-    int downsampling_factor_;
     mutable float32 current_min_;
     mutable float32 current_max_;
+    mutable float32 current_value_;
 
-    QSharedPointer<GDFSignalCache> cache_;
+    QMap<unsigned, QSharedPointer<DataBlock> > downsampled_map_;
+
+    mutable QSharedPointer<GDFSignalCache> cache_;
 };
 
 } // namespace SigViewer_

@@ -10,7 +10,7 @@ class SignalCache
 {
 public:
     virtual ~SignalCache () {}
-    virtual float32 getSample (ChannelID channel, unsigned sample_index) const = 0;
+    virtual float32 getSample (ChannelID channel, unsigned sample_index) = 0;
 };
 
 }

@@ -14,7 +14,7 @@ FILE_SIGNAL_READER_REGISTRATION(gdf, GDFFileSignalReader);
 
 
 //-------------------------------------------------------------------------------------------------
-GDFFileSignalReader::GDFFileSignalReader() : reader_ (0)
+GDFFileSignalReader::GDFFileSignalReader() : reader_ (0), downsampling_thread_ (0)
 {
     // nothing to do here
 }
@@ -22,6 +22,12 @@ GDFFileSignalReader::GDFFileSignalReader() : reader_ (0)
 //-------------------------------------------------------------------------------------------------
 GDFFileSignalReader::~GDFFileSignalReader()
 {
+    if (downsampling_thread_)
+    {
+        downsampling_thread_->terminate();
+        downsampling_thread_->wait();
+    }
+    delete downsampling_thread_;
     if (reader_)
     {
         reader_->close ();
@@ -50,32 +56,20 @@ QSharedPointer<DataBlock const> GDFFileSignalReader::getSignalData (ChannelID ch
                                                        unsigned start_sample,
                                                        unsigned length) const
 {
-    if (!channel_map_.contains (channel_id))
+    if (channel_map_.size() == 0)
     {
-//        unsigned whole_channel_length = header_->getNumberOfSamples();
-//        QSharedPointer<std::vector<float32> > raw_data (new std::vector<float32> (whole_channel_length));
-
-//        double* buffer = new double[header_->getDownSamplingFactor ()];
-
-//        double sample = 0;
-//        for (unsigned index = 0; index < whole_channel_length; index++)
-//        {
-//            sample = 0;
-//            reader_->getSignal (channel_id, buffer, index * header_->getDownSamplingFactor (), (index + 1) * header_->getDownSamplingFactor ());
-//            for (int sub_index = 0; sub_index < header_->getDownSamplingFactor(); sub_index++)
-//                sample += buffer[sub_index];
-//            raw_data->operator [](index) = sample / header_->getDownSamplingFactor();
-//        }
-
-        // qDebug () << "header_->getDownSamplingFactor() = " << header_->getDownSamplingFactor();
-        QSharedPointer<DataBlock const> data (new GDFDataBlock (cache_, channel_id,
-                                                                reader_->getSignalHeader_readonly(channel_id).get_samples_per_record() * reader_->getMainHeader_readonly().get_num_datarecords(),
-                                                                reader_->getSignalHeader_readonly(channel_id).get_samplerate(),
-                                                                header_->getDownSamplingFactor()));//reader_->getSignalHeader_readonly(channel_id).get_samplerate()
-                                                                       /// header_->getDownSamplingFactor ()));
-        channel_map_[channel_id] = data;
-
-//        delete[] buffer;
+        QList<QSharedPointer<DataBlock> > data_for_downsampling;
+        for (unsigned channel_index = 0; channel_index < reader_->getMainHeader_readonly().get_num_signals(); channel_index++)
+        {
+            QSharedPointer<GDFDataBlock> data (new GDFDataBlock (cache_, channel_index,
+                                                                    reader_->getSignalHeader_readonly(channel_index).get_samples_per_record() * reader_->getMainHeader_readonly().get_num_datarecords(),
+                                                                    reader_->getSignalHeader_readonly(channel_index).get_samplerate()));
+            channel_map_[channel_index] = data;
+            data_for_downsampling.append (data);
+        }
+        downsampling_thread_ = new DownSamplingThread (data_for_downsampling, 3, 64);
+        // connect (downsampling_thread_, SIGNAL(downsamplingDataFinished (QSharedPointer<DataBlock>, ChannelID, unsigned)), SLOT(storeDownsampledData(QSharedPointer<DataBlock>, ChannelID, unsigned)), Qt::DirectConnection);
+        downsampling_thread_->start (QThread::LowestPriority);
     }
     return channel_map_[channel_id]->createSubBlock (start_sample, length);
 }
@@ -83,24 +77,30 @@ QSharedPointer<DataBlock const> GDFFileSignalReader::getSignalData (ChannelID ch
 //-------------------------------------------------------------------------------------------------
 QList<QSharedPointer<SignalEvent const> > GDFFileSignalReader::getEvents () const
 {
-    qDebug () << "Number events " << reader_->getEventHeader()->getNumEvents() << "; Event Mode = " << reader_->getEventHeader()->getMode();
-    if (events_.size ())
-        return events_;
-
-    std::vector<gdf::Mode3Event> mode_3_events;
-    if (reader_->getEventHeader()->getMode() == 1)
-        mode_3_events = gdf::convertMode1EventsIntoMode3Events (reader_->getEventHeader()->getMode1Events());
-    else
-        mode_3_events = reader_->getEventHeader()->getMode3Events();
-
-    for (unsigned index = 0; index < mode_3_events.size (); index++)
+    try
     {
-        gdf::Mode3Event& gdf_event = mode_3_events[index];
-        QSharedPointer<SignalEvent const> event (new SignalEvent (gdf_event.position / header_->getDownSamplingFactor(), gdf_event.type, reader_->getEventHeader()->getSamplingRate() / header_->getDownSamplingFactor(),
-                                                            gdf_event.channel - 1, gdf_event.duration / header_->getDownSamplingFactor()));
-        events_.push_back (event);
-    }
+        //qDebug () << "Number events " << reader_->getEventHeader()->getNumEvents() << "; Event Mode = " << reader_->getEventHeader()->getMode();
+        if (events_.size ())
+            return events_;
 
+        std::vector<gdf::Mode3Event> mode_3_events;
+        if (reader_->getEventHeader()->getMode() == 1)
+            mode_3_events = gdf::convertMode1EventsIntoMode3Events (reader_->getEventHeader()->getMode1Events());
+        else
+            mode_3_events = reader_->getEventHeader()->getMode3Events();
+
+        for (unsigned index = 0; index < mode_3_events.size (); index++)
+        {
+            gdf::Mode3Event& gdf_event = mode_3_events[index];
+            QSharedPointer<SignalEvent const> event (new SignalEvent (gdf_event.position / header_->getDownSamplingFactor(), gdf_event.type, reader_->getEventHeader()->getSamplingRate() / header_->getDownSamplingFactor(),
+                                                                      gdf_event.channel - 1, gdf_event.duration / header_->getDownSamplingFactor()));
+            events_.push_back (event);
+        }
+    }
+    catch (...)
+    {
+        //QMessageBox::critical (0, "Error", tr(exc.what()));
+    }
     return events_;
 }
 
