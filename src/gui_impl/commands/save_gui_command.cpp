@@ -45,6 +45,8 @@ SaveGuiCommand::SaveGuiCommand ()
 void SaveGuiCommand::init ()
 {
     setIcon(SAVE_, QIcon (":/images/icons/filesave.png"));
+    setShortcut (SAVE_, QKeySequence::Save);
+    setShortcut (SAVE_AS_, QKeySequence::SaveAs);
 
     resetActionTriggerSlot (SAVE_AS_, SLOT(saveAs()));
     resetActionTriggerSlot (SAVE_, SLOT(save()));
@@ -93,7 +95,10 @@ void SaveGuiCommand::saveAs ()
                 if (error.size())
                     QMessageBox::critical(0, new_file_path, error);
                 else
+                {
                     file_context->resetFilePathAndName (new_file_path);
+                    file_context->setState(FILE_STATE_UNCHANGED);
+                }
             }
             else if (event_mgr->getNumberOfEvents() > 0)
                 QMessageBox::information(0, "", "Events not stored to " + new_file_path + "\n If you want to store events export the file to GDF or export the events into a EVT file!");
