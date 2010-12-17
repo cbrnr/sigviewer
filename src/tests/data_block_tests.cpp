@@ -24,7 +24,7 @@ QString DataBlockTests::run ()
         ten_data->push_back (i);
 
     FixedDataBlock ten_block (ten_data, 10);
-    VERIFY (ten_block.size() == ten_data->size(), "created with 10 elements");
+    VERIFY (ten_block.size() == static_cast<unsigned>(ten_data->size()), "created with 10 elements");
     VERIFY (ten_block.getMax() == 10, "get max");
     VERIFY (ten_block.getMin() == 1, "get min");
     for (unsigned i = 1; i <= 10; i++)

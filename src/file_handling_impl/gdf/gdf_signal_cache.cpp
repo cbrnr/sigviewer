@@ -50,7 +50,7 @@ bool GDFSignalCache::hasSampleIndex (unsigned cache_index, ChannelID channel, un
 }
 
 //-----------------------------------------------------------------------------
-void GDFSignalCache::rebuildCache (unsigned cache_index, ChannelID channel, unsigned sample_index)
+void GDFSignalCache::rebuildCache (unsigned cache_index, ChannelID /*channel*/, unsigned sample_index)
 {
 //    QMutexLocker locker (&rebuild_mutex_);
 
@@ -65,7 +65,7 @@ void GDFSignalCache::rebuildCache (unsigned cache_index, ChannelID channel, unsi
     reader_->enableCache (true);
     //reader_->initCache();
 
-    for (unsigned index = 0; index < channel_buffers_[cache_index].size (); index++)
+    for (int index = 0; index < channel_buffers_[cache_index].size (); index++)
     {
 //        size_t old_start = start_[cache_index][index];
 //        size_t old_end = std::min<size_t>(old_start + CACHE_SIZE_PER_CHANNEL_, reader_->getSignalHeader_readonly(index).get_samples_per_record() * reader_->getMainHeader_readonly().get_num_datarecords());

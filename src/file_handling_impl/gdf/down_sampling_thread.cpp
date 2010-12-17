@@ -1,5 +1,4 @@
 #include "down_sampling_thread.h"
-#include "signal_processing/SPUC/chebyshev.h"
 #include "signal_processing/SPUC/butterworth.h"
 #include "base/fixed_data_block.h"
 #include "gui/background_processes.h"
@@ -57,7 +56,7 @@ void DownSamplingThread::downsampleAllOnBasisData ()
          downsampling_factor < downsampling_max_;
          downsampling_factor *= downsampling_step_)
     {
-        for (unsigned channel = 0; channel < data_.size(); channel++)
+        for (int channel = 0; channel < data_.size(); channel++)
         {
             max_channel_length = std::max (max_channel_length, basis_data_[channel]->size());
             sample_rates[downsampling_factor].append (basis_data_[channel]->getSampleRatePerUnit() / downsampling_factor);
@@ -76,7 +75,7 @@ void DownSamplingThread::downsampleAllOnBasisData ()
 
     for (unsigned sample_index = 0; sample_index < max_channel_length; sample_index++)
     {
-        for (unsigned channel = 0; channel < basis_data_.size(); channel++)
+        for (int channel = 0; channel < basis_data_.size(); channel++)
         {
             if (basis_data_[channel]->size() > sample_index)
             {
@@ -106,7 +105,7 @@ void DownSamplingThread::downsampleOnDownsampledData ()
         QVector<QSharedPointer<SPUC::butterworth<float32> > > low_pass_filters;
         QVector<float32> sample_rates_;
 
-        for (unsigned channel = 0; channel < data_.size(); channel++)
+        for (int channel = 0; channel < data_.size(); channel++)
         {
             max_channel_length = std::max (max_channel_length, data_[channel]->size());
             raw_downsampled_data.append (QSharedPointer<QVector<float32> > (new QVector<float32> (static_cast<int>(data_[channel]->size () / downsampling_step_) + 1)));
@@ -116,7 +115,7 @@ void DownSamplingThread::downsampleOnDownsampledData ()
 
         for (unsigned sample_index = 0; sample_index < max_channel_length; sample_index++)
         {
-            for (unsigned channel = 0; channel < data_.size(); channel++)
+            for (int channel = 0; channel < data_.size(); channel++)
             {
                 if (data_[channel]->size() > sample_index)
                 {
@@ -129,7 +128,7 @@ void DownSamplingThread::downsampleOnDownsampledData ()
 
         data_.clear ();
         low_pass_filters.clear();
-        for (unsigned channel = 0; channel < raw_downsampled_data.size(); channel++)
+        for (int channel = 0; channel < raw_downsampled_data.size(); channel++)
         {
             QSharedPointer<DataBlock> downsampled_data (new FixedDataBlock (raw_downsampled_data[channel], sample_rates_[channel]));
             basis_data_[channel]->addDownSampledVersion (downsampled_data, downsampling_factor);

@@ -43,7 +43,7 @@ public:
     void addDownSampledVersion (QSharedPointer<DataBlock>, unsigned) {}
 
     //-------------------------------------------------------------------------
-    std::pair<QSharedPointer<DataBlock>, unsigned> getNearbyDownsampledBlock (unsigned downsampling_factor) const
+    std::pair<QSharedPointer<DataBlock>, unsigned> getNearbyDownsampledBlock (unsigned /*downsampling_factor*/) const
     {return std::pair<QSharedPointer<DataBlock>, unsigned>(createSubBlock(start_index_, size ()), 1);}
 
     //---------------------------------------------------------------------------------------------
