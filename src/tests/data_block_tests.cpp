@@ -19,7 +19,7 @@ DataBlockTests::DataBlockTests ()
 //-----------------------------------------------------------------------------
 QString DataBlockTests::run ()
 {
-    QSharedPointer<std::vector<float32> > ten_data (new std::vector<float32>);
+    QSharedPointer<QVector<float32> > ten_data (new QVector<float32>);
     for (unsigned i = 1; i <= 10; i++)
         ten_data->push_back (i);
 
@@ -40,8 +40,8 @@ QString DataBlockTests::run ()
 //-----------------------------------------------------------------------------
 QString DataBlockTests::testMean ()
 {
-    QSharedPointer<std::vector<float32> > ten_data (new std::vector<float32>);
-    QSharedPointer<std::vector<float32> > ten_reverse_data (new std::vector<float32>);
+    QSharedPointer<QVector<float32> > ten_data (new QVector<float32>);
+    QSharedPointer<QVector<float32> > ten_reverse_data (new QVector<float32>);
     for (unsigned i = 1; i <= 10; i++)
     {
         ten_data->push_back (i);

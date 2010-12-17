@@ -276,7 +276,7 @@ void BioSigReader::bufferAllChannels () const
 
         sread (read_data, 0, length / biosig_header_->SPR, biosig_header_);
 
-        QSharedPointer<std::vector<float32> > raw_data (new std::vector<float32> (basic_header_->getNumberOfSamples()));
+        QSharedPointer<QVector<float32> > raw_data (new QVector<float32> (basic_header_->getNumberOfSamples()));
 
         double sample = 0;
         for (unsigned data_index = 0; data_index < basic_header_->getNumberOfSamples(); data_index++)

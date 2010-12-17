@@ -4,9 +4,9 @@
 #include "data_block.h"
 
 #include <list>
-#include <vector>
 #include <string>
 
+#include <QVector>
 #include <QSharedPointer>
 
 namespace SigViewer_ {
@@ -22,7 +22,7 @@ public:
     /// @param sample_rate_per_unit as a data_block must not represent data which
     ///                             is associated to time, the sample_rate is given
     ///                             in "per unit" (e.g. "s" or "hz", etc.)
-    FixedDataBlock (QSharedPointer<std::vector<float32> > data, float32 sample_rate_per_unit);
+    FixedDataBlock (QSharedPointer<QVector<float32> > data, float32 sample_rate_per_unit);
 
     //-------------------------------------------------------------------------
     virtual ~FixedDataBlock () {}
@@ -69,7 +69,7 @@ private:
     static QSharedPointer<DataBlock> calculateStandardDeviationImpl (std::list<QSharedPointer<DataBlock const> > const &data_blocks,
                                                                       QSharedPointer<DataBlock> means);
 
-    QSharedPointer<std::vector<float32> > data_;
+    QSharedPointer<QVector<float32> > data_;
     unsigned start_index_;
 
     static unsigned instance_count_;

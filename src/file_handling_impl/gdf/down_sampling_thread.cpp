@@ -32,15 +32,15 @@ void DownSamplingThread::run ()
          downsampling_factor *= downsampling_step_)
     {
         unsigned max_channel_length = 0;
-        QVector<QSharedPointer<std::vector<float32> > > raw_downsampled_data;
+        QVector<QSharedPointer<QVector<float32> > > raw_downsampled_data;
         QVector<QSharedPointer<SPUC::chebyshev<float32> > > low_pass_filters;
         QVector<float32> sample_rates_;
 
         for (unsigned channel = 0; channel < data_.size(); channel++)
         {
             max_channel_length = std::max (max_channel_length, data_[channel]->size());
-            raw_downsampled_data.append (QSharedPointer<std::vector<float32> > (new std::vector<float32> (data_[channel]->size () / downsampling_step_)));
-            low_pass_filters.append (QSharedPointer<SPUC::chebyshev<float32> > (new SPUC::chebyshev<float32> (0.75 / downsampling_factor, 8, 0.01)));
+            raw_downsampled_data.append (QSharedPointer<QVector<float32> > (new QVector<float32> (static_cast<int>(data_[channel]->size () / downsampling_step_) + 1)));
+            low_pass_filters.append (QSharedPointer<SPUC::chebyshev<float32> > (new SPUC::chebyshev<float32> (1.0 / downsampling_step_, 8, 10)));
             sample_rates_.append (data_[channel]->getSampleRatePerUnit() / downsampling_step_);
         }
 

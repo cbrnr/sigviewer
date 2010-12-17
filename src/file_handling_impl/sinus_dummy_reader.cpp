@@ -24,7 +24,7 @@ SinusDummyReader::SinusDummyReader ()
 
     for (int i = 0; i < 10; i++)
     {
-        QSharedPointer<vector<float32> > data (new vector<float32>);
+        QSharedPointer<QVector<float32> > data (new QVector<float32>);
         for (float sample_index = 0; sample_index < 10000; sample_index++)
             data->push_back (sin(sample_index / ((i*i+1))));
         QSharedPointer<DataBlock const> data_block (new FixedDataBlock (data, 100));

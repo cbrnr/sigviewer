@@ -33,6 +33,7 @@ private:
     //-------------------------------------------------------------------------
     QList<QSharedPointer<DataBlock> > basis_data_;
     QList<QSharedPointer<DataBlock> > data_;
+    QList<QSharedPointer<DataBlock> > new_data_;
     unsigned downsampling_step_;
     unsigned downsampling_max_;
     bool running_;

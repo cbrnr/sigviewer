@@ -9,7 +9,7 @@ namespace SigViewer_
 {
 
 //-------------------------------------------------------------------------------------------------
-FixedDataBlock::FixedDataBlock (QSharedPointer<std::vector<float32> > data,
+FixedDataBlock::FixedDataBlock (QSharedPointer<QVector<float32> > data,
                                 float32 sample_rate_per_unit)
     : DataBlock (data->size(), sample_rate_per_unit),
       data_ (data),
@@ -43,10 +43,10 @@ float32 const& FixedDataBlock::operator[] (uint32 index) const
 //-------------------------------------------------------------------------------------------------
 float32 FixedDataBlock::getMin () const
 {
-    std::vector<float32>::const_iterator start = data_->begin() + start_index_;
-    std::vector<float32>::const_iterator end = data_->begin() + start_index_ + size ();
+    QVector<float32>::const_iterator start = data_->begin() + start_index_;
+    QVector<float32>::const_iterator end = data_->begin() + start_index_ + size ();
 
-    std::vector<float32>::const_iterator min_element = std::min_element (start,
+    QVector<float32>::const_iterator min_element = std::min_element (start,
                                                                          end);
     if (min_element != end)
         return *min_element;
@@ -57,10 +57,10 @@ float32 FixedDataBlock::getMin () const
 //-------------------------------------------------------------------------------------------------
 float32 FixedDataBlock::getMax () const
 {
-    std::vector<float32>::const_iterator start = data_->begin() + start_index_;
-    std::vector<float32>::const_iterator end = data_->begin() + start_index_ + size ();
+    QVector<float32>::const_iterator start = data_->begin() + start_index_;
+    QVector<float32>::const_iterator end = data_->begin() + start_index_ + size ();
 
-    std::vector<float32>::const_iterator max_element = std::max_element (start,
+    QVector<float32>::const_iterator max_element = std::max_element (start,
                                                                          end);
     if (max_element != end)
         return *max_element;
@@ -99,7 +99,7 @@ QSharedPointer<DataBlock const> FixedDataBlock::createPowerSpectrum (QSharedPoin
     fft_object.do_fft(out, in);
     fft_object.rescale (out);
 
-    QSharedPointer<std::vector<float32> > spectrum_data (new std::vector<float32>);
+    QSharedPointer<QVector<float32> > spectrum_data (new QVector<float32>);
     for (unsigned index = 0; index < (fft_samples / 2) ; index++)
     {
         spectrum_data->push_back (log10(pow(out[index], 2) + pow(out[(fft_samples/2)+index], 2)));
@@ -134,7 +134,7 @@ QSharedPointer<DataBlock> FixedDataBlock::calculateMean (std::list<QSharedPointe
         return QSharedPointer<DataBlock> (0);
 
     std::list<QSharedPointer<DataBlock const> >::const_iterator it = data_blocks.begin();
-    QSharedPointer<std::vector<float32> > mean (new std::vector<float32>);
+    QSharedPointer<QVector<float32> > mean (new QVector<float32>);
     float32 sample_rate = (*it)->getSampleRatePerUnit ();
     float32 tmp_mean = 0;
     for (unsigned index = 0; index < (*(data_blocks.begin()))->size(); index++)
@@ -169,7 +169,7 @@ QSharedPointer<DataBlock> FixedDataBlock::calculateStandardDeviationImpl (std::l
                                                      const & data_blocks,
                                                      QSharedPointer<DataBlock> means)
 {
-    QSharedPointer<std::vector<float32> > stddev (new std::vector<float32>);
+    QSharedPointer<QVector<float32> > stddev (new QVector<float32>);
     if (data_blocks.size() == 0)
         return QSharedPointer<DataBlock>(0);
 
