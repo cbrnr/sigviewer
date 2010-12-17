@@ -27,13 +27,13 @@ namespace SPUC {
   \addtogroup iir IIR filters
 */
 
-/*!  \brief  Template Class for Chebyshev low pass iir filter
+/*!   \brief  Template Class for Butterworth iir filter
   \ingroup iir
 */
-//! Chebyshev low pass filter.
-//! Specify cut-off, order and passband ripple on construction
-//! Filter is bilinear transformation of analog chebyshev
-template <class Numeric> class chebyshev 
+//! Butterworth low pass filter.
+//! Specify cut-off, order and Attenuation at cut-off on construction
+//! Filter is bilinear transformation of analog butterworth
+template <class Numeric> class butterworth 
 {
 	private:
 	long order;
@@ -44,19 +44,19 @@ template <class Numeric> class chebyshev
 	iir_1st< Numeric>* iir_1;
 	double gain;
 	double* coeff;
-	double epi;
 
 	public:
 	//! Constructor, fcd = cut-off (1=sampling rate)
 	//! ord = Filter order
-	//! ripple = passband ripple in dB
-	chebyshev(double fcd, long ord=1, double ripple=3.0) {
+	//! amax = attenuation at cut-off
+	butterworth(double fcd, long ord=1, double amax=3.0) {
+		// amax - attenuation at cutoff
 		gain = 1;
-                order = ord;
-		epi = pow(10.0,(ripple/10.)) - 1.0;
-		epi = pow(epi,(1./(1.0*ord)));
-		double wca = tan(0.5*PI*fcd);
-		//! wca - pre-warped angular frequency
+		order = ord;
+		double epi = pow( (pow(10.0,(amax/10.)) - 1.0) ,(1./(2.0*ord)));
+		// fcd - desired cutoff frequency (normalized)
+		double wca = 2.0*tan(PI*fcd)/epi;
+		// wca - pre-warped angular frequency
 	    n2 = (order+1)/2;
 		odd = (order%2);
 		roots = new complex<double>[n2];
@@ -67,7 +67,7 @@ template <class Numeric> class chebyshev
 		get_coeff(n2);
 	}
 	//! Destructor
-	~chebyshev() {
+	~butterworth() {
 	  delete [] roots;
 	  if (odd) delete iir_1;
 	  delete [] iir;
@@ -81,11 +81,9 @@ template <class Numeric> class chebyshev
 	} 
 	//! print coefficients
 	void print() {
-		int j;
-		for (j=odd;j<n2;j++) { 
-			iir[j-odd].print();
-		}
-		if (odd) iir_1->print();
+	  for (int j=odd;j<n2;j++) { 
+		iir[j-odd].print();
+	  }
 	} 
 	//! Clock in sample and get output.
 	Numeric clock(Numeric in) {
@@ -97,19 +95,14 @@ template <class Numeric> class chebyshev
 		return(gain*tmp);
 	}
 	private:
-	//! Calculate roots (chebyshev)
+	//! Calculate roots
 	void get_roots(double wp, long n, long n2) {
        long l = 0;
        if (n%2 == 0) l = 1;                                                 
 	   double arg;
-	   double x = 1/epi;
-	   double asinh = log(x + sqrt(1.0+x*x));
-	   double v0 = asinh/(double(n));
-	   double sm = sinh(v0);
-	   double cm = cosh(v0);
 	   for (int j=0;j<n2;j++) {
 		 arg = -0.5*PI*l/float(n);
-		 roots[j] = wp*complex<double>(-sm*cos(arg),cm*sin(arg));
+		 roots[j] = wp*expj(arg);
 		 l += 2;
 	  }
 	}
@@ -117,7 +110,7 @@ template <class Numeric> class chebyshev
 	void bilinear(long n2) {
       double td;
 	  int j;
-	  const double a = 1.;
+	  const double a = 2.;
       if (odd) {
 		// For s-domain zero (or pole) at infinity we
 		// get z-domain zero (or pole) at z = -1
@@ -134,7 +127,7 @@ template <class Numeric> class chebyshev
 	//! Get 2nd order IIR coefficients
 	void get_coeff(long n2) {
         for (int j=odd;j<n2;j++) { 
-		  iir[j-odd].set_coeff(-2*roots[j].real(),magsq(roots[j]));
+		  iir[j-odd].set_coeff(-2*roots[j].real()/magsq(roots[j]),1.0/magsq(roots[j]));
 		  gain *= (magsq(roots[j]) - 2*roots[j].real() + 1.0)/(4*magsq(roots[j])); 
 	  }
 	}

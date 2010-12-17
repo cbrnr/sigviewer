@@ -1,5 +1,6 @@
 #include "down_sampling_thread.h"
 #include "signal_processing/SPUC/chebyshev.h"
+#include "signal_processing/SPUC/butterworth.h"
 #include "base/fixed_data_block.h"
 
 #include <vector>
@@ -26,21 +27,75 @@ void DownSamplingThread::run ()
 
     qDebug () << "DownSamplingThread::run started downsampling; QThread::currentThread = " << QThread::currentThread();
 
+    downsampleAllOnBasisData ();
+    //downsampleOnDownsampledData ();
 
+    qDebug () << "DownSamplingThread::run FINISHED!";
+
+    running_ = false;
+}
+
+//-------------------------------------------------------------------------
+void DownSamplingThread::downsampleAllOnBasisData ()
+{
+    QMap<unsigned, QVector<QSharedPointer<QVector<float32> > > > raw_downsampled_data;
+    QMap<unsigned, QVector<QSharedPointer<SPUC::butterworth<float32> > > > low_pass_filters;
+    QMap<unsigned, QVector<float32> > sample_rates;
+    unsigned max_channel_length = 0;
+
+    for (unsigned downsampling_factor = downsampling_step_;
+         downsampling_factor < downsampling_max_;
+         downsampling_factor *= downsampling_step_)
+    {
+        for (unsigned channel = 0; channel < data_.size(); channel++)
+        {
+            max_channel_length = std::max (max_channel_length, basis_data_[channel]->size());
+            sample_rates[downsampling_factor].append (basis_data_[channel]->getSampleRatePerUnit() / downsampling_factor);
+
+            QSharedPointer<QVector<float32> > raw_data_vector (new QVector<float32> (static_cast<int>(basis_data_[channel]->size () / downsampling_factor) + 1));
+
+            QSharedPointer<DataBlock> downsampled_data (new FixedDataBlock (raw_data_vector, sample_rates[downsampling_factor][channel]));
+            basis_data_[channel]->addDownSampledVersion (downsampled_data, downsampling_factor);
+
+            raw_downsampled_data[downsampling_factor].append (raw_data_vector);
+            low_pass_filters[downsampling_factor].append (QSharedPointer<SPUC::butterworth<float32> > (new SPUC::butterworth<float32> (0.5 / downsampling_factor, 4, 3)));
+        }
+    }
+
+    for (unsigned sample_index = 0; sample_index < max_channel_length; sample_index++)
+    {
+        for (unsigned channel = 0; channel < basis_data_.size(); channel++)
+        {
+            if (basis_data_[channel]->size() > sample_index)
+            {
+                foreach (unsigned downsampling_factor, low_pass_filters.keys())
+                {
+                    float32 value = low_pass_filters[downsampling_factor][channel]->clock (basis_data_[channel]->operator [](sample_index));
+                    if ((sample_index + 1) % downsampling_factor == 0)
+                        raw_downsampled_data[downsampling_factor][channel]->operator []((sample_index + 1) / downsampling_factor) = value;
+                }
+            }
+        }
+    }
+}
+
+//-------------------------------------------------------------------------
+void DownSamplingThread::downsampleOnDownsampledData ()
+{
     for (unsigned downsampling_factor = downsampling_step_;
          downsampling_factor < downsampling_max_;
          downsampling_factor *= downsampling_step_)
     {
         unsigned max_channel_length = 0;
         QVector<QSharedPointer<QVector<float32> > > raw_downsampled_data;
-        QVector<QSharedPointer<SPUC::chebyshev<float32> > > low_pass_filters;
+        QVector<QSharedPointer<SPUC::butterworth<float32> > > low_pass_filters;
         QVector<float32> sample_rates_;
 
         for (unsigned channel = 0; channel < data_.size(); channel++)
         {
             max_channel_length = std::max (max_channel_length, data_[channel]->size());
             raw_downsampled_data.append (QSharedPointer<QVector<float32> > (new QVector<float32> (static_cast<int>(data_[channel]->size () / downsampling_step_) + 1)));
-            low_pass_filters.append (QSharedPointer<SPUC::chebyshev<float32> > (new SPUC::chebyshev<float32> (1.0 / downsampling_step_, 8, 10)));
+            low_pass_filters.append (QSharedPointer<SPUC::butterworth<float32> > (new SPUC::butterworth<float32> (0.9 / downsampling_step_, 4, 3)));
             sample_rates_.append (data_[channel]->getSampleRatePerUnit() / downsampling_step_);
         }
 
@@ -66,11 +121,8 @@ void DownSamplingThread::run ()
             data_.append (downsampled_data);
         }
     }
-
-    qDebug () << "DownSamplingThread::run FINISHED!";
-
-    running_ = false;
 }
+
 
 
 }

@@ -59,16 +59,18 @@ QSharedPointer<DataBlock const> GDFFileSignalReader::getSignalData (ChannelID ch
     if (channel_map_.size() == 0)
     {
         QList<QSharedPointer<DataBlock> > data_for_downsampling;
+        unsigned max_channel_length = 0;
         for (unsigned channel_index = 0; channel_index < reader_->getMainHeader_readonly().get_num_signals(); channel_index++)
         {
+            unsigned current_channel_length = reader_->getSignalHeader_readonly(channel_index).get_samples_per_record() * reader_->getMainHeader_readonly().get_num_datarecords();
+            max_channel_length = std::max (max_channel_length, current_channel_length);
             QSharedPointer<GDFDataBlock> data (new GDFDataBlock (cache_, channel_index,
-                                                                    reader_->getSignalHeader_readonly(channel_index).get_samples_per_record() * reader_->getMainHeader_readonly().get_num_datarecords(),
+                                                                    current_channel_length,
                                                                     reader_->getSignalHeader_readonly(channel_index).get_samplerate()));
             channel_map_[channel_index] = data;
             data_for_downsampling.append (data);
         }
-        downsampling_thread_ = new DownSamplingThread (data_for_downsampling, 3, 64);
-        // connect (downsampling_thread_, SIGNAL(downsamplingDataFinished (QSharedPointer<DataBlock>, ChannelID, unsigned)), SLOT(storeDownsampledData(QSharedPointer<DataBlock>, ChannelID, unsigned)), Qt::DirectConnection);
+        downsampling_thread_ = new DownSamplingThread (data_for_downsampling, 3, max_channel_length / 2000);
         downsampling_thread_->start (QThread::LowestPriority);
     }
     return channel_map_[channel_id]->createSubBlock (start_sample, length);

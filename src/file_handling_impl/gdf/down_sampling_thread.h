@@ -31,6 +31,12 @@ private:
     virtual void run ();
 
     //-------------------------------------------------------------------------
+    void downsampleAllOnBasisData ();
+
+    //-------------------------------------------------------------------------
+    void downsampleOnDownsampledData ();
+
+    //-------------------------------------------------------------------------
     QList<QSharedPointer<DataBlock> > basis_data_;
     QList<QSharedPointer<DataBlock> > data_;
     QList<QSharedPointer<DataBlock> > new_data_;
