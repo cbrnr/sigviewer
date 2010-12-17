@@ -7,6 +7,7 @@
 #include <QString>
 #include <QStringList>
 #include <QDebug>
+#include <QMessageBox>
 
 #include <map>
 
@@ -75,8 +76,18 @@ FileHandlerType* FileHandlerFactory<FileHandlerType>::getHandler (QString const&
 {
     QString file_ending = file_path.section('.', -1);
     qDebug () << "FACTORY " << file_ending;
+
     if (handler_map_.count(file_ending))
-        return handler_map_[file_ending]->createInstance (file_path);
+    {
+        FileHandlerType* handler = handler_map_[file_ending]->createInstance (file_path);
+        if (handler)
+            return handler;
+        else
+        {
+            QMessageBox::information (0, QObject::tr("File Opening"), QObject::tr("Specific file reader not working. The default reader will now try to open the file."));
+            return default_handler_->createInstance (file_path);
+        }
+    }
     else if (!default_handler_.isNull())
         return default_handler_->createInstance (file_path);
     else
