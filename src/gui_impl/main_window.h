@@ -7,6 +7,7 @@
 #include <QMainWindow>
 #include <QSharedPointer>
 #include <QIcon>
+#include <QProgressBar>
 
 class QAction;
 class QComboBox;
@@ -43,6 +44,9 @@ protected:
 private slots:
     void toggleStatusBar (bool visible);
     void toggleAllToolbars ();
+    void addBackgroundProcessToStatusBar (QString name, int max);
+    void updateBackgroundProcessonStatusBar (QString name, int value);
+    void removeBackgroundProcessFromStatusBar (QString name);
 
 private:
     QAction* action (QString const& action_id);
@@ -72,6 +76,8 @@ private:
     QLabel* status_bar_nr_channels_label_;
 
     QAction* toggle_all_toolbars_;
+    QMap<QString, QProgressBar*> background_processes_progressbars_;
+    QMap<QString, QLabel*> background_processes_labels_;
 };
 
 } // namespace SigViewer_

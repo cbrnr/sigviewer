@@ -22,6 +22,9 @@ public:
     //-------------------------------------------------------------------------
     DownSamplingThread (QList<QSharedPointer<DataBlock> > data, unsigned downsampling_step, unsigned downsampling_max);
 
+    //-------------------------------------------------------------------------
+    virtual ~DownSamplingThread ();
+
 signals:
     //-------------------------------------------------------------------------
     void downsamplingDataFinished (QSharedPointer<DataBlock> data, ChannelID channel, unsigned factor);
@@ -43,6 +46,8 @@ private:
     unsigned downsampling_step_;
     unsigned downsampling_max_;
     bool running_;
+
+    static QString PROCESS_NAME_;
 };
 
 }

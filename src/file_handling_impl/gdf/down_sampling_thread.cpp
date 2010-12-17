@@ -2,6 +2,7 @@
 #include "signal_processing/SPUC/chebyshev.h"
 #include "signal_processing/SPUC/butterworth.h"
 #include "base/fixed_data_block.h"
+#include "gui/background_processes.h"
 
 #include <vector>
 #include <QMessageBox>
@@ -9,6 +10,8 @@
 
 namespace SigViewer_
 {
+
+QString DownSamplingThread::PROCESS_NAME_ ("Downsampling...");
 
 //-----------------------------------------------------------------------------
 DownSamplingThread::DownSamplingThread (QList<QSharedPointer<DataBlock> > data, unsigned downsampling_step, unsigned downsampling_max) :
@@ -18,6 +21,12 @@ DownSamplingThread::DownSamplingThread (QList<QSharedPointer<DataBlock> > data, 
     downsampling_max_ (downsampling_max)
 {
 
+}
+
+//-----------------------------------------------------------------------------
+DownSamplingThread::~DownSamplingThread ()
+{
+    BackgroundProcesses::instance().removeProcess (PROCESS_NAME_);
 }
 
 //-----------------------------------------------------------------------------
@@ -38,6 +47,7 @@ void DownSamplingThread::run ()
 //-------------------------------------------------------------------------
 void DownSamplingThread::downsampleAllOnBasisData ()
 {
+
     QMap<unsigned, QVector<QSharedPointer<QVector<float32> > > > raw_downsampled_data;
     QMap<unsigned, QVector<QSharedPointer<SPUC::butterworth<float32> > > > low_pass_filters;
     QMap<unsigned, QVector<float32> > sample_rates;
@@ -62,6 +72,8 @@ void DownSamplingThread::downsampleAllOnBasisData ()
         }
     }
 
+    BackgroundProcesses::instance().addProcess (PROCESS_NAME_, max_channel_length);
+
     for (unsigned sample_index = 0; sample_index < max_channel_length; sample_index++)
     {
         for (unsigned channel = 0; channel < basis_data_.size(); channel++)
@@ -76,7 +88,10 @@ void DownSamplingThread::downsampleAllOnBasisData ()
                 }
             }
         }
+        if (sample_index % 100 == 0)
+            BackgroundProcesses::instance().setProcessState (PROCESS_NAME_, sample_index);
     }
+    BackgroundProcesses::instance().removeProcess (PROCESS_NAME_);
 }
 
 //-------------------------------------------------------------------------

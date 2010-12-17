@@ -27,6 +27,7 @@
 
 #include "main_window.h"
 #include "gui/gui_action_factory.h"
+#include "gui/background_processes.h"
 #include "gui_impl/commands/open_file_gui_command.h"
 
 #include <QAction>
@@ -69,6 +70,10 @@ MainWindow::MainWindow (QSharedPointer<ApplicationContext> application_context)
 //-----------------------------------------------------------------------------
 void MainWindow::initStatusBar()
 {
+    connect (&BackgroundProcesses::instance(), SIGNAL(newProcess(QString,int)), SLOT(addBackgroundProcessToStatusBar(QString,int)));
+    connect (&BackgroundProcesses::instance(), SIGNAL(processChangedState(QString,int)), SLOT(updateBackgroundProcessonStatusBar(QString,int)));
+    connect (&BackgroundProcesses::instance(), SIGNAL(processRemoved(QString)), SLOT(removeBackgroundProcessFromStatusBar(QString)));
+
     QStatusBar* status_bar = statusBar();
     status_bar->showMessage(tr("Ready"));
 
@@ -151,6 +156,43 @@ void MainWindow::toggleAllToolbars ()
 }
 
 
+//-----------------------------------------------------------------------------
+void MainWindow::addBackgroundProcessToStatusBar (QString name, int max)
+{
+    QProgressBar* progress_bar = new QProgressBar (this);
+    progress_bar->setMinimum (0);
+    progress_bar->setMaximum (max);
+    progress_bar->setValue (0);
+
+    background_processes_progressbars_[name] = progress_bar;
+    background_processes_labels_[name] = new QLabel (name, this);
+    statusBar()->insertPermanentWidget (0, progress_bar);
+    statusBar()->insertPermanentWidget (0, background_processes_labels_[name]);
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::updateBackgroundProcessonStatusBar (QString name, int value)
+{
+    if (!background_processes_progressbars_.contains (name))
+        return;
+
+    background_processes_progressbars_[name]->setValue (value);
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::removeBackgroundProcessFromStatusBar (QString name)
+{
+    if (!background_processes_progressbars_.contains (name))
+        return;
+
+    statusBar()->removeWidget (background_processes_progressbars_[name]);
+    delete background_processes_progressbars_[name];
+    background_processes_progressbars_.remove (name);
+
+    statusBar()->removeWidget (background_processes_labels_[name]);
+    delete background_processes_labels_[name];
+    background_processes_labels_.remove (name);
+}
 
 //-----------------------------------------------------------------------------
 void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_context)
