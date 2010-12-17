@@ -38,6 +38,7 @@ private:
 
     static const char* DEFAULT_CHANNEL_COLOR_SETTING_;
     QColor default_channel_color_;
+    QColor default_event_color_;
 
     typedef QMap<EventType, QColor> EventColorMap;
     typedef QMap<ChannelID, QColor> ChannelColorMap;

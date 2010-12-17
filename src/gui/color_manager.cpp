@@ -61,9 +61,16 @@ void ColorManager::setChannelColor (ChannelID channel_id, QColor const& color)
 //-----------------------------------------------------------------------------
 QColor ColorManager::getEventColor (EventType type) const
 {
+    if (type == 800)
+        qDebug () << "ups";
     EventColorMap::const_iterator it = event_type2color_.find(type);
     if (it == event_type2color_.end())
-        return default_event_colors_[type];
+    {
+        if (default_event_colors_.contains (type))
+            return default_event_colors_[type];
+        else
+            return default_event_color_;
+    }
     else
         return *it;
 }
@@ -71,7 +78,10 @@ QColor ColorManager::getEventColor (EventType type) const
 //-----------------------------------------------------------------------------
 QColor ColorManager::getDefaultEventColor (EventType type) const
 {
-    return default_event_colors_[type];
+    if (default_event_colors_.contains (type))
+        return default_event_colors_[type];
+    else
+        return default_event_color_;
 }
 
 //-----------------------------------------------------------------------------
@@ -196,6 +206,7 @@ void ColorManager::loadDefaultEventColors ()
     default_color.setBlue (default_node.attribute("blue").toUInt());
 
     default_event_colors_[UNDEFINED_EVENT_TYPE] = default_color;
+    default_event_color_ = default_color;
 
     QDomNodeList event_elements = root.elementsByTagName("event");
     for (int index = 0; index < event_elements.size(); index++)
