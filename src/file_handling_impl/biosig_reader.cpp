@@ -30,8 +30,6 @@
 #include "gui/progress_bar.h"
 #include "base/fixed_data_block.h"
 
-#include <boost/math/special_functions/fpclassify.hpp>
-
 
 #include "biosig.h"
 
