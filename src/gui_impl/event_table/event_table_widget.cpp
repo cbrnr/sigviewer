@@ -16,8 +16,9 @@ public:
 };
 
 
+//-------------------------------------------------------------------------
 EventTableWidget::EventTableWidget (QSharedPointer<EventManager> event_manager,
-                                   QSharedPointer<ChannelManager const> channel_manager,
+                                   ChannelManager const& channel_manager,
                                    QWidget *parent) :
     QWidget(parent),
     precision_ (MathUtils_::sampleRateToDecimalPrecision(event_manager->getSampleRate())),
@@ -25,9 +26,12 @@ EventTableWidget::EventTableWidget (QSharedPointer<EventManager> event_manager,
     channel_manager_ (channel_manager)
 {
     ui_.setupUi(this);
+    connect (event_manager_.data(), SIGNAL(eventCreated(QSharedPointer<const SignalEvent>)), SLOT(addToTable(QSharedPointer<const SignalEvent>)));
+    connect (event_manager_.data(), SIGNAL(eventRemoved(EventID)), SLOT(removeFromTable(EventID)));
     buildTable();
 }
 
+//-------------------------------------------------------------------------
 EventTableWidget::~EventTableWidget()
 {
 
@@ -41,7 +45,7 @@ void EventTableWidget::addToTable (QSharedPointer<SignalEvent const> event)
 
     QTableWidgetItem* position_item = new EventTableItem (event->getPositionInSec(), precision_);
     QTableWidgetItem* duration_item = new EventTableItem (event->getDurationInSec(), precision_);
-    QTableWidgetItem* channel_item = new QTableWidgetItem (channel_manager_->getChannelLabel(event->getChannel()));
+    QTableWidgetItem* channel_item = new QTableWidgetItem (channel_manager_.getChannelLabel(event->getChannel()));
     QTableWidgetItem* type_item = new QTableWidgetItem (event_manager_->getNameOfEvent(event->getId()));
     QTableWidgetItem* id_item = new EventTableItem (event->getId());
 
@@ -62,10 +66,38 @@ void EventTableWidget::addToTable (QSharedPointer<SignalEvent const> event)
 }
 
 //-------------------------------------------------------------------------
+void EventTableWidget::removeFromTable (EventID event)
+{
+    QList<int> rows_to_remove;
+    for (int row = 0; row < ui_.event_table_->rowCount(); row++)
+        if (ui_.event_table_->item(row, ID_INDEX_)->text().toInt() == event)
+            rows_to_remove.prepend (row);
+
+    foreach (int row, rows_to_remove)
+        ui_.event_table_->removeRow (row);
+}
+
+//-------------------------------------------------------------------------
+void EventTableWidget::updateEventEntry (EventID event)
+{
+    bool updated = false;
+    for (int row = 0;
+         (row < ui_.event_table_->rowCount()) && (!updated);
+         row++)
+    {
+        if (ui_.event_table_->item (row, ID_INDEX_)->text().toInt() == event)
+        {
+            updated = true;
+        }
+    }
+}
+
+//-------------------------------------------------------------------------
 void EventTableWidget::buildTable ()
 {
     foreach (EventID event_id, event_manager_->getAllEvents ())
         addToTable (event_manager_->getEvent (event_id));
 }
+
 
 }

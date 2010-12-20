@@ -241,8 +241,8 @@ int MainWindowModelImpl::createSignalVisualisationImpl (ChannelManager const& ch
 
     if (!event_manager.isNull())
     {
-        //int event_tab_index = tab_widget_->addTab (new EventTableWidget (event_manager, channel_manager), tr("Events"));
-        //browser_models_[event_tab_index] = QSharedPointer<SignalBrowserModel>(0);
+        int event_tab_index = tab_widget_->addTab (new EventTableWidget (event_manager, channel_manager), tr("Events"));
+        browser_models_[event_tab_index] = QSharedPointer<SignalBrowserModel>(0);
 
         model->connect (event_manager.data(), SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)),
                                    SLOT(addEventItem(QSharedPointer<SignalEvent const>)));

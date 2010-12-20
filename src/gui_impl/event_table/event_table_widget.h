@@ -11,18 +11,25 @@
 namespace SigViewer_
 {
 
+namespace Tests_ { class EventTableWidgetTests;}
+
+//-----------------------------------------------------------------------------
 class EventTableWidget : public QWidget
 {
+    friend class SigViewer_::Tests_::EventTableWidgetTests;
+
     Q_OBJECT
 
 public:
     EventTableWidget (QSharedPointer<EventManager> event_manager,
-                      QSharedPointer<ChannelManager const> channel_manager,
+                      ChannelManager const& channel_manager,
                       QWidget *parent = 0);
     virtual ~EventTableWidget ();
 
 private slots:
     void addToTable (QSharedPointer<SignalEvent const> event);
+    void removeFromTable (EventID event);
+    void updateEventEntry (EventID event);
 
 private:
     void buildTable ();
@@ -37,7 +44,7 @@ private:
 
     Ui::EventTableWidget ui_;
     QSharedPointer<EventManager> event_manager_;
-    QSharedPointer<ChannelManager const> channel_manager_;
+    ChannelManager const& channel_manager_;
 };
 
 }

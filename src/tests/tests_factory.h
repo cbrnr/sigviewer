@@ -8,6 +8,7 @@
 #include "gui_tests.h"
 #include "color_manager_tests.h"
 #include "file_handling_tests.h"
+#include "event_table_widget_tests.h"
 
 #include <QSharedPointer>
 #include <QList>
@@ -28,6 +29,7 @@ QList<QSharedPointer<Tests_::Test> > allTests ()
     tests.append (QSharedPointer<Tests_::Test>(new Tests_::EditingCommandsTests));
     tests.append (QSharedPointer<Tests_::Test>(new Tests_::GuiTests));
     tests.append (QSharedPointer<Tests_::Test>(new Tests_::FileHandlingTests));
+    tests.append (QSharedPointer<Tests_::Test>(new Tests_::EventTableWidgetTests));
 
     return tests;
 }
