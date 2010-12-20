@@ -14,7 +14,7 @@ public:
     GDFFileSignalWriter ();
 
     //-------------------------------------------------------------------------
-    virtual FileSignalWriter* createInstance (QString const& file_path);
+    virtual QPair<FileSignalWriter*, QString> createInstance (QString const& file_path);
 
     //-------------------------------------------------------------------------
     virtual bool supportsSavingEvents () const {return true;}

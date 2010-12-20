@@ -26,7 +26,7 @@ public:
     virtual ~GDFFileSignalReader();
 
     //-------------------------------------------------------------------------
-    FileSignalReader* createInstance (QString const& file_path);
+    QPair<FileSignalReader*, QString> createInstance (QString const& file_path);
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<DataBlock const> getSignalData (ChannelID channel_id,

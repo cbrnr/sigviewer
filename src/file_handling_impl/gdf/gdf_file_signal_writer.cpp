@@ -30,9 +30,9 @@ GDFFileSignalWriter::GDFFileSignalWriter (QString const& file_path)
 }
 
 //-------------------------------------------------------------------------
-FileSignalWriter* GDFFileSignalWriter::createInstance (QString const& file_path)
+QPair<FileSignalWriter*, QString> GDFFileSignalWriter::createInstance (QString const& file_path)
 {
-    return new GDFFileSignalWriter (file_path);
+    return QPair<FileSignalWriter*, QString> (new GDFFileSignalWriter (file_path), "");
 }
 
 

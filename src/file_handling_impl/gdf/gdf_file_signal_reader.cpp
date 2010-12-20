@@ -37,18 +37,15 @@ GDFFileSignalReader::~GDFFileSignalReader()
 }
 
 //-------------------------------------------------------------------------------------------------
-FileSignalReader* GDFFileSignalReader::createInstance (QString const& file_path)
+QPair<FileSignalReader*, QString> GDFFileSignalReader::createInstance (QString const& file_path)
 {
     GDFFileSignalReader* reader = new GDFFileSignalReader ();
 
     QString error = reader->open (file_path);
     if (error.size())
-    {
-        QMessageBox::critical(0, QObject::tr("Error"), error);
-        return 0;
-    }
+        return QPair<FileSignalReader*, QString> (0, error);
     else
-        return reader;
+        return QPair<FileSignalReader*, QString> (reader, "");
 }
 
 //-------------------------------------------------------------------------------------------------

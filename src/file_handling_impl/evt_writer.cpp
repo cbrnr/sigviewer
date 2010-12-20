@@ -63,9 +63,9 @@ EVTWriter::~EVTWriter()
 
 
 //-------------------------------------------------------------------------
-FileSignalWriter* EVTWriter::createInstance (QString const& new_file_path)
+QPair<FileSignalWriter*, QString> EVTWriter::createInstance (QString const& new_file_path)
 {
-  return new EVTWriter (new_file_path);
+  return QPair<FileSignalWriter*, QString> (new EVTWriter (new_file_path), "");
 }
 
 //-----------------------------------------------------------------------------

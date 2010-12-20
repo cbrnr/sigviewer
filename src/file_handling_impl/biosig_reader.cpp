@@ -81,7 +81,7 @@ BioSigReader::~BioSigReader()
 }
 
 //-----------------------------------------------------------------------------
-FileSignalReader* BioSigReader::createInstance (QString const& file_path)
+QPair<FileSignalReader*, QString> BioSigReader::createInstance (QString const& file_path)
 {
     BioSigReader* reader (new BioSigReader);
     if (file_path.section('.', -1) == "evt")
@@ -90,11 +90,11 @@ FileSignalReader* BioSigReader::createInstance (QString const& file_path)
     if (error.size() > 0)
     {
         qDebug () << error;
-        QMessageBox::critical(0, QObject::tr("Error"), error);
-        return 0;
+        //QMessageBox::critical(0, QObject::tr("Error"), error);
+        return QPair<FileSignalReader*, QString> (0, error);
     }
     else
-        return reader;
+        return QPair<FileSignalReader*, QString> (reader, "");
 }
 
 

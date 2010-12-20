@@ -79,17 +79,29 @@ FileHandlerType* FileHandlerFactory<FileHandlerType>::getHandler (QString const&
 
     if (handler_map_.count(file_ending))
     {
-        FileHandlerType* handler = handler_map_[file_ending]->createInstance (file_path);
-        if (handler)
-            return handler;
+        QPair<FileHandlerType*, QString> handler = handler_map_[file_ending]->createInstance (file_path);
+        if (handler.first)
+            return handler.first;
         else
         {
-            QMessageBox::information (0, QObject::tr("File Opening"), QObject::tr("Specific file reader not working. The default reader will now try to open the file."));
-            return default_handler_->createInstance (file_path);
+            handler = default_handler_->createInstance (file_path);
+            if (handler.first)
+                return handler.first;
+            else
+            {
+                QMessageBox::information (0, QObject::tr("File Opening"), handler.second);
+                return 0;
+            }
         }
     }
     else if (!default_handler_.isNull())
-        return default_handler_->createInstance (file_path);
+    {
+        QPair<FileHandlerType*, QString> handler = default_handler_->createInstance (file_path);
+        if (handler.second.size())
+            QMessageBox::information (0, QObject::tr("File Opening"), handler.second);
+
+        return handler.first;
+    }
     else
         return 0;
 }

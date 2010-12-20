@@ -8,6 +8,7 @@
 #include <QVector>
 #include <QPointer>
 #include <QSharedPointer>
+#include <QPair>
 
 class QString;
 
@@ -25,7 +26,7 @@ public:
 
     virtual ~FileSignalReader() {}
 
-    virtual FileSignalReader* createInstance (QString const& file_path) = 0;
+    virtual QPair<FileSignalReader*, QString> createInstance (QString const& file_path) = 0;
 
     virtual QSharedPointer<DataBlock const> getSignalData (ChannelID channel_id,
                                                            unsigned start_sample,

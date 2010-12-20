@@ -21,7 +21,7 @@ public:
     EVTWriter (bool prototype_instance);
 
     //-------------------------------------------------------------------------
-    virtual FileSignalWriter* createInstance (QString const& file_path);
+    virtual QPair<FileSignalWriter*, QString> createInstance (QString const& file_path);
 
     //-------------------------------------------------------------------------
     virtual ~EVTWriter();

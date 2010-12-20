@@ -55,11 +55,11 @@ BioSigWriter::BioSigWriter (FileFormat target_type, QString new_file_path) :
 
 
 //-------------------------------------------------------------------------
-FileSignalWriter* BioSigWriter::createInstance (QString const& file_path)
+QPair<FileSignalWriter*, QString> BioSigWriter::createInstance (QString const& file_path)
 {
     BioSigWriter* writer (new BioSigWriter);
     writer->new_file_path_ = file_path;
-    return writer;
+    return QPair<FileSignalWriter*, QString> (writer, "");
 }
 
 //-----------------------------------------------------------------------------

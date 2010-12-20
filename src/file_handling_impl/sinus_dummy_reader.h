@@ -17,7 +17,7 @@ public:
     virtual ~SinusDummyReader();
 
     //-------------------------------------------------------------------------
-    FileSignalReader* createInstance (QString const& file_path);
+    virtual QPair<FileSignalReader*, QString> createInstance (QString const& file_path);
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<DataBlock const> getSignalData (ChannelID channel_id,
