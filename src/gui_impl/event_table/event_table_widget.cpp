@@ -28,6 +28,7 @@ EventTableWidget::EventTableWidget (QSharedPointer<EventManager> event_manager,
     ui_.setupUi(this);
     connect (event_manager_.data(), SIGNAL(eventCreated(QSharedPointer<const SignalEvent>)), SLOT(addToTable(QSharedPointer<const SignalEvent>)));
     connect (event_manager_.data(), SIGNAL(eventRemoved(EventID)), SLOT(removeFromTable(EventID)));
+    connect (event_manager_.data(), SIGNAL(eventChanged(EventID)), SLOT(updateEventEntry(EventID)));
     buildTable();
 }
 
@@ -78,15 +79,21 @@ void EventTableWidget::removeFromTable (EventID event)
 }
 
 //-------------------------------------------------------------------------
-void EventTableWidget::updateEventEntry (EventID event)
+void EventTableWidget::updateEventEntry (EventID event_id)
 {
+    QSharedPointer<SignalEvent const> event = event_manager_->getEvent (event_id);
     bool updated = false;
     for (int row = 0;
          (row < ui_.event_table_->rowCount()) && (!updated);
          row++)
     {
-        if (ui_.event_table_->item (row, ID_INDEX_)->text().toInt() == event)
+        QTableWidgetItem* id_item = ui_.event_table_->item (row, ID_INDEX_);
+        if (id_item->text().toInt() == event_id)
         {
+            ui_.event_table_->item (row, CHANNEL_INDEX_)->setText (channel_manager_.getChannelLabel (event->getChannel()));
+            ui_.event_table_->item (row, POSITION_INDEX_)->setText (QString::number (event->getPositionInSec(), 'f', precision_));
+            ui_.event_table_->item (row, DURATION_INDEX_)->setText (QString::number (event->getDurationInSec(), 'f', precision_));
+            ui_.event_table_->item (row, TYPE_INDEX_)->setText (event_manager_->getNameOfEvent (event_id));
             updated = true;
         }
     }

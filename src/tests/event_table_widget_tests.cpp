@@ -88,13 +88,18 @@ QString EventTableWidgetTests::changedEvents (QSharedPointer<EventManager> event
     EventID const EVENT_ID = 4;
     EventType const OLD_TYPE = event_manager->getEvent (EVENT_ID)->getType();
     EventType const NEW_TYPE = OLD_TYPE + 1;
+    ChannelID const NEW_CHANNEL = 3;
 
     EventTableWidget event_table (event_manager, getChannelManagerDummyData());
     QTableWidget* table = event_table.ui_.event_table_;
     int old_row_count = table->rowCount();
 
-    event_manager->getAndLockEventForEditing (EVENT_ID)->setType (NEW_TYPE);
-    event_manager->updateAndUnlockEvent (EVENT_ID);
+    {
+        QSharedPointer<SignalEvent> event_for_editing = event_manager->getAndLockEventForEditing (EVENT_ID);
+        event_for_editing->setType (NEW_TYPE);
+        event_for_editing->setChannel (NEW_CHANNEL);
+        event_manager->updateAndUnlockEvent (EVENT_ID);
+    }
 
     VERIFY (old_row_count == table->rowCount(), "same amount fo events");
 
@@ -103,6 +108,7 @@ QString EventTableWidgetTests::changedEvents (QSharedPointer<EventManager> event
         if (table->item(row, EventTableWidget::ID_INDEX_)->text().toInt() == EVENT_ID)
         {
             VERIFY (table->item(row, EventTableWidget::TYPE_INDEX_)->text() == event_manager->getNameOfEventType(NEW_TYPE), "types match");
+            VERIFY (table->item(row, EventTableWidget::CHANNEL_INDEX_)->text() == getChannelManagerDummyData ().getChannelLabel (NEW_CHANNEL), "channels match");
         }
     }
 

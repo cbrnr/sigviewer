@@ -29,7 +29,7 @@ public:
 private slots:
     void addToTable (QSharedPointer<SignalEvent const> event);
     void removeFromTable (EventID event);
-    void updateEventEntry (EventID event);
+    void updateEventEntry (EventID event_id);
 
 private:
     void buildTable ();
