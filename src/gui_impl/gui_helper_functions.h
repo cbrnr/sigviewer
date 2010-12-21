@@ -21,12 +21,12 @@ void animateProperty (QObject* target, QByteArray const& property_name,
                       QObject* call_back_object = 0, char const* call_back_slot = 0);
 
 //-----------------------------------------------------------------------------
-QSharedPointer<SignalEvent const> getSelectedEvent (QSharedPointer<SignalVisualisationModel>
+QList<QSharedPointer<SignalEvent const> > getSelectedEvents (QSharedPointer<SignalVisualisationModel>
                                                     signal_visualisation_model);
 
 //-----------------------------------------------------------------------------
-EventID getSelectedEventID (QSharedPointer<SignalVisualisationModel>
-                            signal_visualisation_model);
+QList<EventID> getSelectedEventIDs (QSharedPointer<SignalVisualisationModel>
+                                    signal_visualisation_model);
 
 //-----------------------------------------------------------------------------
 EventType selectEventType (EventType preselected_type, QSharedPointer<SignalVisualisationModel>

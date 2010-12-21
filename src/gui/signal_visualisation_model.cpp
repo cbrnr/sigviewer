@@ -54,9 +54,9 @@ void SignalVisualisationModel::selectChannel (ChannelID channel)
 
 
 //-----------------------------------------------------------------------------
-EventID SignalVisualisationModel::getSelectedEvent () const
+QList<EventID> SignalVisualisationModel::getSelectedEvents () const
 {
-    return UNDEFINED_EVENT_ID;
+    return QList<EventID> ();
 }
 
 

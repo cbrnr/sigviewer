@@ -65,7 +65,7 @@ public:
 
     //-------------------------------------------------------------------------
     /// see base class
-    virtual EventID getSelectedEvent () const;
+    virtual QList<EventID> getSelectedEvents () const;
 
     //-------------------------------------------------------------------------
     virtual SignalVisualisationView const* view () const;

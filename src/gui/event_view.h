@@ -26,6 +26,11 @@ public:
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<EventManager> getEventManager () = 0;
+
+    //-------------------------------------------------------------------------
+    /// @return the id of the currently selected signal event
+    //virtual EventID getSelectedEvent () const;
+
 };
 }
 

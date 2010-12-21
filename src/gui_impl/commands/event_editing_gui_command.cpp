@@ -70,121 +70,123 @@ void EventEditingGuiCommand::init ()
 //-----------------------------------------------------------------------------
 void EventEditingGuiCommand::deleteSelectedEvent ()
 {
-    EventID event = GuiHelper::getSelectedEventID (currentVisModel());
-    if (event == UNDEFINED_EVENT_ID)
-        return;
-
-    QUndoCommand* command = new DeleteEventUndoCommand (
-            currentVisModel()->getEventManager(),
-            event);
-    executeCommand (command);
+    QList<QSharedPointer<QUndoCommand> > commands;
+    foreach (EventID event, GuiHelper::getSelectedEventIDs (currentVisModel()))
+    {
+        commands.append (QSharedPointer<QUndoCommand> (new DeleteEventUndoCommand (
+                currentVisModel()->getEventManager(),
+                event)));
+    }
+    executeCommands (commands);
 }
 
 //-----------------------------------------------------------------------------
 void EventEditingGuiCommand::changeTypeSelectedEvent ()
 {
-    EventID event = GuiHelper::getSelectedEventID (currentVisModel());
-    if (event == UNDEFINED_EVENT_ID)
-        return;
+    QList<QSharedPointer<QUndoCommand> > commands;
+    foreach (EventID event, GuiHelper::getSelectedEventIDs (currentVisModel()))
+    {
+        QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
+        EventType pre_selected_type = event_manager->getEvent (event)->getType ();
+        EventType new_type = GuiHelper::selectEventType (pre_selected_type, currentVisModel());
 
-    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
-    EventType pre_selected_type = event_manager->getEvent (event)->getType ();
-    EventType new_type = GuiHelper::selectEventType (pre_selected_type, currentVisModel());
+        if (new_type == UNDEFINED_EVENT_TYPE)
+            return;
 
-    if (new_type == UNDEFINED_EVENT_TYPE)
-        return;
+        commands.append (QSharedPointer<QUndoCommand> (new ChangeTypeUndoCommand (
+                event_manager,
+                event,
+                new_type)));
+    }
 
-    QUndoCommand* command = new ChangeTypeUndoCommand (
-            event_manager,
-            event,
-            new_type);
-    executeCommand (command);
+    executeCommands (commands);
 }
 
 //-------------------------------------------------------------------------
 void EventEditingGuiCommand::changeChannelSelectedEvent ()
 {
-    EventID event = GuiHelper::getSelectedEventID (currentVisModel());
-    if (event == UNDEFINED_EVENT_ID)
-        return;
+    QList<QSharedPointer<QUndoCommand> > commands;
+    foreach (EventID event, GuiHelper::getSelectedEventIDs (currentVisModel()))
+    {
+        QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
+        ChannelID preselected_channel = event_manager->getEvent (event)->getChannel ();
+        ChannelID new_channel = GuiHelper::selectChannel (preselected_channel,
+                                                          currentVisModel());
 
-    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
-    ChannelID preselected_channel = event_manager->getEvent (event)->getChannel ();
-    ChannelID new_channel = GuiHelper::selectChannel (preselected_channel,
-                                                      currentVisModel());
+        if (new_channel == preselected_channel)
+            return;
 
-    if (new_channel == preselected_channel)
-        return;
-
-    QUndoCommand* change_channel_command = new ChangeChannelUndoCommand (event_manager,
-                                                                       event,
-                                                                       new_channel);
-    executeCommand (change_channel_command);
+        commands.append (QSharedPointer<QUndoCommand> (new ChangeChannelUndoCommand (event_manager,
+                                                                             event,
+                                                                             new_channel)));
+    }
+    executeCommands (commands);
 }
 
 //-------------------------------------------------------------------------
 void EventEditingGuiCommand::toAllChannelsSelectedEvent ()
 {
-    EventID event = GuiHelper::getSelectedEventID (currentVisModel());
-    if (event == UNDEFINED_EVENT_ID)
-        return;
+    QList<QSharedPointer<QUndoCommand> > commands;
+    foreach (EventID event, GuiHelper::getSelectedEventIDs (currentVisModel()))
+    {
+        QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
 
-    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
+        if (event_manager->getEvent (event)->getChannel () == UNDEFINED_CHANNEL)
+            return;
 
-    if (event_manager->getEvent (event)->getChannel () == UNDEFINED_CHANNEL)
-        return;
-
-    QUndoCommand* change_channel_command = new ChangeChannelUndoCommand (event_manager,
-                                                                       event,
-                                                                       UNDEFINED_CHANNEL);
-    executeCommand (change_channel_command);
+        commands.append (QSharedPointer<QUndoCommand> (new ChangeChannelUndoCommand (event_manager,
+                                                                             event,
+                                                                             UNDEFINED_CHANNEL)));
+    }
+    executeCommands (commands);
 }
 
 //-------------------------------------------------------------------------
 void EventEditingGuiCommand::copyToChannelsSelectedEvent ()
 {
-    EventID event_id = GuiHelper::getSelectedEventID (currentVisModel());
-    if (event_id == UNDEFINED_EVENT_ID)
-        return;
-
-    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
-    QSharedPointer<SignalEvent const> event = event_manager->getEvent (event_id);
-    std::set<ChannelID> channels = GuiHelper::selectShownChannels (event->getChannel (),
-                                                                   currentVisModel());
-
-    if (channels.size () == 0)
-        return;
-
-    QList<QSharedPointer<QUndoCommand> > new_commands;
-    for (std::set<ChannelID>::iterator channel_iter = channels.begin();
-         channel_iter != channels.end();
-         ++channel_iter)
+    QList<QSharedPointer<QUndoCommand> > commands;
+    foreach (EventID event_id, GuiHelper::getSelectedEventIDs (currentVisModel()))
     {
-        QSharedPointer<SignalEvent> new_event (new SignalEvent (*event));
-        new_event->setChannel (*channel_iter);
-        QSharedPointer<QUndoCommand> command (new NewEventUndoCommand (event_manager, new_event, 1));
-        new_commands.append (command);
+        QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
+        QSharedPointer<SignalEvent const> event = event_manager->getEvent (event_id);
+        std::set<ChannelID> channels = GuiHelper::selectShownChannels (event->getChannel (),
+                                                                       currentVisModel());
+
+        if (channels.size () == 0)
+            return;
+
+        for (std::set<ChannelID>::iterator channel_iter = channels.begin();
+        channel_iter != channels.end();
+        ++channel_iter)
+        {
+            QSharedPointer<SignalEvent> new_event (new SignalEvent (*event));
+            new_event->setChannel (*channel_iter);
+            QSharedPointer<QUndoCommand> command (new NewEventUndoCommand (event_manager, new_event, 1));
+            commands.append (command);
+        }
     }
-    QUndoCommand* macro = new MacroUndoCommand (new_commands);
-    executeCommand (macro);
+    executeCommands (commands);
 }
 
 //-------------------------------------------------------------------------
 void EventEditingGuiCommand::insertEventOverSelectedEvent ()
 {
-    EventID event = GuiHelper::getSelectedEventID (currentVisModel());
-    if (event == UNDEFINED_EVENT_ID)
-        return;
+    QList<QSharedPointer<QUndoCommand> > commands;
+    foreach (EventID event, GuiHelper::getSelectedEventIDs (currentVisModel()))
+    {
+        if (event == UNDEFINED_EVENT_ID)
+            return;
 
-    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
-    QSharedPointer<SignalVisualisationModel> sv_model = currentVisModel();
-    QSharedPointer<SignalEvent> new_event (new SignalEvent (*(event_manager->getEvent (event))));
-    new_event->setType (sv_model->getActualEventCreationType ());
+        QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
+        QSharedPointer<SignalVisualisationModel> sv_model = currentVisModel();
+        QSharedPointer<SignalEvent> new_event (new SignalEvent (*(event_manager->getEvent (event))));
+        new_event->setType (sv_model->getActualEventCreationType ());
 
-    QUndoCommand* new_event_command = new NewEventUndoCommand (event_manager,
-                                                             new_event,
-                                                             1);
-    executeCommand (new_event_command);
+        commands.append (QSharedPointer<QUndoCommand>(new NewEventUndoCommand (event_manager,
+                                                  new_event,
+                                                  1)));
+    }
+    executeCommands (commands);
 }
 
 //-------------------------------------------------------------------------
@@ -220,9 +222,10 @@ void EventEditingGuiCommand::evaluateEnabledness ()
 
 
 //-------------------------------------------------------------------------
-void EventEditingGuiCommand::executeCommand (QUndoCommand* command)
+void EventEditingGuiCommand::executeCommands (QList<QSharedPointer<QUndoCommand> > commands)
 {
-    applicationContext()->getCurrentCommandExecuter()->executeCommand (command);
+    MacroUndoCommand* macro = new MacroUndoCommand (commands);
+    applicationContext()->getCurrentCommandExecuter()->executeCommand (macro);
 }
 
 

@@ -353,12 +353,12 @@ void SignalBrowserModel::goToSample (unsigned sample)
 }
 
 //-------------------------------------------------------------------------
-EventID SignalBrowserModel::getSelectedEvent () const
+QList<EventID> SignalBrowserModel::getSelectedEvents () const
 {
     if (selected_event_item_)
-        return selected_event_item_->getId ();
+        return QList<EventID> () << selected_event_item_->getId ();
     else
-        return UNDEFINED_EVENT_ID;
+        return QList<EventID> ();
 }
 
 //-------------------------------------------------------------------

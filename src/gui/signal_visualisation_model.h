@@ -79,7 +79,7 @@ public:
 
     //-------------------------------------------------------------------------
     /// @return the id of the currently selected signal event
-    virtual EventID getSelectedEvent () const;
+    virtual QList<EventID> getSelectedEvents () const;
 
     //-------------------------------------------------------------------------
     virtual std::set<EventType> getShownEventTypes () const;

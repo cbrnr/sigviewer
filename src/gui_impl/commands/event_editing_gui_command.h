@@ -50,7 +50,7 @@ protected:
     virtual void evaluateEnabledness ();
 
 private:
-    void executeCommand (QUndoCommand* command);
+    void executeCommands (QList<QSharedPointer<QUndoCommand> > commands);
 
     static QString const DELETE_;
     static QString const CHANGE_TYPE_;

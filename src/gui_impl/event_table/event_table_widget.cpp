@@ -1,6 +1,8 @@
 #include "event_table_widget.h"
 #include "base/math_utils.h"
+#include "gui/gui_action_factory.h"
 
+#include <QToolBar>
 
 namespace SigViewer_
 {
@@ -31,6 +33,9 @@ EventTableWidget::EventTableWidget (QSharedPointer<EventManager> event_manager,
     connect (event_manager_.data(), SIGNAL(eventChanged(EventID)), SLOT(updateEventEntry(EventID)));
     buildTable();
     ui_.event_table_->hideColumn (ID_INDEX_);
+    QToolBar* toolbar = new QToolBar (this);
+    toolbar->addAction (GuiActionFactory::getInstance()->getQAction ("Delete"));
+    ui_.verticalLayout->insertWidget(0, toolbar);
 }
 
 //-------------------------------------------------------------------------
