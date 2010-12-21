@@ -222,6 +222,7 @@ void SaveGuiCommand::exportEvents ()
 void SaveGuiCommand::evaluateEnabledness ()
 {
     disableIfNoFileIsOpened (QStringList() << EXPORT_TO_PNG_);
+    disableIfNoSignalIsVisualised (QStringList() << EXPORT_TO_PNG_);
     bool file_open = getApplicationState () == APP_STATE_FILE_OPEN;
     bool no_gdf_file_open = false;
     bool file_changed = false;

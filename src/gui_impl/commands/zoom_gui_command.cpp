@@ -66,6 +66,11 @@ void ZoomGuiCommand::init ()
 //-------------------------------------------------------------------------
 void ZoomGuiCommand::evaluateEnabledness ()
 {
+    if (disableIfNoSignalIsVisualised (ACTIONS_))
+        return;
+
+    qDebug () << "blaaahaha";
+
     QSharedPointer<SignalViewSettings> vis = currentSignalViewSettings ();
     QSharedPointer<SignalVisualisationModel> vis_model = currentVisModel();
     bool file_open = getApplicationState () == APP_STATE_FILE_OPEN;

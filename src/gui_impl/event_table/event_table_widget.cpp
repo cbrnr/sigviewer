@@ -30,6 +30,7 @@ EventTableWidget::EventTableWidget (QSharedPointer<EventManager> event_manager,
     connect (event_manager_.data(), SIGNAL(eventRemoved(EventID)), SLOT(removeFromTable(EventID)));
     connect (event_manager_.data(), SIGNAL(eventChanged(EventID)), SLOT(updateEventEntry(EventID)));
     buildTable();
+    ui_.event_table_->hideColumn (ID_INDEX_);
 }
 
 //-------------------------------------------------------------------------

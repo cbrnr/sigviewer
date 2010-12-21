@@ -93,6 +93,8 @@ void AdaptChannelViewGuiCommand::evaluateEnabledness ()
     disabled_actions_if_no_file.removeAll(ANIMATIONS_);
     disabled_actions_if_no_file.removeAll(SET_ANIMATION_DURATION_);
     disableIfNoFileIsOpened (disabled_actions_if_no_file);
+    disableIfNoSignalIsVisualised (disabled_actions_if_no_file);
+
     if (!currentVisModel().isNull())
     {
         getQAction (SET_AUTO_SCALE_MAX_TO_MAX_)->setChecked (currentVisModel()->getAutoScaleMode()

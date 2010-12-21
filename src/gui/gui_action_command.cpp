@@ -175,6 +175,17 @@ QSharedPointer<ApplicationContext> GuiActionCommand::applicationContext ()
     return ApplicationContextImpl::getInstance();
 }
 
+//-------------------------------------------------------------------------
+bool GuiActionCommand::disableIfNoSignalIsVisualised (QStringList const &actions)
+{
+    bool no_signal_is_visualised = currentVisModel().isNull();
+
+    if (no_signal_is_visualised)
+        foreach (QString action, actions)
+            action_map_[action]->setDisabled (no_signal_is_visualised);
+
+    return no_signal_is_visualised;
+}
 
 //-------------------------------------------------------------------------
 bool GuiActionCommand::disableIfNoEventsPossible (QStringList const &actions)

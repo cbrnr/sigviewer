@@ -77,7 +77,11 @@ void MouseModeGuiCommand::trigger (QString const& action_name)
 //-------------------------------------------------------------------------
 void MouseModeGuiCommand::evaluateEnabledness ()
 {
-    disableIfNoFileIsOpened (MODE_TEXTS_);
+    if (disableIfNoFileIsOpened (MODE_TEXTS_))
+        return;
+    if (disableIfNoSignalIsVisualised(MODE_TEXTS_))
+        return;
+
     if (!currentVisModel().isNull())
     {
         getQAction(NEW_MODE_TEXT_)->setDisabled(currentVisModel()->getEventManager().isNull());

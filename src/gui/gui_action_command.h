@@ -99,6 +99,9 @@ protected:
     TabEditState getTabEditState () const {return tab_edit_state_;}
 
     //-------------------------------------------------------------------------
+    bool disableIfNoSignalIsVisualised (QStringList const &actions);
+
+    //-------------------------------------------------------------------------
     bool disableIfNoEventsPossible (QStringList const &actions);
 
     //-------------------------------------------------------------------------
