@@ -2,6 +2,7 @@
 #define MAIN_WINDOW_MODEL_H
 
 #include "signal_visualisation_model.h"
+#include "event_view.h"
 #include "file_context.h"
 
 namespace SigViewer_
@@ -26,6 +27,8 @@ public:
     //-------------------------------------------------------------------------
     virtual QSharedPointer<SignalVisualisationModel> getCurrentSignalVisualisationModel () = 0;
 
+    //-------------------------------------------------------------------------
+    virtual QSharedPointer<EventView> getCurrentEventView () = 0;
 };
 
 }

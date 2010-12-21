@@ -104,6 +104,13 @@ void MainWindowModelImpl::closeTab (int tab_index)
         for (int index = tab_index + 1; index < models_count; index++)
             browser_models_[index - 1] = browser_models_[index];
     }
+    int event_views_count = event_views_.size();
+    if (event_views_count >= tab_index)
+    {
+        for (int index = tab_index + 1; index < event_views_count; index++)
+            if (event_views_.contains (index))
+                event_views_[index - 1] = event_views_[index];
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -213,6 +220,15 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::getCurrentSignalVi
 }
 
 //-------------------------------------------------------------------------
+QSharedPointer<EventView> MainWindowModelImpl::getCurrentEventView ()
+{
+    if (!tab_widget_)
+        return QSharedPointer<EventView>(0);
+
+    return browser_models_[tab_widget_->currentIndex()];
+}
+
+//-------------------------------------------------------------------------
 void MainWindowModelImpl::resetCurrentFileName (QString const& file_name)
 {
     if (file_name.size() == 0)
@@ -238,11 +254,13 @@ int MainWindowModelImpl::createSignalVisualisationImpl (ChannelManager const& ch
 
     model->setSignalBrowserView (view);
     browser_models_[tab_index] = model;
+    event_views_[tab_index] = model;
 
     if (!event_manager.isNull())
     {
         int event_tab_index = tab_widget_->addTab (new EventTableWidget (event_manager, channel_manager), tr("Events"));
         browser_models_[event_tab_index] = QSharedPointer<SignalBrowserModel>(0);
+        event_views_[event_tab_index] = QSharedPointer<EventView>(0);
         tab_contexts_[event_tab_index] = tab_context;
 
         model->connect (event_manager.data(), SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)),

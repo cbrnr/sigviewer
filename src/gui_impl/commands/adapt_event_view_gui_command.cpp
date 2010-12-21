@@ -67,7 +67,7 @@ void AdaptEventViewGuiCommand::trigger (QString const& action_name)
 //-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::hideEventsOfOtherType ()
 {
-    QList<QSharedPointer<SignalEvent const> > events = GuiHelper::getSelectedEvents (currentVisModel());
+    QList<QSharedPointer<SignalEvent const> > events = GuiHelper::getSelectedEvents (currentEventView());
 
     if (events.size() != 1)
         return;

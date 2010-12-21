@@ -60,12 +60,12 @@ void animateProperty (QObject* target, QByteArray const& property_name,
 }
 
 //-----------------------------------------------------------------------------
-QList<QSharedPointer<SignalEvent const> > getSelectedEvents (QSharedPointer<SignalVisualisationModel>
-                                                    signal_visualisation_model)
+QList<QSharedPointer<SignalEvent const> > getSelectedEvents (QSharedPointer<EventView>
+                                                             event_view)
 {
-    QList<EventID> ids = getSelectedEventIDs (signal_visualisation_model);
+    QList<EventID> ids = getSelectedEventIDs (event_view);
     QList<QSharedPointer<SignalEvent const> > events;
-    QSharedPointer<EventManager> event_manager = signal_visualisation_model->getEventManager();
+    QSharedPointer<EventManager> event_manager = event_view->getEventManager();
 
     foreach (EventID id, ids)
         events.append (event_manager->getEvent (id));
@@ -75,13 +75,13 @@ QList<QSharedPointer<SignalEvent const> > getSelectedEvents (QSharedPointer<Sign
 
 
 //-----------------------------------------------------------------------------
-QList<EventID> getSelectedEventIDs (QSharedPointer<SignalVisualisationModel>
-                            signal_visualisation_model)
+QList<EventID> getSelectedEventIDs (QSharedPointer<EventView>
+                            event_view)
 {
     QList<EventID> event_ids;
-    if (signal_visualisation_model.isNull())
+    if (event_view.isNull())
         return event_ids;
-    return signal_visualisation_model->getSelectedEvents ();
+    return event_view->getSelectedEvents ();
 }
 
 //-----------------------------------------------------------------------------

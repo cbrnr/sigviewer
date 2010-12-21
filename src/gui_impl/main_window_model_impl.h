@@ -15,6 +15,7 @@
 #include <QString>
 #include <QSharedPointer>
 #include <QTabWidget>
+#include <QMap>
 
 #include <map>
 
@@ -48,6 +49,9 @@ public:
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<SignalVisualisationModel> getCurrentSignalVisualisationModel ();
+
+    //-------------------------------------------------------------------------
+    virtual QSharedPointer<EventView> getCurrentEventView ();
 
 public slots:
     //-------------------------------------------------------------------------
@@ -87,6 +91,7 @@ private:
     QTabWidget* tab_widget_;
     QStringList recent_file_list_;
     std::map<int, QSharedPointer<SignalVisualisationModel> > browser_models_;
+    QMap<int, QSharedPointer<EventView> > event_views_;
     std::map<int, QSharedPointer<TabContext> > tab_contexts_;
 
     //-------------------------------------------------------------------------

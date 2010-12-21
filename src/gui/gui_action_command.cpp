@@ -136,6 +136,19 @@ void GuiActionCommand::evaluateEnabledness ()
 
 }
 
+//-------------------------------------------------------------------------
+QSharedPointer<EventView> GuiActionCommand::currentEventView ()
+{
+    QSharedPointer<EventView> event_view;
+
+    QSharedPointer<MainWindowModel> main_window_model =
+        ApplicationContextImpl::getInstance()->getMainWindowModel ();
+
+    if (!main_window_model.isNull())
+        event_view = main_window_model->getCurrentEventView ();
+
+    return event_view;
+}
 
 //-------------------------------------------------------------------------
 QSharedPointer<SignalVisualisationModel> GuiActionCommand::currentVisModel ()

@@ -9,6 +9,7 @@
 #include "base/exception.h"
 
 #include "signal_visualisation_model.h"
+#include "event_view.h"
 #include "signal_view_settings.h"
 
 #include <QObject>
@@ -73,6 +74,9 @@ protected:
 
     //-------------------------------------------------------------------------
     virtual void evaluateEnabledness ();
+
+    //-------------------------------------------------------------------------
+    QSharedPointer<EventView> currentEventView ();
 
     //-------------------------------------------------------------------------
     QSharedPointer<SignalVisualisationModel> currentVisModel ();
