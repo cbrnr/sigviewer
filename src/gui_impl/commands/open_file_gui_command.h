@@ -26,7 +26,7 @@ public:
     virtual void init ();
 
     //-------------------------------------------------------------------------
-    static void openFile (QString file_path, bool instantly = false);
+    static void openFile (QString file_path, bool instantly = true);
 
 protected:
     //-------------------------------------------------------------------------
@@ -56,7 +56,7 @@ private:
     static GuiActionFactoryRegistrator registrator_;
 
     //-------------------------------------------------------------------------
-    void openFileImpl (QString file_path, bool instantly = false);
+    void openFileImpl (QString file_path, bool instantly = true);
 
     //-------------------------------------------------------------------------
     QString showOpenDialog (QString const& path, QString const& extensions);
