@@ -110,6 +110,12 @@ void AdaptEventViewGuiCommand::evaluateEnabledness ()
                               << FIT_TO_EVENT_);
 
     setNextAndPreviousEvent ();
+    getQAction (SET_SHOWN_EVENTS_)->setEnabled (currentEventView()->eventsHidable());
+    getQAction (HIDE_EVENTS_OF_OTHER_TYPE_)->setEnabled (currentEventView()->eventsHidable());
+    getQAction (SHOW_ALL_EVENTS_)->setEnabled (currentEventView()->eventsHidable());
+    getQAction (FIT_TO_EVENT_)->setEnabled (currentEventView()->eventsHidable());
+    getQAction (GO_TO_NEXT_EVENT_)->setEnabled (currentEventView()->eventsSlidable());
+    getQAction (GO_TO_PREVIOUS_EVENT_)->setEnabled (currentEventView()->eventsSlidable());
 }
 
 

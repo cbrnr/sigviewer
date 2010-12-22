@@ -16,7 +16,19 @@ class EventView
 {
 public:
     //-------------------------------------------------------------------------
+    EventView (bool events_hidable = true, bool events_slidable = true)
+        : events_hidable_ (events_hidable),
+          events_slidable_ (events_slidable)
+    {}
+
+    //-------------------------------------------------------------------------
     virtual ~EventView () {}
+
+    //-------------------------------------------------------------------------
+    virtual bool eventsHidable () const {return events_hidable_;}
+
+    //-------------------------------------------------------------------------
+    virtual bool eventsSlidable () const {return events_slidable_;}
 
     //-------------------------------------------------------------------------
     virtual void setShownEventTypes (std::set<EventType> const& event_types) = 0;
@@ -33,6 +45,10 @@ public:
     //-------------------------------------------------------------------------
     /// @return the id of the currently selected signal event
     virtual QList<EventID> getSelectedEvents () const = 0;
+
+private:
+    bool events_hidable_;
+    bool events_slidable_;
 
 };
 }

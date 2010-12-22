@@ -7,7 +7,8 @@ namespace SigViewer_
 
 //-----------------------------------------------------------------------------
 EventTableViewModel::EventTableViewModel (EventTableWidget& event_table_widget)
-    : event_table_widget_ (event_table_widget)
+    : EventView (false, false),
+      event_table_widget_ (event_table_widget)
 {
 
 }
