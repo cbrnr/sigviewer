@@ -231,8 +231,6 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     edit_menu_->addAction (action("Change Type..."));
     edit_menu_->addSeparator ();
     edit_menu_->addAction (action("Insert Over"));
-    edit_menu_->addSeparator ();
-    edit_menu_->addAction (action("Event Table..."));
 
     mouse_mode_menu_ = menuBar()->addMenu(tr("&Mode"));
     mouse_mode_menu_->addAction (action("New Event"));
