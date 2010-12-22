@@ -20,6 +20,7 @@ class SignalViewSettings : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(float pixelsPerSample READ getPixelsPerSample WRITE setPixelsPerSample)
+    Q_PROPERTY(float channelOverlapping READ getChannelOverlapping WRITE setChannelOverlapping)
     Q_PROPERTY(int channelHeight READ getChannelHeight WRITE setChannelHeight)
 public:
     //-------------------------------------------------------------------------
@@ -30,6 +31,9 @@ public:
 
     //-------------------------------------------------------------------------
     float getPixelsPerSample () const {return pixels_per_sample_;}
+
+    //-------------------------------------------------------------------------
+    float getChannelOverlapping () const {return channel_overlapping_;}
 
     //-------------------------------------------------------------------------
     int getChannelHeight () const {return channel_heigth_in_pixels_;}
@@ -48,6 +52,9 @@ public slots:
     void setPixelsPerSample (float pixel_per_sample);
 
     //-------------------------------------------------------------------------
+    void setChannelOverlapping (float channel_overlapping);
+
+    //-------------------------------------------------------------------------
     void setChannelHeight (int channel_heigth_in_pixels);
 
     //-------------------------------------------------------------------------
@@ -64,6 +71,7 @@ public slots:
 
 signals:
     void pixelsPerSampleChanged ();
+    void channelOverlappingChanged ();
     void channelHeightChanged ();
     void channelHeightChanged (unsigned channel_height_in_pixel);
     void gridFragmentationChanged ();
@@ -71,6 +79,7 @@ signals:
 private:
     //std::set<ChannelID> shown_channels_;
     float pixels_per_sample_;
+    float channel_overlapping_;
     int channel_heigth_in_pixels_;
     QMap<Qt::Orientation, int> grid_fragmentation_;
     ChannelManager const& channel_manager_;

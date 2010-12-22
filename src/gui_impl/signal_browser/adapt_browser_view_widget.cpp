@@ -52,6 +52,15 @@ void AdaptBrowserViewWidget::showEvent (QShowEvent*)
 }
 
 //-------------------------------------------------------------------------
+void AdaptBrowserViewWidget::on_channelOverlappingSlider_valueChanged (int value)
+{
+    if (updating_values_)
+        return;
+
+    settings_->setChannelOverlapping (static_cast<float>(value) / 100.0);
+}
+
+//-------------------------------------------------------------------------
 void AdaptBrowserViewWidget::on_yGridSlider_valueChanged (int value)
 {
     if (updating_values_)

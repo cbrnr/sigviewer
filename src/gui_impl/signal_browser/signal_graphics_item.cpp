@@ -193,14 +193,21 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     if (option->exposedRect.width() < 1)
         return;
 
-    painter->drawRect(boundingRect());
+    bool channel_overlapping = signal_view_settings_->getChannelOverlapping();
+
+    if (!channel_overlapping)
+        painter->drawRect(boundingRect());
+
     if (new_event_)
         painter->fillRect(new_signal_event_->getPosition(), 0, new_signal_event_->getDuration(), height_, new_event_color_);
 
     QRectF clip (option->exposedRect);
 
-    painter->setClipping(true);
-    painter->setClipRect(clip);
+    if (!channel_overlapping)
+    {
+        painter->setClipping(true);
+        painter->setClipRect(clip);
+    }
 
     float32 pixel_per_sample = signal_view_settings_->getPixelsPerSample();
 

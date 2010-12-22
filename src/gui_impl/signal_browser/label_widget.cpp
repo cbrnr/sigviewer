@@ -28,7 +28,11 @@ void LabelWidget::changeYStart (int32 y_start)
 //-----------------------------------------------------------------------------
 void LabelWidget::paintEvent(QPaintEvent*)
 {
+    bool channel_overlapping = signal_view_settings_->getChannelOverlapping();
     float64 signal_height = signal_view_settings_->getChannelHeight();
+    if (channel_overlapping)
+        signal_height = (signal_height + (signal_height * (channel_nr2label_.size() - 1) * (1.0 - signal_view_settings_->getChannelOverlapping()))) / channel_nr2label_.size();
+    //signal_height += signal_view_settings_->getChannelHeight() / (channel_nr2label_.size() + 1);
     int32 y_end = y_start_ + height();
 
     if (signal_height < 1)
@@ -55,6 +59,8 @@ void LabelWidget::paintEvent(QPaintEvent*)
         }
     }
 
+    if (channel_overlapping)
+        return;
     for (float32 float_y = 0;
          float_y <= signal_height * channel_nr2label_.size();
          float_y += signal_height)

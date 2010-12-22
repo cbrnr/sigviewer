@@ -31,6 +31,9 @@ signals:
     void labelsVisibilityChanged (bool visible);
 private slots:
     //-------------------------------------------------------------------------
+    void on_channelOverlappingSlider_valueChanged (int value);
+
+    //-------------------------------------------------------------------------
     void on_yGridSlider_valueChanged (int value);
 
     //-------------------------------------------------------------------------

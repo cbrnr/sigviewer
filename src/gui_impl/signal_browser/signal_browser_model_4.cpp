@@ -23,6 +23,18 @@
 namespace SigViewer_
 {
 
+namespace LayoutFunctions_
+{
+    unsigned getSceneHeight (unsigned num_channels, unsigned channel_height, float channel_overlapping)
+    {
+        if (num_channels == 0)
+            return 0;
+
+        return channel_height +
+               (channel_height * (num_channels - 1) * (1.0 - channel_overlapping));
+    }
+}
+
 //-----------------------------------------------------------------------------
 SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manager,
                                        ChannelManager const& channel_manager,
@@ -61,6 +73,7 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
     }
     connect (getSignalViewSettings().data(), SIGNAL(pixelsPerSampleChanged()), SLOT(update()));
     connect (getSignalViewSettings().data(), SIGNAL(channelHeightChanged()), SLOT(update()));
+    connect (getSignalViewSettings().data(), SIGNAL(channelOverlappingChanged()), SLOT(update()));
 }
 
 //-----------------------------------------------------------------------------
@@ -233,8 +246,9 @@ void SignalBrowserModel::update()
     int32 width = channel_manager_.getNumberSamples()
                   * getSignalViewSettings()->getPixelsPerSample();
 
-    int32 height = getSignalViewSettings()->getChannelHeight() *
-                   channel2signal_item_.size();
+    int32 height = LayoutFunctions_::getSceneHeight (channel2signal_item_.size(),
+                                                     getSignalViewSettings()->getChannelHeight(),
+                                                     getSignalViewSettings()->getChannelOverlapping());
 
     signal_browser_view_->resizeScene (width, height);
 
@@ -248,7 +262,7 @@ void SignalBrowserModel::update()
 
     for (signal_iter = channel2signal_item_.begin();
          signal_iter != channel2signal_item_.end();
-         signal_iter++, y_pos += getSignalViewSettings()->getChannelHeight())
+         signal_iter++, y_pos += getSignalViewSettings()->getChannelHeight() * (1.0 - getSignalViewSettings()->getChannelOverlapping()))
     {
         channel2y_pos_[signal_iter.key()] = y_pos;
         signal_iter.value()->setHeight (getSignalViewSettings()->getChannelHeight());

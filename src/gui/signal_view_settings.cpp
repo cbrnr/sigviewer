@@ -6,6 +6,7 @@ namespace SigViewer_
 //-----------------------------------------------------------------------------
 SignalViewSettings::SignalViewSettings (ChannelManager const& channel_manager)
     : pixels_per_sample_ (1),
+      channel_overlapping_ (0),
       channel_heigth_in_pixels_ (20),
       channel_manager_ (channel_manager)
 {
@@ -21,6 +22,16 @@ void SignalViewSettings::setPixelsPerSample (float pixels_per_sample)
     if (old_pixel_per_sample != pixels_per_sample_)
         emit pixelsPerSampleChanged ();
 }
+
+//-----------------------------------------------------------------------------
+void SignalViewSettings::setChannelOverlapping (float channel_overlapping)
+{
+    float old_channel_overlapping = channel_overlapping_;
+    channel_overlapping_ = channel_overlapping;
+    if (old_channel_overlapping != channel_overlapping_)
+        emit channelOverlappingChanged ();
+}
+
 
 //-------------------------------------------------------------------------
 void SignalViewSettings::setChannelHeight (int channel_heigth_in_pixels)
