@@ -3,6 +3,8 @@
 #include "gui/gui_action_factory.h"
 
 #include <QToolBar>
+#include <QDebug>
+#include <QSet>
 
 namespace SigViewer_
 {
@@ -19,11 +21,13 @@ public:
 
 
 //-------------------------------------------------------------------------
-EventTableWidget::EventTableWidget (QSharedPointer<EventManager> event_manager,
-                                   ChannelManager const& channel_manager,
-                                   QWidget *parent) :
+EventTableWidget::EventTableWidget (QSharedPointer<TabContext> tab_context,
+                                    QSharedPointer<EventManager> event_manager,
+                                    ChannelManager const& channel_manager,
+                                    QWidget *parent) :
     QWidget(parent),
     precision_ (MathUtils_::sampleRateToDecimalPrecision(event_manager->getSampleRate())),
+    tab_context_ (tab_context),
     event_manager_ (event_manager),
     channel_manager_ (channel_manager)
 {
@@ -32,16 +36,37 @@ EventTableWidget::EventTableWidget (QSharedPointer<EventManager> event_manager,
     connect (event_manager_.data(), SIGNAL(eventRemoved(EventID)), SLOT(removeFromTable(EventID)));
     connect (event_manager_.data(), SIGNAL(eventChanged(EventID)), SLOT(updateEventEntry(EventID)));
     buildTable();
+    ui_.event_table_->sortByColumn (POSITION_INDEX_);
     ui_.event_table_->hideColumn (ID_INDEX_);
     QToolBar* toolbar = new QToolBar (this);
+    toolbar->setToolButtonStyle (Qt::ToolButtonTextBesideIcon);
+    toolbar->setOrientation (Qt::Vertical);
     toolbar->addAction (GuiActionFactory::getInstance()->getQAction ("Delete"));
-    ui_.verticalLayout->insertWidget(0, toolbar);
+    ui_.horizontalLayout->addWidget (toolbar);
 }
 
 //-------------------------------------------------------------------------
 EventTableWidget::~EventTableWidget()
 {
+    qDebug () << "EventTableWidget::~EventTableWidget";
+}
 
+//-------------------------------------------------------------------------
+QList<EventID> EventTableWidget::getSelectedEvents () const
+{
+    QSet<EventID> selected_events;
+    foreach (QTableWidgetItem* item, ui_.event_table_->selectedItems ())
+        selected_events.insert (item->data(Qt::UserRole).toInt());
+    return selected_events.values();
+}
+
+//-------------------------------------------------------------------------
+QSharedPointer<EventView> EventTableWidget::getEventView ()
+{
+    if (event_table_view_model_.isNull())
+        event_table_view_model_ = QSharedPointer<EventTableViewModel> (new EventTableViewModel(*this));
+
+    return event_table_view_model_;
 }
 
 //-------------------------------------------------------------------------
@@ -55,6 +80,12 @@ void EventTableWidget::addToTable (QSharedPointer<SignalEvent const> event)
     QTableWidgetItem* channel_item = new QTableWidgetItem (channel_manager_.getChannelLabel(event->getChannel()));
     QTableWidgetItem* type_item = new QTableWidgetItem (event_manager_->getNameOfEvent(event->getId()));
     QTableWidgetItem* id_item = new EventTableItem (event->getId());
+
+    position_item->setData (Qt::UserRole, event->getId());
+    duration_item->setData (Qt::UserRole, event->getId());
+    channel_item->setData (Qt::UserRole, event->getId());
+    type_item->setData (Qt::UserRole, event->getId());
+    id_item->setData (Qt::UserRole, event->getId());
 
     ui_.event_table_->setItem (row, POSITION_INDEX_,
                                position_item);
@@ -75,6 +106,7 @@ void EventTableWidget::addToTable (QSharedPointer<SignalEvent const> event)
 //-------------------------------------------------------------------------
 void EventTableWidget::removeFromTable (EventID event)
 {
+    qDebug () <<  "EventTableWidget::removeFromTable " << event;
     QList<int> rows_to_remove;
     for (int row = 0; row < ui_.event_table_->rowCount(); row++)
         if (ui_.event_table_->item(row, ID_INDEX_)->text().toInt() == event)
@@ -104,6 +136,25 @@ void EventTableWidget::updateEventEntry (EventID event_id)
         }
     }
 }
+
+//-------------------------------------------------------------------------
+void EventTableWidget::on_event_table__itemSelectionChanged ()
+{
+    if (ui_.event_table_->selectedItems().size())
+    {
+        qDebug () << "EventTableWidget::on_event_table__itemSelectionChanged";
+        tab_context_->setSelectionState (TAB_STATE_EVENT_SELECTED_ALL_CHANNELS);
+    }
+    else
+        tab_context_->setSelectionState (TAB_STATE_NO_EVENT_SELECTED);
+}
+
+//-------------------------------------------------------------------------
+void EventTableWidget::showEvent (QShowEvent* /*event*/)
+{
+    on_event_table__itemSelectionChanged ();
+}
+
 
 //-------------------------------------------------------------------------
 void EventTableWidget::buildTable ()

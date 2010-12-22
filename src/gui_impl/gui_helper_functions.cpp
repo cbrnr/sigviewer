@@ -63,8 +63,11 @@ void animateProperty (QObject* target, QByteArray const& property_name,
 QList<QSharedPointer<SignalEvent const> > getSelectedEvents (QSharedPointer<EventView>
                                                              event_view)
 {
+    qDebug () << "getSelectedEvents: " << event_view.isNull();
     QList<EventID> ids = getSelectedEventIDs (event_view);
     QList<QSharedPointer<SignalEvent const> > events;
+    if (ids.size() == 0)
+        return events;
     QSharedPointer<EventManager> event_manager = event_view->getEventManager();
 
     foreach (EventID id, ids)
@@ -79,6 +82,7 @@ QList<EventID> getSelectedEventIDs (QSharedPointer<EventView>
                             event_view)
 {
     QList<EventID> event_ids;
+    qDebug () << "getSelectedEventIDs: " << event_view.isNull();
     if (event_view.isNull())
         return event_ids;
     return event_view->getSelectedEvents ();

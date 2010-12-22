@@ -13,12 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <widget class="QWidget" name="toolbar_" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout"/>
-    </widget>
-   </item>
+  <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QTableWidget" name="event_table_">
      <property name="minimumSize">

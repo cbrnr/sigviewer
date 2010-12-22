@@ -225,7 +225,10 @@ QSharedPointer<EventView> MainWindowModelImpl::getCurrentEventView ()
     if (!tab_widget_)
         return QSharedPointer<EventView>(0);
 
-    return browser_models_[tab_widget_->currentIndex()];
+    if (!event_views_.contains (tab_widget_->currentIndex()))
+        return QSharedPointer<EventView>(0);
+
+    return event_views_[tab_widget_->currentIndex()];
 }
 
 //-------------------------------------------------------------------------
@@ -258,9 +261,10 @@ int MainWindowModelImpl::createSignalVisualisationImpl (ChannelManager const& ch
 
     if (!event_manager.isNull())
     {
-        int event_tab_index = tab_widget_->addTab (new EventTableWidget (event_manager, channel_manager), tr("Events"));
+        EventTableWidget* event_table_widget = new EventTableWidget (tab_context, event_manager, channel_manager);
+        int event_tab_index = tab_widget_->addTab (event_table_widget, tr("Events"));
         browser_models_[event_tab_index] = QSharedPointer<SignalBrowserModel>(0);
-        event_views_[event_tab_index] = QSharedPointer<EventView>(0);
+        event_views_[event_tab_index] = event_table_widget->getEventView();
         tab_contexts_[event_tab_index] = tab_context;
 
         model->connect (event_manager.data(), SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)),

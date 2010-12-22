@@ -204,9 +204,9 @@ bool GuiActionCommand::disableIfNoSignalIsVisualised (QStringList const &actions
 bool GuiActionCommand::disableIfNoEventsPossible (QStringList const &actions)
 {
     bool no_events_possible = false;
-    if (!currentVisModel().isNull())
+    if (!currentEventView().isNull())
     {
-        if (currentVisModel()->getEventManager().isNull())
+        if (currentEventView()->getEventManager().isNull())
             no_events_possible = true;
     }
     else

@@ -23,7 +23,7 @@ QString EventTableWidgetTests::run ()
 //-----------------------------------------------------------------------------
 QString EventTableWidgetTests::basicCreation (QSharedPointer<EventManager> event_manager)
 {
-    EventTableWidget event_table (event_manager, getChannelManagerDummyData());
+    EventTableWidget event_table (QSharedPointer<TabContext>(new TabContext()), event_manager, getChannelManagerDummyData());
     VERIFY (static_cast<unsigned>(event_table.ui_.event_table_->rowCount()) == event_manager->getNumberOfEvents(), "number events");
 
     return "";
@@ -37,7 +37,7 @@ QString EventTableWidgetTests::newEvents (QSharedPointer<EventManager> event_man
     unsigned const LENGTH = 12;
     EventType const TYPE = 0x03;
 
-    EventTableWidget event_table (event_manager, getChannelManagerDummyData());
+    EventTableWidget event_table (QSharedPointer<TabContext>(new TabContext()), event_manager, getChannelManagerDummyData());
     QTableWidget* table = event_table.ui_.event_table_;
     int old_row_count = table->rowCount();
 
@@ -65,7 +65,7 @@ QString EventTableWidgetTests::deleteEvents (QSharedPointer<EventManager> event_
 {
     EventID const EVENT_ID = 2;
 
-    EventTableWidget event_table (event_manager, getChannelManagerDummyData());
+    EventTableWidget event_table (QSharedPointer<TabContext>(new TabContext()), event_manager, getChannelManagerDummyData());
     QTableWidget* table = event_table.ui_.event_table_;
     int old_row_count = table->rowCount();
 
@@ -90,7 +90,7 @@ QString EventTableWidgetTests::changedEvents (QSharedPointer<EventManager> event
     EventType const NEW_TYPE = OLD_TYPE + 1;
     ChannelID const NEW_CHANNEL = 3;
 
-    EventTableWidget event_table (event_manager, getChannelManagerDummyData());
+    EventTableWidget event_table (QSharedPointer<TabContext>(new TabContext()), event_manager, getChannelManagerDummyData());
     QTableWidget* table = event_table.ui_.event_table_;
     int old_row_count = table->rowCount();
 

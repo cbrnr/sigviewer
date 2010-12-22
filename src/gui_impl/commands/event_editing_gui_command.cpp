@@ -7,6 +7,8 @@
 #include "editing_commands/new_event_undo_command.h"
 #include "editing_commands/macro_undo_command.h"
 
+#include <QDebug>
+
 namespace SigViewer_
 {
 
@@ -71,10 +73,10 @@ void EventEditingGuiCommand::init ()
 void EventEditingGuiCommand::deleteSelectedEvent ()
 {
     QList<QSharedPointer<QUndoCommand> > commands;
-    foreach (EventID event, GuiHelper::getSelectedEventIDs (currentVisModel()))
+    foreach (EventID event, GuiHelper::getSelectedEventIDs (currentEventView()))
     {
         commands.append (QSharedPointer<QUndoCommand> (new DeleteEventUndoCommand (
-                currentVisModel()->getEventManager(),
+                currentEventView()->getEventManager(),
                 event)));
     }
     executeCommands (commands);
@@ -84,7 +86,7 @@ void EventEditingGuiCommand::deleteSelectedEvent ()
 void EventEditingGuiCommand::changeTypeSelectedEvent ()
 {
     QList<QSharedPointer<QUndoCommand> > commands;
-    foreach (EventID event, GuiHelper::getSelectedEventIDs (currentVisModel()))
+    foreach (EventID event, GuiHelper::getSelectedEventIDs (currentEventView()))
     {
         QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
         EventType pre_selected_type = event_manager->getEvent (event)->getType ();
@@ -106,7 +108,7 @@ void EventEditingGuiCommand::changeTypeSelectedEvent ()
 void EventEditingGuiCommand::changeChannelSelectedEvent ()
 {
     QList<QSharedPointer<QUndoCommand> > commands;
-    foreach (EventID event, GuiHelper::getSelectedEventIDs (currentVisModel()))
+    foreach (EventID event, GuiHelper::getSelectedEventIDs (currentEventView()))
     {
         QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
         ChannelID preselected_channel = event_manager->getEvent (event)->getChannel ();
@@ -127,7 +129,7 @@ void EventEditingGuiCommand::changeChannelSelectedEvent ()
 void EventEditingGuiCommand::toAllChannelsSelectedEvent ()
 {
     QList<QSharedPointer<QUndoCommand> > commands;
-    foreach (EventID event, GuiHelper::getSelectedEventIDs (currentVisModel()))
+    foreach (EventID event, GuiHelper::getSelectedEventIDs (currentEventView()))
     {
         QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
 
@@ -145,7 +147,7 @@ void EventEditingGuiCommand::toAllChannelsSelectedEvent ()
 void EventEditingGuiCommand::copyToChannelsSelectedEvent ()
 {
     QList<QSharedPointer<QUndoCommand> > commands;
-    foreach (EventID event_id, GuiHelper::getSelectedEventIDs (currentVisModel()))
+    foreach (EventID event_id, GuiHelper::getSelectedEventIDs (currentEventView()))
     {
         QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
         QSharedPointer<SignalEvent const> event = event_manager->getEvent (event_id);
@@ -172,7 +174,7 @@ void EventEditingGuiCommand::copyToChannelsSelectedEvent ()
 void EventEditingGuiCommand::insertEventOverSelectedEvent ()
 {
     QList<QSharedPointer<QUndoCommand> > commands;
-    foreach (EventID event, GuiHelper::getSelectedEventIDs (currentVisModel()))
+    foreach (EventID event, GuiHelper::getSelectedEventIDs (currentEventView()))
     {
         if (event == UNDEFINED_EVENT_ID)
             return;
