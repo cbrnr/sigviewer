@@ -4,6 +4,8 @@
 #include "gui/progress_bar.h"
 #include "base/fixed_data_block.h"
 
+#include <QMessageBox>
+
 namespace SigViewer_
 {
 
@@ -49,6 +51,7 @@ void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation ()
         return;
 
     unsigned num_samples = channel_manager.getSampleRate() * event_dialog->getLengthInSeconds ();
+    unsigned samples_before = channel_manager.getSampleRate() * event_dialog->getSecondsBeforeEvent ();
 
     ProcessedSignalChannelManager* processed_channel_manager (new ProcessedSignalChannelManager(channel_manager.getSampleRate(),
                                                                                                                num_samples, currentFileContext().data()));
@@ -62,8 +65,15 @@ void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation ()
         foreach (EventID event_id, events)
         {
             QSharedPointer<SignalEvent const> event = event_manager->getEvent (event_id);
+
+            if (event->getPosition () < samples_before)
+            {
+                QMessageBox::warning (0, "Warning", QString("Event at ").append(QString::number(event->getPositionInSec())).append("s will be ignored! (because no data can be added in front of this event)"));
+                continue;
+            }
+
             QSharedPointer<DataBlock const> data_block = channel_manager.getData (channel_id,
-                                                                                   event->getPosition(),
+                                                                                   event->getPosition() - samples_before,
                                                                                    num_samples);
             if (!data_block.isNull())
                 data.push_back (data_block);
@@ -95,6 +105,8 @@ void SignalProcessingGuiCommand::calculatePowerSpectrum ()
         return;
 
     unsigned num_samples = channel_manager.getSampleRate() * event_dialog->getLengthInSeconds ();
+    unsigned samples_before = channel_manager.getSampleRate() * event_dialog->getSecondsBeforeEvent ();
+
     unsigned fft_samples = 1;
     while (fft_samples < num_samples)
         fft_samples *= 2;
@@ -114,8 +126,13 @@ void SignalProcessingGuiCommand::calculatePowerSpectrum ()
         foreach (EventID event_id, events)
         {
             QSharedPointer<SignalEvent const> event = event_manager->getEvent (event_id);
+            if (event->getPosition () < samples_before)
+            {
+                QMessageBox::warning (0, "Warning", QString("Event at ").append(QString::number(event->getPositionInSec())).append("s will be ignored! (because no data can be added in front of this event)"));
+                continue;
+            }
             QSharedPointer<DataBlock const> data_block = channel_manager.getData (channel_id,
-                                                                                   event->getPosition(),
+                                                                                   event->getPosition() - samples_before,
                                                                                    num_samples);
             if (!data_block.isNull())
                 data.push_back (FixedDataBlock::createPowerSpectrum(data_block));
