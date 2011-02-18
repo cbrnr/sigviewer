@@ -209,9 +209,9 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
         painter->setClipRect(clip);
     }
 
-    float32 pixel_per_sample = signal_view_settings_->getPixelsPerSample();
+    double pixel_per_sample = signal_view_settings_->getPixelsPerSample();
 
-    float32 last_x = clip.x () - 10;
+    double last_x = clip.x () - 10;
     if (last_x < 0)
         last_x = 0;
     unsigned start_sample = last_x / pixel_per_sample;
@@ -227,12 +227,8 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     if (length < channel_manager_.getNumberSamples() - start_sample)
         length++;
 
-    std::pair<QSharedPointer<DataBlock const>, unsigned> block_downsample_pair = channel_manager_.getData (id_, start_sample, length)->getNearbyDownsampledBlock (std::max (1.0, 1.0 / pixel_per_sample));
 
-    if (id_ == 0)
-    {
-        qDebug () << "get downsampled " << block_downsample_pair.second << "; requested "<< 1.0 / pixel_per_sample;
-    }
+    std::pair<QSharedPointer<DataBlock const>, unsigned> block_downsample_pair = channel_manager_.getData (id_, start_sample, length)->getNearbyDownsampledBlock (std::max (1.0, 1.0 / pixel_per_sample));
 
     QSharedPointer<DataBlock const> data_block = block_downsample_pair.first;
     last_x = start_sample * pixel_per_sample;
@@ -258,6 +254,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
         last_x += pixel_per_sample;
         last_y = new_y;
     }
+
     return;
 }
 
