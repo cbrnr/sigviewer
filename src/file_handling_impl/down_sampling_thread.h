@@ -2,9 +2,7 @@
 #define DOWN_SAMPLING_THREAD_H
 
 #include "base/data_block.h"
-#include "gdf_data_block.h"
-
-#include "GDF/Reader.h"
+#include "file_handling/channel_manager.h"
 
 #include <QThread>
 #include <QMutex>
@@ -23,6 +21,9 @@ public:
     DownSamplingThread (QList<QSharedPointer<DataBlock> > data, unsigned downsampling_step, unsigned downsampling_max);
 
     //-------------------------------------------------------------------------
+    DownSamplingThread (QSharedPointer<ChannelManager> channel_manager, unsigned downsampling_step, unsigned downsampling_max);
+
+    //-------------------------------------------------------------------------
     virtual ~DownSamplingThread ();
 
 signals:
@@ -34,12 +35,16 @@ private:
     virtual void run ();
 
     //-------------------------------------------------------------------------
+    void minMaxDownsampling ();
+
+    //-------------------------------------------------------------------------
     void downsampleAllOnBasisData ();
 
     //-------------------------------------------------------------------------
     void downsampleOnDownsampledData ();
 
     //-------------------------------------------------------------------------
+    QSharedPointer<ChannelManager> channel_manager_;
     QList<QSharedPointer<DataBlock> > basis_data_;
     QList<QSharedPointer<DataBlock> > data_;
     QList<QSharedPointer<DataBlock> > new_data_;

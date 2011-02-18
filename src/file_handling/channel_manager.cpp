@@ -8,6 +8,42 @@ namespace SigViewer_
 {
 
 //-------------------------------------------------------------------------
+void ChannelManager::addDownsampledMinMaxVersion (ChannelID id, QSharedPointer<DataBlock const> min,
+                                                  QSharedPointer<DataBlock const> max, unsigned factor)
+{
+    downsampled_max_map_[id][factor] = max;
+    downsampled_min_map_[id][factor] = min;
+}
+
+//-------------------------------------------------------------------------
+unsigned ChannelManager::getNearestDownsamplingFactor (ChannelID id, unsigned factor) const
+{
+    if (!downsampled_min_map_.contains (id))
+        return 0;
+
+    unsigned nearest_factor = 1;
+    bool search = true;
+    for (nearest_factor = factor + 1; search && (nearest_factor > 1); --nearest_factor)
+        if (downsampled_min_map_[id].contains (nearest_factor - 1))
+            search = false;
+
+    return nearest_factor;
+}
+
+//-------------------------------------------------------------------------
+QSharedPointer<DataBlock const> ChannelManager::getDownsampledMin (ChannelID id, unsigned factor) const
+{
+    return downsampled_min_map_[id][factor];
+}
+
+//-------------------------------------------------------------------------
+QSharedPointer<DataBlock const> ChannelManager::getDownsampledMax (ChannelID id, unsigned factor) const
+{
+    return downsampled_max_map_[id][factor];
+}
+
+
+//-------------------------------------------------------------------------
 float64 ChannelManager::getValueRange (std::set<ChannelID> const& channels) const
 {
     return getMaxValue (channels) - getMinValue (channels);

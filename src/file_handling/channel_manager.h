@@ -52,6 +52,19 @@ public:
     virtual float32 getSampleRate () const = 0;
 
     //-------------------------------------------------------------------------
+    void addDownsampledMinMaxVersion (ChannelID id, QSharedPointer<DataBlock const> min,
+                                      QSharedPointer<DataBlock const> max, unsigned factor);
+
+    //-------------------------------------------------------------------------
+    unsigned getNearestDownsamplingFactor (ChannelID id, unsigned factor) const;
+
+    //-------------------------------------------------------------------------
+    QSharedPointer<DataBlock const> getDownsampledMin (ChannelID id, unsigned factor) const;
+
+    //-------------------------------------------------------------------------
+    QSharedPointer<DataBlock const> getDownsampledMax (ChannelID id, unsigned factor) const;
+
+    //-------------------------------------------------------------------------
     float64 getValueRange (std::set<ChannelID> const& channels) const;
 
     //-------------------------------------------------------------------------
@@ -84,6 +97,10 @@ private:
     mutable std::map<ChannelID, float64> min_values_;
 
     QString x_axis_unit_label_;
+
+    QMap<ChannelID, QMap<unsigned, QSharedPointer<DataBlock const> > > downsampled_max_map_; // [channel][factor] -> maximum downsampled_data
+    QMap<ChannelID, QMap<unsigned, QSharedPointer<DataBlock const> > > downsampled_min_map_; // [channel][factor] -> minimum downsampled_data
+
 };
 
 } // namespace SigViewer_

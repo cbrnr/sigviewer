@@ -1,4 +1,7 @@
 #include "down_sampling_thread.h"
+
+#include <fstream>
+
 #include "signal_processing/SPUC/butterworth.h"
 #include "base/fixed_data_block.h"
 #include "gui/background_processes.h"
@@ -23,6 +26,15 @@ DownSamplingThread::DownSamplingThread (QList<QSharedPointer<DataBlock> > data, 
 }
 
 //-----------------------------------------------------------------------------
+DownSamplingThread::DownSamplingThread (QSharedPointer<ChannelManager> channel_manager, unsigned downsampling_step, unsigned downsampling_max)
+    : channel_manager_ (channel_manager),
+      downsampling_step_ (downsampling_step),
+      downsampling_max_ (downsampling_max)
+{
+
+}
+
+//-----------------------------------------------------------------------------
 DownSamplingThread::~DownSamplingThread ()
 {
     BackgroundProcesses::instance().removeProcess (PROCESS_NAME_);
@@ -35,7 +47,10 @@ void DownSamplingThread::run ()
 
     qDebug () << "DownSamplingThread::run started downsampling; QThread::currentThread = " << QThread::currentThread();
 
-    downsampleAllOnBasisData ();
+    if (!channel_manager_.isNull())
+        minMaxDownsampling ();
+    else
+        downsampleAllOnBasisData ();
     //downsampleOnDownsampledData ();
 
     qDebug () << "DownSamplingThread::run FINISHED!";
@@ -44,9 +59,14 @@ void DownSamplingThread::run ()
 }
 
 //-------------------------------------------------------------------------
-void DownSamplingThread::downsampleAllOnBasisData ()
+void DownSamplingThread::minMaxDownsampling ()
 {
 
+}
+
+//-------------------------------------------------------------------------
+void DownSamplingThread::downsampleAllOnBasisData ()
+{
     QMap<unsigned, QVector<QSharedPointer<QVector<float32> > > > raw_downsampled_data;
     QMap<unsigned, QVector<QSharedPointer<SPUC::butterworth<float32> > > > low_pass_filters;
     QMap<unsigned, QVector<float32> > sample_rates;
