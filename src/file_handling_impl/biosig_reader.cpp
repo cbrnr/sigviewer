@@ -50,11 +50,12 @@ namespace SigViewer_
 {
 
 //-----------------------------------------------------------------------------
+FILE_SIGNAL_READER_REGISTRATION(gdf, BioSigReader);
 FILE_SIGNAL_READER_REGISTRATION(edf, BioSigReader);
 FILE_SIGNAL_READER_REGISTRATION(bdf, BioSigReader);
 FILE_SIGNAL_READER_REGISTRATION(dat, BioSigReader);
 FILE_SIGNAL_READER_REGISTRATION(cnt, BioSigReader);
-FILE_SIGNAL_READER_REGISTRATION(eeg, BioSigReader);
+FILE_SIGNAL_READER_REGISTRATION(vhdr, BioSigReader);
 FILE_SIGNAL_READER_REGISTRATION(bkr, BioSigReader);
 
 FILE_SIGNAL_READER_REGISTRATION(evt, BioSigReader);

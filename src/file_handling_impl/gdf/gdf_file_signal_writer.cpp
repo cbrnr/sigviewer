@@ -14,7 +14,7 @@
 namespace SigViewer_
 {
 
-FILE_SIGNAL_WRITER_REGISTRATION(gdf, GDFFileSignalWriter);
+//FILE_SIGNAL_WRITER_REGISTRATION(gdf, GDFFileSignalWriter);
 
 //-------------------------------------------------------------------------
 GDFFileSignalWriter::GDFFileSignalWriter()

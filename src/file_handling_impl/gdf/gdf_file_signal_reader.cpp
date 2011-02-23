@@ -10,7 +10,7 @@ namespace SigViewer_
 {
 
 //-------------------------------------------------------------------------------------------------
-FILE_SIGNAL_READER_REGISTRATION(gdf, GDFFileSignalReader);
+//FILE_SIGNAL_READER_REGISTRATION(gdf, GDFFileSignalReader);
 
 
 //-------------------------------------------------------------------------------------------------

@@ -33,8 +33,8 @@ macx:QT += opengl
 INCLUDEPATH += $$_PRO_FILE_PWD_/../extern/include \
                $$_PRO_FILE_PWD_/.
 LIBS += -L$$_PRO_FILE_PWD_/../extern/lib \
-    -lbiosig \
-    -lGDF
+    -lbiosig# \
+    #-lGDF
 
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc
@@ -43,6 +43,7 @@ TRANSLATIONS += translations\sigviewer_de.ts \
     translations\sigviewer_en.ts \
     translations\sigviewer_es.ts \
     translations\sigviewer_fr.ts
+#include(../extern/extern.pri)
 include(base/base.pri)
 include(signal_processing/signal_processing.pri)
 include(file_handling_impl/file_handling_impl.pri)
@@ -53,7 +54,6 @@ include(editing_commands/editing_commands.pri)
 #include(console/console.pri)
 #include(console_impl/console_impl.pri)
 include(commands/commands.pri)
-#include(tobiss_integration/tobiss_integration.pri)
 include(tests/tests.pri)
 HEADERS += application_context_impl.h \
     file_context.h \
