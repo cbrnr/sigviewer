@@ -86,14 +86,11 @@ void MainWindowModelImpl::closeTab (int tab_index)
 {
     if (tab_index == 0)
     {
-        // waldesel:
-        // --begin
-        //   to be replaced as soon as multi file support is implemented
         if (!(application_context_->getCurrentFileContext().isNull()))
             GuiActionFactory::getInstance()->getQAction("Close")->trigger();
-        // --end
         return;
-    }
+    } else if (tab_index == 1)
+        return;
     QWidget* widget = tab_widget_->widget (tab_index);
     browser_models_.erase (tab_index);
     tab_widget_->removeTab (tab_index);
