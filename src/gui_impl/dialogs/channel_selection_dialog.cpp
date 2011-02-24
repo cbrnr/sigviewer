@@ -206,10 +206,10 @@ void ChannelSelectionDialog::on_set_default_color_button__clicked ()
 }
 
 //-----------------------------------------------------------------------------
-void ChannelSelectionDialog::on_downsample_factor_spinbox__valueChanged (int value)
+void ChannelSelectionDialog::on_downsample_factor_spinbox__valueChanged (int /*value*/)
 {
-    header_->setDownSamplingFactor (value);
-    ui_.sr_load_label_->setText (QString::number (header_->getSampleRate() ).append(" Hz"));
+//    header_->setDownSamplingFactor (value);
+//    ui_.sr_load_label_->setText (QString::number (header_->getSampleRate() ).append(" Hz"));
 }
 
 //-----------------------------------------------------------------------------

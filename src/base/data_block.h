@@ -35,12 +35,6 @@ public:
     virtual float32 getMax () const = 0;
 
     //-------------------------------------------------------------------------
-    virtual void addDownSampledVersion (QSharedPointer<DataBlock> data, unsigned downsampling_factor) = 0;
-
-    //-------------------------------------------------------------------------
-    virtual std::pair<QSharedPointer<DataBlock>, unsigned> getNearbyDownsampledBlock (unsigned downsampling_factor) const = 0;
-
-    //-------------------------------------------------------------------------
     /// length of the block
     uint32 size () const;
 

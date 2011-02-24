@@ -34,7 +34,7 @@ BiosigBasicHeader::BiosigBasicHeader (HDRTYPE* raw_header, QString const& file_p
 //-----------------------------------------------------------------------------
 uint32 BiosigBasicHeader::getNumberOfSamples () const
 {
-    return ceil(static_cast<double>(number_samples_) / getDownSamplingFactor());
+    return ceil(static_cast<double>(number_samples_));
 }
 
 //-----------------------------------------------------------------------------

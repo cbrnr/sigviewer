@@ -18,22 +18,6 @@ float32 BasicHeader::getSampleRate () const
 }
 
 //-----------------------------------------------------------------------------
-int BasicHeader::addFilter (QSharedPointer<Filter> filter, int before_index)
-{
-    if ((before_index < 0) || (before_index >= filters_.size ()))
-    {
-        filters_.append (filter);
-        return filters_.size() - 1;
-    }
-    else
-    {
-        filters_.insert (before_index, filter);
-        return before_index;
-    }
-}
-
-
-//-----------------------------------------------------------------------------
 uint32 BasicHeader::getNumberEvents() const
 {
     return number_events_;
@@ -77,10 +61,9 @@ void BasicHeader::setFileTypeString (QString const& file_type_string)
 }
 
 //-------------------------------------------------------------------------
-void BasicHeader::setSampleRate (float sample_rate, int downsampling_factor)
+void BasicHeader::setSampleRate (float sample_rate)
 {
     sample_rate_ = sample_rate;
-    downsampling_factor_ = downsampling_factor;
 }
 
 //-------------------------------------------------------------------------

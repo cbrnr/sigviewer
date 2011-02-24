@@ -175,18 +175,6 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
 
     /// waldesel: REMOVE OLD STUFF from here downwards
     ///           and move it into BiosigBasicHeader!!!
-
-#ifdef CHOLMOD_H
-    char *REREF_FILE;
-    REREF_FILE = "/home/as/trunk/biosig4c++/MM63.mmm";
-    REREF_FILE = NULL; 
-    /*
-    	TODD: 
-    	REREF_FILE must be the filename of the spatial filter in MarketMatrix format 
-    */
-
-    RerefCHANNEL(biosig_header_, REREF_FILE, 1);
-#endif
     if (biosig_header_ == NULL || serror())
     {
             sclose (biosig_header_);
@@ -210,15 +198,11 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         if (biosig_header_->CHANNEL[k].OnOff) NS++;
     }
 
-#ifdef CHOLMOD_H
-    if ((biosig_header_->Calib) && (biosig_header_->Calib->nrow==NS))
-	NS = biosig_header_->Calib->ncol;
-#endif
     basic_header_->setNumberEvents(biosig_header_->EVENT.N);
     if (biosig_header_->EVENT.SampleRate)
-        basic_header_->setEventSamplerate(biosig_header_->EVENT.SampleRate / basic_header_->getDownSamplingFactor());
+        basic_header_->setEventSamplerate(biosig_header_->EVENT.SampleRate);
     else
-        basic_header_->setEventSamplerate(biosig_header_->SampleRate / basic_header_->getDownSamplingFactor());
+        basic_header_->setEventSamplerate(biosig_header_->SampleRate);
 
 //#ifdef CHOLMOD_H
 //    if (biosig_header_->Calib==NULL) {
@@ -277,15 +261,8 @@ void BioSigReader::bufferAllChannels () const
 
         QSharedPointer<QVector<float32> > raw_data (new QVector<float32> (basic_header_->getNumberOfSamples()));
 
-        double sample = 0;
         for (unsigned data_index = 0; data_index < basic_header_->getNumberOfSamples(); data_index++)
-        {
-            sample = 0;
-            for (int sub_index = 0; sub_index < basic_header_->getDownSamplingFactor(); sub_index++)
-                sample += read_data[(data_index * basic_header_->getDownSamplingFactor()) + sub_index];
-
-            raw_data->operator [](data_index) = sample;
-        }
+            raw_data->operator [](data_index) = read_data[data_index];
 
         QSharedPointer<DataBlock const> data_block (new FixedDataBlock (raw_data,
                                                                         basic_header_->getSampleRate()));
@@ -304,16 +281,16 @@ void BioSigReader::bufferAllEvents () const
     unsigned number_events = biosig_header_->EVENT.N;
     for (unsigned index = 0; index < number_events; index++)
     {
-        QSharedPointer<SignalEvent> event (new SignalEvent (biosig_header_->EVENT.POS[index] / basic_header_->getDownSamplingFactor(),
+        QSharedPointer<SignalEvent> event (new SignalEvent (biosig_header_->EVENT.POS[index],
                                                             biosig_header_->EVENT.TYP[index],
-                                                            biosig_header_->EVENT.SampleRate / basic_header_->getDownSamplingFactor()));
+                                                            biosig_header_->EVENT.SampleRate));
         if (biosig_header_->EVENT.CHN)
         {
             if (biosig_header_->EVENT.CHN[index] == 0)
                 event->setChannel (UNDEFINED_CHANNEL);
             else
                 event->setChannel (biosig_header_->EVENT.CHN[index] - 1);
-            event->setDuration (biosig_header_->EVENT.DUR[index] / basic_header_->getDownSamplingFactor());
+            event->setDuration (biosig_header_->EVENT.DUR[index]);
         }
         events_.append (event);
     }

@@ -4,7 +4,6 @@
 #define BASIC_HEADER_H
 
 #include "base/signal_channel.h"
-#include "base/filter.h"
 
 #include <QString>
 #include <QList>
@@ -42,32 +41,6 @@ public:
     float getSampleRate () const;
 
     //-------------------------------------------------------------------------
-    QList<QSharedPointer<Filter const> > getFilters () const
-    {return filters_;}
-
-    //-------------------------------------------------------------------------
-    ///
-    /// @return index of the added filter
-    int addFilter (QSharedPointer<Filter> filter, int before_index = -1);
-
-    //-------------------------------------------------------------------------
-    void removeFilter (int filter_index)
-    {
-        if (filters_.size() > filter_index && filter_index >= 0)
-            filters_.removeAt (filter_index);
-    }
-
-    //-------------------------------------------------------------------------
-    void setDownSamplingFactor (int downsampling_factor)
-    {sample_rate_ *= downsampling_factor_;
-     sample_rate_ /= downsampling_factor;
-     downsampling_factor_ = downsampling_factor;}
-
-    //-------------------------------------------------------------------------
-    int getDownSamplingFactor () const
-    {return downsampling_factor_;}
-
-    //-------------------------------------------------------------------------
     QSharedPointer<SignalChannel const> getChannel (ChannelID id) const;
 
     //-------------------------------------------------------------------------
@@ -100,7 +73,7 @@ protected:
 
     //-------------------------------------------------------------------------
     /// required
-    void setSampleRate (float sample_rate, int downsampling_factor = 1);
+    void setSampleRate (float sample_rate);
 
     //-------------------------------------------------------------------------
     /// required
@@ -117,11 +90,9 @@ protected:
     {patient_info_[info_label] = value;}
 
 private:
-    QList<QSharedPointer<Filter const> > filters_;
     QString const file_path_;
     QString file_type_string_;
     float sample_rate_;
-    int downsampling_factor_;
     QMap<ChannelID, QSharedPointer<SignalChannel const> > channels_;
     QMap<QString, QString> recording_info_;
     QMap<QString, QString> patient_info_;

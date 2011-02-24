@@ -180,8 +180,6 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
 
     int tab_index = createSignalVisualisationImpl (file_ctx->getChannelManager(), file_ctx->getEventManager());
     QString tab_title ("Signal Data");
-    if (file_ctx->getHeader()->getDownSamplingFactor() > 1)
-        tab_title.append (" (downsampled)");
 
     main_window_->setCentralWidget(tab_widget_);
     tab_widget_->show();
