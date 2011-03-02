@@ -60,7 +60,7 @@ Section "SigViewer" SecSigViewer
 SectionEnd
 
 Section "Start Menu Entries" SecSMEntries
-  
+  SetShellVarContext all
   CreateDirectory $SMPROGRAMS\SigViewer
 
   CreateShortCut "$SMPROGRAMS\SigViewer\SigViewer.lnk" "$INSTDIR\sigviewer.exe" ""
@@ -88,7 +88,7 @@ SectionEnd
 ;Uninstaller Section
 
 Section "Uninstall"
-
+  SetShellVarContext all
   ;ADD YOUR OWN FILES HERE...
   
   Delete "$INSTDIR\Uninstall.exe"
@@ -100,6 +100,8 @@ Section "Uninstall"
   Delete "$INSTDIR\QtXml4.dll"
   RMDir "$INSTDIR"
   
+  Delete "$SMPROGRAMS\SigViewer\SigViewer.lnk"
+  Delete "$SMPROGRAMS\SigViewer\Uninstall SigViewer.lnk"
   RMDir /r $SMPROGRAMS\SigViewer
 
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer"
