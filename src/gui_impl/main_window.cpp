@@ -48,6 +48,7 @@
 #include <QApplication>
 
 #include <QUrl>
+#include <QDebug>
 
 namespace SigViewer_
 {
@@ -292,14 +293,14 @@ void MainWindow::dropEvent (QDropEvent* event)
 {
     if (event->mimeData()->hasText())
     {
-        QUrl url (event->mimeData()->text());
+        QString localPath(event->mimeData()->text());
         event->acceptProposedAction();
-        OpenFileGuiCommand::openFile (url.path());
+        OpenFileGuiCommand::openFile (localPath);
     } else if (event->mimeData()->hasUrls())
     {
-        QUrl url (event->mimeData()->urls().first().toLocalFile());
+        QString localPath(event->mimeData()->urls().first().toLocalFile());
         event->acceptProposedAction();
-        OpenFileGuiCommand::openFile (url.path());
+        OpenFileGuiCommand::openFile (localPath);
     }
 }
 
