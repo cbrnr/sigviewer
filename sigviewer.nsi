@@ -1,7 +1,7 @@
 ;Include Modern UI
 
   !include "MUI.nsh"
-  !define VERSION 0.5.0
+  !define VERSION 0.5.1
 
 ;General
 
@@ -11,7 +11,7 @@
 
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\SigViewer ${VERSION}"
+  InstallDir "$PROGRAMFILES\SigViewer"
   
 ;Interface Settings
 
@@ -47,7 +47,7 @@ Section "SigViewer" SecSigViewer
   File "bin\release\QtXml4.dll"
   
   ;Store uninstall information in Add/Remove Programs
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "DisplayName" "SigViewer ${VERSION}"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "DisplayName" "SigViewer"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "DisplayVersion" "${VERSION}"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "Publisher" "Graz University of Technology"
@@ -63,9 +63,9 @@ Section "Start Menu Entries" SecSMEntries
   
   CreateDirectory $SMPROGRAMS\SigViewer
 
-  CreateShortCut "$SMPROGRAMS\SigViewer\${VERSION}\SigViewer.lnk" "$INSTDIR\sigviewer.exe" ""
+  CreateShortCut "$SMPROGRAMS\SigViewer\SigViewer.lnk" "$INSTDIR\sigviewer.exe" ""
 
-  CreateShortCut "$SMPROGRAMS\SigViewer\${VERSION}\Uninstall SigViewer.lnk" "$INSTDIR\Uninstall.exe"
+  CreateShortCut "$SMPROGRAMS\SigViewer\Uninstall SigViewer.lnk" "$INSTDIR\Uninstall.exe"
 
 SectionEnd
 
