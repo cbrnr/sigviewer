@@ -291,14 +291,14 @@ void MainWindow::closeEvent (QCloseEvent* event)
 //-----------------------------------------------------------------------------
 void MainWindow::dropEvent (QDropEvent* event)
 {
-    if (event->mimeData()->hasText())
-    {
-        QString localPath(event->mimeData()->text());
-        event->acceptProposedAction();
-        OpenFileGuiCommand::openFile (localPath);
-    } else if (event->mimeData()->hasUrls())
+    if (event->mimeData()->hasUrls())
     {
         QString localPath(event->mimeData()->urls().first().toLocalFile());
+        event->acceptProposedAction();
+        OpenFileGuiCommand::openFile (localPath);
+    } else if (event->mimeData()->hasText())
+    {
+        QString localPath(event->mimeData()->text());
         event->acceptProposedAction();
         OpenFileGuiCommand::openFile (localPath);
     }
