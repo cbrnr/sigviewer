@@ -71,7 +71,7 @@ int main (int argc, char* argv[])
               << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << ")";
     QApplication application (argc,argv);
     QApplication::setOrganizationName ("BCI Lab");
-    QApplication::setOrganizationDomain("http://bci.tugraz.at");
+    QApplication::setOrganizationDomain("http://bci.tugraz.at/");
     QApplication::setApplicationName ("SigViewer");
 
     try
