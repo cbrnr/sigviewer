@@ -1,3 +1,10 @@
+Version 0.5.1
+(B) Fixed bug where signals could be distorted
+(*) Removed libgdf
+(*) Removed downsampling/decimation
+(*) Events are now always displayed in a separate tab
+(B) Fixed file drag & drop bug
+
 Version 0.5.0
 (*) Optimized gdf reading (background downsampling/decimation)
 (*) Support for large gdf (2) files
