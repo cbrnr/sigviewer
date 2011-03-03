@@ -29,6 +29,8 @@ public:
     /// deletes the event
     virtual void redo ();
 
+    //-------------------------------------------------------------------------
+    EventID getIDOfNewlyCreatedEvent () const {return created_signal_event_->getId();}
 
 private:
     QSharedPointer<EventManager> event_manager_;

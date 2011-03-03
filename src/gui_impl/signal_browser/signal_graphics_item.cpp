@@ -422,6 +422,7 @@ void SignalGraphicsItem::mouseReleaseEvent (QGraphicsSceneMouseEvent* event)
         emit mouseMoving (false);
         NewEventUndoCommand* new_event_command = new NewEventUndoCommand (event_manager_, new_signal_event_, 1.0 / signal_view_settings_->getPixelsPerSample());
         command_executor_->executeCommand (new_event_command);
+        signal_browser_model_.selectEvent (new_event_command->getIDOfNewlyCreatedEvent());
     }
 
     shifting_ = false;
