@@ -199,9 +199,11 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     }
 
     basic_header_->setNumberEvents(biosig_header_->EVENT.N);
-    if (biosig_header_->EVENT.SampleRate)
+
+    // Hack Hack: Transforming Events to have the same sample rate as the signals
+    /*if (biosig_header_->EVENT.SampleRate)
         basic_header_->setEventSamplerate(biosig_header_->EVENT.SampleRate);
-    else
+    else*/
         basic_header_->setEventSamplerate(biosig_header_->SampleRate);
 
 //#ifdef CHOLMOD_H
@@ -281,16 +283,18 @@ void BioSigReader::bufferAllEvents () const
     unsigned number_events = biosig_header_->EVENT.N;
     for (unsigned index = 0; index < number_events; index++)
     {
-        QSharedPointer<SignalEvent> event (new SignalEvent (biosig_header_->EVENT.POS[index],
+        // Hack Hack: Transforming Events to have the same sample rate as the signals
+        double rate_transition = basic_header_->getEventSamplerate() / biosig_header_->EVENT.SampleRate;
+        QSharedPointer<SignalEvent> event (new SignalEvent (biosig_header_->EVENT.POS[index] * rate_transition,
                                                             biosig_header_->EVENT.TYP[index],
-                                                            biosig_header_->EVENT.SampleRate));
+                                                            biosig_header_->EVENT.SampleRate * rate_transition));
         if (biosig_header_->EVENT.CHN)
         {
             if (biosig_header_->EVENT.CHN[index] == 0)
                 event->setChannel (UNDEFINED_CHANNEL);
             else
                 event->setChannel (biosig_header_->EVENT.CHN[index] - 1);
-            event->setDuration (biosig_header_->EVENT.DUR[index]);
+            event->setDuration (biosig_header_->EVENT.DUR[index] * rate_transition);
         }
         events_.append (event);
     }
