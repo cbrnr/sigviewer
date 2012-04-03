@@ -36,6 +36,11 @@ LIBS += -L$$_PRO_FILE_PWD_/../extern/lib \
     -lbiosig# \
     #-lGDF
 
+macx:INCLUDEPATH += /opt/local/include
+macx:LIBS += -L/opt/local/lib \
+             -lcholmod \
+             -lz
+
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc
 ICON = sigviewer.icns
