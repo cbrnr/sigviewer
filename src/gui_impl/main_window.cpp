@@ -29,18 +29,19 @@ namespace SigViewer_
 {
 
 //----------------------------------------------------------------------------
-MainWindow::MainWindow (QSharedPointer<ApplicationContext> application_context)
+MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
  : QMainWindow(0)
 {
-    setWindowTitle (tr("SigViewer"));
-    setAcceptDrops (true);
+    setWindowTitle(tr("SigViewer"));
+    setAcceptDrops(true);
     setWindowIcon(QIcon(":images/sigviewer16.png"));
     initStatusBar();
     initToolBars();
-    initMenus (application_context);
+    initMenus(application_context);
     setUnifiedTitleAndToolBarOnMac (true);
-    QSettings settings ("SigViewer");
-    resize (settings.value("MainWindow/size", QSize(800, 600)).toSize());
+    QSettings settings("SigViewer");
+    resize(settings.value("MainWindow/size", QSize(800, 500)).toSize());
+    setMinimumSize(800, 500);
 }
 
 //-----------------------------------------------------------------------------
@@ -51,7 +52,7 @@ void MainWindow::initStatusBar()
     connect (&BackgroundProcesses::instance(), SIGNAL(processRemoved(QString)), SLOT(removeBackgroundProcessFromStatusBar(QString)));
 
     QStatusBar* status_bar = statusBar();
-    status_bar->showMessage(tr("Ready"));
+    //status_bar->showMessage(tr("Ready"));
 
     status_bar_signal_length_label_ = new QLabel (this);
     status_bar_nr_channels_label_ = new QLabel (this);
