@@ -1,6 +1,8 @@
 #ifndef SIGVIEWER_USER_TYPES_H
 #define SIGVIEWER_USER_TYPES_H
 
+#include <stddef.h>
+
 namespace SigViewer_
 {
 

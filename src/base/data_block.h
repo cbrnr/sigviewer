@@ -23,10 +23,10 @@ public:
     virtual ~DataBlock ();
 
     //-------------------------------------------------------------------------
-    virtual QSharedPointer<DataBlock> createSubBlock (uint32 start, uint32 length) const = 0;
+    virtual QSharedPointer<DataBlock> createSubBlock(size_t start, size_t length) const = 0;
 
     //-------------------------------------------------------------------------
-    virtual float32 const& operator[] (uint32 index) const = 0;
+    virtual float32 const& operator[] (size_t index) const = 0;
 
     //-------------------------------------------------------------------------
     virtual float32 getMin () const = 0;
@@ -36,7 +36,7 @@ public:
 
     //-------------------------------------------------------------------------
     /// length of the block
-    uint32 size () const;
+    size_t size () const;
 
     //-------------------------------------------------------------------------
     std::string getLabel () const;
@@ -59,22 +59,22 @@ public:
     std::string getYUnitLabel () const;
 
     //-------------------------------------------------------------------------
-    float32 getSampleRatePerUnit () const;
+    float64 getSampleRatePerUnit () const;
 
 protected:
     // protected constructors here:
-    DataBlock (unsigned length, float32 sample_rate_per_unit);
-    DataBlock (DataBlock const& src, unsigned new_length);
+    DataBlock (size_t length, float64 sample_rate_per_unit);
+    DataBlock (DataBlock const& src, size_t new_length);
 
 private:
-    uint32 length_;
-    float32 sample_rate_per_unit_;
+    size_t length_;
+    float64 sample_rate_per_unit_;
 
     std::string label_;
     std::string x_unit_label_;
     std::string y_unit_label_;
 
-    static unsigned instance_count_;
+    static size_t instance_count_;
 };
 
 }

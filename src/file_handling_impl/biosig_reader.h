@@ -23,8 +23,8 @@ public:
 
     //-------------------------------------------------------------------------
     virtual QSharedPointer<DataBlock const> getSignalData (ChannelID channel_id,
-                                                           unsigned start_sample,
-                                                           unsigned length) const;
+                                                           size_t start_sample,
+                                                           size_t length) const;
 
     //-------------------------------------------------------------------------
     virtual QList<QSharedPointer<SignalEvent const> > getEvents () const;

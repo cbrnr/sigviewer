@@ -16,9 +16,7 @@ QString const EventTableFileReader::UNKNOWN_GROUP_ID = "Unknown Group";
 //-------------------------------------------------------------------------------------------------
 EventTableFileReader::EventTableFileReader()
 {
-    QSettings settings;
-    QString event_codes_file = settings.value ("eventcodes_file", ":/eventcodes.txt").toString();
-    load (event_codes_file);
+    load();
     event_group_ids_.append (UNKNOWN_GROUP_ID);
     group_id2name_[UNKNOWN_GROUP_ID] = UNKNOWN_GROUP_ID;
 }
@@ -30,58 +28,25 @@ EventTableFileReader::~EventTableFileReader()
 }
 
 // load
-bool EventTableFileReader::load(const QString& file_name)
+bool EventTableFileReader::load()
 {
-    event_file_path_ = file_name;
-    QFile file(file_name);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        return false;
-
-    // load event type table
-    QTextStream file_stream(&file); 
-    QString group_id;
-    while (true)
-    {
-        QString one_line = file_stream.readLine();
-        if (one_line.isEmpty())
-        {
-            break;
-        }
-        if (one_line.indexOf("### 0x") == 0)
-        {
-            group_id = one_line.mid(4, 6);
-            if (!group_id2name_.contains(group_id))
-            {
-                QString group_name;
-                int32 begin_name = one_line.indexOf(QRegExp("[^ \t]"), 10);
-                if (begin_name != -1)
-                {
-                    group_name = one_line.mid(begin_name);
-                }
-                group_id2name_[group_id] = group_name;
-                event_group_ids_ << group_id;
-            }
-        }
-        else if (one_line.indexOf("0x") == 0)
-        {
-            uint16 event_type_id = one_line.mid(0, 6).toInt(0, 16);
-            if (!event_type2name_.contains(event_type_id))
-            {
-                EventItem item;
-                int32 begin_name = one_line.indexOf(QRegExp("[^ \t]"), 6);
-                if (begin_name != -1)
-                {
-                    item.name = one_line.mid(begin_name);
-                }
-                item.group_id = group_id;
-                event_type2name_[event_type_id] = item;
-                event_types_ << event_type_id;
-            }
-        }
+    char g[10];
+    uint16_t k;
+    for (k = 0; EventCodeGroups[k].groupid < 0xffff; k++) {
+        sprintf(g, "0x%04x", EventCodeGroups[k].groupid);
+        QString group_id = QString(g);
+        group_id2name_[group_id] = QString(EventCodeGroups[k].GroupDescription);
+        event_group_ids_ << group_id;
     }
-    file.close();
-    qSort(event_types_);
-    qSort(event_group_ids_);
+    EventItem item;
+    for (k = 0; ETD[k].typ ; k++) {
+        sprintf(g, "0x%04x", ETD[k].groupid);
+        QString group_id = QString(g);
+        item.name     =  QString(ETD[k].desc);
+        item.group_id = group_id;
+        event_type2name_[ETD[k].typ] = item;
+        event_types_ << ETD[k].typ;
+    }
     return true;
 }
 
@@ -127,7 +92,7 @@ void EventTableFileReader::setEventName (EventType event_type_id,
 //-----------------------------------------------------------------------------
 void EventTableFileReader::restoreEventNames ()
 {
-    load (event_file_path_);
+    load();
 }
 
 //-----------------------------------------------------------------------------

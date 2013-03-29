@@ -16,14 +16,14 @@ BiosigBasicHeader::BiosigBasicHeader (HDRTYPE* raw_header, QString const& file_p
         for (unsigned index = 0; index < raw_header->EVENT.LenCodeDesc; index++)
         {
             if (raw_header->EVENT.CodeDesc[index])
-                user_defined_event_map_[index+1] = QString(raw_header->EVENT.CodeDesc[index]);
+                user_defined_event_map_[index] = QString(raw_header->EVENT.CodeDesc[index]);
         }
     }
 
 
     setFileTypeString (QString (GetFileTypeString(raw_header->TYPE)).append(" v").append(QString::number(raw_header->VERSION)));
 
-    float sampling_rate = raw_header->SampleRate;
+    float64 sampling_rate = raw_header->SampleRate;
 
     setSampleRate (sampling_rate);
     readChannelsInfo (raw_header);
@@ -32,7 +32,7 @@ BiosigBasicHeader::BiosigBasicHeader (HDRTYPE* raw_header, QString const& file_p
 }
 
 //-----------------------------------------------------------------------------
-uint32 BiosigBasicHeader::getNumberOfSamples () const
+size_t BiosigBasicHeader::getNumberOfSamples () const
 {
     return ceil(static_cast<double>(number_samples_));
 }
@@ -46,17 +46,13 @@ QMap<unsigned, QString> BiosigBasicHeader::getNamesOfUserSpecificEvents () const
 //-------------------------------------------------------------------------
 void BiosigBasicHeader::readChannelsInfo (HDRTYPE const* raw_header)
 {
+    unsigned ch = 0;
     for (unsigned channel_index = 0; channel_index < raw_header->NS; channel_index++)
-    {
-        QString label = QString (QByteArray(raw_header->CHANNEL[channel_index].Label, MAX_LENGTH_LABEL)).trimmed();
-
-        QString phys_y_dim_label = QString (PhysDim3(raw_header->CHANNEL[channel_index].PhysDimCode)).trimmed();
-        if (phys_y_dim_label.compare("uV") == 0)
-            phys_y_dim_label = QString (QChar((ushort)0xb5)).append("V");
-        QSharedPointer<SignalChannel> channel (new SignalChannel(channel_index, label,
-                                                                 phys_y_dim_label));
-        addChannel (channel_index, channel);
-    }
+        if (raw_header->CHANNEL[channel_index].OnOff)
+        {
+            QSharedPointer<SignalChannel> channel(new SignalChannel(channel_index, raw_header));
+            addChannel(ch++, channel);
+        }
 }
 
 //-------------------------------------------------------------------------

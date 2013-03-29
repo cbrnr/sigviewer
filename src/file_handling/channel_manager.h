@@ -43,13 +43,13 @@ public:
                                                      unsigned length) const = 0;
 
     //-------------------------------------------------------------------------
-    virtual float32 getDurationInSec () const = 0;
+    virtual float64 getDurationInSec () const = 0;
 
     //-------------------------------------------------------------------------
-    virtual uint32 getNumberSamples () const = 0;
+    virtual size_t getNumberSamples () const = 0;
 
     //-------------------------------------------------------------------------
-    virtual float32 getSampleRate () const = 0;
+    virtual float64 getSampleRate () const = 0;
 
     //-------------------------------------------------------------------------
     void addDownsampledMinMaxVersion (ChannelID id, QSharedPointer<DataBlock const> min,

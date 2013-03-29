@@ -2,6 +2,7 @@
 #define SIGNAL_CHANNEL_H
 
 #include "sigviewer_user_types.h"
+#include "biosig.h"
 
 #include <QString>
 #include <QMutex>
@@ -16,13 +17,11 @@ class SignalChannel
 {
 public:
     //-------------------------------------------------------------------------
-    SignalChannel (unsigned number,
-                   QString const& label,
-                   QString const& phys_y_dimension_label = "");
+    SignalChannel(unsigned ch, const HDRTYPE* hdr);
+    SignalChannel(unsigned number, CHANNEL_TYPE C);  /* obsolete, deprecated */
 
     //-------------------------------------------------------------------------
     QString typeString() const;
-    uint32 getNumber() const;
     const QString& getLabel() const;
     float64 getLowpass() const;
     float64 getHighpass() const;
@@ -32,6 +31,7 @@ public:
     float64 getDigitalMaximum() const;
     float64 getPhysicalMinimum() const;
     float64 getDigitalMinimum() const;
+    float64 getSampleRate() const;
 
 private:
     // from GDF format
@@ -57,7 +57,7 @@ private:
 
     mutable QMutex mutex_;
     
-    uint32 number_;
+    //uint32 number_;
     QString label_;
     QString phys_y_dimension_label_;
     uint16  physical_dimcode_;
@@ -68,6 +68,7 @@ private:
     uint16_t data_type_;
     float64 lowpass_;
     float64 highpass_;
+    float64 samplerate_;
     bool notch_;
 };
 

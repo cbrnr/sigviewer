@@ -356,9 +356,9 @@ unsigned SignalBrowserModel::getShownPosition () const
 }
 
 //-------------------------------------------------------------------------
-void SignalBrowserModel::goToSample (unsigned sample)
+void SignalBrowserModel::goToSample(unsigned sample)
 {
-    float32 position = 0;
+    float64 position = 0;
     while (position < getSignalViewSettings()->getPixelsPerSample() * sample)
         position += getSignalViewSettings()->getPixelsPerSample();
     position -= getSignalViewSettings()->getPixelsPerSample();

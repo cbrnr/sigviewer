@@ -13,30 +13,30 @@ class SignalEvent
 {
 public:
     SignalEvent();
-    SignalEvent(uint32 position, EventType type,
+    SignalEvent(size_t position, EventType type,
                 float64 sample_rate,
                 ChannelID channel = UNDEFINED_CHANNEL,
-                uint32 duration = 0, EventID id = UNDEFINED_EVENT_ID);
+                size_t duration = 0, EventID id = UNDEFINED_EVENT_ID);
 
     SignalEvent(const SignalEvent& src, int32 id);
     SignalEvent(const SignalEvent& src);
     SignalEvent& operator= (const SignalEvent& src);
 
     int32 getId() const;
-    uint32 getPosition() const;
-    float32 getPositionInSec() const;
+    size_t getPosition() const;
+    float64 getPositionInSec() const;
     uint16 getType() const;
     ChannelID getChannel() const;
-    uint32 getDuration() const;
-    float32 getDurationInSec() const;
-    float32 getEndInSec () const;
+    size_t getDuration() const;
+    float64 getDurationInSec() const;
+    float64 getEndInSec () const;
     float64 getSampleRate () const;
 
     void setId (EventID id);
-    void setPosition(uint32 position);
+    void setPosition(size_t position);
     void setType(EventType type);
     void setChannel(ChannelID channel);
-    void setDuration(uint32 duration);
+    void setDuration(size_t duration);
 
     bool equals (SignalEvent const& event) const;
 
@@ -44,11 +44,11 @@ private:
     static const int32 UNDEFINED_DURATION = 0;
 
     EventID id_;
-    uint32 position_;
+    size_t position_;
     float64 sample_rate_;
     EventType type_;
     ChannelID channel_;
-    uint32 duration_;
+    size_t duration_;
 };
 
 } // namespace SigViewer_

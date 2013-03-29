@@ -14,7 +14,7 @@ float64 round125(float64 value);
 
 //-----------------------------------------------------------------------------
 /// @return number of decimals needed to display time intervals correctly
-int sampleRateToDecimalPrecision (float sample_rate);
+int sampleRateToDecimalPrecision (float64 sample_rate);
 
 }
 

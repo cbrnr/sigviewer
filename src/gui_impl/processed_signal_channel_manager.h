@@ -13,7 +13,7 @@ class ProcessedSignalChannelManager : public ChannelManager, public QObject
 {
 public:
     //-------------------------------------------------------------------------
-    ProcessedSignalChannelManager (float32 sample_rate, unsigned length, QObject* parent);
+    ProcessedSignalChannelManager(float64 sample_rate, unsigned length, QObject* parent);
 
     //-------------------------------------------------------------------------
     void addChannel (ChannelID id, QSharedPointer<DataBlock const> data_block,
@@ -44,13 +44,13 @@ public:
                                                      unsigned length) const;
 
     //-------------------------------------------------------------------------
-    virtual float32 getDurationInSec () const;
+    virtual float64 getDurationInSec() const;
 
     //-------------------------------------------------------------------------
-    virtual uint32 getNumberSamples () const;
+    virtual size_t getNumberSamples() const;
 
     //-------------------------------------------------------------------------
-    virtual float32 getSampleRate () const;
+    virtual float64 getSampleRate() const;
 
 private:
     float32 sample_rate_;

@@ -41,13 +41,13 @@ public:
                                                      unsigned length) const;
 
     //-------------------------------------------------------------------------
-    virtual float32 getDurationInSec () const;
+    virtual float64 getDurationInSec() const;
 
     //-------------------------------------------------------------------------
-    virtual uint32 getNumberSamples () const;
+    virtual size_t getNumberSamples() const;
 
     //-------------------------------------------------------------------------
-    virtual float32 getSampleRate () const;
+    virtual float64 getSampleRate() const;
 
 private:
     FileSignalReader* reader_;

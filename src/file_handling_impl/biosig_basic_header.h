@@ -14,7 +14,7 @@ public:
     BiosigBasicHeader (HDRTYPE* raw_header, QString const& file_path);
 
     //-------------------------------------------------------------------------
-    virtual uint32 getNumberOfSamples () const;
+    virtual size_t getNumberOfSamples () const;
 
     //-------------------------------------------------------------------------
     virtual QMap<unsigned, QString> getNamesOfUserSpecificEvents () const;

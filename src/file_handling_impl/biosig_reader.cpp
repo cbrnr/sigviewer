@@ -75,17 +75,14 @@ QPair<FileSignalReader*, QString> BioSigReader::createInstance (QString const& f
 void BioSigReader::doClose () const
 {
     if (biosig_header_)
-    {
-        sclose (biosig_header_);
         destructHDR (biosig_header_);
-    }
-    biosig_header_ = 0;
+    biosig_header_ = NULL;
 }
 
 //-----------------------------------------------------------------------------
 QSharedPointer<DataBlock const> BioSigReader::getSignalData (ChannelID channel_id,
-                                       unsigned start_sample,
-                                       unsigned length) const
+                                       size_t start_sample,
+                                       size_t length) const
 {
     QMutexLocker lock (&mutex_);
 
@@ -147,13 +144,11 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     basic_header_ = QSharedPointer<BasicHeader>
                     (new BiosigBasicHeader (biosig_header_, file_name));
 
-    /// waldesel: REMOVE OLD STUFF from here downwards
-    ///           and move it into BiosigBasicHeader!!!
-    if (biosig_header_ == NULL || serror())
+    if (biosig_header_ == NULL || serror2(biosig_header_))
     {
             sclose (biosig_header_);
             destructHDR(biosig_header_);
-            biosig_header_ = 0;
+            biosig_header_ = NULL;
             delete c_file_name;
             return "file not supported";
     }
@@ -164,20 +159,13 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     //hdr2ascii(biosig_header_,stdout,4);
 
     delete c_file_name;
-    c_file_name = 0;
-
-    uint16_t NS=0;  // count number of selected channels - status channels are already converted to event table
-    for (uint16_t k=0; k<biosig_header_->NS; k++)
-    {
-        if (biosig_header_->CHANNEL[k].OnOff) NS++;
-    }
+    c_file_name = NULL;
 
     basic_header_->setNumberEvents(biosig_header_->EVENT.N);
 
-    // Hack Hack: Transforming Events to have the same sample rate as the signals
-    /*if (biosig_header_->EVENT.SampleRate)
+    if (biosig_header_->EVENT.SampleRate)
         basic_header_->setEventSamplerate(biosig_header_->EVENT.SampleRate);
-    else*/
+    else
         basic_header_->setEventSamplerate(biosig_header_->SampleRate);
 
 //#ifdef CHOLMOD_H
@@ -215,33 +203,25 @@ QSharedPointer<BasicHeader> BioSigReader::getBasicHeader ()
 //-----------------------------------------------------------------------------
 void BioSigReader::bufferAllChannels () const
 {
-    uint32 length = biosig_header_->NRec * biosig_header_->SPR;
-    biosig_data_type* read_data = new biosig_data_type[length];
+    size_t numberOfSamples = biosig_header_->NRec * biosig_header_->SPR;
+    biosig_data_type* read_data = new biosig_data_type[numberOfSamples * basic_header_->getNumberChannels()];
 
     biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
 
-    for (unsigned channel_id_sub = 0; channel_id_sub <  basic_header_->getNumberChannels(); ++channel_id_sub)
-        biosig_header_->CHANNEL[channel_id_sub].OnOff = 0;
-
     QString progress_name = QObject::tr("Loading data...");
+
+    sread(read_data, 0, biosig_header_->NRec, biosig_header_);
 
     for (unsigned channel_id = 0; channel_id < basic_header_->getNumberChannels();
          ++channel_id)
     {
         ProgressBar::instance().increaseValue (1, progress_name);
-        if (channel_id > 0)
-            biosig_header_->CHANNEL[channel_id-1].OnOff = 0;
-        biosig_header_->CHANNEL[channel_id].OnOff = 1;
 
-        sread (read_data, 0, length / biosig_header_->SPR, biosig_header_);
+        QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples));
+        for (size_t data_index = 0; data_index < numberOfSamples; data_index++)
+            raw_data->operator [](data_index) = read_data[data_index + channel_id * numberOfSamples];
 
-        QSharedPointer<QVector<float32> > raw_data (new QVector<float32> (basic_header_->getNumberOfSamples()));
-
-        for (unsigned data_index = 0; data_index < basic_header_->getNumberOfSamples(); data_index++)
-            raw_data->operator [](data_index) = read_data[data_index];
-
-        QSharedPointer<DataBlock const> data_block (new FixedDataBlock (raw_data,
-                                                                        basic_header_->getSampleRate()));
+        QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, basic_header_->getSampleRate()));
         channel_map_[channel_id] = data_block;
     }
 
@@ -255,10 +235,11 @@ void BioSigReader::bufferAllChannels () const
 void BioSigReader::bufferAllEvents () const
 {
     unsigned number_events = biosig_header_->EVENT.N;
+    // Hack Hack: Transforming Events to have the same sample rate as the signals
+    double rate_transition = basic_header_->getEventSamplerate() / biosig_header_->EVENT.SampleRate;
+
     for (unsigned index = 0; index < number_events; index++)
     {
-        // Hack Hack: Transforming Events to have the same sample rate as the signals
-        double rate_transition = basic_header_->getEventSamplerate() / biosig_header_->EVENT.SampleRate;
         QSharedPointer<SignalEvent> event (new SignalEvent (biosig_header_->EVENT.POS[index] * rate_transition,
                                                             biosig_header_->EVENT.TYP[index],
                                                             biosig_header_->EVENT.SampleRate * rate_transition));
@@ -268,7 +249,16 @@ void BioSigReader::bufferAllEvents () const
                 event->setChannel (UNDEFINED_CHANNEL);
             else
                 event->setChannel (biosig_header_->EVENT.CHN[index] - 1);
-            event->setDuration (biosig_header_->EVENT.DUR[index] * rate_transition);
+
+            if (biosig_header_->EVENT.TYP[index] != 0x7fff)
+                event->setDuration (biosig_header_->EVENT.DUR[index] * rate_transition);
+            else 	// sparse samples (Typ=0x7fff) do not have a duration, but the duration field is used to store the sample value
+                event->setDuration(0);
+        }
+        else
+        {
+            event->setChannel(UNDEFINED_CHANNEL);
+            event->setDuration (1);
         }
         events_.append (event);
     }

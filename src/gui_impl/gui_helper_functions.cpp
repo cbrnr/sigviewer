@@ -28,12 +28,9 @@ void animateProperty (QObject* target, QByteArray const& property_name,
     bool animations_activated = settings.value("activated", false).toBool();
     int animation_duration = settings.value("duration", 200).toInt();
     settings.endGroup();
-#if QT_VERSION < 0x040600
     animations_activated = false;
-#endif
     if (animations_activated)
     {
-#if QT_VERSION >= 0x040600
         QPropertyAnimation* animation = new QPropertyAnimation (target,
                                                                 property_name);
         animation->setDuration (animation_duration);
@@ -45,7 +42,6 @@ void animateProperty (QObject* target, QByteArray const& property_name,
             call_back_object->connect (animation, SIGNAL(finished()), call_back_slot);
         }
         animation->start (animation->DeleteWhenStopped);
-#endif
     }
     else
     {

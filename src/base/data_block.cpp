@@ -9,10 +9,10 @@
 
 namespace SigViewer_ {
 
-unsigned DataBlock::instance_count_ = 0;
+size_t DataBlock::instance_count_ = 0;
 
 //-----------------------------------------------------------------------------
-DataBlock::DataBlock (unsigned length, float32 sample_rate_per_unit)
+DataBlock::DataBlock (size_t length, float64 sample_rate_per_unit)
     : length_ (length),
       sample_rate_per_unit_ (sample_rate_per_unit)
 {
@@ -20,7 +20,7 @@ DataBlock::DataBlock (unsigned length, float32 sample_rate_per_unit)
 }
 
 //-----------------------------------------------------------------------------
-DataBlock::DataBlock (DataBlock const& src, unsigned new_length)
+DataBlock::DataBlock (DataBlock const& src, size_t new_length)
     : length_ (new_length),
       sample_rate_per_unit_ (src.sample_rate_per_unit_),
       label_ (src.label_)
@@ -37,7 +37,7 @@ DataBlock::~DataBlock ()
 }
 
 //-----------------------------------------------------------------------------
-uint32 DataBlock::size () const
+size_t DataBlock::size () const
 {
     return length_;
 }
@@ -79,7 +79,7 @@ std::string DataBlock::getYUnitLabel () const
 }
 
 //-------------------------------------------------------------------------
-float32 DataBlock::getSampleRatePerUnit () const
+float64 DataBlock::getSampleRatePerUnit () const
 {
     return sample_rate_per_unit_;
 }

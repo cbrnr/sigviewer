@@ -56,11 +56,9 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
   created_event_item_ (0),
   hand_tool_on_ (false)
 {
-#if QT_VERSION >= 0x040600
-    setFlag (QGraphicsItem::ItemUsesExtendedStyleOption, true);
-#endif
+    setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
     setAcceptHoverEvents(false);
-    connect (signal_view_settings.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateYGridIntervall()));
+    connect(signal_view_settings.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateYGridIntervall()));
 }
 
 //-----------------------------------------------------------------------------
@@ -232,8 +230,8 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     last_x = start_sample * pixel_per_sample;
 
-    float32 last_y = (*data_block)[0];
-    float32 new_y = 0;
+    float64 last_y = (*data_block)[0];
+    float64 new_y = 0;
 
     if (draw_x_grid_)
         drawXGrid (painter, option);
@@ -294,12 +292,12 @@ void SignalGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* event)
     }
     else if (new_event_)
     {
-        float32 pixel_per_sample = signal_view_settings_->getPixelsPerSample ();
+        float64 pixel_per_sample = signal_view_settings_->getPixelsPerSample();
         int32 sample_cleaned_pos = event->scenePos().x() / pixel_per_sample + 0.5;
         sample_cleaned_pos *= pixel_per_sample;
         int32 new_event_width = new_signal_event_->getDuration ();
-        uint32 old_pos = new_signal_event_->getPosition ();
-        uint32 old_width = new_signal_event_->getDuration ();
+        size_t old_pos = new_signal_event_->getPosition ();
+        size_t old_width = new_signal_event_->getDuration ();
 
         if (sample_cleaned_pos < new_signal_event_reference_x_)
         {

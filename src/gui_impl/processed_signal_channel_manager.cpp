@@ -4,7 +4,7 @@ namespace SigViewer_
 {
 
 //-------------------------------------------------------------------------
-ProcessedSignalChannelManager::ProcessedSignalChannelManager (float32 sample_rate, unsigned length, QObject* parent)
+ProcessedSignalChannelManager::ProcessedSignalChannelManager(float64 sample_rate, unsigned length, QObject* parent)
     : QObject (parent),
       sample_rate_ (sample_rate),
       length_ (length)
@@ -69,22 +69,21 @@ QSharedPointer<DataBlock const> ProcessedSignalChannelManager::getData (ChannelI
 }
 
 //-------------------------------------------------------------------------
-float32 ProcessedSignalChannelManager::getDurationInSec () const
+float64 ProcessedSignalChannelManager::getDurationInSec() const
 {
     return static_cast<float32>(length_) / sample_rate_;
 }
 
 //-------------------------------------------------------------------------
-uint32 ProcessedSignalChannelManager::getNumberSamples () const
+size_t ProcessedSignalChannelManager::getNumberSamples() const
 {
     return length_;
 }
 
 //-------------------------------------------------------------------------
-float32 ProcessedSignalChannelManager::getSampleRate () const
+float64 ProcessedSignalChannelManager::getSampleRate() const
 {
     return sample_rate_;
 }
 
 }
-

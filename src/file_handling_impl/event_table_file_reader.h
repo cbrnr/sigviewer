@@ -4,6 +4,7 @@
 #define EVENT_TABLE_FILE_READER
 
 #include "base/sigviewer_user_types.h"
+#include "biosig.h"
 
 #include <QStringList>
 #include <QMap>
@@ -53,7 +54,7 @@ public:
 
     std::set<uint16> getAllEventTypes () const;
 private:
-    bool load(const QString& file_name);
+    bool load();
 
     static QString const UNKNOWN_GROUP_ID;
 
@@ -72,8 +73,6 @@ private:
     QStringList event_group_ids_;
     Int2EventItemMap event_type2name_;
     String2StringMap group_id2name_;
-
-    QString event_file_path_;
 };
 
 } // namespace SigViewer_

@@ -66,7 +66,7 @@ QSharedPointer<DataBlock const> ChannelManagerImpl::getData (ChannelID id, unsig
 }
 
 //-----------------------------------------------------------------------------
-float32 ChannelManagerImpl::getDurationInSec () const
+float64 ChannelManagerImpl::getDurationInSec () const
 {
     return reader_->getBasicHeader()->getNumberOfSamples() /
            reader_->getBasicHeader()->getSampleRate();
@@ -74,13 +74,13 @@ float32 ChannelManagerImpl::getDurationInSec () const
 
 
 //-----------------------------------------------------------------------------
-uint32 ChannelManagerImpl::getNumberSamples () const
+size_t ChannelManagerImpl::getNumberSamples () const
 {
     return reader_->getBasicHeader()->getNumberOfSamples();
 }
 
 //-----------------------------------------------------------------------------
-float32 ChannelManagerImpl::getSampleRate () const
+float64 ChannelManagerImpl::getSampleRate () const
 {
     return reader_->getBasicHeader()->getSampleRate();
 }

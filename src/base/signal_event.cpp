@@ -18,8 +18,8 @@ SignalEvent::SignalEvent()
 }
 
 // constructor
-SignalEvent::SignalEvent(uint32 position, EventType type, float64 sample_rate, ChannelID channel,
-                         uint32 duration, int32 id)
+SignalEvent::SignalEvent(size_t position, EventType type, float64 sample_rate, ChannelID channel,
+                         size_t duration, int32 id)
 : id_(id),
   position_(position),
   sample_rate_ (sample_rate),
@@ -73,15 +73,15 @@ int32 SignalEvent::getId() const
 }
 
 // get position
-uint32 SignalEvent::getPosition() const
+size_t SignalEvent::getPosition() const
 {
     return position_;
 }
 
 //-----------------------------------------------------------------------------
-float32 SignalEvent::getPositionInSec() const
+float64 SignalEvent::getPositionInSec() const
 {
-    return static_cast<float32>(position_) / sample_rate_;
+    return static_cast<float64>(position_) / sample_rate_;
 }
 
 
@@ -98,21 +98,21 @@ ChannelID SignalEvent::getChannel() const
 }
 
 // get duration
-uint32 SignalEvent::getDuration() const
+size_t SignalEvent::getDuration() const
 {
     return duration_;
 }
 
 //-----------------------------------------------------------------------------
-float32 SignalEvent::getDurationInSec() const
+float64 SignalEvent::getDurationInSec() const
 {
-    return static_cast<float32>(duration_) / sample_rate_;
+    return static_cast<float64>(duration_) / sample_rate_;
 }
 
 //-----------------------------------------------------------------------------
-float32 SignalEvent::getEndInSec () const
+float64 SignalEvent::getEndInSec () const
 {
-    return (static_cast<float32>(duration_ + position_)) / sample_rate_;
+    return (static_cast<float64>(duration_ + position_)) / sample_rate_;
 }
 
 //-----------------------------------------------------------------------------
@@ -128,7 +128,7 @@ void SignalEvent::setId (EventID id)
 }
 
 // set position
-void SignalEvent::setPosition(uint32 position)
+void SignalEvent::setPosition(size_t position)
 {
     position_ = position;
 }
@@ -146,7 +146,7 @@ void SignalEvent::setChannel(ChannelID channel)
 }
 
 // set duration
-void SignalEvent::setDuration(uint32 duration)
+void SignalEvent::setDuration(size_t duration)
 {
     duration_ = duration;
 }

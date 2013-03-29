@@ -24,9 +24,7 @@ class EventGraphicsItem;
 class SignalGraphicsItem : public QGraphicsObject
 {
     Q_OBJECT
-#if QT_VERSION >= 0x040600
     Q_INTERFACES(QGraphicsItem)
-#endif
 public:
     SignalGraphicsItem(QSharedPointer<SignalViewSettings const> signal_view_settings,
                        QSharedPointer<EventManager> event_manager,

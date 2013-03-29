@@ -47,7 +47,7 @@ QString BioSigWriter::saveEventsToSignalFile (QSharedPointer<EventManager const>
                                               std::set<EventType> const& types)
 {
     if (file_formats_support_event_saving_.count(target_type_) == 0)
-        return QObject::tr("Can't write events to that file that file type!");
+        return QObject::tr("Cannot write events to this file type!");
 
 
     QList<EventID> events;
@@ -83,7 +83,6 @@ QString BioSigWriter::saveEventsToSignalFile (QSharedPointer<EventManager const>
     if (error)
         QMessageBox::critical(0, "Events not saved!!!", QString::number(error));
 
-    sclose (header);
     destructHDR (header);
 
     return "";
@@ -109,8 +108,8 @@ QString BioSigWriter::save (QSharedPointer<FileContext const> file_context,
 
     delete read_data;
 
-    sclose (write_header);
-    sclose (read_header);
+    sclose(write_header);
+    sclose(read_header);
 
     destructHDR (write_header);
 
