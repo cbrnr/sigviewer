@@ -1,41 +1,39 @@
-Content
-=======
-- Compiling
-- Building Installation Packages
+Contents
+========
+1. Building SigViewer
+2. Deploying SigViewer
 
 
-Compiling
----------
+1. Building SigViewer
+---------------------
 
 SigViewer depends on the following external libraries:
 
-- QT 4 (qt4-core and qt4-gui)
-  http://www.qtsoftware.com
+- Qt4
+  http://qt-project.org/
 - libbiosig
-  http://biosig.sourceforge.net
+  http://biosig.sourceforge.net/
 
-General building steps:
+General instructions:
 
-1. install qt4 development packages
+1. Install Qt4 development packages
 
-2. download the "extern"-archive which fits for your platform from http://sigviewer.sf.net
+2. Download the "external" archive for your platform from http://sigviewer.sourceforge.net/
 
-3. extract the "extern"-archive into the sigviewer directory (in the same directory where "sigviewer.pro" is located)
+3. Extract the "external" archive into SigViewer's source folder (the folder where "sigviewer.pro" is located)
 
-4. use qmake to generate a makefile and call make:
+4. Use qmake to generate a Makefile and call make:
    qmake sigviewer.pro && make
 
-The SigViewer binary can be found in the "bin" directory (release or debug)
+The SigViewer binary can be found in the "bin" directory (release or debug subfolders)
 
 
 
-Building Installation Packages
-------------------------------
+2. Deploying SigViewer
+----------------------
 
-Debian / Ubuntu / Kubuntu:
-  1. build/compile SigViewer
+Debian/Ubuntu:
+  1. Build SigViewer
 
-  2. run the script build-deb.sh
-        ./build-deb.sh
-  
-  3. the deb file is automatically generated
+  2. Run the script "build-deb.sh", which generates a .deb package:
+     ./build-deb.sh
