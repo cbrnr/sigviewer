@@ -1,3 +1,6 @@
+Version 0.5.2
+(*) Integrated patches from the BioSig project
+
 Version 0.5.1
 (B) Fixed bug where signals could be distorted
 (*) Removed libgdf

@@ -47,7 +47,7 @@ TRANSLATIONS += translations\sigviewer_de.ts \
     translations\sigviewer_en.ts \
     translations\sigviewer_es.ts \
     translations\sigviewer_fr.ts
-#include(../extern/extern.pri)
+
 include(base/base.pri)
 include(signal_processing/signal_processing.pri)
 include(file_handling_impl/file_handling_impl.pri)
@@ -55,14 +55,14 @@ include(file_handling/file_handling.pri)
 include(gui/gui.pri)
 include(gui_impl/gui_impl.pri)
 include(editing_commands/editing_commands.pri)
-#include(console/console.pri)
-#include(console_impl/console_impl.pri)
 include(commands/commands.pri)
 include(tests/tests.pri)
+
 HEADERS += application_context_impl.h \
     file_context.h \
     tab_context.h \
     command_executer.h
+    
 SOURCES += main/sigviewer.cpp \
     application_context_impl.cpp \
     file_context.cpp \

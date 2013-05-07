@@ -1,2 +1,2 @@
-TEMPLATE=subdirs
-SUBDIRS=src
+TEMPLATE = subdirs
+SUBDIRS = src

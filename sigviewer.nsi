@@ -45,6 +45,7 @@ Section "SigViewer" SecSigViewer
   File "bin\release\QtCore4.dll"
   File "bin\release\QtGui4.dll"
   File "bin\release\QtXml4.dll"
+  File "bin\release\libstdc++-6.dll"
   
   ;Store uninstall information in Add/Remove Programs
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\SigViewer" "DisplayName" "SigViewer"
@@ -98,6 +99,7 @@ Section "Uninstall"
   Delete "$INSTDIR\QtCore4.dll"
   Delete "$INSTDIR\QtGui4.dll"
   Delete "$INSTDIR\QtXml4.dll"
+  Delete "$INSTDIR\libstdc++-6.dll"
   RMDir "$INSTDIR"
   
   Delete "$SMPROGRAMS\SigViewer\SigViewer.lnk"
