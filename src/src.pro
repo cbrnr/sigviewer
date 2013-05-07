@@ -28,17 +28,12 @@ CONFIG += warn_on \
     qt \
     thread
 
-macx:QT += opengl
+macx:QMAKE_CXXFLAGS_X86_64 += -mmacosx-version-min=10.6
 
 INCLUDEPATH += $$_PRO_FILE_PWD_/../external/include \
                $$_PRO_FILE_PWD_/.
 LIBS += -L$$_PRO_FILE_PWD_/../external/lib \
-    -lbiosig \
-    -lz
-
-macx:INCLUDEPATH += /opt/local/include
-macx:LIBS += -L/opt/local/lib \
-             -lz
+    -lbiosig
 
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc

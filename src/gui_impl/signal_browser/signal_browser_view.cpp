@@ -19,9 +19,6 @@
 #include <QResizeEvent>
 #include <QGraphicsLinearLayout>
 
-#ifdef Q_OS_MACX
-#include <QGLWidget>
-#endif
 
 namespace SigViewer_
 {
@@ -40,9 +37,6 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalVisualisationModel> s
     resize (initial_size.width(), initial_size.height());
     graphics_scene_ = new QGraphicsScene (0,0,initial_size.width(), initial_size.height(), this);
     graphics_view_ = new SignalBrowserGraphicsView (graphics_scene_);
-#ifdef Q_OS_MACX
-    graphics_view_->setViewport(new QGLWidget);
-#endif
     graphics_view_->setAcceptDrops (false);
     graphics_view_->scroll(0,0);
     graphics_view_->horizontalScrollBar()->hide();
@@ -76,7 +70,6 @@ void SignalBrowserView::resizeScene (int32 width, int32 height)
     center.setY (center.y () + static_cast<double>(graphics_view_->height()) / 2.0);
     graphics_view_->centerOn (center);
 
-//    y_axis_widget_->changeYStart (left_upper_corner.y());
     emit visibleXChanged (graphics_view_->mapToScene (0, 0).x());
     emit visibleYChanged (graphics_view_->mapToScene(0, 0).y());
 }
