@@ -23,15 +23,12 @@ CONFIG(release, debug|release) {
     UI_DIR = $$_PRO_FILE_PWD_/../tmp/release
 }
 
-CONFIG += warn_on \
-    link_prl \
-    qt \
-    thread
+CONFIG += warn_on link_prl qt thread
 
-macx:QMAKE_CXXFLAGS_X86_64 += -mmacosx-version-min=10.6
+QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.6
 
 INCLUDEPATH += $$_PRO_FILE_PWD_/../external/include \
-               $$_PRO_FILE_PWD_/.
+    $$_PRO_FILE_PWD_/.
 LIBS += -L$$_PRO_FILE_PWD_/../external/lib \
     -lbiosig
 
