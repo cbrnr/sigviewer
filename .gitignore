@@ -1,5 +1,3 @@
-syntax: glob
-
 .directory
 .DS_Store
 *~
