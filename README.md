@@ -26,5 +26,6 @@ Deploying SigViewer
 -------------------
 
 Debian/Ubuntu:
+
 1. Build SigViewer
 2. To create a .deb package, run `./build-deb.sh`
