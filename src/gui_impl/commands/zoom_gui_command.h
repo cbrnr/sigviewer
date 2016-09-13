@@ -76,8 +76,8 @@ private:
     //-------------------------------------------------------------------------
     float32 minPixelPerSample ();
 
-    static float const ZOOM_FACTOR_ = 2;
-    static float const MAX_HORIZONTAL_ZOOM_IN_ = 32;
+    static int const ZOOM_FACTOR_ = 2;
+    static int const MAX_HORIZONTAL_ZOOM_IN_ = 32;
 
     static QString const GOTO_;
     static QString const ZOOM_IN_VERTICAL_;
