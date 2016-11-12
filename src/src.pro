@@ -59,3 +59,7 @@ SOURCES += main/sigviewer.cpp \
     application_context_impl.cpp \
     file_context.cpp \
     tab_context.cpp
+
+QMAKE_CFLAGS += -std=c99
+
+QMAKE_CXXFLAGS=-std=gnu++11
