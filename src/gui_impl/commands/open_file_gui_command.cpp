@@ -17,6 +17,7 @@
 #include "editing_commands/macro_undo_command.h"
 #include "editing_commands/new_event_undo_command.h"
 #include "gui/progress_bar.h"
+#include "close_file_gui_command.h"
 
 #include <QFileDialog>
 #include <QSettings>
@@ -86,6 +87,15 @@ void OpenFileGuiCommand::evaluateEnabledness ()
 //-------------------------------------------------------------------------
 void OpenFileGuiCommand::open ()
 {
+    //by YL
+    //close the previous file before opening a new one
+    //thus using less memory
+    CloseFileGuiCommand closeObject;
+
+    closeObject.closeFile();
+
+
+
     QStringList extension_list = FileSignalReaderFactory::getInstance()->getAllFileEndingsWithWildcards();
     QString extensions;
     foreach (QString extension, extension_list)
