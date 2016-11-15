@@ -87,14 +87,6 @@ void OpenFileGuiCommand::evaluateEnabledness ()
 //-------------------------------------------------------------------------
 void OpenFileGuiCommand::open ()
 {
-    //by YL
-    //close the previous file before opening a new one
-    //thus using less memory
-    CloseFileGuiCommand closeObject;
-
-    closeObject.closeFile();
-
-
 
     QStringList extension_list = FileSignalReaderFactory::getInstance()->getAllFileEndingsWithWildcards();
     QString extensions;
@@ -108,6 +100,11 @@ void OpenFileGuiCommand::open ()
 
     if (file_path.isEmpty())
         return;
+
+    //close the previous file before opening a new one
+    //thus using less memory
+    CloseFileGuiCommand closeObject;
+    closeObject.closeFile();
 
     instance_->openFileImpl (file_path);
 }
