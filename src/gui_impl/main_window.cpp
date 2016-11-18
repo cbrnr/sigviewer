@@ -42,11 +42,6 @@
 #include <QUrl>
 #include <QDebug>
 
-//by YL
-#if QT_VERSION >= 0x050000
-#include <QMimeData>
-#endif
-
 namespace SigViewer_
 {
 
