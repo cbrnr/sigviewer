@@ -309,8 +309,6 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
             sclose (xdf_header_);
             destructHDR(xdf_header_);
             xdf_header_ = NULL;
-
-            //by YL: should it be delete[]?
             delete c_file_name;
             return "file not supported";
     }
@@ -320,8 +318,7 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
 
     //hdr2ascii(XDF_header_,stdout,4);
 
-    //by YL: should it be delete[]? (I already changed this one)
-    delete[] c_file_name;
+    delete c_file_name;
     c_file_name = NULL;
 
     basic_header_->setNumberEvents(xdf_header_->EVENT.N);
