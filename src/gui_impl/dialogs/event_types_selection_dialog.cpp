@@ -60,7 +60,16 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
     header_labels << tr("Event Type") << tr("Color") << tr("Alpha") << tr("Type Id");
     ui_.tree_widget_->setHeaderLabels (header_labels);
     ui_.tree_widget_->setColumnWidth(ID_COLUMN_INDEX_, 0);
+    //ui_.tree_widget_->header()->setResizeMode (QHeaderView::Interactive);
+
+    //by YL
+#if QT_VERSION >= 0x050000
+    ui_.tree_widget_->header()->setSectionResizeMode (QHeaderView::Interactive);
+#else
     ui_.tree_widget_->header()->setResizeMode (QHeaderView::Interactive);
+#endif
+
+
     ui_.tree_widget_->header()->resizeSection (NAME_COLUMN_INDEX_, 300);
     ui_.tree_widget_->header()->resizeSection (ID_COLUMN_INDEX_, 0);
 
@@ -307,8 +316,16 @@ void EventTypesSelectionDialog::handleAlpha (QTreeWidgetItem* item)
 
     QColor color = item->backgroundColor (ALPHA_COLUMN_INDEX_);
 
-    color.setAlpha (QInputDialog::getInteger(this, tr("Alpha"), tr("Enter new Value"),
-                                             color.alpha(), 0, 255, 25));
+    //color.setAlpha (QInputDialog::getInteger(this, tr("Alpha"), tr("Enter new Value"),
+      //                                       color.alpha(), 0, 255, 25));
+
+    //by YL
+#if QT_VERSION >= 0x050000
+    color.setAlpha (QInputDialog::getInt(this, tr("Alpha"), tr("Enter new Value"), color.alpha(), 0, 255, 25));
+#else
+    color.setAlpha (QInputDialog::getInteger(this, tr("Alpha"), tr("Enter new Value"), color.alpha(), 0, 255, 25));
+#endif
+
 
 
     item->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
