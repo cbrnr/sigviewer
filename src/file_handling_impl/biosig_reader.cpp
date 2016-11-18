@@ -152,13 +152,22 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
             sclose (biosig_header_);
             destructHDR(biosig_header_);
             biosig_header_ = NULL;
+
             delete[] c_file_name;
+
             return "file not supported";
     }
 
     convert2to4_eventtable(biosig_header_);
 
+<<<<<<< HEAD
+=======
+    //hdr2ascii(biosig_header_,stdout,4);
+
+
+>>>>>>> Sigviewer is now compatible with Qt 5.3
     delete[] c_file_name;
+
     c_file_name = NULL;
 
     basic_header_->setNumberEvents(biosig_header_->EVENT.N);
