@@ -318,7 +318,7 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
 
     //hdr2ascii(XDF_header_,stdout,4);
 
-    delete c_file_name;
+    delete[] c_file_name;
     c_file_name = NULL;
 
     basic_header_->setNumberEvents(xdf_header_->EVENT.N);

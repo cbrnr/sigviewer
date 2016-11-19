@@ -720,7 +720,7 @@ XDFdataStruct load_xdf(std::string filename)
 
         std::cout << "it took " << halfWay << " clicks (" << ((float)halfWay) / CLOCKS_PER_SEC << " seconds)"
                   << " reading XDF data" << std::endl;
-
+/*
         //try to free up some memory
         for (size_t st = 0; st < XDFdata.streams.size(); st++)
         {
@@ -730,7 +730,7 @@ XDFdataStruct load_xdf(std::string filename)
                 XDFdata.streams[st].time_series[ch].shrink_to_fit();
             }
         }
-
+*/
 
 
         //==========================================================
