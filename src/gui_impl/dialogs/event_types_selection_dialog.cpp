@@ -317,7 +317,7 @@ void EventTypesSelectionDialog::handleAlpha (QTreeWidgetItem* item)
     QColor color = item->backgroundColor (ALPHA_COLUMN_INDEX_);
 
     //color.setAlpha (QInputDialog::getInteger(this, tr("Alpha"), tr("Enter new Value"),
-      //                                       color.alpha(), 0, 255, 25));
+     //                                        color.alpha(), 0, 255, 25));
 
     //by YL
 #if QT_VERSION >= 0x050000

@@ -61,9 +61,4 @@ SOURCES += main/sigviewer.cpp \
     tab_context.cpp
 
 #by YL
-
-QMAKE_CFLAGS += -std=c99
-
-QMAKE_CXXFLAGS=-std=gnu++11
-
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
