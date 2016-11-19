@@ -59,3 +59,6 @@ SOURCES += main/sigviewer.cpp \
     application_context_impl.cpp \
     file_context.cpp \
     tab_context.cpp
+
+#by YL
+QT += widgets

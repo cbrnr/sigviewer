@@ -42,6 +42,11 @@
 #include <QUrl>
 #include <QDebug>
 
+
+//by YL
+#include <QMimeData>
+
+
 namespace SigViewer_
 {
 

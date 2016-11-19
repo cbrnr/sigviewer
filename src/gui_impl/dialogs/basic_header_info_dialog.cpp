@@ -93,7 +93,10 @@ void BasicHeaderInfoDialog::buildTree()
     QStringList header_labels;
     header_labels << tr("Property") << tr("Value") << tr("Unit");
     info_tree_widget_->setHeaderLabels(header_labels);
-    info_tree_widget_->header()->setResizeMode(QHeaderView::Interactive);
+    //info_tree_widget_->header()->setResizeMode(QHeaderView::Interactive);
+
+    //by YL
+    info_tree_widget_->header()->setSectionResizeMode(QHeaderView::Interactive);
 
     QTreeWidgetItem* root_item;
     QTreeWidgetItem* tmp_item;
