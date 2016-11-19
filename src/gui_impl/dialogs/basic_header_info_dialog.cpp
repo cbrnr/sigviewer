@@ -96,12 +96,7 @@ void BasicHeaderInfoDialog::buildTree()
     //info_tree_widget_->header()->setResizeMode(QHeaderView::Interactive);
 
     //by YL
-#if QT_VERSION >= 0x050000
     info_tree_widget_->header()->setSectionResizeMode(QHeaderView::Interactive);
-#else
-    info_tree_widget_->header()->setResizeMode(QHeaderView::Interactive);
-#endif
-
 
     QTreeWidgetItem* root_item;
     QTreeWidgetItem* tmp_item;

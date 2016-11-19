@@ -61,4 +61,4 @@ SOURCES += main/sigviewer.cpp \
     tab_context.cpp
 
 #by YL
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT += widgets
