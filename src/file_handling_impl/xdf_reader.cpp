@@ -4,7 +4,6 @@
 #include "gui/progress_bar.h"
 #include "base/fixed_data_block.h"
 #include "biosig_reader.h"
-#include "loadxdf.h"
 
 #include "biosig.h"
 
@@ -18,9 +17,9 @@
 #include <cmath>
 #include <cassert>
 #include <algorithm>
-//#include <vector>
-//#include <string>
-//#include <cstring>
+
+//by YL
+#include "loadxdf.h"
 #include <iostream>
 #include <time.h>       /* clock_t, clock, CLOCKS_PER_SEC */
 
@@ -279,26 +278,29 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
     xdf_header_ = sopen(c_file_name, "r", xdf_header_ );
 
     clock_t t = clock();
+    clock_t t2 = clock();
 
 
 
 
     //by YL
     std::string filename{ file_name.toStdString()};
-    XDFdata = load_xdf(filename);
+    load_xdf(XDFdata, filename);
 
     t = clock() - t;
     std::cout << "it took " << ((float)t) / CLOCKS_PER_SEC << " seconds reading data" << std::endl;
 
     loadXDFHeader(XDFdata, file_name);
 
+    t = clock() - t - t2;
+    std::cout << "it took " << ((float)t) / CLOCKS_PER_SEC << " additional seconds loading XDF header" << std::endl;
+
+
     //end of loading, free up some memory
     decltype(XDFdata.eventMap) freeup;
     XDFdata.eventMap.swap(freeup);
 
 
-    t = clock() - t;
-    std::cout << "it took " << ((float)t) / CLOCKS_PER_SEC << " additional seconds loading XDF header" << std::endl;
 
 
     basic_header_ = QSharedPointer<BasicHeader>
@@ -362,44 +364,6 @@ QSharedPointer<BasicHeader> XDFReader::getBasicHeader ()
 }
 
 //-----------------------------------------------------------------------------
-//original code
-/*void XDFReader::bufferAllChannels () const
-{
-    size_t numberOfSamples = xdf_header_->NRec * xdf_header_->SPR;
-
-
-    biosig_data_type* read_data = new biosig_data_type[numberOfSamples * basic_header_->getNumberChannels()];
-
-
-    xdf_header_->FLAG.ROW_BASED_CHANNELS = 0;
-
-    QString progress_name = QObject::tr("Loading data...");
-
-    sread(read_data, 0, xdf_header_->NRec, xdf_header_);
-
-    for (size_t i = 0; i<numberOfSamples* basic_header_->getNumberChannels(); i++ )
-    {
-        read_data[i]=xdf_header_->data.block[i];
-    }
-
-    for (unsigned channel_id = 0; channel_id < basic_header_->getNumberChannels();
-         ++channel_id)
-
-    {
-        ProgressBar::instance().increaseValue (1, progress_name);
-
-        QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples));
-        for (size_t data_index = 0; data_index < numberOfSamples; data_index++)
-            raw_data->operator [](data_index) = read_data[data_index + channel_id * numberOfSamples];
-        QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, basic_header_->getSampleRate()));
-        channel_map_[channel_id] = data_block;
-    }
-
-    buffered_all_channels_ = true;
-    if (buffered_all_events_)
-        doClose();
-    delete[] read_data;
-}*/
 
 //alteration by YL
 void XDFReader::bufferAllChannels () const
@@ -411,18 +375,8 @@ void XDFReader::bufferAllChannels () const
     QString progress_name = QObject::tr("Loading data...");
 
 
-    //free up the memory for the events
-    //std::vector<std::pair<std::string, float> > freeup;
-    //XDFdata.eventMap.swap(freeup);
-    //{
-        //XDFdata.eventMap.clear();
-        //XDFdata.eventMap.shrink_to_fit();
 
-        //decltype(XDFdata.eventMap) nothing;
-        //XDFdata.eventMap.swap(nothing);
-    //}
-
-    //load all signals channel by channel!!
+    //load all signals channel by channel
     unsigned channel_id = 0;
     for (size_t st = 0; st< XDFdata.streams.size(); st++)
     {
@@ -446,19 +400,12 @@ void XDFReader::bufferAllChannels () const
                     channel_map_[channel_id] = data_block;
                     channel_id++;
 
-                    //XDFdata.streams[st].time_series[ch].clear();
-                    //XDFdata.streams[st].time_series[ch].shrink_to_fit();
-
                     std::vector<float> nothing;
                     XDFdata.streams[st].time_series[ch].swap(nothing);
-
                 }
-                //XDFdata.streams[st].time_stamps.clear();
-                //XDFdata.streams[st].time_stamps.shrink_to_fit();
 
                 std::vector<float> nothing2;
                 XDFdata.streams[st].time_stamps.swap(nothing2);
-
             }
             else
             {
@@ -476,21 +423,12 @@ void XDFReader::bufferAllChannels () const
                     channel_map_[channel_id] = data_block;
                     channel_id++;
 
-                    //XDFdata.streams[st].time_series[ch].clear();
-                    //XDFdata.streams[st].time_series[ch].shrink_to_fit();
-
                     std::vector<float> nothing;
                     XDFdata.streams[st].time_series[ch].swap(nothing);
-
-
-
                 }
-                //XDFdata.streams[st].time_stamps.clear();
-                //XDFdata.streams[st].time_stamps.shrink_to_fit();
 
                 std::vector<float> nothing2;
                 XDFdata.streams[st].time_stamps.swap(nothing2);
-
             }
         }
         //else if: irregualar samples
@@ -525,20 +463,13 @@ void XDFReader::bufferAllChannels () const
                 channel_map_[channel_id] = data_block;
                 channel_id++;
 
-                //XDFdata.streams[st].time_series[ch].clear();
-                //XDFdata.streams[st].time_series[ch].shrink_to_fit();
-
                 std::vector<float> nothing;
                 XDFdata.streams[st].time_series[ch].swap(nothing);
 
             }
-            //XDFdata.streams[st].time_stamps.clear();
-            //XDFdata.streams[st].time_stamps.shrink_to_fit();
 
             std::vector<float> nothing2;
             XDFdata.streams[st].time_stamps.swap(nothing2);
-
-
 
         }
     }
@@ -547,8 +478,6 @@ void XDFReader::bufferAllChannels () const
     buffered_all_channels_ = true;
     if (buffered_all_events_)
         doClose();
-    //delete[] read_data;
-
 
 
     decltype(XDFdata) empty;

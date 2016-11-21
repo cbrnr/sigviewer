@@ -2,19 +2,10 @@
 #ifndef LOADXDF
 #define LOADXDF
 
-//#include <iostream>
-//#include <fstream>
 #include <string>
-//#include <stdlib.h>
-//#include <stdio.h>
-//#include <cmath>
 #include <vector>
-//#include "pugixml.hpp" //pugi XML parser
-//#include <sstream>
-//#include <algorithm>
 
-
-//options
+//options for loading XDF files
 class Opts
 {
 public:
@@ -61,8 +52,8 @@ public:
 struct Stream
 {
     std::vector<std::vector<float> > time_series;
-    std::vector<std::vector<std::string> > time_seriesStr;
     std::vector<float> time_stamps;
+
     struct
     {
         std::string name;
@@ -89,6 +80,7 @@ struct Stream
         int sample_count;
         double measured_srate;
     } info;
+
     struct
     {
         int num_samples;
@@ -98,8 +90,9 @@ struct Stream
         double duration;
         double effective_srate;
     } segment;
-    float last_timestamp{ 0 };   //for temporary use
-    float sampling_interval;//if srate>0,sampling_interval=1/srate;otherwise 0
+
+    float last_timestamp{ 0 };  //for temporary use
+    float sampling_interval;    //if srate>0,sampling_interval=1/srate;otherwise 0
     std::vector<double> clock_times;
     std::vector<double> clock_values;
 };
@@ -115,13 +108,12 @@ struct XDFdataStruct	//final return value
             float version;
         }info;
     } fileHeader;
+
     uint64_t totalLen;
-    float minTS{0};
-    float maxTS{0};
-    int totalCh = 0;
-    //int maxSR {0};  //max sample rate;
+    float minTS {0};
+    float maxTS {0};
+    int totalCh {0};
     int majSR;      //the sample rate that has the most channels;
-    //std::vector<float> generalTS;
     std::vector<std::pair<int, unsigned> > streamMap; //streamNum, channel count
 
     typedef std::string eventName;
@@ -131,7 +123,7 @@ struct XDFdataStruct	//final return value
 };
 
 
-XDFdataStruct load_xdf(std::string filename);
+void load_xdf(XDFdataStruct &XDFdata, std::string filename);
 
 
 

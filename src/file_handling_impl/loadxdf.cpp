@@ -5,14 +5,11 @@
 #include <stdlib.h>     //EXIT_FAILURE, NULL, abs
 //#include <stdio.h>      //size_t
 //#include <cmath>        //abs
-//#include <vector>
 #include "pugixml.hpp"  //pugi XML parser
 #include <sstream>
 #include <algorithm>
 #include "loadxdf.h"
 #include <smarc.h>      //resampling library
-//#include <cstring>
-//#include <string>
 #include <time.h>       /* clock_t, clock, CLOCKS_PER_SEC */
 
 
@@ -77,7 +74,7 @@ double getMad(std::vector<T> vector) //MEDIAN absolute deviation
 */
 
 
-XDFdataStruct load_xdf(std::string filename)
+void load_xdf(XDFdataStruct &XDFdata, std::string filename)
 {
     clock_t time;
     time = clock();
@@ -100,7 +97,7 @@ XDFdataStruct load_xdf(std::string filename)
     */
 
 
-    XDFdataStruct XDFdata; //final return data;
+    //XDFdataStruct XDFdata; //final return data;
 
     std::vector<int> idmap; //remaps stream id's onto indices in streams
 
@@ -443,17 +440,11 @@ XDFdataStruct load_xdf(std::string filename)
                         //read or deduce time stamp
                         uint8_t tsBytes;
                         file.read(reinterpret_cast<char *>(&tsBytes), 1);
+                        double ts;
                         if (tsBytes == 8)
-                        {
-                            double ts;
                             file.read((char*)&ts, 8);
-                            XDFdata.streams[index].time_stamps.emplace_back(ts);
-                        }
                         else
-                        {
-                            double ts = XDFdata.streams[index].last_timestamp + XDFdata.streams[index].sampling_interval;
-                            XDFdata.streams[index].time_stamps.emplace_back(ts);
-                        }
+                            ts = XDFdata.streams[index].last_timestamp + XDFdata.streams[index].sampling_interval;
 
                         //read the event
                         int8_t bytes;
@@ -465,7 +456,7 @@ XDFdataStruct load_xdf(std::string filename)
                             char* buffer = new char[length + 1];
                             file.read(buffer, length);
                             buffer[length] = '\0';
-                            XDFdata.eventMap.emplace_back(buffer, XDFdata.streams[index].time_stamps.back());
+                            XDFdata.eventMap.emplace_back(buffer, ts);
                             delete[] buffer;
                         }
                         else if (bytes == 4)
@@ -475,7 +466,7 @@ XDFdataStruct load_xdf(std::string filename)
                             char* buffer = new char[length + 1];
                             file.read(buffer, length);
                             buffer[length] = '\0';
-                            XDFdata.eventMap.emplace_back(buffer, XDFdata.streams[index].time_stamps.back());
+                            XDFdata.eventMap.emplace_back(buffer, ts);
                             delete[] buffer;
                         }
                         else if (bytes == 8)
@@ -485,13 +476,12 @@ XDFdataStruct load_xdf(std::string filename)
                             char* buffer = new char[length + 1];
                             file.read(buffer, length);
                             buffer[length] = '\0';
-                            XDFdata.eventMap.emplace_back(buffer, XDFdata.streams[index].time_stamps.back());
+                            XDFdata.eventMap.emplace_back(buffer, ts);
                             delete[] buffer;
                         }
+
+                        XDFdata.streams[index].last_timestamp = ts;
                     }
-
-                    XDFdata.streams[index].last_timestamp = XDFdata.streams[index].time_stamps.back();
-
                 }
             }
             break;
@@ -720,17 +710,6 @@ XDFdataStruct load_xdf(std::string filename)
 
         std::cout << "it took " << halfWay << " clicks (" << ((float)halfWay) / CLOCKS_PER_SEC << " seconds)"
                   << " reading XDF data" << std::endl;
-/*
-        //try to free up some memory
-        for (size_t st = 0; st < XDFdata.streams.size(); st++)
-        {
-            XDFdata.streams[st].time_series.shrink_to_fit();
-            for (size_t ch = 0; ch < XDFdata.streams[st].time_series.size(); ch++)
-            {
-                XDFdata.streams[st].time_series[ch].shrink_to_fit();
-            }
-        }
-*/
 
 
         //==========================================================
@@ -753,6 +732,13 @@ XDFdataStruct load_xdf(std::string filename)
                 XDFdata.minTS = XDFdata.streams[i].time_stamps.front();
         }
 
+        //including the timestamps of the events as well
+        for (auto &elem : XDFdata.eventMap)
+        {
+            if (XDFdata.minTS > elem.second)
+                XDFdata.minTS = elem.second;
+        }
+
         //find the max timestamp of all streams
         for (size_t i = 0; i < XDFdata.streams.size(); i++)
         {
@@ -760,6 +746,14 @@ XDFdataStruct load_xdf(std::string filename)
                     XDFdata.streams[i].time_stamps.back() > XDFdata.maxTS)
                 XDFdata.maxTS = XDFdata.streams[i].time_stamps.back();
         }
+
+        //including the timestamps of the events as well
+        for (auto &elem : XDFdata.eventMap)
+        {
+            if (XDFdata.maxTS < elem.second)
+                XDFdata.maxTS = elem.second;
+        }
+
 
 
         //=============================================================================
@@ -910,7 +904,7 @@ XDFdataStruct load_xdf(std::string filename)
         {
             if(!XDFdata.streams[st].time_series.empty())
             {
-                if (XDFdata.totalLen<XDFdata.streams[st].time_series.front().size())
+                if (XDFdata.totalLen < XDFdata.streams[st].time_series.front().size())
                     XDFdata.totalLen = XDFdata.streams[st].time_series.front().size();
             }
         }
@@ -926,15 +920,6 @@ XDFdataStruct load_xdf(std::string filename)
                 nothing.emplace_back(XDFdata.streams[st].time_stamps.front());
                 XDFdata.streams[st].time_stamps.swap(nothing);
             }
-            //else if this is a stream containing only strings
-            else if (XDFdata.streams[st].info.nominal_srate == 0 &&
-                     XDFdata.streams[st].time_series.empty() &&
-                     !XDFdata.streams[st].time_stamps.empty())
-            {
-                //we don't need these anymore because string timestamps are duplicated in eventMap
-                std::vector<float> nothing;
-                XDFdata.streams[st].time_stamps.swap(nothing);
-            }
         }
 
         time = clock() - time;
@@ -946,7 +931,7 @@ XDFdataStruct load_xdf(std::string filename)
         //loading finishes, close file and return XDFdata
         file.close();
 
-        return XDFdata;
+        //return XDFdata;
 
     }
     else
