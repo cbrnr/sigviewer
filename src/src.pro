@@ -2,7 +2,7 @@ TEMPLATE = app
 DESTDIR = $$_PRO_FILE_PWD_/../bin
 TARGET = sigviewer
 
-QT += core gui xml
+QT += core gui xml widgets
 
 CONFIG(debug, debug|release) {
     message(DEBUG)
@@ -54,7 +54,7 @@ HEADERS += application_context_impl.h \
     file_context.h \
     tab_context.h \
     command_executer.h
-    
+
 SOURCES += main/sigviewer.cpp \
     application_context_impl.cpp \
     file_context.cpp \

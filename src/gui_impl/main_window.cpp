@@ -38,7 +38,7 @@
 #include <QLabel>
 #include <QSettings>
 #include <QApplication>
-
+#include <QMimeData>
 #include <QUrl>
 #include <QDebug>
 

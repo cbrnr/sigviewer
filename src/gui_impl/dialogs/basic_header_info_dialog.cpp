@@ -93,7 +93,7 @@ void BasicHeaderInfoDialog::buildTree()
     QStringList header_labels;
     header_labels << tr("Property") << tr("Value") << tr("Unit");
     info_tree_widget_->setHeaderLabels(header_labels);
-    info_tree_widget_->header()->setResizeMode(QHeaderView::Interactive);
+    info_tree_widget_->header()->setSectionResizeMode(QHeaderView::Interactive);
 
     QTreeWidgetItem* root_item;
     QTreeWidgetItem* tmp_item;
@@ -102,7 +102,7 @@ void BasicHeaderInfoDialog::buildTree()
     root_item = new QTreeWidgetItem(info_tree_widget_);
     root_item->setText(0, tr("Basic"));
     root_item->setIcon(0, QIcon(":/images/info_16x16.png"));
-    info_tree_widget_->setItemExpanded(root_item, true);    
+    info_tree_widget_->setItemExpanded(root_item, true);
 
     tmp_item = new QTreeWidgetItem(root_item);
     tmp_item->setText(0, tr("File Type"));
@@ -132,7 +132,7 @@ void BasicHeaderInfoDialog::buildTree()
 
     // file
     root_item = new QTreeWidgetItem(info_tree_widget_);
-    root_item->setText(0, tr("File"));    
+    root_item->setText(0, tr("File"));
     root_item->setIcon(0, QIcon(":/images/file_16x16.png"));
     info_tree_widget_->setItemExpanded(root_item, true);
     tmp_item = new QTreeWidgetItem(root_item);
@@ -157,7 +157,7 @@ void BasicHeaderInfoDialog::buildTree()
     // events
     root_item = new QTreeWidgetItem(info_tree_widget_);
     root_item->setText(0, tr("Events"));
-    root_item->setIcon(0, QIcon(":/images/events_22x22.png"));    
+    root_item->setIcon(0, QIcon(":/images/events_22x22.png"));
     info_tree_widget_->setItemExpanded(root_item, true);
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
@@ -172,9 +172,9 @@ void BasicHeaderInfoDialog::buildTree()
     // channels
     root_item = new QTreeWidgetItem(info_tree_widget_);
     root_item->setText(0, tr("Channels"));
-    root_item->setIcon(0, QIcon(":/images/channels_22x22.png"));    
+    root_item->setIcon(0, QIcon(":/images/channels_22x22.png"));
     info_tree_widget_->setItemExpanded(root_item, true);
-    
+
     for (uint32 channel_nr = 0;
          channel_nr < basic_header_->getNumberChannels();
          channel_nr++)

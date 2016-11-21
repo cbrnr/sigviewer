@@ -28,6 +28,7 @@
 #include <QList>
 #include <QDateTime>
 #include <QMap>
+#include <QSharedPointer>
 
 namespace SigViewer_
 {
@@ -85,7 +86,7 @@ protected:
     // events
     uint32 number_events_;
     double event_sample_rate_;
-    
+
     //-------------------------------------------------------------------------
     /// optional
     void setFileTypeString (QString const& file_type_string);
