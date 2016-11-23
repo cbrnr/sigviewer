@@ -12,7 +12,7 @@
 namespace SigViewer_
 {
 
-//by YL: the object to store raw XDF data
+//the object to store raw XDF data
 XDFdataStruct XDFdata;
 
 //XDFReader, modeled  on BiosigReader

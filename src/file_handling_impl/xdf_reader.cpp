@@ -18,7 +18,6 @@
 #include <cassert>
 #include <algorithm>
 
-//by YL
 #include "loadxdf.h"
 #include <iostream>
 #include <time.h>       /* clock_t, clock, CLOCKS_PER_SEC */
