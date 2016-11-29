@@ -118,26 +118,26 @@ QString XDFReader::open (QString const& file_name)
     return loadFixedHeader (file_name);
 }
 
-//by YL, pass the data in XDFdata to xdf_header_
-void XDFReader::loadXDFHeader(XDFdataStruct &data, const QString& file_name)
+//pass the data in XDFdata to xdf_header_
+void XDFReader::loadXDFHeader(const QString& file_name)
 {
     std::string name = file_name.toStdString();
     xdf_header_->FileName = const_cast<char*>(name.c_str());
-    xdf_header_->VERSION = data.fileHeader.info.version;
+    xdf_header_->VERSION = XDFdata.fileHeader.info.version;
     //xdf_header_->TYPE = XDF;
 
-    xdf_header_->data.size[0] = data.totalCh;
-    xdf_header_->data.size[1] = data.totalLen;
+    xdf_header_->data.size[0] = XDFdata.totalCh;
+    xdf_header_->data.size[1] = XDFdata.totalLen;
     //xdf_header_->data.block =new biosig_data_type[xdf_header_->data.size[0]*xdf_header_->data.size[1]]();
 
     //IPaddr
-    xdf_header_->SampleRate = data.majSR;
+    xdf_header_->SampleRate = XDFdata.majSR;
     xdf_header_->NRec = xdf_header_->data.size[1]; //1
     xdf_header_->T0 = 0;
     //HeadLen
     xdf_header_->SPR = 1; //xdf_header_->data.size[1];
     //LOC[4]
-    xdf_header_->NS = data.totalCh;
+    xdf_header_->NS = XDFdata.totalCh;
     //tzmin
     //*Calib
     //*rerefCHANNEL
@@ -177,7 +177,7 @@ void XDFReader::loadXDFHeader(XDFdataStruct &data, const QString& file_name)
             }
         }
 
-        xdf_header_->EVENT.SampleRate = data.majSR;
+        xdf_header_->EVENT.SampleRate = XDFdata.majSR;
 
         xdf_header_->EVENT.TYP = new uint16_t[XDFdata.eventMap.size()];
         std::copy(eventType.begin(), eventType.end(), xdf_header_->EVENT.TYP);
@@ -185,12 +185,12 @@ void XDFReader::loadXDFHeader(XDFdataStruct &data, const QString& file_name)
         xdf_header_->EVENT.POS = new uint32_t[xdf_header_->EVENT.N];
         for (size_t t = 0; t < xdf_header_->EVENT.N; t++)
         {
-            xdf_header_->EVENT.POS[t] = (XDFdata.eventMap[t].second - data.minTS) * data.majSR;
+            xdf_header_->EVENT.POS[t] = (XDFdata.eventMap[t].second - XDFdata.minTS) * XDFdata.majSR;
         }
 
 
         xdf_header_->EVENT.DUR = new uint32_t[xdf_header_->EVENT.N];
-        std::fill(xdf_header_->EVENT.DUR, xdf_header_->EVENT.DUR + xdf_header_->EVENT.N, data.majSR);
+        std::fill(xdf_header_->EVENT.DUR, xdf_header_->EVENT.DUR + xdf_header_->EVENT.N, XDFdata.majSR);
 
         xdf_header_->EVENT.CHN = new uint16_t[xdf_header_->EVENT.N]();
 
@@ -217,16 +217,16 @@ void XDFReader::loadXDFHeader(XDFdataStruct &data, const QString& file_name)
         std::string label = "CH";
         label += std::to_string(i);
         label += "\nSTR";
-        for (size_t k = 0; k < data.streamMap.size(); k++)
+        for (size_t k = 0; k < XDFdata.streamMap.size(); k++)
         {
-            if (i < data.streamMap[k].second)
+            if (i < XDFdata.streamMap[k].second)
             {
-                int nb = data.streamMap[k].first;
+                int nb = XDFdata.streamMap[k].first;
                 label += std::to_string(nb);
                 label += '\n';
-                label += data.streams[nb].info.name;
+                label += XDFdata.streams[nb].info.name;
                 label += '\n';
-                label += data.streams[nb].info.type;
+                label += XDFdata.streams[nb].info.type;
                 break;
             }
         }
@@ -289,7 +289,7 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
     t = clock() - t;
     std::cout << "it took " << ((float)t) / CLOCKS_PER_SEC << " seconds reading data" << std::endl;
 
-    loadXDFHeader(XDFdata, file_name);
+    loadXDFHeader(file_name);
 
     t = clock() - t - t2;
     std::cout << "it took " << ((float)t) / CLOCKS_PER_SEC << " additional seconds loading XDF header" << std::endl;

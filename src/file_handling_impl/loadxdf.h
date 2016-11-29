@@ -84,7 +84,7 @@ struct Stream
     struct
     {
         int num_samples;
-        std::array<int, 2> index_range;
+
         double t_begin;
         double t_end;
         double duration;

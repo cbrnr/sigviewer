@@ -12,7 +12,7 @@
 namespace SigViewer_
 {
 
-//the object to store raw XDF data
+//by YL: the object to store raw XDF data
 XDFdataStruct XDFdata;
 
 //XDFReader, modeled  on BiosigReader
@@ -40,7 +40,7 @@ public:
     //-------------------------------------------------------------------------
     virtual QSharedPointer<BasicHeader const> getBasicHeader () const {return basic_header_;}
 
-    void loadXDFHeader(XDFdataStruct &data,const QString& file_name);
+    void loadXDFHeader(const QString& file_name);
 
 private:
     //-------------------------------------------------------------------------

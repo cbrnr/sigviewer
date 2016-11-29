@@ -3,8 +3,6 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>     //EXIT_FAILURE, NULL, abs
-//#include <stdio.h>      //size_t
-//#include <cmath>        //abs
 #include "pugixml.hpp"  //pugi XML parser
 #include <sstream>
 #include <algorithm>
@@ -527,7 +525,6 @@ void load_xdf(XDFdataStruct &XDFdata, std::string filename)
                 break;
             }
         }
-
 
 
 
