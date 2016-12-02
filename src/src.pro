@@ -23,14 +23,16 @@ CONFIG(release, debug|release) {
     UI_DIR = $$_PRO_FILE_PWD_/../tmp/release
 }
 
-CONFIG += warn_on link_prl qt thread
+CONFIG += c++11 warn_on link_prl qt thread
 
-QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.6
+QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.7
+QMAKE_LFLAGS += -stdlib=libc++
+QMAKE_CXXFLAGS += -stdlib=libc++
 
 INCLUDEPATH += $$_PRO_FILE_PWD_/../external/include \
     $$_PRO_FILE_PWD_/.
 LIBS += -L$$_PRO_FILE_PWD_/../external/lib \
-    -lbiosig
+    -lbiosig -liconv
 
 RESOURCES = src.qrc
 win32:RC_FILE = src.rc
