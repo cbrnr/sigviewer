@@ -18,7 +18,6 @@
 #include <cassert>
 #include <algorithm>
 
-#include "loadxdf.h"
 #include <iostream>
 #include <time.h>       /* clock_t, clock, CLOCKS_PER_SEC */
 
@@ -238,8 +237,8 @@ void XDFReader::loadXDFHeader(const QString& file_name)
 
         //all numbers below are currently serving only as placeholders until further advice
         xdf_header_->CHANNEL[i].LeadIdCode = 0;
-        xdf_header_->CHANNEL[i].LowPass = 0.1;
-        xdf_header_->CHANNEL[i].HighPass = 140;
+        //xdf_header_->CHANNEL[i].LowPass = 0.1;
+        //xdf_header_->CHANNEL[i].HighPass = 140;
         xdf_header_->CHANNEL[i].PhysDimCode = 4275;
     }
     //gzFID
@@ -282,9 +281,9 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
 
 
 
-    //by YL
+    Libxdf library;
     std::string filename{ file_name.toStdString()};
-    load_xdf(XDFdata, filename);
+    library.load_xdf(XDFdata, filename);
 
     t = clock() - t;
     std::cout << "it took " << ((float)t) / CLOCKS_PER_SEC << " seconds reading data" << std::endl;
