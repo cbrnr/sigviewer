@@ -281,7 +281,7 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
 
 
 
-    Libxdf library;
+    XDF library;
     std::string filename{ file_name.toStdString()};
     library.load_xdf(XDFdata, filename);
 

@@ -8,7 +8,6 @@ HEADERS += \
     $$PWD/evt_writer.h \
     $$PWD/file_handler_factory_registrator.h \
     $$PWD/xdf_reader.h \
-	$$PWD/../../external/include/libxdf.h
 
 SOURCES += \
     $$PWD/biosig_basic_header.cpp \

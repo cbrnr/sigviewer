@@ -7,13 +7,13 @@
 #include <QFile>
 #include <QMutex>
 #include <QMap>
-#include "libxdf.h"
+#include "xdf.h"
 
 namespace SigViewer_
 {
 
 //the object to store raw XDF data
-Libxdf::XDFdataStruct XDFdata;
+XDF::XDFdataStruct XDFdata;
 
 //XDFReader, modeled  on BiosigReader
 class XDFReader : public FileSignalReader
