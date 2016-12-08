@@ -125,10 +125,12 @@ void BasicHeaderInfoDialog::buildTree()
         tmp_item = new QTreeWidgetItem(root_item);
         tmp_item->setText(0, tr("channel_count"));
         tmp_item->setText(1, QString::number(XDFdata.streams[i].info.channel_count));
+        tmp_item->setText(2, tr("channels"));
 
         tmp_item = new QTreeWidgetItem(root_item);
         tmp_item->setText(0, tr("nominal_srate"));
         tmp_item->setText(1, QString::number(XDFdata.streams[i].info.nominal_srate));
+        tmp_item->setText(2, tr("Hz"));
 
         tmp_item = new QTreeWidgetItem(root_item);
         tmp_item->setText(0, tr("channel_format"));
