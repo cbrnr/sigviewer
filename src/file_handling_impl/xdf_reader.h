@@ -13,7 +13,7 @@ namespace SigViewer_
 {
 
 //the object to store raw XDF data
-XDF::XDFdataStruct XDFdata;
+extern XDF::XDFdataStruct XDFdata;
 
 //XDFReader, modeled  on BiosigReader
 class XDFReader : public FileSignalReader

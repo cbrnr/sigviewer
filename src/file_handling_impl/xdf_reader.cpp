@@ -26,6 +26,10 @@ using namespace std;
 namespace SigViewer_
 {
 
+//the object to store raw XDF data
+XDF::XDFdataStruct XDFdata;
+
+
 //-----------------------------------------------------------------------------
 
 FILE_SIGNAL_READER_REGISTRATION(xdf, XDFReader);
@@ -477,9 +481,10 @@ void XDFReader::bufferAllChannels () const
     if (buffered_all_events_)
         doClose();
 
-
+/*
     decltype(XDFdata) empty;
     std::swap(XDFdata, empty);
+    */
 }
 
 //-------------------------------------------------------------------------

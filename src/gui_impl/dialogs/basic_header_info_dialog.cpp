@@ -5,6 +5,7 @@
 
 #include "basic_header_info_dialog.h"
 #include "file_handling/basic_header.h"
+#include "file_handling_impl/xdf_reader.h"
 
 #include <cmath>
 
@@ -102,6 +103,102 @@ void BasicHeaderInfoDialog::buildTree()
         tmp_item->setText(0, key);
         tmp_item->setText(1, recording_info[key]);
     }
+
+    //exclusively for XDF
+
+    for (size_t i =0; i < XDFdata.streams.size(); i++)
+    {
+        // basic
+        root_item = new QTreeWidgetItem(info_tree_widget_);
+        root_item->setText(0, "Stream"+QString::number(i));
+        root_item->setIcon(0, QIcon(":/images/info_16x16.png"));
+        info_tree_widget_->setItemExpanded(root_item, true);
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("name"));
+        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.name));
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("type"));
+        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.type));
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("channel_count"));
+        tmp_item->setText(1, QString::number(XDFdata.streams[i].info.channel_count));
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("nominal_srate"));
+        tmp_item->setText(1, QString::number(XDFdata.streams[i].info.nominal_srate));
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("channel_format"));
+        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.channel_format));
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("source_id"));
+        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.source_id));
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("version"));
+        tmp_item->setText(1, QString::number(XDFdata.streams[i].info.version));
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("created_at"));
+        tmp_item->setText(1, QString::number(XDFdata.streams[i].info.created_at));
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("uid"));
+        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.uid));
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("session_id"));
+        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.session_id));
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("hostname"));
+        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.hostname));
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("v4address"));
+        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.v4address));
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("v4data_port"));
+        tmp_item->setText(1, QString::number(XDFdata.streams[i].info.v4data_port));
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("v4service_port"));
+        tmp_item->setText(1, QString::number(XDFdata.streams[i].info.v4service_port));
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("v6address"));
+        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.v6address));
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("v6data_port"));
+        tmp_item->setText(1, QString::number(XDFdata.streams[i].info.v6data_port));
+
+        tmp_item = new QTreeWidgetItem(root_item);
+        tmp_item->setText(0, tr("v6service_port"));
+        tmp_item->setText(1, QString::number(XDFdata.streams[i].info.v6service_port));
+
+
+    }
+    //XDF ends here
+
+//    tmp_item = new QTreeWidgetItem(root_item);
+//    tmp_item->setText(0, tr("Recording Time"));
+//    tmp_item->setText(1, basic_header_->getRecordingTime().toString("dd.MM.yyyy hh:mm:ss"));
+//    tmp_item = new QTreeWidgetItem(root_item);
+//    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
+//    tmp_item->setText(0, tr("Triggered"));
+//    tmp_item->setText(1, basic_header_->isTriggered() ? tr("yes") : tr("no"));
+//    tmp_item = new QTreeWidgetItem(root_item);
+//    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
+//    tmp_item->setText(0, tr("Recording"));
+//    tmp_item->setText(1, QString::number(basic_header_->getRecordDuration() *
+//                                      basic_header_->getNumberRecords()));
+//    tmp_item->setText(2, tr("seconds"));
 
     // file
     root_item = new QTreeWidgetItem(info_tree_widget_);
