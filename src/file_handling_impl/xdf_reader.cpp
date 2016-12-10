@@ -27,7 +27,7 @@ namespace SigViewer_
 {
 
 //the object to store raw XDF data
-XDF::XDFdataStruct XDFdata;
+Xdf::XDFdataStruct XDFdata;
 
 
 //-----------------------------------------------------------------------------
@@ -285,7 +285,7 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
 
 
 
-    XDF library;
+    Xdf library;
     std::string filename{ file_name.toStdString()};
     library.load_xdf(XDFdata, filename);
 
@@ -367,7 +367,6 @@ QSharedPointer<BasicHeader> XDFReader::getBasicHeader ()
 
 //-----------------------------------------------------------------------------
 
-//alteration by YL
 void XDFReader::bufferAllChannels () const
 {
     size_t numberOfSamples = xdf_header_->NRec * xdf_header_->SPR;

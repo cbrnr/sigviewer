@@ -94,6 +94,12 @@ void BasicHeaderInfoDialog::buildTree()
     tmp_item = new QTreeWidgetItem(root_item);
     tmp_item->setText(0, tr("File Type"));
     tmp_item->setText(1, basic_header_->getFileTypeString());
+    //if XDF
+    if (XDFdata.streams.size())
+    {
+        tmp_item->setText(1, "XDF");
+        tmp_item->setText(2, "Version "+ QString::number(XDFdata.fileHeader.info.version));
+    }
 
 
     QMap<QString, QString> recording_info = basic_header_->getRecordingInfo();
@@ -110,7 +116,7 @@ void BasicHeaderInfoDialog::buildTree()
     {
         // basic
         root_item = new QTreeWidgetItem(info_tree_widget_);
-        root_item->setText(0, "Stream"+QString::number(i));
+        root_item->setText(0, "Stream "+QString::number(i));
         root_item->setIcon(0, QIcon(":/images/info_16x16.png"));
         info_tree_widget_->setItemExpanded(root_item, true);
 
@@ -125,7 +131,14 @@ void BasicHeaderInfoDialog::buildTree()
         tmp_item = new QTreeWidgetItem(root_item);
         tmp_item->setText(0, tr("channel_count"));
         tmp_item->setText(1, QString::number(XDFdata.streams[i].info.channel_count));
-        tmp_item->setText(2, tr("channels"));
+        if (XDFdata.streams[i].info.channel_count <= 1)
+        {
+            tmp_item->setText(2, tr("channel"));
+        }
+        else
+        {
+            tmp_item->setText(2, tr("channels"));
+        }
 
         tmp_item = new QTreeWidgetItem(root_item);
         tmp_item->setText(0, tr("nominal_srate"));
@@ -146,7 +159,7 @@ void BasicHeaderInfoDialog::buildTree()
 
         tmp_item = new QTreeWidgetItem(root_item);
         tmp_item->setText(0, tr("created_at"));
-        tmp_item->setText(1, QString::number(XDFdata.streams[i].info.created_at));
+        //tmp_item->setText(1, QString::number(XDFdata.streams[i].info.created_at));
 
         tmp_item = new QTreeWidgetItem(root_item);
         tmp_item->setText(0, tr("uid"));

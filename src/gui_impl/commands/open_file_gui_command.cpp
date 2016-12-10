@@ -18,10 +18,14 @@
 #include "editing_commands/new_event_undo_command.h"
 #include "gui/progress_bar.h"
 #include "close_file_gui_command.h"
+#include "xdf.h"
+#include "file_handling_impl/xdf_reader.h"
 
 #include <QFileDialog>
 #include <QSettings>
 #include <QMessageBox>
+
+#include <algorithm>
 
 namespace sigviewer
 {
@@ -106,7 +110,16 @@ void OpenFileGuiCommand::open ()
     CloseFileGuiCommand closeObject;
     closeObject.closeFile();
 
+<<<<<<< HEAD
     instance_->openFileImpl (file_path);
+=======
+    Xdf::XDFdataStruct empty;
+    std::swap(XDFdata, empty);
+
+
+
+    openFileImpl (file_path);
+>>>>>>> meta-data and lower case Xdf
 }
 
 //-------------------------------------------------------------------------
