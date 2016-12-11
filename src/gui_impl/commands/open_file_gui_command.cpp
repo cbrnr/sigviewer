@@ -116,7 +116,8 @@ void OpenFileGuiCommand::open ()
     Xdf::XDFdataStruct empty;
     std::swap(XDFdata, empty);
 
-
+    Xdf empty2;
+    std::swap(library, empty2);
 
     openFileImpl (file_path);
 >>>>>>> meta-data and lower case Xdf

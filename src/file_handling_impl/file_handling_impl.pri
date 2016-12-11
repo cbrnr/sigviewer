@@ -8,6 +8,7 @@ HEADERS += \
     $$PWD/evt_writer.h \
     $$PWD/file_handler_factory_registrator.h \
     $$PWD/xdf_reader.h \
+    $$PWD/resampling.h 
 
 SOURCES += \
     $$PWD/biosig_basic_header.cpp \
@@ -17,4 +18,8 @@ SOURCES += \
     $$PWD/event_manager_impl.cpp \
     $$PWD/event_table_file_reader.cpp \
     $$PWD/evt_writer.cpp \
-    $$PWD/xdf_reader.cpp 
+    $$PWD/xdf_reader.cpp \
+    $$PWD/resampling.cpp
+	
+FORMS += \
+    $$PWD/resampling.ui

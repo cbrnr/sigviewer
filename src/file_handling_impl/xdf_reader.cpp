@@ -20,6 +20,7 @@
 
 #include <iostream>
 #include <time.h>       /* clock_t, clock, CLOCKS_PER_SEC */
+#include "resampling.h"
 
 using namespace std;
 
@@ -29,6 +30,7 @@ namespace SigViewer_
 //the object to store raw XDF data
 Xdf::XDFdataStruct XDFdata;
 
+Xdf library;
 
 //-----------------------------------------------------------------------------
 
@@ -135,6 +137,7 @@ void XDFReader::loadXDFHeader(const QString& file_name)
 
     //IPaddr
     xdf_header_->SampleRate = XDFdata.majSR;
+
     xdf_header_->NRec = xdf_header_->data.size[1]; //1
     xdf_header_->T0 = 0;
     //HeadLen
@@ -259,6 +262,8 @@ void XDFReader::loadXDFHeader(const QString& file_name)
 
 }
 
+
+
 //-----------------------------------------------------------------------------
 QString XDFReader::loadFixedHeader(const QString& file_name)
 {
@@ -284,10 +289,18 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
 
 
 
+    library.load_xdf(XDFdata, file_name.toStdString());
 
-    Xdf library;
-    std::string filename{ file_name.toStdString()};
-    library.load_xdf(XDFdata, filename);
+    Resampling prompt(XDFdata.majSR);
+    prompt.setModal(true);
+    prompt.exec();
+
+    library.userPreferredSrate = prompt.getUserSrate();
+
+    if (library.userPreferredSrate)
+        XDFdata.majSR = library.userPreferredSrate;
+
+    library.resampleXDF(XDFdata, XDFdata.majSR);
 
     t = clock() - t;
     std::cout << "it took " << ((float)t) / CLOCKS_PER_SEC << " seconds reading data" << std::endl;
@@ -369,7 +382,7 @@ QSharedPointer<BasicHeader> XDFReader::getBasicHeader ()
 
 void XDFReader::bufferAllChannels () const
 {
-    size_t numberOfSamples = xdf_header_->NRec * xdf_header_->SPR;
+    size_t numberOfSamples = XDFdata.totalLen;
 
     xdf_header_->FLAG.ROW_BASED_CHANNELS = 0;
 
@@ -480,10 +493,6 @@ void XDFReader::bufferAllChannels () const
     if (buffered_all_events_)
         doClose();
 
-/*
-    decltype(XDFdata) empty;
-    std::swap(XDFdata, empty);
-    */
 }
 
 //-------------------------------------------------------------------------
