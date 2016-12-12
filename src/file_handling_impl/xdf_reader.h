@@ -12,9 +12,10 @@
 namespace SigViewer_
 {
 
-//the object to store raw XDF data
+//the object to store XDF data
 extern Xdf::XDFdataStruct XDFdata;
 
+//the object to use XDF library methods
 extern Xdf library;
 
 //XDFReader, modeled  on BiosigReader

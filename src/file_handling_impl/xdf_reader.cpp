@@ -27,9 +27,10 @@ using namespace std;
 namespace SigViewer_
 {
 
-//the object to store raw XDF data
+//the object to store XDF data
 Xdf::XDFdataStruct XDFdata;
 
+//the object to use XDF library methods
 Xdf library;
 
 //-----------------------------------------------------------------------------
@@ -314,8 +315,6 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
     //end of loading, free up some memory
     decltype(XDFdata.eventMap) freeup;
     XDFdata.eventMap.swap(freeup);
-
-
 
 
     basic_header_ = QSharedPointer<BasicHeader>
