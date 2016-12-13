@@ -25,10 +25,7 @@ namespace SigViewer_
 {
 
 //the object to store XDF data
-Xdf::XDFdataStruct XDFdata;
-
-//the object to use XDF library methods
-Xdf library;
+Xdf XDFdata;
 
 //-----------------------------------------------------------------------------
 
@@ -112,19 +109,16 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
     clock_t t = clock();
     clock_t t2 = clock();
 
-
-    library.load_xdf(XDFdata, file_name.toStdString());
+    XDFdata.load_xdf(file_name.toStdString());
 
     Resampling prompt(XDFdata.majSR);
     prompt.setModal(true);
     prompt.exec();
 
-    library.userPreferredSrate = prompt.getUserSrate();
+    if (prompt.getUserSrate())
+        XDFdata.majSR = prompt.getUserSrate();
 
-    if (library.userPreferredSrate)
-        XDFdata.majSR = library.userPreferredSrate;
-
-    library.resampleXDF(XDFdata, XDFdata.majSR);
+    XDFdata.resampleXDF(XDFdata.majSR);
 
 
     t = clock() - t;
