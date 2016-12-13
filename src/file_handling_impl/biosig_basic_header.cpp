@@ -90,7 +90,7 @@ void BiosigBasicHeader::readChannelsInfo (QString XDF)
     unsigned ch = 0;
     for (unsigned channel_index = 0; channel_index < XDFdata.totalCh; channel_index++)
     {
-        QSharedPointer<SignalChannel> channel(new SignalChannel(channel_index, "XDF"));
+        QSharedPointer<SignalChannel> channel(new SignalChannel(channel_index, XDF));
         addChannel(ch++, channel);
     }
 }

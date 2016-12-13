@@ -94,13 +94,6 @@ void BasicHeaderInfoDialog::buildTree()
     tmp_item = new QTreeWidgetItem(root_item);
     tmp_item->setText(0, tr("File Type"));
     tmp_item->setText(1, basic_header_->getFileTypeString());
-    //if XDF
-    if (XDFdata.streams.size())
-    {
-        tmp_item->setText(1, "XDF");
-        tmp_item->setText(2, "Version "+ QString::number(XDFdata.fileHeader.info.version));
-    }
-
 
     QMap<QString, QString> recording_info = basic_header_->getRecordingInfo();
     foreach (QString key, recording_info.keys())
