@@ -43,8 +43,6 @@ public:
     //-------------------------------------------------------------------------
     virtual QSharedPointer<BasicHeader const> getBasicHeader () const {return basic_header_;}
 
-    void loadXDFHeader(const QString& file_name);
-
 private:
     //-------------------------------------------------------------------------
     QString open (QString const& file_name);
@@ -53,21 +51,15 @@ private:
     void bufferAllChannels () const;
 
     //-------------------------------------------------------------------------
-    void applyFilters (double* &in, double* &out, int length) const;
-
-    //-------------------------------------------------------------------------
     void bufferAllEvents () const;
 
     Q_DISABLE_COPY(XDFReader)
 
     QString loadFixedHeader(const QString& file_name);
 
-    void doClose () const;
-
     QSharedPointer<BasicHeader> basic_header_;
     mutable QMutex mutex_;
     mutable QMutex xdf_access_lock_;
-    mutable HDRTYPE* xdf_header_;
     mutable bool buffered_all_channels_;
     mutable bool buffered_all_events_;
     mutable QMap<ChannelID, QSharedPointer<DataBlock const> > channel_map_;
