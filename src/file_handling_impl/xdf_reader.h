@@ -1,5 +1,5 @@
-#ifndef BIOSIG_READER_H_
-#define BIOSIG_READER_H_
+#ifndef XDF_READER_H_
+#define XDF_READER_H_
 
 #include "file_handling/file_signal_reader.h"
 #include "biosig.h"
@@ -7,16 +7,21 @@
 #include <QFile>
 #include <QMutex>
 #include <QMap>
+#include "loadxdf.h"
 
 namespace SigViewer_
 {
 
-class BioSigReader : public FileSignalReader
+//by YL: the object to store raw XDF data
+XDFdataStruct XDFdata;
+
+//XDFReader, modeled  on BiosigReader
+class XDFReader : public FileSignalReader
 {
 public:
-    BioSigReader ();
+    XDFReader ();
 
-    virtual ~BioSigReader();
+    virtual ~XDFReader();
 
     //-------------------------------------------------------------------------
     QPair<FileSignalReader*, QString> createInstance (QString const& file_path);
@@ -35,6 +40,8 @@ public:
     //-------------------------------------------------------------------------
     virtual QSharedPointer<BasicHeader const> getBasicHeader () const {return basic_header_;}
 
+    void loadXDFHeader(XDFdataStruct &data,const QString& file_name);
+
 private:
     //-------------------------------------------------------------------------
     QString open (QString const& file_name);
@@ -48,7 +55,7 @@ private:
     //-------------------------------------------------------------------------
     void bufferAllEvents () const;
 
-    Q_DISABLE_COPY(BioSigReader)
+    Q_DISABLE_COPY(XDFReader)
 
     QString loadFixedHeader(const QString& file_name);
 
@@ -56,14 +63,15 @@ private:
 
     QSharedPointer<BasicHeader> basic_header_;
     mutable QMutex mutex_;
-    mutable QMutex biosig_access_lock_;
-    mutable HDRTYPE* biosig_header_;
+    mutable QMutex xdf_access_lock_;
+    mutable HDRTYPE* xdf_header_;
     mutable bool buffered_all_channels_;
     mutable bool buffered_all_events_;
     mutable QMap<ChannelID, QSharedPointer<DataBlock const> > channel_map_;
     mutable QList<QSharedPointer<SignalEvent const> > events_;
+
 };
 
 } // namespace SigViewer_
 
-#endif /*CNT_READER_H_*/
+#endif /*XDF_READER_H_*/
