@@ -50,7 +50,7 @@ BiosigBasicHeader::BiosigBasicHeader (QString XDF, QString const& file_path)
         }
     }
 
-    QString fileType = "XDF v" + QString::number(XDFdata.fileHeader.info.version);
+    QString fileType = "XDF v" + QString::number(XDFdata.fileHeader.info.version, 'f', 1);
     setFileTypeString (fileType);
 
     float64 sampling_rate = XDFdata.majSR;

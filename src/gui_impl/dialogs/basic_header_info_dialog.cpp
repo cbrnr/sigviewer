@@ -55,7 +55,7 @@ void BasicHeaderInfoDialog::loadSettings()
     move(settings.value("pos", QPoint(200, 200)).toPoint());
     info_tree_widget_->header()->resizeSection(0, settings.value("col0_width", 100).toInt());
     info_tree_widget_->header()->resizeSection(1, settings.value("col1_width", 150).toInt());
-    info_tree_widget_->header()->resizeSection(2, settings.value("col2_width", 100).toInt());
+
     settings.endGroup();
 }
 
@@ -68,7 +68,7 @@ void BasicHeaderInfoDialog::saveSettings()
     settings.setValue("pos", pos());
     settings.setValue("col0_width", info_tree_widget_->header()->sectionSize(0));
     settings.setValue("col1_width", info_tree_widget_->header()->sectionSize(1));
-    settings.setValue("col2_width", info_tree_widget_->header()->sectionSize(2));
+
     settings.endGroup();
 }
 
@@ -78,7 +78,7 @@ void BasicHeaderInfoDialog::buildTree()
     info_tree_widget_->setIconSize(QSize(16, 16));
     info_tree_widget_->setRootIsDecorated(true);
     QStringList header_labels;
-    header_labels << tr("Property") << tr("Value") << tr("Unit");
+    header_labels << tr("Property") << tr("Value");
     info_tree_widget_->setHeaderLabels(header_labels);
 
     info_tree_widget_->header()->setSectionResizeMode(QHeaderView::Interactive);
@@ -126,8 +126,8 @@ void BasicHeaderInfoDialog::buildTree()
     tmp_item = new QTreeWidgetItem(root_item);
     tmp_item->setText(0, tr("Size"));
     QFileInfo file_info (basic_header_->getFilePath());
-    tmp_item->setText(1, QString::number(file_info.size() / 1024));
-    tmp_item->setText(0, tr("kByte"));
+    tmp_item->setText(1, QString::number(file_info.size() / 1024).append(tr(" KB")));
+    tmp_item->setText(0, tr("File Size"));
 
     // patient
     root_item = new QTreeWidgetItem(info_tree_widget_);
@@ -154,8 +154,7 @@ void BasicHeaderInfoDialog::buildTree()
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Sample Rate"));
-    tmp_item->setText(1, QString::number(basic_header_->getEventSamplerate()));
-    tmp_item->setText(2, tr("Hz"));
+    tmp_item->setText(1, QString::number(basic_header_->getEventSamplerate()).append(tr(" Hz")));
 
     //exclusively for XDF
 
@@ -177,20 +176,18 @@ void BasicHeaderInfoDialog::buildTree()
 
         tmp_item = new QTreeWidgetItem(root_item);
         tmp_item->setText(0, tr("channel_count"));
-        tmp_item->setText(1, QString::number(XDFdata.streams[i].info.channel_count));
         if (XDFdata.streams[i].info.channel_count <= 1)
         {
-            tmp_item->setText(2, tr("channel"));
+            tmp_item->setText(1, QString::number(XDFdata.streams[i].info.channel_count).append(tr(" channel")));
         }
         else
         {
-            tmp_item->setText(2, tr("channels"));
+            tmp_item->setText(1, QString::number(XDFdata.streams[i].info.channel_count).append(tr(" channels")));
         }
 
         tmp_item = new QTreeWidgetItem(root_item);
         tmp_item->setText(0, tr("nominal_srate"));
-        tmp_item->setText(1, QString::number(XDFdata.streams[i].info.nominal_srate));
-        tmp_item->setText(2, tr("Hz"));
+        tmp_item->setText(1, QString::number(XDFdata.streams[i].info.nominal_srate).append(tr(" Hz")));
 
         tmp_item = new QTreeWidgetItem(root_item);
         tmp_item->setText(0, tr("channel_format"));
@@ -275,8 +272,7 @@ void BasicHeaderInfoDialog::buildTree()
         float64 fs = channel->getSampleRate();
         if (fs < 0.0)
             fs = basic_header_->getSampleRate();
-        tmp_item->setText(1, QString::number(fs));
-        tmp_item->setText(2, tr("Hz"));
+        tmp_item->setText(1, QString::number(fs).append(tr(" Hz")));
 
         tmp_item = new QTreeWidgetItem(channel_item);
         // tmp_item ->setTextAlignment(1, Qt::AlignRight);
