@@ -51,7 +51,7 @@ MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
 {
     setWindowTitle(tr("SigViewer"));
     setAcceptDrops(true);
-    setWindowIcon(QIcon(":images/sigviewer16.png"));
+    setWindowIcon(QIcon(":images/sigviewer128.png"));
     initStatusBar();
     initToolBars();
     initMenus(application_context);
@@ -202,15 +202,13 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     file_menu_->addMenu (file_recent_files_menu_);
     file_menu_->addAction (action("Save"));
     file_menu_->addAction (action("Save as..."));
+    file_menu_->addAction (action("Info..."));
+    file_menu_->addAction (action("Close"));
     file_menu_->addSeparator ();
     file_menu_->addAction (action("Export to PNG..."));
     file_menu_->addAction (action("Export to GDF..."));
     file_menu_->addAction (action("Export Events..."));
     file_menu_->addAction (action("Import Events..."));
-    file_menu_->addSeparator ();
-    file_menu_->addAction (action("Info..."));
-    file_menu_->addSeparator ();
-    file_menu_->addAction (action("Close"));
     file_menu_->addSeparator ();
     file_menu_->addAction (action("Exit"));
 

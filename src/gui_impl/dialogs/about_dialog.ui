@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>About SigViewer</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="../../src.qrc">
-    <normaloff>:/images/sigviewer16.png</normaloff>:/images/sigviewer16.png</iconset>
-  </property>
   <property name="modal">
    <bool>true</bool>
   </property>
