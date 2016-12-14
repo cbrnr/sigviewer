@@ -1,3 +1,13 @@
 .directory
 .DS_Store
 *~
+external/
+sigviewer.pro.user
+*.a
+*.o
+tmp/
+bin/
+.qmake.stash
+Makefile
+src/Makefile
+
