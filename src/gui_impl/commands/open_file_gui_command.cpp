@@ -74,8 +74,8 @@ OpenFileGuiCommand::~OpenFileGuiCommand ()
 void OpenFileGuiCommand::init ()
 {
     setShortcut (OPEN_, QKeySequence::Open);
-    setIcon (OPEN_, QIcon(":/images/icons/fileopen.png"));
-    setIcon (SHOW_FILE_INFO_, QIcon(":/images/info_16x16.png"));
+    setIcon (OPEN_, QIcon(":/images/ic_folder_open_black_24dp.png"));
+    setIcon (SHOW_FILE_INFO_, QIcon(":/images/ic_info_outline_black_24dp.png"));
 
     resetActionTriggerSlot (OPEN_, SLOT(open()));
     resetActionTriggerSlot (IMPORT_EVENTS_, SLOT(importEvents()));

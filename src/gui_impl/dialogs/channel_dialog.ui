@@ -173,10 +173,6 @@
          <property name="text">
           <string>Add Notch</string>
          </property>
-         <property name="icon">
-          <iconset resource="../../src.qrc">
-           <normaloff>:/images/icons/add.png</normaloff>:/images/icons/add.png</iconset>
-         </property>
         </widget>
        </item>
        <item row="2" column="0">
@@ -199,10 +195,6 @@
          </property>
          <property name="text">
           <string>Remove Filter</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../src.qrc">
-           <normaloff>:/images/icons/editdelete.png</normaloff>:/images/icons/editdelete.png</iconset>
          </property>
         </widget>
        </item>
