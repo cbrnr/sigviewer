@@ -56,6 +56,7 @@ MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
     initToolBars();
     initMenus(application_context);
     setUnifiedTitleAndToolBarOnMac (true);
+    
     QSettings settings("SigViewer");
     resize(settings.value("MainWindow/size", QSize(800, 500)).toSize());
     setMinimumSize(800, 500);
@@ -87,6 +88,7 @@ void MainWindow::initToolBars()
     view_toolbar_views_menu_ = new QMenu (tr("Toolbars"), this);
 
     file_toolbar_ = addToolBar(tr("File"));
+    file_toolbar_->setMovable(false);
     view_toolbar_views_menu_->addAction (file_toolbar_->toggleViewAction());
     file_toolbar_->addAction (action("Open..."));
     file_toolbar_->addAction (action("Save"));
@@ -96,6 +98,7 @@ void MainWindow::initToolBars()
     file_toolbar_->addAction (action("Close"));
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
+    mouse_mode_toolbar_->setMovable(false);
     view_toolbar_views_menu_->addAction (mouse_mode_toolbar_->toggleViewAction());
     mouse_mode_toolbar_->addAction (action("New Event"));
     mouse_mode_toolbar_->addAction (action("Edit Event"));
@@ -104,6 +107,7 @@ void MainWindow::initToolBars()
 
 
     view_toolbar_ = addToolBar(tr("View"));
+    view_toolbar_->setMovable(false);
     view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
     view_toolbar_->addAction(action("Events..."));
     view_toolbar_->addAction(action("Channels..."));

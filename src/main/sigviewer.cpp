@@ -38,6 +38,7 @@
 #include <QSettings>
 #include <QDebug>
 #include <QDir>
+#include <QSysInfo>
 
 #include <iostream>
 #include <string>
@@ -64,9 +65,12 @@ int main(int argc, char* argv[])
     qDebug() << "Starting SigViewer... (compiled with " << __GNUC__ << "."
              << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__ << ")";
     QApplication application(argc, argv);
-    QApplication::setOrganizationName("BCI Lab");
-    QApplication::setOrganizationDomain("http://bci.tugraz.at/");
+    QApplication::setOrganizationName("SigViewer");
+    QApplication::setOrganizationDomain("http://github.com/cbrnr/sigviewer/");
     QApplication::setApplicationName("SigViewer");
+    if (QSysInfo::productType() == "macos" || QSysInfo::productType() == "osx") {
+        QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
+    }
 
     try
     {
