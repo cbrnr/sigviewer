@@ -8,7 +8,7 @@ Resampling::Resampling(QWidget *parent) :
     ui->setupUi(this);
 }
 
-Resampling::Resampling(int nativeSrate, QWidget *parent) :
+Resampling::Resampling(int nativeSrate, int highestSampleRate, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Resampling)
 {
@@ -18,6 +18,7 @@ Resampling::Resampling(int nativeSrate, QWidget *parent) :
     text += "Hz. <br>Would you like to resample it?";
     ui->label->setText(text);
     ui->spinBox->setValue(nativeSrate);
+    ui->spinBox->setMaximum(highestSampleRate);
 }
 
 

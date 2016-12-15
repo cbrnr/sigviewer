@@ -111,7 +111,7 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
 
     XDFdata.load_xdf(file_name.toStdString());
 
-    Resampling prompt(XDFdata.majSR);
+    Resampling prompt(XDFdata.majSR, XDFdata.maxSR);
     prompt.setModal(true);
     prompt.exec();
 

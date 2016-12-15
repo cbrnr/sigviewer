@@ -13,7 +13,7 @@ class Resampling : public QDialog
 
 public:
     explicit Resampling(QWidget *parent = 0);
-    Resampling(int nativeSrate, QWidget *parent = 0);
+    Resampling(int nativeSrate, int highestSampleRate, QWidget *parent = 0);
 
     ~Resampling();
 
