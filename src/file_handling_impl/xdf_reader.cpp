@@ -268,7 +268,7 @@ void XDFReader::bufferAllEvents () const
                                                             XDFdata.majSR));
 
         event->setChannel (UNDEFINED_CHANNEL);
-        event->setDuration (XDFdata.majSR);
+        event->setDuration (1);
         events_.append (event);
     }
 

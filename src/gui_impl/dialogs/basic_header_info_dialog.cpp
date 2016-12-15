@@ -8,6 +8,7 @@
 #include "file_handling_impl/xdf_reader.h"
 
 #include <cmath>
+#include <algorithm>
 
 #include <QTreeWidget>
 #include <QDateTime>
@@ -89,7 +90,7 @@ void BasicHeaderInfoDialog::buildTree()
     // basic
     root_item = new QTreeWidgetItem(info_tree_widget_);
     root_item->setText(0, tr("Basic"));
-    root_item->setIcon(0, QIcon(":/images/info_16x16.png"));
+    //root_item->setIcon(0, QIcon(":/images/sigviewer16.png"));
     info_tree_widget_->setItemExpanded(root_item, true);
 
     tmp_item = new QTreeWidgetItem(root_item);
@@ -246,29 +247,25 @@ void BasicHeaderInfoDialog::buildTree()
             if (!XDFdata.streams[i].time_series.empty())
             {
                 // channels
-                QTreeWidgetItem* XDFchannel;
-                XDFchannel = new QTreeWidgetItem(root_item);
-                XDFchannel->setText(0, tr("Channels"));
-                XDFchannel->setIcon(0, QIcon(":/images/channels_22x22.png"));
-                info_tree_widget_->setItemExpanded(XDFchannel, true);
+                QTreeWidgetItem* channels_item;
+                channels_item = new QTreeWidgetItem(root_item);
+                channels_item->setText(0, tr("Channels"));
+                channels_item->setIcon(0, QIcon(":/images/channels_22x22.png"));
+                info_tree_widget_->setItemExpanded(channels_item, true);
 
                 for (uint32 channel_nr = 0;
                      channel_nr < XDFdata.streams[i].info.channel_count;
                      channel_nr++)
                 {
                     QTreeWidgetItem* channel_item;
-                    int streamMapIndex;
-                    for (size_t str = 0; str < XDFdata.streamMap.size(); str++)
-                    {
-                        if (XDFdata.streamMap[str].first == i)
-                        {
-                            streamMapIndex = str;
-                            break;
-                        }
-                    }
-                    int channelIndex = XDFdata.streamMap[streamMapIndex].second - XDFdata.streams[i].info.channel_count + channel_nr;
+
+
+                    int channelIndex = std::distance(XDFdata.streamMap.begin(),
+                                                     std::find(XDFdata.streamMap.begin(),XDFdata.streamMap.end(),i))
+                            + channel_nr;
+
                     QSharedPointer<SignalChannel const> channel = basic_header_->getChannel (channelIndex);
-                    channel_item = new QTreeWidgetItem(XDFchannel);
+                    channel_item = new QTreeWidgetItem(channels_item);
                     channel_item->setText(0, QString("(%1) %2").arg(channelIndex)
                                                         .arg(channel->getLabel()));
 
