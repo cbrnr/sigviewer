@@ -46,7 +46,7 @@ INCLUDEPATH += \
 
 LIBS += \
     -L$$PWD/external/lib \
-    -lbiosig
+    -lbiosig -lxdf
 
 RESOURCES = $$PWD/src/src.qrc
 win32:RC_FILE = $$PWD/src/src.rc
