@@ -29,6 +29,7 @@ macx {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.7
     QMAKE_LFLAGS += -stdlib=libc++
     QMAKE_CXXFLAGS += -stdlib=libc++
+    LIBS += -liconv
 }
 
 INCLUDEPATH += external/include \
