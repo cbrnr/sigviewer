@@ -168,7 +168,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
             sclose (biosig_header_);
             destructHDR(biosig_header_);
             biosig_header_ = NULL;
-            delete c_file_name;
+            delete[] c_file_name;
             return "file not supported";
     }
 
@@ -177,7 +177,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
 
     //hdr2ascii(biosig_header_,stdout,4);
 
-    delete c_file_name;
+    delete[] c_file_name;
     c_file_name = NULL;
 
     basic_header_->setNumberEvents(biosig_header_->EVENT.N);

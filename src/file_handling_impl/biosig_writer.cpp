@@ -125,7 +125,7 @@ QString BioSigWriter::save (QSharedPointer<FileContext const> file_context,
     HDRTYPE* write_header = sopen (new_file_path_.toStdString().c_str(), "w", read_header);
     qDebug() << "write NELEM = " << swrite (read_data, read_header->NRec, write_header);
 
-    delete read_data;
+    delete[] read_data;
 
     sclose(write_header);
     sclose(read_header);
