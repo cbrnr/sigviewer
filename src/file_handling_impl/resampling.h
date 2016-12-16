@@ -7,6 +7,8 @@ namespace Ui {
 class Resampling;
 }
 
+namespace SigViewer_ {
+
 class Resampling : public QDialog
 {
     Q_OBJECT
@@ -26,5 +28,7 @@ private:
     Ui::Resampling *ui;
     int userSrate = 0;
 };
+
+}
 
 #endif // RESAMPLING_H
