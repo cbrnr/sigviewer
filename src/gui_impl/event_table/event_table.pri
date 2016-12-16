@@ -1,10 +1,11 @@
 HEADERS += \
-    src/gui_impl/event_table/event_table_widget.h \
-    src/gui_impl/event_table/event_table_view_model.h
+    $$PWD/event_table_view_model.h \
+    $$PWD/event_table_widget.h
+
 
 SOURCES += \
-    src/gui_impl/event_table/event_table_widget.cpp \
-    src/gui_impl/event_table/event_table_view_model.cpp
+    $$PWD/event_table_view_model.cpp \
+    $$PWD/event_table_widget.cpp
 
 FORMS += \
-    src/gui_impl/event_table/event_table_widget.ui
+    $$PWD/event_table_widget.ui

@@ -1,15 +1,20 @@
-HEADERS += src/gui_impl/dialogs/basic_header_info_dialog.h \
-    src/gui_impl/dialogs/channel_selection_dialog.h \
-    src/gui_impl/dialogs/event_time_selection_dialog.h \
-    src/gui_impl/dialogs/event_types_selection_dialog.h \
-    src/gui_impl/dialogs/scale_channel_dialog.h
-SOURCES += src/gui_impl/dialogs/basic_header_info_dialog.cpp \
-    src/gui_impl/dialogs/channel_selection_dialog.cpp \
-    src/gui_impl/dialogs/event_time_selection_dialog.cpp \
-    src/gui_impl/dialogs/event_types_selection_dialog.cpp \
-    src/gui_impl/dialogs/scale_channel_dialog.cpp
-FORMS += src/gui_impl/dialogs/channel_dialog.ui \
-    src/gui_impl/dialogs/event_time_selection_dialog.ui \
-    src/gui_impl/dialogs/event_type_selection_dialog.ui \
-    src/gui_impl/dialogs/scale_channel_dialog.ui \
-    src/gui_impl/dialogs/about_dialog.ui
+HEADERS += \
+    $$PWD/basic_header_info_dialog.h \
+    $$PWD/channel_selection_dialog.h \
+    $$PWD/event_time_selection_dialog.h \
+    $$PWD/event_types_selection_dialog.h \
+    $$PWD/scale_channel_dialog.h
+
+SOURCES += \
+    $$PWD/basic_header_info_dialog.cpp \
+    $$PWD/channel_selection_dialog.cpp \
+    $$PWD/event_time_selection_dialog.cpp \
+    $$PWD/event_types_selection_dialog.cpp \
+    $$PWD/scale_channel_dialog.cpp
+
+FORMS += \
+    $$PWD/about_dialog.ui \
+    $$PWD/channel_dialog.ui \
+    $$PWD/event_time_selection_dialog.ui \
+    $$PWD/event_type_selection_dialog.ui \
+    $$PWD/scale_channel_dialog.ui

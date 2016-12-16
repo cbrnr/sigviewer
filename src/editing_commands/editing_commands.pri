@@ -1,12 +1,15 @@
-HEADERS += src/editing_commands/change_channel_undo_command.h \
-    src/editing_commands/change_type_undo_command.h \
-    src/editing_commands/delete_event_undo_command.h \
-    src/editing_commands/macro_undo_command.h \
-    src/editing_commands/new_event_undo_command.h \
-    src/editing_commands/resize_event_undo_command.h
-SOURCES += src/editing_commands/change_channel_undo_command.cpp \
-    src/editing_commands/change_type_undo_command.cpp \
-    src/editing_commands/delete_event_undo_command.cpp \
-    src/editing_commands/macro_undo_command.cpp \
-    src/editing_commands/new_event_undo_command.cpp \
-    src/editing_commands/resize_event_undo_command.cpp
+HEADERS += \
+    $$PWD/change_channel_undo_command.h \
+    $$PWD/change_type_undo_command.h \
+    $$PWD/delete_event_undo_command.h \
+    $$PWD/macro_undo_command.h \
+    $$PWD/new_event_undo_command.h \
+    $$PWD/resize_event_undo_command.h
+
+SOURCES += \
+    $$PWD/change_channel_undo_command.cpp \
+    $$PWD/change_type_undo_command.cpp \
+    $$PWD/delete_event_undo_command.cpp \
+    $$PWD/macro_undo_command.cpp \
+    $$PWD/new_event_undo_command.cpp \
+    $$PWD/resize_event_undo_command.cpp
