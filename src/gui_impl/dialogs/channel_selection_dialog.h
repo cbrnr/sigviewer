@@ -30,6 +30,11 @@ public:
                             QSharedPointer<ColorManager> color_manager,
                             QWidget* parent = 0);
 
+    ChannelSelectionDialog (QString XDF, ChannelManager const& channel_manager,
+                            QSharedPointer<BasicHeader> header,
+                            QSharedPointer<ColorManager> color_manager,
+                            QWidget* parent = 0);
+
     bool isSelected (ChannelID channel_id);
     void setSelected (ChannelID channel_id, bool selected);
 

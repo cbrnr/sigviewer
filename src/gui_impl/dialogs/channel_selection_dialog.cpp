@@ -4,10 +4,12 @@
 
 
 #include "channel_selection_dialog.h"
+#include "file_handling_impl/xdf_reader.h"
 
 #include <QDebug>
 #include <QColorDialog>
 #include <QInputDialog>
+#include <QTreeWidget>
 
 namespace sigviewer
 {
@@ -31,6 +33,7 @@ ChannelSelectionDialog::ChannelSelectionDialog (ChannelManager const&
 {
     ui_.setupUi (this);
     QString window_title (tr("Channels"));
+    ui_.treeWidget->hide();
 
 //    if (header.isNull())
 //    {
@@ -77,6 +80,66 @@ ChannelSelectionDialog::ChannelSelectionDialog (ChannelManager const&
     ui_.channel_table_->hideColumn (ID_INDEX_);
     on_show_colors_box__toggled (false);
     ui_.tabs->setCurrentIndex (0);
+}
+
+ChannelSelectionDialog::ChannelSelectionDialog(QString XDF, const ChannelManager &channel_manager, QSharedPointer<BasicHeader> header, QSharedPointer<ColorManager> color_manager, QWidget *parent)
+    : QDialog (parent),
+      channel_manager_ (channel_manager),
+      color_manager_ (color_manager),
+      header_ (header),
+      self_setting_ (false)
+{
+    ui_.setupUi (this);
+    QString window_title (tr("Channels"));
+    setWindowTitle (window_title);
+
+    ui_.channel_table_->hide();
+    QStringList headerLabels;
+    headerLabels << tr("Stream") << tr("Color");
+    ui_.treeWidget->setHeaderLabels(headerLabels);
+    ui_.treeWidget->setColumnCount(2);
+    ui_.treeWidget->setColumnWidth(0,150);
+    ui_.treeWidget->setColumnWidth(1,150);
+
+    int channelCount = 0;
+    for (size_t i = 0; i < XDFdata.streams.size(); i++)
+    {
+        QTreeWidgetItem* streamItem = new QTreeWidgetItem(ui_.treeWidget);
+        streamItem->setText(0, tr("Stream ").append(QString::number(i)));
+        streamItem->setCheckState(0, Qt::Unchecked);
+        streamItem->setExpanded(true);
+        if (XDFdata.streams[i].info.channel_format != "string")
+        {
+            for (size_t j = 0; j < XDFdata.streams[i].info.channel_count; j++)
+            {
+                QTreeWidgetItem* channelItem = new QTreeWidgetItem(streamItem);
+                channelItem->setText(0, tr("Channel ").append(QString::number(channelCount++)));
+                channelItem->setCheckState(0, Qt::Unchecked);
+                QColor color = color_manager_->getChannelColor (channelCount);
+                channelItem->setText(1, color.name());
+                channelItem->setBackgroundColor(1, color);
+                //channelItem->setFlags(Qt::ItemIsEnabled);
+                if (ColorManager::isDark(color))
+                    channelItem->setForeground(1, Qt::white);
+            }
+        }
+    }
+
+    //    if (header.isNull())
+    //    {
+    while (ui_.tabs->count() > 1)
+        ui_.tabs->removeTab (1);
+    //    }
+    //    else
+    //    {
+    //        window_title.prepend (header->getFilePath() + " - ");
+    //        ui_.tabs->removeTab (1);
+    //        ui_.sr_file_label_->setText (QString::number (header_->getDownSamplingFactor() * header_->getSampleRate()).append(" Hz"));
+    //        ui_.sr_load_label_->setText (QString::number (header_->getSampleRate()).append(" Hz"));
+    //        ui_.downsample_factor_spinbox_->setValue (header_->getDownSamplingFactor());
+    //    }
+ /*
+    */
 }
 
 //-----------------------------------------------------------------------------

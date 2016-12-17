@@ -7,6 +7,7 @@
 #include "dialogs/channel_selection_dialog.h"
 #include "select_shown_channels_dialog.h"
 #include "dialogs/event_types_selection_dialog.h"
+#include "file_handling_impl/xdf_reader.h"
 
 #include <QInputDialog>
 #include <QFileDialog>
@@ -207,33 +208,66 @@ std::set<ChannelID> selectChannels (ChannelManager const& channel_manager,
                                     QSharedPointer<BasicHeader> header,
                                     QSharedPointer<SignalVisualisationModel> vis_model)
 {
-    ChannelSelectionDialog channel_dialog (channel_manager, header, color_manager);
-    std::set<ChannelID> pre_selected_channels;
-    if (!vis_model.isNull())
-        pre_selected_channels = vis_model->getShownChannels ();
-
-    bool empty_selection = (pre_selected_channels.size () == 0);
-
-    foreach (ChannelID channel_id, channel_manager.getChannels())
+    if (XDFdata.streams.size())
     {
-        bool show_channel = (empty_selection ||
-                            (pre_selected_channels.count(channel_id) > 0));
+        ChannelSelectionDialog channel_dialog ("XDF", channel_manager, header, color_manager);
+        std::set<ChannelID> pre_selected_channels;
+        if (!vis_model.isNull())
+            pre_selected_channels = vis_model->getShownChannels ();
 
-        channel_dialog.setSelected (channel_id, show_channel);
+        bool empty_selection = (pre_selected_channels.size () == 0);
+
+        foreach (ChannelID channel_id, channel_manager.getChannels())
+        {
+            bool show_channel = (empty_selection ||
+                                (pre_selected_channels.count(channel_id) > 0));
+
+            channel_dialog.setSelected (channel_id, show_channel);
+        }
+
+        channel_dialog.exec();
+
+        if (channel_dialog.result() == QDialog::Rejected)
+            return pre_selected_channels;
+
+        std::set<ChannelID> selected_channels;
+        foreach (ChannelID channel_id, channel_manager.getChannels())
+        {
+            if (channel_dialog.isSelected (channel_id))
+                selected_channels.insert (channel_id);
+        }
+        return selected_channels;
     }
-
-    channel_dialog.exec();
-
-    if (channel_dialog.result() == QDialog::Rejected)
-        return pre_selected_channels;
-
-    std::set<ChannelID> selected_channels;
-    foreach (ChannelID channel_id, channel_manager.getChannels())
+    else
     {
-        if (channel_dialog.isSelected (channel_id))
-            selected_channels.insert (channel_id);
+        ChannelSelectionDialog channel_dialog (channel_manager, header, color_manager);
+        std::set<ChannelID> pre_selected_channels;
+        if (!vis_model.isNull())
+            pre_selected_channels = vis_model->getShownChannels ();
+
+        bool empty_selection = (pre_selected_channels.size () == 0);
+
+        foreach (ChannelID channel_id, channel_manager.getChannels())
+        {
+            bool show_channel = (empty_selection ||
+                                (pre_selected_channels.count(channel_id) > 0));
+
+            channel_dialog.setSelected (channel_id, show_channel);
+        }
+
+        channel_dialog.exec();
+
+        if (channel_dialog.result() == QDialog::Rejected)
+            return pre_selected_channels;
+
+        std::set<ChannelID> selected_channels;
+        foreach (ChannelID channel_id, channel_manager.getChannels())
+        {
+            if (channel_dialog.isSelected (channel_id))
+                selected_channels.insert (channel_id);
+        }
+        return selected_channels;
     }
-    return selected_channels;
 }
 
 //-----------------------------------------------------------------------------

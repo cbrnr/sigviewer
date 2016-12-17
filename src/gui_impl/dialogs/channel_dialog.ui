@@ -89,6 +89,15 @@
         </widget>
        </item>
        <item>
+        <widget class="QTreeWidget" name="treeWidget">
+         <column>
+          <property name="text">
+           <string notr="true">1</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="bottomMargin">
           <number>0</number>
@@ -288,9 +297,7 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../../src.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>button_box_</sender>
