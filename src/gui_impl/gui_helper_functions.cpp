@@ -222,7 +222,7 @@ std::set<ChannelID> selectChannels (ChannelManager const& channel_manager,
             bool show_channel = (empty_selection ||
                                 (pre_selected_channels.count(channel_id) > 0));
 
-            channel_dialog.setSelected (channel_id, show_channel);
+            channel_dialog.setSelected ("XDF", channel_id, show_channel);
         }
 
         channel_dialog.exec();
@@ -233,7 +233,7 @@ std::set<ChannelID> selectChannels (ChannelManager const& channel_manager,
         std::set<ChannelID> selected_channels;
         foreach (ChannelID channel_id, channel_manager.getChannels())
         {
-            if (channel_dialog.isSelected (channel_id))
+            if (channel_dialog.isSelected ("XDF", channel_id))
                 selected_channels.insert (channel_id);
         }
         return selected_channels;
