@@ -25,7 +25,7 @@
 #include <QPainter>
 #include <QContextMenuEvent>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

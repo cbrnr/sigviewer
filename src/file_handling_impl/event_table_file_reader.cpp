@@ -25,7 +25,7 @@
 #include <QTextStream>
 #include <QSettings>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-------------------------------------------------------------------------------------------------

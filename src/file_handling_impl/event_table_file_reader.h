@@ -33,7 +33,7 @@
 
 class QTextStream;
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 

@@ -30,7 +30,7 @@
 class QListWidget;
 class QPushButton;
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class SelectShownChannelsDialog : public QDialog

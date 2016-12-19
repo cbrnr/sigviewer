@@ -19,7 +19,7 @@
 
 #include "gui_action_factory.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 GuiActionFactory* GuiActionFactory::instance_ = 0;

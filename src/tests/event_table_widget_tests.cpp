@@ -20,7 +20,7 @@
 #include "event_table_widget_tests.h"
 #include "gui_impl/event_table/event_table_widget.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 namespace Tests_

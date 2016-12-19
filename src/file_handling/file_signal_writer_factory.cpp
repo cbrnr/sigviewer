@@ -19,7 +19,7 @@
 
 #include "file_signal_writer_factory.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 // get instance

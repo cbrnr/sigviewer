@@ -31,7 +31,7 @@
 #include <QSettings>
 #include <QMetaObject>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 namespace GuiHelper

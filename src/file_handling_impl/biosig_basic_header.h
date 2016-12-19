@@ -23,7 +23,7 @@
 #include "file_handling/basic_header.h"
 #include "biosig.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class BiosigBasicHeader : public BasicHeader

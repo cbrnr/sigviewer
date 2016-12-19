@@ -20,7 +20,7 @@
 #ifndef APPLICATION_STATES_H
 #define APPLICATION_STATES_H
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 enum ApplicationState

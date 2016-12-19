@@ -25,7 +25,7 @@
 #include <QSettings>
 #include <QInputDialog>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

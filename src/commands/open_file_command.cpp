@@ -28,7 +28,7 @@
 #include <QDir>
 #include <QSettings>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

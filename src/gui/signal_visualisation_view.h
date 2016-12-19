@@ -24,7 +24,7 @@
 #include <QSharedPointer>
 #include <QImage>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class SignalVisualisationView

@@ -30,7 +30,7 @@
 #include <QMap>
 #include <QSharedPointer>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

@@ -19,7 +19,7 @@
 
 #include "signal_event.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 // constructor

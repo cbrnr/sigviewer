@@ -23,7 +23,7 @@
 #include <QWheelEvent>
 #include <QGraphicsSceneMouseEvent>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 SignalBrowserMouseHandling::Action SignalBrowserMouseHandling::getAction(QGraphicsSceneMouseEvent* e, SignalVisualisationMode mode)

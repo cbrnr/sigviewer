@@ -19,7 +19,7 @@
 
 #include "signal_channel.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

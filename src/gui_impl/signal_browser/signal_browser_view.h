@@ -40,7 +40,7 @@ class QGridLayout;
 class QScrollBar;
 class QCursor;
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class LabelWidget;

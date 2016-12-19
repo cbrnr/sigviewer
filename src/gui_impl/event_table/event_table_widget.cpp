@@ -25,7 +25,7 @@
 #include <QDebug>
 #include <QSet>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class EventTableItem : public QTableWidgetItem

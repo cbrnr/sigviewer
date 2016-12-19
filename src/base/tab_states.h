@@ -20,7 +20,7 @@
 #ifndef TAB_STATES_H
 #define TAB_STATES_H
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 enum TabSelectionState

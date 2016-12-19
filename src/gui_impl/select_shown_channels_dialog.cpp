@@ -25,7 +25,7 @@
 #include <QHBoxLayout>
 #include <QSettings>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

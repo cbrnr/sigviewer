@@ -21,7 +21,7 @@
 
 #include <QMutexLocker>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

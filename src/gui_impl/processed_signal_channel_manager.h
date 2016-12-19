@@ -25,7 +25,7 @@
 #include <QMap>
 #include <QObject>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class ProcessedSignalChannelManager : public ChannelManager, public QObject

@@ -30,7 +30,7 @@
 
 #include <set>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class EventEditingWidget : public QWidget

@@ -26,7 +26,7 @@
 #include <QPointer>
 #include <QDebug>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class ProgressBar

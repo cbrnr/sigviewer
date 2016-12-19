@@ -19,7 +19,7 @@
 
 #include "undo_redo_gui_command.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

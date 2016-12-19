@@ -33,7 +33,7 @@
 
 class QPoint;
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class SignalEvent;

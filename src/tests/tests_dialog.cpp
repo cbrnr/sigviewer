@@ -21,7 +21,7 @@
 #include "tests_factory.h"
 #include "gui_impl/commands/open_file_gui_command.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 using namespace Tests_;

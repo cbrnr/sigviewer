@@ -22,7 +22,7 @@
 
 #include "gui/event_view.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class EventTableWidget;

@@ -35,7 +35,7 @@
 #include <QAction>
 #include <QStringList>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class ActionConnector;

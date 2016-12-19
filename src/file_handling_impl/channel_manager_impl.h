@@ -23,7 +23,7 @@
 #include "file_handling/channel_manager.h"
 #include "file_handling/file_signal_reader.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

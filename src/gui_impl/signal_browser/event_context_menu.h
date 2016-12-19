@@ -30,7 +30,7 @@
 #include <QObject>
 #include <QIcon>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

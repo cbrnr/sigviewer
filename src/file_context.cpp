@@ -22,7 +22,7 @@
 #include <QDir>
 #include <QDebug>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

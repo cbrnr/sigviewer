@@ -19,7 +19,7 @@
 
 #include "processed_signal_channel_manager.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-------------------------------------------------------------------------

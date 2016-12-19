@@ -24,7 +24,7 @@
 
 #include <QString>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class ConvertFileCommand

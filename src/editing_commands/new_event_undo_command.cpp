@@ -19,7 +19,7 @@
 
 #include "new_event_undo_command.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

@@ -31,7 +31,7 @@
 #include <QSettings>
 #include <QFileInfo>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 // constructor

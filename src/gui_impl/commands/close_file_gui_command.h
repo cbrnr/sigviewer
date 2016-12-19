@@ -24,7 +24,7 @@
 #include "gui/gui_action_factory_registrator.h"
 #include "file_handling/file_signal_reader.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

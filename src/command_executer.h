@@ -22,7 +22,7 @@
 
 #include <QUndoCommand>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class CommandExecuter

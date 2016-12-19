@@ -26,7 +26,7 @@
 #include <QWidget>
 #include <QSharedPointer>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class XAxisWidget : public QWidget

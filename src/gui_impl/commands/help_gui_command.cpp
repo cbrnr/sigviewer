@@ -24,7 +24,7 @@
 #include <QMessageBox>
 #include <QFile>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

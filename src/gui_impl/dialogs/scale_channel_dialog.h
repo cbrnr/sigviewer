@@ -27,7 +27,7 @@
 
 #include <QDialog>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class ScaleChannelDialog : public QDialog

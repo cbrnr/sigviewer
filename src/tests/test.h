@@ -27,7 +27,7 @@
 #include <QObject>
 #include <QString>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 namespace Tests_

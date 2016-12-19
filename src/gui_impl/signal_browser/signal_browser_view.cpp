@@ -39,7 +39,7 @@
 #include <QGraphicsLinearLayout>
 
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

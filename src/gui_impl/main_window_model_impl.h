@@ -40,7 +40,7 @@
 
 class QAction;
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class MainWindow;

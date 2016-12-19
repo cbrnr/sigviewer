@@ -23,7 +23,7 @@
 #include <QInputDialog>
 #include <QDebug>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

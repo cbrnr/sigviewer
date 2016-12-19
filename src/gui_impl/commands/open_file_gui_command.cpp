@@ -36,7 +36,7 @@
 #include <QSettings>
 #include <QMessageBox>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
@@ -113,7 +113,7 @@ void OpenFileGuiCommand::open ()
     if (file_path.isEmpty())
         return;
 
-    openFileImpl (file_path);
+    instance_->openFileImpl (file_path);
 }
 
 //-------------------------------------------------------------------------

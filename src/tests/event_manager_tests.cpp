@@ -19,7 +19,7 @@
 
 #include "event_manager_tests.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 namespace Tests_

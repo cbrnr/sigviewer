@@ -2,6 +2,15 @@ TEMPLATE = app
 DESTDIR = bin
 TARGET = sigviewer
 
+VERSION_MAJOR = 0
+VERSION_MINOR = 6
+VERSION_BUILD = 0
+
+DEFINES += \
+    "VERSION_MAJOR=$$VERSION_MAJOR" \
+    "VERSION_MINOR=$$VERSION_MINOR" \
+    "VERSION_BUILD=$$VERSION_BUILD"
+
 QT += core gui widgets xml
 
 BUILD_DIR = $$PWD/tmp
@@ -64,7 +73,7 @@ HEADERS += \
     $$PWD/src/tab_context.h
 
 SOURCES += \
-    $$PWD/src/main/sigviewer.cpp \
+    $$PWD/src/main.cpp \
     $$PWD/src/application_context_impl.cpp \
     $$PWD/src/file_context.cpp \
     $$PWD/src/tab_context.cpp

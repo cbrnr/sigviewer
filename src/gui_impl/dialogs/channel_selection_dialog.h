@@ -30,7 +30,7 @@
 #include <QDialog>
 #include <QSharedPointer>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

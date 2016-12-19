@@ -29,7 +29,7 @@
 #include <QSharedPointer>
 #include <QMap>
 
-namespace SigViewer_ {
+namespace sigviewer {
 
 //-------------------------------------------------------------------------
 /// DataBlock

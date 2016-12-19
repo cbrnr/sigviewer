@@ -21,7 +21,7 @@
 #include "event_table_widget.h"
 
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
