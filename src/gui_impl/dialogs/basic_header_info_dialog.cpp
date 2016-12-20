@@ -244,6 +244,56 @@ void BasicHeaderInfoDialog::buildTree()
             tmp_item->setText(0, tr("v6service_port"));
             tmp_item->setText(1, QString::number(XDFdata.streams[i].info.v6service_port));
 
+            tmp_item = new QTreeWidgetItem(root_item);
+            tmp_item->setText(0, tr("desc"));
+            tmp_item->setExpanded(true);
+
+
+            QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
+            desc_item->setText(0, tr("acquisition"));
+            desc_item->setExpanded(true);
+
+            for (auto entry : XDFdata.streams[i].info.desc.acquisition)
+            {
+                QTreeWidgetItem* acquisition_item = new QTreeWidgetItem(desc_item);
+                acquisition_item->setText(0, QString::fromStdString(entry.first));
+                acquisition_item->setText(1, QString::fromStdString(entry.second));
+            }
+
+            desc_item = new QTreeWidgetItem(tmp_item);
+            desc_item->setText(0, tr("reference"));
+            desc_item->setExpanded(true);
+
+            for (auto entry : XDFdata.streams[i].info.desc.reference)
+            {
+                QTreeWidgetItem* reference_item = new QTreeWidgetItem(desc_item);
+                reference_item->setText(0, QString::fromStdString(entry.first));
+                reference_item->setText(1, QString::fromStdString(entry.second));
+            }
+
+            desc_item = new QTreeWidgetItem(tmp_item);
+            desc_item->setText(0, tr("cap"));
+            desc_item->setExpanded(true);
+
+            for (auto entry : XDFdata.streams[i].info.desc.cap)
+            {
+                QTreeWidgetItem* cap_item = new QTreeWidgetItem(desc_item);
+                cap_item->setText(0, QString::fromStdString(entry.first));
+                cap_item->setText(1, QString::fromStdString(entry.second));
+            }
+
+            desc_item = new QTreeWidgetItem(tmp_item);
+            desc_item->setText(0, tr("location_measurement"));
+            desc_item->setExpanded(true);
+
+            for (auto entry : XDFdata.streams[i].info.desc.location_measurement)
+            {
+                QTreeWidgetItem* location_measurement_item = new QTreeWidgetItem(desc_item);
+                location_measurement_item->setText(0, QString::fromStdString(entry.first));
+                location_measurement_item->setText(1, QString::fromStdString(entry.second));
+            }
+
+
             if (!XDFdata.streams[i].time_series.empty())
             {
                 // channels
@@ -259,76 +309,62 @@ void BasicHeaderInfoDialog::buildTree()
                 {
                     QTreeWidgetItem* channel_item;
 
-
                     int channelIndex = std::distance(XDFdata.streamMap.begin(),
-                                                     std::find(XDFdata.streamMap.begin(),XDFdata.streamMap.end(),i))
-                            + channel_nr;
+                                                     std::find(XDFdata.streamMap.begin(),XDFdata.streamMap.end(),i)) + channel_nr;
 
                     QSharedPointer<SignalChannel const> channel = basic_header_->getChannel (channelIndex);
                     channel_item = new QTreeWidgetItem(channels_item);
                     channel_item->setText(0, QString("(%1) %2").arg(channelIndex)
                                                         .arg(channel->getLabel()));
 
-                    // channel basic
-                    tmp_item = new QTreeWidgetItem(channel_item);
-                    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-                    tmp_item->setText(0, tr("Label"));
-                    tmp_item->setText(1, channel->getLabel());
-                    tmp_item = new QTreeWidgetItem(channel_item);
+                    if (XDFdata.streams[i].info.desc.channels.size())
+                    {
+                        tmp_item = new QTreeWidgetItem(channel_item);
+                        tmp_item->setText(0, tr("Unit"));
+                        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.desc.channels[channel_nr].unit));
 
-                    tmp_item->setText(0, tr("Sample Rate"));
-                    float64 fs = channel->getSampleRate();
-                    if (fs < 0.0)
-                        fs = basic_header_->getSampleRate();
-                    tmp_item->setText(1, QString::number(fs).append(tr(" Hz")));
+                        tmp_item = new QTreeWidgetItem(channel_item);
+                        tmp_item->setText(0, tr("Type"));
+                        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.desc.channels[channel_nr].type));
 
-                    tmp_item = new QTreeWidgetItem(channel_item);
-                    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-                    tmp_item->setText(0, tr("Physical Dimension"));
-                    tmp_item->setText(1, channel->getPhysicalDim());
-                    tmp_item = new QTreeWidgetItem(channel_item);
-                    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-                    tmp_item->setText(0, tr("Physical Maximum"));
-                    tmp_item->setText(1, QString::number(channel->getPhysicalMaximum()));
-                    tmp_item = new QTreeWidgetItem(channel_item);
-                    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-                    tmp_item->setText(0, tr("Physical Minimum"));
-                    tmp_item->setText(1, QString::number(channel->getPhysicalMinimum()));
-                    tmp_item = new QTreeWidgetItem(channel_item);
-                    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-                    tmp_item->setText(0, tr("Digital Maximum"));
-                    tmp_item->setText(1, QString::number(channel->getDigitalMaximum()));
-                    tmp_item = new QTreeWidgetItem(channel_item);
-                    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-                    tmp_item->setText(0, tr("Digital Minimum"));
-                    tmp_item->setText(1, QString::number(channel->getDigitalMinimum()));
-                    tmp_item = new QTreeWidgetItem(channel_item);
-                    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-                    tmp_item->setText(0, tr("Data Type"));
-                    tmp_item->setText(1, channel->typeString());
+                        tmp_item = new QTreeWidgetItem(channel_item);
+                        tmp_item->setText(0, tr("Label"));
+                        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.desc.channels[channel_nr].label));
 
-                    // filter
-                    QTreeWidgetItem* filter_item;
-                    filter_item = new QTreeWidgetItem(channel_item);
-                    filter_item->setText(0, tr("Filter"));
-                    tmp_item = new QTreeWidgetItem(filter_item);
-                    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-                    tmp_item->setText(0, tr("Highpass"));
-                    //tmp_item->setText(1, isnan(channel->getHighpass()) ? tr("unknown") :
-                    //    (channel->getHighpass() < 0 ? "" :
-                    //                       QString::number(channel->getHighpass())));
-                    tmp_item->setText(2, tr("Hz"));
-                    tmp_item = new QTreeWidgetItem(filter_item);
-                    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-                    tmp_item->setText(0, tr("Lowpass"));
-                   // tmp_item->setText(1, channel->getLowpass() ? tr("unknown") :
-                    //                (channel->getLowpass() < 0 ? "" :
-                     //                           QString::number(channel->getLowpass())));
-                    tmp_item->setText(2, tr("Hz"));
-                    tmp_item = new QTreeWidgetItem(filter_item);
-                    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-                    tmp_item->setText(0, tr("Notch"));
-                    //tmp_item->setText(1, isnan(channel->getNotch()) ? tr("unknown") : (channel->getNotch() ? tr("yes") : tr("no")));
+                        tmp_item = new QTreeWidgetItem(channel_item);
+                        tmp_item->setText(0, tr("coordinate_system"));
+                        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.desc.channels[channel_nr].coordinate_system));
+
+                        tmp_item = new QTreeWidgetItem(channel_item);
+                        tmp_item->setText(0, tr("eye"));
+                        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.desc.channels[channel_nr].eye));
+
+                        tmp_item = new QTreeWidgetItem(channel_item);
+                        tmp_item->setText(0, tr("impedance"));
+                        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.desc.channels[channel_nr].impedance));
+
+                        tmp_item = new QTreeWidgetItem(channel_item);
+                        tmp_item->setText(0, tr("Location"));
+                        tmp_item->setExpanded(true);
+
+                        for (auto entry : XDFdata.streams[i].info.desc.channels[channel_nr].location)
+                        {
+                            QTreeWidgetItem* location_item = new QTreeWidgetItem(tmp_item);
+                            location_item->setText(0, QString::fromStdString(entry.first));
+                            location_item->setText(1, QString::fromStdString(entry.second));
+                        }
+
+                        tmp_item = new QTreeWidgetItem(channel_item);
+                        tmp_item->setText(0, tr("Hardware"));
+                        tmp_item->setExpanded(true);
+
+                        for (auto entry : XDFdata.streams[i].info.desc.channels[channel_nr].hardware)
+                        {
+                            QTreeWidgetItem* hardware_item = new QTreeWidgetItem(tmp_item);
+                            hardware_item->setText(0, QString::fromStdString(entry.first));
+                            hardware_item->setText(1, QString::fromStdString(entry.second));
+                        }
+                    }
                 }
             }
         }

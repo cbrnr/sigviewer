@@ -38,7 +38,7 @@ BiosigBasicHeader::BiosigBasicHeader (HDRTYPE* raw_header, QString const& file_p
 }
 
 //alternative for XDF
-BiosigBasicHeader::BiosigBasicHeader (QString XDF, QString const& file_path)
+BiosigBasicHeader::BiosigBasicHeader (QString file_format, QString const& file_path)
     : BasicHeader (file_path),
       number_samples_ (XDFdata.totalLen)
 {
@@ -56,7 +56,7 @@ BiosigBasicHeader::BiosigBasicHeader (QString XDF, QString const& file_path)
     float64 sampling_rate = XDFdata.majSR;
 
     setSampleRate (sampling_rate);
-    readChannelsInfo (XDF);
+    readChannelsInfo (file_format);
 }
 
 

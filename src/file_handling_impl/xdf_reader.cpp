@@ -96,7 +96,6 @@ QList<QSharedPointer<SignalEvent const> > XDFReader::getEvents () const
 //-----------------------------------------------------------------------------
 QString XDFReader::open (QString const& file_name)
 {
-
     QMutexLocker lock (&mutex_);
     return loadFixedHeader (file_name);
 }
@@ -114,6 +113,9 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
     Resampling prompt(XDFdata.majSR, XDFdata.maxSR);
     prompt.setModal(true);
     prompt.exec();
+
+    if (prompt.cancel())
+        return "Cancelled";
 
     if (prompt.getUserSrate())
         XDFdata.majSR = prompt.getUserSrate();
@@ -180,7 +182,6 @@ void XDFReader::bufferAllChannels () const
                     std::vector<float> nothing;
                     XDFdata.streams[st].time_series[ch].swap(nothing);
                 }
-
                 std::vector<float> nothing2;
                 XDFdata.streams[st].time_stamps.swap(nothing2);
             }
@@ -244,13 +245,10 @@ void XDFReader::bufferAllChannels () const
                 XDFdata.streams[st].time_series[ch].swap(nothing);
 
             }
-
             std::vector<float> nothing2;
             XDFdata.streams[st].time_stamps.swap(nothing2);
-
         }
     }
-
 
     buffered_all_channels_ = true;
 }
@@ -268,7 +266,7 @@ void XDFReader::bufferAllEvents () const
                                                             XDFdata.majSR));
 
         event->setChannel (UNDEFINED_CHANNEL);
-        event->setDuration (1);
+        event->setDuration (0);
         events_.append (event);
     }
 

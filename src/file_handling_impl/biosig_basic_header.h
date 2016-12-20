@@ -20,7 +20,7 @@ public:
 
     //-------------------------------------------------------------------------
     //Alternative constructor for XDF
-    BiosigBasicHeader (QString XDF, QString const& file_path);
+    BiosigBasicHeader (QString file_format, QString const& file_path);
 
     //-------------------------------------------------------------------------
     virtual size_t getNumberOfSamples () const;

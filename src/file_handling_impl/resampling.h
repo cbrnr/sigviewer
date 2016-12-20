@@ -19,14 +19,17 @@ public:
 
     ~Resampling();
 
-    int getUserSrate();
+    int getUserSrate() {return userSrate;}
+    bool cancel() {return cancelled;}
 
 private slots:
     void on_buttonBox_accepted();
+    void on_buttonBox_rejected();
 
 private:
     Ui::Resampling *ui;
     int userSrate = 0;
+    bool cancelled = false;
 };
 
 }

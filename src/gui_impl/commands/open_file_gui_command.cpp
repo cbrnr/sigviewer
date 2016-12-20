@@ -76,7 +76,15 @@ void OpenFileGuiCommand::init ()
 //-----------------------------------------------------------------------------
 void OpenFileGuiCommand::openFile (QString file_path, bool instantly)
 {
-    instance_->openFileImpl (file_path, instantly);
+    //close the previous file before opening a new one
+    //thus using less memory
+    CloseFileGuiCommand closeObject;
+    closeObject.closeFile();
+
+    Xdf empty;
+    std::swap(XDFdata, empty);
+
+    instance_->openFileImpl (file_path);
 }
 
 //-------------------------------------------------------------------------

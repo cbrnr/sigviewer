@@ -20,9 +20,9 @@ Resampling::Resampling(int nativeSrate, int highestSampleRate, QWidget *parent) 
     this->setWindowTitle("Resampling");
     if (XDFdata.sampleRateMap.size() > 1)
     {
-        QString text = "This file has multiple sample rates across various streams.<br> "
-                       "We need to resample all channels to a unified sample rate in order to display them in Sigviewer.<br> "
-                       "Choose a sample rate below (This won't change the actual file content):";
+        QString text = "This file contains multiple sample rates across various streams.<br> "
+                       "Sigviewer needs to resample some channels to a unified sample rate in order to display them.<br> "
+                       "Please choose a sample rate below (This won't change the actual file content):";
         ui->label->setText(text);
     }
     else
@@ -69,14 +69,14 @@ Resampling::~Resampling()
     delete ui;
 }
 
-int Resampling::getUserSrate()
-{
-    return userSrate;
-}
-
 void Resampling::on_buttonBox_accepted()
 {
     userSrate = ui->spinBox->value();
+}
+
+void SigViewer_::Resampling::on_buttonBox_rejected()
+{
+    cancelled = true;
 }
 
 }
