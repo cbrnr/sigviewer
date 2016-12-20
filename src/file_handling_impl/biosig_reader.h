@@ -27,7 +27,7 @@
 #include <QMutex>
 #include <QMap>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class BioSigReader : public FileSignalReader

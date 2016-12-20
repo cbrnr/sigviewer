@@ -26,7 +26,7 @@
 #include <QSharedPointer>
 #include <QString>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class GuiActionFactoryRegistrator

@@ -27,7 +27,7 @@
 #include <QStringList>
 #include <QActionGroup>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class MouseModeGuiCommand : public GuiActionCommand

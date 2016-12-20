@@ -26,7 +26,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace SigViewer_ {
+namespace sigviewer {
 
 size_t DataBlock::instance_count_ = 0;
 

@@ -32,7 +32,7 @@
 #include <QSettings>
 #include <QDebug>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 int const MainWindowModelImpl::NUMBER_RECENT_FILES_ = 8;

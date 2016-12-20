@@ -22,7 +22,7 @@
 #include <ctime>
 #include <cmath>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

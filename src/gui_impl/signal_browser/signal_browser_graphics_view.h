@@ -24,7 +24,7 @@
 #include <QPoint>
 #include <QMouseEvent>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class SignalBrowserGraphicsView : public QGraphicsView

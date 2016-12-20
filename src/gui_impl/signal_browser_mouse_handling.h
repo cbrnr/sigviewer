@@ -29,7 +29,7 @@
     class QGraphicsSceneMouseEvent;
 
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 // signal browser mouse action

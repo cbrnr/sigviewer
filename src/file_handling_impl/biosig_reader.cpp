@@ -39,7 +39,7 @@
 
 using namespace std;
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

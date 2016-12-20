@@ -32,7 +32,7 @@ class QTreeWidget;
 class QPushButton;
 class QTreeWidgetItem;
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

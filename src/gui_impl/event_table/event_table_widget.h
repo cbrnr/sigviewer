@@ -30,7 +30,7 @@
 
 #include <QWidget>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 namespace Tests_ { class EventTableWidgetTests;}
@@ -38,7 +38,7 @@ namespace Tests_ { class EventTableWidgetTests;}
 //-----------------------------------------------------------------------------
 class EventTableWidget : public QWidget
 {
-    friend class SigViewer_::Tests_::EventTableWidgetTests;
+    friend class sigviewer::Tests_::EventTableWidgetTests;
 
     Q_OBJECT
 

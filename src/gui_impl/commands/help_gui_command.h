@@ -23,7 +23,7 @@
 #include "gui/gui_action_command.h"
 #include "gui/gui_action_factory_registrator.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class HelpGuiCommand : public GuiActionCommand

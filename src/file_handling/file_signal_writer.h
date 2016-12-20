@@ -26,7 +26,7 @@
 #include "channel_manager.h"
 #include "base/signal_event.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 // abstract signal writer

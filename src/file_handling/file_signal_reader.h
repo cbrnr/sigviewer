@@ -31,7 +31,7 @@
 
 class QString;
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

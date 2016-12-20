@@ -21,7 +21,7 @@
 
 #include "basic_header.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

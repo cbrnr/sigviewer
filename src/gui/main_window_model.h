@@ -24,7 +24,7 @@
 #include "event_view.h"
 #include "file_context.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class MainWindowModel

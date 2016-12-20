@@ -22,7 +22,7 @@
 #include <QDebug>
 #include <cmath>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 namespace MathUtils_

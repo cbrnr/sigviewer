@@ -24,7 +24,7 @@
 
 #include <biosig.h>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

@@ -32,7 +32,7 @@
 #include <QSharedPointer>
 #include <QList>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 namespace TestsFactory_

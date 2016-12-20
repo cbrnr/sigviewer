@@ -20,7 +20,7 @@
 #include "change_type_undo_command.h"
 #include "file_handling/event_manager.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

@@ -23,7 +23,7 @@
 #include "file_handling/file_signal_writer_factory.h"
 #include "file_handling/file_signal_reader_factory.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 #define FILE_SIGNAL_WRITER_REGISTRATION(file_ending, writer) \

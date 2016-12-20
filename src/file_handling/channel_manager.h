@@ -27,7 +27,7 @@
 #include <set>
 #include <map>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

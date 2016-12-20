@@ -22,7 +22,7 @@
 
 #include <stddef.h>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 enum ScaleMode
@@ -50,7 +50,7 @@ typedef unsigned __int64 uint64_t;
 #include <inttypes.h>
 #endif
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 typedef int8_t   int8;

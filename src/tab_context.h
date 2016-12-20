@@ -27,7 +27,7 @@
 #include <QUndoStack>
 #include <QUndoCommand>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class TabContext : public QObject, public CommandExecuter

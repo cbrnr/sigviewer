@@ -28,7 +28,7 @@
 #include <QMap>
 #include <QMutex>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class EventManagerImpl : public EventManager

@@ -29,7 +29,7 @@
 #include <QPainter>
 #include <QPointer>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 QString const SaveGuiCommand::SAVE_AS_ = "Save as...";

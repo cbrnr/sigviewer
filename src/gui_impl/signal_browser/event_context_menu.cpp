@@ -25,7 +25,7 @@
 #include <QAction>
 #include <QDebug>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

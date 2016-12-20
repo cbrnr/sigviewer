@@ -25,7 +25,7 @@
 
 #include <memory>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 // file signal reader Factory as singleton

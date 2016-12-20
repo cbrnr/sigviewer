@@ -27,7 +27,7 @@
 #include <QColor>
 #include <QPixmap>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 // color manager

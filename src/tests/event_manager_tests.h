@@ -22,7 +22,7 @@
 
 #include "test.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 namespace Tests_
 {

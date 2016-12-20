@@ -22,7 +22,7 @@
 #include <QApplication>
 #include <QMessageBox>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

@@ -29,7 +29,7 @@
 #include <map>
 #include <memory>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-------------------------------------------------------------------------

@@ -27,7 +27,7 @@
 #include <QMap>
 #include <QMenu>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class GuiActionFactory

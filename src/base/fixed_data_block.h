@@ -28,7 +28,7 @@
 #include <QVector>
 #include <QSharedPointer>
 
-namespace SigViewer_ {
+namespace sigviewer {
 
 //-------------------------------------------------------------------------
 /// FixedDataBlock

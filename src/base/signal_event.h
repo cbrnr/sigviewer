@@ -22,7 +22,7 @@
 
 #include "sigviewer_user_types.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 // SignalEvent

@@ -24,7 +24,7 @@
 #include "application_context_impl.h"
 #include "gui/gui_action_factory.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 namespace Tests_

@@ -23,7 +23,7 @@
 #include "file_handling/file_signal_writer_factory.h"
 #include "gui/progress_bar.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

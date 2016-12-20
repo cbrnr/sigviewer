@@ -19,7 +19,7 @@
 
 #include "exception.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

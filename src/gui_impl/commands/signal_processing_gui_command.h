@@ -24,7 +24,7 @@
 #include "gui/gui_action_factory_registrator.h"
 #include "gui_impl/dialogs/event_time_selection_dialog.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class SignalProcessingGuiCommand : public GuiActionCommand

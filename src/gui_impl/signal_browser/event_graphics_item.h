@@ -37,7 +37,7 @@
 
 class QMutex;
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class SignalBrowserModel;

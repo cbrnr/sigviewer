@@ -28,7 +28,7 @@
 
 #include <set>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 namespace GuiHelper

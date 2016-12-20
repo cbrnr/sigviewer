@@ -23,7 +23,7 @@
 
 #include <limits>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 double ScaleChannelDialog::last_min_ = 0;

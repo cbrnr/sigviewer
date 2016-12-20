@@ -20,7 +20,7 @@
 #include "mouse_mode_gui_command.h"
 #include "gui/signal_visualisation_model.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 

@@ -27,7 +27,7 @@
 #include <QSharedPointer>
 #include <QObject>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class ChangeTypeUndoCommand : public QUndoCommand

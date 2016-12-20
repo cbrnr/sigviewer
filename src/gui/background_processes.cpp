@@ -19,7 +19,7 @@
 
 #include "background_processes.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-------------------------------------------------------------------------

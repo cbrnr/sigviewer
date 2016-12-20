@@ -31,7 +31,7 @@
 
 #include <set>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

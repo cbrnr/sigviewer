@@ -29,7 +29,7 @@
 #include <QObject>
 #include <QSharedPointer>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

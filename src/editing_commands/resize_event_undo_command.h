@@ -26,7 +26,7 @@
 #include <QSharedPointer>
 #include <QUndoCommand>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class ResizeEventUndoCommand : public QUndoCommand

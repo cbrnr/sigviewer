@@ -21,7 +21,7 @@
 
 #include "gui/color_manager.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 namespace Tests_
 {

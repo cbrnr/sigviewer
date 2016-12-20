@@ -26,7 +26,7 @@
 
 #include <QUndoCommand>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class EventEditingGuiCommand : public GuiActionCommand

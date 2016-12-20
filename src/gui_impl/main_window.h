@@ -33,7 +33,7 @@ class QComboBox;
 class QMenu;
 class QLabel;
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 // main window

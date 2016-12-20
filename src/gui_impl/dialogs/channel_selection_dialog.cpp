@@ -23,7 +23,7 @@
 #include <QColorDialog>
 #include <QInputDialog>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 QColor const ChannelSelectionDialog::NOT_VISIBLE_COLOR_ (Qt::gray);

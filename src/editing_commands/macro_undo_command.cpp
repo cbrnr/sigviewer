@@ -19,7 +19,7 @@
 
 #include "macro_undo_command.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

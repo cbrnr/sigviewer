@@ -23,7 +23,7 @@
 #include <exception>
 #include <string>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class Exception : public std::exception

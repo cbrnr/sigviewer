@@ -26,7 +26,7 @@
 #include <QString>
 #include <QMutex>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

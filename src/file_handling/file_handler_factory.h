@@ -30,7 +30,7 @@
 
 #include <map>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

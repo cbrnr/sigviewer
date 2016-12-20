@@ -28,7 +28,7 @@
 class QTreeWidget;
 class QPushButton;
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 // basic header info dialog

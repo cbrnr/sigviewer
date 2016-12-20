@@ -24,7 +24,7 @@
 #include <QDomDocument>
 #include <QFile>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 const char* ColorManager::DEFAULT_CHANNEL_COLOR_SETTING_ = "Default Channel Color";

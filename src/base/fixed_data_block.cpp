@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-------------------------------------------------------------------------------------------------

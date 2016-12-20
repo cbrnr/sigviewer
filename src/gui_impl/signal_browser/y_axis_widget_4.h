@@ -25,7 +25,7 @@
 #include <QWidget>
 #include <QMap>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class SignalGraphicsItem;

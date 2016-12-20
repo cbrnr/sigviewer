@@ -23,7 +23,7 @@
 #include <QString>
 #include <QObject>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

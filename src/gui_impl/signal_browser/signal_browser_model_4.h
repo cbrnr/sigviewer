@@ -37,7 +37,7 @@
 #include <map>
 #include <set>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 class SignalBrowserView;

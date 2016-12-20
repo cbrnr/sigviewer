@@ -23,7 +23,7 @@
 #include <QPushButton>
 #include <limits>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------

@@ -38,7 +38,7 @@
 #include <cmath>
 #include <algorithm>
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 namespace LayoutFunctions_
