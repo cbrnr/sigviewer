@@ -25,8 +25,8 @@ namespace sigviewer
 // constructor
 BasicHeaderInfoDialog::BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header,
                                              QWidget* parent)
- : QDialog(parent),
-   basic_header_(header)
+    : QDialog(parent),
+      basic_header_(header)
 {
     setWindowTitle(tr("Basic Header Info"));
     QVBoxLayout* top_layout = new QVBoxLayout(this);
@@ -106,19 +106,19 @@ void BasicHeaderInfoDialog::buildTree()
     }
 
 
-//    tmp_item = new QTreeWidgetItem(root_item);
-//    tmp_item->setText(0, tr("Recording Time"));
-//    tmp_item->setText(1, basic_header_->getRecordingTime().toString("dd.MM.yyyy hh:mm:ss"));
-//    tmp_item = new QTreeWidgetItem(root_item);
-//    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-//    tmp_item->setText(0, tr("Triggered"));
-//    tmp_item->setText(1, basic_header_->isTriggered() ? tr("yes") : tr("no"));
-//    tmp_item = new QTreeWidgetItem(root_item);
-//    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-//    tmp_item->setText(0, tr("Recording"));
-//    tmp_item->setText(1, QString::number(basic_header_->getRecordDuration() *
-//                                      basic_header_->getNumberRecords()));
-//    tmp_item->setText(2, tr("seconds"));
+    //    tmp_item = new QTreeWidgetItem(root_item);
+    //    tmp_item->setText(0, tr("Recording Time"));
+    //    tmp_item->setText(1, basic_header_->getRecordingTime().toString("dd.MM.yyyy hh:mm:ss"));
+    //    tmp_item = new QTreeWidgetItem(root_item);
+    //    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
+    //    tmp_item->setText(0, tr("Triggered"));
+    //    tmp_item->setText(1, basic_header_->isTriggered() ? tr("yes") : tr("no"));
+    //    tmp_item = new QTreeWidgetItem(root_item);
+    //    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
+    //    tmp_item->setText(0, tr("Recording"));
+    //    tmp_item->setText(1, QString::number(basic_header_->getRecordDuration() *
+    //                                      basic_header_->getNumberRecords()));
+    //    tmp_item->setText(2, tr("seconds"));
 
     // file
     root_item = new QTreeWidgetItem(info_tree_widget_);
@@ -169,128 +169,92 @@ void BasicHeaderInfoDialog::buildTree()
             root_item->setIcon(0, QIcon(":/images/info_16x16.png"));
             info_tree_widget_->setItemExpanded(root_item, true);
 
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("name"));
-            tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.name));
 
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("type"));
-            tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.type));
-
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("channel_count"));
-            if (XDFdata.streams[i].info.channel_count <= 1)
+            for (auto entry : XDFdata.streams[i].info.infoMap)
             {
-                tmp_item->setText(1, QString::number(XDFdata.streams[i].info.channel_count).append(tr(" channel")));
+                tmp_item = new QTreeWidgetItem(root_item);
+                tmp_item->setText(0, QString::fromStdString(entry.first));
+                tmp_item->setText(1, QString::fromStdString(entry.second));
             }
-            else
-            {
-                tmp_item->setText(1, QString::number(XDFdata.streams[i].info.channel_count).append(tr(" channels")));
-            }
-
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("nominal_srate"));
-            tmp_item->setText(1, QString::number(XDFdata.streams[i].info.nominal_srate).append(tr(" Hz")));
-
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("channel_format"));
-            tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.channel_format));
-
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("source_id"));
-            tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.source_id));
-
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("version"));
-            tmp_item->setText(1, QString::number(XDFdata.streams[i].info.version, 'f', 1));
-
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("created_at"));
-            tmp_item->setText(1, QString::number(XDFdata.streams[i].info.created_at));
-
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("uid"));
-            tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.uid));
-
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("session_id"));
-            tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.session_id));
-
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("hostname"));
-            tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.hostname));
-
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("v4address"));
-            tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.v4address));
-
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("v4data_port"));
-            tmp_item->setText(1, QString::number(XDFdata.streams[i].info.v4data_port));
-
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("v4service_port"));
-            tmp_item->setText(1, QString::number(XDFdata.streams[i].info.v4service_port));
-
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("v6address"));
-            tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.v6address));
-
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("v6data_port"));
-            tmp_item->setText(1, QString::number(XDFdata.streams[i].info.v6data_port));
-
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("v6service_port"));
-            tmp_item->setText(1, QString::number(XDFdata.streams[i].info.v6service_port));
 
             tmp_item = new QTreeWidgetItem(root_item);
             tmp_item->setText(0, tr("desc"));
             tmp_item->setExpanded(true);
 
 
-            QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
-            desc_item->setText(0, tr("acquisition"));
-            desc_item->setExpanded(true);
-
-            for (auto entry : XDFdata.streams[i].info.desc.acquisition)
+            if (XDFdata.streams[i].info.desc.acquisition.size())
             {
-                QTreeWidgetItem* acquisition_item = new QTreeWidgetItem(desc_item);
-                acquisition_item->setText(0, QString::fromStdString(entry.first));
-                acquisition_item->setText(1, QString::fromStdString(entry.second));
+                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
+                desc_item->setText(0, tr("acquisition"));
+                desc_item->setExpanded(true);
+
+                for (auto entry : XDFdata.streams[i].info.desc.acquisition)
+                {
+                    QTreeWidgetItem* acquisition_item = new QTreeWidgetItem(desc_item);
+                    acquisition_item->setText(0, QString::fromStdString(entry.first));
+                    acquisition_item->setText(1, QString::fromStdString(entry.second));
+                }
             }
 
-            desc_item = new QTreeWidgetItem(tmp_item);
-            desc_item->setText(0, tr("reference"));
-            desc_item->setExpanded(true);
-
-            for (auto entry : XDFdata.streams[i].info.desc.reference)
+            if (XDFdata.streams[i].info.desc.reference.size())
             {
-                QTreeWidgetItem* reference_item = new QTreeWidgetItem(desc_item);
-                reference_item->setText(0, QString::fromStdString(entry.first));
-                reference_item->setText(1, QString::fromStdString(entry.second));
+                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
+                desc_item->setText(0, tr("reference"));
+                desc_item->setExpanded(true);
+
+                for (auto entry : XDFdata.streams[i].info.desc.reference)
+                {
+                    QTreeWidgetItem* reference_item = new QTreeWidgetItem(desc_item);
+                    reference_item->setText(0, QString::fromStdString(entry.first));
+                    reference_item->setText(1, QString::fromStdString(entry.second));
+                }
             }
 
-            desc_item = new QTreeWidgetItem(tmp_item);
-            desc_item->setText(0, tr("cap"));
-            desc_item->setExpanded(true);
-
-            for (auto entry : XDFdata.streams[i].info.desc.cap)
+            if (XDFdata.streams[i].info.desc.cap.size())
             {
-                QTreeWidgetItem* cap_item = new QTreeWidgetItem(desc_item);
-                cap_item->setText(0, QString::fromStdString(entry.first));
-                cap_item->setText(1, QString::fromStdString(entry.second));
+                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
+                desc_item->setText(0, tr("cap"));
+                desc_item->setExpanded(true);
+
+                for (auto entry : XDFdata.streams[i].info.desc.cap)
+                {
+                    QTreeWidgetItem* cap_item = new QTreeWidgetItem(desc_item);
+                    cap_item->setText(0, QString::fromStdString(entry.first));
+                    cap_item->setText(1, QString::fromStdString(entry.second));
+                }
             }
 
-            desc_item = new QTreeWidgetItem(tmp_item);
-            desc_item->setText(0, tr("location_measurement"));
-            desc_item->setExpanded(true);
-
-            for (auto entry : XDFdata.streams[i].info.desc.location_measurement)
+            if (XDFdata.streams[i].info.desc.location_measurement.size())
             {
-                QTreeWidgetItem* location_measurement_item = new QTreeWidgetItem(desc_item);
-                location_measurement_item->setText(0, QString::fromStdString(entry.first));
-                location_measurement_item->setText(1, QString::fromStdString(entry.second));
+                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
+                desc_item->setText(0, tr("location_measurement"));
+                desc_item->setExpanded(true);
+
+                for (auto entry : XDFdata.streams[i].info.desc.location_measurement)
+                {
+                    QTreeWidgetItem* location_measurement_item = new QTreeWidgetItem(desc_item);
+                    location_measurement_item->setText(0, QString::fromStdString(entry.first));
+                    location_measurement_item->setText(1, QString::fromStdString(entry.second));
+                }
+            }
+
+            if (XDFdata.streams[i].info.desc.amplifier.settings.size())
+            {
+                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
+                desc_item->setText(0, tr("amplifier"));
+                desc_item->setExpanded(true);
+
+                QTreeWidgetItem* sub_item = new QTreeWidgetItem(desc_item);
+                sub_item->setText(0, tr("settings"));
+                sub_item->setExpanded(true);
+
+
+                for (auto entry : XDFdata.streams[i].info.desc.amplifier.settings)
+                {
+                    QTreeWidgetItem* settings_item = new QTreeWidgetItem(sub_item);
+                    settings_item->setText(0, QString::fromStdString(entry.first));
+                    settings_item->setText(1, QString::fromStdString(entry.second));
+                }
             }
 
 
@@ -315,54 +279,85 @@ void BasicHeaderInfoDialog::buildTree()
                     QSharedPointer<SignalChannel const> channel = basic_header_->getChannel (channelIndex);
                     channel_item = new QTreeWidgetItem(channels_item);
                     channel_item->setText(0, QString("(%1) %2").arg(channelIndex)
-                                                        .arg(channel->getLabel()));
+                                          .arg(channel->getLabel()));
 
                     if (XDFdata.streams[i].info.desc.channels.size())
                     {
-                        tmp_item = new QTreeWidgetItem(channel_item);
-                        tmp_item->setText(0, tr("Unit"));
-                        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.desc.channels[channel_nr].unit));
-
-                        tmp_item = new QTreeWidgetItem(channel_item);
-                        tmp_item->setText(0, tr("Type"));
-                        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.desc.channels[channel_nr].type));
-
-                        tmp_item = new QTreeWidgetItem(channel_item);
-                        tmp_item->setText(0, tr("Label"));
-                        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.desc.channels[channel_nr].label));
-
-                        tmp_item = new QTreeWidgetItem(channel_item);
-                        tmp_item->setText(0, tr("coordinate_system"));
-                        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.desc.channels[channel_nr].coordinate_system));
-
-                        tmp_item = new QTreeWidgetItem(channel_item);
-                        tmp_item->setText(0, tr("eye"));
-                        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.desc.channels[channel_nr].eye));
-
-                        tmp_item = new QTreeWidgetItem(channel_item);
-                        tmp_item->setText(0, tr("impedance"));
-                        tmp_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.desc.channels[channel_nr].impedance));
-
-                        tmp_item = new QTreeWidgetItem(channel_item);
-                        tmp_item->setText(0, tr("Location"));
-                        tmp_item->setExpanded(true);
-
-                        for (auto entry : XDFdata.streams[i].info.desc.channels[channel_nr].location)
+                        for (auto entry : XDFdata.streams[i].info.desc.channels[channel_nr].channelInfoMap)
                         {
-                            QTreeWidgetItem* location_item = new QTreeWidgetItem(tmp_item);
-                            location_item->setText(0, QString::fromStdString(entry.first));
-                            location_item->setText(1, QString::fromStdString(entry.second));
-                        }
+                            QTreeWidgetItem* tmp_item = new QTreeWidgetItem(channel_item);
+                            tmp_item->setText(0, QString::fromStdString(entry.first));
+                            tmp_item->setText(1, QString::fromStdString(entry.second));
+                            tmp_item->setExpanded(true);
 
-                        tmp_item = new QTreeWidgetItem(channel_item);
-                        tmp_item->setText(0, tr("Hardware"));
-                        tmp_item->setExpanded(true);
+                            if (entry.first.compare("location")==0)
+                            {
+                                for (auto subentry : XDFdata.streams[i].info.desc.channels[channel_nr].location)
+                                {
+                                    QTreeWidgetItem* location_item = new QTreeWidgetItem(tmp_item);
+                                    location_item->setText(0, QString::fromStdString(subentry.first));
+                                    location_item->setText(1, QString::fromStdString(subentry.second));
+                                }
+                            }
 
-                        for (auto entry : XDFdata.streams[i].info.desc.channels[channel_nr].hardware)
-                        {
-                            QTreeWidgetItem* hardware_item = new QTreeWidgetItem(tmp_item);
-                            hardware_item->setText(0, QString::fromStdString(entry.first));
-                            hardware_item->setText(1, QString::fromStdString(entry.second));
+                            if (entry.first.compare("hardware")==0)
+                            {
+                                for (auto subentry : XDFdata.streams[i].info.desc.channels[channel_nr].hardware)
+                                {
+                                    QTreeWidgetItem* hardware_item = new QTreeWidgetItem(tmp_item);
+                                    hardware_item->setText(0, QString::fromStdString(subentry.first));
+                                    hardware_item->setText(1, QString::fromStdString(subentry.second));
+                                }
+                            }
+
+                            if (entry.first.compare("filtering")==0)
+                            {
+                                QTreeWidgetItem* filtering_item = new QTreeWidgetItem(tmp_item);
+                                filtering_item->setText(0, QString::fromStdString(entry.first));
+                                filtering_item->setExpanded(true);
+
+                                if (XDFdata.streams[i].info.desc.channels[channel_nr].filtering.highpass.size())
+                                {
+                                    QTreeWidgetItem* highpass_item = new QTreeWidgetItem(filtering_item);
+                                    highpass_item->setText(0, tr("highpass"));
+                                    highpass_item->setExpanded(true);
+
+                                    for (auto subentry : XDFdata.streams[i].info.desc.channels[channel_nr].filtering.highpass)
+                                    {
+                                        QTreeWidgetItem* buff_item = new QTreeWidgetItem(highpass_item);
+                                        buff_item->setText(0, QString::fromStdString(subentry.first));
+                                        buff_item->setText(1, QString::fromStdString(subentry.second));
+                                    }
+                                }
+
+                                if (XDFdata.streams[i].info.desc.channels[channel_nr].filtering.lowpass.size())
+                                {
+                                    QTreeWidgetItem* lowpass_item = new QTreeWidgetItem(filtering_item);
+                                    lowpass_item->setText(0, tr("lowpass"));
+                                    lowpass_item->setExpanded(true);
+
+                                    for (auto subentry : XDFdata.streams[i].info.desc.channels[channel_nr].filtering.highpass)
+                                    {
+                                        QTreeWidgetItem* buff_item = new QTreeWidgetItem(lowpass_item);
+                                        buff_item->setText(0, QString::fromStdString(subentry.first));
+                                        buff_item->setText(1, QString::fromStdString(subentry.second));
+                                    }
+                                }
+
+                                if (XDFdata.streams[i].info.desc.channels[channel_nr].filtering.notch.size())
+                                {
+                                    QTreeWidgetItem* notch_item = new QTreeWidgetItem(filtering_item);
+                                    notch_item->setText(0, tr("notch"));
+                                    notch_item->setExpanded(true);
+
+                                    for (auto subentry : XDFdata.streams[i].info.desc.channels[channel_nr].filtering.highpass)
+                                    {
+                                        QTreeWidgetItem* buff_item = new QTreeWidgetItem(notch_item);
+                                        buff_item->setText(0, QString::fromStdString(subentry.first));
+                                        buff_item->setText(1, QString::fromStdString(subentry.second));
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -385,7 +380,7 @@ void BasicHeaderInfoDialog::buildTree()
             QSharedPointer<SignalChannel const> channel = basic_header_->getChannel (channel_nr);
             channel_item = new QTreeWidgetItem(root_item);
             channel_item->setText(0, QString("(%1) %2").arg(channel_nr + 1)
-                                                .arg(channel->getLabel()));
+                                  .arg(channel->getLabel()));
 
             // channel basic
             tmp_item = new QTreeWidgetItem(channel_item);
@@ -439,9 +434,9 @@ void BasicHeaderInfoDialog::buildTree()
             tmp_item = new QTreeWidgetItem(filter_item);
             // tmp_item ->setTextAlignment(1, Qt::AlignRight);
             tmp_item->setText(0, tr("Lowpass"));
-           // tmp_item->setText(1, channel->getLowpass() ? tr("unknown") :
+            // tmp_item->setText(1, channel->getLowpass() ? tr("unknown") :
             //                (channel->getLowpass() < 0 ? "" :
-             //                           QString::number(channel->getLowpass())));
+            //                           QString::number(channel->getLowpass())));
             tmp_item->setText(2, tr("Hz"));
             tmp_item = new QTreeWidgetItem(filter_item);
             // tmp_item ->setTextAlignment(1, Qt::AlignRight);

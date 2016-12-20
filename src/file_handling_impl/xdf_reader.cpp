@@ -115,7 +115,11 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
     prompt.exec();
 
     if (prompt.cancel())
+    {
+        Xdf empty;
+        std::swap(XDFdata, empty);
         return "Cancelled";
+    }
 
     if (prompt.getUserSrate())
         XDFdata.majSR = prompt.getUserSrate();

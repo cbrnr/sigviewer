@@ -35,7 +35,7 @@ SignalChannel::SignalChannel(unsigned ch, const HDRTYPE* hdr) :
 SignalChannel::SignalChannel(unsigned ch, QString XDF) :
     label_ (QString::fromStdString(XDFdata.labels[ch]).trimmed())
 {
-    phys_y_dimension_label_ = QString::number(ch);
+    phys_y_dimension_label_ = "No"+QString::number(ch);
     samplerate_ = XDFdata.majSR;
 }
 

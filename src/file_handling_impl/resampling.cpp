@@ -44,11 +44,11 @@ Resampling::Resampling(int nativeSrate, int highestSampleRate, QWidget *parent) 
 
         QTreeWidgetItem* infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Name"));
-        infoItem->setText(1, QString::fromStdString(XDFdata.streams[i].info.name));
+        infoItem->setText(1, QString::fromStdString(XDFdata.streams[i].info.infoMap["name"]));
 
         infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Type"));
-        infoItem->setText(1, QString::fromStdString(XDFdata.streams[i].info.type));
+        infoItem->setText(1, QString::fromStdString(XDFdata.streams[i].info.infoMap["type"]));
 
         infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Sample Rate"));
@@ -56,7 +56,7 @@ Resampling::Resampling(int nativeSrate, int highestSampleRate, QWidget *parent) 
 
         infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Channel Format"));
-        infoItem->setText(1, QString::fromStdString(XDFdata.streams[i].info.channel_format));
+        infoItem->setText(1, QString::fromStdString(XDFdata.streams[i].info.infoMap["channel_format"]));
     }
 
     ui->spinBox->setValue(nativeSrate);

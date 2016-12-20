@@ -107,7 +107,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(QString file_format, const Channe
         streamItem->setCheckState(0, Qt::Unchecked);
         //streamItem->setAutoTristate(true);
         streamItem->setExpanded(true);
-        if (XDFdata.streams[i].info.channel_format != "string")
+        if (XDFdata.streams[i].info.infoMap["channel_format"].compare("string"))
         {
             for (size_t j = 0; j < XDFdata.streams[i].info.channel_count; j++)
             {
