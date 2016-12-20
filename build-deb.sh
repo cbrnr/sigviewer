@@ -14,7 +14,10 @@ cp ./deb_building_stuff/sigviewer128.png ./$dir/sigviewer/usr/share/pixmaps/
 cp ./deb_building_stuff/sigviewer.desktop ./$dir/sigviewer/usr/share/applications/
 
 # get current version of sigviewer
-version=`head -n 1 src/version.txt`
+version_major=`sed -n -e 's/^VERSION_MAJOR = \([0-9]*\)$/\1/p' sigviewer.pro`
+version_minor=`sed -n -e 's/^VERSION_MINOR = \([0-9]*\)$/\1/p' sigviewer.pro`
+version_build=`sed -n -e 's/^VERSION_BUILD = \([0-9]*\)$/\1/p' sigviewer.pro`
+version=$version_major.$version_minor.$version_build
 
 # get local architecture
 architecture=`dpkg-architecture -l | grep DEB_BUILD_ARCH= | sed -e '/DEB_BUILD_ARCH=/s/DEB_BUILD_ARCH=//'`
@@ -32,5 +35,3 @@ dpkg -b ./$dir/sigviewer sigviewer-$version-$architecture.deb
 
 # delete all temporary build directories
 rm -r $dir
-
-tar czvf extern-$architecture.tar.gz --exclude=".*" extern
