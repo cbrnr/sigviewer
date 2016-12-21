@@ -3,6 +3,8 @@
 #include "file_handler_factory_registrator.h"
 #include "gui/progress_bar.h"
 #include "base/fixed_data_block.h"
+#include "resampling.h"
+
 
 #include <QTextStream>
 #include <QTranslator>
@@ -14,10 +16,8 @@
 #include <cmath>
 #include <cassert>
 #include <algorithm>
-
 #include <iostream>
 #include <time.h>       /* clock_t, clock, CLOCKS_PER_SEC */
-#include "resampling.h"
 
 using namespace std;
 
@@ -125,6 +125,23 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
         XDFdata.majSR = prompt.getUserSrate();
 
     XDFdata.resampleXDF(XDFdata.majSR);
+
+    ColorManager colorTest;
+    QVector<QColor> colorList = {Qt::blue, Qt::darkCyan, Qt::red, Qt::magenta,
+                                 Qt::darkGreen, Qt::darkYellow, Qt::darkMagenta, Qt::darkRed, Qt::darkBlue};
+
+
+    for (size_t i = 0; i < XDFdata.totalCh; i++)
+    {
+        size_t stream = 0;
+        if (stream != XDFdata.streamMap[i])
+            stream = XDFdata.streamMap[i];
+        while (stream > 8)
+            stream -= 9;
+        colorTest.setChannelColor(i, colorList[stream]);
+    }
+    colorTest.saveSettings();
+
 
 
     t = clock() - t;

@@ -26,6 +26,7 @@
 #include <QMessageBox>
 
 #include <algorithm>
+#include "gui/color_manager.h"
 
 namespace sigviewer
 {
