@@ -1,20 +1,6 @@
-// Copyright 2013 Clemens Brunner, Thomas Brunner, Christoph Eibel,
-// Alois Schlögl, Oliver Terbu.
-
-// This file is part of SigViewer.
-//
-// SigViewer is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// SigViewer is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with SigViewer. If not, see <http://www.gnu.org/licenses/>.
+// Copyright (c) 2016 The SigViewer Development Team
+// Licensed under the GNU General Public License (GPL)
+// https://www.gnu.org/licenses/gpl
 
 
 #include "application_context_impl.h"
@@ -23,6 +9,7 @@
 #include "gui_impl/main_window_model_impl.h"
 
 #include <QDebug>
+
 
 namespace sigviewer
 {
@@ -137,5 +124,4 @@ void ApplicationContextImpl::setState (ApplicationState state)
     emit stateChanged (state_);
 }
 
-
-} // namespace SigViewer_
+}

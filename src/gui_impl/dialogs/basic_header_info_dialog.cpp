@@ -1,20 +1,6 @@
-// Copyright 2013 Clemens Brunner, Thomas Brunner, Christoph Eibel,
-// Alois Schlögl, Oliver Terbu.
-
-// This file is part of SigViewer.
-//
-// SigViewer is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// SigViewer is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with SigViewer. If not, see <http://www.gnu.org/licenses/>.
+// Copyright (c) 2016 The SigViewer Development Team
+// Licensed under the GNU General Public License (GPL)
+// https://www.gnu.org/licenses/gpl
 
 
 #include "basic_header_info_dialog.h"
@@ -115,19 +101,6 @@ void BasicHeaderInfoDialog::buildTree()
         tmp_item->setText(0, key);
         tmp_item->setText(1, recording_info[key]);
     }
-//    tmp_item = new QTreeWidgetItem(root_item);
-//    tmp_item->setText(0, tr("Recording Time"));
-//    tmp_item->setText(1, basic_header_->getRecordingTime().toString("dd.MM.yyyy hh:mm:ss"));
-//    tmp_item = new QTreeWidgetItem(root_item);
-//    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-//    tmp_item->setText(0, tr("Triggered"));
-//    tmp_item->setText(1, basic_header_->isTriggered() ? tr("yes") : tr("no"));
-//    tmp_item = new QTreeWidgetItem(root_item);
-//    // tmp_item ->setTextAlignment(1, Qt::AlignRight);
-//    tmp_item->setText(0, tr("Recording"));
-//    tmp_item->setText(1, QString::number(basic_header_->getRecordDuration() *
-//                                      basic_header_->getNumberRecords()));
-//    tmp_item->setText(2, tr("seconds"));
 
     // file
     root_item = new QTreeWidgetItem(info_tree_widget_);
@@ -244,4 +217,4 @@ void BasicHeaderInfoDialog::buildTree()
     }
 }
 
-} //namespace SigViewer_
+}

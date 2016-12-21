@@ -1,20 +1,6 @@
-// Copyright 2013 Clemens Brunner, Thomas Brunner, Christoph Eibel,
-// Alois Schlögl, Oliver Terbu.
-
-// This file is part of SigViewer.
-//
-// SigViewer is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// SigViewer is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with SigViewer. If not, see <http://www.gnu.org/licenses/>.
+// Copyright (c) 2016 The SigViewer Development Team
+// Licensed under the GNU General Public License (GPL)
+// https://www.gnu.org/licenses/gpl
 
 
 #include "biosig_reader.h"
@@ -82,7 +68,6 @@ QPair<FileSignalReader*, QString> BioSigReader::createInstance (QString const& f
     if (error.size() > 0)
     {
         qDebug () << error;
-        //QMessageBox::critical(0, QObject::tr("Error"), error);
         return QPair<FileSignalReader*, QString> (0, error);
     }
     else
@@ -150,7 +135,6 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
 
     tzset();
 
-    // set flags
     if(biosig_header_==NULL)
     {
         biosig_header_ = constructHDR (0,0);
@@ -172,10 +156,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
             return "file not supported";
     }
 
-    // (C) 2008 AS: EVENT.DUR and EVENT.CHN are optional in SOPEN, but SigViewer needs them.
     convert2to4_eventtable(biosig_header_);
-
-    //hdr2ascii(biosig_header_,stdout,4);
 
     delete[] c_file_name;
     c_file_name = NULL;
@@ -187,28 +168,6 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     else
         basic_header_->setEventSamplerate(biosig_header_->SampleRate);
 
-//#ifdef CHOLMOD_H
-//    if (biosig_header_->Calib==NULL) {
-//#endif
-//    uint16_t chan=0;
-//    for (uint16_t channel_index = 0; channel_index < biosig_header_->NS; ++channel_index)
-//    if (biosig_header_->CHANNEL[channel_index].OnOff)	// show only selected channels - status channels are not shown.
-//    {
-//        SignalChannel* channel = new SignalChannel(chan++,
-//                                                   biosig_header_->SPR,
-//                                                   biosig_header_->CHANNEL[channel_index]);
-//        basic_header_->addChannel(channel);
-//    }
-//#ifdef CHOLMOD_H
-//    } else
-//    for (uint16_t channel_index = 0; channel_index < biosig_header_->Calib->ncol; ++channel_index)
-//    {
-//        SignalChannel* channel = new SignalChannel(channel_index,
-//                                                   biosig_header_->SPR,
-//                                                   biosig_header_->rerefCHANNEL[channel_index]);
-//        basic_header_->addChannel(channel);
-//    }
-//#endif
     return "";
 }
 
