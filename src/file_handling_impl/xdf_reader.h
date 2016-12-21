@@ -9,7 +9,7 @@
 #include <QMap>
 #include "xdf.h"
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //the object to store XDF data
@@ -65,6 +65,6 @@ private:
 
 };
 
-} // namespace SigViewer_
+} // namespace sigviewer
 
 #endif /*XDF_READER_H_*/

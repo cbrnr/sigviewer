@@ -3,7 +3,7 @@
 #include "file_handler_factory_registrator.h"
 #include "gui/progress_bar.h"
 #include "base/fixed_data_block.h"
-#include "resampling.h"
+#include "gui_impl/dialogs/resampling_dialog.h"
 
 
 #include <QTextStream>
@@ -19,9 +19,8 @@
 #include <iostream>
 #include <time.h>       /* clock_t, clock, CLOCKS_PER_SEC */
 
-using namespace std;
 
-namespace SigViewer_
+namespace sigviewer
 {
 
 //the object to store XDF data
@@ -110,7 +109,7 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
 
     XDFdata.load_xdf(file_name.toStdString());
 
-    Resampling prompt(XDFdata.majSR, XDFdata.maxSR);
+    ResamplingDialog prompt(XDFdata.majSR, XDFdata.maxSR);
     prompt.setModal(true);
     prompt.exec();
 
@@ -125,7 +124,7 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
         XDFdata.majSR = prompt.getUserSrate();
 
     XDFdata.resampleXDF(XDFdata.majSR);
-
+/*
     ColorManager colorTest;
     QVector<QColor> colorList = {Qt::blue, Qt::darkCyan, Qt::red, Qt::magenta,
                                  Qt::darkGreen, Qt::darkYellow, Qt::darkMagenta, Qt::darkRed, Qt::darkBlue};
@@ -141,7 +140,7 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
         colorTest.setChannelColor(i, colorList[stream]);
     }
     colorTest.saveSettings();
-
+*/
 
 
     t = clock() - t;

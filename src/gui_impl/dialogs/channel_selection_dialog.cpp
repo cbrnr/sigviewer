@@ -98,6 +98,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(QString file_format, const Channe
     ui_.treeWidget->setColumnCount(2);
     ui_.treeWidget->setColumnWidth(0,150);
     ui_.treeWidget->setColumnWidth(1,150);
+    ui_.treeWidget->setAnimated(true);
 
     int channelCount = 0;
     for (size_t i = 0; i < XDFdata.streams.size(); i++)
@@ -105,19 +106,19 @@ ChannelSelectionDialog::ChannelSelectionDialog(QString file_format, const Channe
         QTreeWidgetItem* streamItem = new QTreeWidgetItem(ui_.treeWidget);
         streamItem->setText(0, tr("Stream ").append(QString::number(i)));
         streamItem->setCheckState(0, Qt::Unchecked);
-        //streamItem->setAutoTristate(true);
+        streamItem->setFlags(Qt::ItemIsAutoTristate | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
         streamItem->setExpanded(true);
         if (XDFdata.streams[i].info.infoMap["channel_format"].compare("string"))
         {
-            for (size_t j = 0; j < XDFdata.streams[i].info.channel_count; j++)
+            for (int j = 0; j < XDFdata.streams[i].info.channel_count; j++)
             {
                 QTreeWidgetItem* channelItem = new QTreeWidgetItem(streamItem);
                 channelItem->setText(0, tr("Channel ").append(QString::number(channelCount)));
                 channelItem->setCheckState(0, Qt::Unchecked);
+                channelItem->setFlags(Qt::ItemIsAutoTristate | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
                 QColor color = color_manager_->getChannelColor (channelCount);
                 channelItem->setText(1, color.name());
                 channelItem->setBackgroundColor(1, color);
-                channelItem->setFlags(Qt::ItemIsEnabled);
                 if (ColorManager::isDark(color))
                     channelItem->setForeground(1, Qt::white);
                 channelCount++;
@@ -368,15 +369,7 @@ void ChannelSelectionDialog::on_remove_filter_button__clicked ()
 
 void ChannelSelectionDialog::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 {
-    if (column == LABEL_INDEX_)
-    {
-        self_setting_ = true;
-        if (item->checkState(0) == Qt::Checked)
-            item->setCheckState (0, Qt::Unchecked);
-        else
-            item->setCheckState (0, Qt::Checked);
-    }
-    else if (column == COLOR_INDEX_)
+    if (column == COLOR_INDEX_)
     {
         QColorDialog color_dialog (item->backgroundColor (1), this);
         if (color_dialog.exec () == QDialog::Accepted)
@@ -392,16 +385,8 @@ void ChannelSelectionDialog::on_treeWidget_itemChanged(QTreeWidgetItem *item, in
     if (column == VISIBLE_INDEX_)
     {
         if (!self_setting_)
-        {
             self_setting_ = true;
 
-                if (item->checkState(0) == Qt::Checked)
-                {
-                    item->setCheckState (0, Qt::Unchecked);
-                }
-                else
-                    item->setCheckState (0, Qt::Checked);
-        }
         bool all_visible = true;
         bool all_hidden = true;
         QTreeWidgetItemIterator it(ui_.treeWidget);

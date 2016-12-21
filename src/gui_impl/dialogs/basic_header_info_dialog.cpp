@@ -131,19 +131,6 @@ void BasicHeaderInfoDialog::buildTree()
     tmp_item->setText(1, QString::number(file_info.size() / 1024).append(tr(" KB")));
     tmp_item->setText(0, tr("File Size"));
 
-    // patient
-    root_item = new QTreeWidgetItem(info_tree_widget_);
-    root_item->setText(0, tr("Patient"));
-    root_item->setIcon(0, QIcon(":/images/patient_16x16.png"));
-    info_tree_widget_->setItemExpanded(root_item, true);
-    QMap<QString, QString> patient_info = basic_header_->getPatientInfo();
-    foreach (QString key, patient_info.keys())
-    {
-        tmp_item = new QTreeWidgetItem(root_item);
-        tmp_item->setText(0, key);
-        tmp_item->setText(1, patient_info[key]);
-    }
-
     // events
     root_item = new QTreeWidgetItem(info_tree_widget_);
     root_item->setText(0, tr("Events"));
@@ -159,16 +146,16 @@ void BasicHeaderInfoDialog::buildTree()
     tmp_item->setText(1, QString::number(basic_header_->getEventSamplerate()).append(tr(" Hz")));
 
     //exclusively for XDF
-    if (basic_header_->getFileTypeString().indexOf("XDF") == 0)
+    if (basic_header_->getFileTypeString().startsWith("XDF", Qt::CaseInsensitive))
     {
         for (size_t i =0; i < XDFdata.streams.size(); i++)
         {
             // basic
             root_item = new QTreeWidgetItem(info_tree_widget_);
             root_item->setText(0, "Stream "+QString::number(i));
-            root_item->setIcon(0, QIcon(":/images/info_16x16.png"));
+            //root_item->setIcon(0, QIcon(":/images/info_16x16.png"));
             info_tree_widget_->setItemExpanded(root_item, true);
-
+            info_tree_widget_->setAnimated(true);
 
             for (auto entry : XDFdata.streams[i].info.infoMap)
             {
@@ -264,7 +251,7 @@ void BasicHeaderInfoDialog::buildTree()
                 QTreeWidgetItem* channels_item;
                 channels_item = new QTreeWidgetItem(root_item);
                 channels_item->setText(0, tr("Channels"));
-                channels_item->setIcon(0, QIcon(":/images/channels_22x22.png"));
+                //channels_item->setIcon(0, QIcon(":/images/channels_22x22.png"));
                 info_tree_widget_->setItemExpanded(channels_item, true);
 
                 for (uint32 channel_nr = 0;
@@ -278,8 +265,8 @@ void BasicHeaderInfoDialog::buildTree()
 
                     QSharedPointer<SignalChannel const> channel = basic_header_->getChannel (channelIndex);
                     channel_item = new QTreeWidgetItem(channels_item);
-                    channel_item->setText(0, QString("(%1) %2").arg(channelIndex)
-                                          .arg(channel->getLabel()));
+                    channel_item->setText(0, QString("(%1) %2").arg(channelIndex).arg(channel->getLabel()));
+                    channel_item->setExpanded(true);
 
                     if (XDFdata.streams[i].info.desc.channels.size())
                     {
@@ -312,13 +299,9 @@ void BasicHeaderInfoDialog::buildTree()
 
                             if (entry.first.compare("filtering")==0)
                             {
-                                QTreeWidgetItem* filtering_item = new QTreeWidgetItem(tmp_item);
-                                filtering_item->setText(0, QString::fromStdString(entry.first));
-                                filtering_item->setExpanded(true);
-
                                 if (XDFdata.streams[i].info.desc.channels[channel_nr].filtering.highpass.size())
                                 {
-                                    QTreeWidgetItem* highpass_item = new QTreeWidgetItem(filtering_item);
+                                    QTreeWidgetItem* highpass_item = new QTreeWidgetItem(tmp_item);
                                     highpass_item->setText(0, tr("highpass"));
                                     highpass_item->setExpanded(true);
 
@@ -332,7 +315,7 @@ void BasicHeaderInfoDialog::buildTree()
 
                                 if (XDFdata.streams[i].info.desc.channels[channel_nr].filtering.lowpass.size())
                                 {
-                                    QTreeWidgetItem* lowpass_item = new QTreeWidgetItem(filtering_item);
+                                    QTreeWidgetItem* lowpass_item = new QTreeWidgetItem(tmp_item);
                                     lowpass_item->setText(0, tr("lowpass"));
                                     lowpass_item->setExpanded(true);
 
@@ -346,7 +329,7 @@ void BasicHeaderInfoDialog::buildTree()
 
                                 if (XDFdata.streams[i].info.desc.channels[channel_nr].filtering.notch.size())
                                 {
-                                    QTreeWidgetItem* notch_item = new QTreeWidgetItem(filtering_item);
+                                    QTreeWidgetItem* notch_item = new QTreeWidgetItem(tmp_item);
                                     notch_item->setText(0, tr("notch"));
                                     notch_item->setExpanded(true);
 
@@ -366,6 +349,19 @@ void BasicHeaderInfoDialog::buildTree()
     }   //XDF ends here
     else
     {
+        // patient
+        root_item = new QTreeWidgetItem(info_tree_widget_);
+        root_item->setText(0, tr("Patient"));
+        root_item->setIcon(0, QIcon(":/images/patient_16x16.png"));
+        info_tree_widget_->setItemExpanded(root_item, true);
+        QMap<QString, QString> patient_info = basic_header_->getPatientInfo();
+        foreach (QString key, patient_info.keys())
+        {
+            tmp_item = new QTreeWidgetItem(root_item);
+            tmp_item->setText(0, key);
+            tmp_item->setText(1, patient_info[key]);
+        }
+
         // channels
         root_item = new QTreeWidgetItem(info_tree_widget_);
         root_item->setText(0, tr("Channels"));

@@ -1,20 +1,19 @@
-#include "resampling.h"
-#include "ui_resampling.h"
-#include "xdf_reader.h"
+#include "resampling_dialog.h"
+#include "ui_resampling_dialog.h"
+#include "file_handling_impl/xdf_reader.h"
 
-namespace SigViewer_ {
+namespace sigviewer {
 
-
-Resampling::Resampling(QWidget *parent) :
+ResamplingDialog::ResamplingDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::Resampling)
+    ui(new Ui::ResamplingDialog)
 {
     ui->setupUi(this);
 }
 
-Resampling::Resampling(int nativeSrate, int highestSampleRate, QWidget *parent) :
+ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::Resampling)
+    ui(new Ui::ResamplingDialog)
 {
     ui->setupUi(this);
     this->setWindowTitle("Resampling");
@@ -33,6 +32,7 @@ Resampling::Resampling(int nativeSrate, int highestSampleRate, QWidget *parent) 
     ui->treeWidget->setColumnCount(2);
     ui->treeWidget->setColumnWidth(0, 270);
     ui->treeWidget->setColumnWidth(1, 270);
+    ui->treeWidget->setAnimated(true);
     QStringList headers;
     headers << "Stream" << "Info";
     ui->treeWidget->setHeaderLabels(headers);
@@ -59,22 +59,22 @@ Resampling::Resampling(int nativeSrate, int highestSampleRate, QWidget *parent) 
         infoItem->setText(1, QString::fromStdString(XDFdata.streams[i].info.infoMap["channel_format"]));
     }
 
+    ui->spinBox->setMinimum(1);
     ui->spinBox->setValue(nativeSrate);
     ui->spinBox->setMaximum(highestSampleRate);
 }
 
-
-Resampling::~Resampling()
+ResamplingDialog::~ResamplingDialog()
 {
     delete ui;
 }
 
-void Resampling::on_buttonBox_accepted()
+void ResamplingDialog::on_buttonBox_accepted()
 {
     userSrate = ui->spinBox->value();
 }
 
-void SigViewer_::Resampling::on_buttonBox_rejected()
+void ResamplingDialog::on_buttonBox_rejected()
 {
     cancelled = true;
 }

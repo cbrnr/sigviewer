@@ -159,10 +159,4 @@ void BiosigBasicHeader::readRecordingInfo (HDRTYPE const* raw_header)
     }
 }
 
-<<<<<<< HEAD
 }
-=======
-
-
-} // namespace SigViewer_
->>>>>>> libxdf is now independent from libbiosig
