@@ -181,53 +181,31 @@ void XDFReader::bufferAllChannels () const
     {
         if (XDFdata.streams[st].info.nominal_srate != 0)
         {
-            int pos = (XDFdata.streams[st].time_stamps.front() - XDFdata.minTS) * XDFdata.majSR;
-            if (XDFdata.streams[st].time_series.front().size() < XDFdata.totalLen-pos )
+            int startingPosition = (XDFdata.streams[st].time_stamps.front() - XDFdata.minTS) * XDFdata.majSR;
+
+            if (XDFdata.streams[st].time_series.front().size() > XDFdata.totalLen - startingPosition )
+                startingPosition = XDFdata.totalLen - XDFdata.streams[st].time_series.front().size();
+
+            for (size_t ch = 0; ch < XDFdata.streams[st].time_series.size(); ch++)
             {
-                for (size_t ch = 0; ch < XDFdata.streams[st].time_series.size(); ch++)
-                {
-                    ProgressBar::instance().increaseValue (1, progress_name);
+                ProgressBar::instance().increaseValue (1, progress_name);
 
-                    QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples,0));
+                QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples,0));
 
 
-                    std::copy(XDFdata.streams[st].time_series[ch].begin(),
-                              XDFdata.streams[st].time_series[ch].end(),
-                              raw_data->begin() + pos);
-                    QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata.majSR));
+                std::copy(XDFdata.streams[st].time_series[ch].begin(),
+                          XDFdata.streams[st].time_series[ch].end(),
+                          raw_data->begin() + startingPosition);
+                QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata.majSR));
 
-                    channel_map_[channel_id] = data_block;
-                    channel_id++;
+                channel_map_[channel_id] = data_block;
+                channel_id++;
 
-                    std::vector<float> nothing;
-                    XDFdata.streams[st].time_series[ch].swap(nothing);
-                }
-                std::vector<float> nothing2;
-                XDFdata.streams[st].time_stamps.swap(nothing2);
+                std::vector<float> nothing;
+                XDFdata.streams[st].time_series[ch].swap(nothing);
             }
-            else
-            {
-                for (size_t ch = 0; ch < XDFdata.streams[st].time_series.size(); ch++)
-                {
-                    ProgressBar::instance().increaseValue (1, progress_name);
-
-                    QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples,0));
-
-
-                    std::copy(XDFdata.streams[st].time_series[ch].begin(),
-                              XDFdata.streams[st].time_series[ch].end(),
-                              raw_data->begin() + XDFdata.totalLen - XDFdata.streams[st].time_series[ch].size());
-                    QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata.majSR));
-                    channel_map_[channel_id] = data_block;
-                    channel_id++;
-
-                    std::vector<float> nothing;
-                    XDFdata.streams[st].time_series[ch].swap(nothing);
-                }
-
-                std::vector<float> nothing2;
-                XDFdata.streams[st].time_stamps.swap(nothing2);
-            }
+            std::vector<float> nothing2;
+            XDFdata.streams[st].time_stamps.swap(nothing2);
         }
         //else if: irregualar samples
         else if (XDFdata.streams[st].info.nominal_srate == 0 && !XDFdata.streams[st].time_series.empty())
@@ -243,7 +221,7 @@ void XDFReader::bufferAllChannels () const
                 {
                     //find out the position using the timestamp provided
                     float* pt = raw_data->begin()  + (int)((XDFdata.streams[st].time_stamps[i]- XDFdata.minTS)* XDFdata.majSR);
-                    *(pt) = XDFdata.streams[st].time_series[ch][i];
+                    *pt = XDFdata.streams[st].time_series[ch][i];
 
                     //if i is not the last element of the irregular time series
                     if (i != XDFdata.streams[st].time_stamps.size() - 1)
