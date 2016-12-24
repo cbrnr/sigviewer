@@ -37,6 +37,9 @@ public:
     virtual QString getChannelLabel (ChannelID id) const = 0;
 
     //-------------------------------------------------------------------------
+    virtual QString getChannelLabel (ChannelID id, int streamNumber) const; //streamNumber is for XDF only
+
+    //-------------------------------------------------------------------------
     virtual QString getChannelYUnitString (ChannelID id) const = 0;
 
     //-------------------------------------------------------------------------

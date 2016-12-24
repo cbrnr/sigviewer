@@ -223,7 +223,7 @@ void BioSigReader::bufferAllEvents () const
     {
         QSharedPointer<SignalEvent> event (new SignalEvent (biosig_header_->EVENT.POS[index] * rate_transition,
                                                             biosig_header_->EVENT.TYP[index],
-                                                            biosig_header_->EVENT.SampleRate * rate_transition));
+                                                            biosig_header_->EVENT.SampleRate * rate_transition, -1));
         if (biosig_header_->EVENT.CHN)
         {
             if (biosig_header_->EVENT.CHN[index] == 0)

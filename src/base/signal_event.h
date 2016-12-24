@@ -17,7 +17,7 @@ class SignalEvent
 public:
     SignalEvent();
     SignalEvent(size_t position, EventType type,
-                float64 sample_rate,
+                float64 sample_rate, int streamNumber,
                 ChannelID channel = UNDEFINED_CHANNEL,
                 size_t duration = 0, EventID id = UNDEFINED_EVENT_ID);
 
@@ -34,6 +34,7 @@ public:
     float64 getDurationInSec() const;
     float64 getEndInSec () const;
     float64 getSampleRate () const;
+    int getStream() const;
 
     void setId (EventID id);
     void setPosition(size_t position);
@@ -52,6 +53,7 @@ private:
     EventType type_;
     ChannelID channel_;
     size_t duration_;
+    int stream_;
 };
 
 }

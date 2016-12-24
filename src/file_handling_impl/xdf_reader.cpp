@@ -259,9 +259,9 @@ void XDFReader::bufferAllEvents () const
     for (unsigned index = 0; index < number_events; index++)
     {
         QSharedPointer<SignalEvent> event
-                (new SignalEvent ((XDFdata.eventMap[index].second - XDFdata.minTS) * XDFdata.majSR,
+                (new SignalEvent ((XDFdata.eventMap[index].first.second - XDFdata.minTS) * XDFdata.majSR,
                                                             XDFdata.eventType[index],
-                                                            XDFdata.majSR));
+                                                            XDFdata.majSR, XDFdata.eventMap[index].second));
 
         event->setChannel (UNDEFINED_CHANNEL);
         event->setDuration (0);

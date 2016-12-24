@@ -15,20 +15,23 @@ SignalEvent::SignalEvent()
   sample_rate_ (1),
   type_(0xFFFF),
   channel_(UNDEFINED_CHANNEL),
-  duration_(UNDEFINED_DURATION)
+  duration_(UNDEFINED_DURATION),
+  stream_(-1)
 {
     // nothing
 }
 
+
 // constructor
-SignalEvent::SignalEvent(size_t position, EventType type, float64 sample_rate, ChannelID channel,
+SignalEvent::SignalEvent(size_t position, EventType type, float64 sample_rate, int streamNumber, ChannelID channel,
                          size_t duration, int32 id)
 : id_(id),
   position_(position),
   sample_rate_ (sample_rate),
   type_(type),
   channel_(channel),
-  duration_(duration)
+  duration_(duration),
+  stream_(streamNumber)
 {
     // nothing
 }
@@ -40,7 +43,8 @@ SignalEvent::SignalEvent(const SignalEvent& src, int32 id)
   sample_rate_ (src.sample_rate_),
   type_(src.type_),
   channel_(src.channel_),
-  duration_(src.duration_)
+  duration_(src.duration_),
+  stream_(src.stream_)
 {
     // nothing   
 }
@@ -52,7 +56,8 @@ SignalEvent::SignalEvent(const SignalEvent& src)
   sample_rate_ (src.sample_rate_),
   type_(src.type_),
   channel_(src.channel_),
-  duration_(src.duration_)
+  duration_(src.duration_),
+  stream_(src.stream_)
 {
     // nothing
 }
@@ -65,6 +70,7 @@ SignalEvent& SignalEvent::operator= (const SignalEvent& src)
     type_ = src.type_;
     channel_ = src.channel_;
     duration_ = src.duration_;
+    stream_ = src.stream_;
     return *this;
 }
 
@@ -124,6 +130,11 @@ float64 SignalEvent::getSampleRate () const
     return sample_rate_;
 }
 
+int SignalEvent::getStream() const
+{
+    return stream_;
+}
+
 //-----------------------------------------------------------------------------
 void SignalEvent::setId (EventID id)
 {
@@ -167,6 +178,9 @@ bool SignalEvent::equals (SignalEvent const& event) const
         return false;
     if (channel_ != event.channel_)
         return false;
+    if (stream_ != event.stream_)
+        return false;
+
     return true;
 }
 

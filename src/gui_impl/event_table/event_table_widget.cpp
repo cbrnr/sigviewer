@@ -82,7 +82,7 @@ void EventTableWidget::addToTable (QSharedPointer<SignalEvent const> event)
 
     QTableWidgetItem* position_item = new EventTableItem (event->getPositionInSec(), precision_);
     QTableWidgetItem* duration_item = new EventTableItem (event->getDurationInSec(), precision_);
-    QTableWidgetItem* channel_item = new QTableWidgetItem (channel_manager_.getChannelLabel(event->getChannel()));
+    QTableWidgetItem* channel_item = new QTableWidgetItem (channel_manager_.getChannelLabel(event->getChannel(), event->getStream()));
     QTableWidgetItem* type_item = new QTableWidgetItem (event_manager_->getNameOfEvent(event->getId()));
     QTableWidgetItem* id_item = new EventTableItem (event->getId());
 
@@ -133,7 +133,7 @@ void EventTableWidget::updateEventEntry (EventID event_id)
         QTableWidgetItem* id_item = ui_.event_table_->item (row, ID_INDEX_);
         if (id_item->text().toInt() == event_id)
         {
-            ui_.event_table_->item (row, CHANNEL_INDEX_)->setText (channel_manager_.getChannelLabel (event->getChannel()));
+            ui_.event_table_->item (row, CHANNEL_INDEX_)->setText (channel_manager_.getChannelLabel (event->getChannel(), event->getStream()));
             ui_.event_table_->item (row, POSITION_INDEX_)->setText (QString::number (event->getPositionInSec(), 'f', precision_));
             ui_.event_table_->item (row, DURATION_INDEX_)->setText (QString::number (event->getDurationInSec(), 'f', precision_));
             ui_.event_table_->item (row, TYPE_INDEX_)->setText (event_manager_->getNameOfEvent (event_id));
