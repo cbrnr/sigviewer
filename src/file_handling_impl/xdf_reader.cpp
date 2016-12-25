@@ -141,6 +141,25 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
     }
     colorTest.saveSettings();
 */
+    /*
+
+    This part of code is for testing "Fiducial" entry in the info dialog. The fiducial tag doesn't exist in the XDF files that I have,
+    thus I can only test them by manually inserting some code
+
+    for (size_t i = 0; i < XDFdata.streams.size(); i++)
+    {
+        XDFdata.streams[i].info.desc.fiducials.resize(5);
+
+        for (size_t j = 0; j < XDFdata.streams[i].info.desc.fiducials.size(); j++)
+        {
+            XDFdata.streams[i].info.desc.fiducials[j].label = "test fiducial label";
+
+            XDFdata.streams[i].info.desc.fiducials[j].location.emplace("X", "test");
+            XDFdata.streams[i].info.desc.fiducials[j].location.emplace("Y", "test");
+            XDFdata.streams[i].info.desc.fiducials[j].location.emplace("Z", "test");
+        }
+    }
+    */
 
 
     t = clock() - t;
