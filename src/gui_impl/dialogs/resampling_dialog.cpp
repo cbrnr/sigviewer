@@ -30,8 +30,7 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
         ui->label->setText(text);
     }
     ui->treeWidget->setColumnCount(2);
-    ui->treeWidget->setColumnWidth(0, 270);
-    ui->treeWidget->setColumnWidth(1, 270);
+    ui->treeWidget->setColumnWidth(0, this->width()/2.15);
     ui->treeWidget->setAnimated(true);
     QStringList headers;
     headers << "Stream" << "Info";
@@ -39,7 +38,6 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
     for (size_t i = 0; i < XDFdata.streams.size(); i++)
     {
         QTreeWidgetItem* streamItem = new QTreeWidgetItem(ui->treeWidget);
-        streamItem->setExpanded(true);
         streamItem->setText(0, "Stream "+QString::number(i));
 
         QTreeWidgetItem* infoItem = new QTreeWidgetItem(streamItem);
@@ -55,6 +53,13 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
         infoItem->setText(1, QString::number(XDFdata.streams[i].info.nominal_srate).append(tr(" Hz")));
 
         infoItem = new QTreeWidgetItem(streamItem);
+        infoItem->setText(0, tr("Channel Count"));
+        if (XDFdata.streams[i].info.channel_count <= 1)
+            infoItem->setText(1, QString::number(XDFdata.streams[i].info.channel_count).append(tr(" Channel")));
+        else
+            infoItem->setText(1, QString::number(XDFdata.streams[i].info.channel_count).append(tr(" Channels")));
+
+        infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Channel Format"));
         infoItem->setText(1, QString::fromStdString(XDFdata.streams[i].info.infoMap["channel_format"]));
     }
@@ -62,6 +67,7 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
     ui->spinBox->setMinimum(1);
     ui->spinBox->setValue(nativeSrate);
     ui->spinBox->setMaximum(highestSampleRate);
+    ui->treeWidget->expandAll();
 }
 
 ResamplingDialog::~ResamplingDialog()

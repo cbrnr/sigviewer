@@ -132,15 +132,15 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
 
     for (size_t i = 0; i < XDFdata.totalCh; i++)
     {
-        size_t stream = 0;
-        if (stream != XDFdata.streamMap[i])
-            stream = XDFdata.streamMap[i];
+        size_t stream = XDFdata.streamMap[i];
         while (stream > 8)
             stream -= 9;
         colorTest.setChannelColor(i, colorList[stream]);
     }
     colorTest.saveSettings();
+    //colorTest.loadSettings();
 */
+
     /*
 
     This part of code is for testing "Fiducial" entry in the info dialog. The fiducial tag doesn't exist in the XDF files that I have,

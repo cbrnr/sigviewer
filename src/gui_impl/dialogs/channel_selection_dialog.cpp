@@ -88,16 +88,14 @@ ChannelSelectionDialog::ChannelSelectionDialog(QString file_format, const Channe
       header_ (header), self_setting_ (false), fileType (file_format)
 {
     ui_.setupUi (this);
-    QString window_title (tr("Channels"));
-    setWindowTitle (window_title);
+    this->setWindowTitle (tr("Channels"));
 
     ui_.channel_table_->hide();
     QStringList headerLabels;
     headerLabels << tr("Stream") << tr("Color");
     ui_.treeWidget->setHeaderLabels(headerLabels);
     ui_.treeWidget->setColumnCount(2);
-    ui_.treeWidget->setColumnWidth(0,150);
-    ui_.treeWidget->setColumnWidth(1,150);
+    ui_.treeWidget->setColumnWidth(0,ui_.treeWidget->width()/2.15);
     ui_.treeWidget->setAnimated(true);
 
     int channelCount = 0;
@@ -105,11 +103,16 @@ ChannelSelectionDialog::ChannelSelectionDialog(QString file_format, const Channe
     {
         QTreeWidgetItem* streamItem = new QTreeWidgetItem(ui_.treeWidget);
         streamItem->setText(0, tr("Stream ").append(QString::number(i)));
-        streamItem->setCheckState(0, Qt::Unchecked);
         streamItem->setFlags(Qt::ItemIsAutoTristate | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
         streamItem->setExpanded(true);
         if (XDFdata.streams[i].info.infoMap["channel_format"].compare("string"))
         {
+            QColor streamColor = color_manager_->getChannelColor (channelCount);
+            streamItem->setText(1, streamColor.name());
+            streamItem->setBackgroundColor(1, streamColor);
+            if (ColorManager::isDark(streamColor))
+                streamItem->setForeground(1, Qt::white);
+
             for (int j = 0; j < XDFdata.streams[i].info.channel_count; j++)
             {
                 QTreeWidgetItem* channelItem = new QTreeWidgetItem(streamItem);
@@ -169,7 +172,10 @@ void ChannelSelectionDialog::setSelected(QString file_format, ChannelID channel_
     QString temp = "Channel " + QString::number(channel_id);
     while (*it) {
         if ((*it)->text(0) == temp)
+        {
             (*it)->setCheckState(0, state);
+            break;
+        }
         it++;
     }
 }
@@ -295,12 +301,12 @@ void ChannelSelectionDialog::on_button_box__accepted ()
     if (fileType.compare("XDF", Qt::CaseInsensitive) == 0)
     {
         QTreeWidgetItemIterator it(ui_.treeWidget);
-        while (*it) {
-            if ((*it)->text(0).indexOf("Channel") == 0)
+        while (*it)
+        {
+            if ((*it)->text(0).startsWith("Channel"))
             {
-                QString temp = (*it)->text(0);
-                temp.remove("Channel ", Qt::CaseInsensitive);
-                color_manager_->setChannelColor(temp.toUInt(), (*it)->backgroundColor(1));
+                unsigned channelNumber = (*it)->text(0).remove("Channel ", Qt::CaseInsensitive).toUInt();
+                color_manager_->setChannelColor(channelNumber, (*it)->backgroundColor(1));
             }
             it++;
         }
@@ -308,10 +314,8 @@ void ChannelSelectionDialog::on_button_box__accepted ()
     else
     {
         for (int row = 0; row < ui_.channel_table_->rowCount(); ++row)
-        {
             color_manager_->setChannelColor (ui_.channel_table_->item (row, ID_INDEX_)->text().toUInt(),
                                              ui_.channel_table_->item (row, COLOR_INDEX_)->backgroundColor());
-        }
     }
     color_manager_->saveSettings ();
 }
@@ -367,25 +371,38 @@ void ChannelSelectionDialog::on_remove_filter_button__clicked ()
     //    }
 }
 
+//-----------------------------------------------------------------------------
 void ChannelSelectionDialog::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 {
     if (column == COLOR_INDEX_)
     {
-        QColorDialog color_dialog (item->backgroundColor (1), this);
-        if (color_dialog.exec () == QDialog::Accepted)
-            updateColor("XDF", item, color_dialog.selectedColor());
+        if (item->text(0).startsWith("Channel", Qt::CaseInsensitive))
+        {
+            QColorDialog color_dialog (item->backgroundColor (1), this);
+            if (color_dialog.exec () == QDialog::Accepted)
+                updateColor("XDF", item, color_dialog.selectedColor());
+        }
+        else if (item->text(0).startsWith("Stream", Qt::CaseInsensitive) && item->childCount())
+        {
+            QColorDialog color_dialog (item->backgroundColor (1), this);
+            if (color_dialog.exec () == QDialog::Accepted)
+            {
+                updateColor("XDF", item, color_dialog.selectedColor());
+
+                for (size_t i = 0; i < item->childCount(); i++)
+                    updateColor("XDF", item->child(i), color_dialog.selectedColor());
+            }
+        }
     }
     self_setting_ = false;
 }
-
 
 //-----------------------------------------------------------------------------
 void ChannelSelectionDialog::on_treeWidget_itemChanged(QTreeWidgetItem *item, int column)
 {
     if (column == VISIBLE_INDEX_)
     {
-        if (!self_setting_)
-            self_setting_ = true;
+        self_setting_ = true;
 
         bool all_visible = true;
         bool all_hidden = true;

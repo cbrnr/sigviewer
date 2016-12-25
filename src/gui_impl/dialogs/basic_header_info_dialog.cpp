@@ -42,7 +42,7 @@ BasicHeaderInfoDialog::BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header,
     button_layout->addWidget(close_button_);
     button_layout->addStretch(1);
     buildTree();
-    resize(400, 400);
+    resize(850, 850);
     top_layout->activate();
     connect(close_button_, SIGNAL(clicked()), this, SLOT(accept()));
 }
@@ -52,10 +52,10 @@ void BasicHeaderInfoDialog::loadSettings()
 {
     QSettings settings("SigViewer");
     settings.beginGroup("BasicHeaderInfoDialog");
-    resize(settings.value("size", QSize(400, 400)).toSize());
+    resize(settings.value("size", QSize(850, 850)).toSize());
     move(settings.value("pos", QPoint(200, 200)).toPoint());
-    info_tree_widget_->header()->resizeSection(0, settings.value("col0_width", 100).toInt());
-    info_tree_widget_->header()->resizeSection(1, settings.value("col1_width", 150).toInt());
+    info_tree_widget_->header()->resizeSection(0, settings.value("col0_width", 400).toInt());
+    info_tree_widget_->header()->resizeSection(1, settings.value("col1_width", 450).toInt());
 
     settings.endGroup();
 }
@@ -83,6 +83,7 @@ void BasicHeaderInfoDialog::buildTree()
     info_tree_widget_->setHeaderLabels(header_labels);
 
     info_tree_widget_->header()->setSectionResizeMode(QHeaderView::Interactive);
+    info_tree_widget_->setColumnWidth(0, this->width()/1.6);
 
     QTreeWidgetItem* root_item;
     QTreeWidgetItem* tmp_item;

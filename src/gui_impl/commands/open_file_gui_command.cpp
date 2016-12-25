@@ -159,7 +159,6 @@ void OpenFileGuiCommand::showFileInfo ()
 {
     BasicHeaderInfoDialog basic_header_info_dialog(applicationContext()->getCurrentFileContext()->getHeader());
 
-    basic_header_info_dialog.loadSettings();
     basic_header_info_dialog.exec();
     basic_header_info_dialog.saveSettings();
 }
