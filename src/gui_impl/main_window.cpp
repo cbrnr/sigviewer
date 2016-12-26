@@ -46,6 +46,7 @@ MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
     QSettings settings("SigViewer");
     resize(settings.value("MainWindow/size", QSize(800, 500)).toSize());
     setMinimumSize(800, 500);
+    showMaximized();
 }
 
 //-----------------------------------------------------------------------------

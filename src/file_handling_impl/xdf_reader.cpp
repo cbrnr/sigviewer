@@ -159,8 +159,22 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
             XDFdata.streams[i].info.desc.fiducials[j].location.emplace("Z", "test");
         }
     }
-    */
 
+    for (size_t i = 0; i < XDFdata.streams.size(); i++)
+    {
+        XDFdata.streams[i].info.desc.provider.emplace("star", "wars");
+        XDFdata.streams[i].info.desc.provider.emplace("wars", "star");
+
+        XDFdata.streams[i].info.desc.facility.emplace("star", "wars");
+        XDFdata.streams[i].info.desc.facility.emplace("wars", "star");
+
+        XDFdata.streams[i].info.desc.synchronization.emplace("star", "wars");
+        XDFdata.streams[i].info.desc.synchronization.emplace("wars", "star");
+
+        XDFdata.streams[i].info.desc.encoding.emplace("star", "wars");
+        XDFdata.streams[i].info.desc.encoding.emplace("wars", "star");
+    }
+*/
 
     t = clock() - t;
     std::cout << "it took " << ((float)t) / CLOCKS_PER_SEC << " seconds reading data" << std::endl;

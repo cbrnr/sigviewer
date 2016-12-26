@@ -164,6 +164,57 @@ void BasicHeaderInfoDialog::buildTree()
             tmp_item = new QTreeWidgetItem(root_item);
             tmp_item->setText(0, tr("desc"));
 
+            if (XDFdata.streams[i].info.desc.provider.size())
+            {
+                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
+                desc_item->setText(0, tr("provider"));
+
+                for (auto entry : XDFdata.streams[i].info.desc.provider)
+                {
+                    QTreeWidgetItem* provider_item = new QTreeWidgetItem(desc_item);
+                    provider_item->setText(0, QString::fromStdString(entry.first));
+                    provider_item->setText(1, QString::fromStdString(entry.second));
+                }
+            }
+
+            if (XDFdata.streams[i].info.desc.facility.size())
+            {
+                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
+                desc_item->setText(0, tr("facility"));
+
+                for (auto entry : XDFdata.streams[i].info.desc.facility)
+                {
+                    QTreeWidgetItem* facility_item = new QTreeWidgetItem(desc_item);
+                    facility_item->setText(0, QString::fromStdString(entry.first));
+                    facility_item->setText(1, QString::fromStdString(entry.second));
+                }
+            }
+
+            if (XDFdata.streams[i].info.desc.synchronization.size())
+            {
+                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
+                desc_item->setText(0, tr("synchronization"));
+
+                for (auto entry : XDFdata.streams[i].info.desc.synchronization)
+                {
+                    QTreeWidgetItem* synchronization_item = new QTreeWidgetItem(desc_item);
+                    synchronization_item->setText(0, QString::fromStdString(entry.first));
+                    synchronization_item->setText(1, QString::fromStdString(entry.second));
+                }
+            }
+
+            if (XDFdata.streams[i].info.desc.encoding.size())
+            {
+                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
+                desc_item->setText(0, tr("encoding"));
+
+                for (auto entry : XDFdata.streams[i].info.desc.encoding)
+                {
+                    QTreeWidgetItem* encoding_item = new QTreeWidgetItem(desc_item);
+                    encoding_item->setText(0, QString::fromStdString(entry.first));
+                    encoding_item->setText(1, QString::fromStdString(entry.second));
+                }
+            }
 
             if (XDFdata.streams[i].info.desc.acquisition.size())
             {
