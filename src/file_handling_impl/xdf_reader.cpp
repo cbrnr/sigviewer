@@ -5,7 +5,6 @@
 #include "base/fixed_data_block.h"
 #include "gui_impl/dialogs/resampling_dialog.h"
 
-
 #include <QTextStream>
 #include <QTranslator>
 #include <QMutexLocker>
@@ -108,6 +107,7 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
     clock_t t2 = clock();
 
     XDFdata.load_xdf(file_name.toStdString());
+    XDFdata.subtractByMean();
 
     ResamplingDialog prompt(XDFdata.majSR, XDFdata.maxSR);
     prompt.setModal(true);
@@ -124,6 +124,9 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
         XDFdata.majSR = prompt.getUserSrate();
 
     XDFdata.resampleXDF(XDFdata.majSR);
+    XDFdata.freeUpTimeStamps(); //to save some memory
+
+
 /*
     ColorManager colorTest;
     QVector<QColor> colorList = {Qt::blue, Qt::darkCyan, Qt::red, Qt::magenta,
@@ -210,24 +213,24 @@ void XDFReader::bufferAllChannels () const
 
     //load all signals channel by channel
     unsigned channel_id = 0;
-    for (size_t st = 0; st< XDFdata.streams.size(); st++)
+    for (auto &stream : XDFdata.streams)
     {
-        if (XDFdata.streams[st].info.nominal_srate != 0)
+        if (stream.info.nominal_srate != 0)
         {
-            int startingPosition = (XDFdata.streams[st].time_stamps.front() - XDFdata.minTS) * XDFdata.majSR;
+            int startingPosition = (stream.time_stamps.front() - XDFdata.minTS) * XDFdata.majSR;
 
-            if (XDFdata.streams[st].time_series.front().size() > XDFdata.totalLen - startingPosition )
-                startingPosition = XDFdata.totalLen - XDFdata.streams[st].time_series.front().size();
+            if (stream.time_series.front().size() > XDFdata.totalLen - startingPosition )
+                startingPosition = XDFdata.totalLen - stream.time_series.front().size();
 
-            for (size_t ch = 0; ch < XDFdata.streams[st].time_series.size(); ch++)
+            for (size_t ch = 0; ch < stream.time_series.size(); ch++)
             {
                 ProgressBar::instance().increaseValue (1, progress_name);
 
                 QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples,0));
 
 
-                std::copy(XDFdata.streams[st].time_series[ch].begin(),
-                          XDFdata.streams[st].time_series[ch].end(),
+                std::copy(stream.time_series[ch].begin(),
+                          stream.time_series[ch].end(),
                           raw_data->begin() + startingPosition);
                 QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata.majSR));
 
@@ -235,37 +238,37 @@ void XDFReader::bufferAllChannels () const
                 channel_id++;
 
                 std::vector<float> nothing;
-                XDFdata.streams[st].time_series[ch].swap(nothing);
+                stream.time_series[ch].swap(nothing);
             }
             std::vector<float> nothing2;
-            XDFdata.streams[st].time_stamps.swap(nothing2);
+            stream.time_stamps.swap(nothing2);
         }
         //else if: irregualar samples
-        else if (XDFdata.streams[st].info.nominal_srate == 0 && !XDFdata.streams[st].time_series.empty())
+        else if (stream.info.nominal_srate == 0 && !stream.time_series.empty())
         {
-            for (size_t ch = 0; ch < XDFdata.streams[st].time_series.size(); ch++)
+            for (size_t ch = 0; ch < stream.time_series.size(); ch++)
             {
                 ProgressBar::instance().increaseValue (1, progress_name);
 
                 QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples,0));
 
 
-                for (size_t i = 0; i < XDFdata.streams[st].time_series[ch].size(); i++)
+                for (size_t i = 0; i < stream.time_series[ch].size(); i++)
                 {
                     //find out the position using the timestamp provided
-                    float* pt = raw_data->begin()  + (int)((XDFdata.streams[st].time_stamps[i]- XDFdata.minTS)* XDFdata.majSR);
-                    *pt = XDFdata.streams[st].time_series[ch][i];
+                    float* pt = raw_data->begin()  + (int)((stream.time_stamps[i]- XDFdata.minTS)* XDFdata.majSR);
+                    *pt = stream.time_series[ch][i];
 
                     //if i is not the last element of the irregular time series
-                    if (i != XDFdata.streams[st].time_stamps.size() - 1)
+                    if (i != stream.time_stamps.size() - 1)
                     {
                         //using linear interpolation to fill in the space between every two signals
-                        int interval = (XDFdata.streams[st].time_stamps[i+1]
-                                        - XDFdata.streams[st].time_stamps[i]) * XDFdata.majSR;
+                        int interval = (stream.time_stamps[i+1]
+                                        - stream.time_stamps[i]) * XDFdata.majSR;
                         for (int mid = 1; mid <= interval; mid++)
-                            *(pt + mid) = XDFdata.streams[st].time_series[ch][i]
-                                + mid * ((XDFdata.streams[st].time_series[ch][i+1]
-                                - XDFdata.streams[st].time_series[ch][i])) / interval;
+                            *(pt + mid) = stream.time_series[ch][i]
+                                + mid * ((stream.time_series[ch][i+1]
+                                - stream.time_series[ch][i])) / interval;
                     }
                 }
                 QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata.majSR));
@@ -273,11 +276,11 @@ void XDFReader::bufferAllChannels () const
                 channel_id++;
 
                 std::vector<float> nothing;
-                XDFdata.streams[st].time_series[ch].swap(nothing);
+                stream.time_series[ch].swap(nothing);
 
             }
             std::vector<float> nothing2;
-            XDFdata.streams[st].time_stamps.swap(nothing2);
+            stream.time_stamps.swap(nothing2);
         }
     }
 

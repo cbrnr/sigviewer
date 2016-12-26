@@ -3,11 +3,11 @@
 
 #include "file_handling/file_signal_reader.h"
 #include "biosig.h"
+#include "xdf.h"
 
 #include <QFile>
 #include <QMutex>
 #include <QMap>
-#include "xdf.h"
 
 namespace sigviewer
 {
