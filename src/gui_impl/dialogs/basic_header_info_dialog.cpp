@@ -304,7 +304,7 @@ void BasicHeaderInfoDialog::buildTree()
 
                     QSharedPointer<SignalChannel const> channel = basic_header_->getChannel (channelIndex);
                     channel_item = new QTreeWidgetItem(channels_item);
-                    channel_item->setText(0, QString("(%1) %2").arg(channelIndex).arg(channel->getLabel()));
+                    channel_item->setText(0, QString("%1").arg(channel->getLabel()));
 
                     if (XDFdata.streams[i].info.desc.channels.size())
                     {
@@ -387,7 +387,7 @@ void BasicHeaderInfoDialog::buildTree()
                 fiducials_item->setText(0, tr("fiducials"));
 
 
-                for (size_t iFidu =0; iFidu < XDFdata.streams[i].info.desc.fiducials.size(); iFidu++)
+                for (auto const &fiducial : XDFdata.streams[i].info.desc.fiducials)
                 {
                     QTreeWidgetItem* fiducial_item = new QTreeWidgetItem(fiducials_item);
                     fiducial_item->setText(0, tr("fiducial"));
@@ -395,12 +395,12 @@ void BasicHeaderInfoDialog::buildTree()
                     QTreeWidgetItem* label_item = new QTreeWidgetItem(fiducial_item);
                     label_item->setText(0, tr("label"));
 
-                    if (XDFdata.streams[i].info.desc.fiducials[iFidu].location.size())
+                    if (fiducial.location.size())
                     {
                         QTreeWidgetItem* fiducialLocation_item = new QTreeWidgetItem(fiducial_item);
                         fiducialLocation_item->setText(0, tr("location"));
 
-                        for (auto entry : XDFdata.streams[i].info.desc.fiducials[iFidu].location)
+                        for (auto entry : fiducial.location)
                         {
                             QTreeWidgetItem* fiducialLocationChild_item = new QTreeWidgetItem(fiducialLocation_item);
                             fiducialLocationChild_item->setText(0, QString::fromStdString(entry.first));

@@ -144,11 +144,11 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
     //colorTest.loadSettings();
 */
 
-    /*
 
-    This part of code is for testing "Fiducial" entry in the info dialog. The fiducial tag doesn't exist in the XDF files that I have,
-    thus I can only test them by manually inserting some code
 
+   // This part of code is for testing "Fiducial" entry in the info dialog. The fiducial tag doesn't exist in the XDF files that I have,
+   // thus I can only test them by manually inserting some code
+/*
     for (size_t i = 0; i < XDFdata.streams.size(); i++)
     {
         XDFdata.streams[i].info.desc.fiducials.resize(5);
@@ -222,23 +222,20 @@ void XDFReader::bufferAllChannels () const
             if (stream.time_series.front().size() > XDFdata.totalLen - startingPosition )
                 startingPosition = XDFdata.totalLen - stream.time_series.front().size();
 
-            for (size_t ch = 0; ch < stream.time_series.size(); ch++)
+            for (auto &row : stream.time_series)
             {
                 ProgressBar::instance().increaseValue (1, progress_name);
 
                 QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples,0));
 
-
-                std::copy(stream.time_series[ch].begin(),
-                          stream.time_series[ch].end(),
-                          raw_data->begin() + startingPosition);
+                std::copy(row.begin(), row.end(), raw_data->begin() + startingPosition);
                 QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata.majSR));
 
                 channel_map_[channel_id] = data_block;
                 channel_id++;
 
                 std::vector<float> nothing;
-                stream.time_series[ch].swap(nothing);
+                row.swap(nothing);
             }
             std::vector<float> nothing2;
             stream.time_stamps.swap(nothing2);
@@ -246,18 +243,17 @@ void XDFReader::bufferAllChannels () const
         //else if: irregualar samples
         else if (stream.info.nominal_srate == 0 && !stream.time_series.empty())
         {
-            for (size_t ch = 0; ch < stream.time_series.size(); ch++)
+            for (auto &row : stream.time_series)
             {
                 ProgressBar::instance().increaseValue (1, progress_name);
 
                 QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples,0));
 
-
-                for (size_t i = 0; i < stream.time_series[ch].size(); i++)
+                for (size_t i = 0; i < row.size(); i++)
                 {
                     //find out the position using the timestamp provided
                     float* pt = raw_data->begin()  + (int)((stream.time_stamps[i]- XDFdata.minTS)* XDFdata.majSR);
-                    *pt = stream.time_series[ch][i];
+                    *pt = row[i];
 
                     //if i is not the last element of the irregular time series
                     if (i != stream.time_stamps.size() - 1)
@@ -266,9 +262,7 @@ void XDFReader::bufferAllChannels () const
                         int interval = (stream.time_stamps[i+1]
                                         - stream.time_stamps[i]) * XDFdata.majSR;
                         for (int mid = 1; mid <= interval; mid++)
-                            *(pt + mid) = stream.time_series[ch][i]
-                                + mid * ((stream.time_series[ch][i+1]
-                                - stream.time_series[ch][i])) / interval;
+                            *(pt + mid) = row[i] + mid * ((row[i+1] - row[i])) / interval;
                     }
                 }
                 QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata.majSR));
@@ -276,8 +270,7 @@ void XDFReader::bufferAllChannels () const
                 channel_id++;
 
                 std::vector<float> nothing;
-                stream.time_series[ch].swap(nothing);
-
+                row.swap(nothing);
             }
             std::vector<float> nothing2;
             stream.time_stamps.swap(nothing2);
