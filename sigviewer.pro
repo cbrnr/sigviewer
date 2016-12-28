@@ -46,7 +46,7 @@ INCLUDEPATH += \
 
 LIBS += \
     -L$$PWD/external/lib \
-    -lbiosig -lxdf
+    -lbiosig
 
 RESOURCES = $$PWD/src/src.qrc
 win32:RC_FILE = $$PWD/src/src.rc
@@ -77,3 +77,5 @@ SOURCES += \
     $$PWD/src/application_context_impl.cpp \
     $$PWD/src/file_context.cpp \
     $$PWD/src/tab_context.cpp
+
+QMAKE_CFLAGS += -std=c99

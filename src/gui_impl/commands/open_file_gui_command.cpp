@@ -18,7 +18,7 @@
 #include "editing_commands/new_event_undo_command.h"
 #include "gui/progress_bar.h"
 #include "close_file_gui_command.h"
-#include "xdf.h"
+#include "file_handling_impl/xdf.h"
 #include "file_handling_impl/xdf_reader.h"
 
 #include <QFileDialog>

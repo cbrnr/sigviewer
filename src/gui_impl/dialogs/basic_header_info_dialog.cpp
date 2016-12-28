@@ -154,7 +154,7 @@ void BasicHeaderInfoDialog::buildTree()
             //root_item->setIcon(0, QIcon(":/images/info_16x16.png"));
             info_tree_widget_->setAnimated(true);
 
-            for (auto entry : XDFdata.streams[i].info.infoMap)
+            for (auto const &entry : XDFdata.streams[i].info.infoMap)
             {
                 tmp_item = new QTreeWidgetItem(root_item);
                 tmp_item->setText(0, QString::fromStdString(entry.first));
@@ -169,7 +169,7 @@ void BasicHeaderInfoDialog::buildTree()
                 QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
                 desc_item->setText(0, tr("provider"));
 
-                for (auto entry : XDFdata.streams[i].info.desc.provider)
+                for (auto const &entry : XDFdata.streams[i].info.desc.provider)
                 {
                     QTreeWidgetItem* provider_item = new QTreeWidgetItem(desc_item);
                     provider_item->setText(0, QString::fromStdString(entry.first));
@@ -182,7 +182,7 @@ void BasicHeaderInfoDialog::buildTree()
                 QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
                 desc_item->setText(0, tr("facility"));
 
-                for (auto entry : XDFdata.streams[i].info.desc.facility)
+                for (auto const &entry : XDFdata.streams[i].info.desc.facility)
                 {
                     QTreeWidgetItem* facility_item = new QTreeWidgetItem(desc_item);
                     facility_item->setText(0, QString::fromStdString(entry.first));
@@ -195,7 +195,7 @@ void BasicHeaderInfoDialog::buildTree()
                 QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
                 desc_item->setText(0, tr("synchronization"));
 
-                for (auto entry : XDFdata.streams[i].info.desc.synchronization)
+                for (auto const &entry : XDFdata.streams[i].info.desc.synchronization)
                 {
                     QTreeWidgetItem* synchronization_item = new QTreeWidgetItem(desc_item);
                     synchronization_item->setText(0, QString::fromStdString(entry.first));
@@ -208,7 +208,7 @@ void BasicHeaderInfoDialog::buildTree()
                 QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
                 desc_item->setText(0, tr("encoding"));
 
-                for (auto entry : XDFdata.streams[i].info.desc.encoding)
+                for (auto const &entry : XDFdata.streams[i].info.desc.encoding)
                 {
                     QTreeWidgetItem* encoding_item = new QTreeWidgetItem(desc_item);
                     encoding_item->setText(0, QString::fromStdString(entry.first));
@@ -221,7 +221,7 @@ void BasicHeaderInfoDialog::buildTree()
                 QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
                 desc_item->setText(0, tr("acquisition"));
 
-                for (auto entry : XDFdata.streams[i].info.desc.acquisition)
+                for (auto const &entry : XDFdata.streams[i].info.desc.acquisition)
                 {
                     QTreeWidgetItem* acquisition_item = new QTreeWidgetItem(desc_item);
                     acquisition_item->setText(0, QString::fromStdString(entry.first));
@@ -234,7 +234,7 @@ void BasicHeaderInfoDialog::buildTree()
                 QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
                 desc_item->setText(0, tr("reference"));
 
-                for (auto entry : XDFdata.streams[i].info.desc.reference)
+                for (auto const &entry : XDFdata.streams[i].info.desc.reference)
                 {
                     QTreeWidgetItem* reference_item = new QTreeWidgetItem(desc_item);
                     reference_item->setText(0, QString::fromStdString(entry.first));
@@ -247,7 +247,7 @@ void BasicHeaderInfoDialog::buildTree()
                 QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
                 desc_item->setText(0, tr("cap"));
 
-                for (auto entry : XDFdata.streams[i].info.desc.cap)
+                for (auto const &entry : XDFdata.streams[i].info.desc.cap)
                 {
                     QTreeWidgetItem* cap_item = new QTreeWidgetItem(desc_item);
                     cap_item->setText(0, QString::fromStdString(entry.first));
@@ -260,7 +260,7 @@ void BasicHeaderInfoDialog::buildTree()
                 QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
                 desc_item->setText(0, tr("location_measurement"));
 
-                for (auto entry : XDFdata.streams[i].info.desc.location_measurement)
+                for (auto const &entry : XDFdata.streams[i].info.desc.location_measurement)
                 {
                     QTreeWidgetItem* location_measurement_item = new QTreeWidgetItem(desc_item);
                     location_measurement_item->setText(0, QString::fromStdString(entry.first));
@@ -276,7 +276,7 @@ void BasicHeaderInfoDialog::buildTree()
                 QTreeWidgetItem* sub_item = new QTreeWidgetItem(desc_item);
                 sub_item->setText(0, tr("settings"));
 
-                for (auto entry : XDFdata.streams[i].info.desc.amplifier.settings)
+                for (auto const &entry : XDFdata.streams[i].info.desc.amplifier.settings)
                 {
                     QTreeWidgetItem* settings_item = new QTreeWidgetItem(sub_item);
                     settings_item->setText(0, QString::fromStdString(entry.first));
@@ -308,7 +308,7 @@ void BasicHeaderInfoDialog::buildTree()
 
                     if (XDFdata.streams[i].info.desc.channels.size())
                     {
-                        for (auto entry : XDFdata.streams[i].info.desc.channels[channel_nr].channelInfoMap)
+                        for (auto const &entry : XDFdata.streams[i].info.desc.channels[channel_nr].channelInfoMap)
                         {
                             QTreeWidgetItem* tmp_item = new QTreeWidgetItem(channel_item);
                             tmp_item->setText(0, QString::fromStdString(entry.first));
@@ -316,7 +316,7 @@ void BasicHeaderInfoDialog::buildTree()
 
                             if (entry.first.compare("location")==0)
                             {
-                                for (auto subentry : XDFdata.streams[i].info.desc.channels[channel_nr].location)
+                                for (auto const &subentry : XDFdata.streams[i].info.desc.channels[channel_nr].location)
                                 {
                                     QTreeWidgetItem* location_item = new QTreeWidgetItem(tmp_item);
                                     location_item->setText(0, QString::fromStdString(subentry.first));
@@ -326,7 +326,7 @@ void BasicHeaderInfoDialog::buildTree()
 
                             if (entry.first.compare("hardware")==0)
                             {
-                                for (auto subentry : XDFdata.streams[i].info.desc.channels[channel_nr].hardware)
+                                for (auto const &subentry : XDFdata.streams[i].info.desc.channels[channel_nr].hardware)
                                 {
                                     QTreeWidgetItem* hardware_item = new QTreeWidgetItem(tmp_item);
                                     hardware_item->setText(0, QString::fromStdString(subentry.first));
@@ -341,7 +341,7 @@ void BasicHeaderInfoDialog::buildTree()
                                     QTreeWidgetItem* highpass_item = new QTreeWidgetItem(tmp_item);
                                     highpass_item->setText(0, tr("highpass"));
 
-                                    for (auto subentry : XDFdata.streams[i].info.desc.channels[channel_nr].filtering.highpass)
+                                    for (auto const &subentry : XDFdata.streams[i].info.desc.channels[channel_nr].filtering.highpass)
                                     {
                                         QTreeWidgetItem* buff_item = new QTreeWidgetItem(highpass_item);
                                         buff_item->setText(0, QString::fromStdString(subentry.first));
@@ -354,7 +354,7 @@ void BasicHeaderInfoDialog::buildTree()
                                     QTreeWidgetItem* lowpass_item = new QTreeWidgetItem(tmp_item);
                                     lowpass_item->setText(0, tr("lowpass"));
 
-                                    for (auto subentry : XDFdata.streams[i].info.desc.channels[channel_nr].filtering.highpass)
+                                    for (auto const &subentry : XDFdata.streams[i].info.desc.channels[channel_nr].filtering.highpass)
                                     {
                                         QTreeWidgetItem* buff_item = new QTreeWidgetItem(lowpass_item);
                                         buff_item->setText(0, QString::fromStdString(subentry.first));
@@ -367,7 +367,7 @@ void BasicHeaderInfoDialog::buildTree()
                                     QTreeWidgetItem* notch_item = new QTreeWidgetItem(tmp_item);
                                     notch_item->setText(0, tr("notch"));
 
-                                    for (auto subentry : XDFdata.streams[i].info.desc.channels[channel_nr].filtering.highpass)
+                                    for (auto const &subentry : XDFdata.streams[i].info.desc.channels[channel_nr].filtering.highpass)
                                     {
                                         QTreeWidgetItem* buff_item = new QTreeWidgetItem(notch_item);
                                         buff_item->setText(0, QString::fromStdString(subentry.first));
@@ -400,7 +400,7 @@ void BasicHeaderInfoDialog::buildTree()
                         QTreeWidgetItem* fiducialLocation_item = new QTreeWidgetItem(fiducial_item);
                         fiducialLocation_item->setText(0, tr("location"));
 
-                        for (auto entry : fiducial.location)
+                        for (auto const &entry : fiducial.location)
                         {
                             QTreeWidgetItem* fiducialLocationChild_item = new QTreeWidgetItem(fiducialLocation_item);
                             fiducialLocationChild_item->setText(0, QString::fromStdString(entry.first));
