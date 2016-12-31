@@ -550,9 +550,16 @@ void Xdf::load_xdf(std::string filename)
 
         loadSampleRateMap();
 
+        calcTotalChannel();
+
+        loadDictionary();
+
+        subtractMean();
+
+        createLabels();
+
         //loading finishes, close file
         file.close();
-
     }
     else
     {
@@ -643,21 +650,15 @@ void Xdf::resampleXDF(int userSrate)
     //===========Calculating total length & total channel count=============
     //======================================================================
 
-    calcTotalChannel();
 
     calcTotalLength(userSrate);
 
     adjustTotalLength();
 
-    loadDictionary();
-
-    createLabels();
-
     time = clock() - time;
 
     std::cout << "it took " << time << " clicks (" << ((float)time) / CLOCKS_PER_SEC << " seconds)"
               << " resampling" << std::endl;
-
 }
 
 //function of reading the length of each chunk

@@ -107,7 +107,6 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
     clock_t t2 = clock();
 
     XDFdata.load_xdf(file_name.toStdString());
-    XDFdata.subtractMean();
 
     ResamplingDialog prompt(XDFdata.majSR, XDFdata.maxSR);
     prompt.setModal(true);
