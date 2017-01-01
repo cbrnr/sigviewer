@@ -44,6 +44,9 @@ public:
     //-------------------------------------------------------------------------
     virtual float32 getMax () const;
 
+    //-------------------------------------------------------------------------
+    virtual float64 getMean () const;
+
     //---------------------------------------------------------------------------------------------
     static QSharedPointer<DataBlock const> createPowerSpectrum (QSharedPointer<DataBlock const> data_block);
 

@@ -73,6 +73,17 @@ float32 FixedDataBlock::getMax () const
         return 0;
 }
 
+float64 FixedDataBlock::getMean() const
+{
+    QVector<float32>::const_iterator start = data_->begin() + start_index_;
+    QVector<float32>::const_iterator end = data_->begin() + start_index_ + size ();
+
+    long double init = 0.0;
+    long double mean = std::accumulate(start, end, init) / data_->size();
+
+    return mean;
+}
+
 //-----------------------------------------------------------------------------
 QSharedPointer<DataBlock const> FixedDataBlock::createPowerSpectrum (QSharedPointer<DataBlock const> data_block)
 {

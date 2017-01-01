@@ -41,6 +41,9 @@ public:
     virtual float32 getMax () const = 0;
 
     //-------------------------------------------------------------------------
+    virtual float64 getMean () const = 0;
+
+    //-------------------------------------------------------------------------
     /// length of the block
     size_t size () const;
 
