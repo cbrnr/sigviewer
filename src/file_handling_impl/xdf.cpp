@@ -160,6 +160,14 @@ void Xdf::load_xdf(std::string filename)
 
                 for (auto const &entry : desc.child("acquisition").children())
                     streams[index].info.desc.acquisition.emplace(entry.name(), entry.child_value());
+                streams[index].info.desc.acquisition.erase("distortion");
+                streams[index].info.desc.acquisition.erase("setting");
+
+                for (auto const &entry : desc.child("acquisition").child("distortion").children())
+                    streams[index].info.desc.acquisitionDistortion.emplace(entry.name(), entry.child_value());
+
+                for (auto const &entry : desc.child("acquisition").child("setting").children())
+                    streams[index].info.desc.acquisitionSetting.emplace(entry.name(), entry.child_value());
 
                 for (auto const &entry : desc.child("reference").children())
                     streams[index].info.desc.reference.emplace(entry.name(), entry.child_value());
@@ -170,8 +178,76 @@ void Xdf::load_xdf(std::string filename)
                 for (auto const &entry : desc.child("location_measurement").children())
                     streams[index].info.desc.location_measurement.emplace(entry.name(), entry.child_value());
 
+                for (auto const &entry : desc.child("display").children())
+                    streams[index].info.desc.display.emplace(entry.name(), entry.child_value());
+
+                for (auto const &entry : desc.child("content").children())
+                    streams[index].info.desc.content.emplace(entry.name(), entry.child_value());
+
+                for (auto const &entry : desc.child("filtering").children())
+                    streams[index].info.desc.filtering.emplace(entry.name(), entry.child_value());
+
+                if (desc.child("setup"))
+                {
+                    streams[index].info.desc.setup.name = desc.child("setup").child("name").child_value();
+                    streams[index].info.desc.setup.initialized = true;
+                }
+
+                for (auto const &entry : desc.child("setup").child("objects").children())
+                {
+                    streams[index].info.desc.setup.objects.emplace_back();
+                    for (auto const &subentry : entry)
+                        streams[index].info.desc.setup.objects.back().emplace(subentry.name(), subentry.child_value());
+                }
+
+                for (auto const &entry : desc.child("setup").child("markers").children())
+                {
+                    streams[index].info.desc.setup.markers.emplace_back();
+                    for (auto const &subentry : entry)
+                        streams[index].info.desc.setup.objects.back().emplace(subentry.name(), subentry.child_value());
+                }
+
+                for (auto const &entry : desc.child("setup").child("bounds").children())
+                {
+                    std::string temp = entry.name();
+                    std::map<std::string, std::string> tempMap;
+
+                    for (auto const &subentry : entry)
+                        tempMap.emplace(subentry.name(), subentry.child_value());
+                    streams[index].info.desc.setup.bounds[temp] = tempMap;
+                }
+
+                //cameras
+                streams[index].info.desc.setup.camerasModel = desc.child("setup").child("cameras").child("model").child_value();
+                for (auto camera = desc.child("setup").child("cameras").child("camera"); camera; camera = camera.next_sibling("camera"))
+                {
+                    streams[index].info.desc.setup.cameras.emplace_back();
+                    for (auto const &entry : camera.children())
+                        streams[index].info.desc.setup.cameras.back().cameraInfo.emplace(entry.name(), entry.child_value());
+                    streams[index].info.desc.setup.cameras.back().cameraInfo.erase("position");
+                    streams[index].info.desc.setup.cameras.back().cameraInfo.erase("orientation");
+                    streams[index].info.desc.setup.cameras.back().cameraInfo.erase("settings");
+
+                    for (auto const &entry : camera.child("position"))
+                        streams[index].info.desc.setup.cameras.back().position.emplace(entry.name(), entry.child_value());
+
+                    for (auto const &entry : camera.child("orientation"))
+                        streams[index].info.desc.setup.cameras.back().orientation.emplace(entry.name(), entry.child_value());
+
+                    for (auto const &entry : camera.child("settings"))
+                        streams[index].info.desc.setup.cameras.back().settings.emplace(entry.name(), entry.child_value());
+                }
+
+
                 for (auto const &entry : desc.child("amplifier").child("settings").children())
                     streams[index].info.desc.amplifier.settings.emplace(entry.name(), entry.child_value());
+
+                for (auto const &entry : desc.child("subject").children())
+                    streams[index].info.desc.subject.subjectInfo.emplace(entry.name(), entry.child_value());
+                streams[index].info.desc.subject.subjectInfo.erase("medication");
+
+                for (auto const &entry : desc.child("subject").child("medication").children())
+                    streams[index].info.desc.subject.medication.emplace(entry.name(), entry.child_value());
 
                 for (auto fiducial = desc.child("fiducials").child("fiducial"); fiducial; fiducial = fiducial.next_sibling("fiducial"))
                 {

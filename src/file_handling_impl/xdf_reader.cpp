@@ -176,6 +176,47 @@ QString XDFReader::loadFixedHeader(const QString& file_name)
         XDFdata.streams[i].info.desc.encoding.emplace("star", "wars");
         XDFdata.streams[i].info.desc.encoding.emplace("wars", "star");
     }
+
+
+    for (auto &stream : XDFdata.streams)
+    {
+        stream.info.desc.acquisitionDistortion.emplace("test1", "test2");
+        stream.info.desc.provider.emplace("test1", "test2");
+        stream.info.desc.facility.emplace("test1", "test2");
+        stream.info.desc.synchronization.emplace("test1", "test2");
+        stream.info.desc.encoding.emplace("test1", "test2");
+        stream.info.desc.display.emplace("test1", "test2");
+        stream.info.desc.content.emplace("test1", "test2");
+        stream.info.desc.acquisition.emplace("test1", "test2");
+        stream.info.desc.location_measurement.emplace("test1", "test2");
+        stream.info.desc.cap.emplace("test1", "test2");
+        stream.info.desc.filtering.emplace("test1", "test2");
+        stream.info.desc.setup.initialized = true;
+        stream.info.desc.setup.camerasModel = "Olympus";
+
+
+        for (size_t i = 0; i < 3; i++)
+        {
+            stream.info.desc.setup.objects.emplace_back();
+            stream.info.desc.setup.objects.back().emplace("test1", "test2");
+            stream.info.desc.setup.objects.back().emplace("test3", "test4");
+            stream.info.desc.setup.bounds["minimum"].emplace("test1", "test2");
+            stream.info.desc.setup.bounds["minimum"].emplace("test3", "test4");
+            stream.info.desc.setup.cameras.emplace_back();
+            stream.info.desc.setup.cameras.back().cameraInfo.emplace("test1", "test2");
+            stream.info.desc.setup.cameras.back().position.emplace("test1", "test2");
+            stream.info.desc.setup.cameras.back().orientation.emplace("test1", "test2");
+            stream.info.desc.setup.cameras.back().settings.emplace("test1", "test2");
+        }
+        for (size_t i = 0; i < 3; i++)
+        {
+            stream.info.desc.setup.markers.emplace_back();
+            stream.info.desc.setup.markers.back().emplace("test1", "test2");
+            stream.info.desc.setup.markers.back().emplace("test3", "test4");
+            stream.info.desc.setup.bounds["maximum"].emplace("test1", "test2");
+            stream.info.desc.setup.bounds["maximum"].emplace("test3", "test4");
+        }
+    }
 */
 
     t = clock() - t;

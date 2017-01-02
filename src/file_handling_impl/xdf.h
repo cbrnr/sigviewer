@@ -12,8 +12,8 @@
 /*! \class Xdf
  *
  * Xdf class is designed to store the data of an entire XDF file.
- * It comes with structs, vectors, methods, etc. needed to read and
- * resample XDF signals.
+ * It comes with methods to read XDF files and containers to store
+ * the data, as well as some additional methods e.g. resampling etc.
  */
 
 class Xdf
@@ -68,10 +68,38 @@ public:
                 std::map<std::string, std::string> cap;             /*!< EEG cap description. */
                 std::map<std::string, std::string> location_measurement;/*!< Information about the sensor localization system/method. */
                 std::map<std::string, std::string> acquisition;     /*!< Information about the acquisition system. */
+                std::map<std::string, std::string> acquisitionDistortion;/*!< Distortion parameters of the camera used (using Brown's distortion model). */
+                std::map<std::string, std::string> acquisitionSetting;/*!< Settings of the acquisition system. */
                 std::map<std::string, std::string> provider;        /*!< Information about the audio provider. */
                 std::map<std::string, std::string> facility;        /*!< Information about the recording facility (i.e. lab). */
                 std::map<std::string, std::string> synchronization; /*!< Information about synchronization requirements. */
                 std::map<std::string, std::string> encoding;        /*!< Specification of how each sample (frame) is encoded. */
+                std::map<std::string, std::string> display;         /*!< Specification of how the images shall be displayed. */
+                std::map<std::string, std::string> content;         /*!< Information about the video content. */
+                std::map<std::string, std::string> filtering;       /*!< Filtering applied to the data. */
+
+                struct Camera /*!< Information about a single camera (repeated for each camera). */
+                {
+                    std::map<std::string, std::string> cameraInfo;
+                    std::map<std::string, std::string> position;    /*!< 3-d position of the camera, in meters (arbitrary coordinate system). */
+                    std::map<std::string, std::string> orientation; /*!< Orientation of the camera, specified as a quaternion. */
+                    std::map<std::string, std::string> settings;    /*!< Settings of the camera. */
+                };
+
+                struct {
+                    bool initialized = false;
+                    std::string name; /*!< Name of the setup. */
+                    std::vector<std::map<std::string, std::string> > objects; /*!< Information about objects (e.g., rigid bodies). */
+                    std::vector<std::map<std::string, std::string> > markers; /*!< Information about point markers in the setup. */
+                    std::map<std::string, std::map<std::string, std::string> > bounds; /*!< Bounding box of the space/room (in the same coordinate system as all others). */
+                    std::vector<Camera> cameras;    /*!< Camera setup. */
+                    std::string camerasModel;       /*!< Camera model. */
+                } setup; /*!< Information about the physical setup (e.g. room layout). */
+
+                struct {
+                    std::map<std::string, std::string> subjectInfo;/*!< All direct children of _subject_. \sa subject*/
+                    std::map<std::string, std::string> medication;/*!< General information on medication and other substance effects. */
+                } subject; /*!< Information about the human subject. */
 
                 /*!
                  * \brief Information about a single fiducial, can be repeated.
