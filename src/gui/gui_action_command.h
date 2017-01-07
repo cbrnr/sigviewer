@@ -39,6 +39,9 @@ public:
     //-------------------------------------------------------------------------
     QList<QString> getActionIDs () const;
 
+	//-------------------------------------------------------------------------
+	void initConnections();
+
     //-------------------------------------------------------------------------
     virtual void init () = 0;
 
@@ -134,6 +137,9 @@ class ActionConnector : public QObject
     Q_OBJECT
 public:
     ActionConnector (QObject* parent, QString const& name) : QObject (parent), name_ (name) {}
+
+	QString const& getName() const {return name_; }
+
 public slots:
     void trigger () {emit triggered (name_);}
 signals:

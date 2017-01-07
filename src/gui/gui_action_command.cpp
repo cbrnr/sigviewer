@@ -31,25 +31,34 @@ GuiActionCommand::GuiActionCommand (QStringList const& action_ids)
     {
         action_map_[*iter] = new QAction (*iter, this);
         connectors_.push_back (new ActionConnector (this, *iter));
-        connectors_.last ()->connect (action_map_[*iter], SIGNAL(triggered()), SLOT(trigger()));
-        connect (connectors_.last (), SIGNAL(triggered(QString const&)), SLOT(trigger(QString const&)));
     }
-    qDebug () << "GuiActionCommand::GuiActionCommand connecting to ApplicationContextImpl::getInstance() = " << ApplicationContextImpl::getInstance();
-        if (!connect (ApplicationContextImpl::getInstance().data(), SIGNAL(stateChanged(ApplicationState)),
-                          SLOT(updateEnablednessToApplicationState(ApplicationState))))
-            throw (GuiActionCommandException (action_ids.first(), "connect to signal stateChanged(ApplicationState)"));
-        else
-            qDebug () << "GuiActionCommand::GuiActionCommand connect to signal stateChanged(ApplicationState) = true";
-        if (!connect (ApplicationContextImpl::getInstance().data(), SIGNAL(currentTabSelectionStateChanged(TabSelectionState)),
-                          SLOT(updateEnablednessToTabSelectionState (TabSelectionState))))
-            throw (GuiActionCommandException (action_ids.first(), "connect to signal currentTabSelectionStateChanged(TabSelectionState)"));
-        if (!connect (ApplicationContextImpl::getInstance().data(), SIGNAL(currentTabEditStateChanged(TabEditState)),
-                          SLOT(updateEnablednessToTabEditState (TabEditState))))
-            throw (GuiActionCommandException (action_ids.first(), "connect to signal currentTabEditStateChanged(TabEditState)"));
-        if (!connect (ApplicationContextImpl::getInstance().data(), SIGNAL(currentFileStateChanged(FileState)),
-                          SLOT(updateEnablednessToFileState (FileState))))
-            throw (GuiActionCommandException (action_ids.first(), "connect to signal currentFileStateChanged(FileState)"));
+}
 
+//-----------------------------------------------------------------------------
+void GuiActionCommand::initConnections()
+{
+	for (ActionConnector* con : connectors_)
+	{
+		QAction* act = action_map_[con->getName()];
+		con->connect (act, SIGNAL(triggered()), SLOT(trigger()));
+		connect (con, SIGNAL(triggered(QString const&)), SLOT(trigger(QString const&)));
+	}
+	QString firstActionId = connectors_.first()->getName();
+	qDebug() << "GuiActionCommand::GuiActionCommand connecting to ApplicationContextImpl::getInstance() = " << ApplicationContextImpl::getInstance();
+	if (!connect(ApplicationContextImpl::getInstance().data(), SIGNAL(stateChanged(ApplicationState)),
+		SLOT(updateEnablednessToApplicationState(ApplicationState))))
+		throw (GuiActionCommandException(firstActionId, "connect to signal stateChanged(ApplicationState)"));
+	else
+		qDebug() << "GuiActionCommand::GuiActionCommand connect to signal stateChanged(ApplicationState) = true";
+	if (!connect(ApplicationContextImpl::getInstance().data(), SIGNAL(currentTabSelectionStateChanged(TabSelectionState)),
+		SLOT(updateEnablednessToTabSelectionState(TabSelectionState))))
+		throw (GuiActionCommandException(firstActionId, "connect to signal currentTabSelectionStateChanged(TabSelectionState)"));
+	if (!connect(ApplicationContextImpl::getInstance().data(), SIGNAL(currentTabEditStateChanged(TabEditState)),
+		SLOT(updateEnablednessToTabEditState(TabEditState))))
+		throw (GuiActionCommandException(firstActionId, "connect to signal currentTabEditStateChanged(TabEditState)"));
+	if (!connect(ApplicationContextImpl::getInstance().data(), SIGNAL(currentFileStateChanged(FileState)),
+		SLOT(updateEnablednessToFileState(FileState))))
+		throw (GuiActionCommandException(firstActionId, "connect to signal currentFileStateChanged(FileState)"));
 }
 
 //-----------------------------------------------------------------------------

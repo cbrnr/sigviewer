@@ -61,10 +61,13 @@ QAction* GuiActionFactory::getQAction (QString const& action_id) const
 //-----------------------------------------------------------------------------
 void GuiActionFactory::initAllCommands ()
 {
-    for (CommandMap::iterator cmd_iter = command_map_.begin ();
-         cmd_iter != command_map_.end ();
-         ++cmd_iter)
-        cmd_iter.value()->init ();
+	for (CommandMap::iterator cmd_iter = command_map_.begin();
+	cmd_iter != command_map_.end();
+		++cmd_iter)
+	{
+		cmd_iter.value()->initConnections();
+		cmd_iter.value()->init();
+	}
 }
 
 }
