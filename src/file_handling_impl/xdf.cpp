@@ -74,7 +74,7 @@ void Xdf::load_xdf(std::string filename)
             {
             case 1: //[FileHeader]
             {
-                char* buffer = new char[ChLen - 2];
+                /*char* buffer = new char[ChLen - 2];
                 file.read(buffer, ChLen - 2);
 
                 pugi::xml_document doc;
@@ -84,6 +84,21 @@ void Xdf::load_xdf(std::string filename)
                 pugi::xml_node info = doc.child("info");
 
                 fileHeader.info.version = info.child("version").text().as_float();
+
+                delete[] buffer;
+                */
+                char* buffer = new char[ChLen - 2];
+                file.read(buffer, ChLen - 2);
+                testFileHeader = buffer;
+
+                pugi::xml_document doc;
+
+                pugi::xml_parse_result result = doc.load_buffer_inplace(buffer, ChLen - 2);
+
+                pugi::xml_node info = doc.child("info");
+
+                fileHeader.info.version = info.child("version").text().as_float();
+
 
                 delete[] buffer;
             }
@@ -110,6 +125,9 @@ void Xdf::load_xdf(std::string filename)
                 //read [Content]
                 char* buffer = new char[ChLen - 6];
                 file.read(buffer, ChLen - 6);
+                streams[index].streamHeader = buffer;
+
+
                 pugi::xml_parse_result result = doc.load_buffer_inplace(buffer, ChLen - 6);
 
                 pugi::xml_node info = doc.child("info");

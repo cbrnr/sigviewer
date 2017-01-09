@@ -36,6 +36,7 @@ public:
         //! A 2D vector which stores the time series of a stream. Each row represents a channel.
         std::vector<std::vector<float> > time_series;
         std::vector<float> time_stamps; /*!< A vector to store time stamps. */
+        std::string streamHeader;   /*!< Raw XDF of streamHeader. */
 
         struct
         {
@@ -178,6 +179,8 @@ public:
     std::vector<std::string> labels;    /*!< The vector to store descriptive labels of each channel. */
     std::vector<double> sampleRateMap;  /*!< The vector to store all sample rates across all the streams. */
     std::vector<float> offsets;         /*!< Offsets of each channel after using subtractMean() function */
+
+    std::string testFileHeader;         /*!< Raw XML of the file header. */
 
     //=============================================================================================
 

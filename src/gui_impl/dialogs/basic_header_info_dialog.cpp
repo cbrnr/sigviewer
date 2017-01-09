@@ -18,6 +18,8 @@
 #include <QHeaderView>
 #include <QSettings>
 #include <QFileInfo>
+#include <QtXml>
+#include <QDebug>
 
 namespace sigviewer
 {
@@ -154,6 +156,35 @@ void BasicHeaderInfoDialog::buildTree()
             //root_item->setIcon(0, QIcon(":/images/info_16x16.png"));
             info_tree_widget_->setAnimated(true);
 
+            //stream header test
+            QDomDocument documentStream;
+            documentStream.setContent(QString::fromStdString(XDFdata.streams[i].streamHeader));
+            QDomElement rootStream = documentStream.firstChildElement();
+
+            for (QDomNode n = rootStream.firstChild(); !n.isNull();)
+            {
+                tmp_item = new QTreeWidgetItem(root_item);
+                tmp_item->setText(0, n.nodeName());
+                if (!n.firstChild().isElement())
+                {
+                    tmp_item->setText(1, n.toElement().text());
+                    while (n.nextSibling().isNull() &&
+                           n.parentNode() != rootStream)
+                    {
+                        n = n.parentNode();
+                        tmp_item = tmp_item->parent();
+                        root_item = tmp_item->parent();
+                    }
+                    n = n.nextSibling();
+                }
+                else
+                {
+                    n = n.firstChild();
+                    root_item = tmp_item;
+                }
+            }
+
+/*
             for (auto const &entry : XDFdata.streams[i].info.infoMap)
             {
                 tmp_item = new QTreeWidgetItem(root_item);
@@ -641,6 +672,7 @@ void BasicHeaderInfoDialog::buildTree()
                     }
                 }
             }
+            */
         }
     }   //XDF ends here
     else
