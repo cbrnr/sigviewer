@@ -19,8 +19,8 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
     this->setWindowTitle("Resampling");
     if (XDFdata.sampleRateMap.size() > 1)
     {
-        QString text = "This file contains multiple sample rates across various streams.<br> "
-                       "Sigviewer needs to resample some channels to a unified sample rate in order to display them.<br> "
+        QString text = "This file contains signals of multiple sample rates.<br> "
+                       "Sigviewer needs to resample all channels to a unified sample rate in order to display them.<br> "
                        "Please choose a sample rate below (This won't change the actual file content):";
         ui->label->setText(text);
     }
@@ -42,11 +42,11 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
 
         QTreeWidgetItem* infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Name"));
-        infoItem->setText(1, QString::fromStdString(XDFdata.streams[i].info.infoMap["name"]));
+        infoItem->setText(1, QString::fromStdString(XDFdata.streams[i].info.name));
 
         infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Type"));
-        infoItem->setText(1, QString::fromStdString(XDFdata.streams[i].info.infoMap["type"]));
+        infoItem->setText(1, QString::fromStdString(XDFdata.streams[i].info.type));
 
         infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Sample Rate"));
@@ -61,7 +61,7 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
 
         infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Channel Format"));
-        infoItem->setText(1, QString::fromStdString(XDFdata.streams[i].info.infoMap["channel_format"]));
+        infoItem->setText(1, QString::fromStdString(XDFdata.streams[i].info.channel_format));
     }
 
     ui->spinBox->setMinimum(1);

@@ -19,7 +19,6 @@
 #include <QSettings>
 #include <QFileInfo>
 #include <QtXml>
-#include <QDebug>
 
 namespace sigviewer
 {
@@ -156,12 +155,11 @@ void BasicHeaderInfoDialog::buildTree()
             //root_item->setIcon(0, QIcon(":/images/info_16x16.png"));
             info_tree_widget_->setAnimated(true);
 
-            //stream header test
-            QDomDocument documentStream;
-            documentStream.setContent(QString::fromStdString(XDFdata.streams[i].streamHeader));
-            QDomElement rootStream = documentStream.firstChildElement();
+            QDomDocument streamHeader;
+            streamHeader.setContent(QString::fromStdString(XDFdata.streams[i].streamHeader));
+            QDomElement rootElement = streamHeader.firstChildElement();
 
-            for (QDomNode n = rootStream.firstChild(); !n.isNull();)
+            for (QDomNode n = rootElement.firstChild(); !n.isNull();)
             {
                 tmp_item = new QTreeWidgetItem(root_item);
                 tmp_item->setText(0, n.nodeName());
@@ -169,7 +167,7 @@ void BasicHeaderInfoDialog::buildTree()
                 {
                     tmp_item->setText(1, n.toElement().text());
                     while (n.nextSibling().isNull() &&
-                           n.parentNode() != rootStream)
+                           n.parentNode() != rootElement)
                     {
                         n = n.parentNode();
                         tmp_item = tmp_item->parent();
@@ -184,495 +182,32 @@ void BasicHeaderInfoDialog::buildTree()
                 }
             }
 
-/*
-            for (auto const &entry : XDFdata.streams[i].info.infoMap)
+            QDomDocument streamFooter;
+            streamFooter.setContent(QString::fromStdString(XDFdata.streams[i].streamFooter));
+            rootElement = streamFooter.firstChildElement();
+            for (QDomNode n = rootElement.firstChild(); !n.isNull();)
             {
                 tmp_item = new QTreeWidgetItem(root_item);
-                tmp_item->setText(0, QString::fromStdString(entry.first));
-                tmp_item->setText(1, QString::fromStdString(entry.second));
-            }
-
-            tmp_item = new QTreeWidgetItem(root_item);
-            tmp_item->setText(0, tr("desc"));
-
-            if (XDFdata.streams[i].info.desc.provider.size())
-            {
-                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
-                desc_item->setText(0, tr("provider"));
-
-                for (auto const &entry : XDFdata.streams[i].info.desc.provider)
+                tmp_item->setText(0, n.nodeName());
+                if (!n.firstChild().isElement())
                 {
-                    QTreeWidgetItem* provider_item = new QTreeWidgetItem(desc_item);
-                    provider_item->setText(0, QString::fromStdString(entry.first));
-                    provider_item->setText(1, QString::fromStdString(entry.second));
-                }
-            }
-
-            if (XDFdata.streams[i].info.desc.facility.size())
-            {
-                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
-                desc_item->setText(0, tr("facility"));
-
-                for (auto const &entry : XDFdata.streams[i].info.desc.facility)
-                {
-                    QTreeWidgetItem* facility_item = new QTreeWidgetItem(desc_item);
-                    facility_item->setText(0, QString::fromStdString(entry.first));
-                    facility_item->setText(1, QString::fromStdString(entry.second));
-                }
-            }
-
-            if (XDFdata.streams[i].info.desc.synchronization.size())
-            {
-                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
-                desc_item->setText(0, tr("synchronization"));
-
-                for (auto const &entry : XDFdata.streams[i].info.desc.synchronization)
-                {
-                    QTreeWidgetItem* synchronization_item = new QTreeWidgetItem(desc_item);
-                    synchronization_item->setText(0, QString::fromStdString(entry.first));
-                    synchronization_item->setText(1, QString::fromStdString(entry.second));
-                }
-            }
-
-            if (XDFdata.streams[i].info.desc.encoding.size())
-            {
-                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
-                desc_item->setText(0, tr("encoding"));
-
-                for (auto const &entry : XDFdata.streams[i].info.desc.encoding)
-                {
-                    QTreeWidgetItem* encoding_item = new QTreeWidgetItem(desc_item);
-                    encoding_item->setText(0, QString::fromStdString(entry.first));
-                    encoding_item->setText(1, QString::fromStdString(entry.second));
-                }
-            }
-
-            if (XDFdata.streams[i].info.desc.acquisition.size())
-            {
-                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
-                desc_item->setText(0, tr("acquisition"));
-
-                for (auto const &entry : XDFdata.streams[i].info.desc.acquisition)
-                {
-                    QTreeWidgetItem* acquisition_item = new QTreeWidgetItem(desc_item);
-                    acquisition_item->setText(0, QString::fromStdString(entry.first));
-                    acquisition_item->setText(1, QString::fromStdString(entry.second));
-                }
-
-                if (XDFdata.streams[i].info.desc.acquisitionDistortion.size())
-                {
-                    QTreeWidgetItem* acquisition_item = new QTreeWidgetItem(desc_item);
-                    acquisition_item->setText(0, "distortion");
-
-                    for (auto const &entry : XDFdata.streams[i].info.desc.acquisitionDistortion)
+                    tmp_item->setText(1, n.toElement().text());
+                    while (n.nextSibling().isNull() &&
+                           n.parentNode() != rootElement)
                     {
-                        QTreeWidgetItem* acquisitionDistortion_item = new QTreeWidgetItem(acquisition_item);
-                        acquisitionDistortion_item->setText(0, QString::fromStdString(entry.first));
-                        acquisitionDistortion_item->setText(1, QString::fromStdString(entry.second));
+                        n = n.parentNode();
+                        tmp_item = tmp_item->parent();
+                        root_item = tmp_item->parent();
                     }
+                    n = n.nextSibling();
                 }
-
-                if (XDFdata.streams[i].info.desc.acquisitionSetting.size())
+                else
                 {
-                    QTreeWidgetItem* acquisition_item = new QTreeWidgetItem(desc_item);
-                    acquisition_item->setText(0, "setting");
-
-                    for (auto const &entry : XDFdata.streams[i].info.desc.acquisitionSetting)
-                    {
-                        QTreeWidgetItem* acquisitionSetting_item = new QTreeWidgetItem(acquisition_item);
-                        acquisitionSetting_item->setText(0, QString::fromStdString(entry.first));
-                        acquisitionSetting_item->setText(1, QString::fromStdString(entry.second));
-                    }
+                    n = n.firstChild();
+                    root_item = tmp_item;
                 }
             }
 
-
-            if (XDFdata.streams[i].info.desc.reference.size())
-            {
-                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
-                desc_item->setText(0, tr("reference"));
-
-                for (auto const &entry : XDFdata.streams[i].info.desc.reference)
-                {
-                    QTreeWidgetItem* reference_item = new QTreeWidgetItem(desc_item);
-                    reference_item->setText(0, QString::fromStdString(entry.first));
-                    reference_item->setText(1, QString::fromStdString(entry.second));
-                }
-            }
-
-            if (XDFdata.streams[i].info.desc.cap.size())
-            {
-                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
-                desc_item->setText(0, tr("cap"));
-
-                for (auto const &entry : XDFdata.streams[i].info.desc.cap)
-                {
-                    QTreeWidgetItem* cap_item = new QTreeWidgetItem(desc_item);
-                    cap_item->setText(0, QString::fromStdString(entry.first));
-                    cap_item->setText(1, QString::fromStdString(entry.second));
-                }
-            }
-
-            if (XDFdata.streams[i].info.desc.location_measurement.size())
-            {
-                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
-                desc_item->setText(0, tr("location_measurement"));
-
-                for (auto const &entry : XDFdata.streams[i].info.desc.location_measurement)
-                {
-                    QTreeWidgetItem* location_measurement_item = new QTreeWidgetItem(desc_item);
-                    location_measurement_item->setText(0, QString::fromStdString(entry.first));
-                    location_measurement_item->setText(1, QString::fromStdString(entry.second));
-                }
-            }
-
-            if (XDFdata.streams[i].info.desc.display.size())
-            {
-                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
-                desc_item->setText(0, tr("display"));
-
-                for (auto const &entry : XDFdata.streams[i].info.desc.display)
-                {
-                    QTreeWidgetItem* display_item = new QTreeWidgetItem(desc_item);
-                    display_item->setText(0, QString::fromStdString(entry.first));
-                    display_item->setText(1, QString::fromStdString(entry.second));
-                }
-            }
-
-            if (XDFdata.streams[i].info.desc.content.size())
-            {
-                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
-                desc_item->setText(0, tr("content"));
-
-                for (auto const &entry : XDFdata.streams[i].info.desc.content)
-                {
-                    QTreeWidgetItem* content_item = new QTreeWidgetItem(desc_item);
-                    content_item->setText(0, QString::fromStdString(entry.first));
-                    content_item->setText(1, QString::fromStdString(entry.second));
-                }
-            }
-
-            if (XDFdata.streams[i].info.desc.filtering.size())
-            {
-                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
-                desc_item->setText(0, tr("filtering"));
-
-                for (auto const &entry : XDFdata.streams[i].info.desc.filtering)
-                {
-                    QTreeWidgetItem* filtering_item = new QTreeWidgetItem(desc_item);
-                    filtering_item->setText(0, QString::fromStdString(entry.first));
-                    filtering_item->setText(1, QString::fromStdString(entry.second));
-                }
-            }
-
-            //setup
-            if (XDFdata.streams[i].info.desc.setup.initialized)
-            {
-                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
-                desc_item->setText(0, tr("setup"));
-
-                if (XDFdata.streams[i].info.desc.setup.objects.size())
-                {
-                    QTreeWidgetItem* setup_item = new QTreeWidgetItem(desc_item);
-                    setup_item->setText(0, tr("objects"));
-
-                    for (size_t o = 0; o < XDFdata.streams[i].info.desc.setup.objects.size(); o++)
-                    {
-                        QTreeWidgetItem* object_item = new QTreeWidgetItem(setup_item);
-                        object_item->setText(0, tr("object ")+QString::number(o));
-
-                        for (const auto &entry : XDFdata.streams[i].info.desc.setup.objects[o])
-                        {
-                            QTreeWidgetItem* object_sub_item = new QTreeWidgetItem(object_item);
-                            object_sub_item->setText(0, QString::fromStdString(entry.first));
-                            object_sub_item->setText(1, QString::fromStdString(entry.second));
-                        }
-                    }
-                }
-
-                if (XDFdata.streams[i].info.desc.setup.markers.size())
-                {
-                    QTreeWidgetItem* setup_item = new QTreeWidgetItem(desc_item);
-                    setup_item->setText(0, tr("markers"));
-
-                    for (size_t o = 0; o < XDFdata.streams[i].info.desc.setup.markers.size(); o++)
-                    {
-                        QTreeWidgetItem* markers_item = new QTreeWidgetItem(setup_item);
-                        markers_item->setText(0, tr("marker ")+QString::number(o));
-
-                        for (const auto &entry : XDFdata.streams[i].info.desc.setup.markers[o])
-                        {
-                            QTreeWidgetItem* marker_sub_item = new QTreeWidgetItem(markers_item);
-                            marker_sub_item->setText(0, QString::fromStdString(entry.first));
-                            marker_sub_item->setText(1, QString::fromStdString(entry.second));
-                        }
-                    }
-                }
-
-                if (XDFdata.streams[i].info.desc.setup.bounds.size())
-                {
-                    QTreeWidgetItem* setup_item = new QTreeWidgetItem(desc_item);
-                    setup_item->setText(0, tr("bounds"));
-
-                    if (XDFdata.streams[i].info.desc.setup.bounds.find("minimum") != XDFdata.streams[i].info.desc.setup.bounds.end())
-                    {
-                        QTreeWidgetItem* bounds_item = new QTreeWidgetItem(setup_item);
-                        bounds_item->setText(0, tr("minimum"));
-
-                        for (const auto &entry : XDFdata.streams[i].info.desc.setup.bounds["minimum"])
-                        {
-                            QTreeWidgetItem* minimum_item = new QTreeWidgetItem(bounds_item);
-                            minimum_item->setText(0, QString::fromStdString(entry.first));
-                            minimum_item->setText(1, QString::fromStdString(entry.second));
-                        }
-                    }
-
-                    if (XDFdata.streams[i].info.desc.setup.bounds.find("maximum") != XDFdata.streams[i].info.desc.setup.bounds.end())
-                    {
-                        QTreeWidgetItem* bounds_item = new QTreeWidgetItem(setup_item);
-                        bounds_item->setText(0, tr("maximum"));
-
-                        for (const auto &entry : XDFdata.streams[i].info.desc.setup.bounds["maximum"])
-                        {
-                            QTreeWidgetItem* maximum_item = new QTreeWidgetItem(bounds_item);
-                            maximum_item->setText(0, QString::fromStdString(entry.first));
-                            maximum_item->setText(1, QString::fromStdString(entry.second));
-                        }
-                    }
-                }
-
-                //cameras
-                if (XDFdata.streams[i].info.desc.setup.cameras.size())
-                {
-                    QTreeWidgetItem* setup_item = new QTreeWidgetItem(desc_item);
-                    setup_item->setText(0, tr("cameras"));
-
-                    QTreeWidgetItem* camera_item = new QTreeWidgetItem(setup_item);
-                    camera_item->setText(0, tr("model"));
-                    camera_item->setText(1, QString::fromStdString(XDFdata.streams[i].info.desc.setup.camerasModel));
-
-                    for (const auto &camera : XDFdata.streams[i].info.desc.setup.cameras)
-                    {
-                        QTreeWidgetItem* camera_item = new QTreeWidgetItem(setup_item);
-                        camera_item->setText(0, tr("camera"));
-
-                        for (const auto &item : camera.cameraInfo)
-                        {
-                            QTreeWidgetItem* camera_2nd_item = new QTreeWidgetItem(camera_item);
-                            camera_2nd_item->setText(0, QString::fromStdString(item.first));
-                            camera_2nd_item->setText(1, QString::fromStdString(item.second));
-                        }
-
-                        if (camera.position.size())
-                        {
-                            QTreeWidgetItem* camera_2nd_item = new QTreeWidgetItem(camera_item);
-                            camera_2nd_item->setText(0, tr("position"));
-
-                            for (auto const &subitem : camera.position)
-                            {
-                                QTreeWidgetItem* camera_3rd_item = new QTreeWidgetItem(camera_2nd_item);
-                                camera_3rd_item->setText(0, QString::fromStdString(subitem.first));
-                                camera_3rd_item->setText(1, QString::fromStdString(subitem.second));
-                            }
-                        }
-
-                        if (camera.orientation.size())
-                        {
-                            QTreeWidgetItem* camera_2nd_item = new QTreeWidgetItem(camera_item);
-                            camera_2nd_item->setText(0, tr("orientation"));
-
-                            for (auto const &subitem : camera.orientation)
-                            {
-                                QTreeWidgetItem* camera_3rd_item = new QTreeWidgetItem(camera_2nd_item);
-                                camera_3rd_item->setText(0, QString::fromStdString(subitem.first));
-                                camera_3rd_item->setText(1, QString::fromStdString(subitem.second));
-                            }
-                        }
-
-                        if (camera.settings.size())
-                        {
-                            QTreeWidgetItem* camera_2nd_item = new QTreeWidgetItem(camera_item);
-                            camera_2nd_item->setText(0, tr("settings"));
-
-                            for (auto const &subitem : camera.settings)
-                            {
-                                QTreeWidgetItem* camera_3rd_item = new QTreeWidgetItem(camera_2nd_item);
-                                camera_3rd_item->setText(0, QString::fromStdString(subitem.first));
-                                camera_3rd_item->setText(1, QString::fromStdString(subitem.second));
-                            }
-                        }
-                    }
-
-                }
-            }
-
-            if (XDFdata.streams[i].info.desc.amplifier.settings.size())
-            {
-                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
-                desc_item->setText(0, tr("amplifier"));
-
-                QTreeWidgetItem* sub_item = new QTreeWidgetItem(desc_item);
-                sub_item->setText(0, tr("settings"));
-
-                for (auto const &entry : XDFdata.streams[i].info.desc.amplifier.settings)
-                {
-                    QTreeWidgetItem* settings_item = new QTreeWidgetItem(sub_item);
-                    settings_item->setText(0, QString::fromStdString(entry.first));
-                    settings_item->setText(1, QString::fromStdString(entry.second));
-                }
-            }
-
-            if (XDFdata.streams[i].info.desc.subject.subjectInfo.size())
-            {
-                QTreeWidgetItem* desc_item = new QTreeWidgetItem(tmp_item);
-                desc_item->setText(0, tr("subject"));
-
-                for (auto const &entry : XDFdata.streams[i].info.desc.subject.subjectInfo)
-                {
-                    QTreeWidgetItem* subject_item = new QTreeWidgetItem(desc_item);
-                    subject_item->setText(0, QString::fromStdString(entry.first));
-                    subject_item->setText(1, QString::fromStdString(entry.second));
-                }
-
-                if (XDFdata.streams[i].info.desc.subject.medication.size())
-                {
-                    QTreeWidgetItem* subject_item = new QTreeWidgetItem(desc_item);
-                    subject_item->setText(0, "medication");
-
-                    for (auto const &entry : XDFdata.streams[i].info.desc.subject.medication)
-                    {
-                        QTreeWidgetItem* medication_item = new QTreeWidgetItem(subject_item);
-                        medication_item->setText(0, QString::fromStdString(entry.first));
-                        medication_item->setText(1, QString::fromStdString(entry.second));
-                    }
-                }
-            }
-
-            if (!XDFdata.streams[i].time_series.empty())
-            {
-                // channels
-                QTreeWidgetItem* channels_item;
-                channels_item = new QTreeWidgetItem(root_item);
-                channels_item->setText(0, tr("channels"));
-                //channels_item->setIcon(0, QIcon(":/images/channels_22x22.png"));
-
-                for (int32 channel_nr = 0;
-                     channel_nr < XDFdata.streams[i].info.channel_count;
-                     channel_nr++)
-                {
-                    QTreeWidgetItem* channel_item;
-
-                    int channelIndex = std::distance(XDFdata.streamMap.begin(),
-                                                     std::find(XDFdata.streamMap.begin(),XDFdata.streamMap.end(),i)) + channel_nr;
-
-                    QSharedPointer<SignalChannel const> channel = basic_header_->getChannel (channelIndex);
-                    channel_item = new QTreeWidgetItem(channels_item);
-                    channel_item->setText(0, QString("%1").arg(channel->getLabel()));
-
-                    if (XDFdata.streams[i].info.desc.channels.size())
-                    {
-                        for (auto const &entry : XDFdata.streams[i].info.desc.channels[channel_nr].channelInfoMap)
-                        {
-                            QTreeWidgetItem* tmp_item = new QTreeWidgetItem(channel_item);
-                            tmp_item->setText(0, QString::fromStdString(entry.first));
-                            tmp_item->setText(1, QString::fromStdString(entry.second));
-
-                            if (entry.first.compare("location")==0)
-                            {
-                                for (auto const &subentry : XDFdata.streams[i].info.desc.channels[channel_nr].location)
-                                {
-                                    QTreeWidgetItem* location_item = new QTreeWidgetItem(tmp_item);
-                                    location_item->setText(0, QString::fromStdString(subentry.first));
-                                    location_item->setText(1, QString::fromStdString(subentry.second));
-                                }
-                            }
-
-                            if (entry.first.compare("hardware")==0)
-                            {
-                                for (auto const &subentry : XDFdata.streams[i].info.desc.channels[channel_nr].hardware)
-                                {
-                                    QTreeWidgetItem* hardware_item = new QTreeWidgetItem(tmp_item);
-                                    hardware_item->setText(0, QString::fromStdString(subentry.first));
-                                    hardware_item->setText(1, QString::fromStdString(subentry.second));
-                                }
-                            }
-
-                            if (entry.first.compare("filtering")==0)
-                            {
-                                if (XDFdata.streams[i].info.desc.channels[channel_nr].filtering.highpass.size())
-                                {
-                                    QTreeWidgetItem* highpass_item = new QTreeWidgetItem(tmp_item);
-                                    highpass_item->setText(0, tr("highpass"));
-
-                                    for (auto const &subentry : XDFdata.streams[i].info.desc.channels[channel_nr].filtering.highpass)
-                                    {
-                                        QTreeWidgetItem* buff_item = new QTreeWidgetItem(highpass_item);
-                                        buff_item->setText(0, QString::fromStdString(subentry.first));
-                                        buff_item->setText(1, QString::fromStdString(subentry.second));
-                                    }
-                                }
-
-                                if (XDFdata.streams[i].info.desc.channels[channel_nr].filtering.lowpass.size())
-                                {
-                                    QTreeWidgetItem* lowpass_item = new QTreeWidgetItem(tmp_item);
-                                    lowpass_item->setText(0, tr("lowpass"));
-
-                                    for (auto const &subentry : XDFdata.streams[i].info.desc.channels[channel_nr].filtering.highpass)
-                                    {
-                                        QTreeWidgetItem* buff_item = new QTreeWidgetItem(lowpass_item);
-                                        buff_item->setText(0, QString::fromStdString(subentry.first));
-                                        buff_item->setText(1, QString::fromStdString(subentry.second));
-                                    }
-                                }
-
-                                if (XDFdata.streams[i].info.desc.channels[channel_nr].filtering.notch.size())
-                                {
-                                    QTreeWidgetItem* notch_item = new QTreeWidgetItem(tmp_item);
-                                    notch_item->setText(0, tr("notch"));
-
-                                    for (auto const &subentry : XDFdata.streams[i].info.desc.channels[channel_nr].filtering.highpass)
-                                    {
-                                        QTreeWidgetItem* buff_item = new QTreeWidgetItem(notch_item);
-                                        buff_item->setText(0, QString::fromStdString(subentry.first));
-                                        buff_item->setText(1, QString::fromStdString(subentry.second));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (XDFdata.streams[i].info.desc.fiducials.size())
-            {
-                //fiducials
-                QTreeWidgetItem* fiducials_item = new QTreeWidgetItem(root_item);
-                fiducials_item->setText(0, tr("fiducials"));
-
-
-                for (auto const &fiducial : XDFdata.streams[i].info.desc.fiducials)
-                {
-                    QTreeWidgetItem* fiducial_item = new QTreeWidgetItem(fiducials_item);
-                    fiducial_item->setText(0, tr("fiducial"));
-
-                    QTreeWidgetItem* label_item = new QTreeWidgetItem(fiducial_item);
-                    label_item->setText(0, tr("label"));
-
-                    if (fiducial.location.size())
-                    {
-                        QTreeWidgetItem* fiducialLocation_item = new QTreeWidgetItem(fiducial_item);
-                        fiducialLocation_item->setText(0, tr("location"));
-
-                        for (auto const &entry : fiducial.location)
-                        {
-                            QTreeWidgetItem* fiducialLocationChild_item = new QTreeWidgetItem(fiducialLocation_item);
-                            fiducialLocationChild_item->setText(0, QString::fromStdString(entry.first));
-                            fiducialLocationChild_item->setText(1, QString::fromStdString(entry.second));
-                        }
-                    }
-                }
-            }
-            */
         }
     }   //XDF ends here
     else

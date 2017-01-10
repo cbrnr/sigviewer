@@ -36,90 +36,20 @@ public:
         //! A 2D vector which stores the time series of a stream. Each row represents a channel.
         std::vector<std::vector<float> > time_series;
         std::vector<float> time_stamps; /*!< A vector to store time stamps. */
-        std::string streamHeader;   /*!< Raw XDF of streamHeader. */
+        std::string streamHeader;   /*!< Raw XDF of stream header chunk. */
+        std::string streamFooter;   /*!< Raw XDF of stream footer chunk. */
 
         struct
         {
             int channel_count;      /*!< Number of channels of the current stream */
             double nominal_srate;   /*!< The nominal sample rate of the current stream. */
-            std::map<std::string, std::string> infoMap; /*!< This map stores all direct children of the _info_ section. */
+            std::string name;       /*!< Name of the current stream. */
+            std::string type;       /*!< Type of the current stream. */
+            std::string channel_format;/*!< Channel format of the current stream. */
 
-            struct {
-                //! The description of one channel, repeated (one for each channel in the time series)
-                struct Channel
-                {
-                    std::map<std::string, std::string> channelInfoMap; /*!< The top-level meta-data of a single channel. */
-                    /*!
-                     * \brief  Measured location (note: this may be arbitrary
-                     * but should then include well-known fiducials
-                     * (landmarks) for co-registration).
-                     */
-                    std::map<std::string, std::string> location;
-                    std::map<std::string, std::string> hardware;/*!< Information about hardware properties. */
-                    struct {
-                        std::map<std::string, std::string> highpass;    /*!< Highpass filter, if any. */
-                        std::map<std::string, std::string> lowpass;     /*!< Lowpass filter, if any. */
-                        std::map<std::string, std::string> notch;       /*!< Notch filter, if any. */
-                    } filtering;/*!< Information about the hardware/software filters already applied to the data (e.g. notch). */
-                };
+            std::vector<std::map<std::string, std::string> > channels;/*!< A vector to store the meta-data of the channels of the current stream. */
 
-                std::vector<Channel> channels;  /*!< A vector to store the meta-data of the channels of the current stream. */
-
-                std::map<std::string, std::string> reference;       /*!< Signal referencing scheme. */
-                std::map<std::string, std::string> cap;             /*!< EEG cap description. */
-                std::map<std::string, std::string> location_measurement;/*!< Information about the sensor localization system/method. */
-                std::map<std::string, std::string> acquisition;     /*!< Information about the acquisition system. */
-                std::map<std::string, std::string> acquisitionDistortion;/*!< Distortion parameters of the camera used (using Brown's distortion model). */
-                std::map<std::string, std::string> acquisitionSetting;/*!< Settings of the acquisition system. */
-                std::map<std::string, std::string> provider;        /*!< Information about the audio provider. */
-                std::map<std::string, std::string> facility;        /*!< Information about the recording facility (i.e. lab). */
-                std::map<std::string, std::string> synchronization; /*!< Information about synchronization requirements. */
-                std::map<std::string, std::string> encoding;        /*!< Specification of how each sample (frame) is encoded. */
-                std::map<std::string, std::string> display;         /*!< Specification of how the images shall be displayed. */
-                std::map<std::string, std::string> content;         /*!< Information about the video content. */
-                std::map<std::string, std::string> filtering;       /*!< Filtering applied to the data. */
-
-                struct Camera /*!< Information about a single camera (repeated for each camera). */
-                {
-                    std::map<std::string, std::string> cameraInfo;
-                    std::map<std::string, std::string> position;    /*!< 3-d position of the camera, in meters (arbitrary coordinate system). */
-                    std::map<std::string, std::string> orientation; /*!< Orientation of the camera, specified as a quaternion. */
-                    std::map<std::string, std::string> settings;    /*!< Settings of the camera. */
-                };
-
-                struct {
-                    bool initialized = false;
-                    std::string name; /*!< Name of the setup. */
-                    std::vector<std::map<std::string, std::string> > objects; /*!< Information about objects (e.g., rigid bodies). */
-                    std::vector<std::map<std::string, std::string> > markers; /*!< Information about point markers in the setup. */
-                    std::map<std::string, std::map<std::string, std::string> > bounds; /*!< Bounding box of the space/room (in the same coordinate system as all others). */
-                    std::vector<Camera> cameras;    /*!< Camera setup. */
-                    std::string camerasModel;       /*!< Camera model. */
-                } setup; /*!< Information about the physical setup (e.g. room layout). */
-
-                struct {
-                    std::map<std::string, std::string> subjectInfo;/*!< All direct children of _subject_. \sa subject*/
-                    std::map<std::string, std::string> medication;/*!< General information on medication and other substance effects. */
-                } subject; /*!< Information about the human subject. */
-
-                /*!
-                 * \brief Information about a single fiducial, can be repeated.
-                 */
-                struct Fiducials
-                {
-                    std::string label;/*!< Label of the location (e.g., Nasion, Inion, LPF, RPF); can also cover Ground and Reference.*/
-                    std::map<std::string, std::string> location; /*!< Measured location (same coordinate system as channel locations). */
-                };
-
-                std::vector<Fiducials> fiducials;/*!< Locations of fiducials (in the same space as the signal-carrying channels).*/
-
-                struct {
-                    std::map<std::string, std::string> settings;/*!< Settings. */
-                } amplifier; /*!< Information about the used amplification (e.g. Gain, OpAmps/InAmps...). */
-            } desc; /*!< Member struct to store descriptive information in addition to the infoMap. */
-
-            //! A vector to store clock offsets from the ClockOffset chunk
-            std::vector<std::pair<double, double> > clock_offsets;
+            std::vector<std::pair<double, double> > clock_offsets;  /*!< A vector to store clock offsets from the ClockOffset chunk. */
 
             double first_timestamp; /*!< First time stamp of the stream. */
             double last_timestamp;  /*!< Last time stamp of the stream. */
@@ -135,18 +65,11 @@ public:
 
     //===============================================================================================
 
-    std::vector<Stream> streams; /*!< A vector to store all the streams of an XDF file. */
-    struct
-    {
-        struct
-        {
-            float version;  /*!< The version of XDF file */
-        }info;              /*!< Sub-struct of file header. Not to be confused with the _info_ section in stream header. */
-    } fileHeader;           /*!< Member struct to store file header.
-                             * \sa version */
+    std::vector<Stream> streams; /*!< A vector to store all the streams of the current XDF file. */
+    float version;  /*!< The version of XDF file */
 
-    uint64_t totalLen = 0;  /*!< The total length is calculated from the smallest time stamp
-                             *to the largest multiplies the major sample rate. */
+    uint64_t totalLen = 0;  /*!< The total length is the product of the range between the smallest
+                             *time stamp and the largest multiplied by the major sample rate. */
 
     float minTS = 0;        /*!< The smallest time stamp across all streams. */
     float maxTS = 0;        /*!< The largest time stamp across all streams. */
@@ -169,18 +92,15 @@ public:
      */
     typedef float eventTimeStamp;
 
-    /*! The vector to store all the events across all streams.
-     * The format is <<events, timestamps>, streamNum>.
-     */
-    std::vector<std::pair<std::pair<eventName, eventTimeStamp>, int> > eventMap;
-
+    std::vector<std::pair<std::pair<eventName, eventTimeStamp>, int> > eventMap;/*!< The vector to store all the events across all streams.
+                                                                                 * The format is <<events, timestamps>, streamNum>. */
     std::vector<std::string> dictionary;/*!< The vector to store unique event types with no repetitions. \sa eventMap */
     std::vector<uint16_t> eventType;    /*!< The vector to store events by their index in the dictionary.\sa dictionary, eventMap */
     std::vector<std::string> labels;    /*!< The vector to store descriptive labels of each channel. */
     std::vector<double> sampleRateMap;  /*!< The vector to store all sample rates across all the streams. */
     std::vector<float> offsets;         /*!< Offsets of each channel after using subtractMean() function */
 
-    std::string testFileHeader;         /*!< Raw XML of the file header. */
+    std::string fileHeader;         /*!< Raw XML of the file header. */
 
     //=============================================================================================
 

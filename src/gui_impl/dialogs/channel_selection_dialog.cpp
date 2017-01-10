@@ -105,7 +105,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(QString file_format, const Channe
         streamItem->setText(0, tr("Stream ").append(QString::number(i)));
         streamItem->setFlags(Qt::ItemIsAutoTristate | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
         streamItem->setExpanded(true);
-        if (XDFdata.streams[i].info.infoMap["channel_format"].compare("string"))
+        if (XDFdata.streams[i].info.channel_format.compare("string"))
         {
             QColor streamColor = color_manager_->getChannelColor (channelCount);
             streamItem->setText(1, streamColor.name());
