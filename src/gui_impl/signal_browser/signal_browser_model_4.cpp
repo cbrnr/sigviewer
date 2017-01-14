@@ -137,7 +137,7 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
         if (new_shown_channels.count (channel) == 0)
             removeChannel (channel);
 
-    getSignalViewSettings()->setChannelHeight (std::max<unsigned>(100, new_channel_height));
+    getSignalViewSettings()->setChannelHeight (std::max<unsigned>(120, new_channel_height));
 
     foreach (ChannelID channel, new_shown_channels)
     {

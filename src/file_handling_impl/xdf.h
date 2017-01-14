@@ -55,10 +55,11 @@ public:
             double last_timestamp;  /*!< Last time stamp of the stream. */
             int sample_count;       /*!< Sample count of the stream. */
             double measured_srate;  /*!< Measured sample rate of the stream. */
+            double effective_sample_rate;/*!< Effective sample rate. */
         } info; /*!< Meta-data from the stream header of the current stream. */
 
-        float last_timestamp{ 0 };      /*!< For temporary use while loading the vector */
-        float sampling_interval;        /*!< If srate > 0, sampling_interval = 1/srate; otherwise 0 */
+        float last_timestamp{ 0 };  /*!< For temporary use while loading the vector */
+        float sampling_interval;    /*!< If srate > 0, sampling_interval = 1/srate; otherwise 0 */
         std::vector<double> clock_times;/*!< Vector of clock times from clock offset chunk (Tag 4). */
         std::vector<double> clock_values;/*!< Vector of clock values from clock offset chunk (Tag 4). */
     };
@@ -100,7 +101,7 @@ public:
     std::vector<double> sampleRateMap;  /*!< The vector to store all sample rates across all the streams. */
     std::vector<float> offsets;         /*!< Offsets of each channel after using subtractMean() function */
 
-    std::string fileHeader;         /*!< Raw XML of the file header. */
+    std::string fileHeader;             /*!< Raw XML of the file header. */
 
     //=============================================================================================
 
@@ -247,6 +248,11 @@ public:
      * \sa offsets
      */
     void subtractMean();
+
+    /*!
+     * \brief calcEffectiveSrate
+     */
+    void calcEffectiveSrate();
 };
 
 #endif // XDF_H

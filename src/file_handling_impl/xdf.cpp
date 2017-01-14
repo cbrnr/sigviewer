@@ -10,7 +10,6 @@
 #include <time.h>       /* clock_t, clock, CLOCKS_PER_SEC */
 #include <numeric>      //std::accumulate
 
-
 Xdf::Xdf()
 {
 }
@@ -505,6 +504,8 @@ void Xdf::load_xdf(std::string filename)
 
         loadDictionary();
 
+        calcEffectiveSrate();
+
         //loading finishes, close file
         file.close();
     }
@@ -799,6 +800,37 @@ void Xdf::subtractMean()
     }
 }
 
+void Xdf::calcEffectiveSrate()
+{
+    for (auto &stream : streams)
+    {
+        try
+        {
+            stream.info.effective_sample_rate
+                    = stream.info.sample_count /
+                    (stream.info.last_timestamp - stream.info.first_timestamp);
+
+            pugi::xml_document doc;
+            pugi::xml_parse_result result = doc.load_string(stream.streamFooter.c_str());
+            pugi::xml_node sampleCount = doc.child("info").child("sample_count");
+            pugi::xml_node effectiveSampleRate
+                    = doc.child("info").insert_child_after("effective_sample_rate", sampleCount);
+            effectiveSampleRate.append_child(pugi::node_pcdata)
+                    .set_value(std::to_string(stream.info.effective_sample_rate).c_str());
+
+            std::stringstream buffer;
+            doc.save(buffer);
+
+            stream.streamFooter = buffer.str();
+        }
+        catch (std::exception &e)
+        {
+            std::cerr << "Error calculating effective sample rate. "
+                      << e.what() << std::endl;
+        }
+    }
+}
+
 void Xdf::createLabels()
 {
     int channelCount = 0;
@@ -816,12 +848,12 @@ void Xdf::createLabels()
                 {
                     if (entry.second != "")
                     {
-                        label.append(entry.first).append(": ").append(entry.second);
+                        label.append(entry.first).append(" : ").append(entry.second);
                         label += '\n';
                     }
                 }
                 if (offsets.size())
-                    label.append("Offset: ").append(std::to_string(-offsets[channelCount]));
+                    label.append("Offset: ").append(std::to_string(offsets[channelCount]));
 
                 labels.emplace_back(label);
                 channelCount++;
@@ -838,7 +870,7 @@ void Xdf::createLabels()
                 label += '\n';
                 label += stream.info.type;
                 if (offsets.size())
-                    label += "\nOffset: " + std::to_string(-offsets[channelCount]);
+                    label += "\nOffset: " + std::to_string(offsets[channelCount]);
 
                 labels.emplace_back(label);
                 channelCount++;
