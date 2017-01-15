@@ -1,3 +1,9 @@
+// Copyright (c) 2016 The SigViewer Development Team
+// Licensed under the GNU General Public License (GPL)
+// https://www.gnu.org/licenses/gpl
+
+
+
 #include "xdf_reader.h"
 #include "biosig_basic_header.h"
 #include "file_handler_factory_registrator.h"
@@ -181,65 +187,73 @@ void XDFReader::bufferAllChannels () const
     unsigned channel_id = 0;
     for (auto &stream : XDFdata.streams)
     {
-        if (stream.info.nominal_srate != 0)
+        try
         {
-            int startingPosition = (stream.time_stamps.front() - XDFdata.minTS) * XDFdata.majSR;
-
-            if (stream.time_series.front().size() > XDFdata.totalLen - startingPosition )
-                startingPosition = XDFdata.totalLen - stream.time_series.front().size();
-
-            for (auto &row : stream.time_series)
+            if (stream.info.nominal_srate != 0)
             {
-                ProgressBar::instance().increaseValue (1, progress_name);
+                int startingPosition = (stream.time_stamps.front() - XDFdata.minTS) * XDFdata.majSR;
 
-                QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples,0));
+                if (stream.time_series.front().size() > XDFdata.totalLen - startingPosition )
+                    startingPosition = XDFdata.totalLen - stream.time_series.front().size();
 
-                std::copy(row.begin(), row.end(), raw_data->begin() + startingPosition);
-                QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata.majSR));
-
-                channel_map_[channel_id] = data_block;
-                channel_id++;
-
-                std::vector<float> nothing;
-                row.swap(nothing);
-            }
-            std::vector<float> nothing2;
-            stream.time_stamps.swap(nothing2);
-        }
-        //else if: irregualar samples
-        else if (stream.info.nominal_srate == 0 && !stream.time_series.empty())
-        {
-            for (auto &row : stream.time_series)
-            {
-                ProgressBar::instance().increaseValue (1, progress_name);
-
-                QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples,0));
-
-                for (size_t i = 0; i < row.size(); i++)
+                for (auto &row : stream.time_series)
                 {
-                    //find out the position using the timestamp provided
-                    float* pt = raw_data->begin()  + (int)((stream.time_stamps[i]- XDFdata.minTS)* XDFdata.majSR);
-                    *pt = row[i];
+                    ProgressBar::instance().increaseValue (1, progress_name);
 
-                    //if i is not the last element of the irregular time series
-                    if (i != stream.time_stamps.size() - 1)
-                    {
-                        //using linear interpolation to fill in the space between every two signals
-                        int interval = (stream.time_stamps[i+1]
-                                        - stream.time_stamps[i]) * XDFdata.majSR;
-                        for (int mid = 1; mid <= interval; mid++)
-                            *(pt + mid) = row[i] + mid * ((row[i+1] - row[i])) / interval;
-                    }
+                    QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples,0));
+
+                    std::copy(row.begin(), row.end(), raw_data->begin() + startingPosition);
+                    QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata.majSR));
+
+                    channel_map_[channel_id] = data_block;
+                    channel_id++;
+
+                    std::vector<float> nothing;
+                    row.swap(nothing);
                 }
-                QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata.majSR));
-                channel_map_[channel_id] = data_block;
-                channel_id++;
-
-                std::vector<float> nothing;
-                row.swap(nothing);
+                std::vector<float> nothing2;
+                stream.time_stamps.swap(nothing2);
             }
-            std::vector<float> nothing2;
-            stream.time_stamps.swap(nothing2);
+            //else if: irregualar samples
+            else if (stream.info.nominal_srate == 0 && !stream.time_series.empty())
+            {
+                for (auto &row : stream.time_series)
+                {
+                    ProgressBar::instance().increaseValue (1, progress_name);
+
+                    QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples,0));
+
+                    for (size_t i = 0; i < row.size(); i++)
+                    {
+                        //find out the position using the timestamp provided
+                        float* pt = raw_data->begin()  + (int)((stream.time_stamps[i]- XDFdata.minTS)* XDFdata.majSR);
+                        *pt = row[i];
+
+                        //if i is not the last element of the irregular time series
+                        if (i != stream.time_stamps.size() - 1)
+                        {
+                            //using linear interpolation to fill in the space between every two signals
+                            int interval = (stream.time_stamps[i+1]
+                                    - stream.time_stamps[i]) * XDFdata.majSR;
+                            for (int mid = 1; mid <= interval; mid++)
+                                *(pt + mid) = row[i] + mid * ((row[i+1] - row[i])) / interval;
+                        }
+                    }
+                    QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata.majSR));
+                    channel_map_[channel_id] = data_block;
+                    channel_id++;
+
+                    std::vector<float> nothing;
+                    row.swap(nothing);
+                }
+                std::vector<float> nothing2;
+                stream.time_stamps.swap(nothing2);
+            }
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Error loading channel " << channel_id
+                      << '\n' << e.what() << std::endl;
         }
     }
 

@@ -511,7 +511,7 @@ void Xdf::load_xdf(std::string filename)
     }
     else
     {
-        std::cout << "Unable to open file";
+        std::cout << "Unable to open file" << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -847,14 +847,15 @@ void Xdf::createLabels()
                 for (auto const &entry : channelItem)
                 {
                     if (entry.second != "")
-                    {
-                        label.append(entry.first).append(" : ").append(entry.second);
-                        label += '\n';
-                    }
+                        label += entry.first + " : " + entry.second + '\n';
                 }
                 if (offsets.size())
-                    label.append("Offset: ").append(std::to_string(offsets[channelCount]));
-
+                {
+                    if (offsets[channelCount] >= 0)
+                        label.append("baseline +").append(std::to_string(offsets[channelCount]));
+                    else
+                        label.append("baseline ").append(std::to_string(offsets[channelCount]));
+                }
                 labels.emplace_back(label);
                 channelCount++;
             }
@@ -865,12 +866,16 @@ void Xdf::createLabels()
             {
                 std::string label = std::to_string(channelCount) +
                         " - Stream " + std::to_string(streamMap[channelCount]) +
-                        " - " + std::to_string((int)stream.info.nominal_srate) + " Hz\n";
-                label += stream.info.name;
-                label += '\n';
-                label += stream.info.type;
+                        " - " + std::to_string((int)stream.info.nominal_srate) +
+                        " Hz\n" + stream.info.name + '\n' + stream.info.type + '\n';
+
                 if (offsets.size())
-                    label += "\nOffset: " + std::to_string(offsets[channelCount]);
+                {
+                    if (offsets[channelCount] >= 0)
+                        label.append("baseline +").append(std::to_string(offsets[channelCount]));
+                    else
+                        label.append("baseline ").append(std::to_string(offsets[channelCount]));
+                }
 
                 labels.emplace_back(label);
                 channelCount++;

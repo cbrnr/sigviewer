@@ -24,6 +24,12 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
                        "Please choose a sample rate below (This won't change the actual file content):";
         ui->label->setText(text);
     }
+    else if (XDFdata.sampleRateMap.size() == 1 &&
+             XDFdata.sampleRateMap.front() == 0)
+    {
+        ui->label->setText("The nominal sample rate of this file is 0.\n"
+                           "Please choose a preferred sample rate:");
+    }
     else
     {
         QString text = "Would you like to resample this file? (This won't change the actual file content) ";
@@ -39,6 +45,7 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
     {
         QTreeWidgetItem* streamItem = new QTreeWidgetItem(ui->treeWidget);
         streamItem->setText(0, "Stream "+QString::number(i));
+        streamItem->setIcon(0, QIcon(":/images/ic_flag_black_24dp.png"));
 
         QTreeWidgetItem* infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Name"));

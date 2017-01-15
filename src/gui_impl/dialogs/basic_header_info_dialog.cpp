@@ -85,6 +85,7 @@ void BasicHeaderInfoDialog::buildTree()
 
     info_tree_widget_->header()->setSectionResizeMode(QHeaderView::Interactive);
     info_tree_widget_->setColumnWidth(0, this->width()/1.6);
+    info_tree_widget_->setAnimated(true);
 
     QTreeWidgetItem* root_item;
     QTreeWidgetItem* tmp_item;
@@ -92,7 +93,7 @@ void BasicHeaderInfoDialog::buildTree()
     // basic
     root_item = new QTreeWidgetItem(info_tree_widget_);
     root_item->setText(0, tr("Basic"));
-    //root_item->setIcon(0, QIcon(":/images/sigviewer16.png"));
+    root_item->setIcon(0, QIcon(":/images/ic_info_outline_black_24dp.png"));
 
     tmp_item = new QTreeWidgetItem(root_item);
     tmp_item->setText(0, tr("File Type"));
@@ -124,7 +125,7 @@ void BasicHeaderInfoDialog::buildTree()
     // file
     root_item = new QTreeWidgetItem(info_tree_widget_);
     root_item->setText(0, tr("File"));
-    root_item->setIcon(0, QIcon(":/images/file_16x16.png"));
+    root_item->setIcon(0, QIcon(":/images/ic_folder_open_black_24dp.png"));
     tmp_item = new QTreeWidgetItem(root_item);
     tmp_item->setText(0, tr("Size"));
     QFileInfo file_info (basic_header_->getFilePath());
@@ -134,7 +135,7 @@ void BasicHeaderInfoDialog::buildTree()
     // events
     root_item = new QTreeWidgetItem(info_tree_widget_);
     root_item->setText(0, tr("Events"));
-    root_item->setIcon(0, QIcon(":/images/events_22x22.png"));
+    root_item->setIcon(0, QIcon(":/images/ic_font_download_black_24dp.png"));
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Number"));
@@ -152,8 +153,7 @@ void BasicHeaderInfoDialog::buildTree()
             // basic
             root_item = new QTreeWidgetItem(info_tree_widget_);
             root_item->setText(0, "Stream "+QString::number(i));
-            //root_item->setIcon(0, QIcon(":/images/info_16x16.png"));
-            info_tree_widget_->setAnimated(true);
+            root_item->setIcon(0, QIcon(":/images/ic_flag_black_24dp.png"));
 
             QDomDocument streamHeader;
             streamHeader.setContent(QString::fromStdString(XDFdata.streams[i].streamHeader));
