@@ -399,7 +399,7 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
             new_event_ = true;
             new_signal_event_ = QSharedPointer<SignalEvent>(new SignalEvent(sample_cleaned_pos,
                                                                             signal_browser_model_.getActualEventCreationType(),
-                                                                            event_manager_->getSampleRate(),
+                                                                            event_manager_->getSampleRate(), 0,
                                                                             id_));
             new_event_color_ = color_manager_->getEventColor(signal_browser_model_.getActualEventCreationType());
             new_signal_event_reference_x_ = sample_cleaned_pos;

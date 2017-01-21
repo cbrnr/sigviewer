@@ -105,7 +105,7 @@ QSharedPointer<SignalEvent const> EventManagerImpl::createEvent (
             return QSharedPointer<SignalEvent>(0);
 
     QSharedPointer<SignalEvent> new_event (
-            new SignalEvent(pos, type, sample_rate_, channel_id, duration, id));
+            new SignalEvent(pos, type, sample_rate_, 0, channel_id, duration, id));
     event_map_[id] = new_event;
     mutex_map_[id] = QSharedPointer<QMutex> (new QMutex);
     position_event_map_.insertMulti (pos, id);

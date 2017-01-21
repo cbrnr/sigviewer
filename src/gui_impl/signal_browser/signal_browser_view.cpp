@@ -154,7 +154,7 @@ QSharedPointer<QImage> SignalBrowserView::renderVisibleScene () const
     QSharedPointer<QImage> image (new QImage(graphics_view_->viewport()->width(),
                                              graphics_view_->viewport()->height(),
                                              QImage::Format_ARGB32));
-    image->fill (0);
+    image->fill (Qt::white);
     QPainter painter (image.data());
     graphics_view_->render (&painter, graphics_view_->viewport()->rect(), graphics_view_->viewport()->rect());
     return image;
