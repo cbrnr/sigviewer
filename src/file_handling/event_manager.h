@@ -104,6 +104,9 @@ public:
     //-------------------------------------------------------------------------
     virtual EventID getPreviousEventOfSameType (EventID id) const = 0;
 
+    //-------------------------------------------------------------------------
+    virtual QString getFileType () const = 0;
+
 signals:
     void eventChanged (EventID id);
     void eventCreated (QSharedPointer<SignalEvent const> event);

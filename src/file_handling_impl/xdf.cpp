@@ -60,9 +60,8 @@ void Xdf::load_xdf(std::string filename)
         //for each chunk
         while (1)
         {
-            uint64_t ChLen; //Chunk Length
+            uint64_t ChLen = readLength(file);//chunk length
 
-            ChLen = readLength(file);
             if (ChLen == 0)
                 break;
 
@@ -614,20 +613,20 @@ uint64_t Xdf::readLength(std::ifstream &file)
 {
     uint8_t bytes;
     file.read((char*)&bytes, 1);
-    uint64_t length;
+    uint64_t length = 0;
 
     switch (bytes)
     {
     case 1:
     {
-        uint8_t buffer;
+        uint8_t buffer = 0;
         file.read(reinterpret_cast<char *>(&buffer), 1);
         length = buffer;
         return length;
     }
     case 4:
     {
-        uint32_t buffer;
+        uint32_t buffer = 0;
         file.read(reinterpret_cast<char *>(&buffer), 4);
         length = buffer;
         return length;
@@ -827,6 +826,86 @@ void Xdf::calcEffectiveSrate()
         {
             std::cerr << "Error calculating effective sample rate. "
                       << e.what() << std::endl;
+        }
+    }
+}
+
+void Xdf::writeEventsToXDF(std::string file_path)
+{
+    if (userAddedStream)
+    {
+        std::fstream file;
+        file.open(file_path, std::ios::app | std::ios::binary);
+
+        if (file.is_open())
+        {
+            //start to append to new XDF file
+            //first write a stream header chunk
+            //Num Length Bytes
+            file.put(4);
+            //length
+            int length = streams[userAddedStream].streamHeader.size() + 6; //+6 because of the length int itself and short int tag
+            file.write((char*)&length, 4);
+
+            //tag
+            short tag = 2;
+            file.write((char*)&tag, 2);
+            //streamNumber
+            int streamNumber = userAddedStream + 1; //+1 because the stream IDs in XDF are 1 based instead of 0 based
+            file.write((char*)&streamNumber, 4);
+            //content
+            file.write(streams[userAddedStream].streamHeader.c_str(), length - 6);//length - 6 is the string length
+
+            //write samples chunk
+            //Num Length Bytes
+            file.put(8);
+            //length
+            //add the bytes of all following actions together
+            int64_t stringTotalLength = 0;
+            for (auto const &event : userCreatedEvents)
+                stringTotalLength += event.first.size();
+
+            int64_t sampleChunkLength = 2 + 4 + 1 + 4 +
+                    userCreatedEvents.size() *
+                    (1 + 8 + 1 + 4) + stringTotalLength;
+            file.write((char*)&sampleChunkLength, 8);
+
+
+            //tag
+            tag = 3;
+            file.write((char*)&tag, 2);
+            //streamNumber
+            file.write((char*)&streamNumber, 4);
+            //content
+            //NumSamplesBytes
+            file.put(4);
+
+            //Num Samples
+            int numSamples = userCreatedEvents.size();
+            file.write((char*)&numSamples, 4);
+
+            //samples
+            for (auto const &event : userCreatedEvents)
+            {
+                //TimeStampBytes
+                file.put(8);
+
+                //Optional Time Stamp
+                double timeStamp = event.second;
+                file.write((char*)&timeStamp, 8);
+
+                //Num Length Bytes
+                file.put(4);
+
+                //Length
+                int stringLength = event.first.length();
+                file.write((char*)&stringLength, 4);
+
+                //String Content
+                file.write(event.first.c_str(), stringLength);
+            }
+
+            file.close();
         }
     }
 }

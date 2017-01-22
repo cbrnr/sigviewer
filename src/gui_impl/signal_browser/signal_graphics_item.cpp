@@ -16,6 +16,7 @@
 #include "gui_impl/signal_browser_mouse_handling.h"
 #include "gui/color_manager.h"
 #include "gui/gui_action_factory.h"
+#include "file_handling_impl/xdf_reader.h"
 
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
@@ -397,10 +398,51 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
             int32 sample_cleaned_pos = event->scenePos().x() / pixel_per_sample + 0.5;
             sample_cleaned_pos *= pixel_per_sample;
             new_event_ = true;
-            new_signal_event_ = QSharedPointer<SignalEvent>(new SignalEvent(sample_cleaned_pos,
-                                                                            signal_browser_model_.getActualEventCreationType(),
-                                                                            event_manager_->getSampleRate(), 0,
-                                                                            id_));
+
+            if (event_manager_->getFileType().startsWith("XDF", Qt::CaseInsensitive))
+            {
+                //If user added events in Sigviewer, we will create a new stream to store these events
+                //and later store back to the XDF file
+                if (!XDFdata.userAddedStream)
+                {
+                    //check whether a user added stream has already been existing
+                    XDFdata.userAddedStream = XDFdata.streams.size();
+                    XDFdata.streams.emplace_back();
+                    XDFdata.streams.back().streamHeader =
+                            "<?xml version='1.0'?>"
+                            "<info>"
+                                "<name>UserCreatedEventStream</name>"
+                                "<type>Events</type>"
+                                "<channel_count>1</channel_count>"
+                                "<nominal_srate>0</nominal_srate>"
+                                "<channel_format>string</channel_format>"
+                                "<source_id>User Added Events</source_id>"
+                                "<version>1</version>"
+                                "<created_at/>"
+                                "<uid/>"
+                                "<session_id/>"
+                                "<hostname/>"
+                                "<desc />"
+                            "</info>";
+                }
+                new_signal_event_ = QSharedPointer<SignalEvent>
+                        (new SignalEvent(sample_cleaned_pos,
+                                         signal_browser_model_.getActualEventCreationType(),
+                                         event_manager_->getSampleRate(), XDFdata.userAddedStream,
+                                         id_));
+                //Add the newly created event to the XDFdata object for later use
+                QString eventName = event_manager_->getNameOfEventType(signal_browser_model_.getActualEventCreationType());
+                XDFdata.userCreatedEvents.emplace_back
+                        (eventName.toStdString(), (sample_cleaned_pos/event_manager_->getSampleRate()) + XDFdata.minTS);
+            }
+            else
+            {
+                new_signal_event_ = QSharedPointer<SignalEvent>
+                        (new SignalEvent(sample_cleaned_pos,
+                                         signal_browser_model_.getActualEventCreationType(),
+                                         event_manager_->getSampleRate(), -1,
+                                         id_));
+            }
             new_event_color_ = color_manager_->getEventColor(signal_browser_model_.getActualEventCreationType());
             new_signal_event_reference_x_ = sample_cleaned_pos;
             emit mouseMoving (true);

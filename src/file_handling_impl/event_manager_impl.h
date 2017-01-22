@@ -92,6 +92,10 @@ public:
     //-------------------------------------------------------------------------
     virtual EventID getPreviousEventOfSameType (EventID id) const;
 
+    //-------------------------------------------------------------------------
+    virtual QString getFileType () const;
+
+
 private:
     EventTableFileReader event_table_reader_;
 
@@ -108,6 +112,7 @@ private:
     EventID next_free_id_;
     PositionMap position_event_map_;
     QMap<EventID, uint32> temp_event_position_map_;
+    QString file_type_;
 };
 
 }

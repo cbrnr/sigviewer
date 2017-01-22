@@ -6,6 +6,7 @@
 #include "event_manager_impl.h"
 #include "file_handling/file_signal_reader.h"
 #include "base/exception.h"
+#include "gui/gui_action_command.h"
 
 #include <QMutexLocker>
 #include <QDebug>
@@ -18,6 +19,8 @@ EventManagerImpl::EventManagerImpl (FileSignalReader const& reader)
     : max_event_position_ (reader.getBasicHeader()->getNumberOfSamples()),
       caller_mutex_ (new QMutex)
 {
+    file_type_ = reader.getBasicHeader()->getFileTypeString();
+
     QList<QSharedPointer<SignalEvent const> > signal_events = reader.getEvents ();
     next_free_id_ = 0;
     for (int index = 0; index < signal_events.size(); index++)
@@ -105,7 +108,7 @@ QSharedPointer<SignalEvent const> EventManagerImpl::createEvent (
             return QSharedPointer<SignalEvent>(0);
 
     QSharedPointer<SignalEvent> new_event (
-            new SignalEvent(pos, type, sample_rate_, 0, channel_id, duration, id));
+            new SignalEvent(pos, type, sample_rate_, -1, channel_id, duration, id));
     event_map_[id] = new_event;
     mutex_map_[id] = QSharedPointer<QMutex> (new QMutex);
     position_event_map_.insertMulti (pos, id);
@@ -283,6 +286,11 @@ EventID EventManagerImpl::getPreviousEventOfSameType (EventID id) const
             return previous_event_id;
 
     return UNDEFINED_EVENT_ID;
+}
+
+QString EventManagerImpl::getFileType() const
+{
+    return file_type_;
 }
 
 }
