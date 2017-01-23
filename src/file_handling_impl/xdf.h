@@ -250,7 +250,7 @@ public:
      *
      * \sa offsets
      */
-    void subtractMean();
+    void detrend();
 
     /*!
      * \brief calcEffectiveSrate
@@ -263,7 +263,7 @@ public:
      * If user added some markups and events in Sigviewer, this function can
      * store those user created events back to the XDF file in a new stream
      */
-    void writeEventsToXDF(std::string file_path);
+    int writeEventsToXDF(std::string file_path);
 };
 
 #endif // XDF_H

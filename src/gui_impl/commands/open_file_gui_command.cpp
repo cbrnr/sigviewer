@@ -83,7 +83,7 @@ void OpenFileGuiCommand::openFile (QString file_path, bool instantly)
     closeObject.closeFile();
 
     Xdf empty;
-    std::swap(XDFdata, empty);
+    std::swap(XDFdata, empty);//clear the data of the previous XDF file
 
     instance_->openFileImpl (file_path);
 }
@@ -92,7 +92,15 @@ void OpenFileGuiCommand::openFile (QString file_path, bool instantly)
 void OpenFileGuiCommand::evaluateEnabledness ()
 {
     bool file_opened = (getApplicationState() == APP_STATE_FILE_OPEN);
-    getQAction (IMPORT_EVENTS_)->setEnabled (file_opened);
+    bool enable_import_events = file_opened;
+
+    if (file_opened)
+    {
+        if (applicationContext()->getCurrentFileContext()->getFileName().endsWith("xdf"))
+            enable_import_events = false;//Disabled because currently XDF files doesn't support importing events
+    }
+
+    getQAction (IMPORT_EVENTS_)->setEnabled (enable_import_events);
     getQAction (SHOW_FILE_INFO_)->setEnabled (file_opened);
 }
 

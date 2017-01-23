@@ -268,7 +268,10 @@ void SaveGuiCommand::evaluateEnabledness ()
         if (!currentVisModel().isNull())
             if (!currentVisModel()->getEventManager().isNull())
                 has_events = currentVisModel()->getEventManager()->getNumberOfEvents() > 0;
+        if (applicationContext()->getCurrentFileContext()->getFileName().endsWith("xdf"))
+            no_gdf_file_open = false;//Disabled because currently no XDF to GDF conversion allowed
     }
+
 
     getQAction (SAVE_)->setEnabled (file_changed);
     getQAction (SAVE_AS_)->setEnabled (file_open);

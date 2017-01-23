@@ -30,6 +30,7 @@
 #include <QSet>
 
 #include <cmath>
+#include <ctime> //to get current date when user add events
 
 namespace sigviewer
 {
@@ -408,6 +409,9 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
                     //check whether a user added stream has already been existing
                     XDFdata.userAddedStream = XDFdata.streams.size();
                     XDFdata.streams.emplace_back();
+                    std::time_t currentTime = std::time(nullptr);
+                    std::string timeString = std::asctime(std::localtime(&currentTime));
+                    timeString.pop_back(); //we don't need '\n' at the end
                     XDFdata.streams.back().streamHeader =
                             "<?xml version='1.0'?>"
                             "<info>"
@@ -418,7 +422,7 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
                                 "<channel_format>string</channel_format>"
                                 "<source_id>User Added Events</source_id>"
                                 "<version>1</version>"
-                                "<created_at/>"
+                                "<created_at>" + timeString + "</created_at>"
                                 "<uid/>"
                                 "<session_id/>"
                                 "<hostname/>"
