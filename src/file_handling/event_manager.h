@@ -107,6 +107,10 @@ public:
     //-------------------------------------------------------------------------
     virtual QString getFileType () const = 0;
 
+    //-------------------------------------------------------------------------
+    virtual void setEventName (EventType event_type_id, QString const& name) = 0;
+
+
 signals:
     void eventChanged (EventID id);
     void eventCreated (QSharedPointer<SignalEvent const> event);

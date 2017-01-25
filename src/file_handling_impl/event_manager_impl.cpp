@@ -293,4 +293,9 @@ QString EventManagerImpl::getFileType() const
     return file_type_;
 }
 
+void EventManagerImpl::setEventName(EventType event_type_id, const QString &name)
+{
+    event_table_reader_.setEventName(event_type_id, name);
+}
+
 }

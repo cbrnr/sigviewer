@@ -95,6 +95,9 @@ public:
     //-------------------------------------------------------------------------
     virtual QString getFileType () const;
 
+    //-------------------------------------------------------------------------
+    virtual void setEventName (EventType event_type_id, QString const& name);
+
 
 private:
     EventTableFileReader event_table_reader_;

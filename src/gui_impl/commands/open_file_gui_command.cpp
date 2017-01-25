@@ -77,6 +77,9 @@ void OpenFileGuiCommand::init ()
 //-----------------------------------------------------------------------------
 void OpenFileGuiCommand::openFile (QString file_path, bool instantly)
 {
+    if (!instance_->confirmClosingOldFile())   /*!< In case the user decides not to close the old file, return. */
+        return;
+
     //close the previous file before opening a new one
     //thus using less memory
     CloseFileGuiCommand closeObject;
@@ -86,6 +89,30 @@ void OpenFileGuiCommand::openFile (QString file_path, bool instantly)
     std::swap(XDFdata, empty);//clear the data of the previous XDF file
 
     instance_->openFileImpl (file_path);
+}
+
+//-------------------------------------------------------------------------
+bool OpenFileGuiCommand::confirmClosingOldFile()
+{
+    QSharedPointer<FileContext> current_file_context =
+            applicationContext()->getCurrentFileContext();
+
+    if (!current_file_context.isNull() &&
+            current_file_context->getState () == FILE_STATE_CHANGED)
+    {
+        QString file_name = current_file_context->getFileName ();
+        QMessageBox::StandardButton pressed_button
+                =  QMessageBox::question (0, tr("Really close?"),
+                                          tr("Changes in '%1' are not saved!!").arg(file_name) + "\n" +
+                                          tr("Really close?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+
+        if (pressed_button == QMessageBox::No)
+            return false;
+        else
+            current_file_context->setState(FILE_STATE_UNCHANGED);
+    }
+
+    return true;
 }
 
 //-------------------------------------------------------------------------
@@ -108,6 +135,8 @@ void OpenFileGuiCommand::evaluateEnabledness ()
 //-------------------------------------------------------------------------
 void OpenFileGuiCommand::open ()
 {
+    if (!instance_->confirmClosingOldFile())   /*!< In case the user decides not to close the old file, return. */
+        return;
 
     QStringList extension_list = FileSignalReaderFactory::getInstance()->getAllFileEndingsWithWildcards();
     QString extensions;
