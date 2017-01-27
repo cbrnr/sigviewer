@@ -10,6 +10,7 @@
 #include "file_handling/event_manager.h"
 #include "command_executer.h"
 #include "ui_event_editing_widget.h"
+#include "gui_impl\signal_browser\event_creation_widget.h"
 
 #include <QWidget>
 #include <QMutex>
@@ -22,6 +23,7 @@ namespace sigviewer
 class EventEditingWidget : public QWidget
 {
 Q_OBJECT
+    friend class EventCreationWidget;
 public:
     explicit EventEditingWidget (QSharedPointer<EventManager> event_manager,
                                  QSharedPointer<CommandExecuter> command_executer,

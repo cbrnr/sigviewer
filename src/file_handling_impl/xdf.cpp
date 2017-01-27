@@ -14,7 +14,7 @@ Xdf::Xdf()
 {
 }
 
-void Xdf::load_xdf(std::string filename)
+int Xdf::load_xdf(std::string filename)
 {
     clock_t time;
     time = clock();
@@ -511,9 +511,10 @@ void Xdf::load_xdf(std::string filename)
     else
     {
         std::cout << "Unable to open file" << std::endl;
-        exit(EXIT_FAILURE);
+        return 1;
     }
 
+    return 0;
 }
 
 void Xdf::resampleXDF(int userSrate)

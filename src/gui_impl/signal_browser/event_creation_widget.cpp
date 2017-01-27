@@ -39,6 +39,16 @@ int EventCreationWidget::insertNewEventType()
 {
     if (ui_.lineEdit->text().compare(""))
     {
+        //avoid same types being repeated
+        for (int i = 0; i < ui_.type_combobox_->count(); i++)
+        {
+            if (ui_.lineEdit->text().compare(ui_.type_combobox_->itemText(i), Qt::CaseSensitive) == 0)
+            {   //if it already exists
+                ui_.type_combobox_->setCurrentIndex (i);
+                return 1;
+            }
+        }
+
         customized_text_ = ui_.lineEdit->text();
         event_manager_->setEventName(customized_event_id_, customized_text_);
 
@@ -49,6 +59,8 @@ int EventCreationWidget::insertNewEventType()
         customized_event_id_++;
         if (customized_event_id_ >= 254) //Sigviewer has only 255 slots for custom events
             customized_event_id_ = XDFdata.dictionary.size();
+
+        emit newEventType(event_manager_->getEventTypes());
     }
 
     return 0;

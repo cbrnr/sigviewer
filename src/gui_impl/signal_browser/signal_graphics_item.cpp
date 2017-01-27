@@ -529,7 +529,8 @@ void SignalGraphicsItem::drawYGrid (QPainter* painter,
         return;
 
     QRectF clip (option->exposedRect);
-    painter->setPen (Qt::lightGray);
+    //painter->setPen (Qt::lightGray);
+    painter->setPen ("#f3f3f3"); // Qt::lightGray is still too dark and strong.
 
     for (float64 y = y_offset_;
          y < height_ / 2;
@@ -561,7 +562,8 @@ void SignalGraphicsItem::drawXGrid (QPainter* painter,
         return;
 
     QRectF clip (option->exposedRect);
-    painter->setPen (Qt::lightGray);
+    //painter->setPen (Qt::lightGray);
+    painter->setPen (QColor(255, 255 , 255, 0)); // We probably don't need the x grid
 
     if (clip.width() < 1)
         return;

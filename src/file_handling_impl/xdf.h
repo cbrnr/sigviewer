@@ -126,7 +126,7 @@ public:
      * \param filename is the path to the file being loaded including the
      * file name.
      */
-    void load_xdf(std::string filename);
+    int load_xdf(std::string filename);
 
     /*!
      * \brief Resample all streams and channel to a chosen sample rate

@@ -7,7 +7,7 @@
 #include "dialogs/channel_selection_dialog.h"
 #include "select_shown_channels_dialog.h"
 #include "dialogs/event_types_selection_dialog.h"
-#include "file_handling_impl/xdf_reader.h"
+#include "src\application_context_impl.h"
 
 #include <QInputDialog>
 #include <QFileDialog>
@@ -208,7 +208,7 @@ std::set<ChannelID> selectChannels (ChannelManager const& channel_manager,
                                     QSharedPointer<BasicHeader> header,
                                     QSharedPointer<SignalVisualisationModel> vis_model)
 {
-    if (XDFdata.streams.size())
+    if (ApplicationContextImpl::getInstance()->getCurrentFileContext()->getFileName().endsWith("XDF", Qt::CaseInsensitive))
     {
         ChannelSelectionDialog channel_dialog ("XDF", channel_manager, header, color_manager);
         std::set<ChannelID> pre_selected_channels;

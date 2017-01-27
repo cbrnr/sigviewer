@@ -89,6 +89,8 @@ FileHandlerType* FileHandlerFactory<FileHandlerType>::getHandler (QString const&
             return handler.first;
         else if (handler.second.compare("Cancelled", Qt::CaseInsensitive) == 0)
             return 0;
+        else if (handler.second.compare("non-exist", Qt::CaseInsensitive) == 0)
+            return 0;
         else
         {
             handler = default_handler_->createInstance (file_path);

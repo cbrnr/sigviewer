@@ -47,9 +47,13 @@ public:
     //-------------------------------------------------------------------------
     virtual QSharedPointer<BasicHeader const> getBasicHeader () const {return basic_header_;}
 
+    //-------------------------------------------------------------------------
+    //! Set a distinct color for each stream
+    int setStreamColors();
+
 private:
     //-------------------------------------------------------------------------
-    QString open (QString const& file_name);
+    QString open (QString const& file_path);
 
     //-------------------------------------------------------------------------
     void bufferAllChannels () const;
@@ -59,7 +63,7 @@ private:
 
     Q_DISABLE_COPY(XDFReader)
 
-    QString loadFixedHeader(const QString& file_name);
+    QString loadFixedHeader(const QString& file_path);
 
     QSharedPointer<BasicHeader> basic_header_;
     mutable QMutex mutex_;

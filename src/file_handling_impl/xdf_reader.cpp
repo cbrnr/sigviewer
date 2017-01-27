@@ -10,6 +10,7 @@
 #include "gui/progress_bar.h"
 #include "base/fixed_data_block.h"
 #include "gui_impl/dialogs/resampling_dialog.h"
+#include "application_context_impl.h"
 
 #include <QTextStream>
 #include <QTranslator>
@@ -98,74 +99,85 @@ QList<QSharedPointer<SignalEvent const> > XDFReader::getEvents () const
 }
 
 //-----------------------------------------------------------------------------
-QString XDFReader::open (QString const& file_name)
+QString XDFReader::open (QString const& file_path)
 {
     QMutexLocker lock (&mutex_);
-    return loadFixedHeader (file_name);
+    return loadFixedHeader (file_path);
 }
 
 //-----------------------------------------------------------------------------
-QString XDFReader::loadFixedHeader(const QString& file_name)
+QString XDFReader::loadFixedHeader(const QString& file_path)
 {
     QMutexLocker locker (&xdf_access_lock_);
 
     clock_t t = clock();
     clock_t t2 = clock();
 
-    XDFdata.load_xdf(file_name.toStdString());
-    XDFdata.detrend();
-    XDFdata.createLabels();
-
-    ResamplingDialog prompt(XDFdata.majSR, XDFdata.maxSR);
-    prompt.setModal(true);
-    prompt.exec();
-
-    if (prompt.cancel())
+    if (QFile::exists(file_path))
     {
-        Xdf empty;
-        std::swap(XDFdata, empty);
-        return "Cancelled";
+        if (XDFdata.load_xdf(file_path.toStdString()) == 0)
+        {
+            XDFdata.detrend();
+            XDFdata.createLabels();
+
+            ResamplingDialog prompt(XDFdata.majSR, XDFdata.maxSR);
+            prompt.setModal(true);
+            prompt.exec();
+
+            if (prompt.cancel())
+            {
+                Xdf empty;
+                std::swap(XDFdata, empty);
+                return "Cancelled";
+            }
+
+            if (prompt.getUserSrate())
+                XDFdata.majSR = prompt.getUserSrate();
+
+            XDFdata.resampleXDF(XDFdata.majSR);
+            XDFdata.freeUpTimeStamps(); //to save some memory
+
+            setStreamColors();
+
+            t = clock() - t;
+            std::cout << "it took " << ((float)t) / CLOCKS_PER_SEC << " seconds reading data" << std::endl;
+
+            t = clock() - t - t2;
+            std::cout << "it took " << ((float)t) / CLOCKS_PER_SEC << " additional seconds loading XDF header" << std::endl;
+
+
+            basic_header_ = QSharedPointer<BasicHeader>
+                    (new BiosigBasicHeader ("XDF", file_path));
+
+            basic_header_->setNumberEvents(XDFdata.eventType.size());
+
+            basic_header_->setEventSamplerate(XDFdata.majSR);
+
+            return "";
+        }
+        else
+        {
+            qDebug() << "Unable to open file.";
+            QMessageBox msgBox;
+            msgBox.setIcon(QMessageBox::Warning);
+            msgBox.setText("Unable to open file.");
+            msgBox.setStandardButtons(QMessageBox::Ok);
+            int ret = msgBox.exec();
+
+            return "non-exist";
+        }
     }
-
-    if (prompt.getUserSrate())
-        XDFdata.majSR = prompt.getUserSrate();
-
-    XDFdata.resampleXDF(XDFdata.majSR);
-    XDFdata.freeUpTimeStamps(); //to save some memory
-
-
-/*
-    ColorManager colorTest;
-    QVector<QColor> colorList = {Qt::blue, Qt::darkCyan, Qt::red, Qt::magenta,
-                                 Qt::darkGreen, Qt::darkYellow, Qt::darkMagenta, Qt::darkRed, Qt::darkBlue};
-
-
-    for (size_t i = 0; i < XDFdata.totalCh; i++)
+    else
     {
-        size_t stream = XDFdata.streamMap[i];
-        while (stream > 8)
-            stream -= 9;
-        colorTest.setChannelColor(i, colorList[stream]);
+        qDebug() << "File doesn't exist.";
+        QMessageBox msgBox;
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setText("File does not exist.");
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        int ret = msgBox.exec();
+
+        return "non-exist";
     }
-    colorTest.saveSettings();
-    //colorTest.loadSettings();
-*/
-
-    t = clock() - t;
-    std::cout << "it took " << ((float)t) / CLOCKS_PER_SEC << " seconds reading data" << std::endl;
-
-    t = clock() - t - t2;
-    std::cout << "it took " << ((float)t) / CLOCKS_PER_SEC << " additional seconds loading XDF header" << std::endl;
-
-
-    basic_header_ = QSharedPointer<BasicHeader>
-                    (new BiosigBasicHeader ("XDF", file_name));
-
-    basic_header_->setNumberEvents(XDFdata.eventType.size());
-
-    basic_header_->setEventSamplerate(XDFdata.majSR);
-
-    return "";
 }
 
 //-----------------------------------------------------------------------------
@@ -176,7 +188,39 @@ QSharedPointer<BasicHeader> XDFReader::getBasicHeader ()
 }
 
 //-----------------------------------------------------------------------------
+int XDFReader::setStreamColors()
+{
+    // Display each stream in a distinct color
+    QSharedPointer<ColorManager> colorPicker = ApplicationContextImpl::getInstance()->color_manager_;
+    QVector<QColor> colorList = {"#0055ff", "#00aa00", "#aa00ff", "#00557f",
+                                 "#5555ff", "#ff55ff", "#00aaff", "#00aa7f"};
 
+    //some streams contains text only and no channels, so we skip those streams
+    //because the colors I picked look the best when they are sorted in order
+    int colorChoice = -1;
+    int stream = -1;
+    for (size_t i = 0; i < XDFdata.totalCh; i++)
+    {
+        if (stream != XDFdata.streamMap[i])
+        {
+            stream = XDFdata.streamMap[i];
+            colorChoice++;
+            if (colorChoice == 8)   //we only have 8 colors
+                colorChoice = 0;
+        }
+        colorPicker->setChannelColor(i, colorList[colorChoice]);
+    }
+
+    //set event colors
+    for (size_t index = 0; index < XDFdata.eventType.size(); index++)
+        colorPicker->setEventColor(XDFdata.eventType[index], QColor(85, 170, 255, 20));
+
+    colorPicker->saveSettings();
+
+    return 0;
+}
+
+//-----------------------------------------------------------------------------
 void XDFReader::bufferAllChannels () const
 {
     size_t numberOfSamples = XDFdata.totalLen;

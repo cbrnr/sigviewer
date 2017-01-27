@@ -11,6 +11,8 @@
 #include "gui/main_window_model.h"
 #include "gui/application_context.h"
 #include "file_context.h"
+#include "file_handling_impl/xdf_reader.h"
+#include "file_handling_impl/biosig_reader.h"
 
 #include <QObject>
 #include <QSharedPointer>
@@ -26,6 +28,8 @@ namespace sigviewer
 class ApplicationContextImpl : public QObject, public ApplicationContext
 {
     Q_OBJECT
+    friend class XDFReader;
+    friend class BioSigReader;
 public:
     //-------------------------------------------------------------------------
     static QSharedPointer<ApplicationContextImpl> getInstance (bool cleanup = false);

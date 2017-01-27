@@ -32,6 +32,9 @@ public:
 
 signals:
 
+    //! User added new event type
+    void newEventType(std::set<EventType>);
+
 public slots:
     void updateShownEventTypes (std::set<EventType> const& shown_event_types);
 

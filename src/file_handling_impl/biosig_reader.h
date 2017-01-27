@@ -40,6 +40,11 @@ public:
     //-------------------------------------------------------------------------
     virtual QSharedPointer<BasicHeader const> getBasicHeader () const {return basic_header_;}
 
+    //-------------------------------------------------------------------------
+    //! Set the colors of all channels.
+    int setChannelColors();
+
+
 private:
     //-------------------------------------------------------------------------
     QString open (QString const& file_name);
