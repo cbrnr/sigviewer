@@ -50,8 +50,8 @@ public:
     ///
     /// @return const pointer to the newly created event
     virtual QSharedPointer<SignalEvent const> createEvent
-            (ChannelID channel_id, unsigned pos, unsigned length,
-             EventType type, EventID id = UNDEFINED_EVENT_ID) = 0;
+            (ChannelID channel_id, unsigned pos, unsigned length, EventType type,
+             int stream_id, EventID id = UNDEFINED_EVENT_ID) = 0;
 
     //-------------------------------------------------------------------------
     /// removes the event with the given id

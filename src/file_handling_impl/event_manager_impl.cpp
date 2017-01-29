@@ -95,8 +95,8 @@ void EventManagerImpl::updateAndUnlockEvent (EventID id)
 
 //-----------------------------------------------------------------------------
 QSharedPointer<SignalEvent const> EventManagerImpl::createEvent (
-        ChannelID channel_id, unsigned pos, unsigned duration, EventType type,
-        EventID id)
+        ChannelID channel_id, unsigned pos, unsigned duration,
+        EventType type, int stream_id, EventID id)
 {
     if (id == UNDEFINED_EVENT_ID)
     {
@@ -108,7 +108,7 @@ QSharedPointer<SignalEvent const> EventManagerImpl::createEvent (
             return QSharedPointer<SignalEvent>(0);
 
     QSharedPointer<SignalEvent> new_event (
-            new SignalEvent(pos, type, sample_rate_, -1, channel_id, duration, id));
+            new SignalEvent(pos, type, sample_rate_, stream_id, channel_id, duration, id));
     event_map_[id] = new_event;
     mutex_map_[id] = QSharedPointer<QMutex> (new QMutex);
     position_event_map_.insertMulti (pos, id);

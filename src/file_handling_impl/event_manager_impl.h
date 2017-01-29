@@ -42,6 +42,7 @@ public:
                                                            unsigned pos,
                                                            unsigned length,
                                                            EventType type,
+                                                           int stream_id,
                                                            EventID id = UNDEFINED_EVENT_ID);
 
     //-------------------------------------------------------------------------

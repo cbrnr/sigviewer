@@ -32,6 +32,7 @@ void DeleteEventUndoCommand::undo ()
             deleted_event_->getPosition (),
             deleted_event_->getDuration (),
             deleted_event_->getType (),
+            deleted_event_->getStream(),
             deleted_event_->getId ());
 }
 

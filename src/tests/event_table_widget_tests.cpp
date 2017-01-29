@@ -46,7 +46,7 @@ QString EventTableWidgetTests::newEvents (QSharedPointer<EventManager> event_man
     QTableWidget* table = event_table.ui_.event_table_;
     int old_row_count = table->rowCount();
 
-    QSharedPointer<SignalEvent const> event = event_manager->createEvent (CHANNEL, POS, LENGTH, TYPE);
+    QSharedPointer<SignalEvent const> event = event_manager->createEvent (CHANNEL, POS, LENGTH, TYPE, UNDEFINED_STREAM_ID);
 
     VERIFY (old_row_count + 1 == table->rowCount(), "one event more");
 

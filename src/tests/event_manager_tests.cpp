@@ -27,7 +27,7 @@ QString EventManagerTests::run ()
 
 QString EventManagerTests::testEventCreation (QSharedPointer<EventManager> evt_mgr)
 {
-    QSharedPointer<SignalEvent const> event = evt_mgr->createEvent (1, 10, 100, 1);
+    QSharedPointer<SignalEvent const> event = evt_mgr->createEvent (1, 10, 100, 1, UNDEFINED_STREAM_ID);
     VERIFY (event.isNull() == false, "event created");
     VERIFY (event->getChannel() == 1, "event created channel");
     VERIFY (event->getDuration() == 100, "event created duration");

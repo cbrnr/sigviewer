@@ -55,6 +55,7 @@ void NewEventUndoCommand::redo ()
             raw_signal_event_->getPosition(),
             raw_signal_event_->getDuration(),
             raw_signal_event_->getType(),
+            raw_signal_event_->getStream(),
             id);
 }
 

@@ -517,7 +517,7 @@ int Xdf::load_xdf(std::string filename)
     return 0;
 }
 
-void Xdf::resampleXDF(int userSrate)
+void Xdf::resample(int userSrate)
 {
     //if user entered a preferred sample rate, we resample all the channels to that sample rate
     //Otherwise, we resample all channels to the sample rate that has the most channels

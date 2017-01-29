@@ -415,7 +415,7 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
                     XDFdata.streams.back().streamHeader =
                             "<?xml version='1.0'?>"
                             "<info>"
-                                "<name>UserCreatedEventStream</name>"
+                                "<name>User Created Event Stream</name>"
                                 "<type>Events</type>"
                                 "<channel_count>1</channel_count>"
                                 "<nominal_srate>0</nominal_srate>"

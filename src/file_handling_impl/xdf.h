@@ -133,7 +133,7 @@ public:
      * \param userSrate is recommended to be between integer 1 and
      * the highest sample rate of the current file.
      */
-    void resampleXDF(int userSrate);
+    void resample(int userSrate);
 
     //! This function will get the length of the upcoming chunk, or the number of samples.
     /*!
@@ -170,7 +170,7 @@ public:
      * be resampled, the resampling process will be finished in the shortest
      * possible period.
      *
-     * \sa majSR, resampleXDF(int userSrate)
+     * \sa majSR, resample(int userSrate)
      */
     void findMajSR();
 
