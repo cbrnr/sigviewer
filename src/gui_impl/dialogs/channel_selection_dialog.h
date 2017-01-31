@@ -47,7 +47,7 @@ private slots:
    void on_channel_table__cellClicked (int row, int column);
    void on_channel_table__cellChanged (int row, int column);
    void on_button_box__accepted ();
-   void on_show_colors_box__toggled (bool on);
+//   void on_show_colors_box__toggled (bool on);
    void on_set_default_color_button__clicked ();
    void on_downsample_factor_spinbox__valueChanged (int value);
    void on_add_filter_button__clicked ();

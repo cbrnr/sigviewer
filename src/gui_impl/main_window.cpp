@@ -46,7 +46,8 @@ MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
     QSettings settings("SigViewer");
     resize(settings.value("MainWindow/size", QSize(800, 500)).toSize());
     setMinimumSize(800, 500);
-    showMaximized();
+    restoreGeometry(settings.value("geometry").toByteArray());  //restore geometry and window state (full screen etc.)
+    restoreState(settings.value("windowState").toByteArray());
 }
 
 //-----------------------------------------------------------------------------
@@ -263,6 +264,10 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
 //-----------------------------------------------------------------------------
 void MainWindow::closeEvent (QCloseEvent* event)
 {
+    QSettings settings("SigViewer");
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("windowState", saveState());
+
     GuiActionFactory::getInstance()->getQAction("Exit")->trigger();
     event->ignore ();
 }
