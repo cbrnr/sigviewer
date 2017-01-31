@@ -36,7 +36,7 @@ CONFIG(release, debug|release) {
 CONFIG += warn_on link_prl qt thread
 
 macx {
-    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.7
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
     LIBS += -liconv
 }
 
