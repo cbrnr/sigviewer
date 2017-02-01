@@ -7,7 +7,7 @@
 #include "dialogs/channel_selection_dialog.h"
 #include "select_shown_channels_dialog.h"
 #include "dialogs/event_types_selection_dialog.h"
-#include "src\application_context_impl.h"
+#include "application_context_impl.h"
 
 #include <QInputDialog>
 #include <QFileDialog>

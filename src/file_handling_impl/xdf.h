@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 
 /*! \class Xdf
  *
@@ -98,12 +99,13 @@ public:
     std::vector<std::string> dictionary;/*!< The vector to store unique event types with no repetitions. \sa eventMap */
     std::vector<uint16_t> eventType;    /*!< The vector to store events by their index in the dictionary.\sa dictionary, eventMap */
     std::vector<std::string> labels;    /*!< The vector to store descriptive labels of each channel. */
-    std::vector<double> sampleRateMap;  /*!< The vector to store all sample rates across all the streams. */
+    std::set<double> sampleRateMap;  /*!< The vector to store all sample rates across all the streams. */
     std::vector<float> offsets;         /*!< Offsets of each channel after using subtractMean() function */
 
     std::string fileHeader;             /*!< Raw XML of the file header. */
     int userAddedStream { 0 };            /*!< For Sigviewer only: if user manually added events in Sigviewer,
-                                          * the events will be stored in a new stream after all current streams. */
+                                          * the events will be stored in a new stream after all current streams.
+                                          * The index will be userAddedStream.  */
     std::vector<std::pair<std::string, double> > userCreatedEvents;/*!< User created events in Sigviewer. */
 
     //=============================================================================================

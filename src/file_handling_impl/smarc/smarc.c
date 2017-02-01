@@ -27,9 +27,10 @@
 #include "multi_stage.h"
 #include "polyfilt.h"
 #include <stdio.h>
-#include <malloc.h>
+//#include <malloc.h>
 #include <string.h>
 #include <math.h>
+#include <stdlib.h> //to replace malloc.h
 
 #define FIRST_BUFFER_SIZE 512
 

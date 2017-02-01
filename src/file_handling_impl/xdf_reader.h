@@ -21,6 +21,13 @@ namespace sigviewer
 //the object to store XDF data
 extern Xdf XDFdata;
 
+enum sampleRateTypes
+{
+    No_streams_found,
+    Zero_Hz_Only,
+    Mono_Sample_Rate,
+    Multi_Sample_Rate
+};
 
 //XDFReader, modeled  on BiosigReader
 class XDFReader : public FileSignalReader
@@ -50,6 +57,9 @@ public:
     //-------------------------------------------------------------------------
     //! Set a distinct color for each stream
     int setStreamColors();
+
+    //-------------------------------------------------------------------------
+    sampleRateTypes selectSampleRateType();
 
 private:
     //-------------------------------------------------------------------------

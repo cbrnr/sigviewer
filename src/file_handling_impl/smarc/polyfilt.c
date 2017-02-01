@@ -26,7 +26,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <malloc.h>
+//#include <malloc.h>
 #include <string.h>
 
 void polyfiltLM(struct PSFilter* pfilt, struct PSState* pstate,

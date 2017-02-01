@@ -530,7 +530,7 @@ void SignalGraphicsItem::drawYGrid (QPainter* painter,
 
     QRectF clip (option->exposedRect);
     //painter->setPen (Qt::lightGray);
-    painter->setPen ("#f3f3f3"); // Qt::lightGray is still too dark and strong.
+    painter->setPen (QColor(220, 220, 220, 50)); // Qt::lightGray is still too dark and strong.
 
     for (float64 y = y_offset_;
          y < height_ / 2;

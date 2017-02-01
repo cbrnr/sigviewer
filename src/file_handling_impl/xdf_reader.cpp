@@ -120,21 +120,70 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
             XDFdata.detrend();
             XDFdata.createLabels();
 
-            ResamplingDialog prompt(XDFdata.majSR, XDFdata.maxSR);
-            prompt.setModal(true);
-            prompt.exec();
+            sampleRateTypes sampleRateType = selectSampleRateType();
 
-            if (prompt.cancel())
+            switch (sampleRateType) {
+            case No_streams_found:
             {
-                Xdf empty;
-                std::swap(XDFdata, empty);
-                return "Cancelled";
+                QMessageBox msgBox;
+                msgBox.setIcon(QMessageBox::Warning);
+                msgBox.setText("No Stream Found");
+                msgBox.setStandardButtons(QMessageBox::Ok);
+                msgBox.exec();
+
+                return "non-exist";
+            }
+            case Zero_Hz_Only:
+            {
+                ResamplingDialog prompt(XDFdata.majSR, XDFdata.maxSR);
+                prompt.setModal(true);
+                prompt.exec();
+
+                if (prompt.cancel())
+                {
+                    Xdf empty;
+                    std::swap(XDFdata, empty);
+                    return "Cancelled";
+                }
+
+                if (prompt.getUserSrate())
+                    XDFdata.majSR = prompt.getUserSrate();
+
+                XDFdata.resample(XDFdata.majSR);
+            }
+                break;
+            case Mono_Sample_Rate:
+            {
+                XDFdata.calcTotalLength(XDFdata.majSR);
+
+                XDFdata.adjustTotalLength();
+            }
+                break;
+            case Multi_Sample_Rate:
+            {
+                ResamplingDialog prompt(XDFdata.majSR, XDFdata.maxSR);
+                prompt.setModal(true);
+                prompt.exec();
+
+                if (prompt.cancel())
+                {
+                    Xdf empty;
+                    std::swap(XDFdata, empty);
+                    return "Cancelled";
+                }
+
+                if (prompt.getUserSrate())
+                    XDFdata.majSR = prompt.getUserSrate();
+
+                XDFdata.resample(XDFdata.majSR);
+            }
+                break;
+            default:
+                qDebug() << "Unknown sample rate type.";
+                break;
             }
 
-            if (prompt.getUserSrate())
-                XDFdata.majSR = prompt.getUserSrate();
 
-            XDFdata.resample(XDFdata.majSR);
             XDFdata.freeUpTimeStamps(); //to save some memory
 
             setStreamColors();
@@ -218,6 +267,27 @@ int XDFReader::setStreamColors()
     colorPicker->saveSettings();
 
     return 0;
+}
+
+//-----------------------------------------------------------------------------
+sampleRateTypes XDFReader::selectSampleRateType()
+{
+    switch (XDFdata.sampleRateMap.size()) {
+    case 0:
+        return No_streams_found;
+    case 1:
+        if (XDFdata.sampleRateMap.count(0))
+            return Zero_Hz_Only;
+        else
+            return Mono_Sample_Rate;
+    case 2:
+        if (XDFdata.sampleRateMap.count(0))
+            return Mono_Sample_Rate;
+        else
+            return Multi_Sample_Rate;
+    default:
+        return Multi_Sample_Rate;
+    }
 }
 
 //-----------------------------------------------------------------------------

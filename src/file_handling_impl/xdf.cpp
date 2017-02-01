@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <stdlib.h>     //EXIT_FAILURE, NULL, abs
 #include "pugixml/pugixml.hpp"  //pugi XML parser
 #include <sstream>
 #include <algorithm>
@@ -54,7 +53,7 @@ int Xdf::load_xdf(std::string filename)
         if (magicNumber.compare("XDF:"))
         {
             std::cout << "This is not a valid XDF file.('" << filename << "')\n";
-            exit(EXIT_FAILURE);
+            return -1;
         }
 
         //for each chunk
@@ -780,10 +779,7 @@ void Xdf::getHighestSampleRate()
 void Xdf::loadSampleRateMap()
 {
     for (auto const &stream : streams)
-    {
-        if (std::find(sampleRateMap.begin(), sampleRateMap.end(), stream.info.nominal_srate)==sampleRateMap.end())
-            sampleRateMap.emplace_back(stream.info.nominal_srate);
-    }
+        sampleRateMap.emplace(stream.info.nominal_srate);
 }
 
 void Xdf::detrend()
@@ -804,118 +800,118 @@ void Xdf::calcEffectiveSrate()
 {
     for (auto &stream : streams)
     {
-        try
+        if (stream.info.nominal_srate)
         {
-            stream.info.effective_sample_rate
-                    = stream.info.sample_count /
-                    (stream.info.last_timestamp - stream.info.first_timestamp);
+            try
+            {
+                stream.info.effective_sample_rate
+                        = stream.info.sample_count /
+                        (stream.info.last_timestamp - stream.info.first_timestamp);
 
-            pugi::xml_document doc;
-            pugi::xml_parse_result result = doc.load_string(stream.streamFooter.c_str());
-            pugi::xml_node sampleCount = doc.child("info").child("sample_count");
-            pugi::xml_node effectiveSampleRate
-                    = doc.child("info").insert_child_after("effective_sample_rate", sampleCount);
-            effectiveSampleRate.append_child(pugi::node_pcdata)
-                    .set_value(std::to_string(stream.info.effective_sample_rate).c_str());
+                pugi::xml_document doc;
+                pugi::xml_parse_result result = doc.load_string(stream.streamFooter.c_str());
+                pugi::xml_node sampleCount = doc.child("info").child("sample_count");
+                pugi::xml_node effectiveSampleRate
+                        = doc.child("info").insert_child_after("effective_sample_rate", sampleCount);
+                effectiveSampleRate.append_child(pugi::node_pcdata)
+                        .set_value(std::to_string(stream.info.effective_sample_rate).c_str());
 
-            std::stringstream buffer;
-            doc.save(buffer);
+                std::stringstream buffer;
+                doc.save(buffer);
 
-            stream.streamFooter = buffer.str();
-        }
-        catch (std::exception &e)
-        {
-            std::cerr << "Error calculating effective sample rate. "
-                      << e.what() << std::endl;
+                stream.streamFooter = buffer.str();
+            }
+            catch (std::exception &e)
+            {
+                std::cerr << "Error calculating effective sample rate. "
+                          << e.what() << std::endl;
+            }
         }
     }
 }
 
 int Xdf::writeEventsToXDF(std::string file_path)
 {
-    try
+    if (userAddedStream)
     {
-        if (userAddedStream)
+        std::fstream file;
+        file.open(file_path, std::ios::app | std::ios::binary);
+
+        if (file.is_open())
         {
-            std::fstream file;
-            file.open(file_path, std::ios::app | std::ios::binary);
+            //start to append to new XDF file
+            //first write a stream header chunk
+            //Num Length Bytes
+            file.put(4);
+            //length
+            int length = streams[userAddedStream].streamHeader.size() + 6; //+6 because of the length int itself and short int tag
+            file.write((char*)&length, 4);
 
-            if (file.is_open())
+            //tag
+            short tag = 2;
+            file.write((char*)&tag, 2);
+            //streamNumber
+            int streamNumber = userAddedStream + 1; //+1 because the stream IDs in XDF are 1 based instead of 0 based
+            file.write((char*)&streamNumber, 4);
+            //content
+            file.write(streams[userAddedStream].streamHeader.c_str(), length - 6);//length - 6 is the string length
+
+            //write samples chunk
+            //Num Length Bytes
+            file.put(8);
+            //length
+            //add the bytes of all following actions together
+            int64_t stringTotalLength = 0;
+            for (auto const &event : userCreatedEvents)
+                stringTotalLength += event.first.size();
+
+            int64_t sampleChunkLength = 2 + 4 + 1 + 4 +
+                    userCreatedEvents.size() *
+                    (1 + 8 + 1 + 4) + stringTotalLength;
+            file.write((char*)&sampleChunkLength, 8);
+
+
+            //tag
+            tag = 3;
+            file.write((char*)&tag, 2);
+            //streamNumber
+            file.write((char*)&streamNumber, 4);
+            //content
+            //NumSamplesBytes
+            file.put(4);
+
+            //Num Samples
+            int numSamples = userCreatedEvents.size();
+            file.write((char*)&numSamples, 4);
+
+            //samples
+            for (auto const &event : userCreatedEvents)
             {
-                //start to append to new XDF file
-                //first write a stream header chunk
-                //Num Length Bytes
-                file.put(4);
-                //length
-                int length = streams[userAddedStream].streamHeader.size() + 6; //+6 because of the length int itself and short int tag
-                file.write((char*)&length, 4);
-
-                //tag
-                short tag = 2;
-                file.write((char*)&tag, 2);
-                //streamNumber
-                int streamNumber = userAddedStream + 1; //+1 because the stream IDs in XDF are 1 based instead of 0 based
-                file.write((char*)&streamNumber, 4);
-                //content
-                file.write(streams[userAddedStream].streamHeader.c_str(), length - 6);//length - 6 is the string length
-
-                //write samples chunk
-                //Num Length Bytes
+                //TimeStampBytes
                 file.put(8);
-                //length
-                //add the bytes of all following actions together
-                int64_t stringTotalLength = 0;
-                for (auto const &event : userCreatedEvents)
-                    stringTotalLength += event.first.size();
 
-                int64_t sampleChunkLength = 2 + 4 + 1 + 4 +
-                        userCreatedEvents.size() *
-                        (1 + 8 + 1 + 4) + stringTotalLength;
-                file.write((char*)&sampleChunkLength, 8);
+                //Optional Time Stamp
+                double timeStamp = event.second;
+                file.write((char*)&timeStamp, 8);
 
-
-                //tag
-                tag = 3;
-                file.write((char*)&tag, 2);
-                //streamNumber
-                file.write((char*)&streamNumber, 4);
-                //content
-                //NumSamplesBytes
+                //Num Length Bytes
                 file.put(4);
 
-                //Num Samples
-                int numSamples = userCreatedEvents.size();
-                file.write((char*)&numSamples, 4);
+                //Length
+                int stringLength = event.first.length();
+                file.write((char*)&stringLength, 4);
 
-                //samples
-                for (auto const &event : userCreatedEvents)
-                {
-                    //TimeStampBytes
-                    file.put(8);
-
-                    //Optional Time Stamp
-                    double timeStamp = event.second;
-                    file.write((char*)&timeStamp, 8);
-
-                    //Num Length Bytes
-                    file.put(4);
-
-                    //Length
-                    int stringLength = event.first.length();
-                    file.write((char*)&stringLength, 4);
-
-                    //String Content
-                    file.write(event.first.c_str(), stringLength);
-                }
-
-                file.close();
+                //String Content
+                file.write(event.first.c_str(), stringLength);
             }
+
+            file.close();
         }
-    }
-    catch (std::exception &e)
-    {
-        std::cerr << "Error writing back to XDF file.\n" << e.what() << std::endl;
-        return -1; //Error
+        else
+        {
+            std::cerr << "Unable to open file." << std::endl;
+            return -1; //Error
+        }
     }
 
     std::cout << "Succesfully wrote to XDF file." << std::endl;

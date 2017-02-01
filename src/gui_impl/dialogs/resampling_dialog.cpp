@@ -17,6 +17,7 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
 {
     ui->setupUi(this);
     this->setWindowTitle("Resampling");
+
     if (XDFdata.sampleRateMap.size() > 1)
     {
         QString text = "This file contains signals of multiple sample rates.<br> "
@@ -25,7 +26,7 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
         ui->label->setText(text);
     }
     else if (XDFdata.sampleRateMap.size() == 1 &&
-             XDFdata.sampleRateMap.front() == 0)
+             XDFdata.sampleRateMap.count(0))
     {
         ui->label->setText("The nominal sample rate of this file is 0.\n"
                            "Please choose a preferred sample rate:");
@@ -58,6 +59,8 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
         infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Sample Rate"));
         infoItem->setText(1, QString::number(XDFdata.streams[i].info.nominal_srate).append(tr(" Hz")));
+        if (XDFdata.streams[i].info.nominal_srate == 0)
+            infoItem->setText(1, infoItem->text(1).append(tr("  (Irregular Sample Rate)")));
 
         infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Channel Count"));

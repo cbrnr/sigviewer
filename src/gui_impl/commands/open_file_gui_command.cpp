@@ -83,12 +83,13 @@ void OpenFileGuiCommand::openFile (QString file_path, bool instantly)
     //close the previous file before opening a new one
     //thus using less memory
     CloseFileGuiCommand closeObject;
-    closeObject.closeFile();
+    if (closeObject.closeCurrentFile())
+    {
+        Xdf empty;
+        std::swap(XDFdata, empty);//clear the data of the previous XDF file
 
-    Xdf empty;
-    std::swap(XDFdata, empty);//clear the data of the previous XDF file
-
-    instance_->openFileImpl (file_path);
+        instance_->openFileImpl (file_path);
+    }
 }
 
 //-------------------------------------------------------------------------
@@ -154,12 +155,13 @@ void OpenFileGuiCommand::open ()
     //close the previous file before opening a new one
     //thus using less memory
     CloseFileGuiCommand closeObject;
-    closeObject.closeFile();
+    if (closeObject.closeCurrentFile())
+    {
+        Xdf empty;
+        std::swap(XDFdata, empty);
 
-    Xdf empty;
-    std::swap(XDFdata, empty);
-
-    instance_->openFileImpl (file_path);
+        instance_->openFileImpl (file_path);
+    }
 }
 
 //-------------------------------------------------------------------------
@@ -196,7 +198,7 @@ void OpenFileGuiCommand::showFileInfo ()
 {
     BasicHeaderInfoDialog basic_header_info_dialog(applicationContext()->getCurrentFileContext()->getHeader());
 
-    //basic_header_info_dialog.loadSettings();
+    basic_header_info_dialog.loadSettings();
     basic_header_info_dialog.exec();
     basic_header_info_dialog.saveSettings();
 }
