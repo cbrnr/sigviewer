@@ -65,10 +65,10 @@ QString EVTWriter::save(QSharedPointer<FileContext const> file_context,
     header->SampleRate = event_manager->getSampleRate();
     header->EVENT.SampleRate = event_manager->getSampleRate();
     header->EVENT.N = number_events;
-    header->EVENT.TYP = (typeof(header->EVENT.TYP)) realloc(header->EVENT.TYP,number_events * sizeof(typeof(*header->EVENT.TYP)));
-    header->EVENT.POS = (typeof(header->EVENT.POS)) realloc(header->EVENT.POS,number_events * sizeof(typeof(*header->EVENT.POS)));
-    header->EVENT.CHN = (typeof(header->EVENT.CHN)) realloc(header->EVENT.CHN,number_events * sizeof(typeof(*header->EVENT.CHN)));
-    header->EVENT.DUR = (typeof(header->EVENT.DUR)) realloc(header->EVENT.DUR,number_events * sizeof(typeof(*header->EVENT.DUR)));
+    header->EVENT.TYP = (decltype(header->EVENT.TYP)) realloc(header->EVENT.TYP,number_events * sizeof(decltype(*header->EVENT.TYP)));
+    header->EVENT.POS = (decltype(header->EVENT.POS)) realloc(header->EVENT.POS,number_events * sizeof(decltype(*header->EVENT.POS)));
+    header->EVENT.CHN = (decltype(header->EVENT.CHN)) realloc(header->EVENT.CHN,number_events * sizeof(decltype(*header->EVENT.CHN)));
+    header->EVENT.DUR = (decltype(header->EVENT.DUR)) realloc(header->EVENT.DUR,number_events * sizeof(decltype(*header->EVENT.DUR)));
     for (unsigned index = 0; index < number_events; index++)
     {
         QSharedPointer<SignalEvent const> event = event_manager->getEvent(events[index]);
