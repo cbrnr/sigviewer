@@ -15,6 +15,8 @@
 #include <QPainter>
 #include <QPointer>
 
+#include <fstream>
+
 namespace sigviewer
 {
 
@@ -23,14 +25,15 @@ QString const SaveGuiCommand::SAVE_ = "Save";
 QString const SaveGuiCommand::EXPORT_TO_PNG_ = "Export to PNG...";
 QString const SaveGuiCommand::EXPORT_TO_GDF_ = "Export to GDF...";
 QString const SaveGuiCommand::EXPORT_EVENTS_ = "Export Events...";
-
+QString const SaveGuiCommand::EXPORT_TO_CSV_ = "Export to CSV...";
 
 QStringList const SaveGuiCommand::ACTIONS_ = QStringList() <<
                                              SaveGuiCommand::SAVE_AS_ <<
                                              SaveGuiCommand::SAVE_ <<
                                              SaveGuiCommand::EXPORT_TO_GDF_ <<
                                              SaveGuiCommand::EXPORT_EVENTS_ <<
-                                             SaveGuiCommand::EXPORT_TO_PNG_;
+                                             SaveGuiCommand::EXPORT_TO_PNG_ <<
+                                             SaveGuiCommand::EXPORT_TO_CSV_;
 
 
 
@@ -58,6 +61,7 @@ void SaveGuiCommand::init ()
     resetActionTriggerSlot (EXPORT_TO_PNG_, SLOT(exportToPNG()));
     resetActionTriggerSlot (EXPORT_TO_GDF_, SLOT(exportToGDF()));
     resetActionTriggerSlot (EXPORT_EVENTS_, SLOT(exportEvents()));
+    resetActionTriggerSlot (EXPORT_TO_CSV_, SLOT(exportToCSV()));
 }
 
 
@@ -207,9 +211,9 @@ void SaveGuiCommand::exportEvents ()
     QString current_file_path = applicationContext()->getCurrentFileContext()->getFilePathAndName();
 
     QString extension = ".evt";
-    QString extenstions = "*.evt";
+    QString extensions = "*.evt";
 
-    QString new_file_path = GuiHelper::getFilePathFromSaveAsDialog (current_file_path.left(current_file_path.lastIndexOf('.')) + extension, extenstions, tr("Events files"));
+    QString new_file_path = GuiHelper::getFilePathFromSaveAsDialog (current_file_path.left(current_file_path.lastIndexOf('.')) + extension, extensions, tr("Events files"));
 
     if (new_file_path.size() == 0)
         return;
@@ -221,6 +225,52 @@ void SaveGuiCommand::exportEvents ()
 
     file_signal_writer->save (applicationContext()->getCurrentFileContext(), types);
     delete file_signal_writer;
+}
+
+//-------------------------------------------------------------------------
+void SaveGuiCommand::exportToCSV()
+{
+    QString current_file_path = applicationContext()->getCurrentFileContext()->getFilePathAndName();
+
+    QString extension = ".csv";
+    QString extensions = "*.csv";
+
+    QString new_file_path = GuiHelper::getFilePathFromSaveAsDialog (current_file_path.left(current_file_path.lastIndexOf('.')) + extension, extensions, tr("CSV files"));
+
+    if (new_file_path.size() == 0)
+        return;
+
+
+    std::ofstream file;
+    file.open(new_file_path.toStdString());
+
+    if (file.is_open())
+    {
+        file << "Position,Duration,Channel,Type\n";
+
+        QSharedPointer<EventManager> event_manager_pt = applicationContext()
+                ->getCurrentFileContext()->getEventManager();
+
+        for (int i = 0; i < event_manager_pt->getNumberOfEvents(); i++)
+        {
+            file << event_manager_pt->getEvent(i)->getPositionInSec() << ",";
+            file << event_manager_pt->getEvent(i)->getDurationInSec() << ",";
+
+            if (event_manager_pt->getEvent(i)->getChannel() == -1)
+                file << "All Channels,";
+            else
+                file << "Channel " << event_manager_pt->getEvent(i)->getChannel() << ",";
+
+            QString eventName = event_manager_pt->getNameOfEvent(i);
+            eventName.remove(QString(","), Qt::CaseInsensitive);
+            file << eventName.toStdString() << "\n";
+        }
+        file.close();
+    }
+    else
+    {
+        QMessageBox::critical (0, current_file_path, tr("Exporting to CSV failed!\nIs the target file opened by another application?"));
+    }
 }
 
 //-------------------------------------------------------------------------
