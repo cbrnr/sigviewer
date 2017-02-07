@@ -130,7 +130,9 @@ void SaveGuiCommand::save ()
 
     if (writer && can_save_events)
     {
-        QSharedPointer<EventManager> event_mgr = currentVisModel()->getEventManager();
+        QSharedPointer<EventManager> event_mgr
+                = applicationContext()->getCurrentFileContext()->getEventManager();
+//                currentVisModel()->getEventManager();
         QString error = writer->saveEventsToSignalFile(event_mgr, event_mgr->getEventTypes());
         if (error.size())
             QMessageBox::critical (0, tr("Error"), error);
