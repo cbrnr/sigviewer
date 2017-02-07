@@ -15,6 +15,7 @@
 #include <QPainter>
 #include <QPointer>
 
+#include <algorithm>
 #include <fstream>
 
 namespace sigviewer
@@ -221,20 +222,55 @@ void SaveGuiCommand::exportEvents ()
         QSharedPointer<EventManager> event_manager_pt = applicationContext()
                 ->getCurrentFileContext()->getEventManager();
 
+        struct row {
+            unsigned long pos;
+            unsigned long dur;
+            int chan;
+            QString name;
+        };
+
+        QVector<row> events;
+
         for (unsigned int i = 0; i < event_manager_pt->getNumberOfEvents(); i++)
         {
-            file << event_manager_pt->getEvent(i)->getPosition() << ",";
-            file << event_manager_pt->getEvent(i)->getDuration() << ",";
-
-            if (event_manager_pt->getEvent(i)->getChannel() == -1)
-                file << "All Channels,";
-            else
-                file << "Channel " << event_manager_pt->getEvent(i)->getChannel() << ",";
-
-            QString eventName = event_manager_pt->getNameOfEvent(i);
-            eventName.remove(QString(","), Qt::CaseInsensitive);
-            file << eventName.toStdString() << "\n";
+            row tmp = {
+                event_manager_pt->getEvent(i)->getPosition(),
+                event_manager_pt->getEvent(i)->getDuration(),
+                event_manager_pt->getEvent(i)->getChannel(),
+                event_manager_pt->getNameOfEvent(i)
+            };
+            events.append(tmp);
         }
+
+        std::sort(events.begin(),
+                  events.end(),
+                  [](const row& a, const row& b) {
+                      return a.pos < b.pos;
+                  }
+        );
+
+        for (int i = 0; i < events.size(); ++i)
+        {
+            file << events[i].pos << "," <<
+                    events[i].dur << "," <<
+                    events[i].chan << "," <<
+                    events[i].name.remove(",").toStdString() << "\n";
+        }
+
+//        for (unsigned int i = 0; i < event_manager_pt->getNumberOfEvents(); i++)
+//        {
+//            file << event_manager_pt->getEvent(i)->getPosition() << ",";
+//            file << event_manager_pt->getEvent(i)->getDuration() << ",";
+
+//            if (event_manager_pt->getEvent(i)->getChannel() == -1)
+//                file << "All Channels,";
+//            else
+//                file << "Channel " << event_manager_pt->getEvent(i)->getChannel() << ",";
+
+//            QString eventName = event_manager_pt->getNameOfEvent(i);
+//            eventName.remove(QString(","), Qt::CaseInsensitive);
+//            file << eventName.toStdString() << "\n";
+//        }
         file.close();
     }
     else
