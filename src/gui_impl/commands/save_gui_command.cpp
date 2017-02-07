@@ -256,21 +256,6 @@ void SaveGuiCommand::exportEvents ()
                     events[i].chan << "," <<
                     events[i].name.remove(",").toStdString() << "\n";
         }
-
-//        for (unsigned int i = 0; i < event_manager_pt->getNumberOfEvents(); i++)
-//        {
-//            file << event_manager_pt->getEvent(i)->getPosition() << ",";
-//            file << event_manager_pt->getEvent(i)->getDuration() << ",";
-
-//            if (event_manager_pt->getEvent(i)->getChannel() == -1)
-//                file << "All Channels,";
-//            else
-//                file << "Channel " << event_manager_pt->getEvent(i)->getChannel() << ",";
-
-//            QString eventName = event_manager_pt->getNameOfEvent(i);
-//            eventName.remove(QString(","), Qt::CaseInsensitive);
-//            file << eventName.toStdString() << "\n";
-//        }
         file.close();
     }
     else
