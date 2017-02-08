@@ -217,7 +217,7 @@ void SaveGuiCommand::exportEvents ()
 
     if (file.is_open())
     {
-        file << "Position,Duration,Channel,Type\n";
+        file << "position,duration,channel,type,name\n";
 
         QSharedPointer<EventManager> event_manager_pt = applicationContext()
                 ->getCurrentFileContext()->getEventManager();
@@ -226,6 +226,7 @@ void SaveGuiCommand::exportEvents ()
             unsigned long pos;
             unsigned long dur;
             int chan;
+            int id;
             QString name;
         };
 
@@ -237,6 +238,7 @@ void SaveGuiCommand::exportEvents ()
                 event_manager_pt->getEvent(i)->getPosition(),
                 event_manager_pt->getEvent(i)->getDuration(),
                 event_manager_pt->getEvent(i)->getChannel(),
+                event_manager_pt->getEvent(i)->getType(),
                 event_manager_pt->getNameOfEvent(i)
             };
             events.append(tmp);
@@ -254,6 +256,7 @@ void SaveGuiCommand::exportEvents ()
             file << events[i].pos << "," <<
                     events[i].dur << "," <<
                     events[i].chan << "," <<
+                    events[i].id << "," <<
                     events[i].name.remove(",").toStdString() << "\n";
         }
         file.close();
