@@ -1,3 +1,8 @@
+// Copyright (c) 2016 The SigViewer Development Team
+// Licensed under the GNU General Public License (GPL)
+// https://www.gnu.org/licenses/gpl
+
+
 #ifndef RESAMPLING_DIALOG_H
 #define RESAMPLING_DIALOG_H
 

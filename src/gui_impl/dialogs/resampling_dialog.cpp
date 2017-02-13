@@ -1,3 +1,8 @@
+// Copyright (c) 2016 The SigViewer Development Team
+// Licensed under the GNU General Public License (GPL)
+// https://www.gnu.org/licenses/gpl
+
+
 #include "resampling_dialog.h"
 #include "ui_resampling_dialog.h"
 #include "file_handling_impl/xdf_reader.h"

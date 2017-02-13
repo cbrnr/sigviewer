@@ -1,3 +1,20 @@
+//libxdf is a static C++ library to load XDF files
+//Copyright (C) 2017  Yida Lin
+
+//This program is free software: you can redistribute it and/or modify
+//it under the terms of the GNU General Public License as published by
+//the Free Software Foundation, either version 3 of the License, or
+//(at your option) any later version.
+
+//This program is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//GNU General Public License for more details.
+
+//You should have received a copy of the GNU General Public License
+//along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//If you have questions, contact author at ITAL_FAZIOLI@hotmail.com
+
 /*! \file xdf.h
  * \brief The header file of Xdf class
  */
@@ -99,7 +116,7 @@ public:
     std::vector<std::string> dictionary;/*!< The vector to store unique event types with no repetitions. \sa eventMap */
     std::vector<uint16_t> eventType;    /*!< The vector to store events by their index in the dictionary.\sa dictionary, eventMap */
     std::vector<std::string> labels;    /*!< The vector to store descriptive labels of each channel. */
-    std::set<double> sampleRateMap;  /*!< The vector to store all sample rates across all the streams. */
+    std::set<double> sampleRateMap;  /*!< The set to store all sample rates across all the streams. */
     std::vector<float> offsets;         /*!< Offsets of each channel after using subtractMean() function */
 
     std::string fileHeader;             /*!< Raw XML of the file header. */
