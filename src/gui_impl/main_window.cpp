@@ -81,7 +81,7 @@ void MainWindow::initToolBars()
     file_toolbar_->addAction (action("Info..."));
     file_toolbar_->addAction (action("Undo"));
     file_toolbar_->addAction (action("Redo"));
-    file_toolbar_->addAction (action("Close"));
+    // file_toolbar_->addAction (action("Close"));
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
     mouse_mode_toolbar_->setMovable(false);
@@ -195,10 +195,9 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     file_menu_->addAction (action("Info..."));
     file_menu_->addAction (action("Close"));
     file_menu_->addSeparator ();
-    file_menu_->addAction (action("Export to PNG..."));
-    file_menu_->addAction (action("Export to GDF..."));
-    file_menu_->addAction (action("Export Events..."));
     file_menu_->addAction (action("Import Events..."));
+    file_menu_->addAction (action("Export Events..."));
+    // file_menu_->addAction (action("Export to GDF..."));
     file_menu_->addSeparator ();
     file_menu_->addAction (action("Exit"));
 
