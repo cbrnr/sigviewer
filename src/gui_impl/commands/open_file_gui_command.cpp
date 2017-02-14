@@ -22,6 +22,8 @@
 #include <QSettings>
 #include <QMessageBox>
 
+#include <fstream>
+
 namespace sigviewer
 {
 
@@ -105,30 +107,74 @@ void OpenFileGuiCommand::open ()
 //-------------------------------------------------------------------------
 void OpenFileGuiCommand::importEvents ()
 {
-    QString extensions = "*.evt";
+    QString extensions = "*.csv";
     QSettings settings ("SigViewer");
     QString open_path = settings.value ("file_open_path").toString();
     if (!open_path.length())
         open_path = QDir::homePath ();
     QString file_path = showOpenDialog (open_path, extensions);
 
-    FileSignalReader* file_signal_reader = FileSignalReaderFactory::getInstance()->getHandler (file_path);
-
-    if (file_signal_reader == 0)
+    if (file_path.isEmpty())
         return;
 
-    QList<QSharedPointer<SignalEvent const> > events = file_signal_reader->getEvents ();
+    std::fstream file;
+    file.open(file_path.toStdString());
 
-    QSharedPointer<EventManager> event_manager = currentVisModel()->getEventManager();
-    QList<QSharedPointer<QUndoCommand> > creation_commands;
-    foreach (QSharedPointer<SignalEvent const> event, events)
+    if (file.is_open())
     {
-        QSharedPointer<QUndoCommand> creation_command (new NewEventUndoCommand (event_manager, event));
-        creation_commands.append (creation_command);
+        std::string line;
+        std::getline(file, line);
+
+        if (line.compare("position,duration,channel,type,name"))
+        {
+            QMessageBox::critical(0, file_path, tr("This is not a valid event CSV file!"));
+            return;
+        }
+
+        QList<QSharedPointer<SignalEvent const> > events;
+        QSharedPointer<EventManager> event_manager
+                = applicationContext()->getCurrentFileContext()->getEventManager();
+        double sampleRate = event_manager->getSampleRate();
+        std::set<EventType> types = event_manager->getEventTypes();
+        int numberChannels = applicationContext()->getCurrentFileContext()->getChannelManager().getNumberChannels();
+
+        while (std::getline(file, line))
+        {
+            QStringList Qline = QString::fromStdString(line).split(',');
+
+            size_t position = Qline[0].toUInt();
+            EventType type = Qline[3].toInt();
+            ChannelID channel = Qline[2].toInt();
+            size_t duration = Qline[1].toULongLong();
+
+            //boundary check & error handling
+            if (position > event_manager->getMaxEventPosition()
+                    || position + duration > event_manager->getMaxEventPosition()
+                    || channel >= numberChannels
+                    || !types.count(type))
+                continue;
+
+            QSharedPointer<SignalEvent> event = QSharedPointer<SignalEvent>(new SignalEvent(position,
+                    type, sampleRate, channel, duration));
+
+            events << event;
+        }
+
+
+        QList<QSharedPointer<QUndoCommand> > creation_commands;
+        foreach (QSharedPointer<SignalEvent const> event, events)
+        {
+            QSharedPointer<QUndoCommand> creation_command (new NewEventUndoCommand (event_manager, event));
+            creation_commands.append (creation_command);
+        }
+        MacroUndoCommand* macro_command = new MacroUndoCommand (creation_commands);
+        applicationContext()->getCurrentCommandExecuter()->executeCommand (macro_command);
     }
-    MacroUndoCommand* macro_command = new MacroUndoCommand (creation_commands);
-    applicationContext()->getCurrentCommandExecuter()->executeCommand (macro_command);
-    delete file_signal_reader;
+    else
+    {
+        QMessageBox::critical(0, file_path, tr("Cannot open file.\nIs the target file open in another application?"));
+        return;
+    }
 }
 
 //-------------------------------------------------------------------------
