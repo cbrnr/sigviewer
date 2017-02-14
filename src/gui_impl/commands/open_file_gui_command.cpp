@@ -107,18 +107,12 @@ void OpenFileGuiCommand::open ()
 //-------------------------------------------------------------------------
 void OpenFileGuiCommand::importEvents ()
 {
-//    QString extensions = "*.evt";
     QString extensions = "*.csv";
     QSettings settings ("SigViewer");
     QString open_path = settings.value ("file_open_path").toString();
     if (!open_path.length())
         open_path = QDir::homePath ();
     QString file_path = showOpenDialog (open_path, extensions);
-
-//    FileSignalReader* file_signal_reader = FileSignalReaderFactory::getInstance()->getHandler (file_path);
-
-//    if (file_signal_reader == 0)
-//        return;
 
     if (file_path.isEmpty())
         return;
@@ -140,7 +134,6 @@ void OpenFileGuiCommand::importEvents ()
         QList<QSharedPointer<SignalEvent const> > events;
         QSharedPointer<EventManager> event_manager
                 = applicationContext()->getCurrentFileContext()->getEventManager();
-//                currentVisModel()->getEventManager();
         double sampleRate = event_manager->getSampleRate();
         std::set<EventType> types = event_manager->getEventTypes();
         int numberChannels = applicationContext()->getCurrentFileContext()->getChannelManager().getNumberChannels();
@@ -176,7 +169,6 @@ void OpenFileGuiCommand::importEvents ()
         }
         MacroUndoCommand* macro_command = new MacroUndoCommand (creation_commands);
         applicationContext()->getCurrentCommandExecuter()->executeCommand (macro_command);
-//        delete file_signal_reader;
     }
     else
     {
