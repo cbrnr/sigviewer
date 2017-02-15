@@ -81,7 +81,10 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
 
     ui->spinBox->setMinimum(1);
     ui->spinBox->setValue(nativeSrate);
-    ui->spinBox->setMaximum(highestSampleRate);
+    if (highestSampleRate > 0)
+        ui->spinBox->setMaximum(highestSampleRate);
+    else
+        ui->spinBox->setMaximum(2048);
     ui->treeWidget->expandAll();
 }
 
