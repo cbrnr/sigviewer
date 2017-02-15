@@ -51,6 +51,7 @@ public:
     float64 getYGridPixelIntervall() const;
     double getValueRangeFragment () const;
     QString getPhysicalDimensionString () const;
+    float64 getMean() const {return mean_;}
 
     void zoomIn();
     void zoomOut();
@@ -92,6 +93,7 @@ private:
 
     float64 minimum_;
     float64 maximum_;
+    float64 mean_;
 
     float64 y_zoom_;
     float64 y_grid_pixel_intervall_;

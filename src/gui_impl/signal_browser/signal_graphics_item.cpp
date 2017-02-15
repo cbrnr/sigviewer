@@ -50,6 +50,7 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
   signal_browser_model_(model),
   minimum_ (channel_manager_.getMinValue (id_)),
   maximum_ (channel_manager_.getMaxValue (id_)),
+  mean_ (channel_manager_.getMean(id_)),
   y_zoom_ (1),
   draw_y_grid_ (true),
   draw_x_grid_ (true),

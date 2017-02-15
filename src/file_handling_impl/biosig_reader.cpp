@@ -199,6 +199,12 @@ void BioSigReader::bufferAllChannels () const
         for (size_t data_index = 0; data_index < numberOfSamples; data_index++)
             raw_data->operator [](data_index) = read_data[data_index + channel_id * numberOfSamples];
 
+        //Calculate mean
+        float64 init = 0.0;
+        float64 mean = std::accumulate(raw_data->begin(), raw_data->end(), init) / raw_data->size();
+        std::transform(raw_data->begin(), raw_data->end(), raw_data->begin(), bind2nd(std::minus<double>(), mean));
+        basic_header_->means_.push_back(mean);
+
         QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, basic_header_->getSampleRate()));
         channel_map_[channel_id] = data_block;
     }

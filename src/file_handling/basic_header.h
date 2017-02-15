@@ -62,6 +62,11 @@ public:
     double getEventSamplerate() const;
     void setEventSamplerate (double event_sample_rate);
 
+    //-------------------------------------------------------------------------
+    float64 getMean (ChannelID id) const;
+
+    //-------------------------------------------------------------------------
+    QVector<float64> means_;
 
 protected:
     //-------------------------------------------------------------------------

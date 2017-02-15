@@ -90,4 +90,10 @@ float64 ChannelManagerImpl::getSampleRate () const
     return reader_->getBasicHeader()->getSampleRate();
 }
 
+//-------------------------------------------------------------------------
+float64 ChannelManagerImpl::getMean(ChannelID id) const
+{
+    return reader_->getBasicHeader()->getMean(id);
+}
+
 }
