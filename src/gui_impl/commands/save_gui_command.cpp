@@ -17,6 +17,9 @@
 #include <QPainter>
 #include <QPointer>
 
+#include <algorithm>
+#include <fstream>
+
 namespace sigviewer
 {
 
@@ -25,7 +28,6 @@ QString const SaveGuiCommand::SAVE_ = "Save";
 QString const SaveGuiCommand::EXPORT_TO_PNG_ = "Export to PNG...";
 QString const SaveGuiCommand::EXPORT_TO_GDF_ = "Export to GDF...";
 QString const SaveGuiCommand::EXPORT_EVENTS_ = "Export Events...";
-
 
 QStringList const SaveGuiCommand::ACTIONS_ = QStringList() <<
                                              SaveGuiCommand::SAVE_AS_ <<
@@ -155,7 +157,7 @@ void SaveGuiCommand::save ()
 
         if (writer && can_save_events)
         {
-            QSharedPointer<EventManager> event_mgr = currentVisModel()->getEventManager();
+            QSharedPointer<EventManager> event_mgr = applicationContext()->getCurrentFileContext()->getEventManager();
             QString error = writer->saveEventsToSignalFile(event_mgr, event_mgr->getEventTypes());
             if (error.size())
                 QMessageBox::critical (0, tr("Error"), error);
@@ -228,27 +230,69 @@ void SaveGuiCommand::exportToGDF ()
 //-------------------------------------------------------------------------
 void SaveGuiCommand::exportEvents ()
 {
-    std::set<EventType> types = GuiHelper::selectEventTypes (currentVisModel()->getShownEventTypes(),
-                                                             currentVisModel()->getEventManager(),
-                                                             applicationContext()->getEventColorManager());
-
     QString current_file_path = applicationContext()->getCurrentFileContext()->getFilePathAndName();
 
-    QString extension = ".evt";
-    QString extenstions = "*.evt";
+    QString extension = ".csv";
+    QString extensions = "*.csv";
 
-    QString new_file_path = GuiHelper::getFilePathFromSaveAsDialog (current_file_path.left(current_file_path.lastIndexOf('.')) + extension, extenstions, tr("Events files"));
+    QString new_file_path = GuiHelper::getFilePathFromSaveAsDialog (current_file_path.left(current_file_path.lastIndexOf('.')) + extension, extensions, tr("CSV files"));
 
     if (new_file_path.size() == 0)
         return;
 
-    FileSignalWriter* file_signal_writer = FileSignalWriterFactory::getInstance()
-                                           ->getHandler(new_file_path);
+    std::ofstream file;
+    file.open(new_file_path.toStdString());
 
-    qDebug() << new_file_path;
+    if (file.is_open())
+    {
+        file << "position,duration,channel,type,name\n";
 
-    file_signal_writer->save (applicationContext()->getCurrentFileContext(), types);
-    delete file_signal_writer;
+        QSharedPointer<EventManager> event_manager_pt = applicationContext()
+                ->getCurrentFileContext()->getEventManager();
+
+        struct row {
+            unsigned long pos;
+            unsigned long dur;
+            int chan;
+            int id;
+            QString name;
+        };
+
+        QVector<row> events;
+
+        for (unsigned int i = 0; i < event_manager_pt->getNumberOfEvents(); i++)
+        {
+            row tmp = {
+                event_manager_pt->getEvent(i)->getPosition(),
+                event_manager_pt->getEvent(i)->getDuration(),
+                event_manager_pt->getEvent(i)->getChannel(),
+                event_manager_pt->getEvent(i)->getType(),
+                event_manager_pt->getNameOfEvent(i)
+            };
+            events.append(tmp);
+        }
+
+        std::sort(events.begin(),
+                  events.end(),
+                  [](const row& a, const row& b) {
+                      return a.pos < b.pos;
+                  }
+        );
+
+        for (int i = 0; i < events.size(); ++i)
+        {
+            file << events[i].pos << "," <<
+                    events[i].dur << "," <<
+                    events[i].chan << "," <<
+                    events[i].id << "," <<
+                    events[i].name.remove(",").toStdString() << "\n";
+        }
+        file.close();
+    }
+    else
+    {
+        QMessageBox::critical (0, current_file_path, tr("Exporting events to CSV failed!\nIs the target file open in another application?"));
+    }
 }
 
 //-------------------------------------------------------------------------
@@ -265,9 +309,8 @@ void SaveGuiCommand::evaluateEnabledness ()
     {
         no_gdf_file_open = !(applicationContext()->getCurrentFileContext()->getFileName().endsWith("gdf"));
         file_changed = (getFileState () == FILE_STATE_CHANGED);
-        if (!currentVisModel().isNull())
-            if (!currentVisModel()->getEventManager().isNull())
-                has_events = currentVisModel()->getEventManager()->getNumberOfEvents() > 0;
+        has_events = applicationContext()->getCurrentFileContext()->getEventManager()->getNumberOfEvents() > 0;
+      
         if (applicationContext()->getCurrentFileContext()->getFileName().endsWith("xdf"))
             no_gdf_file_open = false;//Disabled because currently XDF to GDF conversion doesn't work
     }
