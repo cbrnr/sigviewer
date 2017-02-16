@@ -48,7 +48,8 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
     ui_.tree_widget_->setColumnWidth(ID_COLUMN_INDEX_, 0);
 
     ui_.tree_widget_->header()->setSectionResizeMode (QHeaderView::Interactive);
-    ui_.tree_widget_->header()->resizeSection (NAME_COLUMN_INDEX_, 300);
+    ui_.tree_widget_->header()->resizeSection (NAME_COLUMN_INDEX_, 380);
+    ui_.tree_widget_->header()->resizeSection (COLOR_COLUMN_INDEX_, 120);
     ui_.tree_widget_->header()->resizeSection (ID_COLUMN_INDEX_, 0);
 
     if (!show_colors_)
