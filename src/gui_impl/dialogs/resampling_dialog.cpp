@@ -51,7 +51,7 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
     {
         QTreeWidgetItem* streamItem = new QTreeWidgetItem(ui->treeWidget);
         streamItem->setText(0, "Stream "+QString::number(i));
-        streamItem->setIcon(0, QIcon(":/images/ic_flag_black_24dp.png"));
+//        streamItem->setIcon(0, QIcon(":/images/ic_flag_black_24dp.png"));
 
         QTreeWidgetItem* infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Name"));

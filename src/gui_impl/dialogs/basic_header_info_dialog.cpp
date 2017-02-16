@@ -93,7 +93,7 @@ void BasicHeaderInfoDialog::buildTree()
     // basic
     root_item = new QTreeWidgetItem(info_tree_widget_);
     root_item->setText(0, tr("Basic"));
-    root_item->setIcon(0, QIcon(":/images/ic_info_outline_black_24dp.png"));
+//    root_item->setIcon(0, QIcon(":/images/ic_info_outline_black_24dp.png"));
 
     tmp_item = new QTreeWidgetItem(root_item);
     tmp_item->setText(0, tr("File Type"));
@@ -125,7 +125,7 @@ void BasicHeaderInfoDialog::buildTree()
     // file
     root_item = new QTreeWidgetItem(info_tree_widget_);
     root_item->setText(0, tr("File"));
-    root_item->setIcon(0, QIcon(":/images/ic_folder_open_black_24dp.png"));
+//    root_item->setIcon(0, QIcon(":/images/ic_folder_open_black_24dp.png"));
     tmp_item = new QTreeWidgetItem(root_item);
     tmp_item->setText(0, tr("Size"));
     QFileInfo file_info (basic_header_->getFilePath());
@@ -135,7 +135,7 @@ void BasicHeaderInfoDialog::buildTree()
     // events
     root_item = new QTreeWidgetItem(info_tree_widget_);
     root_item->setText(0, tr("Events"));
-    root_item->setIcon(0, QIcon(":/images/ic_font_download_black_24dp.png"));
+//    root_item->setIcon(0, QIcon(":/images/ic_font_download_black_24dp.png"));
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Number"));
@@ -153,7 +153,7 @@ void BasicHeaderInfoDialog::buildTree()
             // basic
             root_item = new QTreeWidgetItem(info_tree_widget_);
             root_item->setText(0, "Stream "+QString::number(i));
-            root_item->setIcon(0, QIcon(":/images/ic_flag_black_24dp.png"));
+//            root_item->setIcon(0, QIcon(":/images/ic_flag_black_24dp.png"));
 
             QDomDocument streamHeader;
             streamHeader.setContent(QString::fromStdString(XDFdata.streams[i].streamHeader));
@@ -215,7 +215,7 @@ void BasicHeaderInfoDialog::buildTree()
         // patient
         root_item = new QTreeWidgetItem(info_tree_widget_);
         root_item->setText(0, tr("Patient"));
-        root_item->setIcon(0, QIcon(":/images/patient_16x16.png"));
+//        root_item->setIcon(0, QIcon(":/images/patient_16x16.png"));
         QMap<QString, QString> patient_info = basic_header_->getPatientInfo();
         foreach (QString key, patient_info.keys())
         {
@@ -227,7 +227,7 @@ void BasicHeaderInfoDialog::buildTree()
         // channels
         root_item = new QTreeWidgetItem(info_tree_widget_);
         root_item->setText(0, tr("Channels"));
-        root_item->setIcon(0, QIcon(":/images/channels_22x22.png"));
+//        root_item->setIcon(0, QIcon(":/images/channels_22x22.png"));
 
         for (uint32 channel_nr = 0;
              channel_nr < basic_header_->getNumberChannels();
