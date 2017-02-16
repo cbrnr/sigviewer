@@ -7,6 +7,8 @@
 #include "gui_impl/gui_helper_functions.h"
 #include "file_handling/file_signal_writer_factory.h"
 #include "open_file_gui_command.h"
+#include "file_handling_impl/xdf_reader.h"
+#include "fstream"
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -77,17 +79,33 @@ void SaveGuiCommand::saveAs ()
                                                                     extension,
                                                                     tr("Signal files"));
 
+    old_file_path_and_name.replace("\\", "/"); //change back slashes into forward slashes...
+
     if (new_file_path.size())
     {
         if (QFile::exists (new_file_path))
         {
-            if (QMessageBox::question(0, tr("Overwrite"), tr("Replace ") + new_file_path + tr("?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No)
-                == QMessageBox::Yes)
+            //if (QMessageBox::question(0, tr("Overwrite"), tr("Replace ") + new_file_path + tr("?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+            //else
+            //  return;
+            ///^There is already another dialog asking whether to overwrite: why do we need 2 dialogs? I commented it out for now
+
+            if (old_file_path_and_name.compare(new_file_path) != 0) //if the old path is NOT the same as the new path
+            {
                 QFile::remove(new_file_path);
-            else
-                return;
+                QFile::copy (old_file_path_and_name, new_file_path);
+            } //otherwise just leave it as is
         }
-        if (QFile::copy (old_file_path_and_name, new_file_path))
+        else
+            QFile::copy (old_file_path_and_name, new_file_path);
+
+        //add save events to XDF support
+        if (new_file_path.endsWith("xdf", Qt::CaseInsensitive))
+        {
+            XDFdata.writeEventsToXDF(new_file_path.toStdString());
+            applicationContext()->getCurrentFileContext()->setState(FILE_STATE_UNCHANGED);
+        }
+        else
         {
             FileSignalWriter* writer (FileSignalWriterFactory::getInstance()->getHandler(new_file_path));
 
@@ -111,9 +129,9 @@ void SaveGuiCommand::saveAs ()
                 QMessageBox::information(0, "", "Events not stored to " + new_file_path + "\n If you want to store events export the file to GDF or export the events into a EVT file!");
             delete writer;
         }
-        else
-            QMessageBox::critical(0, "Saving.... failed!", "Could not save " + file_name + " to " + new_file_path);
     }
+    else
+        QMessageBox::critical(0, "Saving.... failed!", "Could not save " + file_name + " to " + new_file_path);
 }
 
 //-----------------------------------------------------------------------------
@@ -121,32 +139,40 @@ void SaveGuiCommand::save ()
 {
     QString file_path = applicationContext()->getCurrentFileContext()->getFilePathAndName();
     QString file_name = applicationContext()->getCurrentFileContext()->getFileName();
-    FileSignalWriter* writer = FileSignalWriterFactory::getInstance()->getHandler (file_path);
 
-    bool can_save_events = false;
-
-    if (writer)
-        can_save_events = writer->supportsSavingEvents();
-
-    if (writer && can_save_events)
+    //add save events to XDF support
+    if (file_path.endsWith("xdf", Qt::CaseInsensitive))
     {
-        QSharedPointer<EventManager> event_mgr
-                = applicationContext()->getCurrentFileContext()->getEventManager();
-//                currentVisModel()->getEventManager();
-        QString error = writer->saveEventsToSignalFile(event_mgr, event_mgr->getEventTypes());
-        if (error.size())
-            QMessageBox::critical (0, tr("Error"), error);
+        XDFdata.writeEventsToXDF(file_path.toStdString());
+        applicationContext()->getCurrentFileContext()->setState(FILE_STATE_UNCHANGED);
+    }
+    else //Original Sigviewer code (not XDF)
+    {
+        FileSignalWriter* writer = FileSignalWriterFactory::getInstance()->getHandler (file_path);
+
+        bool can_save_events = false;
+
+        if (writer)
+            can_save_events = writer->supportsSavingEvents();
+
+        if (writer && can_save_events)
+        {
+            QSharedPointer<EventManager> event_mgr = applicationContext()->getCurrentFileContext()->getEventManager();
+            QString error = writer->saveEventsToSignalFile(event_mgr, event_mgr->getEventTypes());
+            if (error.size())
+                QMessageBox::critical (0, tr("Error"), error);
+            else
+                applicationContext()->getCurrentFileContext()->setState(FILE_STATE_UNCHANGED);
+        }
         else
-            applicationContext()->getCurrentFileContext()->setState(FILE_STATE_UNCHANGED);
+        {
+            QMessageBox::StandardButton pressed_button = QMessageBox::question (0, file_name, tr("Saving of Events is not possible to this file format! Do you want to convert this file into GDF?"),
+                                                                                QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+            if (pressed_button == QMessageBox::Yes)
+                exportToGDF ();
+        }
+        delete writer;
     }
-    else
-    {
-        QMessageBox::StandardButton pressed_button = QMessageBox::question (0, file_name, tr("Saving of Events is not possible to this file format! Do you want to convert this file into GDF?"),
-            QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-        if (pressed_button == QMessageBox::Yes)
-            exportToGDF ();
-    }
-    delete writer;
 }
 
 //-----------------------------------------------------------------------------
@@ -284,7 +310,11 @@ void SaveGuiCommand::evaluateEnabledness ()
         no_gdf_file_open = !(applicationContext()->getCurrentFileContext()->getFileName().endsWith("gdf"));
         file_changed = (getFileState () == FILE_STATE_CHANGED);
         has_events = applicationContext()->getCurrentFileContext()->getEventManager()->getNumberOfEvents() > 0;
+      
+        if (applicationContext()->getCurrentFileContext()->getFileName().endsWith("xdf"))
+            no_gdf_file_open = false;//Disabled because currently XDF to GDF conversion doesn't work
     }
+
 
     getQAction (SAVE_)->setEnabled (file_changed);
     getQAction (SAVE_AS_)->setEnabled (file_open);

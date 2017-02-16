@@ -13,6 +13,11 @@ namespace sigviewer
 {
 
 //-------------------------------------------------------------------------
+QString ChannelManager::getChannelLabel(ChannelID id, int streamNumber) const
+{
+
+}
+
 void ChannelManager::addDownsampledMinMaxVersion (ChannelID id, QSharedPointer<DataBlock const> min,
                                                   QSharedPointer<DataBlock const> max, unsigned factor)
 {

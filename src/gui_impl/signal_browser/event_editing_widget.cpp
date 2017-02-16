@@ -8,6 +8,7 @@
 #include "editing_commands/change_type_undo_command.h"
 #include "editing_commands/resize_event_undo_command.h"
 #include "base/math_utils.h"
+#include "file_handling_impl/xdf_reader.h"
 
 #include <QMutexLocker>
 #include <QDebug>
@@ -57,6 +58,11 @@ void EventEditingWidget::updateSelectedEventInfo (QSharedPointer<SignalEvent con
     selected_signal_event_ = selected_signal_event;
     if (selected_signal_event_.isNull())
         ui_.selection_frame_->setDisabled (true);
+    else if (event_manager_->getFileType().startsWith("XDF", Qt::CaseInsensitive))
+    {
+        ui_.selection_frame_->setDisabled(true);//Editing events are not allowed in XDF files
+        ui_.selection_frame_->setToolTip("Editing events are not allowed in XDF files");
+    }
     else
     {
         ui_.selection_frame_->setEnabled (true);
@@ -88,6 +94,17 @@ void EventEditingWidget::on_type_combobox__currentIndexChanged (int combo_box_in
     {
         ChangeTypeUndoCommand* change_type_command = new ChangeTypeUndoCommand (event_manager_, selected_signal_event_->getId(), event_type);
         command_executer_->executeCommand (change_type_command);
+
+        //keep up with XDF customized events
+        if (event_manager_->getFileType().startsWith("XDF", Qt::CaseInsensitive))
+        {
+            if (selected_signal_event_->getStream() == XDFdata.userAddedStream)
+            {
+                int index = selected_signal_event_->getId() - XDFdata.eventType.size();
+                XDFdata.userCreatedEvents[index].first =
+                        event_manager_->getNameOfEventType(event_type).toStdString();
+            }
+        }
     }
 }
 
@@ -106,6 +123,18 @@ void EventEditingWidget::on_begin_spinbox__editingFinished ()
                                         new_begin,
                                         selected_signal_event_->getDuration());
     command_executer_->executeCommand (resize_command);
+
+    //keep up with XDF customized events
+    if (event_manager_->getFileType().startsWith("XDF", Qt::CaseInsensitive))
+    {
+        if (selected_signal_event_->getStream() == XDFdata.userAddedStream)
+        {
+            int index = selected_signal_event_->getId() - XDFdata.eventType.size();
+            XDFdata.userCreatedEvents[index].second =
+                    event_manager_->getEvent(selected_signal_event_->getId())->getPositionInSec()
+                    + XDFdata.minTS;
+        }
+    }
 }
 
 //-------------------------------------------------------------------

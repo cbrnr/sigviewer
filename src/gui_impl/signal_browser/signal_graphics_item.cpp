@@ -16,6 +16,7 @@
 #include "gui_impl/signal_browser_mouse_handling.h"
 #include "gui/color_manager.h"
 #include "gui/gui_action_factory.h"
+#include "file_handling_impl/xdf_reader.h"
 
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
@@ -29,6 +30,7 @@
 #include <QSet>
 
 #include <cmath>
+#include <ctime> //to get current date when user add events
 
 namespace sigviewer
 {
@@ -245,12 +247,18 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
         drawYGrid (painter, option);
     painter->setPen (color_manager_->getChannelColor (id_));
 
+
     for (int index = 0;
          index < static_cast<int>(data_block->size()) - 1;
          index++)
     {
         new_y = (*data_block)[index+1];
-        painter->drawLine(last_x, y_offset_ - (y_zoom_ * last_y), last_x + pixel_per_sample, y_offset_ - (y_zoom_ * new_y));
+
+        //!Draw nothing if NAN
+        if (!std::isnan(last_y) && !std::isnan(new_y))
+        {
+            painter->drawLine(last_x, y_offset_ - (y_zoom_ * last_y), last_x + pixel_per_sample, y_offset_ - (y_zoom_ * new_y));
+        }
 
         last_x += pixel_per_sample;
         last_y = new_y;
@@ -397,10 +405,54 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
             int32 sample_cleaned_pos = event->scenePos().x() / pixel_per_sample + 0.5;
             sample_cleaned_pos *= pixel_per_sample;
             new_event_ = true;
-            new_signal_event_ = QSharedPointer<SignalEvent>(new SignalEvent(sample_cleaned_pos,
-                                                                            signal_browser_model_.getActualEventCreationType(),
-                                                                            event_manager_->getSampleRate(),
-                                                                            id_));
+
+            if (event_manager_->getFileType().startsWith("XDF", Qt::CaseInsensitive))
+            {
+                //If user added events in Sigviewer, we will create a new stream to store these events
+                //and later store back to the XDF file
+                if (!XDFdata.userAddedStream)
+                {
+                    //check whether a user added stream has already been existing
+                    XDFdata.userAddedStream = XDFdata.streams.size();
+                    XDFdata.streams.emplace_back();
+                    std::time_t currentTime = std::time(nullptr);
+                    std::string timeString = std::asctime(std::localtime(&currentTime));
+                    timeString.pop_back(); //we don't need '\n' at the end
+                    XDFdata.streams.back().streamHeader =
+                            "<?xml version='1.0'?>"
+                            "<info>"
+                                "<name>User Created Event Stream</name>"
+                                "<type>Events</type>"
+                                "<channel_count>1</channel_count>"
+                                "<nominal_srate>0</nominal_srate>"
+                                "<channel_format>string</channel_format>"
+                                "<source_id>User Added Events</source_id>"
+                                "<version>1</version>"
+                                "<created_at>" + timeString + "</created_at>"
+                                "<uid/>"
+                                "<session_id/>"
+                                "<hostname/>"
+                                "<desc />"
+                            "</info>";
+                }
+                new_signal_event_ = QSharedPointer<SignalEvent>
+                        (new SignalEvent(sample_cleaned_pos,
+                                         signal_browser_model_.getActualEventCreationType(),
+                                         event_manager_->getSampleRate(), XDFdata.userAddedStream,
+                                         id_));
+                //Add the newly created event to the XDFdata object for later use
+                QString eventName = event_manager_->getNameOfEventType(signal_browser_model_.getActualEventCreationType());
+                XDFdata.userCreatedEvents.emplace_back
+                        (eventName.toStdString(), (sample_cleaned_pos/event_manager_->getSampleRate()) + XDFdata.minTS);
+            }
+            else
+            {
+                new_signal_event_ = QSharedPointer<SignalEvent>
+                        (new SignalEvent(sample_cleaned_pos,
+                                         signal_browser_model_.getActualEventCreationType(),
+                                         event_manager_->getSampleRate(), -1,
+                                         id_));
+            }
             new_event_color_ = color_manager_->getEventColor(signal_browser_model_.getActualEventCreationType());
             new_signal_event_reference_x_ = sample_cleaned_pos;
             emit mouseMoving (true);
@@ -483,7 +535,8 @@ void SignalGraphicsItem::drawYGrid (QPainter* painter,
         return;
 
     QRectF clip (option->exposedRect);
-    painter->setPen (Qt::lightGray);
+    //painter->setPen (Qt::lightGray);
+    painter->setPen (QColor(220, 220, 220, 50)); // Qt::lightGray is still too dark and strong.
 
     for (float64 y = y_offset_;
          y < height_ / 2;
@@ -515,7 +568,8 @@ void SignalGraphicsItem::drawXGrid (QPainter* painter,
         return;
 
     QRectF clip (option->exposedRect);
-    painter->setPen (Qt::lightGray);
+    //painter->setPen (Qt::lightGray);
+    painter->setPen (QColor(255, 255 , 255, 0)); // We probably don't need the x grid
 
     if (clip.width() < 1)
         return;

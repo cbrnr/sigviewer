@@ -19,6 +19,10 @@ public:
     BiosigBasicHeader (HDRTYPE* raw_header, QString const& file_path);
 
     //-------------------------------------------------------------------------
+    //Alternative constructor for XDF
+    BiosigBasicHeader (QString file_format, QString const& file_path);
+
+    //-------------------------------------------------------------------------
     virtual size_t getNumberOfSamples () const;
 
     //-------------------------------------------------------------------------
@@ -33,6 +37,12 @@ private:
 
     //-------------------------------------------------------------------------
     void readRecordingInfo (HDRTYPE const* raw_header);
+
+    //alternative functions for XDF
+    //-------------------------------------------------------------------------
+    void readChannelsInfo (QString XDF);
+
+
 
     unsigned number_samples_;
     QMap<unsigned, QString> user_defined_event_map_;

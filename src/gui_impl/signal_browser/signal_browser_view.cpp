@@ -154,7 +154,7 @@ QSharedPointer<QImage> SignalBrowserView::renderVisibleScene () const
     QSharedPointer<QImage> image (new QImage(graphics_view_->viewport()->width(),
                                              graphics_view_->viewport()->height(),
                                              QImage::Format_ARGB32));
-    image->fill (0);
+    image->fill (Qt::white);
     QPainter painter (image.data());
     graphics_view_->render (&painter, graphics_view_->viewport()->rect(), graphics_view_->viewport()->rect());
     return image;
@@ -348,6 +348,10 @@ void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager,
             this, SLOT(verticalScrollBarRangeChaned(int,int)));
     connect(vertical_scrollbar_, SIGNAL(valueChanged(int)),
             this, SLOT(verticalSrollbarMoved(int)));
+
+    //! To sync event creation widget and editing widget
+    connect(event_creation_widget_, SIGNAL(newEventType(std::set<EventType>)),
+            event_editing_widget_, SLOT(updateShownEventTypes(std::set<EventType>)));
 
     connect(this, SIGNAL(visibleXChanged(int32)), x_axis_widget_, SLOT(changeXStart(int32)));
     connect(model_->getSignalViewSettings().data(), SIGNAL(pixelsPerSampleChanged()), x_axis_widget_, SLOT(update()));

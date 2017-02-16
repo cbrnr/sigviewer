@@ -23,6 +23,7 @@ class SignalChannel
 public:
     //-------------------------------------------------------------------------
     SignalChannel(unsigned ch, const HDRTYPE* hdr);
+    SignalChannel(unsigned ch, QString XDF);
     SignalChannel(unsigned number, CHANNEL_TYPE C);  /* obsolete, deprecated */
 
     //-------------------------------------------------------------------------

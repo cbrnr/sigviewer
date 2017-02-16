@@ -3,11 +3,13 @@
 // https://www.gnu.org/licenses/gpl
 
 
-#ifndef BIOSIG_READER_H_
-#define BIOSIG_READER_H_
+
+#ifndef XDF_READER_H_
+#define XDF_READER_H_
 
 #include "file_handling/file_signal_reader.h"
 #include "biosig.h"
+#include "xdf.h"
 
 #include <QFile>
 #include <QMutex>
@@ -16,12 +18,24 @@
 namespace sigviewer
 {
 
-class BioSigReader : public FileSignalReader
+//the object to store XDF data
+extern Xdf XDFdata;
+
+enum sampleRateTypes
+{
+    No_streams_found,
+    Zero_Hz_Only,
+    Mono_Sample_Rate,
+    Multi_Sample_Rate
+};
+
+//XDFReader, modeled  on BiosigReader
+class XDFReader : public FileSignalReader
 {
 public:
-    BioSigReader ();
+    XDFReader ();
 
-    virtual ~BioSigReader();
+    virtual ~XDFReader();
 
     //-------------------------------------------------------------------------
     QPair<FileSignalReader*, QString> createInstance (QString const& file_path);
@@ -41,39 +55,36 @@ public:
     virtual QSharedPointer<BasicHeader const> getBasicHeader () const {return basic_header_;}
 
     //-------------------------------------------------------------------------
-    //! Set the colors of all channels.
-    int setChannelColors();
+    //! Set a distinct color for each stream
+    int setStreamColors();
 
+    //-------------------------------------------------------------------------
+    sampleRateTypes selectSampleRateType();
 
 private:
     //-------------------------------------------------------------------------
-    QString open (QString const& file_name);
+    QString open (QString const& file_path);
 
     //-------------------------------------------------------------------------
     void bufferAllChannels () const;
 
     //-------------------------------------------------------------------------
-    void applyFilters (double* &in, double* &out, int length) const;
-
-    //-------------------------------------------------------------------------
     void bufferAllEvents () const;
 
-    Q_DISABLE_COPY(BioSigReader)
+    Q_DISABLE_COPY(XDFReader)
 
-    QString loadFixedHeader(const QString& file_name);
-
-    void doClose () const;
+    QString loadFixedHeader(const QString& file_path);
 
     QSharedPointer<BasicHeader> basic_header_;
     mutable QMutex mutex_;
-    mutable QMutex biosig_access_lock_;
-    mutable HDRTYPE* biosig_header_;
+    mutable QMutex xdf_access_lock_;
     mutable bool buffered_all_channels_;
     mutable bool buffered_all_events_;
     mutable QMap<ChannelID, QSharedPointer<DataBlock const> > channel_map_;
     mutable QList<QSharedPointer<SignalEvent const> > events_;
+
 };
 
-}
+} // namespace sigviewer
 
-#endif
+#endif /*XDF_READER_H_*/

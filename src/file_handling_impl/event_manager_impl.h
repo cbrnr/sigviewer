@@ -42,6 +42,7 @@ public:
                                                            unsigned pos,
                                                            unsigned length,
                                                            EventType type,
+                                                           int stream_id,
                                                            EventID id = UNDEFINED_EVENT_ID);
 
     //-------------------------------------------------------------------------
@@ -92,6 +93,13 @@ public:
     //-------------------------------------------------------------------------
     virtual EventID getPreviousEventOfSameType (EventID id) const;
 
+    //-------------------------------------------------------------------------
+    virtual QString getFileType () const;
+
+    //-------------------------------------------------------------------------
+    virtual void setEventName (EventType event_type_id, QString const& name);
+
+
 private:
     EventTableFileReader event_table_reader_;
 
@@ -108,6 +116,7 @@ private:
     EventID next_free_id_;
     PositionMap position_event_map_;
     QMap<EventID, uint32> temp_event_position_map_;
+    QString file_type_;
 };
 
 }

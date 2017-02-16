@@ -38,6 +38,9 @@ public:
     virtual QString getChannelLabel (ChannelID id) const;
 
     //-------------------------------------------------------------------------
+    virtual QString getChannelLabel (ChannelID id, int streamNumber) const;
+
+    //-------------------------------------------------------------------------
     virtual QString getChannelYUnitString (ChannelID id) const;
 
     //-------------------------------------------------------------------------

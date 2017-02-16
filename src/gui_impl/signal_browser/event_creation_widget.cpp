@@ -4,6 +4,8 @@
 
 
 #include "event_creation_widget.h"
+#include "file_handling_impl/xdf_reader.h"
+#include "event_editing_widget.h" //to sync the event type combobox
 
 #include <QMutexLocker>
 
@@ -20,6 +22,48 @@ EventCreationWidget::EventCreationWidget (QSharedPointer<SignalVisualisationMode
     self_updating_ (false)
 {
     ui_.setupUi (this);
+    if (event_manager_->getFileType().startsWith("XDF", Qt::CaseInsensitive))
+    {
+        ui_.lineEdit->setPlaceholderText("Customize Event Text");
+        customized_event_id_ = XDFdata.dictionary.size();
+    }
+    else //custom event seems doesn't work in files other than XDF
+    {
+        ui_.lineEdit->hide();
+        ui_.pushButton->hide();
+    }
+}
+
+//-----------------------------------------------------------------------------
+int EventCreationWidget::insertNewEventType()
+{
+    if (ui_.lineEdit->text().compare(""))
+    {
+        //avoid same types being repeated
+        for (int i = 0; i < ui_.type_combobox_->count(); i++)
+        {
+            if (ui_.lineEdit->text().compare(ui_.type_combobox_->itemText(i), Qt::CaseSensitive) == 0)
+            {   //if it already exists
+                ui_.type_combobox_->setCurrentIndex (i);
+                return 1;
+            }
+        }
+
+        customized_text_ = ui_.lineEdit->text();
+        event_manager_->setEventName(customized_event_id_, customized_text_);
+
+        ui_.type_combobox_->removeItem(customized_event_id_);
+        ui_.type_combobox_->insertItem(customized_event_id_, customized_text_, QVariant (customized_event_id_));
+
+        ui_.type_combobox_->setCurrentIndex(customized_event_id_);
+        customized_event_id_++;
+        if (customized_event_id_ >= 254) //Sigviewer has only 255 slots for custom events
+            customized_event_id_ = XDFdata.dictionary.size();
+
+        emit newEventType(event_manager_->getEventTypes());
+    }
+
+    return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -50,8 +94,6 @@ void EventCreationWidget::on_type_combobox__currentIndexChanged (int combo_box_i
     signal_visualisation_model_->setActualEventCreationType (event_type);
 }
 
-
-
 //-------------------------------------------------------------------
 void EventCreationWidget::setSelfUpdating (bool self_updating)
 {
@@ -64,6 +106,18 @@ bool EventCreationWidget::isSelfUpdating ()
 {
     QMutexLocker locker (&self_updating_mutex_);
     return self_updating_;
+}
+
+//-------------------------------------------------------------------
+void EventCreationWidget::on_pushButton_clicked()
+{
+    insertNewEventType();
+}
+
+//-------------------------------------------------------------------
+void EventCreationWidget::on_lineEdit_returnPressed() //same as push button clicked
+{
+    insertNewEventType();
 }
 
 }

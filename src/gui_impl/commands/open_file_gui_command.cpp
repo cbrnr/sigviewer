@@ -17,11 +17,16 @@
 #include "editing_commands/macro_undo_command.h"
 #include "editing_commands/new_event_undo_command.h"
 #include "gui/progress_bar.h"
+#include "close_file_gui_command.h"
+#include "xdf.h"
+#include "file_handling_impl/xdf_reader.h"
 
 #include <QFileDialog>
 #include <QSettings>
 #include <QMessageBox>
 
+#include <algorithm>
+#include "gui/color_manager.h"
 #include <fstream>
 
 namespace sigviewer
@@ -73,14 +78,58 @@ void OpenFileGuiCommand::init ()
 //-----------------------------------------------------------------------------
 void OpenFileGuiCommand::openFile (QString file_path, bool instantly)
 {
-    instance_->openFileImpl (file_path, instantly);
+    if (!instance_->confirmClosingOldFile())   /*!< In case the user decides not to close the old file, return. */
+        return;
+
+    //close the previous file before opening a new one
+    //thus using less memory
+    CloseFileGuiCommand closeObject;
+    if (closeObject.closeCurrentFile())
+    {
+        Xdf empty;
+        std::swap(XDFdata, empty);//clear the data of the previous XDF file
+
+        instance_->openFileImpl (file_path);
+    }
+}
+
+//-------------------------------------------------------------------------
+bool OpenFileGuiCommand::confirmClosingOldFile()
+{
+    QSharedPointer<FileContext> current_file_context =
+            applicationContext()->getCurrentFileContext();
+
+    if (!current_file_context.isNull() &&
+            current_file_context->getState () == FILE_STATE_CHANGED)
+    {
+        QString file_name = current_file_context->getFileName ();
+        QMessageBox::StandardButton pressed_button
+                =  QMessageBox::question (0, tr("Really close?"),
+                                          tr("Changes in '%1' are not saved!!").arg(file_name) + "\n" +
+                                          tr("Really close?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+
+        if (pressed_button == QMessageBox::No)
+            return false;
+        else
+            current_file_context->setState(FILE_STATE_UNCHANGED);
+    }
+
+    return true;
 }
 
 //-------------------------------------------------------------------------
 void OpenFileGuiCommand::evaluateEnabledness ()
 {
     bool file_opened = (getApplicationState() == APP_STATE_FILE_OPEN);
-    getQAction (IMPORT_EVENTS_)->setEnabled (file_opened);
+    bool enable_import_events = file_opened;
+
+    if (file_opened)
+    {
+        if (applicationContext()->getCurrentFileContext()->getFileName().endsWith("xdf"))
+            enable_import_events = false;//Disabled because currently XDF files doesn't support importing events
+    }
+
+    getQAction (IMPORT_EVENTS_)->setEnabled (enable_import_events);
     getQAction (SHOW_FILE_INFO_)->setEnabled (file_opened);
 }
 
@@ -88,6 +137,9 @@ void OpenFileGuiCommand::evaluateEnabledness ()
 //-------------------------------------------------------------------------
 void OpenFileGuiCommand::open ()
 {
+    if (!instance_->confirmClosingOldFile())   /*!< In case the user decides not to close the old file, return. */
+        return;
+
     QStringList extension_list = FileSignalReaderFactory::getInstance()->getAllFileEndingsWithWildcards();
     QString extensions;
     foreach (QString extension, extension_list)
@@ -101,7 +153,16 @@ void OpenFileGuiCommand::open ()
     if (file_path.isEmpty())
         return;
 
-    instance_->openFileImpl (file_path);
+    //close the previous file before opening a new one
+    //thus using less memory
+    CloseFileGuiCommand closeObject;
+    if (closeObject.closeCurrentFile())
+    {
+        Xdf empty;
+        std::swap(XDFdata, empty);
+
+        instance_->openFileImpl (file_path);
+    }
 }
 
 //-------------------------------------------------------------------------

@@ -51,6 +51,22 @@ QString ChannelManagerImpl::getChannelLabel (ChannelID id) const
 }
 
 //-------------------------------------------------------------------------
+QString ChannelManagerImpl::getChannelLabel (ChannelID id, int streamNumber) const
+{
+    if (id == UNDEFINED_CHANNEL)
+    {
+        if (streamNumber == -1)
+            return QObject::tr("All Channels");
+        else
+            return QObject::tr("Stream ").append(QString::number(streamNumber));
+    }
+    else if (!reader_->getBasicHeader()->getChannel (id).isNull())
+        return reader_->getBasicHeader()->getChannel (id)->getLabel();
+    else
+        return QObject::tr("Invalid Channel");
+}
+
+//-------------------------------------------------------------------------
 QString ChannelManagerImpl::getChannelYUnitString (ChannelID id) const
 {
     if (id != UNDEFINED_CHANNEL)

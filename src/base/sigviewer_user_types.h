@@ -57,7 +57,7 @@ typedef int ChannelID;
 const ChannelID UNDEFINED_CHANNEL = -1;
 const EventID UNDEFINED_EVENT_ID = -1;
 const EventType UNDEFINED_EVENT_TYPE = -1;
-
+const int UNDEFINED_STREAM_ID= -1;
 }
 
 #endif // SIGVIEWER_USER_TYPES_H

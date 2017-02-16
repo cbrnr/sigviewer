@@ -4,6 +4,7 @@
 
 
 #include "signal_channel.h"
+#include "file_handling_impl/xdf_reader.h"
 
 namespace sigviewer
 {
@@ -28,6 +29,37 @@ SignalChannel::SignalChannel(unsigned ch, const HDRTYPE* hdr) :
 #endif
     phys_y_dimension_label_ = QString(tmpstr);
     samplerate_ = hdr->SampleRate * hdr->CHANNEL[ch].SPR / hdr->SPR;
+}
+
+//constructor for XDF
+SignalChannel::SignalChannel(unsigned ch, QString XDF) :
+    label_ (QString::fromStdString(XDFdata.labels[ch]).trimmed())
+{
+    phys_y_dimension_label_ = QString::number(ch);
+    samplerate_ = XDFdata.majSR;
+}
+
+
+SignalChannel::SignalChannel(unsigned number, CHANNEL_TYPE C) :
+    /* obsolete */
+    label_ (QString(C.Label).trimmed()),
+    physical_maximum_(C.PhysMax),
+    digital_maximum_(C.DigMax),
+    physical_minimum_(C.PhysMin),
+    digital_minimum_(C.DigMin),
+    data_type_(C.GDFTYP),
+    lowpass_(C.LowPass),
+    highpass_(C.HighPass),
+    notch_(C.Notch)
+{
+#if (BIOSIG_VERSION < 10400)
+    char tmpstr[30];
+    PhysDim(C.PhysDimCode), tmpstr);
+#else
+    const char *tmpstr = PhysDim3(C.PhysDimCode);
+#endif
+    phys_y_dimension_label_ = QString(tmpstr);
+    samplerate_ = -1.0;
 }
 
 //-----------------------------------------------------------------------------

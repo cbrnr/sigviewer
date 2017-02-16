@@ -46,31 +46,53 @@ float32 const& FixedDataBlock::operator[] (size_t index) const
 }
 
 //-------------------------------------------------------------------------------------------------
+//! Get the minimal value in a data block, excluding any NANs
 float32 FixedDataBlock::getMin () const
 {
-    QVector<float32>::const_iterator start = data_->begin() + start_index_;
-    QVector<float32>::const_iterator end = data_->begin() + start_index_ + size ();
+    float32 min = 0;
+    for (auto const elem : *data_)
+    {
+        if (!std::isnan(elem))
+        {
+            min = elem;
+            break;
+        }
+    }
 
-    QVector<float32>::const_iterator min_element = std::min_element (start,
-                                                                         end);
-    if (min_element != end)
-        return *min_element;
-    else
-        return 0;
+    for (auto const elem : *data_)
+    {
+        if (!std::isnan(elem))
+        {
+            if (elem < min)
+                min = elem;
+        }
+    }
+    return min;
 }
 
 //-------------------------------------------------------------------------------------------------
+//! Get the maximal value in a data block, excluding any NANs
 float32 FixedDataBlock::getMax () const
 {
-    QVector<float32>::const_iterator start = data_->begin() + start_index_;
-    QVector<float32>::const_iterator end = data_->begin() + start_index_ + size ();
+    float32 max = 0;
+    for (auto const elem : *data_)
+    {
+        if (!std::isnan(elem))
+        {
+            max = elem;
+            break;
+        }
+    }
 
-    QVector<float32>::const_iterator max_element = std::max_element (start,
-                                                                         end);
-    if (max_element != end)
-        return *max_element;
-    else
-        return 0;
+    for (auto const elem : *data_)
+    {
+        if (!std::isnan(elem))
+        {
+            if (elem > max)
+                max = elem;
+        }
+    }
+    return max;
 }
 
 //-----------------------------------------------------------------------------

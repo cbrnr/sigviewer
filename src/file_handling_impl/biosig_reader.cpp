@@ -8,7 +8,7 @@
 #include "file_handler_factory_registrator.h"
 #include "gui/progress_bar.h"
 #include "base/fixed_data_block.h"
-
+#include "application_context_impl.h"
 
 #include "biosig.h"
 
@@ -147,18 +147,39 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     basic_header_ = QSharedPointer<BasicHeader>
                     (new BiosigBasicHeader (biosig_header_, file_name));
 
+    if (!QFile::exists(file_name))
+    {
+        sclose (biosig_header_);
+        destructHDR(biosig_header_);
+        biosig_header_ = NULL;
+
+        delete[] c_file_name;
+
+        qDebug() << "File doesn't exist.";
+        QMessageBox msgBox;
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setText("File does not exist.");
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        int ret = msgBox.exec();
+
+        return "non-exist";
+    }
+
     if (biosig_header_ == NULL || serror2(biosig_header_))
     {
-            sclose (biosig_header_);
-            destructHDR(biosig_header_);
-            biosig_header_ = NULL;
-            delete[] c_file_name;
-            return "file not supported";
+        sclose (biosig_header_);
+        destructHDR(biosig_header_);
+        biosig_header_ = NULL;
+
+        delete[] c_file_name;
+
+        return "file not supported";
     }
 
     convert2to4_eventtable(biosig_header_);
 
     delete[] c_file_name;
+
     c_file_name = NULL;
 
     basic_header_->setNumberEvents(biosig_header_->EVENT.N);
@@ -168,6 +189,8 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     else
         basic_header_->setEventSamplerate(biosig_header_->SampleRate);
 
+    setChannelColors();
+
     return "";
 }
 
@@ -176,6 +199,18 @@ QSharedPointer<BasicHeader> BioSigReader::getBasicHeader ()
 {
     //QMutexLocker lock (&mutex_);
     return basic_header_;
+}
+
+//-----------------------------------------------------------------------------
+int BioSigReader::setChannelColors()
+{
+    QSharedPointer<ColorManager> colorPicker = ApplicationContextImpl::getInstance()->color_manager_;
+    for (size_t i = 0; i < basic_header_->getNumberChannels(); i++)
+        colorPicker->setChannelColor(i, colorPicker->getDefaultChannelColor());
+
+    colorPicker->saveSettings();
+
+    return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -220,7 +255,7 @@ void BioSigReader::bufferAllEvents () const
     {
         QSharedPointer<SignalEvent> event (new SignalEvent (biosig_header_->EVENT.POS[index] * rate_transition,
                                                             biosig_header_->EVENT.TYP[index],
-                                                            biosig_header_->EVENT.SampleRate * rate_transition));
+                                                            biosig_header_->EVENT.SampleRate * rate_transition, -1));
         if (biosig_header_->EVENT.CHN)
         {
             if (biosig_header_->EVENT.CHN[index] == 0)

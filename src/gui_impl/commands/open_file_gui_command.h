@@ -33,6 +33,10 @@ public:
     //-------------------------------------------------------------------------
     static void openFile (QString file_path, bool instantly = true);
 
+    //-------------------------------------------------------------------------
+    //!In case user has made changes to the old file but hasn't saved it, prompt the user to confirm whether to still close it
+    bool confirmClosingOldFile();
+
 protected:
     //-------------------------------------------------------------------------
     virtual void evaluateEnabledness ();

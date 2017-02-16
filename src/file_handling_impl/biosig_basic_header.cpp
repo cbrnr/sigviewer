@@ -4,6 +4,7 @@
 
 
 #include "biosig_basic_header.h"
+#include "xdf_reader.h"
 
 #include <ctime>
 #include <cmath>
@@ -36,6 +37,29 @@ BiosigBasicHeader::BiosigBasicHeader (HDRTYPE* raw_header, QString const& file_p
     readRecordingInfo (raw_header);
 }
 
+//alternative for XDF
+BiosigBasicHeader::BiosigBasicHeader (QString file_format, QString const& file_path)
+    : BasicHeader (file_path),
+      number_samples_ (XDFdata.totalLen)
+{
+    if (XDFdata.dictionary.size())
+    {
+        for (unsigned index = 0; index < XDFdata.dictionary.size(); index++)
+        {
+            user_defined_event_map_[index] = QString::fromStdString(XDFdata.dictionary[index]);
+        }
+    }
+
+    QString fileType = "XDF v" + QString::number(XDFdata.version, 'f', 1);
+    setFileTypeString (fileType);
+
+    float64 sampling_rate = XDFdata.majSR;
+
+    setSampleRate (sampling_rate);
+    readChannelsInfo (file_format);
+}
+
+
 //-----------------------------------------------------------------------------
 size_t BiosigBasicHeader::getNumberOfSamples () const
 {
@@ -58,6 +82,17 @@ void BiosigBasicHeader::readChannelsInfo (HDRTYPE const* raw_header)
             QSharedPointer<SignalChannel> channel(new SignalChannel(channel_index, raw_header));
             addChannel(ch++, channel);
         }
+}
+
+//-------------------------------------------------------------------------
+void BiosigBasicHeader::readChannelsInfo (QString XDF)
+{
+    unsigned ch = 0;
+    for (unsigned channel_index = 0; channel_index < XDFdata.totalCh; channel_index++)
+    {
+        QSharedPointer<SignalChannel> channel(new SignalChannel(channel_index, XDF));
+        addChannel(ch++, channel);
+    }
 }
 
 //-------------------------------------------------------------------------
@@ -112,6 +147,7 @@ void BiosigBasicHeader::readPatientInfo (HDRTYPE const* raw_header)
     if (raw_header->Patient.Height)
         addPatientInfo ("Height", QString::number(raw_header->Patient.Height).append("cm"));
 }
+
 
 //-------------------------------------------------------------------------
 void BiosigBasicHeader::readRecordingInfo (HDRTYPE const* raw_header)

@@ -37,6 +37,9 @@ public:
     virtual QString getChannelLabel (ChannelID id) const = 0;
 
     //-------------------------------------------------------------------------
+    virtual QString getChannelLabel (ChannelID id, int streamNumber) const; //streamNumber is for XDF only
+
+    //-------------------------------------------------------------------------
     virtual QString getChannelYUnitString (ChannelID id) const = 0;
 
     //-------------------------------------------------------------------------
@@ -100,6 +103,7 @@ private:
     mutable bool min_max_initialized_;
     mutable std::map<ChannelID, float64> max_values_;
     mutable std::map<ChannelID, float64> min_values_;
+    mutable std::map<ChannelID, float64> offsets_;
 
     QString x_axis_unit_label_;
 

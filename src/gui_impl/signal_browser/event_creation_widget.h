@@ -27,13 +27,23 @@ public:
                                   QSharedPointer<EventManager> event_manager,
                                   QWidget* parent = 0);
 
+    //! When user customizes the event text, add the new event type to the combobox
+    int insertNewEventType ();
+
 signals:
+
+    //! User added new event type
+    void newEventType(std::set<EventType>);
 
 public slots:
     void updateShownEventTypes (std::set<EventType> const& shown_event_types);
 
 private slots:
     void on_type_combobox__currentIndexChanged (int combo_box_index);
+
+    void on_pushButton_clicked();
+
+    void on_lineEdit_returnPressed();
 
 private:
     void setSelfUpdating (bool self_updating);
@@ -46,6 +56,9 @@ private:
     bool self_updating_;
 
     Ui::EventCreationWidget ui_;
+
+    QString customized_text_;
+    int customized_event_id_;
 };
 
 }
