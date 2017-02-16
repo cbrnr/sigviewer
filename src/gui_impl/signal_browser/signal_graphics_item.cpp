@@ -247,12 +247,18 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
         drawYGrid (painter, option);
     painter->setPen (color_manager_->getChannelColor (id_));
 
+
     for (int index = 0;
          index < static_cast<int>(data_block->size()) - 1;
          index++)
     {
         new_y = (*data_block)[index+1];
-        painter->drawLine(last_x, y_offset_ - (y_zoom_ * last_y), last_x + pixel_per_sample, y_offset_ - (y_zoom_ * new_y));
+
+        //!Draw nothing if NAN
+        if (!std::isnan(last_y) && !std::isnan(new_y))
+        {
+            painter->drawLine(last_x, y_offset_ - (y_zoom_ * last_y), last_x + pixel_per_sample, y_offset_ - (y_zoom_ * new_y));
+        }
 
         last_x += pixel_per_sample;
         last_y = new_y;

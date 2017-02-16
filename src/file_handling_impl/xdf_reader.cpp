@@ -117,7 +117,6 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
     {
         if (XDFdata.load_xdf(file_path.toStdString()) == 0)
         {
-            XDFdata.detrend();
             XDFdata.createLabels();
 
             sampleRateTypes sampleRateType = selectSampleRateType();
@@ -312,7 +311,7 @@ void XDFReader::bufferAllChannels () const
             {
                 ProgressBar::instance().increaseValue (1, progress_name);
 
-                QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples,0));
+                QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples, NAN));
 
                 std::copy(row.begin(), row.end(), raw_data->begin() + startingPosition);
                 QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata.majSR));
@@ -333,7 +332,7 @@ void XDFReader::bufferAllChannels () const
             {
                 ProgressBar::instance().increaseValue (1, progress_name);
 
-                QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples,0));
+                QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples, NAN));
 
                 for (size_t i = 0; i < row.size(); i++)
                 {
@@ -347,8 +346,10 @@ void XDFReader::bufferAllChannels () const
                         //using linear interpolation to fill in the space between every two signals
                         int interval = (stream.time_stamps[i+1]
                                 - stream.time_stamps[i]) * XDFdata.majSR;
-                        for (int mid = 1; mid <= interval; mid++)
-                            *(pt + mid) = row[i] + mid * ((row[i+1] - row[i])) / interval;
+                        for (int interpolation = 1; interpolation <= interval; interpolation++)
+                        {
+                            *(pt + interpolation) = row[i] + interpolation * ((row[i+1] - row[i])) / (interval + 1);
+                        }
                     }
                 }
                 QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata.majSR));
