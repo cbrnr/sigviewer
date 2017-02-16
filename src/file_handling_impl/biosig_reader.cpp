@@ -139,7 +139,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     {
         biosig_header_ = constructHDR (0,0);
         biosig_header_->FLAG.UCAL = 0;
-        biosig_header_->FLAG.OVERFLOWDETECTION = 0;
+        biosig_header_->FLAG.OVERFLOWDETECTION = 1;
     }
 
     biosig_header_ = sopen(c_file_name, "r", biosig_header_ );
@@ -160,7 +160,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         msgBox.setIcon(QMessageBox::Warning);
         msgBox.setText("File does not exist.");
         msgBox.setStandardButtons(QMessageBox::Ok);
-        int ret = msgBox.exec();
+        msgBox.exec();
 
         return "non-exist";
     }
@@ -230,7 +230,7 @@ void BioSigReader::bufferAllChannels () const
     {
         ProgressBar::instance().increaseValue (1, progress_name);
 
-        QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples));
+        QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples, NAN));
         for (size_t data_index = 0; data_index < numberOfSamples; data_index++)
             raw_data->operator [](data_index) = read_data[data_index + channel_id * numberOfSamples];
 
