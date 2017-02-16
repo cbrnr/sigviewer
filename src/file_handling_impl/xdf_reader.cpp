@@ -210,7 +210,7 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
             msgBox.setIcon(QMessageBox::Warning);
             msgBox.setText("Unable to open file.");
             msgBox.setStandardButtons(QMessageBox::Ok);
-            int ret = msgBox.exec();
+            msgBox.exec();
 
             return "non-exist";
         }
@@ -222,7 +222,7 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
         msgBox.setIcon(QMessageBox::Warning);
         msgBox.setText("File does not exist.");
         msgBox.setStandardButtons(QMessageBox::Ok);
-        int ret = msgBox.exec();
+        msgBox.exec();
 
         return "non-exist";
     }
