@@ -161,7 +161,6 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
             case Multi_Sample_Rate:
             {
                 ResamplingDialog prompt(XDFdata.majSR, XDFdata.maxSR);
-                prompt.setModal(true);
                 prompt.exec();
 
                 if (prompt.cancel())

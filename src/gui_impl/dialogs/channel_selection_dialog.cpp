@@ -97,7 +97,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(QString file_format, const Channe
     headerLabels << tr("Stream") << tr("Color");
     ui_.treeWidget->setHeaderLabels(headerLabels);
     ui_.treeWidget->setColumnCount(2);
-    ui_.treeWidget->setColumnWidth(0,ui_.treeWidget->width()/2.15);
+    ui_.treeWidget->setColumnWidth(0,ui_.treeWidget->width() * 0.6);
     ui_.treeWidget->setAnimated(true);
 
     int channelCount = 0;

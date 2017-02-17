@@ -46,11 +46,11 @@ void HelpGuiCommand::showAboutDialog ()
     version_file.open(QIODevice::ReadOnly);
     QByteArray version_array = version_file.readLine();
 
-    QDialog dialog;
+    dialog_ = new QDialog(0);
     Ui::aboutDialog ui;
-    ui.setupUi (&dialog);
+    ui.setupUi (&(*dialog_));
     ui.aboutLabel->setText(ui.aboutLabel->text().replace(QString("[VERSION-NUMBER]"), QString (version_array)));
-    dialog.exec();
+    dialog_->show();
 }
 
 //-----------------------------------------------------------------------------
