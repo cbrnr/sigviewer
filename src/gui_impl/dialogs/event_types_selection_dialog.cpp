@@ -41,7 +41,7 @@ EventTypesSelectionDialog::EventTypesSelectionDialog (QString const& caption,
 //-----------------------------------------------------------------------------
 void EventTypesSelectionDialog::buildTree (bool only_existing_events)
 {
-    ui_.tree_widget_->setRootIsDecorated(true);
+//    ui_.tree_widget_->setRootIsDecorated(true);
     QStringList header_labels;
     header_labels << tr("Event Type") << tr("Color") << tr("Alpha") << tr("Type Id");
     ui_.tree_widget_->setHeaderLabels (header_labels);
@@ -52,12 +52,12 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
     ui_.tree_widget_->header()->resizeSection (COLOR_COLUMN_INDEX_, width() * 0.2);
     ui_.tree_widget_->header()->resizeSection (ID_COLUMN_INDEX_, 0);
 
-    if (!show_colors_)
-    {
-        ui_.tree_widget_->setColumnHidden (COLOR_COLUMN_INDEX_, true);
-        ui_.tree_widget_->setColumnHidden (ALPHA_COLUMN_INDEX_, true);
-        ui_.show_colors_box_->setVisible (false);
-    }
+//    if (!show_colors_)
+//    {
+//        ui_.tree_widget_->setColumnHidden (COLOR_COLUMN_INDEX_, true);
+//        ui_.tree_widget_->setColumnHidden (ALPHA_COLUMN_INDEX_, true);
+//        ui_.show_colors_box_->setVisible (false);
+//    }
 
     ui_.tree_widget_->setColumnHidden (ID_COLUMN_INDEX_, true);
 
@@ -125,6 +125,8 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
             }
         }
     }
+
+    ui_.tree_widget_->setAnimated(true);
 }
 
 //-----------------------------------------------------------------------------
