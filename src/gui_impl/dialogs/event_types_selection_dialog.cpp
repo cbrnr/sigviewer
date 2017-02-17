@@ -113,14 +113,12 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
 
                 event_item->setBackgroundColor (COLOR_COLUMN_INDEX_, color);
                 event_item->setTextColor (COLOR_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
-                event_item->setTextAlignment (COLOR_COLUMN_INDEX_, Qt::AlignHCenter);
                 event_item->setText (COLOR_COLUMN_INDEX_, color.name());
 
                 color = color_manager_->getEventColor(event_type);
 
                 event_item->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
                 event_item->setTextColor(ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
-                event_item->setTextAlignment(ALPHA_COLUMN_INDEX_, Qt::AlignHCenter);
                 event_item->setText(ALPHA_COLUMN_INDEX_, QString("%1").arg(color.alpha()));
 
                 event_item->setText (ID_COLUMN_INDEX_, QString::number(event_type));
@@ -250,7 +248,6 @@ void EventTypesSelectionDialog::on_reset_colors_button__clicked ()
         QColor color = color_manager_->getDefaultEventColor((*alpha_iterator)->text (ID_COLUMN_INDEX_).toUInt ());
         (*alpha_iterator)->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
         (*alpha_iterator)->setTextColor(ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
-        (*alpha_iterator)->setTextAlignment(ALPHA_COLUMN_INDEX_, Qt::AlignHCenter);
         (*alpha_iterator)->setText(ALPHA_COLUMN_INDEX_, QString("%1").arg(color.alpha()));
         ++alpha_iterator;
     }
