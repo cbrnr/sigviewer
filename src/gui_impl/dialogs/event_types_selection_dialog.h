@@ -32,7 +32,6 @@ public:
                                QSharedPointer<EventManager const> event_manager,
                                std::set<EventType> const& preselected_types,
                                QSharedPointer<ColorManager> color_manager,
-                               bool show_colors = false,
                                QWidget* parent = 0);
 
     void storeColors();
@@ -45,7 +44,6 @@ private slots:
     void on_existing_events_button__toggled (bool checked);
     void on_select_all_button__clicked ();
     void on_unselect_all_button__clicked ();
-    void on_show_colors_box__toggled (bool on);
     void on_reset_colors_button__clicked ();
 
 
@@ -75,7 +73,6 @@ private:
     static int const ALPHA_COLUMN_INDEX_ = 2;
     static int const ID_COLUMN_INDEX_ = 3;
 
-    bool const show_colors_;
     QSharedPointer<EventManager const> event_manager_;
     std::set<EventType> selected_types_;
     QSharedPointer<ColorManager> color_manager_;

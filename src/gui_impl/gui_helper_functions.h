@@ -40,8 +40,7 @@ EventType selectEventType (EventType preselected_type, QSharedPointer<SignalVisu
 //-----------------------------------------------------------------------------
 std::set<EventType> selectEventTypes (std::set<EventType> const& preselected_type,
                                       QSharedPointer<EventManager const> event_manager,
-                                      QSharedPointer<ColorManager> color_manager,
-                                      bool enable_color_editing = false);
+                                      QSharedPointer<ColorManager> color_manager);
 
 //-----------------------------------------------------------------------------
 ChannelID selectChannel (ChannelID preselected_channel,

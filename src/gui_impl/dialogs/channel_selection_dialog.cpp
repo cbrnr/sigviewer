@@ -82,15 +82,15 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
         int row = 0;
         foreach (ChannelID id, channel_manager_.getChannels())
         {
-            QTreeWidgetItem* label_item = new QTreeWidgetItem (ui_.treeWidget);
-            label_item->setText(0, tr("Channel ").append(QString::number(id)));
-            label_item->setFlags((Qt::ItemIsEnabled | Qt::ItemIsUserCheckable));
+            QTreeWidgetItem* channelItem = new QTreeWidgetItem (ui_.treeWidget);
+            channelItem->setText(0, tr("Channel ").append(QString::number(id)));
+            channelItem->setFlags((Qt::ItemIsEnabled | Qt::ItemIsUserCheckable));
 
             QColor color = color_manager_->getChannelColor (id);
-            label_item->setText(1, color.name());
-            label_item->setBackgroundColor(1, color);
+            channelItem->setText(1, color.name());
+            channelItem->setBackgroundColor(1, color);
             if (ColorManager::isDark(color))
-                label_item->setForeground(1, Qt::white);
+                channelItem->setForeground(1, Qt::white);
             row++;
         }
     }
@@ -105,12 +105,12 @@ void ChannelSelectionDialog::resizeEvent(QResizeEvent *event) {
     QDialog::resizeEvent(event);
 }
 
-
 //-----------------------------------------------------------------------------
 bool ChannelSelectionDialog::isSelected (ChannelID channel_id)
 {
     QTreeWidgetItemIterator it(ui_.treeWidget);
-    while (*it) {
+    while (*it)
+    {
         if ((*it)->text(0).compare("Channel "+ QString::number(channel_id), Qt::CaseInsensitive) == 0)
         {
             return (*it)->checkState(0) == Qt::Checked;
@@ -127,7 +127,8 @@ void ChannelSelectionDialog::setSelected (ChannelID channel_id, bool selected)
     Qt::CheckState state = selected ? Qt::Checked : Qt::Unchecked;
     QTreeWidgetItemIterator it(ui_.treeWidget);
     QString temp = "Channel " + QString::number(channel_id);
-    while (*it) {
+    while (*it)
+    {
         if ((*it)->text(0) == temp)
         {
             (*it)->setCheckState(0, state);

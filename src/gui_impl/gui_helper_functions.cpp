@@ -130,8 +130,7 @@ EventType selectEventType (EventType preselected_type,
 //-----------------------------------------------------------------------------
 std::set<EventType> selectEventTypes (std::set<EventType> const& preselected_type,
                                       QSharedPointer<EventManager const> event_manager,
-                                      QSharedPointer<ColorManager> color_manager,
-                                      bool enable_color_editing)
+                                      QSharedPointer<ColorManager> color_manager)
 {
     std::set<EventType> selected_types;
     if (event_manager.isNull())
@@ -139,11 +138,10 @@ std::set<EventType> selectEventTypes (std::set<EventType> const& preselected_typ
 
     EventTypesSelectionDialog dialog (QObject::tr("Select Event Types"),
                                       event_manager, preselected_type,
-                                      color_manager,
-                                      enable_color_editing, 0);
+                                      color_manager, 0);
     int result = dialog.exec();
     selected_types = dialog.getSelectedTypes ();
-    if (enable_color_editing && result == QDialog::Accepted)
+    if (result == QDialog::Accepted)
         dialog.storeColors ();
     return selected_types;
 }

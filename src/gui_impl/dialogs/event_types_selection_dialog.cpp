@@ -24,10 +24,8 @@ EventTypesSelectionDialog::EventTypesSelectionDialog (QString const& caption,
                                                       QSharedPointer<EventManager const> event_manager,
                                                       std::set<EventType> const& preselected_types,
                                                       QSharedPointer<ColorManager> color_manager,
-                                                      bool show_colors,
                                                       QWidget* parent)
     : QDialog(parent),
-      show_colors_ (show_colors),
       event_manager_ (event_manager),
       selected_types_ (preselected_types),
       color_manager_ (color_manager)
@@ -204,23 +202,6 @@ void EventTypesSelectionDialog::on_unselect_all_button__clicked ()
         ui_.tree_widget_->topLevelItem(index)->setCheckState(CHECKBOX_COLUMN_INDEX_, Qt::Unchecked);
     selected_types_.clear ();
 }
-
-//-----------------------------------------------------------------------------
-void EventTypesSelectionDialog::on_show_colors_box__toggled (bool on)
-{
-    ui_.tree_widget_->setColumnHidden (COLOR_COLUMN_INDEX_, !on);
-    ui_.tree_widget_->setColumnHidden (ALPHA_COLUMN_INDEX_, !on);
-    ui_.reset_colors_button_->setVisible (on);
-
-    if (on)
-    {
-        int width = ui_.tree_widget_->width ();
-        ui_.tree_widget_->setColumnWidth (NAME_COLUMN_INDEX_, width / 2);
-        ui_.tree_widget_->setColumnWidth (COLOR_COLUMN_INDEX_, width / 4);
-        ui_.tree_widget_->setColumnWidth (ALPHA_COLUMN_INDEX_, width / 4 - 20);
-    }
-}
-
 
 //-----------------------------------------------------------------------------
 void EventTypesSelectionDialog::on_reset_colors_button__clicked ()
