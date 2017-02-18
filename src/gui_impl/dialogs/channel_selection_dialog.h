@@ -30,32 +30,20 @@ public:
                             QSharedPointer<ColorManager> color_manager,
                             QWidget* parent = 0);
 
-    ChannelSelectionDialog (QString file_format, ChannelManager const& channel_manager,
-                            QSharedPointer<BasicHeader> header,
-                            QSharedPointer<ColorManager> color_manager,
-                            QWidget* parent = 0);
-
     bool isSelected (ChannelID channel_id);
-    bool isSelected (QString file_format, ChannelID channel_id);
     void setSelected (ChannelID channel_id, bool selected);
-    void setSelected (QString file_format, ChannelID channel_id, bool selected);
 
 private slots:
    void on_unselect_all_button__clicked ();
    void on_select_all_button__clicked ();
    void on_reset_colors_button__clicked ();
-   void on_channel_table__cellClicked (int row, int column);
-   void on_channel_table__cellChanged (int row, int column);
    void on_button_box__accepted ();
    void on_set_default_color_button__clicked ();
-
    void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
-
    void on_treeWidget_itemChanged(QTreeWidgetItem *item, int column);
 
 private:
-    void updateColor (int row, QColor const& color);
-    void updateColor (QString file_format, QTreeWidgetItem* item, QColor const& color);
+    void updateColor (QTreeWidgetItem *item, QColor const& color);
     void resizeEvent(QResizeEvent *event);
 
    //-------------------------------------------------------------------------
@@ -76,8 +64,6 @@ private:
     static int const ID_INDEX_ = 2;
     static QColor const NOT_VISIBLE_COLOR_;
     static QColor const VISIBLE_COLOR_;
-    bool self_setting_;
-    QString fileType;
 };
 
 }
