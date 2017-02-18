@@ -39,6 +39,8 @@ private:
 
     static GuiActionFactoryRegistrator registrator_;
 
+    QDialog* dialog_;
+
 };
 
 }

@@ -95,8 +95,7 @@ void AdaptEventViewGuiCommand::setShownEvents ()
     std::set<EventType> shown_types = currentVisModel()->getShownEventTypes ();
     std::set<EventType> new_shown_types = GuiHelper::selectEventTypes (shown_types,
                                                                        currentVisModel()->getEventManager(),
-                                                                       applicationContext()->getEventColorManager(),
-                                                                       true);
+                                                                       applicationContext()->getEventColorManager());
     if (shown_types != new_shown_types)
         currentVisModel()->setShownEventTypes (new_shown_types);
     currentVisModel()->update ();

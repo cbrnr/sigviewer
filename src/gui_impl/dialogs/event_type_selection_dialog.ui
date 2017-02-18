@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>664</width>
-    <height>699</height>
+    <width>633</width>
+    <height>744</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -101,14 +101,17 @@
      </item>
      <item>
       <widget class="QGroupBox" name="show_colors_box_">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="title">
         <string>Color Settings</string>
        </property>
        <property name="checkable">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>

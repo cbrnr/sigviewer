@@ -161,7 +161,6 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
             case Multi_Sample_Rate:
             {
                 ResamplingDialog prompt(XDFdata.majSR, XDFdata.maxSR);
-                prompt.setModal(true);
                 prompt.exec();
 
                 if (prompt.cancel())
@@ -205,7 +204,6 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
         }
         else
         {
-            qDebug() << "Unable to open file.";
             QMessageBox msgBox;
             msgBox.setIcon(QMessageBox::Warning);
             msgBox.setText("Unable to open file.");
@@ -217,7 +215,6 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
     }
     else
     {
-        qDebug() << "File doesn't exist.";
         QMessageBox msgBox;
         msgBox.setIcon(QMessageBox::Warning);
         msgBox.setText("File does not exist.");

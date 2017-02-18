@@ -24,10 +24,8 @@ EventTypesSelectionDialog::EventTypesSelectionDialog (QString const& caption,
                                                       QSharedPointer<EventManager const> event_manager,
                                                       std::set<EventType> const& preselected_types,
                                                       QSharedPointer<ColorManager> color_manager,
-                                                      bool show_colors,
                                                       QWidget* parent)
     : QDialog(parent),
-      show_colors_ (show_colors),
       event_manager_ (event_manager),
       selected_types_ (preselected_types),
       color_manager_ (color_manager)
@@ -41,23 +39,15 @@ EventTypesSelectionDialog::EventTypesSelectionDialog (QString const& caption,
 //-----------------------------------------------------------------------------
 void EventTypesSelectionDialog::buildTree (bool only_existing_events)
 {
-    ui_.tree_widget_->setRootIsDecorated(true);
     QStringList header_labels;
     header_labels << tr("Event Type") << tr("Color") << tr("Alpha") << tr("Type Id");
     ui_.tree_widget_->setHeaderLabels (header_labels);
     ui_.tree_widget_->setColumnWidth(ID_COLUMN_INDEX_, 0);
 
     ui_.tree_widget_->header()->setSectionResizeMode (QHeaderView::Interactive);
-    ui_.tree_widget_->header()->resizeSection (NAME_COLUMN_INDEX_, 380);
-    ui_.tree_widget_->header()->resizeSection (COLOR_COLUMN_INDEX_, 120);
+    ui_.tree_widget_->header()->resizeSection (NAME_COLUMN_INDEX_, width() * 0.6);
+    ui_.tree_widget_->header()->resizeSection (COLOR_COLUMN_INDEX_, width() * 0.2);
     ui_.tree_widget_->header()->resizeSection (ID_COLUMN_INDEX_, 0);
-
-    if (!show_colors_)
-    {
-        ui_.tree_widget_->setColumnHidden (COLOR_COLUMN_INDEX_, true);
-        ui_.tree_widget_->setColumnHidden (ALPHA_COLUMN_INDEX_, true);
-        ui_.show_colors_box_->setVisible (false);
-    }
 
     ui_.tree_widget_->setColumnHidden (ID_COLUMN_INDEX_, true);
 
@@ -113,20 +103,20 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
 
                 event_item->setBackgroundColor (COLOR_COLUMN_INDEX_, color);
                 event_item->setTextColor (COLOR_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
-                event_item->setTextAlignment (COLOR_COLUMN_INDEX_, Qt::AlignHCenter);
                 event_item->setText (COLOR_COLUMN_INDEX_, color.name());
 
                 color = color_manager_->getEventColor(event_type);
 
                 event_item->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
                 event_item->setTextColor(ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
-                event_item->setTextAlignment(ALPHA_COLUMN_INDEX_, Qt::AlignHCenter);
                 event_item->setText(ALPHA_COLUMN_INDEX_, QString("%1").arg(color.alpha()));
 
                 event_item->setText (ID_COLUMN_INDEX_, QString::number(event_type));
             }
         }
     }
+
+    ui_.tree_widget_->setAnimated(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -214,23 +204,6 @@ void EventTypesSelectionDialog::on_unselect_all_button__clicked ()
 }
 
 //-----------------------------------------------------------------------------
-void EventTypesSelectionDialog::on_show_colors_box__toggled (bool on)
-{
-    ui_.tree_widget_->setColumnHidden (COLOR_COLUMN_INDEX_, !on);
-    ui_.tree_widget_->setColumnHidden (ALPHA_COLUMN_INDEX_, !on);
-    ui_.reset_colors_button_->setVisible (on);
-
-    if (on)
-    {
-        int width = ui_.tree_widget_->width ();
-        ui_.tree_widget_->setColumnWidth (NAME_COLUMN_INDEX_, width / 2);
-        ui_.tree_widget_->setColumnWidth (COLOR_COLUMN_INDEX_, width / 4);
-        ui_.tree_widget_->setColumnWidth (ALPHA_COLUMN_INDEX_, width / 4 - 20);
-    }
-}
-
-
-//-----------------------------------------------------------------------------
 void EventTypesSelectionDialog::on_reset_colors_button__clicked ()
 {
     QTreeWidgetItemIterator color_iterator (ui_.tree_widget_, QTreeWidgetItemIterator::NoChildren);
@@ -250,7 +223,6 @@ void EventTypesSelectionDialog::on_reset_colors_button__clicked ()
         QColor color = color_manager_->getDefaultEventColor((*alpha_iterator)->text (ID_COLUMN_INDEX_).toUInt ());
         (*alpha_iterator)->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
         (*alpha_iterator)->setTextColor(ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
-        (*alpha_iterator)->setTextAlignment(ALPHA_COLUMN_INDEX_, Qt::AlignHCenter);
         (*alpha_iterator)->setText(ALPHA_COLUMN_INDEX_, QString("%1").arg(color.alpha()));
         ++alpha_iterator;
     }
