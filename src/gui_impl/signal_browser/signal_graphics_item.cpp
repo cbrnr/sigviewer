@@ -410,15 +410,15 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
             {
                 //If user added events in Sigviewer, we will create a new stream to store these events
                 //and later store back to the XDF file
-                if (!XDFdata.userAddedStream)
+                if (!XDFdata->userAddedStream)
                 {
                     //check whether a user added stream has already been existing
-                    XDFdata.userAddedStream = XDFdata.streams.size();
-                    XDFdata.streams.emplace_back();
+                    XDFdata->userAddedStream = XDFdata->streams.size();
+                    XDFdata->streams.emplace_back();
                     std::time_t currentTime = std::time(nullptr);
                     std::string timeString = std::asctime(std::localtime(&currentTime));
                     timeString.pop_back(); //we don't need '\n' at the end
-                    XDFdata.streams.back().streamHeader =
+                    XDFdata->streams.back().streamHeader =
                             "<?xml version='1.0'?>"
                             "<info>"
                                 "<name>User Created Event Stream</name>"
@@ -438,12 +438,12 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
                 new_signal_event_ = QSharedPointer<SignalEvent>
                         (new SignalEvent(sample_cleaned_pos,
                                          signal_browser_model_.getActualEventCreationType(),
-                                         event_manager_->getSampleRate(), XDFdata.userAddedStream,
+                                         event_manager_->getSampleRate(), XDFdata->userAddedStream,
                                          id_));
                 //Add the newly created event to the XDFdata object for later use
                 QString eventName = event_manager_->getNameOfEventType(signal_browser_model_.getActualEventCreationType());
-                XDFdata.userCreatedEvents.emplace_back
-                        (eventName.toStdString(), (sample_cleaned_pos/event_manager_->getSampleRate()) + XDFdata.minTS);
+                XDFdata->userCreatedEvents.emplace_back
+                        (eventName.toStdString(), (sample_cleaned_pos/event_manager_->getSampleRate()) + XDFdata->minTS);
             }
             else
             {

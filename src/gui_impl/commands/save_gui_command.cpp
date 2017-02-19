@@ -102,7 +102,7 @@ void SaveGuiCommand::saveAs ()
         //add save events to XDF support
         if (new_file_path.endsWith("xdf", Qt::CaseInsensitive))
         {
-            XDFdata.writeEventsToXDF(new_file_path.toStdString());
+            XDFdata->writeEventsToXDF(new_file_path.toStdString());
             applicationContext()->getCurrentFileContext()->setState(FILE_STATE_UNCHANGED);
         }
         else
@@ -143,7 +143,7 @@ void SaveGuiCommand::save ()
     //add save events to XDF support
     if (file_path.endsWith("xdf", Qt::CaseInsensitive))
     {
-        XDFdata.writeEventsToXDF(file_path.toStdString());
+        XDFdata->writeEventsToXDF(file_path.toStdString());
         applicationContext()->getCurrentFileContext()->setState(FILE_STATE_UNCHANGED);
     }
     else //Original Sigviewer code (not XDF)

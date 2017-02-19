@@ -67,7 +67,7 @@ bool CloseFileGuiCommand::closeCurrentFile ()
     if (current_file_context->getFileName().endsWith("xdf", Qt::CaseInsensitive))
     {
         Xdf empty;
-        std::swap(XDFdata, empty);//clear the data of the previous XDF file
+        std::swap(*XDFdata, empty);//clear the data of the previous XDF file
     }
 
     applicationContext()->getMainWindowModel ()->closeCurrentFileTabs ();
