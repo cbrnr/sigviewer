@@ -4,6 +4,7 @@
 
 
 #include "close_file_gui_command.h"
+#include "file_handling_impl/xdf_reader.h"
 
 #include <QApplication>
 #include <QMessageBox>
@@ -61,6 +62,12 @@ bool CloseFileGuiCommand::closeCurrentFile ()
 
         if (pressed_button == QMessageBox::No)
             return false;
+    }
+
+    if (current_file_context->getFileName().endsWith("xdf", Qt::CaseInsensitive))
+    {
+        Xdf empty;
+        std::swap(XDFdata, empty);//clear the data of the previous XDF file
     }
 
     applicationContext()->getMainWindowModel ()->closeCurrentFileTabs ();

@@ -266,7 +266,7 @@ int XDFReader::setStreamColors()
 }
 
 //-----------------------------------------------------------------------------
-sampleRateTypes XDFReader::selectSampleRateType()
+XDFReader::sampleRateTypes XDFReader::selectSampleRateType()
 {
     switch (XDFdata.sampleRateMap.size()) {
     case 0:
