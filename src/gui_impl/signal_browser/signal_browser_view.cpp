@@ -144,6 +144,7 @@ void SignalBrowserView::updateWidgets (bool update_view)
     if (update_view)
         graphics_view_->viewport()->update();
     x_axis_widget_->update();
+    y_axis_widget_->update();
     label_widget_->update();
     emit visibleYChanged (graphics_view_->mapToScene(0,0).y());
 }
@@ -275,6 +276,7 @@ void SignalBrowserView::horizontalScrollBarRangeChaned (int min, int max)
 void SignalBrowserView::verticalScrollBarRangeChaned (int min, int max)
 {
     label_widget_->update ();
+    y_axis_widget_->update();
     vertical_scrollbar_->setRange(min, max);
     vertical_scrollbar_->setPageStep(graphics_view_->verticalScrollBar()->pageStep());
     qreal y = graphics_view_->mapToScene(0,0).y();
@@ -298,7 +300,7 @@ void SignalBrowserView::dragEnterEvent(QDragEnterEvent *event)
 //-----------------------------------------------------------------------------
 void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager, QSharedPointer<CommandExecuter> command_executer)
 {
-    y_axis_widget_ = new YAxisWidget (this);
+    y_axis_widget_ = new YAxisWidget (this, model_->getSignalViewSettings());
     y_axis_widget_->resize(70, height());
     y_axis_widget_->setMinimumSize(70, 0);
 
@@ -356,7 +358,9 @@ void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager,
     connect(this, SIGNAL(visibleXChanged(int32)), x_axis_widget_, SLOT(changeXStart(int32)));
     connect(model_->getSignalViewSettings().data(), SIGNAL(pixelsPerSampleChanged()), x_axis_widget_, SLOT(update()));
     label_widget_->connect (this, SIGNAL(visibleYChanged(int32)), SLOT(changeYStart (int32)));
-    connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
+    y_axis_widget_->connect (this, SIGNAL(visibleYChanged(int32)), SLOT(changeYStart (int32)));
+
+//    connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
     connect(model_->getSignalViewSettings().data(), SIGNAL(channelHeightChanged(uint)), y_axis_widget_, SLOT(changeSignalHeight(uint)));
     connect(model_.data(), SIGNAL(modeChanged(SignalVisualisationMode)), SLOT(setMode(SignalVisualisationMode)));
 }
