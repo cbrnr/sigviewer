@@ -137,7 +137,7 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
     }
 
     double value = 0;
-    for (float64 value_y = offset + height / 2; value_y < height;
+    for (float64 value_y = offset + height / 2; value_y < offset + height;
          value_y += y_grid_pixel_intervall)
     {
         painter->drawText(0, value_y - 20, width () - 10, 40,
@@ -148,7 +148,7 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
 
     value = 0;
     for (float64 value_y = offset + height / 2 - y_grid_pixel_intervall;
-         value_y > 0; value_y -= y_grid_pixel_intervall)
+         value_y > offset; value_y -= y_grid_pixel_intervall)
     {
         value += value_range_fragment;
         painter->drawText(0, value_y - 20, width () - 10, 40,
