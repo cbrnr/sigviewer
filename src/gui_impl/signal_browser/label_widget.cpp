@@ -41,7 +41,6 @@ void LabelWidget::paintEvent(QPaintEvent*)
                  (signal_height * (channel_nr2label_.size() - 1)
                   * (1.0 - signal_view_settings_->getChannelOverlapping())))
                 / channel_nr2label_.size();
-    //signal_height += signal_view_settings_->getChannelHeight() / (channel_nr2label_.size() + 1);
     int32 y_end = y_start_ + height();
 
     if (signal_height < 1)
@@ -49,7 +48,7 @@ void LabelWidget::paintEvent(QPaintEvent*)
 
     QPainter painter(this);
     painter.translate(0, -y_start_);
-    painter.drawLine(0, y_start_, 0, y_end);
+    //painter.drawLine(0, y_start_, 0, y_end);
 
     // labels
     float64 float_y_start = y_start_;//floor(static_cast<float64>(y_start) / intervall) * intervall;
@@ -69,14 +68,14 @@ void LabelWidget::paintEvent(QPaintEvent*)
         }
     }
 
-    if (channel_overlapping)
-        return;
-    for (float32 float_y = 0;
-         float_y <= signal_height * channel_nr2label_.size();
-         float_y += signal_height)
-    {
-        painter.drawLine(0, float_y, width() - 1, float_y);
-    }
+//    if (channel_overlapping)
+//        return;
+//    for (float32 float_y = 0;
+//         float_y <= signal_height * channel_nr2label_.size();
+//         float_y += signal_height)
+//    {
+//        painter.drawLine(0, float_y, width() - 1, float_y);
+//    }
 }
 
 //-----------------------------------------------------------------------------

@@ -92,7 +92,7 @@ void XAxisWidget::paintEvent(QPaintEvent*)
 
     p.setPen (Qt::black);
     p.translate(-x_start_, 0);
-    p.drawLine(x_start_, 0, x_end, 0);
+    //p.drawLine(x_start_, 0, x_end, 0);
     float64 float_x_start = floor((x_start_ + intervall_ / 2) / intervall_) *
                            intervall_;
 

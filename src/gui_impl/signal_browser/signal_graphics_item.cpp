@@ -564,19 +564,38 @@ void SignalGraphicsItem::drawYGrid (QPainter* painter,
 void SignalGraphicsItem::drawXGrid (QPainter* painter,
                                     QStyleOptionGraphicsItem const* option)
 {
-    if (x_grid_interval_ < 1)
+    double pixel_per_sample = signal_view_settings_->getPixelsPerSample();
+    double pixel_per_sec_ = pixel_per_sample * signal_view_settings_->getSampleRate();
+    double interval_ = pixel_per_sec_ * MathUtils_::round125 (100.0 / pixel_per_sec_);
+    if (interval_ < 1)
         return;
 
     QRectF clip (option->exposedRect);
-    //painter->setPen (Qt::lightGray);
-    painter->setPen (QColor(255, 255 , 255, 0)); // We probably don't need the x grid
+    painter->setPen (QColor(220, 220, 220, 50));
 
     if (clip.width() < 1)
         return;
 
-    for (int x = clip.x() - (static_cast<int>(clip.x()) % x_grid_interval_);
-         x < clip.x() + clip.width(); x += x_grid_interval_)
+    int32 x_start = clip.x();
+    int32 x_end = clip.x() + clip.width();
+
+    float64 float_x_start = floor((x_start + interval_ / 2) / interval_) *
+                           interval_;
+
+    float64 float_x_end = ceil((x_end - interval_ / 2) / interval_) *
+                          interval_ + interval_ / 2;
+
+    for (float32 float_x = float_x_start;
+         float_x < float_x_end;
+         float_x += interval_)
+    {
+        int32 x = (int32)(float_x + 0.5);
         painter->drawLine (x, 0, x, height_);
+    }
+
+//    for (int x = clip.x() - (static_cast<int>(clip.x()) % x_grid_interval_);
+//         x < clip.x() + clip.width(); x += x_grid_interval_)
+//        painter->drawLine (x, 0, x, height_);
 }
 
 }
