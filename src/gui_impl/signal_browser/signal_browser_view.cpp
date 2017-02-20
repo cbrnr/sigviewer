@@ -54,7 +54,6 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalVisualisationModel> s
     initWidgets (event_manager, command_executer);
 
     graphics_view_->setFrameStyle(QFrame::NoFrame);
-    setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
     createLayout();
     connect (graphics_view_, SIGNAL(resized(QResizeEvent*)), SLOT(graphicsViewResized(QResizeEvent*)));
