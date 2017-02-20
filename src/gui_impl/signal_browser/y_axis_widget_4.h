@@ -43,7 +43,8 @@ private:
                            double value_range_fragment,
                            QString const& unit_string, float64 height);
 
-    void paintYUnits (QPainter* painter, QString const& unit_string);
+    void paintYUnits (QPainter* painter, QString const& unit_string,
+                      float64 channelHeight);
 
     unsigned channel_height_;
     int32 y_start_;
