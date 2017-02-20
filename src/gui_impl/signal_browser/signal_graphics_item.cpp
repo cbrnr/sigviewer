@@ -200,8 +200,8 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     bool channel_overlapping = signal_view_settings_->getChannelOverlapping();
 
-    if (!channel_overlapping)
-        painter->drawRect(boundingRect());
+    //if (!channel_overlapping)
+    //    painter->drawRect(boundingRect());
 
     if (new_event_)
         painter->fillRect(new_signal_event_->getPosition(), 0, new_signal_event_->getDuration(), height_, new_event_color_);
