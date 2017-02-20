@@ -52,6 +52,9 @@ private slots:
 
     //-------------------------------------------------------------------------
     void selfUpdatingFinished ();
+
+    void on_dial_actionTriggered(int action);
+
 private:
     //-------------------------------------------------------------------------
     virtual void showEvent (QShowEvent* event);
