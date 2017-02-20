@@ -35,16 +35,15 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
         throw (Exception ("connect failed: y_axis_checkbox_"));
     if (!connect (ui_.labels_checkbox_, SIGNAL(toggled(bool)), SIGNAL(labelsVisibilityChanged(bool))))
         throw (Exception ("connect failed: labels_checkbox_"));
-//    ui_.xGridCheckbox->setVisible(false);
-//    ui_.xGridSlider->setVisible(false);
-//    ui_.xGridFragmentationLabel->setVisible(false);
-//    ui_.yGridCheckbox->setVisible(false);
+    ui_.xGridCheckbox->setVisible(false);
+    ui_.xGridSlider->setVisible(false);
+    ui_.xGridFragmentationLabel->setVisible(false);
+    ui_.yGridCheckbox->setVisible(false);
     ui_.zero_centered_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Zero Line Centered"));
     ui_.zero_fitted_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Zero Line Fitted"));
     ui_.channelsPerPageSpinbox->setMaximum (settings->getChannelManager().getNumberChannels());
     ui_.secsPerPageSpinbox->setMaximum (settings_->getChannelManager().getDurationInSec());
-//    ui_.xUnitsPerPageLabel->setText (settings_->getChannelManager().getXAxisUnitLabel() + ui_.xUnitsPerPageLabel->text());
-    ui_.channelOverlappingSlider->hide();
+    ui_.xUnitsPerPageLabel->setText (settings_->getChannelManager().getXAxisUnitLabel() + ui_.xUnitsPerPageLabel->text());
 
     connect (settings_.data(), SIGNAL(channelHeightChanged()), SLOT(updateValues()));
     connect (settings_.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateValues()));
@@ -126,30 +125,4 @@ void AdaptBrowserViewWidget::selfUpdatingFinished ()
     self_updating_ = false;
 }
 
-void AdaptBrowserViewWidget::on_dial_actionTriggered(int action)
-{
-    if (action == QAbstractSlider::SliderMove)
-    {
-        //lock dial at maximum position
-        if (ui_.dial->value() == ui_.dial->maximum() &&
-                ui_.dial->sliderPosition()< ui_.dial->maximum() -1)
-        {
-            ui_.dial->setSliderPosition(ui_.dial->maximum());
-        }
-        else if (ui_.dial->value() == ui_.dial->minimum() &&
-                 ui_.dial->sliderPosition() > ui_.dial->minimum()+1)
-        {
-            ui_.dial->setSliderPosition(ui_.dial->minimum());
-        }
-
-        if (updating_values_)
-            return;
-
-        settings_->setChannelOverlapping (static_cast<float>(ui_.dial->value()) / 100.0);
-    }
-
-
 }
-
-}
-
