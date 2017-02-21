@@ -19,15 +19,7 @@ namespace sigviewer
 {
 
 //the object to store XDF data
-extern Xdf XDFdata;
-
-enum sampleRateTypes
-{
-    No_streams_found,
-    Zero_Hz_Only,
-    Mono_Sample_Rate,
-    Multi_Sample_Rate
-};
+extern QSharedPointer<Xdf> XDFdata;
 
 //XDFReader, modeled  on BiosigReader
 class XDFReader : public FileSignalReader
@@ -59,6 +51,14 @@ public:
     int setStreamColors();
 
     //-------------------------------------------------------------------------
+    enum sampleRateTypes
+    {
+        No_streams_found,
+        Zero_Hz_Only,
+        Mono_Sample_Rate,
+        Multi_Sample_Rate
+    };
+
     sampleRateTypes selectSampleRateType();
 
 private:
@@ -82,7 +82,6 @@ private:
     mutable bool buffered_all_events_;
     mutable QMap<ChannelID, QSharedPointer<DataBlock const> > channel_map_;
     mutable QList<QSharedPointer<SignalEvent const> > events_;
-
 };
 
 } // namespace sigviewer

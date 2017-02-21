@@ -86,9 +86,6 @@ void OpenFileGuiCommand::openFile (QString file_path, bool instantly)
     CloseFileGuiCommand closeObject;
     if (closeObject.closeCurrentFile())
     {
-        Xdf empty;
-        std::swap(XDFdata, empty);//clear the data of the previous XDF file
-
         instance_->openFileImpl (file_path);
     }
 }
@@ -158,9 +155,6 @@ void OpenFileGuiCommand::open ()
     CloseFileGuiCommand closeObject;
     if (closeObject.closeCurrentFile())
     {
-        Xdf empty;
-        std::swap(XDFdata, empty);
-
         instance_->openFileImpl (file_path);
     }
 }

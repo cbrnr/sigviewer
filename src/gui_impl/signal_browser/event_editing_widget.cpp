@@ -98,10 +98,10 @@ void EventEditingWidget::on_type_combobox__currentIndexChanged (int combo_box_in
         //keep up with XDF customized events
         if (event_manager_->getFileType().startsWith("XDF", Qt::CaseInsensitive))
         {
-            if (selected_signal_event_->getStream() == XDFdata.userAddedStream)
+            if (selected_signal_event_->getStream() == XDFdata->userAddedStream)
             {
-                int index = selected_signal_event_->getId() - XDFdata.eventType.size();
-                XDFdata.userCreatedEvents[index].first =
+                int index = selected_signal_event_->getId() - XDFdata->eventType.size();
+                XDFdata->userCreatedEvents[index].first =
                         event_manager_->getNameOfEventType(event_type).toStdString();
             }
         }
@@ -127,12 +127,12 @@ void EventEditingWidget::on_begin_spinbox__editingFinished ()
     //keep up with XDF customized events
     if (event_manager_->getFileType().startsWith("XDF", Qt::CaseInsensitive))
     {
-        if (selected_signal_event_->getStream() == XDFdata.userAddedStream)
+        if (selected_signal_event_->getStream() == XDFdata->userAddedStream)
         {
-            int index = selected_signal_event_->getId() - XDFdata.eventType.size();
-            XDFdata.userCreatedEvents[index].second =
+            int index = selected_signal_event_->getId() - XDFdata->eventType.size();
+            XDFdata->userCreatedEvents[index].second =
                     event_manager_->getEvent(selected_signal_event_->getId())->getPositionInSec()
-                    + XDFdata.minTS;
+                    + XDFdata->minTS;
         }
     }
 }

@@ -42,13 +42,13 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
     if (ApplicationContextImpl::getInstance()->getCurrentFileContext()->getFileName().endsWith("XDF", Qt::CaseInsensitive))
     {
         int channelCount = 0;
-        for (size_t i = 0; i < XDFdata.streams.size(); i++)
+        for (size_t i = 0; i < XDFdata->streams.size(); i++)
         {
             QTreeWidgetItem* streamItem = new QTreeWidgetItem(ui_.treeWidget);
             streamItem->setText(0, tr("Stream ").append(QString::number(i)));
             streamItem->setFlags(Qt::ItemIsAutoTristate | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
             streamItem->setExpanded(true);
-            if (XDFdata.streams[i].info.channel_format.compare("string") == 0)
+            if (XDFdata->streams[i].info.channel_format.compare("string") == 0)
             {
                 streamItem->setForeground(0, NOT_VISIBLE_COLOR_);
                 streamItem->setText(0, streamItem->text(0).append(tr(" (text events only)")));
@@ -61,7 +61,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
                 if (ColorManager::isDark(streamColor))
                     streamItem->setForeground(1, Qt::white);
 
-                for (int j = 0; j < XDFdata.streams[i].info.channel_count; j++)
+                for (int j = 0; j < XDFdata->streams[i].info.channel_count; j++)
                 {
                     QTreeWidgetItem* channelItem = new QTreeWidgetItem(streamItem);
                     channelItem->setText(0, tr("Channel ").append(QString::number(channelCount)));
