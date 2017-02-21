@@ -66,6 +66,8 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
     setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
     setAcceptHoverEvents(false);
     connect(signal_view_settings.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateYGridIntervall()));
+    connect(signal_view_settings.data(), SIGNAL(xGridToggled()), SLOT(toggleXGrid()));
+    connect(signal_view_settings.data(), SIGNAL(yGridToggled()), SLOT(toggleYGrid()));
 }
 
 //-----------------------------------------------------------------------------
@@ -73,7 +75,6 @@ SignalGraphicsItem::~SignalGraphicsItem ()
 {
 
 }
-
 
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::setHeight (unsigned height)
@@ -90,6 +91,20 @@ void SignalGraphicsItem::setHeight (unsigned height)
 void SignalGraphicsItem::setXGridInterval (unsigned interval)
 {
     x_grid_interval_ = interval;
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::toggleXGrid()
+{
+    draw_x_grid_ = !draw_x_grid_;
+    update ();
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::toggleYGrid()
+{
+    draw_y_grid_ = !draw_y_grid_;
+    update ();
 }
 
 //-----------------------------------------------------------------------------
@@ -190,7 +205,6 @@ void SignalGraphicsItem::scaleImpl (double min, double max)
     }
     update ();
 }
-
 
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget*)
@@ -571,7 +585,8 @@ void SignalGraphicsItem::drawXGrid (QPainter* painter,
         return;
 
     QRectF clip (option->exposedRect);
-    painter->setPen (QColor(220, 220, 220, 50));
+    painter->setPen (QColor(220, 220, 220, 50)); // Qt::lightGray is still too dark and strong.
+
 
     if (clip.width() < 1)
         return;

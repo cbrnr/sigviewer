@@ -35,15 +35,13 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
         throw (Exception ("connect failed: y_axis_checkbox_"));
     if (!connect (ui_.labels_checkbox_, SIGNAL(toggled(bool)), SIGNAL(labelsVisibilityChanged(bool))))
         throw (Exception ("connect failed: labels_checkbox_"));
-    ui_.xGridCheckbox->setVisible(false);
-    ui_.xGridSlider->setVisible(false);
-    ui_.xGridFragmentationLabel->setVisible(false);
-    ui_.yGridCheckbox->setVisible(false);
     ui_.zero_centered_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Zero Line Centered"));
     ui_.zero_fitted_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Zero Line Fitted"));
     ui_.channelsPerPageSpinbox->setMaximum (settings->getChannelManager().getNumberChannels());
     ui_.secsPerPageSpinbox->setMaximum (settings_->getChannelManager().getDurationInSec());
     ui_.xUnitsPerPageLabel->setText (settings_->getChannelManager().getXAxisUnitLabel() + ui_.xUnitsPerPageLabel->text());
+    ui_.xGridSlider->hide();
+    ui_.xGridFragmentationLabel->hide();
 
     connect (settings_.data(), SIGNAL(channelHeightChanged()), SLOT(updateValues()));
     connect (settings_.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateValues()));
@@ -72,6 +70,15 @@ void AdaptBrowserViewWidget::on_yGridSlider_valueChanged (int value)
         return;
 
     settings_->setGridFragmentation (Qt::Vertical, value);
+}
+
+//-------------------------------------------------------------------------
+void AdaptBrowserViewWidget::on_xGridSlider_valueChanged(int value)
+{
+    if (updating_values_)
+        return;
+
+    settings_->setGridFragmentation (Qt::Horizontal, value);
 }
 
 //-------------------------------------------------------------------------
@@ -111,6 +118,7 @@ void AdaptBrowserViewWidget::updateValues ()
     ui_.y_axis_checkbox_->setChecked (signal_visualisation_view_->getYAxisVisibility ());
     ui_.labels_checkbox_->setChecked (signal_visualisation_view_->getLabelsVisibility ());
     ui_.yGridSlider->setValue (settings_->getGridFragmentation(Qt::Vertical));
+    ui_.xGridSlider->setValue (settings_->getGridFragmentation(Qt::Horizontal));
     ui_.channelsPerPageSpinbox->setValue (signal_visualisation_view_->getViewportHeight() /
                                           settings_->getChannelHeight());
     ui_.secsPerPageSpinbox->setValue ((signal_visualisation_view_->getViewportWidth() /
@@ -126,3 +134,33 @@ void AdaptBrowserViewWidget::selfUpdatingFinished ()
 }
 
 }
+
+void sigviewer::AdaptBrowserViewWidget::on_yGridCheckbox_stateChanged(int checkState)
+{
+    if (checkState == Qt::Unchecked)
+    {//cancel Y Grid
+        ui_.yGridSlider->setDisabled(true);
+        settings_->enableYGrid(false);
+    }
+    else if (checkState == Qt::Checked)
+    {
+        ui_.yGridSlider->setEnabled(true);
+        settings_->enableYGrid(true);
+    }
+}
+
+void sigviewer::AdaptBrowserViewWidget::on_xGridCheckbox_stateChanged(int checkState)
+{
+    if (checkState == Qt::Unchecked)
+    {//cancel X Grid
+        ui_.xGridSlider->setDisabled(true);
+        settings_->enableXGrid(false);
+    }
+    else if (checkState == Qt::Checked)
+    {
+        ui_.xGridSlider->setEnabled(true);
+        settings_->enableXGrid(true);
+    }
+
+}
+

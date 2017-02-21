@@ -13,7 +13,9 @@ SignalViewSettings::SignalViewSettings (ChannelManager const& channel_manager)
     : pixels_per_sample_ (1),
       channel_overlapping_ (0),
       channel_heigth_in_pixels_ (20),
-      channel_manager_ (channel_manager)
+      channel_manager_ (channel_manager),
+      enable_x_grid_ (true),
+      enable_y_grid_ (true)
 {
     grid_fragmentation_[Qt::Horizontal] = 10;
     grid_fragmentation_[Qt::Vertical] = 4;
@@ -57,6 +59,26 @@ void SignalViewSettings::setGridFragmentation (Qt::Orientation orientation, int 
     grid_fragmentation_[orientation] = fragmentation;
     if (old_fragmentation != fragmentation)
         emit gridFragmentationChanged ();
+}
+
+//-------------------------------------------------------------------------
+void SignalViewSettings::enableXGrid(bool enabled)
+{
+    if (enabled != enable_x_grid_)
+    {
+        enable_x_grid_ = enabled;
+        emit xGridToggled();
+    }
+}
+
+//-------------------------------------------------------------------------
+void SignalViewSettings::enableYGrid(bool enabled)
+{
+    if (enabled != enable_y_grid_)
+    {
+        enable_y_grid_ = enabled;
+        emit yGridToggled();
+    }
 }
 
 }

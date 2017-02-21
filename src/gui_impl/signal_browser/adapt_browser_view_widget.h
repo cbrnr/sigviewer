@@ -52,6 +52,15 @@ private slots:
 
     //-------------------------------------------------------------------------
     void selfUpdatingFinished ();
+
+    //-------------------------------------------------------------------------
+    void on_yGridCheckbox_stateChanged(int checkState);
+
+    //-------------------------------------------------------------------------
+    void on_xGridCheckbox_stateChanged(int checkState);
+
+    void on_xGridSlider_valueChanged(int value);
+
 private:
     //-------------------------------------------------------------------------
     virtual void showEvent (QShowEvent* event);

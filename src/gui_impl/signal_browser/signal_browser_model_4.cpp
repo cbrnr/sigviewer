@@ -53,8 +53,9 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
   signal_browser_view_ (0),
   selected_event_item_ (0),
   x_grid_pixel_intervall_(0),
-  show_y_grid_(true),
-  initialized_ (false)
+  initialized_ (false),
+  show_x_grid_ (true),
+  show_y_grid_ (true)
 {
     if (!event_manager_.isNull ())
     {

@@ -33,7 +33,7 @@
    <item row="0" column="3">
     <widget class="QCheckBox" name="yGridCheckbox">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -107,7 +107,7 @@
    <item row="1" column="3">
     <widget class="QCheckBox" name="xGridCheckbox">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="text">
       <string>X-Grid</string>
@@ -168,6 +168,9 @@
     <widget class="QSlider" name="xGridSlider">
      <property name="enabled">
       <bool>false</bool>
+     </property>
+     <property name="maximum">
+      <number>30</number>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

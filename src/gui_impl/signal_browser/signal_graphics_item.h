@@ -61,6 +61,8 @@ public slots:
     void updateYGridIntervall();
     void setHeight (unsigned height);
     void setXGridInterval (unsigned interval);
+    void toggleXGrid();
+    void toggleYGrid();
 
 signals:
     void mouseAtSecond (float64 sec);
