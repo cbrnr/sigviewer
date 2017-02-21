@@ -57,6 +57,9 @@ public:
     //-------------------------------------------------------------------------
     virtual float64 getSampleRate() const;
 
+    //-------------------------------------------------------------------------
+    virtual float64 getMean(ChannelID id) const;
+
 private:
     FileSignalReader* reader_;
 };

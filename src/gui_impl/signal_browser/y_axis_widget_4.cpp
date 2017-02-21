@@ -81,7 +81,7 @@ void YAxisWidget::paintEvent(QPaintEvent*)
             current_y_start <= y_start_ + height ())
             paintYAxisLabels (&painter, signal->getYOffset(),signal->getYGridPixelIntervall(),
                               signal->getValueRangeFragment(),
-                              signal->getPhysicalDimensionString());
+                              signal->getPhysicalDimensionString(), signal->getMean());
         painter.translate (0, intervall);
         current_y_start += intervall;
     }
@@ -105,7 +105,7 @@ void YAxisWidget::contextMenuEvent (QContextMenuEvent* event)
 void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
                                     float64 y_grid_pixel_intervall,
                                     double value_range_fragment,
-                                    QString const& unit_string)
+                                    QString const& unit_string, float64 mean)
 {
     int upper_border = channel_height_ / 2;
     int lower_border = -static_cast<int>(channel_height_ / 2);
@@ -119,9 +119,10 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
 
     paintYUnits (painter, unit_string);
 
-    painter->drawText (0, offset - 20, width () - 10, 40,
-                       Qt::AlignRight | Qt::AlignVCenter,
-                       QString::number (0));
+    //! The step below is duplicate
+//    painter->drawText (0, offset - 20, width () - 10, 40,
+//                       Qt::AlignRight | Qt::AlignVCenter,
+//                       QString::number (0));
     if (y_grid_pixel_intervall < 1)
         return;
 
@@ -142,7 +143,7 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
             painter->drawLine (width () - 5, value_y, width () - 1, value_y);
             painter->drawText(0, value_y - 20, width () - 10, 40,
                              Qt::AlignRight | Qt::AlignVCenter,
-                             QString::number (value));
+                             QString::number (value + mean, 'f', 0));
         }
         value -= value_range_fragment;
     }
@@ -158,7 +159,7 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
             painter->drawLine (width () - 5, value_y, width () - 1, value_y);
             painter->drawText(0, value_y - 20, width () - 10, 40,
                              Qt::AlignRight | Qt::AlignVCenter,
-                             QString::number (value));
+                             QString::number (value + mean, 'f', 0));
         }
     }
 }

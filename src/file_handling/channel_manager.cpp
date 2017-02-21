@@ -114,8 +114,8 @@ void ChannelManager::initMinMax () const
     foreach (ChannelID id, getChannels())
     {
         QSharedPointer<DataBlock const> data = getData (id, 0, getNumberSamples ());
-        max_values_[id] = data->getMax ();
-        min_values_[id] = data->getMin ();
+        max_values_[id] = data->getMax () + getMean(id);
+        min_values_[id] = data->getMin () + getMean(id);
         ProgressBar::instance().increaseValue (1, QObject::tr("Searching for Min-Max"));
     }
     min_max_initialized_ = true;

@@ -26,20 +26,30 @@ uint32 BasicHeader::getNumberEvents() const
     return number_events_;
 }
 
+//-------------------------------------------------------------------------
 void BasicHeader::setNumberEvents(uint32 number_events)
 {
     number_events_ = number_events;
 }
 
-// get event samplerate
+//get event samplerate-----------------------------------------------------
 double BasicHeader::getEventSamplerate() const
 {
     return sample_rate_;
 }
 
+//-------------------------------------------------------------------------
 void BasicHeader::setEventSamplerate(double event_sample_rate)
 {
     event_sample_rate_ = event_sample_rate;
+}
+//-------------------------------------------------------------------------
+float64 BasicHeader::getMean(ChannelID id) const
+{
+    if (means_.size() > id)
+        return means_[id];
+    else
+        return 0;
 }
 
 //-------------------------------------------------------------------------

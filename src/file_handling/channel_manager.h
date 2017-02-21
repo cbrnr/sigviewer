@@ -60,6 +60,9 @@ public:
     virtual float64 getSampleRate () const = 0;
 
     //-------------------------------------------------------------------------
+    virtual float64 getMean (ChannelID id) const {return 0;}/*!< This function is only available at channel_manager_impl.cpp. */
+
+    //-------------------------------------------------------------------------
     void addDownsampledMinMaxVersion (ChannelID id, QSharedPointer<DataBlock const> min,
                                       QSharedPointer<DataBlock const> max, unsigned factor);
 
