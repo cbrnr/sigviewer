@@ -9,7 +9,7 @@
 namespace sigviewer
 {
 
-//-----------------------------------------------------------------------------
+//!Constructor for libbiosig---------------------------------------------------
 SignalChannel::SignalChannel(unsigned ch, const HDRTYPE* hdr) :
     label_ (QString(hdr->CHANNEL[ch].Label).trimmed()),
     physical_maximum_(hdr->CHANNEL[ch].PhysMax),
@@ -31,36 +31,39 @@ SignalChannel::SignalChannel(unsigned ch, const HDRTYPE* hdr) :
     samplerate_ = hdr->SampleRate * hdr->CHANNEL[ch].SPR / hdr->SPR;
 }
 
-//constructor for XDF
-SignalChannel::SignalChannel(unsigned ch, QString XDF) :
+//!Constructor for XDF format---------------------------------------------------
+SignalChannel::SignalChannel(unsigned ch, QString file_format) :
     label_ (QString::fromStdString(XDFdata->labels[ch]).trimmed())
 {
-    phys_y_dimension_label_ = QString::number(ch);
-    samplerate_ = XDFdata->majSR;
+    //easy extension for potential other formats in the future
+    if (file_format.compare("xdf", Qt::CaseInsensitive))
+    {
+        phys_y_dimension_label_ = QString::number(ch);
+        samplerate_ = XDFdata->majSR;
+    }
 }
 
-
-SignalChannel::SignalChannel(unsigned number, CHANNEL_TYPE C) :
-    /* obsolete */
-    label_ (QString(C.Label).trimmed()),
-    physical_maximum_(C.PhysMax),
-    digital_maximum_(C.DigMax),
-    physical_minimum_(C.PhysMin),
-    digital_minimum_(C.DigMin),
-    data_type_(C.GDFTYP),
-    lowpass_(C.LowPass),
-    highpass_(C.HighPass),
-    notch_(C.Notch)
-{
-#if (BIOSIG_VERSION < 10400)
-    char tmpstr[30];
-    PhysDim(C.PhysDimCode), tmpstr);
-#else
-    const char *tmpstr = PhysDim3(C.PhysDimCode);
-#endif
-    phys_y_dimension_label_ = QString(tmpstr);
-    samplerate_ = -1.0;
-}
+//SignalChannel::SignalChannel(unsigned number, CHANNEL_TYPE C) :
+//    /* obsolete */
+//    label_ (QString(C.Label).trimmed()),
+//    physical_maximum_(C.PhysMax),
+//    digital_maximum_(C.DigMax),
+//    physical_minimum_(C.PhysMin),
+//    digital_minimum_(C.DigMin),
+//    data_type_(C.GDFTYP),
+//    lowpass_(C.LowPass),
+//    highpass_(C.HighPass),
+//    notch_(C.Notch)
+//{
+//#if (BIOSIG_VERSION < 10400)
+//    char tmpstr[30];
+//    PhysDim(C.PhysDimCode), tmpstr);
+//#else
+//    const char *tmpstr = PhysDim3(C.PhysDimCode);
+//#endif
+//    phys_y_dimension_label_ = QString(tmpstr);
+//    samplerate_ = -1.0;
+//}
 
 //-----------------------------------------------------------------------------
 float64 SignalChannel::getSampleRate() const

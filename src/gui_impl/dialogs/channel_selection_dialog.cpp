@@ -256,6 +256,9 @@ void ChannelSelectionDialog::on_treeWidget_itemChanged(QTreeWidgetItem *item, in
         }
         ui_.select_all_button_->setDisabled (select_all_disabled);
         ui_.unselect_all_button_->setDisabled (unselect_all_disabled);
+
+        if (item->isDisabled()) //unnecessary but to get rid of compiler warnings...
+            return;
     }
 }
 

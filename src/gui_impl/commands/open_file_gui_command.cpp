@@ -76,7 +76,7 @@ void OpenFileGuiCommand::init ()
 }
 
 //-----------------------------------------------------------------------------
-void OpenFileGuiCommand::openFile (QString file_path, bool instantly)
+void OpenFileGuiCommand::openFile (QString file_path)
 {
     if (!instance_->confirmClosingOldFile())   /*!< In case the user decides not to close the old file, return. */
         return;

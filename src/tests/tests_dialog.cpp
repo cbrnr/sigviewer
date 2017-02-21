@@ -65,7 +65,7 @@ void TestsDialog::on_start_button__clicked ()
 //-----------------------------------------------------------------------------
 void TestsDialog::on_open_dummy__clicked ()
 {
-    OpenFileGuiCommand::openFile ("blub.sinusdummy", true);
+    OpenFileGuiCommand::openFile ("blub.sinusdummy");
     close();
 }
 

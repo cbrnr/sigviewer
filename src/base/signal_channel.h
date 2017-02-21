@@ -23,8 +23,8 @@ class SignalChannel
 public:
     //-------------------------------------------------------------------------
     SignalChannel(unsigned ch, const HDRTYPE* hdr);
-    SignalChannel(unsigned ch, QString XDF);
-    SignalChannel(unsigned number, CHANNEL_TYPE C);  /* obsolete, deprecated */
+    SignalChannel(unsigned ch, QString file_format);
+//    SignalChannel(unsigned number, CHANNEL_TYPE C);  /* obsolete, deprecated */
 
     //-------------------------------------------------------------------------
     QString typeString() const;
@@ -66,7 +66,6 @@ private:
     //uint32 number_;
     QString label_;
     QString phys_y_dimension_label_;
-    uint16  physical_dimcode_;
     float64 physical_maximum_;
     float64 digital_maximum_;
     float64 physical_minimum_;

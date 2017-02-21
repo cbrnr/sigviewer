@@ -4,6 +4,7 @@
 
 
 #include "processed_signal_channel_manager.h"
+#include <QDebug>
 
 namespace sigviewer
 {
@@ -89,6 +90,13 @@ size_t ProcessedSignalChannelManager::getNumberSamples() const
 float64 ProcessedSignalChannelManager::getSampleRate() const
 {
     return sample_rate_;
+}
+
+//!Inherited, should not be called.----------------------------------------
+QString ProcessedSignalChannelManager::getChannelLabel(ChannelID id, int streamNumber) const
+{
+    qDebug() << "id: " << id << "stream: " << streamNumber;
+    return "";
 }
 
 }

@@ -37,7 +37,7 @@ BiosigBasicHeader::BiosigBasicHeader (HDRTYPE* raw_header, QString const& file_p
     readRecordingInfo (raw_header);
 }
 
-//alternative for XDF
+//!alternative for XDF---------------------------------------------------------
 BiosigBasicHeader::BiosigBasicHeader (QString file_format, QString const& file_path)
     : BasicHeader (file_path),
       number_samples_ (XDFdata->totalLen)
@@ -72,7 +72,7 @@ QMap<unsigned, QString> BiosigBasicHeader::getNamesOfUserSpecificEvents () const
     return user_defined_event_map_;
 }
 
-//-------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void BiosigBasicHeader::readChannelsInfo (HDRTYPE const* raw_header)
 {
     unsigned ch = 0;
@@ -85,12 +85,12 @@ void BiosigBasicHeader::readChannelsInfo (HDRTYPE const* raw_header)
 }
 
 //-------------------------------------------------------------------------
-void BiosigBasicHeader::readChannelsInfo (QString XDF)
+void BiosigBasicHeader::readChannelsInfo (QString file_format)
 {
     unsigned ch = 0;
     for (unsigned channel_index = 0; channel_index < XDFdata->totalCh; channel_index++)
     {
-        QSharedPointer<SignalChannel> channel(new SignalChannel(channel_index, XDF));
+        QSharedPointer<SignalChannel> channel(new SignalChannel(channel_index, file_format));
         addChannel(ch++, channel);
     }
 }

@@ -58,7 +58,7 @@ public:
     virtual float64 getSampleRate() const;
 
 private:
-    virtual QString getChannelLabel (ChannelID id, int streamNumber) const {return "";} /*!< Inherited, should not be called. */
+    virtual QString getChannelLabel (ChannelID id, int streamNumber) const; /*!< Inherited, should not be called. */
 
     float32 sample_rate_;
     unsigned length_;
