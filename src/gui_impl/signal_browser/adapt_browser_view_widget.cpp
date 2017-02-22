@@ -39,9 +39,11 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
     ui_.zero_fitted_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Zero Line Fitted"));
     ui_.channelsPerPageSpinbox->setMaximum (settings->getChannelManager().getNumberChannels());
     ui_.secsPerPageSpinbox->setMaximum (settings_->getChannelManager().getDurationInSec());
-    ui_.xUnitsPerPageLabel->setText (settings_->getChannelManager().getXAxisUnitLabel() + ui_.xUnitsPerPageLabel->text());
+//    ui_.xUnitsPerPageLabel->setText (settings_->getChannelManager().getXAxisUnitLabel() + ui_.xUnitsPerPageLabel->text());
     ui_.xGridSlider->hide();
     ui_.xGridFragmentationLabel->hide();
+    ui_.channelOverlappingSlider->hide();
+    ui_.label->hide();
 
     connect (settings_.data(), SIGNAL(channelHeightChanged()), SLOT(updateValues()));
     connect (settings_.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateValues()));
@@ -164,3 +166,11 @@ void sigviewer::AdaptBrowserViewWidget::on_xGridCheckbox_stateChanged(int checkS
 
 }
 
+
+void sigviewer::AdaptBrowserViewWidget::on_horizontalSlider_valueChanged(int value)
+{
+    if (updating_values_)
+        return;
+
+    settings_->setChannelOverlapping (static_cast<float>(value) / 100.0);
+}

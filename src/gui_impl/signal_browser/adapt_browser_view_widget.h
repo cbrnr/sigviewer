@@ -61,6 +61,8 @@ private slots:
 
     void on_xGridSlider_valueChanged(int value);
 
+    void on_horizontalSlider_valueChanged(int value);
+
 private:
     //-------------------------------------------------------------------------
     virtual void showEvent (QShowEvent* event);
