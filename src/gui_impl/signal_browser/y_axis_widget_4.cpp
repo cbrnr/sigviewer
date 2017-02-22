@@ -86,6 +86,7 @@ void YAxisWidget::paintEvent(QPaintEvent*)
 
     QPainter painter (this);
     painter.translate(0, -y_start_);
+//    painter.drawLine(0, y_start_, 0, y_end);
 
     float64 float_y_end = y_end;
     auto iter = channel_nr2signal_graphics_item_.begin();
@@ -101,6 +102,18 @@ void YAxisWidget::paintEvent(QPaintEvent*)
                           signal_height);
         painter.translate (0, signal_height);
     }
+
+//    painter.drawLine (0, 0, width() - 1, 0);
+
+//    if (channel_overlapping)
+//        return;
+
+//    for (float32 float_y = 0;
+//         float_y <= signal_height * channel_nr2signal_graphics_item_.size();
+//         float_y += signal_height)
+//    {
+//        painter.drawLine(0, float_y, width() - 1, float_y);
+//    }
 }
 
 //-----------------------------------------------------------------------------
@@ -125,6 +138,8 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
     painter->setClipping (true);
     painter->setClipRect (0, -1, width(), height + 2);
 
+    painter->drawLine (0, 0, width() - 1, 0);
+
     paintYUnits (painter, unit_string, height);
 
     if (y_grid_pixel_intervall < 1)
@@ -140,6 +155,7 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
     for (float64 value_y = offset + height / 2; value_y < offset + height;
          value_y += y_grid_pixel_intervall)
     {
+        painter->drawLine (width () - 5, value_y, width () - 1, value_y);
         painter->drawText(0, value_y - 20, width () - 10, 40,
                           Qt::AlignRight | Qt::AlignVCenter,
                           QString::number (value));
@@ -151,6 +167,7 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
          value_y > offset; value_y -= y_grid_pixel_intervall)
     {
         value += value_range_fragment;
+        painter->drawLine (width () - 5, value_y, width () - 1, value_y);
         painter->drawText(0, value_y - 20, width () - 10, 40,
                           Qt::AlignRight | Qt::AlignVCenter,
                           QString::number (value));
