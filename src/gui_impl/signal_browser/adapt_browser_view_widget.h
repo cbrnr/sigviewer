@@ -56,12 +56,7 @@ private slots:
     //-------------------------------------------------------------------------
     void on_yGridCheckbox_stateChanged(int checkState);
 
-    //-------------------------------------------------------------------------
-    void on_xGridCheckbox_stateChanged(int checkState);
-
-    void on_xGridSlider_valueChanged(int value);
-
-    void on_horizontalSlider_valueChanged(int value);
+    void on_offsetCheckBox_stateChanged(int checkState);
 
 private:
     //-------------------------------------------------------------------------
@@ -72,6 +67,8 @@ private:
     Ui::AdaptBrowserViewWidget ui_;
     bool self_updating_;
     bool updating_values_;
+    QAction* offset_centered_;
+    QAction* offset_fitted_;
 };
 
 }
