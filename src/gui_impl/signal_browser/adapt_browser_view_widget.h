@@ -53,7 +53,7 @@ private slots:
     //-------------------------------------------------------------------------
     void selfUpdatingFinished ();
 
-    //-------------------------------------------------------------------------
+    void on_xGridCheckbox_stateChanged(int checkState);
     void on_yGridCheckbox_stateChanged(int checkState);
 
     void on_offsetCheckBox_stateChanged(int checkState);

@@ -137,6 +137,18 @@ void sigviewer::AdaptBrowserViewWidget::on_offsetCheckBox_stateChanged(int check
     }
 }
 
+void sigviewer::AdaptBrowserViewWidget::on_xGridCheckbox_stateChanged(int checkState)
+{
+    if (checkState == Qt::Unchecked)
+    {//cancel X Grid
+        settings_->enableXGrid(false);
+    }
+    else if (checkState == Qt::Checked)
+    {
+        settings_->enableXGrid(true);
+    }
+}
+
 void sigviewer::AdaptBrowserViewWidget::on_yGridCheckbox_stateChanged(int checkState)
 {
     if (checkState == Qt::Unchecked)
