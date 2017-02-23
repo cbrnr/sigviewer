@@ -79,6 +79,13 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
     connect (getSignalViewSettings().data(), SIGNAL(pixelsPerSampleChanged()), SLOT(update()));
     connect (getSignalViewSettings().data(), SIGNAL(channelHeightChanged()), SLOT(update()));
     connect (getSignalViewSettings().data(), SIGNAL(channelOverlappingChanged()), SLOT(update()));
+    loadSettings();
+}
+
+//-----------------------------------------------------------------------------
+SignalBrowserModel::~SignalBrowserModel()
+{
+    saveSettings();
 }
 
 //-----------------------------------------------------------------------------
@@ -385,6 +392,18 @@ void SignalBrowserModel::updateEventItems ()
 {
     updateEventItemsImpl ();
     signal_browser_view_->update ();
+}
+
+//-------------------------------------------------------------------
+void SignalBrowserModel::toggleXGrid()
+{
+    show_x_grid_ = !show_x_grid_;
+}
+
+//-------------------------------------------------------------------
+void SignalBrowserModel::toggleYGrid()
+{
+    show_y_grid_ = !show_y_grid_;
 }
 
 //-------------------------------------------------------------------

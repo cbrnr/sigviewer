@@ -25,6 +25,8 @@ public:
     explicit AdaptBrowserViewWidget (SignalVisualisationView const* signal_visualisation_view,
                                      QSharedPointer<SignalViewSettings> settings_,
                                      QWidget *parent = 0);
+    ~AdaptBrowserViewWidget();
+
 signals:
     //-------------------------------------------------------------------------
     void xAxisVisibilityChanged (bool visible);

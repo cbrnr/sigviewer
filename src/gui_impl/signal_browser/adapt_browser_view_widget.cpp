@@ -44,6 +44,26 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
     connect (settings_.data(), SIGNAL(channelHeightChanged()), SLOT(updateValues()));
     connect (settings_.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateValues()));
     connect (settings_.data(), SIGNAL(pixelsPerSampleChanged()), SLOT(updateValues()));
+
+    QSettings setting("SigViewer");
+
+    setting.beginGroup("SignalBrowserModel");
+    ui_.xGridCheckbox->setChecked(setting.value("show_x_grid", true).toBool());
+    ui_.yGridCheckbox->setChecked(setting.value("show_y_grid", true).toBool());
+
+    setting.endGroup();
+}
+
+AdaptBrowserViewWidget::~AdaptBrowserViewWidget()
+{
+    QSettings setting("SigViewer");
+
+    setting.beginGroup("SignalBrowserModel");
+
+    setting.setValue("show_x_grid", ui_.xGridCheckbox->checkState());
+    setting.setValue("show_y_grid", ui_.yGridCheckbox->checkState());
+
+    setting.endGroup();
 }
 
 //-------------------------------------------------------------------------

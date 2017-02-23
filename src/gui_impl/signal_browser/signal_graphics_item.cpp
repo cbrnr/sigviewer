@@ -53,8 +53,6 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
   minimum_ (channel_manager_.getMinValue (id_)),
   maximum_ (channel_manager_.getMaxValue (id_)),
   y_zoom_ (1),
-  draw_y_grid_ (true),
-  draw_x_grid_ (true),
   y_offset_ (0),
   height_ (signal_view_settings->getChannelHeight()),
   width_ (0),
@@ -68,6 +66,8 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
     connect(signal_view_settings.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateYGridIntervall()));
     connect(signal_view_settings.data(), SIGNAL(xGridToggled()), SLOT(toggleXGrid()));
     connect(signal_view_settings.data(), SIGNAL(yGridToggled()), SLOT(toggleYGrid()));
+    draw_x_grid_ = signal_browser_model_.getShowXGrid();
+    draw_y_grid_ = signal_browser_model_.getShowYGrid();
 }
 
 //-----------------------------------------------------------------------------
@@ -97,6 +97,7 @@ void SignalGraphicsItem::setXGridInterval (unsigned interval)
 void SignalGraphicsItem::toggleXGrid()
 {
     draw_x_grid_ = !draw_x_grid_;
+    signal_browser_model_.toggleXGrid();
     update ();
 }
 
@@ -104,6 +105,7 @@ void SignalGraphicsItem::toggleXGrid()
 void SignalGraphicsItem::toggleYGrid()
 {
     draw_y_grid_ = !draw_y_grid_;
+    signal_browser_model_.toggleYGrid();
     update ();
 }
 

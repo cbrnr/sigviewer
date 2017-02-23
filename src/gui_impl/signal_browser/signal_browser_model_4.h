@@ -42,7 +42,7 @@ public:
                        QSharedPointer<ColorManager const> color_manager);
 
     //-------------------------------------------------------------------------
-    virtual ~SignalBrowserModel() {}
+    virtual ~SignalBrowserModel();
 
     //-------------------------------------------------------------------------
     virtual void scaleChannel (ChannelID id, float32 lower_value, float32 upper_value);
@@ -87,6 +87,12 @@ public:
 
     EventGraphicsItem* getSelectedEventItem();
     void updateEventItems ();
+
+    void toggleXGrid();
+    void toggleYGrid();
+
+    bool getShowXGrid() {return show_x_grid_;}
+    bool getShowYGrid() {return show_y_grid_;}
 
 public slots:
     //-------------------------------------------------------------------------
