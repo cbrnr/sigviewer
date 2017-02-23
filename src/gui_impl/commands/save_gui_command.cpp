@@ -235,7 +235,9 @@ void SaveGuiCommand::exportEvents ()
     QString extension = ".csv";
     QString extensions = "*.csv";
 
-    QString new_file_path = GuiHelper::getFilePathFromSaveAsDialog (current_file_path.left(current_file_path.lastIndexOf('.')) + extension, extensions, tr("CSV files"));
+    QString new_file_path = GuiHelper::getFilePathFromSaveAsDialog
+            (current_file_path.left(current_file_path.lastIndexOf('.')) +
+             extension, extensions, tr("CSV files"));
 
     if (new_file_path.size() == 0)
         return;

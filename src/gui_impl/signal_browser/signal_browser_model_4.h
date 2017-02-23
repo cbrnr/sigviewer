@@ -157,9 +157,9 @@ private:
 
     float64 x_grid_pixel_intervall_;
 
-    bool show_y_grid_;
-    bool show_x_grid_;
     bool initialized_;
+    bool show_x_grid_;
+    bool show_y_grid_;
     QList<EventGraphicsItem*> items_to_delete_;
 };
 

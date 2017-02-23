@@ -68,6 +68,8 @@ private:
 
     //-------------------------------------------------------------------------
     QString showOpenDialog (QString const& path, QString const& extensions);
+
+    bool do_not_show_warning_message;
 };
 
 }

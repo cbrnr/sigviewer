@@ -97,8 +97,8 @@ private:
     int channel_heigth_in_pixels_;
     QMap<Qt::Orientation, int> grid_fragmentation_;
     ChannelManager const& channel_manager_;
-    bool enable_y_grid_;
     bool enable_x_grid_;
+    bool enable_y_grid_;
 };
 
 }
