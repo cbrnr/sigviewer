@@ -86,7 +86,9 @@ void YAxisWidget::paintEvent(QPaintEvent*)
 
     QPainter painter (this);
     painter.translate(0, -y_start_);
-//    painter.drawLine(0, y_start_, 0, y_end);
+//    painter.setPen(QColor(0, 43, 130));
+//    painter.drawLine(width() - 1, y_start_, width() - 1, y_end);
+//    painter.setPen(Qt::black);
 
     float64 float_y_end = y_end;
     auto iter = channel_nr2signal_graphics_item_.begin();
@@ -103,7 +105,10 @@ void YAxisWidget::paintEvent(QPaintEvent*)
         painter.translate (0, signal_height);
     }
 
-//    painter.drawLine (0, 0, width() - 1, 0);
+//    this is the bottom line
+//    painter.setPen(QColor(0, 43, 130));
+    painter.drawLine (0, 0, width() - 1, 0);
+//    painter.setPen(Qt::black);
 
 //    if (channel_overlapping)
 //        return;
@@ -133,14 +138,24 @@ void YAxisWidget::contextMenuEvent (QContextMenuEvent* event)
 void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
                                     float64 y_grid_pixel_intervall,
                                     double value_range_fragment,
-                                    QString const& unit_string, float64 height)
+                                    QString const& unit_string, float64 channelHeight)
 {
     painter->setClipping (true);
-    painter->setClipRect (0, -1, width(), height + 2);
 
-    painter->drawLine (0, 0, width() - 1, 0);
+    //Below, 0 is the relative upper boarder of each channel.
+    //despite being an absolute value, because the painter coordinates are readjusted
+    //automatically every time it moves to a new channel, hence 0 is the
+    //relative position of the upper boarder of each channel
+#define UPPER_BORDER 0
 
-    paintYUnits (painter, unit_string, height);
+    painter->setClipRect (0, UPPER_BORDER - 1,          // -1 to include the black boarder as well
+                          width(), channelHeight + 2);  //+2 include both upper and lower boarders
+
+//    painter->setPen(QColor(0, 43, 130));
+    painter->drawLine (0, UPPER_BORDER, width() - 1, UPPER_BORDER);
+//    painter->setPen(Qt::black);
+
+    paintYUnits (painter, unit_string, channelHeight);
 
     if (y_grid_pixel_intervall < 1)
         return;
@@ -152,25 +167,52 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
     }
 
     double value = 0;
-    for (float64 value_y = offset + height / 2; value_y < offset + 10 * height;
+
+    //offset + channelHeight / 2 is the position where 0 is for each channel
+    //However, 0 doesn't necessarily appear in the channel, if we are in
+    //"zero line fitted" mode and if the mean is far from 0.
+
+    //In the following for loop, we are still going to calculate from  the position of 0
+    //even if 0 doesn't appear in the channel. Because in "view option" mode, the channel
+    //can be scrolled up and down arbitrarily.
+    for (float64 value_y = offset + channelHeight / 2; value_y < channelHeight;
          value_y += y_grid_pixel_intervall)
     {
-        painter->drawLine (width () - 5, value_y, width () - 1, value_y);
-        painter->drawText(0, value_y - 20, width () - 10, 40,
-                          Qt::AlignRight | Qt::AlignVCenter,
-                          QString::number (value));
+        //But we only paint the calibration when they are within the channel height.
+        //This can be dynamic if in the "view option" mode, since channels can be
+        //scolled up and down.
+
+        //Here, value starts with 0 means painter will draw 0 first, and subtract
+        //value_range_fragment from value thereafter, so long as they are within channel
+        //height from UPPER_BORDER
+        if (value_y > UPPER_BORDER)
+        {
+
+            painter->drawLine (width () - 5, value_y, width () - 1, value_y);
+            painter->drawText(0, value_y - 20, width () - 10, 40,
+                              Qt::AlignRight | Qt::AlignVCenter,
+                              QString::number (value));
+        }
         value -= value_range_fragment;
     }
 
+    //We finished painting 0 and all negative numbers, now reset value to 0
     value = 0;
-    for (float64 value_y = offset + height / 2 - y_grid_pixel_intervall;
-         value_y > offset - 10 * height; value_y -= y_grid_pixel_intervall)
+    //Now paint the positive numbers
+    for (float64 value_y = offset + channelHeight / 2 - y_grid_pixel_intervall;
+         value_y > UPPER_BORDER; value_y -= y_grid_pixel_intervall)
     {
         value += value_range_fragment;
-        painter->drawLine (width () - 5, value_y, width () - 1, value_y);
-        painter->drawText(0, value_y - 20, width () - 10, 40,
-                          Qt::AlignRight | Qt::AlignVCenter,
-                          QString::number (value));
+        //paint only if they position is within the range from UPPER_BORDER to
+        //the bottom (UPPER_BORDER + channelHeight). This can be dynamic when
+        //scrolling the channel.
+        if (value_y < channelHeight)
+        {
+            painter->drawLine (width () - 5, value_y, width () - 1, value_y);
+            painter->drawText(0, value_y - 20, width () - 10, 40,
+                              Qt::AlignRight | Qt::AlignVCenter,
+                              QString::number (value));
+        }
     }
 }
 
