@@ -53,9 +53,7 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
   signal_browser_view_ (0),
   selected_event_item_ (0),
   x_grid_pixel_intervall_(0),
-  initialized_ (false),
-  show_x_grid_ (true),
-  show_y_grid_ (true)
+  initialized_ (false)
 {
     if (!event_manager_.isNull ())
     {
@@ -112,8 +110,9 @@ void SignalBrowserModel::loadSettings()
     QSettings settings("SigViewer");
 
     settings.beginGroup("SignalBrowserModel");
-    show_x_grid_ = settings.value("show_x_grid", show_x_grid_).toBool();
-    show_y_grid_ = settings.value("show_y_grid", show_y_grid_).toBool();
+    show_x_grid_ = settings.value("show_x_grid", false).toBool();
+    show_y_grid_ = settings.value("show_y_grid", false).toBool();
+    show_boarderline_ = settings.value("show_boarderline", true).toBool();
 
     settings.endGroup();
 }
@@ -127,6 +126,7 @@ void SignalBrowserModel::saveSettings()
     settings.beginGroup("SignalBrowserModel");
     settings.setValue("show_x_grid", show_x_grid_);
     settings.setValue("show_y_grid", show_y_grid_);
+    settings.setValue("show_boarderline", show_boarderline_);
 
     settings.endGroup();
 }
@@ -404,6 +404,12 @@ void SignalBrowserModel::toggleXGrid()
 void SignalBrowserModel::toggleYGrid()
 {
     show_y_grid_ = !show_y_grid_;
+}
+
+//-------------------------------------------------------------------
+void SignalBrowserModel::enableBoarderline(bool enable)
+{
+    show_boarderline_ = enable;
 }
 
 //-------------------------------------------------------------------

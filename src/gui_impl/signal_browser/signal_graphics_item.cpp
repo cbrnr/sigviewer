@@ -66,8 +66,10 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
     connect(signal_view_settings.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateYGridIntervall()));
     connect(signal_view_settings.data(), SIGNAL(xGridToggled()), SLOT(toggleXGrid()));
     connect(signal_view_settings.data(), SIGNAL(yGridToggled()), SLOT(toggleYGrid()));
+    connect(signal_view_settings.data(), SIGNAL(boarderlineEnabled(bool)), SLOT(enableBoarderline(bool)));
     draw_x_grid_ = signal_browser_model_.getShowXGrid();
     draw_y_grid_ = signal_browser_model_.getShowYGrid();
+    draw_boarderline = signal_browser_model_.getShowBoarderline();
 }
 
 //-----------------------------------------------------------------------------
@@ -107,6 +109,14 @@ void SignalGraphicsItem::toggleYGrid()
     draw_y_grid_ = !draw_y_grid_;
     signal_browser_model_.toggleYGrid();
     update ();
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::enableBoarderline(bool enable)
+{
+    draw_boarderline = enable;
+    signal_browser_model_.enableBoarderline(enable);
+    update();
 }
 
 //-----------------------------------------------------------------------------
@@ -216,8 +226,8 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     bool channel_overlapping = signal_view_settings_->getChannelOverlapping();
 
-//    if (!channel_overlapping)
-//        painter->drawRect(boundingRect());
+    if (draw_boarderline && !channel_overlapping)
+        painter->drawRect(boundingRect());
 
     if (new_event_)
         painter->fillRect(new_signal_event_->getPosition(), 0, new_signal_event_->getDuration(), height_, new_event_color_);

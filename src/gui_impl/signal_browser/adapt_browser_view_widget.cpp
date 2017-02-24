@@ -50,6 +50,7 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
     setting.beginGroup("SignalBrowserModel");
     ui_.xGridCheckbox->setChecked(setting.value("show_x_grid", true).toBool());
     ui_.yGridCheckbox->setChecked(setting.value("show_y_grid", true).toBool());
+    ui_.checkBox->setChecked(setting.value("show_boarderline", true).toBool());
 
     setting.endGroup();
 }
@@ -62,6 +63,7 @@ AdaptBrowserViewWidget::~AdaptBrowserViewWidget()
 
     setting.setValue("show_x_grid", ui_.xGridCheckbox->checkState());
     setting.setValue("show_y_grid", ui_.yGridCheckbox->checkState());
+    setting.setValue("show_boarderline", ui_.checkBox->checkState());
 
     setting.endGroup();
 }
@@ -171,8 +173,8 @@ void sigviewer::AdaptBrowserViewWidget::on_xGridCheckbox_stateChanged(int checkS
 
 void sigviewer::AdaptBrowserViewWidget::on_yGridCheckbox_stateChanged(int checkState)
 {
-    if (checkState == Qt::Unchecked)
-    {//cancel Y Grid
+    if (checkState == Qt::Unchecked)        //cancel Y Grid
+    {
         ui_.yGridSlider->setDisabled(true);
         settings_->enableYGrid(false);
     }
@@ -180,5 +182,35 @@ void sigviewer::AdaptBrowserViewWidget::on_yGridCheckbox_stateChanged(int checkS
     {
         ui_.yGridSlider->setEnabled(true);
         settings_->enableYGrid(true);
+    }
+}
+
+void sigviewer::AdaptBrowserViewWidget::on_checkBox_stateChanged(int checkState)
+{
+    if (checkState == Qt::Unchecked)        //cancel boarders
+    {
+        settings_->enableBoarderLines(false);
+
+        QSettings setting("SigViewer");
+
+        setting.beginGroup("SignalBrowserModel");
+
+        setting.setValue("show_boarderline", ui_.checkBox->checkState());
+
+        setting.endGroup();
+
+    }
+    else if (checkState == Qt::Checked)
+    {
+        settings_->enableBoarderLines(true);
+
+        QSettings setting("SigViewer");
+
+        setting.beginGroup("SignalBrowserModel");
+
+        setting.setValue("show_boarderline", ui_.checkBox->checkState());
+
+        setting.endGroup();
+
     }
 }

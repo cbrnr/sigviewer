@@ -15,7 +15,8 @@ SignalViewSettings::SignalViewSettings (ChannelManager const& channel_manager)
       channel_heigth_in_pixels_ (20),
       channel_manager_ (channel_manager),
       enable_x_grid_ (true),
-      enable_y_grid_ (true)
+      enable_y_grid_ (true),
+      enable_boarder_lines (true)
 {
     grid_fragmentation_[Qt::Horizontal] = 10;
     grid_fragmentation_[Qt::Vertical] = 4;
@@ -79,6 +80,13 @@ void SignalViewSettings::enableYGrid(bool enabled)
         enable_y_grid_ = enabled;
         emit yGridToggled();
     }
+}
+
+//-------------------------------------------------------------------------
+void SignalViewSettings::enableBoarderLines(bool enabled)
+{
+    enable_boarder_lines = enabled;
+    emit boarderlineEnabled(enabled);
 }
 
 }

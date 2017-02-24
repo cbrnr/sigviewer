@@ -68,6 +68,13 @@ void YAxisWidget::updateChannel (ChannelID)
     update ();
 }
 
+//-----------------------------------------------------------------------------
+void YAxisWidget::enableBoarderline(bool enable)
+{
+    enable_boarderline = enable;
+    update();
+}
+
 //!this section is set to be consistent with label_widget.cpp----------------
 void YAxisWidget::paintEvent(QPaintEvent*)
 {
@@ -107,8 +114,9 @@ void YAxisWidget::paintEvent(QPaintEvent*)
 
 //    this is the bottom line
 //    painter.setPen(QColor(0, 43, 130));
-    painter.drawLine (0, 0, width() - 1, 0);
-//    painter.setPen(Qt::black);
+    if (enable_boarderline)
+        painter.drawLine (0, 0, width() - 1, 0);
+    //    painter.setPen(Qt::black);
 
 //    if (channel_overlapping)
 //        return;
@@ -152,8 +160,9 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
                           width(), channelHeight + 2);  //+2 include both upper and lower boarders
 
 //    painter->setPen(QColor(0, 43, 130));
-    painter->drawLine (0, UPPER_BORDER, width() - 1, UPPER_BORDER);
-//    painter->setPen(Qt::black);
+    if (enable_boarderline)
+        painter->drawLine (0, UPPER_BORDER, width() - 1, UPPER_BORDER);
+    //    painter->setPen(Qt::black);
 
     paintYUnits (painter, unit_string, channelHeight);
 

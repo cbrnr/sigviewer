@@ -90,9 +90,11 @@ public:
 
     void toggleXGrid();
     void toggleYGrid();
+    void enableBoarderline(bool enable);
 
     bool getShowXGrid() {return show_x_grid_;}
     bool getShowYGrid() {return show_y_grid_;}
+    bool getShowBoarderline() {return show_boarderline_;}
 
 public slots:
     //-------------------------------------------------------------------------
@@ -160,6 +162,7 @@ private:
     bool initialized_;
     bool show_x_grid_;
     bool show_y_grid_;
+    bool show_boarderline_;
     QList<EventGraphicsItem*> items_to_delete_;
 };
 

@@ -330,6 +330,8 @@ void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager,
 
     adapt_browser_view_widget_ = new AdaptBrowserViewWidget (this, model_->getSignalViewSettings());
     x_axis_widget_->connect (adapt_browser_view_widget_, SIGNAL(xAxisVisibilityChanged(bool)), SLOT(setVisible(bool)));
+    model_->connect (adapt_browser_view_widget_, SIGNAL(xAxisVisibilityChanged(bool)), SLOT(scaleChannel(UNDEFINED_CHANNEL)));
+
     y_axis_widget_->connect (adapt_browser_view_widget_, SIGNAL(yAxisVisibilityChanged(bool)), SLOT(setVisible(bool)));
     label_widget_->connect (adapt_browser_view_widget_, SIGNAL(labelsVisibilityChanged(bool)), SLOT(setVisible(bool)));
 

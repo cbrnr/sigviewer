@@ -60,6 +60,8 @@ private slots:
 
     void on_offsetCheckBox_stateChanged(int checkState);
 
+    void on_checkBox_stateChanged(int checkState);
+
 private:
     //-------------------------------------------------------------------------
     virtual void showEvent (QShowEvent* event);
