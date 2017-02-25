@@ -248,6 +248,29 @@ void SignalBrowserView::graphicsViewResized (QResizeEvent* event)
     model_->getSignalViewSettings()->setChannelHeight (channel_height);
 }
 
+/*!
+ * \brief Toggle X Widget
+ * \param A boolean value on whether to enable X widget
+ *
+ * y_axis_widget_, label_widget_ and graphics_view_ (The main widget which
+ * shows signals) needs to be turned off first then turned on again, to avoid
+ * overlapping with x_axis_widget_ (usually the last channel).
+ *
+ * Current known minor issue: after toggling off and on, the border line
+ * or graphics_view_ is occaisionally slightly higher than y_axis_widget_
+ * and label_widget_.
+ */
+void SignalBrowserView::toggleXWidget(bool enabled)
+{
+    y_axis_widget_->hide();
+    label_widget_->hide();
+    graphics_view_->hide();
+    x_axis_widget_->setVisible(enabled);
+    graphics_view_->show();
+    y_axis_widget_->show();
+    label_widget_->show();
+}
+
 //-----------------------------------------------------------------------------
 void SignalBrowserView::verticalSrollbarMoved(int)
 {
@@ -329,8 +352,10 @@ void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager,
     }
 
     adapt_browser_view_widget_ = new AdaptBrowserViewWidget (this, model_->getSignalViewSettings(), y_axis_widget_,
-                                                             x_axis_widget_, label_widget_, model_);
-    x_axis_widget_->connect (adapt_browser_view_widget_, SIGNAL(xAxisVisibilityChanged(bool)), SLOT(setVisible(bool)));
+                                                             x_axis_widget_, label_widget_);
+
+    connect (adapt_browser_view_widget_, SIGNAL(xAxisVisibilityChanged(bool)), SLOT(toggleXWidget(bool)));
+
     y_axis_widget_->connect (adapt_browser_view_widget_, SIGNAL(yAxisVisibilityChanged(bool)), SLOT(setVisible(bool)));
     label_widget_->connect (adapt_browser_view_widget_, SIGNAL(labelsVisibilityChanged(bool)), SLOT(setVisible(bool)));
 
@@ -375,6 +400,11 @@ void SignalBrowserView::createLayout()
     layout_->setSpacing(0);
     layout_->setVerticalSpacing(0);
     layout_->setHorizontalSpacing(0);
+
+    //The vertical size policy of graphics_view_ needs to be Fixed in order to correctly show it
+    graphics_view_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    y_axis_widget_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    label_widget_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     layout_->addWidget(current_info_widget_, 1, 1, 1, 3);
     layout_->addWidget(y_axis_widget_, 2, 1);

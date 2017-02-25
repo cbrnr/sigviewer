@@ -31,7 +31,6 @@ public:
                                      YAxisWidget* yAxisWidget,
                                      XAxisWidget* xAxisWidget,
                                      LabelWidget* labelWidget,
-                                     QSharedPointer<SignalVisualisationModel> model,
                                      QWidget *parent = 0);
     ~AdaptBrowserViewWidget();
 
@@ -84,7 +83,6 @@ private:
     XAxisWidget* x_axis_widget_;
     YAxisWidget* y_axis_widget_;
     LabelWidget* label_widget_;
-    QSharedPointer<SignalVisualisationModel> model_;
 
 };
 

@@ -23,7 +23,7 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
                                                 QSharedPointer<SignalViewSettings> settings,
                                                 YAxisWidget *yAxisWidget,
                                                 XAxisWidget *xAxisWidget,
-                                                LabelWidget *labelWidget, QSharedPointer<SignalVisualisationModel> model,
+                                                LabelWidget *labelWidget,
                                                 QWidget *parent) :
     QWidget (parent),
     signal_visualisation_view_ (signal_visualisation_view),
@@ -32,8 +32,7 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
     updating_values_ (false),
     x_axis_widget_ (xAxisWidget),
     y_axis_widget_ (yAxisWidget),
-    label_widget_ (labelWidget),
-    model_ (model)
+    label_widget_ (labelWidget)
 {
     ui_.setupUi (this);
     if (!connect (ui_.x_axis_checkbox_, SIGNAL(toggled(bool)), SIGNAL(xAxisVisibilityChanged(bool))))
