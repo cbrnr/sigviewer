@@ -21,12 +21,19 @@ namespace sigviewer
 //-------------------------------------------------------------------------
 AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* signal_visualisation_view,
                                                 QSharedPointer<SignalViewSettings> settings,
+                                                YAxisWidget *yAxisWidget,
+                                                XAxisWidget *xAxisWidget,
+                                                LabelWidget *labelWidget, QSharedPointer<SignalVisualisationModel> model,
                                                 QWidget *parent) :
     QWidget (parent),
     signal_visualisation_view_ (signal_visualisation_view),
     settings_ (settings),
     self_updating_ (false),
-    updating_values_ (false)
+    updating_values_ (false),
+    x_axis_widget_ (xAxisWidget),
+    y_axis_widget_ (yAxisWidget),
+    label_widget_ (labelWidget),
+    model_ (model)
 {
     ui_.setupUi (this);
     if (!connect (ui_.x_axis_checkbox_, SIGNAL(toggled(bool)), SIGNAL(xAxisVisibilityChanged(bool))))
@@ -48,11 +55,17 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
     QSettings setting("SigViewer");
 
     setting.beginGroup("SignalBrowserModel");
-    ui_.xGridCheckbox->setChecked(setting.value("show_x_grid", true).toBool());
-    ui_.yGridCheckbox->setChecked(setting.value("show_y_grid", true).toBool());
-    ui_.checkBox->setChecked(setting.value("show_boarderline", true).toBool());
+    ui_.xGridCheckbox->setChecked(setting.value("show_x_grid", false).toBool());
+    ui_.yGridCheckbox->setChecked(setting.value("show_y_grid", false).toBool());
+    ui_.checkBox->setChecked(setting.value("show_borderline", false).toBool());
 
     setting.endGroup();
+
+    y_axis_widget_->enableBorderline(ui_.checkBox->checkState());
+    label_widget_->enableBorderline(ui_.checkBox->checkState());
+    settings_->enableBorderline(ui_.checkBox->checkState());
+
+
 }
 
 AdaptBrowserViewWidget::~AdaptBrowserViewWidget()
@@ -63,7 +76,7 @@ AdaptBrowserViewWidget::~AdaptBrowserViewWidget()
 
     setting.setValue("show_x_grid", ui_.xGridCheckbox->checkState());
     setting.setValue("show_y_grid", ui_.yGridCheckbox->checkState());
-    setting.setValue("show_boarderline", ui_.checkBox->checkState());
+    setting.setValue("show_borderline", ui_.checkBox->checkState());
 
     setting.endGroup();
 }
@@ -187,30 +200,32 @@ void sigviewer::AdaptBrowserViewWidget::on_yGridCheckbox_stateChanged(int checkS
 
 void sigviewer::AdaptBrowserViewWidget::on_checkBox_stateChanged(int checkState)
 {
-    if (checkState == Qt::Unchecked)        //cancel boarders
+    if (checkState == Qt::Unchecked)        //cancel borders
     {
-        settings_->enableBoarderLines(false);
+        y_axis_widget_->enableBorderline(false);
+        label_widget_->enableBorderline(false);
+//        for (auto signalGraphicsItem : model_->getChannelToSignalItem())
+//            signalGraphicsItem->enableBorderline(false);
 
-        QSettings setting("SigViewer");
+//        for (auto it = model_->getChannelToSignalItem().begin();
+//             it != model_->getChannelToSignalItem().end(); it++)
+//            it.value()->enableborderline(false);
 
-        setting.beginGroup("SignalBrowserModel");
+        settings_->enableBorderline(false);
 
-        setting.setValue("show_boarderline", ui_.checkBox->checkState());
+//        QSettings setting("SigViewer");
 
-        setting.endGroup();
+//        setting.beginGroup("SignalBrowserModel");
+
+//        setting.setValue("show_borderline", ui_.checkBox->checkState());
+
+//        setting.endGroup();
 
     }
     else if (checkState == Qt::Checked)
     {
-        settings_->enableBoarderLines(true);
-
-        QSettings setting("SigViewer");
-
-        setting.beginGroup("SignalBrowserModel");
-
-        setting.setValue("show_boarderline", ui_.checkBox->checkState());
-
-        setting.endGroup();
-
+        y_axis_widget_->enableBorderline(true);
+        label_widget_->enableBorderline(true);
+        settings_->enableBorderline(true);
     }
 }

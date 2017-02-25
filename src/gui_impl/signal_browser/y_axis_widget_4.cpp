@@ -69,9 +69,9 @@ void YAxisWidget::updateChannel (ChannelID)
 }
 
 //-----------------------------------------------------------------------------
-void YAxisWidget::enableBoarderline(bool enable)
+void YAxisWidget::enableBorderline(bool enable)
 {
-    enable_boarderline = enable;
+    enable_borderline = enable;
     update();
 }
 
@@ -113,10 +113,8 @@ void YAxisWidget::paintEvent(QPaintEvent*)
     }
 
 //    this is the bottom line
-//    painter.setPen(QColor(0, 43, 130));
-    if (enable_boarderline)
+    if (!channel_overlapping && enable_borderline)
         painter.drawLine (0, 0, width() - 1, 0);
-    //    painter.setPen(Qt::black);
 
 //    if (channel_overlapping)
 //        return;
@@ -150,19 +148,19 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
 {
     painter->setClipping (true);
 
-    //Below, 0 is the relative upper boarder of each channel.
+    //Below, 0 is the relative upper border of each channel.
     //despite being an absolute value, because the painter coordinates are readjusted
     //automatically every time it moves to a new channel, hence 0 is the
-    //relative position of the upper boarder of each channel
+    //relative position of the upper border of each channel
 #define UPPER_BORDER 0
 
-    painter->setClipRect (0, UPPER_BORDER - 1,          // -1 to include the black boarder as well
-                          width(), channelHeight + 2);  //+2 include both upper and lower boarders
+    painter->setClipRect (0, UPPER_BORDER - 1,          // -1 to include the black border as well
+                          width(), channelHeight + 2);  //+2 include both upper and lower borders
 
-//    painter->setPen(QColor(0, 43, 130));
-    if (enable_boarderline)
+    bool channel_overlapping = signal_view_settings_->getChannelOverlapping();
+
+    if (!channel_overlapping && enable_borderline)
         painter->drawLine (0, UPPER_BORDER, width() - 1, UPPER_BORDER);
-    //    painter->setPen(Qt::black);
 
     paintYUnits (painter, unit_string, channelHeight);
 

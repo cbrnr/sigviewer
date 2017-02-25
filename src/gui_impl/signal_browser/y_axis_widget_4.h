@@ -33,7 +33,7 @@ public slots:
     void changeSignalHeight (unsigned signal_height);
     void changeYStart (int32 y_start);
     void updateChannel (ChannelID channel_id);
-    void enableBoarderline(bool enable);
+    void enableBorderline(bool enable);
 
 private:
     virtual void paintEvent (QPaintEvent* event = 0);
@@ -51,7 +51,7 @@ private:
     int32 y_start_;
     QMap<ChannelID, SignalGraphicsItem const*> channel_nr2signal_graphics_item_;
     QSharedPointer<SignalViewSettings const> signal_view_settings_;
-    bool enable_boarderline;
+    bool enable_borderline;
 
 };
 

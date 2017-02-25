@@ -218,13 +218,13 @@
    <item row="0" column="2">
     <widget class="QGroupBox" name="groupBox_4">
      <property name="title">
-      <string>Boarders</string>
+      <string>Borders</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
       <item row="0" column="0">
        <widget class="QCheckBox" name="checkBox">
         <property name="text">
-         <string>Boarder lines</string>
+         <string>Border lines</string>
         </property>
        </widget>
       </item>

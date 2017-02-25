@@ -92,9 +92,13 @@ SignalVisualisationView const* SignalBrowserModel::view () const
     return signal_browser_view_;
 }
 
-
 //-----------------------------------------------------------------------------
-// set signal browser view
+QMap<ChannelID, SignalGraphicsItem *> SignalBrowserModel::getChannelToSignalItem()
+{
+    return channel2signal_item_;
+}
+
+// set signal browser view-----------------------------------------------------
 void SignalBrowserModel::setSignalBrowserView (SignalBrowserView* signal_browser_view)
 {
     signal_browser_view_ = signal_browser_view;
@@ -112,7 +116,7 @@ void SignalBrowserModel::loadSettings()
     settings.beginGroup("SignalBrowserModel");
     show_x_grid_ = settings.value("show_x_grid", false).toBool();
     show_y_grid_ = settings.value("show_y_grid", false).toBool();
-    show_boarderline_ = settings.value("show_boarderline", true).toBool();
+    show_borderline_ = settings.value("show_borderline", true).toBool();
 
     settings.endGroup();
 }
@@ -126,7 +130,7 @@ void SignalBrowserModel::saveSettings()
     settings.beginGroup("SignalBrowserModel");
     settings.setValue("show_x_grid", show_x_grid_);
     settings.setValue("show_y_grid", show_y_grid_);
-    settings.setValue("show_boarderline", show_boarderline_);
+    settings.setValue("show_borderline", show_borderline_);
 
     settings.endGroup();
 }
@@ -407,9 +411,9 @@ void SignalBrowserModel::toggleYGrid()
 }
 
 //-------------------------------------------------------------------
-void SignalBrowserModel::enableBoarderline(bool enable)
+void SignalBrowserModel::enableborderline(bool enable)
 {
-    show_boarderline_ = enable;
+    show_borderline_ = enable;
 }
 
 //-------------------------------------------------------------------

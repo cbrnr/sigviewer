@@ -72,7 +72,7 @@ public slots:
     void enableYGrid (bool enabled);
 
     //-------------------------------------------------------------------------
-    void enableBoarderLines(bool enabled);
+    void enableBorderline(bool enabled);
 
 
     //-------------------------------------------------------------------------
@@ -92,7 +92,7 @@ signals:
     void gridFragmentationChanged ();
     void xGridToggled();
     void yGridToggled();
-    void boarderlineEnabled(bool enabled);
+    void borderlineEnabled(bool enabled);
 
 private:
     //std::set<ChannelID> shown_channels_;
@@ -103,7 +103,6 @@ private:
     ChannelManager const& channel_manager_;
     bool enable_x_grid_;
     bool enable_y_grid_;
-    bool enable_boarder_lines;
 };
 
 }

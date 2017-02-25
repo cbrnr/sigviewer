@@ -74,6 +74,10 @@ public:
     //-------------------------------------------------------------------------
     virtual SignalVisualisationView const* view () const;
 
+    //-------------------------------------------------------------------------
+    virtual QMap<ChannelID, SignalGraphicsItem *> getChannelToSignalItem();
+
+
     void setSignalBrowserView(SignalBrowserView* signal_browser_view);
     void loadSettings();
     void saveSettings();
@@ -90,11 +94,11 @@ public:
 
     void toggleXGrid();
     void toggleYGrid();
-    void enableBoarderline(bool enable);
+    void enableborderline(bool enable);
 
     bool getShowXGrid() {return show_x_grid_;}
     bool getShowYGrid() {return show_y_grid_;}
-    bool getShowBoarderline() {return show_boarderline_;}
+    bool getShowborderline() {return show_borderline_;}
 
 public slots:
     //-------------------------------------------------------------------------
@@ -162,7 +166,7 @@ private:
     bool initialized_;
     bool show_x_grid_;
     bool show_y_grid_;
-    bool show_boarderline_;
+    bool show_borderline_;
     QList<EventGraphicsItem*> items_to_delete_;
 };
 

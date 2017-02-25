@@ -28,6 +28,7 @@ public:
 
 public slots:
     void changeYStart (int32 y_start);
+    void enableBorderline(bool enable);
 
 protected:
     void paintEvent(QPaintEvent* pe);
@@ -38,6 +39,7 @@ private:
 
     QMap<ChannelID, QString> channel_nr2label_;
     int32 y_start_;
+    bool enable_borderline_;
 };
 
 }

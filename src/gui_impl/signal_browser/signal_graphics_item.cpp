@@ -66,10 +66,10 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
     connect(signal_view_settings.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateYGridIntervall()));
     connect(signal_view_settings.data(), SIGNAL(xGridToggled()), SLOT(toggleXGrid()));
     connect(signal_view_settings.data(), SIGNAL(yGridToggled()), SLOT(toggleYGrid()));
-    connect(signal_view_settings.data(), SIGNAL(boarderlineEnabled(bool)), SLOT(enableBoarderline(bool)));
+    connect(signal_view_settings.data(), SIGNAL(borderlineEnabled(bool)), SLOT(enableborderline(bool)));
     draw_x_grid_ = signal_browser_model_.getShowXGrid();
     draw_y_grid_ = signal_browser_model_.getShowYGrid();
-    draw_boarderline = signal_browser_model_.getShowBoarderline();
+    draw_borderline = signal_browser_model_.getShowborderline();
 }
 
 //-----------------------------------------------------------------------------
@@ -112,10 +112,10 @@ void SignalGraphicsItem::toggleYGrid()
 }
 
 //-----------------------------------------------------------------------------
-void SignalGraphicsItem::enableBoarderline(bool enable)
+void SignalGraphicsItem::enableborderline(bool enable)
 {
-    draw_boarderline = enable;
-    signal_browser_model_.enableBoarderline(enable);
+    draw_borderline = enable;
+    signal_browser_model_.enableborderline(enable);
     update();
 }
 
@@ -226,8 +226,13 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     bool channel_overlapping = signal_view_settings_->getChannelOverlapping();
 
-    if (draw_boarderline && !channel_overlapping)
-        painter->drawRect(boundingRect());
+    if (draw_borderline && !channel_overlapping)
+//        painter->drawRect(boundingRect());
+    {
+        //draw only upper and lower border, no verdical borders
+        painter->drawLine(0, 0, width_, 0);
+        painter->drawLine(0, height_, width_, height_);
+    }
 
     if (new_event_)
         painter->fillRect(new_signal_event_->getPosition(), 0, new_signal_event_->getDuration(), height_, new_event_color_);

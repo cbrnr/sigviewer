@@ -63,7 +63,7 @@ public slots:
     void setXGridInterval (unsigned interval);
     void toggleXGrid();
     void toggleYGrid();
-    void enableBoarderline(bool enable);
+    void enableborderline(bool enable);
 
 signals:
     void mouseAtSecond (float64 sec);
@@ -101,7 +101,7 @@ private:
     double value_range_fragment_;
     bool draw_y_grid_;
     bool draw_x_grid_;
-    bool draw_boarderline;
+    bool draw_borderline;
     float64 y_offset_;
     int32 height_;
     uint32 width_;
