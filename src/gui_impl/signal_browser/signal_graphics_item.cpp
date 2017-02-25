@@ -28,6 +28,7 @@
 #include <QDebug>
 #include <QToolTip>
 #include <QSet>
+#include <QSettings>
 
 #include <cmath>
 #include <ctime> //to get current date when user add events
@@ -69,12 +70,27 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
     connect(signal_view_settings.data(), SIGNAL(borderlineEnabled(bool)), SLOT(enableborderline(bool)));
     draw_x_grid_ = signal_browser_model_.getShowXGrid();
     draw_y_grid_ = signal_browser_model_.getShowYGrid();
-    draw_borderline = signal_browser_model_.getShowborderline();
+
+    QSettings settings("SigViewer");
+
+    settings.beginGroup("SignalBrowserModel");
+    draw_borderline = settings.value("show_borderline", true).toBool();
+    settings.endGroup();
+
+
 }
 
 //-----------------------------------------------------------------------------
 SignalGraphicsItem::~SignalGraphicsItem ()
 {
+    QSettings settings("SigViewer");
+
+    settings.beginGroup("SignalBrowserModel");
+//    settings.setValue("show_x_grid", show_x_grid_);
+//    settings.setValue("show_y_grid", show_y_grid_);
+    settings.setValue("show_borderline", draw_borderline);
+
+    settings.endGroup();
 
 }
 
@@ -115,7 +131,6 @@ void SignalGraphicsItem::toggleYGrid()
 void SignalGraphicsItem::enableborderline(bool enable)
 {
     draw_borderline = enable;
-    signal_browser_model_.enableborderline(enable);
     update();
 }
 

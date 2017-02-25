@@ -116,7 +116,6 @@ void SignalBrowserModel::loadSettings()
     settings.beginGroup("SignalBrowserModel");
     show_x_grid_ = settings.value("show_x_grid", false).toBool();
     show_y_grid_ = settings.value("show_y_grid", false).toBool();
-    show_borderline_ = settings.value("show_borderline", true).toBool();
 
     settings.endGroup();
 }
@@ -130,7 +129,6 @@ void SignalBrowserModel::saveSettings()
     settings.beginGroup("SignalBrowserModel");
     settings.setValue("show_x_grid", show_x_grid_);
     settings.setValue("show_y_grid", show_y_grid_);
-    settings.setValue("show_borderline", show_borderline_);
 
     settings.endGroup();
 }
@@ -408,12 +406,6 @@ void SignalBrowserModel::toggleXGrid()
 void SignalBrowserModel::toggleYGrid()
 {
     show_y_grid_ = !show_y_grid_;
-}
-
-//-------------------------------------------------------------------
-void SignalBrowserModel::enableborderline(bool enable)
-{
-    show_borderline_ = enable;
 }
 
 //-------------------------------------------------------------------

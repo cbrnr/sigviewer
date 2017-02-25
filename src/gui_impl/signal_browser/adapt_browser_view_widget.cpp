@@ -198,28 +198,20 @@ void sigviewer::AdaptBrowserViewWidget::on_yGridCheckbox_stateChanged(int checkS
     }
 }
 
+//!Checkbox for borderLine
 void sigviewer::AdaptBrowserViewWidget::on_checkBox_stateChanged(int checkState)
 {
     if (checkState == Qt::Unchecked)        //cancel borders
     {
         y_axis_widget_->enableBorderline(false);
         label_widget_->enableBorderline(false);
-//        for (auto signalGraphicsItem : model_->getChannelToSignalItem())
-//            signalGraphicsItem->enableBorderline(false);
-
-//        for (auto it = model_->getChannelToSignalItem().begin();
-//             it != model_->getChannelToSignalItem().end(); it++)
-//            it.value()->enableborderline(false);
 
         settings_->enableBorderline(false);
 
-//        QSettings setting("SigViewer");
-
-//        setting.beginGroup("SignalBrowserModel");
-
-//        setting.setValue("show_borderline", ui_.checkBox->checkState());
-
-//        setting.endGroup();
+        QSettings setting("SigViewer");
+        setting.beginGroup("SignalBrowserModel");
+        setting.setValue("show_borderline", ui_.checkBox->checkState());
+        setting.endGroup();
 
     }
     else if (checkState == Qt::Checked)
@@ -227,5 +219,10 @@ void sigviewer::AdaptBrowserViewWidget::on_checkBox_stateChanged(int checkState)
         y_axis_widget_->enableBorderline(true);
         label_widget_->enableBorderline(true);
         settings_->enableBorderline(true);
+
+        QSettings setting("SigViewer");
+        setting.beginGroup("SignalBrowserModel");
+        setting.setValue("show_borderline", ui_.checkBox->checkState());
+        setting.endGroup();
     }
 }
