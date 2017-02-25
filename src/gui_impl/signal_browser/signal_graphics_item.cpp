@@ -65,32 +65,22 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
     setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
     setAcceptHoverEvents(false);
     connect(signal_view_settings.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateYGridIntervall()));
-    connect(signal_view_settings.data(), SIGNAL(xGridToggled()), SLOT(toggleXGrid()));
-    connect(signal_view_settings.data(), SIGNAL(yGridToggled()), SLOT(toggleYGrid()));
+    connect(signal_view_settings.data(), SIGNAL(enableXGrid(bool)), SLOT(toggleXGrid(bool)));
+    connect(signal_view_settings.data(), SIGNAL(enableYGrid(bool)), SLOT(toggleYGrid(bool)));
     connect(signal_view_settings.data(), SIGNAL(borderlineEnabled(bool)), SLOT(enableborderline(bool)));
-    draw_x_grid_ = signal_browser_model_.getShowXGrid();
-    draw_y_grid_ = signal_browser_model_.getShowYGrid();
 
     QSettings settings("SigViewer");
 
     settings.beginGroup("SignalBrowserModel");
+    draw_x_grid_ = settings.value("show_x_grid", false).toBool();
+    draw_y_grid_ = settings.value("show_y_grid", false).toBool();
     draw_borderline = settings.value("show_borderline", true).toBool();
     settings.endGroup();
-
-
 }
 
 //-----------------------------------------------------------------------------
 SignalGraphicsItem::~SignalGraphicsItem ()
 {
-    QSettings settings("SigViewer");
-
-    settings.beginGroup("SignalBrowserModel");
-//    settings.setValue("show_x_grid", show_x_grid_);
-//    settings.setValue("show_y_grid", show_y_grid_);
-    settings.setValue("show_borderline", draw_borderline);
-
-    settings.endGroup();
 
 }
 
@@ -112,18 +102,16 @@ void SignalGraphicsItem::setXGridInterval (unsigned interval)
 }
 
 //-----------------------------------------------------------------------------
-void SignalGraphicsItem::toggleXGrid()
+void SignalGraphicsItem::toggleXGrid(bool enable)
 {
-    draw_x_grid_ = !draw_x_grid_;
-    signal_browser_model_.toggleXGrid();
+    draw_x_grid_ = enable;
     update ();
 }
 
 //-----------------------------------------------------------------------------
-void SignalGraphicsItem::toggleYGrid()
+void SignalGraphicsItem::toggleYGrid(bool enable)
 {
-    draw_y_grid_ = !draw_y_grid_;
-    signal_browser_model_.toggleYGrid();
+    draw_y_grid_ = enable;
     update ();
 }
 

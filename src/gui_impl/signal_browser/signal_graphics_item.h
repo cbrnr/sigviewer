@@ -61,8 +61,8 @@ public slots:
     void updateYGridIntervall();
     void setHeight (unsigned height);
     void setXGridInterval (unsigned interval);
-    void toggleXGrid();
-    void toggleYGrid();
+    void toggleXGrid(bool enable);
+    void toggleYGrid(bool enable);
     void enableborderline(bool enable);
 
 signals:

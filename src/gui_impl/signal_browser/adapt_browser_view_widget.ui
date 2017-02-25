@@ -224,7 +224,7 @@
       <item row="0" column="0">
        <widget class="QCheckBox" name="checkBox">
         <property name="text">
-         <string>Border lines</string>
+         <string>Borderlines</string>
         </property>
        </widget>
       </item>

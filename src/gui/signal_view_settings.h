@@ -66,16 +66,6 @@ public slots:
     void setGridFragmentation (Qt::Orientation orientation, int fragmentation);
 
     //-------------------------------------------------------------------------
-    void enableXGrid (bool enabled);
-
-    //-------------------------------------------------------------------------
-    void enableYGrid (bool enabled);
-
-    //-------------------------------------------------------------------------
-    void enableBorderline(bool enabled);
-
-
-    //-------------------------------------------------------------------------
     /// @param channels a set of ids of channels that should be visible
     //void setShownChannels (std::set<ChannelID> const& channels) {shown_channels_ = channels;
     //    shownChannelsChanged (shown_channels_);}
@@ -90,8 +80,8 @@ signals:
     void channelHeightChanged ();
     void channelHeightChanged (unsigned channel_height_in_pixel);
     void gridFragmentationChanged ();
-    void xGridToggled();
-    void yGridToggled();
+    void enableXGrid(bool enabled);
+    void enableYGrid(bool enabled);
     void borderlineEnabled(bool enabled);
 
 private:
@@ -101,8 +91,6 @@ private:
     int channel_heigth_in_pixels_;
     QMap<Qt::Orientation, int> grid_fragmentation_;
     ChannelManager const& channel_manager_;
-    bool enable_x_grid_;
-    bool enable_y_grid_;
 };
 
 }

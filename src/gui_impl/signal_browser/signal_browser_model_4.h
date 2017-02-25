@@ -92,12 +92,6 @@ public:
     EventGraphicsItem* getSelectedEventItem();
     void updateEventItems ();
 
-    void toggleXGrid();
-    void toggleYGrid();
-
-    bool getShowXGrid() {return show_x_grid_;}
-    bool getShowYGrid() {return show_y_grid_;}
-
 public slots:
     //-------------------------------------------------------------------------
     virtual void update ();
@@ -162,8 +156,6 @@ private:
     float64 x_grid_pixel_intervall_;
 
     bool initialized_;
-    bool show_x_grid_;
-    bool show_y_grid_;
     QList<EventGraphicsItem*> items_to_delete_;
 };
 

@@ -255,10 +255,6 @@ void SignalBrowserView::graphicsViewResized (QResizeEvent* event)
  * y_axis_widget_, label_widget_ and graphics_view_ (The main widget which
  * shows signals) needs to be turned off first then turned on again, to avoid
  * overlapping with x_axis_widget_ (usually the last channel).
- *
- * Current known minor issue: after toggling off and on, the border line
- * or graphics_view_ is occaisionally slightly higher than y_axis_widget_
- * and label_widget_.
  */
 void SignalBrowserView::toggleXWidget(bool enabled)
 {
@@ -401,10 +397,11 @@ void SignalBrowserView::createLayout()
     layout_->setVerticalSpacing(0);
     layout_->setHorizontalSpacing(0);
 
-    //The vertical size policy of graphics_view_ needs to be Fixed in order to correctly show it
-    graphics_view_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    y_axis_widget_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    label_widget_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    //set vertical size policy of graphics_view_ to adjust size
+    //when other widgets are toggled on and off
+    graphics_view_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    y_axis_widget_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    label_widget_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
     layout_->addWidget(current_info_widget_, 1, 1, 1, 3);
     layout_->addWidget(y_axis_widget_, 2, 1);
@@ -413,6 +410,9 @@ void SignalBrowserView::createLayout()
     layout_->addWidget(horizontal_scrollbar_, 4, 2);
     layout_->addWidget(label_widget_, 2, 3);
     layout_->addWidget(vertical_scrollbar_, 2, 4);
+
+    //align top to avoid misplacing caused by toggling other widgets
+    graphics_view_->setAlignment(Qt::AlignTop);
 }
 
 }
