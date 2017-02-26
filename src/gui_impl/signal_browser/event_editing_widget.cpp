@@ -35,6 +35,8 @@ EventEditingWidget::EventEditingWidget (QSharedPointer<EventManager> event_manag
     ui_.begin_spinbox_->setDecimals (precision);
     ui_.begin_spinbox_->setMaximum (static_cast<double>(event_manager_->getMaxEventPosition()) / event_manager_->getSampleRate ());
     ui_.duration_spinbox_->setDecimals (precision);
+    ui_.label->hide();
+    ui_.label_2->hide();
 }
 
 //-----------------------------------------------------------------------------
