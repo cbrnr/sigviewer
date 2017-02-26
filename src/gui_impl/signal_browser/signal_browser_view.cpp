@@ -262,9 +262,9 @@ void SignalBrowserView::toggleXWidget(bool enabled)
     label_widget_->hide();
     graphics_view_->hide();
     x_axis_widget_->setVisible(enabled);
-    graphics_view_->show();
     y_axis_widget_->show();
     label_widget_->show();
+    graphics_view_->show();
 }
 
 //-----------------------------------------------------------------------------

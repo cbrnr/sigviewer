@@ -37,6 +37,7 @@ EventEditingWidget::EventEditingWidget (QSharedPointer<EventManager> event_manag
     ui_.duration_spinbox_->setDecimals (precision);
     ui_.label->hide();
     ui_.label_2->hide();
+    ui_.groupBox->setToolTip(tr("Click on any event block on the signals first and change its type."));
 }
 
 //-----------------------------------------------------------------------------
