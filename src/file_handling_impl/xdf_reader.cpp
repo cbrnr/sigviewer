@@ -137,17 +137,18 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
             {
                 ResamplingDialog prompt(XDFdata->majSR, XDFdata->maxSR);
                 prompt.setModal(true);
-                prompt.exec();
+                int result = prompt.exec();
 
-                if (prompt.cancel())
+                if (result == QDialog::Rejected)
                 {
                     Xdf empty;
                     std::swap(*XDFdata, empty);
                     return "Cancelled";
                 }
-
-                if (prompt.getUserSrate())
+                else if (result == QDialog::Accepted)
+                {
                     XDFdata->majSR = prompt.getUserSrate();
+                }
 
                 XDFdata->resample(XDFdata->majSR);
             }
@@ -162,17 +163,18 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
             case Multi_Sample_Rate:
             {
                 ResamplingDialog prompt(XDFdata->majSR, XDFdata->maxSR);
-                prompt.exec();
+                int result = prompt.exec();
 
-                if (prompt.cancel())
+                if (result == QDialog::Rejected)
                 {
                     Xdf empty;
                     std::swap(*XDFdata, empty);
                     return "Cancelled";
                 }
-
-                if (prompt.getUserSrate())
+                else if (result == QDialog::Accepted)
+                {
                     XDFdata->majSR = prompt.getUserSrate();
+                }
 
                 XDFdata->resample(XDFdata->majSR);
             }

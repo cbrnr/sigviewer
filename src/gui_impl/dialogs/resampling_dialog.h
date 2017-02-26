@@ -25,17 +25,16 @@ public:
     ~ResamplingDialog();
 
     int getUserSrate() {return userSrate;}
-    bool cancel() {return cancelled;}
 
 private slots:
-    void on_buttonBox_accepted();
-    void on_buttonBox_rejected();
 
+    void on_resample_button_clicked();
+
+    void on_cancel_button_clicked();
 
 private:
     Ui::ResamplingDialog *ui;
     int userSrate = 0;
-    bool cancelled = false;
 };
 
 }

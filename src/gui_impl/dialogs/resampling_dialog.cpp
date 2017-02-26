@@ -93,14 +93,15 @@ ResamplingDialog::~ResamplingDialog()
     delete ui;
 }
 
-void ResamplingDialog::on_buttonBox_accepted()
+void ResamplingDialog::on_resample_button_clicked()
 {
     userSrate = ui->spinBox->value();
+    done(QDialog::Accepted);
 }
 
-void ResamplingDialog::on_buttonBox_rejected()
+void ResamplingDialog::on_cancel_button_clicked()
 {
-    cancelled = true;
+    done(QDialog::Rejected);
 }
 
 }

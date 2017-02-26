@@ -67,7 +67,7 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
     //Zero line fitted mode should always be default
     ui_.offsetCheckBox->setChecked(true);
 
-    ui_.yGridSlider->setToolTip("Slide to change the density of Y grids.");
+    ui_.yGridSlider->setToolTip("Slide to change the density of Y grids");
 }
 
 AdaptBrowserViewWidget::~AdaptBrowserViewWidget()

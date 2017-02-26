@@ -37,7 +37,24 @@ EventEditingWidget::EventEditingWidget (QSharedPointer<EventManager> event_manag
     ui_.duration_spinbox_->setDecimals (precision);
     ui_.label->hide();
     ui_.label_2->hide();
-    ui_.groupBox->setToolTip(tr("Click on any event block on the signals first and change its type."));
+
+    if (event_manager_->getFileType().startsWith("XDF", Qt::CaseInsensitive))
+    {
+        ui_.groupBox->setDisabled(true);
+        ui_.groupBox_2->setDisabled(true);
+        ui_.groupBox_3->setDisabled(true);
+        ui_.fit_button_->hide();    //Fit button doesn't work in XDF file since XDF events has no durations
+
+        ui_.groupBox->setToolTip(tr("Editing events is not allowed in XDF files"));
+        ui_.groupBox_2->setToolTip(tr("Editing events is not allowed in XDF files"));
+        ui_.groupBox_3->setToolTip(tr("Editing events is not allowed in XDF files"));
+    }
+    else
+    {
+        ui_.groupBox->setToolTip(tr("Click on any event block on the signals first then edit its type"));
+        ui_.groupBox_2->setToolTip(tr("Click on any event block on the signals first then edit its starting position"));
+        ui_.groupBox_3->setToolTip(tr("Click on any event block on the signals first then edit its duration"));
+    }
 }
 
 //-----------------------------------------------------------------------------
