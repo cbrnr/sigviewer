@@ -199,7 +199,9 @@ void ChannelSelectionDialog::on_button_box__accepted ()
 //-----------------------------------------------------------------------------
 void ChannelSelectionDialog::on_set_default_color_button__clicked ()
 {
-    QColor new_default_color = QColorDialog::getColor (color_manager_->getDefaultChannelColor());
+    QColor new_default_color = QColorDialog::getColor
+            (color_manager_->getDefaultChannelColor(), this, tr("Default Color"),
+             QColorDialog::ShowAlphaChannel);
     if (new_default_color.isValid())
         color_manager_->setDefaultChannelColor (new_default_color);
 }
@@ -212,12 +214,14 @@ void ChannelSelectionDialog::on_treeWidget_itemClicked(QTreeWidgetItem *item, in
         if (item->text(0).startsWith("Channel", Qt::CaseInsensitive))
         {
             QColorDialog color_dialog (item->backgroundColor (1), this);
+            color_dialog.setOption(QColorDialog::ShowAlphaChannel);
             if (color_dialog.exec () == QDialog::Accepted)
                 updateColor(item, color_dialog.selectedColor());
         }
         else if (item->text(0).startsWith("Stream", Qt::CaseInsensitive) && item->childCount())
         {
             QColorDialog color_dialog (item->backgroundColor (1), this);
+            color_dialog.setOption(QColorDialog::ShowAlphaChannel);
             if (color_dialog.exec () == QDialog::Accepted)
             {
                 updateColor(item, color_dialog.selectedColor());

@@ -136,21 +136,18 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
             case Zero_Hz_Only:
             {
                 ResamplingDialog prompt(XDFdata->majSR, XDFdata->maxSR);
-                prompt.setModal(true);
-                int result = prompt.exec();
 
-                if (result == QDialog::Rejected)
+                if (prompt.exec() == QDialog::Accepted)
+                {
+                    XDFdata->majSR = prompt.getUserSrate();
+                    XDFdata->resample(XDFdata->majSR);
+                }
+                else
                 {
                     Xdf empty;
                     std::swap(*XDFdata, empty);
                     return "Cancelled";
                 }
-                else if (result == QDialog::Accepted)
-                {
-                    XDFdata->majSR = prompt.getUserSrate();
-                }
-
-                XDFdata->resample(XDFdata->majSR);
             }
                 break;
             case Mono_Sample_Rate:
@@ -163,27 +160,24 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
             case Multi_Sample_Rate:
             {
                 ResamplingDialog prompt(XDFdata->majSR, XDFdata->maxSR);
-                int result = prompt.exec();
 
-                if (result == QDialog::Rejected)
+                if (prompt.exec() == QDialog::Accepted)
+                {
+                    XDFdata->majSR = prompt.getUserSrate();
+                    XDFdata->resample(XDFdata->majSR);
+                }
+                else
                 {
                     Xdf empty;
                     std::swap(*XDFdata, empty);
                     return "Cancelled";
                 }
-                else if (result == QDialog::Accepted)
-                {
-                    XDFdata->majSR = prompt.getUserSrate();
-                }
-
-                XDFdata->resample(XDFdata->majSR);
             }
                 break;
             default:
                 qDebug() << "Unknown sample rate type.";
                 break;
             }
-
 
             XDFdata->freeUpTimeStamps(); //to save some memory
 
