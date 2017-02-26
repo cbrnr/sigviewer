@@ -32,7 +32,7 @@ EventCreationWidget::EventCreationWidget (QSharedPointer<SignalVisualisationMode
     {
         ui_.lineEdit->hide();
         ui_.pushButton->hide();
-        ui_.groupBox->setToolTip("Select an event type and click anywhere on the signals to create new events");
+        ui_.groupBox->setToolTip("Select an event type then click anywhere on the signals to create new events");
     }
 }
 

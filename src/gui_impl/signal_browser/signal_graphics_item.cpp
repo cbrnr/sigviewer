@@ -60,7 +60,8 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
   shifting_ (false),
   new_event_ (false),
   created_event_item_ (0),
-  hand_tool_on_ (false)
+  hand_tool_on_ (false),
+  grid_color_ (QColor(220, 220, 220, 50))   //set the default grid color
 {
     setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
     setAcceptHoverEvents(false);
@@ -68,6 +69,7 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
     connect(signal_view_settings.data(), SIGNAL(enableXGrid(bool)), SLOT(toggleXGrid(bool)));
     connect(signal_view_settings.data(), SIGNAL(enableYGrid(bool)), SLOT(toggleYGrid(bool)));
     connect(signal_view_settings.data(), SIGNAL(borderlineEnabled(bool)), SLOT(enableborderline(bool)));
+    connect(signal_view_settings.data(), SIGNAL(gridColorChanged(QColor)), SLOT(updateGridColor(QColor)));
 
     QSettings settings("SigViewer");
 
@@ -119,6 +121,13 @@ void SignalGraphicsItem::toggleYGrid(bool enable)
 void SignalGraphicsItem::enableborderline(bool enable)
 {
     draw_borderline = enable;
+    update();
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::updateGridColor(QColor gridColor)
+{
+    grid_color_ = gridColor;
     update();
 }
 
@@ -570,7 +579,8 @@ void SignalGraphicsItem::drawYGrid (QPainter* painter,
 
     QRectF clip (option->exposedRect);
     //painter->setPen (Qt::lightGray);
-    painter->setPen (QColor(220, 220, 220, 50)); // Qt::lightGray is still too dark and strong.
+//    painter->setPen (QColor(220, 220, 220, 50)); // Qt::lightGray is still too dark and strong.
+    painter->setPen(grid_color_);
 
     for (float64 y = y_offset_;
          y < height_ / 2;
@@ -605,7 +615,8 @@ void SignalGraphicsItem::drawXGrid (QPainter* painter,
         return;
 
     QRectF clip (option->exposedRect);
-    painter->setPen (QColor(220, 220, 220, 50)); // Qt::lightGray is still too dark and strong.
+//    painter->setPen (QColor(220, 220, 220, 50)); // Qt::lightGray is still too dark and strong.
+    painter->setPen(grid_color_);
 
 
     if (clip.width() < 1)

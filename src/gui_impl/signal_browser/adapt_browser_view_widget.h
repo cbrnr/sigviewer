@@ -74,6 +74,8 @@ private slots:
     //-------------------------------------------------------------------------
     void on_checkBox_stateChanged(int checkState);
 
+    void on_grid_color_button_clicked();
+
 private:
     //-------------------------------------------------------------------------
     virtual void showEvent (QShowEvent* event);

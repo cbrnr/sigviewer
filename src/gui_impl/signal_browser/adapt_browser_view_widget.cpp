@@ -12,7 +12,7 @@
 #include <QSettings>
 #include <QDebug>
 #include <QMutexLocker>
-
+#include <QColorDialog>
 #include <cmath>
 
 namespace sigviewer
@@ -178,7 +178,7 @@ void sigviewer::AdaptBrowserViewWidget::on_xGridCheckbox_stateChanged(int checkS
 {
     if (checkState == Qt::Unchecked)    //cancel X Grid
     {
-        settings_->enableXGrid(false);
+        emit settings_->enableXGrid(false);
 
         QSettings setting("SigViewer");
         setting.beginGroup("SignalBrowserModel");
@@ -187,7 +187,7 @@ void sigviewer::AdaptBrowserViewWidget::on_xGridCheckbox_stateChanged(int checkS
     }
     else if (checkState == Qt::Checked)
     {
-        settings_->enableXGrid(true);
+        emit settings_->enableXGrid(true);
         QSettings setting("SigViewer");
         setting.beginGroup("SignalBrowserModel");
         setting.setValue("show_x_grid", ui_.xGridCheckbox->checkState());
@@ -200,7 +200,7 @@ void sigviewer::AdaptBrowserViewWidget::on_yGridCheckbox_stateChanged(int checkS
     if (checkState == Qt::Unchecked)        //cancel Y Grid
     {
         ui_.yGridSlider->setDisabled(true);
-        settings_->enableYGrid(false);
+        emit settings_->enableYGrid(false);
 
         QSettings setting("SigViewer");
         setting.beginGroup("SignalBrowserModel");
@@ -211,7 +211,7 @@ void sigviewer::AdaptBrowserViewWidget::on_yGridCheckbox_stateChanged(int checkS
     else if (checkState == Qt::Checked)
     {
         ui_.yGridSlider->setEnabled(true);
-        settings_->enableYGrid(true);
+        emit settings_->enableYGrid(true);
 
         QSettings setting("SigViewer");
         setting.beginGroup("SignalBrowserModel");
@@ -227,7 +227,7 @@ void sigviewer::AdaptBrowserViewWidget::on_checkBox_stateChanged(int checkState)
     {
         y_axis_widget_->enableBorderline(false);
         label_widget_->enableBorderline(false);
-        settings_->borderlineEnabled(false);
+        emit settings_->borderlineEnabled(false);
 
         QSettings setting("SigViewer");
         setting.beginGroup("SignalBrowserModel");
@@ -239,11 +239,22 @@ void sigviewer::AdaptBrowserViewWidget::on_checkBox_stateChanged(int checkState)
     {
         y_axis_widget_->enableBorderline(true);
         label_widget_->enableBorderline(true);
-        settings_->borderlineEnabled(true);
+        emit settings_->borderlineEnabled(true);
 
         QSettings setting("SigViewer");
         setting.beginGroup("SignalBrowserModel");
         setting.setValue("show_borderline", ui_.checkBox->checkState());
         setting.endGroup();
+    }
+}
+
+void sigviewer::AdaptBrowserViewWidget::on_grid_color_button_clicked()
+{
+    QColorDialog colorPicker;
+    colorPicker.setOption(QColorDialog::ShowAlphaChannel);
+    if (colorPicker.exec() == QDialog::Accepted)
+    {
+        QColor gridColor = colorPicker.selectedColor();
+        emit settings_->gridColorChanged(gridColor);
     }
 }

@@ -11,6 +11,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QColor>
 
 #include <set>
 
@@ -83,6 +84,7 @@ signals:
     void enableXGrid(bool enabled);
     void enableYGrid(bool enabled);
     void borderlineEnabled(bool enabled);
+    void gridColorChanged(QColor gridColor);
 
 private:
     //std::set<ChannelID> shown_channels_;
