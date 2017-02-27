@@ -24,7 +24,8 @@ YAxisWidget::YAxisWidget (QWidget* parent, QSharedPointer<const SignalViewSettin
   : QWidget (parent),
     channel_height_ (0),
     y_start_ (0),
-    signal_view_settings_ (signal_view_settings)
+    signal_view_settings_ (signal_view_settings),
+    label_color_ (Qt::black)
 {
     // nothing to do here
 }
@@ -75,6 +76,13 @@ void YAxisWidget::enableBorderline(bool enable)
     update();
 }
 
+//-----------------------------------------------------------------------------
+void YAxisWidget::changeLabelColor(QColor labelColor)
+{
+    label_color_ = labelColor;
+    update();
+}
+
 //!this section is set to be consistent with label_widget.cpp----------------
 void YAxisWidget::paintEvent(QPaintEvent*)
 {
@@ -93,6 +101,8 @@ void YAxisWidget::paintEvent(QPaintEvent*)
 
     QPainter painter (this);
     painter.translate(0, -y_start_);
+    painter.setPen(label_color_);
+
 //    painter.setPen(QColor(0, 43, 130));
 //    painter.drawLine(width() - 1, y_start_, width() - 1, y_end);
 //    painter.setPen(Qt::black);
@@ -160,7 +170,9 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
     bool channel_overlapping = signal_view_settings_->getChannelOverlapping();
 
     if (!channel_overlapping && enable_borderline)
+    {
         painter->drawLine (0, UPPER_BORDER, width() - 1, UPPER_BORDER);
+    }
 
     paintYUnits (painter, unit_string, channelHeight);
 

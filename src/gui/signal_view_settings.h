@@ -85,6 +85,7 @@ signals:
     void enableYGrid(bool enabled);
     void borderlineEnabled(bool enabled);
     void gridColorChanged(QColor gridColor);
+    void labelColorChanged(QColor labelColor);
 
 private:
     //std::set<ChannelID> shown_channels_;

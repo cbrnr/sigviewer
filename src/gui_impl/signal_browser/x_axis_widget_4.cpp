@@ -33,7 +33,8 @@ XAxisWidget::XAxisWidget (QSharedPointer<SignalViewSettings const> signal_view_s
     pixel_per_sec_ (2),
     length_in_sec_ (0),
     highlighting_enabled_ (false),
-    time_to_highlight_ (0)
+    time_to_highlight_ (0),
+    label_color_ (Qt::black)
 {
 
 }
@@ -74,6 +75,12 @@ void XAxisWidget::enableHighlightTime (bool highlighting_enabled)
     update ();
 }
 
+//-----------------------------------------------------------------------------
+void XAxisWidget::changeLabelColor(QColor labelColor)
+{
+    label_color_ = labelColor;
+    update();
+}
 
 //-----------------------------------------------------------------------------
 void XAxisWidget::paintEvent(QPaintEvent*)
@@ -92,6 +99,7 @@ void XAxisWidget::paintEvent(QPaintEvent*)
 
     p.setPen (Qt::black);
     p.translate(-x_start_, 0);
+    p.setPen(label_color_);
 //    p.drawLine(x_start_, 0, x_end, 0);
     float64 float_x_start = floor((x_start_ + intervall_ / 2) / intervall_) *
                            intervall_;

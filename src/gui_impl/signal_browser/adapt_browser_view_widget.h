@@ -72,9 +72,11 @@ private slots:
     void on_offsetCheckBox_stateChanged(int checkState);
 
     //-------------------------------------------------------------------------
-    void on_checkBox_stateChanged(int checkState);
+    void on_border_checkBox__stateChanged(int checkState);
 
     void on_grid_color_button_clicked();
+
+    void on_label_color_button_clicked();
 
 private:
     //-------------------------------------------------------------------------

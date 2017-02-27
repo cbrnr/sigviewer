@@ -65,6 +65,7 @@ public slots:
     void toggleYGrid(bool enable);
     void enableborderline(bool enable);
     void updateGridColor(QColor gridColor);
+    void updateLabelColor(QColor labelColor);
 
 signals:
     void mouseAtSecond (float64 sec);
@@ -118,6 +119,7 @@ private:
     int32 new_signal_event_reference_x_;
     QColor new_event_color_;
     QColor grid_color_;
+    QColor label_color_;
 };
 
 }

@@ -61,7 +61,8 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
   new_event_ (false),
   created_event_item_ (0),
   hand_tool_on_ (false),
-  grid_color_ (QColor(220, 220, 220, 50))   //set the default grid color
+  grid_color_ (QColor(220, 220, 220, 50)),   //set the default grid color
+  label_color_ (Qt::black)
 {
     setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
     setAcceptHoverEvents(false);
@@ -70,6 +71,7 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
     connect(signal_view_settings.data(), SIGNAL(enableYGrid(bool)), SLOT(toggleYGrid(bool)));
     connect(signal_view_settings.data(), SIGNAL(borderlineEnabled(bool)), SLOT(enableborderline(bool)));
     connect(signal_view_settings.data(), SIGNAL(gridColorChanged(QColor)), SLOT(updateGridColor(QColor)));
+    connect(signal_view_settings.data(), SIGNAL(labelColorChanged(QColor)), SLOT(updateLabelColor(QColor)));
 
     QSettings settings("SigViewer");
 
@@ -128,6 +130,12 @@ void SignalGraphicsItem::enableborderline(bool enable)
 void SignalGraphicsItem::updateGridColor(QColor gridColor)
 {
     grid_color_ = gridColor;
+    update();
+}
+
+void SignalGraphicsItem::updateLabelColor(QColor labelColor)
+{
+    label_color_ = labelColor;
     update();
 }
 
@@ -242,6 +250,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 //        painter->drawRect(boundingRect());
     {
         //draw only upper and lower border, no verdical borders
+        painter->setPen(label_color_);
         painter->drawLine(0, 0, width_, 0);
         painter->drawLine(0, height_, width_, height_);
     }

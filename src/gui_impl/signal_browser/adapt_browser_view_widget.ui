@@ -20,36 +20,16 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_7">
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox">
+   <item row="0" column="5">
+    <widget class="QGroupBox" name="groupBox_6">
      <property name="title">
-      <string>Labels</string>
+      <string>Centering</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="labels_checkbox_">
-        <property name="text">
-         <string>Channels</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="y_axis_checkbox_">
-        <property name="text">
-         <string>Y-Axis</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
+     <layout class="QGridLayout" name="gridLayout_6">
       <item row="0" column="0">
-       <widget class="QCheckBox" name="x_axis_checkbox_">
+       <widget class="QCheckBox" name="offsetCheckBox">
         <property name="text">
-         <string>X-Axis</string>
+         <string>Center Channels</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -75,19 +55,6 @@
         </property>
         <property name="checked">
          <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2" rowspan="2">
-       <widget class="QPushButton" name="grid_color_button">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Grid Color</string>
         </property>
        </widget>
       </item>
@@ -132,14 +99,63 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QGroupBox" name="groupBox_4">
+   <item row="0" column="4">
+    <widget class="QGroupBox" name="groupBox_5">
      <property name="title">
-      <string>Borders</string>
+      <string>Channel Overlap</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_4">
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="0">
+       <widget class="QSlider" name="channelOverlappingSlider">
+        <property name="maximum">
+         <number>100</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Labels</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="labels_checkbox_">
+        <property name="text">
+         <string>Channels</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="y_axis_checkbox_">
+        <property name="text">
+         <string>Y-Axis</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="x_axis_checkbox_">
+        <property name="text">
+         <string>X-Axis</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="1">
-       <widget class="QCheckBox" name="checkBox">
+       <widget class="QCheckBox" name="border_checkBox_">
         <property name="text">
          <string>Borderlines</string>
         </property>
@@ -206,38 +222,29 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="4">
-    <widget class="QGroupBox" name="groupBox_5">
+   <item row="0" column="2">
+    <widget class="QGroupBox" name="groupBox_4">
      <property name="title">
-      <string>Channel Overlap</string>
+      <string>Colors</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_5">
+     <layout class="QGridLayout" name="gridLayout_4">
       <item row="0" column="0">
-       <widget class="QSlider" name="channelOverlappingSlider">
-        <property name="maximum">
-         <number>100</number>
+       <widget class="QPushButton" name="grid_color_button">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+        <property name="text">
+         <string>Grid Color</string>
         </property>
        </widget>
       </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="5">
-    <widget class="QGroupBox" name="groupBox_6">
-     <property name="title">
-      <string>Centering</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_6">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="offsetCheckBox">
+      <item row="1" column="0">
+       <widget class="QPushButton" name="label_color_button">
         <property name="text">
-         <string>Center Channels</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
+         <string>Label Color</string>
         </property>
        </widget>
       </item>

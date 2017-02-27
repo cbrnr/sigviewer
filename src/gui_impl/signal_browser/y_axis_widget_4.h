@@ -34,6 +34,7 @@ public slots:
     void changeYStart (int32 y_start);
     void updateChannel (ChannelID channel_id);
     void enableBorderline(bool enable);
+    void changeLabelColor(QColor labelColor);
 
 private:
     virtual void paintEvent (QPaintEvent* event = 0);
@@ -52,6 +53,7 @@ private:
     QMap<ChannelID, SignalGraphicsItem const*> channel_nr2signal_graphics_item_;
     QSharedPointer<SignalViewSettings const> signal_view_settings_;
     bool enable_borderline;
+    QColor label_color_;
 
 };
 

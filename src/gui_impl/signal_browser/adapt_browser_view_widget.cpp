@@ -56,13 +56,13 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
     setting.beginGroup("SignalBrowserModel");
     ui_.xGridCheckbox->setChecked(setting.value("show_x_grid", false).toBool());
     ui_.yGridCheckbox->setChecked(setting.value("show_y_grid", false).toBool());
-    ui_.checkBox->setChecked(setting.value("show_borderline", false).toBool());
+    ui_.border_checkBox_->setChecked(setting.value("show_borderline", false).toBool());
 
     setting.endGroup();
 
-    y_axis_widget_->enableBorderline(ui_.checkBox->checkState());
-    label_widget_->enableBorderline(ui_.checkBox->checkState());
-    settings_->borderlineEnabled(ui_.checkBox->checkState());
+    y_axis_widget_->enableBorderline(ui_.border_checkBox_->checkState());
+    label_widget_->enableBorderline(ui_.border_checkBox_->checkState());
+    settings_->borderlineEnabled(ui_.border_checkBox_->checkState());
 
     //Zero line fitted mode should always be default
     ui_.offsetCheckBox->setChecked(true);
@@ -78,7 +78,7 @@ AdaptBrowserViewWidget::~AdaptBrowserViewWidget()
 
     setting.setValue("show_x_grid", ui_.xGridCheckbox->checkState());
     setting.setValue("show_y_grid", ui_.yGridCheckbox->checkState());
-    setting.setValue("show_borderline", ui_.checkBox->checkState());
+    setting.setValue("show_borderline", ui_.border_checkBox_->checkState());
 
     setting.endGroup();
 }
@@ -221,7 +221,7 @@ void sigviewer::AdaptBrowserViewWidget::on_yGridCheckbox_stateChanged(int checkS
 }
 
 //!Checkbox for borderLine
-void sigviewer::AdaptBrowserViewWidget::on_checkBox_stateChanged(int checkState)
+void sigviewer::AdaptBrowserViewWidget::on_border_checkBox__stateChanged(int checkState)
 {
     if (checkState == Qt::Unchecked)        //cancel borders
     {
@@ -231,7 +231,7 @@ void sigviewer::AdaptBrowserViewWidget::on_checkBox_stateChanged(int checkState)
 
         QSettings setting("SigViewer");
         setting.beginGroup("SignalBrowserModel");
-        setting.setValue("show_borderline", ui_.checkBox->checkState());
+        setting.setValue("show_borderline", ui_.border_checkBox_->checkState());
         setting.endGroup();
 
     }
@@ -243,7 +243,7 @@ void sigviewer::AdaptBrowserViewWidget::on_checkBox_stateChanged(int checkState)
 
         QSettings setting("SigViewer");
         setting.beginGroup("SignalBrowserModel");
-        setting.setValue("show_borderline", ui_.checkBox->checkState());
+        setting.setValue("show_borderline", ui_.border_checkBox_->checkState());
         setting.endGroup();
     }
 }
@@ -256,5 +256,19 @@ void sigviewer::AdaptBrowserViewWidget::on_grid_color_button_clicked()
     {
         QColor gridColor = colorPicker.selectedColor();
         emit settings_->gridColorChanged(gridColor);
+    }
+}
+
+void sigviewer::AdaptBrowserViewWidget::on_label_color_button_clicked()
+{
+    QColorDialog colorPicker;
+    colorPicker.setOption(QColorDialog::ShowAlphaChannel);
+    if (colorPicker.exec() == QDialog::Accepted)
+    {
+        QColor labelColor = colorPicker.selectedColor();
+        y_axis_widget_->changeLabelColor(labelColor);
+        label_widget_->changeLabelColor(labelColor);
+        x_axis_widget_->changeLabelColor(labelColor);
+        emit settings_->labelColorChanged(labelColor);
     }
 }
