@@ -96,6 +96,11 @@ void AdaptBrowserViewWidget::on_channelOverlappingSlider_valueChanged (int value
         return;
 
     settings_->setChannelOverlapping (static_cast<float>(value) / 100.0);
+
+    if (value > 0)
+        ui_.border_checkBox_->setEnabled(false);
+    else
+        ui_.border_checkBox_->setEnabled(true);
 }
 
 //-------------------------------------------------------------------------

@@ -45,7 +45,7 @@ MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
     
     QSettings settings("SigViewer");
     resize(settings.value("MainWindow/size", QSize(800, 500)).toSize());
-    setMinimumSize(800, 500);
+    setMinimumSize(900, 500);
     restoreGeometry(settings.value("geometry").toByteArray());  //restore geometry and window state (full screen etc.)
     restoreState(settings.value("windowState").toByteArray());
 }
