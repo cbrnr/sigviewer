@@ -12,7 +12,7 @@
 #include "y_axis_widget_4.h"
 #include "x_axis_widget_4.h"
 #include "label_widget.h"
-#include "gui\signal_visualisation_model.h"
+#include "gui/signal_visualisation_model.h"
 
 #include <QWidget>
 #include <QSharedPointer>
