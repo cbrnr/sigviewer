@@ -28,7 +28,7 @@ public:
 
 public slots:
     void changeYStart (int32 y_start);
-    void enableBorderline(bool enable);
+    void enableSeparator(bool enable);
     void changeLabelColor(QColor labelColor);
 
 protected:
@@ -40,7 +40,7 @@ private:
 
     QMap<ChannelID, QString> channel_nr2label_;
     int32 y_start_;
-    bool enable_borderline_;
+    bool enable_separator_;
     QColor label_color_;
 };
 

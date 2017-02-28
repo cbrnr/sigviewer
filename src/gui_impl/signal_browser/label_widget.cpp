@@ -18,7 +18,7 @@ namespace sigviewer
 LabelWidget::LabelWidget (QSharedPointer<SignalViewSettings const> signal_view_settings)
 : signal_view_settings_ (signal_view_settings),
   y_start_ (0),
-  enable_borderline_ (true),
+  enable_separator_ (true),
   label_color_ (Qt::black)
 {
     // nothing to do here
@@ -32,9 +32,9 @@ void LabelWidget::changeYStart (int32 y_start)
 }
 
 //-----------------------------------------------------------------------------
-void LabelWidget::enableBorderline(bool enable)
+void LabelWidget::enableSeparator(bool enable)
 {
-    enable_borderline_ = enable;
+    enable_separator_ = enable;
     update();
 }
 
@@ -88,7 +88,7 @@ void LabelWidget::paintEvent(QPaintEvent*)
 
     if (channel_overlapping)
         return;
-    if (enable_borderline_)
+    if (enable_separator_)
     {
         for (float32 float_y = 0;
              float_y <= signal_height * channel_nr2label_.size();

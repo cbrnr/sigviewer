@@ -33,7 +33,7 @@ public slots:
     void changeSignalHeight (unsigned signal_height);
     void changeYStart (int32 y_start);
     void updateChannel (ChannelID channel_id);
-    void enableBorderline(bool enable);
+    void enableSeparator(bool enable);
     void changeLabelColor(QColor labelColor);
 
 private:
@@ -52,7 +52,7 @@ private:
     int32 y_start_;
     QMap<ChannelID, SignalGraphicsItem const*> channel_nr2signal_graphics_item_;
     QSharedPointer<SignalViewSettings const> signal_view_settings_;
-    bool enable_borderline;
+    bool enable_separator;
     QColor label_color_;
 
 };

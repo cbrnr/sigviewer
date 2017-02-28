@@ -69,7 +69,7 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
     connect(signal_view_settings.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateYGridIntervall()));
     connect(signal_view_settings.data(), SIGNAL(enableXGrid(bool)), SLOT(toggleXGrid(bool)));
     connect(signal_view_settings.data(), SIGNAL(enableYGrid(bool)), SLOT(toggleYGrid(bool)));
-    connect(signal_view_settings.data(), SIGNAL(borderlineEnabled(bool)), SLOT(enableborderline(bool)));
+    connect(signal_view_settings.data(), SIGNAL(separatorEnabled(bool)), SLOT(enableSeparator(bool)));
     connect(signal_view_settings.data(), SIGNAL(gridColorChanged(QColor)), SLOT(updateGridColor(QColor)));
     connect(signal_view_settings.data(), SIGNAL(labelColorChanged(QColor)), SLOT(updateLabelColor(QColor)));
 
@@ -78,7 +78,7 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
     settings.beginGroup("SignalBrowserModel");
     draw_x_grid_ = settings.value("show_x_grid", false).toBool();
     draw_y_grid_ = settings.value("show_y_grid", false).toBool();
-    draw_borderline = settings.value("show_borderline", true).toBool();
+    draw_separator = settings.value("show_separator", true).toBool();
     settings.endGroup();
 }
 
@@ -120,9 +120,9 @@ void SignalGraphicsItem::toggleYGrid(bool enable)
 }
 
 //-----------------------------------------------------------------------------
-void SignalGraphicsItem::enableborderline(bool enable)
+void SignalGraphicsItem::enableSeparator(bool enable)
 {
-    draw_borderline = enable;
+    draw_separator = enable;
     update();
 }
 
@@ -288,7 +288,7 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     if (draw_y_grid_)
         drawYGrid (painter, option);
 
-    if (draw_borderline && !channel_overlapping)
+    if (draw_separator && !channel_overlapping)
     {
         painter->setPen(label_color_);
         painter->drawLine(0, 0, width_, 0);

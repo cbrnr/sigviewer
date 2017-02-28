@@ -70,9 +70,9 @@ void YAxisWidget::updateChannel (ChannelID)
 }
 
 //-----------------------------------------------------------------------------
-void YAxisWidget::enableBorderline(bool enable)
+void YAxisWidget::enableSeparator(bool enable)
 {
-    enable_borderline = enable;
+    enable_separator = enable;
     update();
 }
 
@@ -123,7 +123,7 @@ void YAxisWidget::paintEvent(QPaintEvent*)
     }
 
 //    this is the bottom line
-    if (!channel_overlapping && enable_borderline)
+    if (!channel_overlapping && enable_separator)
         painter.drawLine (0, 0, width() - 1, 0);
 
 //    if (channel_overlapping)
@@ -169,7 +169,7 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
 
     bool channel_overlapping = signal_view_settings_->getChannelOverlapping();
 
-    if (!channel_overlapping && enable_borderline)
+    if (!channel_overlapping && enable_separator)
     {
         painter->drawLine (0, UPPER_BORDER, width() - 1, UPPER_BORDER);
     }

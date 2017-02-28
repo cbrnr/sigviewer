@@ -63,7 +63,7 @@ public slots:
     void setXGridInterval (unsigned interval);
     void toggleXGrid(bool enable);
     void toggleYGrid(bool enable);
-    void enableborderline(bool enable);
+    void enableSeparator(bool enable);
     void updateGridColor(QColor gridColor);
     void updateLabelColor(QColor labelColor);
 
@@ -103,7 +103,7 @@ private:
     double value_range_fragment_;
     bool draw_y_grid_;
     bool draw_x_grid_;
-    bool draw_borderline;
+    bool draw_separator;
     float64 y_offset_;
     int32 height_;
     uint32 width_;

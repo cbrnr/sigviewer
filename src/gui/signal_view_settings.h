@@ -83,7 +83,7 @@ signals:
     void gridFragmentationChanged ();
     void enableXGrid(bool enabled);
     void enableYGrid(bool enabled);
-    void borderlineEnabled(bool enabled);
+    void separatorEnabled(bool enabled);
     void gridColorChanged(QColor gridColor);
     void labelColorChanged(QColor labelColor);
 
