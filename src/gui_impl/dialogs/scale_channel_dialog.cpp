@@ -46,6 +46,9 @@ ScaleChannelDialog::ScaleChannelDialog (ChannelID preselected_channel,
         ui_.lower_spinbox_->setValue (channel_manager_.getMinValue (selected_channel_));
     }
     connect (this, SIGNAL(accepted()), SLOT(storeAccepted()));
+
+    ui_.unitLabelLower->hide();
+    ui_.unitLabelUpper->hide();
 }
 
 //-----------------------------------------------------------------------------

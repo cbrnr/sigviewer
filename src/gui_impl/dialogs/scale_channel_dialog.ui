@@ -6,16 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>517</width>
-    <height>206</height>
+    <width>426</width>
+    <height>238</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Scale Channel</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title">
       <string>Scaling</string>
      </property>
@@ -40,58 +46,44 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>Upper Value</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="1">
       <widget class="QLabel" name="unitLabelUpper">
        <property name="text">
         <string/>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="2">
       <widget class="QDoubleSpinBox" name="upper_spinbox_">
        <property name="enabled">
         <bool>false</bool>
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item row="2" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
+     <item row="1" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Lower Value</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="1" column="1">
       <widget class="QLabel" name="unitLabelLower">
        <property name="text">
         <string/>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="1" column="2">
       <widget class="QDoubleSpinBox" name="lower_spinbox_">
        <property name="enabled">
         <bool>false</bool>
@@ -102,6 +94,16 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="2" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
