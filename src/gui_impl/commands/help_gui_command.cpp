@@ -43,6 +43,7 @@ void HelpGuiCommand::init ()
 void HelpGuiCommand::showAboutDialog ()
 {
     dialog_ = new QDialog(0);
+    dialog_->setFixedSize(dialog_->minimumSizeHint());
     Ui::aboutDialog ui;
     ui.setupUi (&(*dialog_));
     ui.aboutLabel->setText(ui.aboutLabel->text().replace(QString("VERSION_MAJOR"), QString::number(VERSION_MAJOR))
