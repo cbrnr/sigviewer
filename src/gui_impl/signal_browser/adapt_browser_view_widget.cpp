@@ -68,6 +68,8 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
     ui_.offsetCheckBox->setChecked(true);
 
     ui_.yGridSlider->setToolTip("Slide to change the density of Y grids");
+
+    ui_.colors_groupbox->hide();    //currently the color button is immature, hide it temporarily
 }
 
 AdaptBrowserViewWidget::~AdaptBrowserViewWidget()
