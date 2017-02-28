@@ -5,6 +5,14 @@
   <property name="enabled">
    <bool>true</bool>
   </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>220</height>
+   </rect>
+  </property>
   <property name="sizePolicy">
    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
@@ -13,14 +21,14 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>350</width>
-    <height>200</height>
+    <width>400</width>
+    <height>220</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>503</width>
-    <height>200</height>
+    <width>400</width>
+    <height>220</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -47,6 +55,12 @@
      </item>
      <item>
       <widget class="QLabel" name="aboutLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;SigViewer&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Version VERSION_MAJOR.VERSION_MINOR.VERSION_BUILD&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/cbrnr/sigviewer&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;github.com/cbrnr/sigviewer&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Licensed under the &lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.en.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GNU GPL&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
 </string>
@@ -56,6 +70,9 @@
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
        <property name="openExternalLinks">
         <bool>true</bool>
