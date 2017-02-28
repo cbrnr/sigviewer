@@ -44,8 +44,8 @@ MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
     setUnifiedTitleAndToolBarOnMac (true);
     
     QSettings settings("SigViewer");
-    resize(settings.value("MainWindow/size", QSize(800, 500)).toSize());
-    setMinimumSize(900, 500);
+    resize(settings.value("MainWindow/size", QSize(900, 800)).toSize());
+    setMinimumSize(900, 800);
     restoreGeometry(settings.value("geometry").toByteArray());  //restore geometry and window state (full screen etc.)
     restoreState(settings.value("windowState").toByteArray());
 }
@@ -67,7 +67,7 @@ void MainWindow::initStatusBar()
     status_bar->addPermanentWidget(status_bar_signal_length_label_);
     status_bar->addPermanentWidget(status_bar_nr_channels_label_);
     QSettings settings ("SigViewer");
-    status_bar->setVisible (settings.value ("MainWindow/statusbar", true).toBool());
+    status_bar->setVisible (settings.value ("MainWindow/statusbar", false).toBool());
 }
 
 //-----------------------------------------------------------------------------
@@ -76,6 +76,7 @@ void MainWindow::initToolBars()
     view_toolbar_views_menu_ = new QMenu (tr("Toolbars"), this);
 
     file_toolbar_ = addToolBar(tr("File"));
+    file_toolbar_->setObjectName("File");
     file_toolbar_->setMovable(false);
     view_toolbar_views_menu_->addAction (file_toolbar_->toggleViewAction());
     file_toolbar_->addAction (action("Open..."));
@@ -86,6 +87,7 @@ void MainWindow::initToolBars()
     // file_toolbar_->addAction (action("Close"));
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
+    mouse_mode_toolbar_->setObjectName("Mode");
     mouse_mode_toolbar_->setMovable(false);
     view_toolbar_views_menu_->addAction (mouse_mode_toolbar_->toggleViewAction());
     mouse_mode_toolbar_->addAction (action("New Event"));
@@ -95,6 +97,7 @@ void MainWindow::initToolBars()
 
 
     view_toolbar_ = addToolBar(tr("View"));
+    view_toolbar_->setObjectName("View");
     view_toolbar_->setMovable(false);
     view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
     view_toolbar_->addAction(action("Events..."));
