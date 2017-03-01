@@ -246,6 +246,15 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     bool channel_overlapping = signal_view_settings_->getChannelOverlapping();
 
+    if (draw_separator && !channel_overlapping)
+        //        painter->drawRect(boundingRect());
+    {
+        //draw only upper and lower border, no verdical borders
+        painter->setPen(label_color_);
+        painter->drawLine(0, 0, width_, 0);
+        painter->drawLine(0, height_, width_, height_);
+    }
+
     if (new_event_)
         painter->fillRect(new_signal_event_->getPosition(), 0, new_signal_event_->getDuration(), height_, new_event_color_);
 
@@ -285,15 +294,18 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     if (draw_x_grid_)
         drawXGrid (painter, option);
+
     if (draw_y_grid_)
         drawYGrid (painter, option);
 
-    if (draw_separator && !channel_overlapping)
-    {
-        painter->setPen(label_color_);
-        painter->drawLine(0, 0, width_, 0);
-        painter->drawLine(0, height_, width_, height_);
-    }
+    //You can't draw the lines here because it's after the clipping, thus the lower border is always
+    //overwritten by the next channel, and the lower border of the last channel is never shown
+//    if (draw_separator && !channel_overlapping)
+//    {
+//        painter->setPen(label_color_);
+//        painter->drawLine(0, 0, width_, 0);
+//        painter->drawLine(0, height_, width_, height_);
+//    }
 
     painter->translate (0, height_ / 2.0f);
     painter->setPen (color_manager_->getChannelColor (id_));
