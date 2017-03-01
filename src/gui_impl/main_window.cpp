@@ -67,7 +67,7 @@ void MainWindow::initStatusBar()
     status_bar->addPermanentWidget(status_bar_signal_length_label_);
     status_bar->addPermanentWidget(status_bar_nr_channels_label_);
     QSettings settings ("SigViewer");
-    status_bar->setVisible (settings.value ("MainWindow/statusbar", false).toBool());
+    status_bar->setVisible (settings.value ("MainWindow/statusbar", true).toBool());
 }
 
 //-----------------------------------------------------------------------------
@@ -224,9 +224,12 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     mouse_mode_menu_->addAction (action("Scroll"));
     mouse_mode_menu_->addAction (action("View Options"));
 
+
+    QSettings settings ("SigViewer");
+
     QAction* toggle_status_bar = new QAction (tr("Statusbar"), this);
     toggle_status_bar->setCheckable (true);
-    toggle_status_bar->setChecked (statusBar()->isVisible());
+    toggle_status_bar->setChecked (settings.value ("MainWindow/statusbar", true).toBool());
     connect (toggle_status_bar, SIGNAL(toggled(bool)), this, SLOT(toggleStatusBar(bool)));
 
     view_menu_ = menuBar()->addMenu(tr("&View"));
