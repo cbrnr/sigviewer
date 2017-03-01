@@ -78,7 +78,7 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
     settings.beginGroup("SignalBrowserModel");
     draw_x_grid_ = settings.value("show_x_grid", false).toBool();
     draw_y_grid_ = settings.value("show_y_grid", false).toBool();
-    draw_separator = settings.value("show_separator", true).toBool();
+    draw_separator = settings.value("show_separator", false).toBool();
     settings.endGroup();
 }
 
