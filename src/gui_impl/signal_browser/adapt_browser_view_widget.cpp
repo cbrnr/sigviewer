@@ -123,7 +123,7 @@ void AdaptBrowserViewWidget::on_channelsPerPageSpinbox_valueChanged (int value)
 
     self_updating_ = true;
     int new_channel_height = signal_visualisation_view_->getViewportHeight() /
-                             value;
+                             value - 1; // - 1 to fit the lower border of the last channel
     GuiHelper::animateProperty (settings_.data(), "channelHeight", settings_->getChannelHeight(),
                                 new_channel_height, this, SLOT(selfUpdatingFinished()));
 }
@@ -254,27 +254,27 @@ void sigviewer::AdaptBrowserViewWidget::on_border_checkBox__stateChanged(int che
     }
 }
 
-//void sigviewer::AdaptBrowserViewWidget::on_grid_color_button_clicked()
-//{
-//    QColorDialog colorPicker;
-//    colorPicker.setOption(QColorDialog::ShowAlphaChannel);
-//    if (colorPicker.exec() == QDialog::Accepted)
-//    {
-//        QColor gridColor = colorPicker.selectedColor();
-//        emit settings_->gridColorChanged(gridColor);
-//    }
-//}
+void sigviewer::AdaptBrowserViewWidget::on_grid_color_button_clicked()
+{
+    QColorDialog colorPicker;
+    colorPicker.setOption(QColorDialog::ShowAlphaChannel);
+    if (colorPicker.exec() == QDialog::Accepted)
+    {
+        QColor gridColor = colorPicker.selectedColor();
+        emit settings_->gridColorChanged(gridColor);
+    }
+}
 
-//void sigviewer::AdaptBrowserViewWidget::on_label_color_button_clicked()
-//{
-//    QColorDialog colorPicker;
-//    colorPicker.setOption(QColorDialog::ShowAlphaChannel);
-//    if (colorPicker.exec() == QDialog::Accepted)
-//    {
-//        QColor labelColor = colorPicker.selectedColor();
-//        y_axis_widget_->changeLabelColor(labelColor);
-//        label_widget_->changeLabelColor(labelColor);
-//        x_axis_widget_->changeLabelColor(labelColor);
-//        emit settings_->labelColorChanged(labelColor);
-//    }
-//}
+void sigviewer::AdaptBrowserViewWidget::on_label_color_button_clicked()
+{
+    QColorDialog colorPicker;
+    colorPicker.setOption(QColorDialog::ShowAlphaChannel);
+    if (colorPicker.exec() == QDialog::Accepted)
+    {
+        QColor labelColor = colorPicker.selectedColor();
+        y_axis_widget_->changeLabelColor(labelColor);
+        label_widget_->changeLabelColor(labelColor);
+        x_axis_widget_->changeLabelColor(labelColor);
+        emit settings_->labelColorChanged(labelColor);
+    }
+}
