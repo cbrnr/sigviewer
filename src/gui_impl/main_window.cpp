@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The SigViewer Development Team
+// Copyright (c) 2017 The SigViewer Development Team
 // Licensed under the GNU General Public License (GPL)
 // https://www.gnu.org/licenses/gpl
 

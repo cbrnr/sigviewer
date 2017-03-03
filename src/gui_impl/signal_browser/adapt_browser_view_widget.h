@@ -34,6 +34,8 @@ public:
                                      QWidget *parent = 0);
     ~AdaptBrowserViewWidget();
 
+    double getSecsPerPage() {return ui_.secsPerPageSpinbox->value();}
+
 signals:
     //-------------------------------------------------------------------------
     void xAxisVisibilityChanged (bool visible);
@@ -77,6 +79,8 @@ private slots:
     void on_grid_color_button_clicked();
 
     void on_label_color_button_clicked();
+
+    void on_checkBox_stateChanged(int checkState);
 
 private:
     //-------------------------------------------------------------------------

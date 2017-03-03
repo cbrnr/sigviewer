@@ -278,3 +278,15 @@ void sigviewer::AdaptBrowserViewWidget::on_label_color_button_clicked()
         emit settings_->labelColorChanged(labelColor);
     }
 }
+
+void sigviewer::AdaptBrowserViewWidget::on_checkBox_stateChanged(int checkState)
+{
+    if (checkState == Qt::Checked)
+    {
+        ui_.colors_groupbox->show();
+    }
+    else
+    {
+        ui_.colors_groupbox->hide();
+    }
+}

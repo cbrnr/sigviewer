@@ -12,12 +12,12 @@
 #include "event_creation_widget.h"
 #include "event_editing_widget.h"
 #include "adapt_browser_view_widget.h"
+#include "gui_impl/gui_helper_functions.h"
 
 #include <QGraphicsLineItem>
 #include <QGridLayout>
 #include <QScrollBar>
 #include <QPointF>
-#include <QSettings>
 #include <QToolBox>
 #include <QMenu>
 #include <QDebug>
@@ -250,6 +250,27 @@ void SignalBrowserView::graphicsViewResized (QResizeEvent* event)
     if (channel_height < 10)
         return;
     model_->getSignalViewSettings()->setChannelHeight (channel_height);
+
+//    float32 pixel_per_sample = model_->getSignalViewSettings()->getPixelsPerSample();
+//    float32 new_pixel_per_sample = std::min (pixel_per_sample * ZOOM_FACTOR_,
+//                                 maxPixelPerSample() );
+
+
+//    double secsPerPageSpinbox = adapt_browser_view_widget_->getSecsPerPage();
+
+//    float new_pixels_per_sample = this->getViewportWidth() /
+//            (secsPerPageSpinbox * model_->getSignalViewSettings()->
+//             getChannelManager().getSampleRate());
+
+//    GuiHelper::animateProperty (model_->getSignalViewSettings().data(), "pixelsPerSample",
+//                                pixel_per_sample, new_pixels_per_sample,
+//                                this, SLOT(evaluateEnabledness()));
+
+
+//    GuiHelper::animateProperty (model_->getSignalViewSettings().data(), "pixelsPerSample",
+//                                model_->getSignalViewSettings()->getPixelsPerSample(),
+//                                new_pixels_per_sample, this, SLOT(selfUpdatingFinished()));
+
 }
 
 /*!
