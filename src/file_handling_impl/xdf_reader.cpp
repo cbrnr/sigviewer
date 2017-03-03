@@ -30,7 +30,8 @@ namespace sigviewer
 {
 
 //the object to store XDF data
-Xdf XDFdata;
+QSharedPointer<Xdf> XDFdata = QSharedPointer<Xdf>(new Xdf);
+
 
 //-----------------------------------------------------------------------------
 
@@ -43,12 +44,12 @@ XDFReader::XDFReader() :
     buffered_all_events_ (false)
 {
     qDebug () << "Constructed XDFReader";
-    // nothing to do here
 }
 
 //-----------------------------------------------------------------------------
 XDFReader::~XDFReader()
 {
+    qDebug() << "Destructed XDFReader.";
 }
 
 //-----------------------------------------------------------------------------
@@ -115,9 +116,9 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
 
     if (QFile::exists(file_path)) //Double check whether file exists
     {
-        if (XDFdata.load_xdf(file_path.toStdString()) == 0)
+        if (XDFdata->load_xdf(file_path.toStdString()) == 0)
         {
-            XDFdata.createLabels();
+            XDFdata->createLabels();
 
             sampleRateTypes sampleRateType = selectSampleRateType();
 
@@ -134,46 +135,43 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
             }
             case Zero_Hz_Only:
             {
-                ResamplingDialog prompt(XDFdata.majSR, XDFdata.maxSR);
-                prompt.setModal(true);
-                prompt.exec();
+                ResamplingDialog prompt(XDFdata->majSR, XDFdata->maxSR);
 
-                if (prompt.cancel())
+                if (prompt.exec() == QDialog::Accepted)
+                {
+                    XDFdata->majSR = prompt.getUserSrate();
+                    XDFdata->resample(XDFdata->majSR);
+                }
+                else
                 {
                     Xdf empty;
-                    std::swap(XDFdata, empty);
+                    std::swap(*XDFdata, empty);
                     return "Cancelled";
                 }
-
-                if (prompt.getUserSrate())
-                    XDFdata.majSR = prompt.getUserSrate();
-
-                XDFdata.resample(XDFdata.majSR);
             }
                 break;
             case Mono_Sample_Rate:
             {
-                XDFdata.calcTotalLength(XDFdata.majSR);
+                XDFdata->calcTotalLength(XDFdata->majSR);
 
-                XDFdata.adjustTotalLength();
+                XDFdata->adjustTotalLength();
             }
                 break;
             case Multi_Sample_Rate:
             {
-                ResamplingDialog prompt(XDFdata.majSR, XDFdata.maxSR);
-                prompt.exec();
+                ResamplingDialog prompt(XDFdata->majSR, XDFdata->maxSR);
 
-                if (prompt.cancel())
+                if (prompt.exec() == QDialog::Accepted)
+                {
+                    XDFdata->majSR = prompt.getUserSrate();
+                    XDFdata->resample(XDFdata->majSR);
+                }
+                else
                 {
                     Xdf empty;
-                    std::swap(XDFdata, empty);
+                    std::swap(*XDFdata, empty);
                     return "Cancelled";
                 }
-
-                if (prompt.getUserSrate())
-                    XDFdata.majSR = prompt.getUserSrate();
-
-                XDFdata.resample(XDFdata.majSR);
             }
                 break;
             default:
@@ -181,8 +179,7 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
                 break;
             }
 
-
-            XDFdata.freeUpTimeStamps(); //to save some memory
+            XDFdata->freeUpTimeStamps(); //to save some memory
 
             setStreamColors();
 
@@ -196,9 +193,9 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
             basic_header_ = QSharedPointer<BasicHeader>
                     (new BiosigBasicHeader ("XDF", file_path));
 
-            basic_header_->setNumberEvents(XDFdata.eventType.size());
+            basic_header_->setNumberEvents(XDFdata->eventType.size());
 
-            basic_header_->setEventSamplerate(XDFdata.majSR);
+            basic_header_->setEventSamplerate(XDFdata->majSR);
 
             return "";
         }
@@ -244,11 +241,11 @@ int XDFReader::setStreamColors()
     //because the colors I picked look the best when they are sorted in order
     int colorChoice = -1;
     int stream = -1;
-    for (size_t i = 0; i < XDFdata.totalCh; i++)
+    for (size_t i = 0; i < XDFdata->totalCh; i++)
     {
-        if (stream != XDFdata.streamMap[i])
+        if (stream != XDFdata->streamMap[i])
         {
-            stream = XDFdata.streamMap[i];
+            stream = XDFdata->streamMap[i];
             colorChoice++;
             if (colorChoice == 8)   //we only have 8 colors
                 colorChoice = 0;
@@ -266,18 +263,18 @@ int XDFReader::setStreamColors()
 }
 
 //-----------------------------------------------------------------------------
-sampleRateTypes XDFReader::selectSampleRateType()
+XDFReader::sampleRateTypes XDFReader::selectSampleRateType()
 {
-    switch (XDFdata.sampleRateMap.size()) {
+    switch (XDFdata->sampleRateMap.size()) {
     case 0:
         return No_streams_found;
     case 1:
-        if (XDFdata.sampleRateMap.count(0))
+        if (XDFdata->sampleRateMap.count(0))
             return Zero_Hz_Only;
         else
             return Mono_Sample_Rate;
     case 2:
-        if (XDFdata.sampleRateMap.count(0))
+        if (XDFdata->sampleRateMap.count(0))
             return Mono_Sample_Rate;
         else
             return Multi_Sample_Rate;
@@ -289,20 +286,20 @@ sampleRateTypes XDFReader::selectSampleRateType()
 //-----------------------------------------------------------------------------
 void XDFReader::bufferAllChannels () const
 {
-    size_t numberOfSamples = XDFdata.totalLen;
+    size_t numberOfSamples = XDFdata->totalLen;
 
     QString progress_name = QObject::tr("Loading data...");
 
     //load all signals channel by channel
     unsigned channel_id = 0;
-    for (auto &stream : XDFdata.streams)
+    for (auto &stream : XDFdata->streams)
     {
         if (stream.info.nominal_srate != 0)
         {
-            int startingPosition = (stream.time_stamps.front() - XDFdata.minTS) * XDFdata.majSR;
+            int startingPosition = (stream.time_stamps.front() - XDFdata->minTS) * XDFdata->majSR;
 
-            if (stream.time_series.front().size() > XDFdata.totalLen - startingPosition )
-                startingPosition = XDFdata.totalLen - stream.time_series.front().size();
+            if (stream.time_series.front().size() > XDFdata->totalLen - startingPosition )
+                startingPosition = XDFdata->totalLen - stream.time_series.front().size();
 
             for (auto &row : stream.time_series)
             {
@@ -311,7 +308,7 @@ void XDFReader::bufferAllChannels () const
                 QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples, NAN));
 
                 std::copy(row.begin(), row.end(), raw_data->begin() + startingPosition);
-                QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata.majSR));
+                QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata->majSR));
 
                 channel_map_[channel_id] = data_block;
                 channel_id++;
@@ -334,7 +331,7 @@ void XDFReader::bufferAllChannels () const
                 for (size_t i = 0; i < row.size(); i++)
                 {
                     //find out the position using the timestamp provided
-                    float* pt = raw_data->begin()  + (int)((stream.time_stamps[i]- XDFdata.minTS)* XDFdata.majSR);
+                    float* pt = raw_data->begin()  + (int)((stream.time_stamps[i]- XDFdata->minTS)* XDFdata->majSR);
                     *pt = row[i];
 
                     //if i is not the last element of the irregular time series
@@ -342,14 +339,14 @@ void XDFReader::bufferAllChannels () const
                     {
                         //using linear interpolation to fill in the space between every two signals
                         int interval = (stream.time_stamps[i+1]
-                                - stream.time_stamps[i]) * XDFdata.majSR;
+                                - stream.time_stamps[i]) * XDFdata->majSR;
                         for (int interpolation = 1; interpolation <= interval; interpolation++)
                         {
                             *(pt + interpolation) = row[i] + interpolation * ((row[i+1] - row[i])) / (interval + 1);
                         }
                     }
                 }
-                QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata.majSR));
+                QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata->majSR));
                 channel_map_[channel_id] = data_block;
                 channel_id++;
 
@@ -367,14 +364,14 @@ void XDFReader::bufferAllChannels () const
 //-------------------------------------------------------------------------
 void XDFReader::bufferAllEvents () const
 {
-    unsigned number_events = XDFdata.eventMap.size();
+    unsigned number_events = XDFdata->eventMap.size();
 
     for (unsigned index = 0; index < number_events; index++)
     {
         QSharedPointer<SignalEvent> event
-                (new SignalEvent ((XDFdata.eventMap[index].first.second - XDFdata.minTS) * XDFdata.majSR,
-                                                            XDFdata.eventType[index],
-                                                            XDFdata.majSR, XDFdata.eventMap[index].second));
+                (new SignalEvent ((XDFdata->eventMap[index].first.second - XDFdata->minTS) * XDFdata->majSR,
+                                                            XDFdata->eventType[index],
+                                                            XDFdata->majSR, XDFdata->eventMap[index].second));
 
         event->setChannel (UNDEFINED_CHANNEL);
         event->setDuration (0);

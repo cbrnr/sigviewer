@@ -28,7 +28,7 @@ QString GuiTests::run ()
 {
     RUN_SUB_TEST (testEnablednessNoOpenFile())
 
-    OpenFileGuiCommand::openFile ("blub.sinusdummy", true);
+    OpenFileGuiCommand::openFile ("blub.sinusdummy");
     VERIFY (applicationContext()->getCurrentFileContext().isNull() != true, "open file")
 
     RUN_SUB_TEST (testZooming ())

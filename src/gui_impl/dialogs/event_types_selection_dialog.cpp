@@ -245,7 +245,7 @@ void EventTypesSelectionDialog::handleColor (QTreeWidgetItem* item)
 
     QColor color = item->backgroundColor (COLOR_COLUMN_INDEX_);
 
-    color = QColorDialog::getColor (color, this);
+    color = QColorDialog::getColor (color, this, tr("Event Color"), QColorDialog::ShowAlphaChannel);
     if (!color.isValid())
         return;
 

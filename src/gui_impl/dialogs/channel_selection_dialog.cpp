@@ -42,13 +42,13 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
     if (ApplicationContextImpl::getInstance()->getCurrentFileContext()->getFileName().endsWith("XDF", Qt::CaseInsensitive))
     {
         int channelCount = 0;
-        for (size_t i = 0; i < XDFdata.streams.size(); i++)
+        for (size_t i = 0; i < XDFdata->streams.size(); i++)
         {
             QTreeWidgetItem* streamItem = new QTreeWidgetItem(ui_.treeWidget);
             streamItem->setText(0, tr("Stream ").append(QString::number(i)));
             streamItem->setFlags(Qt::ItemIsAutoTristate | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
             streamItem->setExpanded(true);
-            if (XDFdata.streams[i].info.channel_format.compare("string") == 0)
+            if (XDFdata->streams[i].info.channel_format.compare("string") == 0)
             {
                 streamItem->setForeground(0, NOT_VISIBLE_COLOR_);
                 streamItem->setText(0, streamItem->text(0).append(tr(" (text events only)")));
@@ -61,7 +61,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
                 if (ColorManager::isDark(streamColor))
                     streamItem->setForeground(1, Qt::white);
 
-                for (int j = 0; j < XDFdata.streams[i].info.channel_count; j++)
+                for (int j = 0; j < XDFdata->streams[i].info.channel_count; j++)
                 {
                     QTreeWidgetItem* channelItem = new QTreeWidgetItem(streamItem);
                     channelItem->setText(0, tr("Channel ").append(QString::number(channelCount)));
@@ -199,7 +199,9 @@ void ChannelSelectionDialog::on_button_box__accepted ()
 //-----------------------------------------------------------------------------
 void ChannelSelectionDialog::on_set_default_color_button__clicked ()
 {
-    QColor new_default_color = QColorDialog::getColor (color_manager_->getDefaultChannelColor());
+    QColor new_default_color = QColorDialog::getColor
+            (color_manager_->getDefaultChannelColor(), this, tr("Default Color"),
+             QColorDialog::ShowAlphaChannel);
     if (new_default_color.isValid())
         color_manager_->setDefaultChannelColor (new_default_color);
 }
@@ -212,12 +214,14 @@ void ChannelSelectionDialog::on_treeWidget_itemClicked(QTreeWidgetItem *item, in
         if (item->text(0).startsWith("Channel", Qt::CaseInsensitive))
         {
             QColorDialog color_dialog (item->backgroundColor (1), this);
+            color_dialog.setOption(QColorDialog::ShowAlphaChannel);
             if (color_dialog.exec () == QDialog::Accepted)
                 updateColor(item, color_dialog.selectedColor());
         }
         else if (item->text(0).startsWith("Stream", Qt::CaseInsensitive) && item->childCount())
         {
             QColorDialog color_dialog (item->backgroundColor (1), this);
+            color_dialog.setOption(QColorDialog::ShowAlphaChannel);
             if (color_dialog.exec () == QDialog::Accepted)
             {
                 updateColor(item, color_dialog.selectedColor());
@@ -256,6 +260,9 @@ void ChannelSelectionDialog::on_treeWidget_itemChanged(QTreeWidgetItem *item, in
         }
         ui_.select_all_button_->setDisabled (select_all_disabled);
         ui_.unselect_all_button_->setDisabled (unselect_all_disabled);
+
+        if (item->isDisabled()) //unnecessary but to get rid of compiler warnings...
+            return;
     }
 }
 

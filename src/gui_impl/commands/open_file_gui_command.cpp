@@ -24,6 +24,7 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QMessageBox>
+#include <QCheckBox>
 
 #include <algorithm>
 #include "gui/color_manager.h"
@@ -53,7 +54,8 @@ GuiActionFactoryRegistrator OpenFileGuiCommand::registrator_ ("Opening",
 OpenFileGuiCommand::OpenFileGuiCommand ()
     : GuiActionCommand (ACTIONS_)
 {
-    // nothing to do here
+    QSettings settings("SigViewer");
+    do_not_show_warning_message = settings.value("DoNotShowWarningMessage", false).toBool();
 }
 
 //-------------------------------------------------------------------------
@@ -76,7 +78,7 @@ void OpenFileGuiCommand::init ()
 }
 
 //-----------------------------------------------------------------------------
-void OpenFileGuiCommand::openFile (QString file_path, bool instantly)
+void OpenFileGuiCommand::openFile (QString file_path)
 {
     if (!instance_->confirmClosingOldFile())   /*!< In case the user decides not to close the old file, return. */
         return;
@@ -86,9 +88,6 @@ void OpenFileGuiCommand::openFile (QString file_path, bool instantly)
     CloseFileGuiCommand closeObject;
     if (closeObject.closeCurrentFile())
     {
-        Xdf empty;
-        std::swap(XDFdata, empty);//clear the data of the previous XDF file
-
         instance_->openFileImpl (file_path);
     }
 }
@@ -158,9 +157,6 @@ void OpenFileGuiCommand::open ()
     CloseFileGuiCommand closeObject;
     if (closeObject.closeCurrentFile())
     {
-        Xdf empty;
-        std::swap(XDFdata, empty);
-
         instance_->openFileImpl (file_path);
     }
 }
@@ -204,9 +200,44 @@ void OpenFileGuiCommand::importEvents ()
             QStringList Qline = QString::fromStdString(line).split(',');
 
             size_t position = Qline[0].toUInt();
-            EventType type = Qline[3].toInt();
-            ChannelID channel = Qline[2].toInt();
             size_t duration = Qline[1].toULongLong();
+            ChannelID channel = Qline[2].toInt();
+            EventType type = Qline[3].toInt();
+
+            if (type <= 254 && do_not_show_warning_message == false)
+            {
+                QMessageBox msgBox;
+                msgBox.setText("Currently customized event text cannot be properly imported.");
+                msgBox.setIcon(QMessageBox::Warning);
+                msgBox.addButton(QMessageBox::Ok);
+                msgBox.addButton(QMessageBox::Cancel);
+                msgBox.setDefaultButton(QMessageBox::Cancel);
+                QCheckBox* dontShowCheckBox = new QCheckBox("Don't show this message again");
+                msgBox.setCheckBox(dontShowCheckBox);
+                int32_t userReply = msgBox.exec();
+                if (userReply == QMessageBox::Ok)
+                {
+                    if(dontShowCheckBox->checkState() == Qt::Checked)
+                    {
+                        QSettings settings("SigViewer");
+                        settings.setValue("DoNotShowWarningMessage", true);
+                        do_not_show_warning_message = true;
+                    }
+                }
+                else if (userReply == QMessageBox::Cancel)
+                {
+                    if(dontShowCheckBox->checkState() == Qt::Checked)
+                    {
+                        QSettings settings("SigViewer");
+                        settings.setValue("DoNotShowWarningMessage", true);
+
+                        do_not_show_warning_message = true;
+                        return;
+                    }
+
+                    return;
+                }
+            }
 
             //boundary check & error handling
             if (position > event_manager->getMaxEventPosition()

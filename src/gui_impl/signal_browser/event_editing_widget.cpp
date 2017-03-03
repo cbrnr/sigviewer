@@ -35,6 +35,26 @@ EventEditingWidget::EventEditingWidget (QSharedPointer<EventManager> event_manag
     ui_.begin_spinbox_->setDecimals (precision);
     ui_.begin_spinbox_->setMaximum (static_cast<double>(event_manager_->getMaxEventPosition()) / event_manager_->getSampleRate ());
     ui_.duration_spinbox_->setDecimals (precision);
+    ui_.label->hide();
+    ui_.label_2->hide();
+
+    if (event_manager_->getFileType().startsWith("XDF", Qt::CaseInsensitive))
+    {
+        ui_.groupBox->setDisabled(true);
+        ui_.groupBox_2->setDisabled(true);
+        ui_.groupBox_3->setDisabled(true);
+        ui_.fit_button_->hide();    //Fit button doesn't work in XDF file since XDF events has no durations
+
+        ui_.groupBox->setToolTip(tr("Editing events is not allowed in XDF files"));
+        ui_.groupBox_2->setToolTip(tr("Editing events is not allowed in XDF files"));
+        ui_.groupBox_3->setToolTip(tr("Editing events is not allowed in XDF files"));
+    }
+    else
+    {
+        ui_.groupBox->setToolTip(tr("Click on any event block on the signals first then edit its type"));
+        ui_.groupBox_2->setToolTip(tr("Click on any event block on the signals first then edit its starting position"));
+        ui_.groupBox_3->setToolTip(tr("Click on any event block on the signals first then edit its duration"));
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -98,10 +118,10 @@ void EventEditingWidget::on_type_combobox__currentIndexChanged (int combo_box_in
         //keep up with XDF customized events
         if (event_manager_->getFileType().startsWith("XDF", Qt::CaseInsensitive))
         {
-            if (selected_signal_event_->getStream() == XDFdata.userAddedStream)
+            if (selected_signal_event_->getStream() == XDFdata->userAddedStream)
             {
-                int index = selected_signal_event_->getId() - XDFdata.eventType.size();
-                XDFdata.userCreatedEvents[index].first =
+                int index = selected_signal_event_->getId() - XDFdata->eventType.size();
+                XDFdata->userCreatedEvents[index].first =
                         event_manager_->getNameOfEventType(event_type).toStdString();
             }
         }
@@ -127,12 +147,12 @@ void EventEditingWidget::on_begin_spinbox__editingFinished ()
     //keep up with XDF customized events
     if (event_manager_->getFileType().startsWith("XDF", Qt::CaseInsensitive))
     {
-        if (selected_signal_event_->getStream() == XDFdata.userAddedStream)
+        if (selected_signal_event_->getStream() == XDFdata->userAddedStream)
         {
-            int index = selected_signal_event_->getId() - XDFdata.eventType.size();
-            XDFdata.userCreatedEvents[index].second =
+            int index = selected_signal_event_->getId() - XDFdata->eventType.size();
+            XDFdata->userCreatedEvents[index].second =
                     event_manager_->getEvent(selected_signal_event_->getId())->getPositionInSec()
-                    + XDFdata.minTS;
+                    + XDFdata->minTS;
         }
     }
 }

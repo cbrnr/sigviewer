@@ -34,11 +34,11 @@ void NewEventUndoCommand::undo ()
     //If XDF file, also pop back the event added to the XDFdata object earlier
     if (event_manager_->getFileType().startsWith("XDF", Qt::CaseInsensitive))
     {
-        XDFdata.userCreatedEvents.pop_back();
-        if (XDFdata.userCreatedEvents.empty())
+        XDFdata->userCreatedEvents.pop_back();
+        if (XDFdata->userCreatedEvents.empty())
         {
-            XDFdata.streams.pop_back();
-            XDFdata.userAddedStream = 0;
+            XDFdata->streams.pop_back();
+            XDFdata->userAddedStream = 0;
         }
     }
 }

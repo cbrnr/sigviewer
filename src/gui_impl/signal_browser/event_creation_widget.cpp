@@ -25,12 +25,14 @@ EventCreationWidget::EventCreationWidget (QSharedPointer<SignalVisualisationMode
     if (event_manager_->getFileType().startsWith("XDF", Qt::CaseInsensitive))
     {
         ui_.lineEdit->setPlaceholderText("Customize Event Text");
-        customized_event_id_ = XDFdata.dictionary.size();
+        customized_event_id_ = XDFdata->dictionary.size();
+        ui_.groupBox->setToolTip("Select or customize an event type then click anywhere on the signals to create new events");
     }
     else //custom event seems doesn't work in files other than XDF
     {
         ui_.lineEdit->hide();
         ui_.pushButton->hide();
+        ui_.groupBox->setToolTip("Select an event type then click anywhere on the signals to create new events");
     }
 }
 
@@ -58,7 +60,7 @@ int EventCreationWidget::insertNewEventType()
         ui_.type_combobox_->setCurrentIndex(customized_event_id_);
         customized_event_id_++;
         if (customized_event_id_ >= 254) //Sigviewer has only 255 slots for custom events
-            customized_event_id_ = XDFdata.dictionary.size();
+            customized_event_id_ = XDFdata->dictionary.size();
 
         emit newEventType(event_manager_->getEventTypes());
     }

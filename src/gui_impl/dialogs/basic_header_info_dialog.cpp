@@ -148,7 +148,7 @@ void BasicHeaderInfoDialog::buildTree()
     //exclusively for XDF
     if (basic_header_->getFileTypeString().startsWith("XDF", Qt::CaseInsensitive))
     {
-        for (size_t i =0; i < XDFdata.streams.size(); i++)
+        for (size_t i =0; i < XDFdata->streams.size(); i++)
         {
             // basic
             root_item = new QTreeWidgetItem(info_tree_widget_);
@@ -156,7 +156,7 @@ void BasicHeaderInfoDialog::buildTree()
 //            root_item->setIcon(0, QIcon(":/images/ic_flag_black_24dp.png"));
 
             QDomDocument streamHeader;
-            streamHeader.setContent(QString::fromStdString(XDFdata.streams[i].streamHeader));
+            streamHeader.setContent(QString::fromStdString(XDFdata->streams[i].streamHeader));
             QDomElement rootElement = streamHeader.firstChildElement();
 
             for (QDomNode n = rootElement.firstChild(); !n.isNull();)
@@ -183,7 +183,7 @@ void BasicHeaderInfoDialog::buildTree()
             }
 
             QDomDocument streamFooter;
-            streamFooter.setContent(QString::fromStdString(XDFdata.streams[i].streamFooter));
+            streamFooter.setContent(QString::fromStdString(XDFdata->streams[i].streamFooter));
             rootElement = streamFooter.firstChildElement();
             for (QDomNode n = rootElement.firstChild(); !n.isNull();)
             {

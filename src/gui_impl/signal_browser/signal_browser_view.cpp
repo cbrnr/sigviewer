@@ -12,18 +12,19 @@
 #include "event_creation_widget.h"
 #include "event_editing_widget.h"
 #include "adapt_browser_view_widget.h"
+//#include "gui_impl/gui_helper_functions.h"
 
 #include <QGraphicsLineItem>
 #include <QGridLayout>
 #include <QScrollBar>
 #include <QPointF>
-#include <QSettings>
 #include <QToolBox>
 #include <QMenu>
 #include <QDebug>
 #include <QResizeEvent>
 #include <QGraphicsLinearLayout>
 
+#include <math.h>       /* round */
 
 namespace sigviewer
 {
@@ -54,7 +55,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalVisualisationModel> s
     initWidgets (event_manager, command_executer);
 
     graphics_view_->setFrameStyle(QFrame::NoFrame);
-    setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+//    setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
     createLayout();
     connect (graphics_view_, SIGNAL(resized(QResizeEvent*)), SLOT(graphicsViewResized(QResizeEvent*)));
@@ -144,6 +145,7 @@ void SignalBrowserView::updateWidgets (bool update_view)
     if (update_view)
         graphics_view_->viewport()->update();
     x_axis_widget_->update();
+    y_axis_widget_->update();
     label_widget_->update();
     emit visibleYChanged (graphics_view_->mapToScene(0,0).y());
 }
@@ -193,6 +195,9 @@ int SignalBrowserView::getViewportWidth () const
 //-----------------------------------------------------------------------------
 void SignalBrowserView::setMode (SignalVisualisationMode mode)
 {
+    double channelHeight = model_->getSignalViewSettings()->getChannelHeight();
+    double oldCentralWidgetHeight = graphics_view_->height();
+
     if (current_info_widget_)
     {
         layout_->removeWidget (current_info_widget_);
@@ -229,6 +234,8 @@ void SignalBrowserView::setMode (SignalVisualisationMode mode)
         layout_->addWidget (current_info_widget_, 1, 2);
         current_info_widget_->show();
     }
+    double factor = graphics_view_->height() / oldCentralWidgetHeight;
+    model_->getSignalViewSettings()->setChannelHeight(round(channelHeight * factor));
 }
 
 //-----------------------------------------------------------------------------
@@ -245,6 +252,51 @@ void SignalBrowserView::graphicsViewResized (QResizeEvent* event)
     if (channel_height < 10)
         return;
     model_->getSignalViewSettings()->setChannelHeight (channel_height);
+
+//    float32 pixel_per_sample = model_->getSignalViewSettings()->getPixelsPerSample();
+//    float32 new_pixel_per_sample = std::min (pixel_per_sample * ZOOM_FACTOR_,
+//                                 maxPixelPerSample() );
+
+
+//    double secsPerPageSpinbox = adapt_browser_view_widget_->getSecsPerPage();
+
+//    float new_pixels_per_sample = this->getViewportWidth() /
+//            (secsPerPageSpinbox * model_->getSignalViewSettings()->
+//             getChannelManager().getSampleRate());
+
+//    GuiHelper::animateProperty (model_->getSignalViewSettings().data(), "pixelsPerSample",
+//                                pixel_per_sample, new_pixels_per_sample,
+//                                this, SLOT(evaluateEnabledness()));
+
+
+//    GuiHelper::animateProperty (model_->getSignalViewSettings().data(), "pixelsPerSample",
+//                                model_->getSignalViewSettings()->getPixelsPerSample(),
+//                                new_pixels_per_sample, this, SLOT(selfUpdatingFinished()));
+
+}
+
+/*!
+ * \brief Toggle X Widget
+ * \param A boolean value on whether to enable X widget
+ *
+ * y_axis_widget_, label_widget_ and graphics_view_ (The main widget which
+ * shows signals) needs to be turned off first then turned on again, to avoid
+ * overlapping with x_axis_widget_ (usually the last channel).
+ */
+void SignalBrowserView::toggleXWidget(bool enabled)
+{
+    double channelHeight = model_->getSignalViewSettings()->getChannelHeight();
+    y_axis_widget_->hide();
+    label_widget_->hide();
+    graphics_view_->hide();
+    horizontal_scrollbar_->hide();
+    x_axis_widget_->setVisible(enabled);
+    y_axis_widget_->show();
+    label_widget_->show();
+    graphics_view_->show();
+    horizontal_scrollbar_->show();
+    if (model_->getSignalViewSettings()->getChannelHeight() != channelHeight)
+        model_->getSignalViewSettings()->setChannelHeight(channelHeight);
 }
 
 //-----------------------------------------------------------------------------
@@ -275,6 +327,7 @@ void SignalBrowserView::horizontalScrollBarRangeChaned (int min, int max)
 void SignalBrowserView::verticalScrollBarRangeChaned (int min, int max)
 {
     label_widget_->update ();
+    y_axis_widget_->update();
     vertical_scrollbar_->setRange(min, max);
     vertical_scrollbar_->setPageStep(graphics_view_->verticalScrollBar()->pageStep());
     qreal y = graphics_view_->mapToScene(0,0).y();
@@ -298,7 +351,7 @@ void SignalBrowserView::dragEnterEvent(QDragEnterEvent *event)
 //-----------------------------------------------------------------------------
 void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager, QSharedPointer<CommandExecuter> command_executer)
 {
-    y_axis_widget_ = new YAxisWidget (this);
+    y_axis_widget_ = new YAxisWidget (this, model_->getSignalViewSettings());
     y_axis_widget_->resize(70, height());
     y_axis_widget_->setMinimumSize(70, 0);
 
@@ -326,8 +379,11 @@ void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager,
         event_editing_widget_->connect (model_.data(), SIGNAL(eventSelected(QSharedPointer<SignalEvent const>)), SLOT(updateSelectedEventInfo(QSharedPointer<SignalEvent const>)));
     }
 
-    adapt_browser_view_widget_ = new AdaptBrowserViewWidget (this, model_->getSignalViewSettings());
-    x_axis_widget_->connect (adapt_browser_view_widget_, SIGNAL(xAxisVisibilityChanged(bool)), SLOT(setVisible(bool)));
+    adapt_browser_view_widget_ = new AdaptBrowserViewWidget (this, model_->getSignalViewSettings(), y_axis_widget_,
+                                                             x_axis_widget_, label_widget_);
+
+    connect (adapt_browser_view_widget_, SIGNAL(xAxisVisibilityChanged(bool)), SLOT(toggleXWidget(bool)));
+
     y_axis_widget_->connect (adapt_browser_view_widget_, SIGNAL(yAxisVisibilityChanged(bool)), SLOT(setVisible(bool)));
     label_widget_->connect (adapt_browser_view_widget_, SIGNAL(labelsVisibilityChanged(bool)), SLOT(setVisible(bool)));
 
@@ -356,7 +412,9 @@ void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager,
     connect(this, SIGNAL(visibleXChanged(int32)), x_axis_widget_, SLOT(changeXStart(int32)));
     connect(model_->getSignalViewSettings().data(), SIGNAL(pixelsPerSampleChanged()), x_axis_widget_, SLOT(update()));
     label_widget_->connect (this, SIGNAL(visibleYChanged(int32)), SLOT(changeYStart (int32)));
-    connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
+    y_axis_widget_->connect (this, SIGNAL(visibleYChanged(int32)), SLOT(changeYStart (int32)));
+
+//    connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
     connect(model_->getSignalViewSettings().data(), SIGNAL(channelHeightChanged(uint)), y_axis_widget_, SLOT(changeSignalHeight(uint)));
     connect(model_.data(), SIGNAL(modeChanged(SignalVisualisationMode)), SLOT(setMode(SignalVisualisationMode)));
 }
@@ -371,6 +429,12 @@ void SignalBrowserView::createLayout()
     layout_->setVerticalSpacing(0);
     layout_->setHorizontalSpacing(0);
 
+    //set vertical size policy of graphics_view_ to adjust size
+    //when other widgets are toggled on and off
+    graphics_view_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    y_axis_widget_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    label_widget_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+
     layout_->addWidget(current_info_widget_, 1, 1, 1, 3);
     layout_->addWidget(y_axis_widget_, 2, 1);
     layout_->addWidget(graphics_view_, 2, 2);
@@ -378,6 +442,8 @@ void SignalBrowserView::createLayout()
     layout_->addWidget(horizontal_scrollbar_, 4, 2);
     layout_->addWidget(label_widget_, 2, 3);
     layout_->addWidget(vertical_scrollbar_, 2, 4);
+
+    graphics_view_->setAlignment(Qt::AlignVCenter);
 }
 
 }

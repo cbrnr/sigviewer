@@ -19,7 +19,7 @@ namespace Tests_
 //-----------------------------------------------------------------------------
 void FileHandlingTests::init ()
 {
-    OpenFileGuiCommand::openFile ("blub.sinusdummy", true);
+    OpenFileGuiCommand::openFile ("blub.sinusdummy");
 }
 
 //-----------------------------------------------------------------------------

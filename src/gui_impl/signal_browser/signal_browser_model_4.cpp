@@ -53,7 +53,6 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
   signal_browser_view_ (0),
   selected_event_item_ (0),
   x_grid_pixel_intervall_(0),
-  show_y_grid_(true),
   initialized_ (false)
 {
     if (!event_manager_.isNull ())
@@ -81,46 +80,30 @@ SignalBrowserModel::SignalBrowserModel(QSharedPointer<EventManager> event_manage
 }
 
 //-----------------------------------------------------------------------------
+SignalBrowserModel::~SignalBrowserModel()
+{
+
+}
+
+//-----------------------------------------------------------------------------
 SignalVisualisationView const* SignalBrowserModel::view () const
 {
     return signal_browser_view_;
 }
 
-
 //-----------------------------------------------------------------------------
-// set signal browser view
+QMap<ChannelID, SignalGraphicsItem *> SignalBrowserModel::getChannelToSignalItem()
+{
+    return channel2signal_item_;
+}
+
+// set signal browser view-----------------------------------------------------
 void SignalBrowserModel::setSignalBrowserView (SignalBrowserView* signal_browser_view)
 {
     signal_browser_view_ = signal_browser_view;
     if (!event_manager_.isNull())
         setShownEventTypes (event_manager_->getEventTypes());
 
-}
-
-//-----------------------------------------------------------------------------
-// load settings
-void SignalBrowserModel::loadSettings()
-{
-    QSettings settings("SigViewer");
-
-    settings.beginGroup("SignalBrowserModel");
-    show_x_grid_ = settings.value("show_x_grid", show_x_grid_).toBool();
-    show_y_grid_ = settings.value("show_y_grid", show_y_grid_).toBool();
-
-    settings.endGroup();
-}
-
-//-----------------------------------------------------------------------------
-// save settings
-void SignalBrowserModel::saveSettings()
-{
-    QSettings settings("SigViewer");
-
-    settings.beginGroup("SignalBrowserModel");
-    settings.setValue("show_x_grid", show_x_grid_);
-    settings.setValue("show_y_grid", show_y_grid_);
-
-    settings.endGroup();
 }
 
 //-----------------------------------------------------------------------------
@@ -274,8 +257,8 @@ void SignalBrowserModel::update()
         signal_iter.value()->setZValue(SIGNAL_Z);
         signal_iter.value()->updateYGridIntervall();
 
-        signal_iter.value()->enableYGrid(show_y_grid_);
-        signal_iter.value()->enableXGrid(show_x_grid_);
+////        signal_iter.value()->enableYGrid(show_y_grid_);
+//        signal_iter.value()->enableXGrid(show_x_grid_);
         signal_iter.value()->setXGridInterval (x_grid_pixel_intervall_);
         signal_iter.value()->show();
     }

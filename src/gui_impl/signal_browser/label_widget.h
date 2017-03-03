@@ -28,6 +28,8 @@ public:
 
 public slots:
     void changeYStart (int32 y_start);
+    void enableSeparator(bool enable);
+    void changeLabelColor(QColor labelColor);
 
 protected:
     void paintEvent(QPaintEvent* pe);
@@ -38,6 +40,8 @@ private:
 
     QMap<ChannelID, QString> channel_nr2label_;
     int32 y_start_;
+    bool enable_separator_;
+    QColor label_color_;
 };
 
 }

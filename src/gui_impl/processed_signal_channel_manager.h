@@ -58,6 +58,8 @@ public:
     virtual float64 getSampleRate() const;
 
 private:
+    virtual QString getChannelLabel (ChannelID id, int streamNumber) const; /*!< Inherited, should not be called. */
+
     float32 sample_rate_;
     unsigned length_;
     QMap<ChannelID, QSharedPointer<DataBlock const> > channels_;

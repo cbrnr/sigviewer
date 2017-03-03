@@ -28,6 +28,7 @@ public slots:
     void changeXStart (int32 x_start);
     void changeHighlightTime (float64 time_to_highlight);
     void enableHighlightTime (bool highlighting_enabled);
+    void changeLabelColor(QColor labelColor);
 
 private:
     virtual void paintEvent(QPaintEvent*);
@@ -44,6 +45,7 @@ private:
     QRect last_highlight_rect_;
 
     int highlight_timer_;
+    QColor label_color_;
 };
 
 }

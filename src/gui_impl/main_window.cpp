@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The SigViewer Development Team
+// Copyright (c) 2017 The SigViewer Development Team
 // Licensed under the GNU General Public License (GPL)
 // https://www.gnu.org/licenses/gpl
 
@@ -44,8 +44,8 @@ MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
     setUnifiedTitleAndToolBarOnMac (true);
     
     QSettings settings("SigViewer");
-    resize(settings.value("MainWindow/size", QSize(800, 500)).toSize());
-    setMinimumSize(800, 500);
+    resize(settings.value("MainWindow/size", QSize(900, 800)).toSize());
+    setMinimumSize(900, 800);
     restoreGeometry(settings.value("geometry").toByteArray());  //restore geometry and window state (full screen etc.)
     restoreState(settings.value("windowState").toByteArray());
 }
@@ -76,6 +76,7 @@ void MainWindow::initToolBars()
     view_toolbar_views_menu_ = new QMenu (tr("Toolbars"), this);
 
     file_toolbar_ = addToolBar(tr("File"));
+    file_toolbar_->setObjectName("File");
     file_toolbar_->setMovable(false);
     view_toolbar_views_menu_->addAction (file_toolbar_->toggleViewAction());
     file_toolbar_->addAction (action("Open..."));
@@ -86,6 +87,7 @@ void MainWindow::initToolBars()
     // file_toolbar_->addAction (action("Close"));
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
+    mouse_mode_toolbar_->setObjectName("Mode");
     mouse_mode_toolbar_->setMovable(false);
     view_toolbar_views_menu_->addAction (mouse_mode_toolbar_->toggleViewAction());
     mouse_mode_toolbar_->addAction (action("New Event"));
@@ -95,6 +97,7 @@ void MainWindow::initToolBars()
 
 
     view_toolbar_ = addToolBar(tr("View"));
+    view_toolbar_->setObjectName("View");
     view_toolbar_->setMovable(false);
     view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
     view_toolbar_->addAction(action("Events..."));
@@ -221,9 +224,12 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     mouse_mode_menu_->addAction (action("Scroll"));
     mouse_mode_menu_->addAction (action("View Options"));
 
+
+    QSettings settings ("SigViewer");
+
     QAction* toggle_status_bar = new QAction (tr("Statusbar"), this);
     toggle_status_bar->setCheckable (true);
-    toggle_status_bar->setChecked (statusBar()->isVisible());
+    toggle_status_bar->setChecked (settings.value ("MainWindow/statusbar", true).toBool());
     connect (toggle_status_bar, SIGNAL(toggled(bool)), this, SLOT(toggleStatusBar(bool)));
 
     view_menu_ = menuBar()->addMenu(tr("&View"));

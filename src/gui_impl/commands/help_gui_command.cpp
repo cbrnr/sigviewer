@@ -8,7 +8,7 @@
 #include "ui_about_dialog.h"
 
 #include <QMessageBox>
-#include <QFile>
+
 
 namespace sigviewer
 {
@@ -42,14 +42,13 @@ void HelpGuiCommand::init ()
 //-----------------------------------------------------------------------------
 void HelpGuiCommand::showAboutDialog ()
 {
-    QFile version_file (":version.txt");
-    version_file.open(QIODevice::ReadOnly);
-    QByteArray version_array = version_file.readLine();
-
     dialog_ = new QDialog(0);
     Ui::aboutDialog ui;
     ui.setupUi (&(*dialog_));
-    ui.aboutLabel->setText(ui.aboutLabel->text().replace(QString("[VERSION-NUMBER]"), QString (version_array)));
+    ui.aboutLabel->setText(ui.aboutLabel->text().replace(QString("VERSION_MAJOR"), QString::number(VERSION_MAJOR))
+                                                .replace(QString("VERSION_MINOR"), QString::number(VERSION_MINOR))
+                                                .replace(QString("VERSION_BUILD"), QString::number(VERSION_BUILD)));
+    dialog_->setFixedSize(dialog_->minimumSizeHint());
     dialog_->show();
 }
 

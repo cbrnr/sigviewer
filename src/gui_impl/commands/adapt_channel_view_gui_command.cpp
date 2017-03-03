@@ -120,6 +120,7 @@ void AdaptChannelViewGuiCommand::changeColor ()
     QSharedPointer<ColorManager> color_manager = applicationContext()->getEventColorManager();
     QColor old_color = color_manager->getChannelColor(channel);
     QColorDialog color_dialog (old_color);
+    color_dialog.setOption(QColorDialog::ShowAlphaChannel);
 
     if (color_dialog.exec() == QDialog::Accepted)
     {

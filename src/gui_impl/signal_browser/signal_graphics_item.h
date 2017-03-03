@@ -61,6 +61,11 @@ public slots:
     void updateYGridIntervall();
     void setHeight (unsigned height);
     void setXGridInterval (unsigned interval);
+    void toggleXGrid(bool enable);
+    void toggleYGrid(bool enable);
+    void enableSeparator(bool enable);
+    void updateGridColor(QColor gridColor);
+    void updateLabelColor(QColor labelColor);
 
 signals:
     void mouseAtSecond (float64 sec);
@@ -98,6 +103,7 @@ private:
     double value_range_fragment_;
     bool draw_y_grid_;
     bool draw_x_grid_;
+    bool draw_separator;
     float64 y_offset_;
     int32 height_;
     uint32 width_;
@@ -112,6 +118,8 @@ private:
     QSharedPointer<SignalEvent> new_signal_event_;
     int32 new_signal_event_reference_x_;
     QColor new_event_color_;
+    QColor grid_color_;
+    QColor label_color_;
 };
 
 }

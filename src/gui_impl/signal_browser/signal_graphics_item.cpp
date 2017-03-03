@@ -28,6 +28,7 @@
 #include <QDebug>
 #include <QToolTip>
 #include <QSet>
+#include <QSettings>
 
 #include <cmath>
 #include <ctime> //to get current date when user add events
@@ -53,19 +54,32 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
   minimum_ (channel_manager_.getMinValue (id_)),
   maximum_ (channel_manager_.getMaxValue (id_)),
   y_zoom_ (1),
-  draw_y_grid_ (true),
-  draw_x_grid_ (true),
   y_offset_ (0),
   height_ (signal_view_settings->getChannelHeight()),
   width_ (0),
   shifting_ (false),
   new_event_ (false),
   created_event_item_ (0),
-  hand_tool_on_ (false)
+  hand_tool_on_ (false),
+  grid_color_ (QColor(220, 220, 220, 50)),   //set the default grid color
+  label_color_ (Qt::black)
 {
     setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
     setAcceptHoverEvents(false);
     connect(signal_view_settings.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateYGridIntervall()));
+    connect(signal_view_settings.data(), SIGNAL(enableXGrid(bool)), SLOT(toggleXGrid(bool)));
+    connect(signal_view_settings.data(), SIGNAL(enableYGrid(bool)), SLOT(toggleYGrid(bool)));
+    connect(signal_view_settings.data(), SIGNAL(separatorEnabled(bool)), SLOT(enableSeparator(bool)));
+    connect(signal_view_settings.data(), SIGNAL(gridColorChanged(QColor)), SLOT(updateGridColor(QColor)));
+    connect(signal_view_settings.data(), SIGNAL(labelColorChanged(QColor)), SLOT(updateLabelColor(QColor)));
+
+    QSettings settings("SigViewer");
+
+    settings.beginGroup("SignalBrowserModel");
+    draw_x_grid_ = settings.value("show_x_grid", false).toBool();
+    draw_y_grid_ = settings.value("show_y_grid", false).toBool();
+    draw_separator = settings.value("show_separator", false).toBool();
+    settings.endGroup();
 }
 
 //-----------------------------------------------------------------------------
@@ -73,7 +87,6 @@ SignalGraphicsItem::~SignalGraphicsItem ()
 {
 
 }
-
 
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::setHeight (unsigned height)
@@ -90,6 +103,40 @@ void SignalGraphicsItem::setHeight (unsigned height)
 void SignalGraphicsItem::setXGridInterval (unsigned interval)
 {
     x_grid_interval_ = interval;
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::toggleXGrid(bool enable)
+{
+    draw_x_grid_ = enable;
+    update ();
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::toggleYGrid(bool enable)
+{
+    draw_y_grid_ = enable;
+    update ();
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::enableSeparator(bool enable)
+{
+    draw_separator = enable;
+    update();
+}
+
+//-----------------------------------------------------------------------------
+void SignalGraphicsItem::updateGridColor(QColor gridColor)
+{
+    grid_color_ = gridColor;
+    update();
+}
+
+void SignalGraphicsItem::updateLabelColor(QColor labelColor)
+{
+    label_color_ = labelColor;
+    update();
 }
 
 //-----------------------------------------------------------------------------
@@ -191,7 +238,6 @@ void SignalGraphicsItem::scaleImpl (double min, double max)
     update ();
 }
 
-
 //-----------------------------------------------------------------------------
 void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget*)
 {
@@ -200,8 +246,14 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     bool channel_overlapping = signal_view_settings_->getChannelOverlapping();
 
-    if (!channel_overlapping)
-        painter->drawRect(boundingRect());
+    if (draw_separator && !channel_overlapping)
+        //        painter->drawRect(boundingRect());
+    {
+        //draw only upper and lower border, no verdical borders
+        painter->setPen(label_color_);
+        painter->drawLine(0, 0, width_, 0);
+        painter->drawLine(0, height_, width_, height_);
+    }
 
     if (new_event_)
         painter->fillRect(new_signal_event_->getPosition(), 0, new_signal_event_->getDuration(), height_, new_event_color_);
@@ -242,9 +294,20 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     if (draw_x_grid_)
         drawXGrid (painter, option);
-    painter->translate (0, height_ / 2.0f);
+
     if (draw_y_grid_)
         drawYGrid (painter, option);
+
+    //You can't draw the lines here because it's after the clipping, thus the lower border is always
+    //overwritten by the next channel, and the lower border of the last channel is never shown
+//    if (draw_separator && !channel_overlapping)
+//    {
+//        painter->setPen(label_color_);
+//        painter->drawLine(0, 0, width_, 0);
+//        painter->drawLine(0, height_, width_, height_);
+//    }
+
+    painter->translate (0, height_ / 2.0f);
     painter->setPen (color_manager_->getChannelColor (id_));
 
 
@@ -410,15 +473,15 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
             {
                 //If user added events in Sigviewer, we will create a new stream to store these events
                 //and later store back to the XDF file
-                if (!XDFdata.userAddedStream)
+                if (!XDFdata->userAddedStream)
                 {
                     //check whether a user added stream has already been existing
-                    XDFdata.userAddedStream = XDFdata.streams.size();
-                    XDFdata.streams.emplace_back();
+                    XDFdata->userAddedStream = XDFdata->streams.size();
+                    XDFdata->streams.emplace_back();
                     std::time_t currentTime = std::time(nullptr);
                     std::string timeString = std::asctime(std::localtime(&currentTime));
                     timeString.pop_back(); //we don't need '\n' at the end
-                    XDFdata.streams.back().streamHeader =
+                    XDFdata->streams.back().streamHeader =
                             "<?xml version='1.0'?>"
                             "<info>"
                                 "<name>User Created Event Stream</name>"
@@ -438,12 +501,12 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
                 new_signal_event_ = QSharedPointer<SignalEvent>
                         (new SignalEvent(sample_cleaned_pos,
                                          signal_browser_model_.getActualEventCreationType(),
-                                         event_manager_->getSampleRate(), XDFdata.userAddedStream,
+                                         event_manager_->getSampleRate(), XDFdata->userAddedStream,
                                          id_));
                 //Add the newly created event to the XDFdata object for later use
                 QString eventName = event_manager_->getNameOfEventType(signal_browser_model_.getActualEventCreationType());
-                XDFdata.userCreatedEvents.emplace_back
-                        (eventName.toStdString(), (sample_cleaned_pos/event_manager_->getSampleRate()) + XDFdata.minTS);
+                XDFdata->userCreatedEvents.emplace_back
+                        (eventName.toStdString(), (sample_cleaned_pos/event_manager_->getSampleRate()) + XDFdata->minTS);
             }
             else
             {
@@ -536,7 +599,8 @@ void SignalGraphicsItem::drawYGrid (QPainter* painter,
 
     QRectF clip (option->exposedRect);
     //painter->setPen (Qt::lightGray);
-    painter->setPen (QColor(220, 220, 220, 50)); // Qt::lightGray is still too dark and strong.
+//    painter->setPen (QColor(220, 220, 220, 50)); // Qt::lightGray is still too dark and strong.
+    painter->setPen(grid_color_);
 
     for (float64 y = y_offset_;
          y < height_ / 2;
@@ -564,19 +628,40 @@ void SignalGraphicsItem::drawYGrid (QPainter* painter,
 void SignalGraphicsItem::drawXGrid (QPainter* painter,
                                     QStyleOptionGraphicsItem const* option)
 {
-    if (x_grid_interval_ < 1)
+    double pixel_per_sample = signal_view_settings_->getPixelsPerSample();
+    double pixel_per_sec_ = pixel_per_sample * signal_view_settings_->getSampleRate();
+    double interval_ = pixel_per_sec_ * MathUtils_::round125 (100.0 / pixel_per_sec_);
+    if (interval_ < 1)
         return;
 
     QRectF clip (option->exposedRect);
-    //painter->setPen (Qt::lightGray);
-    painter->setPen (QColor(255, 255 , 255, 0)); // We probably don't need the x grid
+//    painter->setPen (QColor(220, 220, 220, 50)); // Qt::lightGray is still too dark and strong.
+    painter->setPen(grid_color_);
+
 
     if (clip.width() < 1)
         return;
 
-    for (int x = clip.x() - (static_cast<int>(clip.x()) % x_grid_interval_);
-         x < clip.x() + clip.width(); x += x_grid_interval_)
+    int32 x_start = clip.x();
+    int32 x_end = clip.x() + clip.width();
+
+    float64 float_x_start = floor((x_start + interval_ / 2) / interval_) *
+                           interval_;
+
+    float64 float_x_end = ceil((x_end - interval_ / 2) / interval_) *
+                          interval_ + interval_ / 2;
+
+    for (float32 float_x = float_x_start;
+         float_x < float_x_end;
+         float_x += interval_)
+    {
+        int32 x = (int32)(float_x + 0.5);
         painter->drawLine (x, 0, x, height_);
+    }
+
+//    for (int x = clip.x() - (static_cast<int>(clip.x()) % x_grid_interval_);
+//         x < clip.x() + clip.width(); x += x_grid_interval_)
+//        painter->drawLine (x, 0, x, height_);
 }
 
 }

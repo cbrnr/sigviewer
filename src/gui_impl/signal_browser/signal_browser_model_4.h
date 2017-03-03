@@ -42,7 +42,7 @@ public:
                        QSharedPointer<ColorManager const> color_manager);
 
     //-------------------------------------------------------------------------
-    virtual ~SignalBrowserModel() {}
+    virtual ~SignalBrowserModel();
 
     //-------------------------------------------------------------------------
     virtual void scaleChannel (ChannelID id, float32 lower_value, float32 upper_value);
@@ -73,6 +73,10 @@ public:
 
     //-------------------------------------------------------------------------
     virtual SignalVisualisationView const* view () const;
+
+    //-------------------------------------------------------------------------
+    virtual QMap<ChannelID, SignalGraphicsItem *> getChannelToSignalItem();
+
 
     void setSignalBrowserView(SignalBrowserView* signal_browser_view);
     void loadSettings();
@@ -151,8 +155,6 @@ private:
 
     float64 x_grid_pixel_intervall_;
 
-    bool show_y_grid_;
-    bool show_x_grid_;
     bool initialized_;
     QList<EventGraphicsItem*> items_to_delete_;
 };

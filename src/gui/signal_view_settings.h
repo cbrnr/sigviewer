@@ -11,6 +11,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QColor>
 
 #include <set>
 
@@ -80,6 +81,11 @@ signals:
     void channelHeightChanged ();
     void channelHeightChanged (unsigned channel_height_in_pixel);
     void gridFragmentationChanged ();
+    void enableXGrid(bool enabled);
+    void enableYGrid(bool enabled);
+    void separatorEnabled(bool enabled);
+    void gridColorChanged(QColor gridColor);
+    void labelColorChanged(QColor labelColor);
 
 private:
     //std::set<ChannelID> shown_channels_;

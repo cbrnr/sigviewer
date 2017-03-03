@@ -11,7 +11,8 @@ namespace sigviewer
 // get instance
 FileSignalWriterFactory* FileSignalWriterFactory::getInstance()
 {
-    static std::auto_ptr<FileSignalWriterFactory> instance;
+    //auto_ptr is deprecated
+    static std::unique_ptr<FileSignalWriterFactory> instance;
     if (!instance.get())
         instance.reset(new FileSignalWriterFactory);
     return instance.get();

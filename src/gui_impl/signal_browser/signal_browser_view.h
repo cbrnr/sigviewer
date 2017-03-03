@@ -84,6 +84,7 @@ private slots:
     virtual void dropEvent (QDropEvent* event);
     virtual void dragEnterEvent(QDragEnterEvent *event);
     void graphicsViewResized (QResizeEvent* event);
+    void toggleXWidget(bool enabled);
 
 private:
     void initWidgets (QSharedPointer<EventManager> event_manager, QSharedPointer<CommandExecuter> command_executer);

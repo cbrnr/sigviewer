@@ -63,6 +63,11 @@ void MouseModeGuiCommand::init ()
     getQAction (VIEW_OPTIONS_TEXT_)->setShortcut (QString("Ctrl+4"));
     //getQAction (INFO_MODE_TEXT_)->setShortcut (QString("Ctrl+5"));
 
+//    getQAction (NEW_MODE_TEXT_)->setToolTip(getQAction (NEW_MODE_TEXT_)->toolTip().append(tr(" (Ctrl+1)")));
+//    getQAction (POINTER_MODE_TEXT_)->setToolTip(getQAction (POINTER_MODE_TEXT_)->toolTip().append(tr(" (Ctrl+2)")));
+//    getQAction (HAND_MODE_TEXT_)->setToolTip(getQAction (HAND_MODE_TEXT_)->toolTip().append(tr(" (Ctrl+3)")));
+//    getQAction (VIEW_OPTIONS_TEXT_)->setToolTip(getQAction (VIEW_OPTIONS_TEXT_)->toolTip().append(tr(" (Ctrl+4)")));
+
     QList<QAction*> actions = getQActions ();
     foreach (QAction* action, actions)
     {
