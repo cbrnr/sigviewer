@@ -80,7 +80,7 @@ private slots:
 
     void on_label_color_button_clicked();
 
-    void on_checkBox_stateChanged(int checkState);
+    void on_color_checkBox_stateChanged(int checkState);
 
 private:
     //-------------------------------------------------------------------------

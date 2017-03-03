@@ -70,6 +70,7 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
     ui_.yGridSlider->setToolTip("Slide to change the density of Y grids");
 
     ui_.colors_groupbox->hide();    //currently the color button is immature, hide it temporarily
+    ui_.color_checkBox->hide();
 }
 
 AdaptBrowserViewWidget::~AdaptBrowserViewWidget()
@@ -279,7 +280,7 @@ void sigviewer::AdaptBrowserViewWidget::on_label_color_button_clicked()
     }
 }
 
-void sigviewer::AdaptBrowserViewWidget::on_checkBox_stateChanged(int checkState)
+void sigviewer::AdaptBrowserViewWidget::on_color_checkBox_stateChanged(int checkState)
 {
     if (checkState == Qt::Checked)
     {
