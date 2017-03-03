@@ -12,7 +12,7 @@
 #include "event_creation_widget.h"
 #include "event_editing_widget.h"
 #include "adapt_browser_view_widget.h"
-#include "gui_impl/gui_helper_functions.h"
+//#include "gui_impl/gui_helper_functions.h"
 
 #include <QGraphicsLineItem>
 #include <QGridLayout>
@@ -24,6 +24,7 @@
 #include <QResizeEvent>
 #include <QGraphicsLinearLayout>
 
+#include <math.h>       /* round */
 
 namespace sigviewer
 {
@@ -195,6 +196,7 @@ int SignalBrowserView::getViewportWidth () const
 void SignalBrowserView::setMode (SignalVisualisationMode mode)
 {
     double channelHeight = model_->getSignalViewSettings()->getChannelHeight();
+    double oldCentralWidgetHeight = graphics_view_->height();
 
     if (current_info_widget_)
     {
@@ -232,8 +234,8 @@ void SignalBrowserView::setMode (SignalVisualisationMode mode)
         layout_->addWidget (current_info_widget_, 1, 2);
         current_info_widget_->show();
     }
-
-    model_->getSignalViewSettings()->setChannelHeight(channelHeight);
+    double factor = graphics_view_->height() / oldCentralWidgetHeight;
+    model_->getSignalViewSettings()->setChannelHeight(round(channelHeight * factor));
 }
 
 //-----------------------------------------------------------------------------
@@ -441,7 +443,6 @@ void SignalBrowserView::createLayout()
     layout_->addWidget(label_widget_, 2, 3);
     layout_->addWidget(vertical_scrollbar_, 2, 4);
 
-    //align top to avoid misplacing caused by toggling other widgets
     graphics_view_->setAlignment(Qt::AlignVCenter);
 }
 
