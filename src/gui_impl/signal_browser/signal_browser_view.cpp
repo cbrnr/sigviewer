@@ -194,6 +194,8 @@ int SignalBrowserView::getViewportWidth () const
 //-----------------------------------------------------------------------------
 void SignalBrowserView::setMode (SignalVisualisationMode mode)
 {
+    double channelHeight = model_->getSignalViewSettings()->getChannelHeight();
+
     if (current_info_widget_)
     {
         layout_->removeWidget (current_info_widget_);
@@ -230,6 +232,8 @@ void SignalBrowserView::setMode (SignalVisualisationMode mode)
         layout_->addWidget (current_info_widget_, 1, 2);
         current_info_widget_->show();
     }
+
+    model_->getSignalViewSettings()->setChannelHeight(channelHeight);
 }
 
 //-----------------------------------------------------------------------------
@@ -258,13 +262,18 @@ void SignalBrowserView::graphicsViewResized (QResizeEvent* event)
  */
 void SignalBrowserView::toggleXWidget(bool enabled)
 {
+    double channelHeight = model_->getSignalViewSettings()->getChannelHeight();
     y_axis_widget_->hide();
     label_widget_->hide();
     graphics_view_->hide();
+    horizontal_scrollbar_->hide();
     x_axis_widget_->setVisible(enabled);
     y_axis_widget_->show();
     label_widget_->show();
     graphics_view_->show();
+    horizontal_scrollbar_->show();
+    if (model_->getSignalViewSettings()->getChannelHeight() != channelHeight)
+        model_->getSignalViewSettings()->setChannelHeight(channelHeight);
 }
 
 //-----------------------------------------------------------------------------
@@ -412,7 +421,7 @@ void SignalBrowserView::createLayout()
     layout_->addWidget(vertical_scrollbar_, 2, 4);
 
     //align top to avoid misplacing caused by toggling other widgets
-    graphics_view_->setAlignment(Qt::AlignTop);
+    graphics_view_->setAlignment(Qt::AlignVCenter);
 }
 
 }
