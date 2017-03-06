@@ -20,14 +20,14 @@ namespace sigviewer
 
 //-------------------------------------------------------------------------
 AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* signal_visualisation_view,
-                                                QSharedPointer<SignalViewSettings> settingss,
+                                                QSharedPointer<SignalViewSettings> setting,
                                                 YAxisWidget *yAxisWidget,
                                                 XAxisWidget *xAxisWidget,
                                                 LabelWidget *labelWidget,
                                                 QWidget *parent) :
     QWidget (parent),
     signal_visualisation_view_ (signal_visualisation_view),
-    settings_ (settingss),
+    settings_ (setting),
     self_updating_ (false),
     updating_values_ (false),
     x_axis_widget_ (xAxisWidget),
@@ -43,7 +43,7 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
         throw (Exception ("connect failed: labels_checkbox_"));
     offset_centered_ =  GuiActionFactory::getInstance()->getQAction("Zero Line Centered");
     offset_fitted_ =  GuiActionFactory::getInstance()->getQAction("Zero Line Fitted");
-    ui_.channelsPerPageSpinbox->setMaximum (settingss->getChannelManager().getNumberChannels());
+    ui_.channelsPerPageSpinbox->setMaximum (setting->getChannelManager().getNumberChannels());
     ui_.secsPerPageSpinbox->setMaximum (settings_->getChannelManager().getDurationInSec());
     connect(ui_.offsetCheckBox, SIGNAL(stateChanged(int)), SLOT(on_offsetCheckBox_stateChanged(int)));
 
