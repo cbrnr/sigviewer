@@ -52,7 +52,6 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
     connect (settings_.data(), SIGNAL(pixelsPerSampleChanged()), SLOT(updateValues()));
 
     QSettings settings("SigViewer");
-    qDebug() << settings.fileName();
 
     settings.beginGroup("SignalBrowserModel");
     ui_.xGridCheckbox->setChecked(settings.value("show_x_grid", false).toBool());

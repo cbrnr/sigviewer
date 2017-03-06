@@ -44,7 +44,7 @@ MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
     setUnifiedTitleAndToolBarOnMac (true);
     
     QSettings settings("SigViewer");
-    resize(settings.value("MainWindow/size", QSize(900, 800)).toSize());
+    resize(settings.value("MainWindow/size", QSize(1500, 800)).toSize());
     setMinimumSize(900, 800);
     restoreGeometry(settings.value("geometry").toByteArray());  //restore geometry and window state (full screen etc.)
     restoreState(settings.value("windowState").toByteArray());

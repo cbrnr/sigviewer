@@ -218,7 +218,9 @@ void AdaptChannelViewGuiCommand::setAnimationDuration ()
     settings.beginGroup ("Animations");
 
     bool ok = false;
-    int new_duration = QInputDialog::getInt(0, tr("Set Animation Duration"), tr("Milliseconds:"), settings.value("duration", 200).toInt(), 0, 1000, 100, &ok);
+    int new_duration = QInputDialog::getInt
+            (0, tr("Set Animation Duration"), tr("Milliseconds:"),
+             settings.value("duration", 200).toInt(), 0, 1000, 100, &ok);
     if (ok)
         settings.setValue ("duration", new_duration);
     settings.endGroup ();

@@ -24,8 +24,7 @@ class BasicHeaderInfoDialog : public QDialog
 public:
     BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header, QWidget* parent = 0);
 
-    void loadSettings();
-    void saveSettings();
+    ~BasicHeaderInfoDialog();
 
 private:
     // not allowed
@@ -38,6 +37,7 @@ private:
     QSharedPointer<BasicHeader> basic_header_;
     QTreeWidget* info_tree_widget_;
     QPushButton* close_button_;
+    void readSettings();
 };
 
 }

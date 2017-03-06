@@ -45,32 +45,23 @@ BasicHeaderInfoDialog::BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header,
     buildTree();
     resize(850, 850);
     top_layout->activate();
+    readSettings();
     connect(close_button_, SIGNAL(clicked()), this, SLOT(accept()));
 }
 
-// load settings
-void BasicHeaderInfoDialog::loadSettings()
+BasicHeaderInfoDialog::~BasicHeaderInfoDialog()
 {
     QSettings settings("SigViewer");
     settings.beginGroup("BasicHeaderInfoDialog");
-    resize(settings.value("size", QSize(850, 850)).toSize());
-    move(settings.value("pos", QPoint(200, 200)).toPoint());
-    info_tree_widget_->header()->resizeSection(0, settings.value("col0_width", 400).toInt());
-    info_tree_widget_->header()->resizeSection(1, settings.value("col1_width", 450).toInt());
-
+    settings.setValue("geometry", saveGeometry());
     settings.endGroup();
 }
 
-// save settings
-void BasicHeaderInfoDialog::saveSettings()
+void BasicHeaderInfoDialog::readSettings()
 {
     QSettings settings("SigViewer");
     settings.beginGroup("BasicHeaderInfoDialog");
-    settings.setValue("size", size());
-    settings.setValue("pos", pos());
-    settings.setValue("col0_width", info_tree_widget_->header()->sectionSize(0));
-    settings.setValue("col1_width", info_tree_widget_->header()->sectionSize(1));
-
+    restoreGeometry(settings.value("geometry").toByteArray());
     settings.endGroup();
 }
 
@@ -84,7 +75,7 @@ void BasicHeaderInfoDialog::buildTree()
     info_tree_widget_->setHeaderLabels(header_labels);
 
     info_tree_widget_->header()->setSectionResizeMode(QHeaderView::Interactive);
-    info_tree_widget_->setColumnWidth(0, this->width()/1.6);
+    info_tree_widget_->setColumnWidth(0, width() * 0.65);
     info_tree_widget_->setAnimated(true);
 
     QTreeWidgetItem* root_item;
