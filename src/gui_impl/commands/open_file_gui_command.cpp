@@ -272,9 +272,10 @@ void OpenFileGuiCommand::importEvents ()
 //-------------------------------------------------------------------------
 void OpenFileGuiCommand::showFileInfo ()
 {
-    BasicHeaderInfoDialog basic_header_info_dialog(applicationContext()->getCurrentFileContext()->getHeader());
+    basic_header_info_dialog = QSharedPointer<BasicHeaderInfoDialog>
+            (new BasicHeaderInfoDialog (applicationContext()->getCurrentFileContext()->getHeader()));
 
-    basic_header_info_dialog.exec();
+    basic_header_info_dialog->show();
 }
 
 //-------------------------------------------------------------------------
