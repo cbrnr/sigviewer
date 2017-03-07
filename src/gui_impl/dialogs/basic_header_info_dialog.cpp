@@ -40,6 +40,8 @@ BasicHeaderInfoDialog::BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header,
     top_layout->addLayout(button_layout);
     button_layout->addStretch(1);
     close_button_ = new QPushButton(tr("Close"), this);
+    toggle_button_ = new QPushButton(tr("Collapse All"), this);
+    button_layout->addWidget(toggle_button_);
     button_layout->addWidget(close_button_);
     button_layout->addStretch(1);
     buildTree();
@@ -47,6 +49,7 @@ BasicHeaderInfoDialog::BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header,
     top_layout->activate();
     readSettings();
     connect(close_button_, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(toggle_button_, SIGNAL(clicked()), this, SLOT(toggleCollapseExpand()));
 }
 
 BasicHeaderInfoDialog::~BasicHeaderInfoDialog()
@@ -55,6 +58,20 @@ BasicHeaderInfoDialog::~BasicHeaderInfoDialog()
     settings.beginGroup("BasicHeaderInfoDialog");
     settings.setValue("geometry", saveGeometry());
     settings.endGroup();
+}
+
+void BasicHeaderInfoDialog::toggleCollapseExpand()
+{
+    if (toggle_button_->text().compare("Collapse All") == 0)
+    {
+        info_tree_widget_->collapseAll();
+        toggle_button_->setText("Expand All");
+    }
+    else if (toggle_button_->text().compare("Expand All") == 0)
+    {
+        info_tree_widget_->expandAll();
+        toggle_button_->setText("Collapse All");
+    }
 }
 
 void BasicHeaderInfoDialog::readSettings()

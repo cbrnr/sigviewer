@@ -26,6 +26,9 @@ public:
 
     ~BasicHeaderInfoDialog();
 
+public slots:
+    void toggleCollapseExpand();
+
 private:
     // not allowed
     BasicHeaderInfoDialog();
@@ -37,6 +40,8 @@ private:
     QSharedPointer<BasicHeader> basic_header_;
     QTreeWidget* info_tree_widget_;
     QPushButton* close_button_;
+    QPushButton* toggle_button_;    //toggle expand/collapse all
+
     void readSettings();
 };
 
