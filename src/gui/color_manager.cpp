@@ -125,7 +125,9 @@ void ColorManager::loadSettings()
     QSettings settings("SigViewer");
     settings.beginGroup("ColorManager");
 
-    default_channel_color_ = Qt::darkBlue;
+
+    default_channel_color_ = QColor("#0055ff"); //vivid blue
+//    default_channel_color_ = Qt::darkBlue;
     if (settings.contains (DEFAULT_CHANNEL_COLOR_SETTING_))
         default_channel_color_ = settings.value (DEFAULT_CHANNEL_COLOR_SETTING_).value<QColor>();
     else
