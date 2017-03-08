@@ -47,6 +47,8 @@ private slots:
     void on_reset_colors_button__clicked ();
 
 
+    void on_toggle_collapse_expand_button_clicked();
+
 private:
     //-------------------------------------------------------------------------
     // not allowed

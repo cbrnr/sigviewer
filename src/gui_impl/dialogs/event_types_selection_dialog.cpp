@@ -275,3 +275,18 @@ void EventTypesSelectionDialog::handleAlpha (QTreeWidgetItem* item)
 }
 
 }
+
+void sigviewer::EventTypesSelectionDialog::on_toggle_collapse_expand_button_clicked()
+{
+    if (ui_.toggle_collapse_expand_button->text().compare("Collapse All") == 0)
+    {
+        ui_.tree_widget_->collapseAll();
+        ui_.toggle_collapse_expand_button->setText("Expand All");
+    }
+    else if (ui_.toggle_collapse_expand_button->text().compare("Expand All") == 0)
+    {
+        ui_.tree_widget_->expandAll();
+        ui_.toggle_collapse_expand_button->setText("Collapse All");
+    }
+
+}
