@@ -255,7 +255,7 @@ int XDFReader::setStreamColors()
 
     //set event colors
     for (size_t type = 0; type < 254; type++)
-        colorPicker->setEventColor(type, QColor(85, 170, 255, 20));
+        colorPicker->setEventColor(type, QColor(0, 85, 255, 80));
 
     colorPicker->saveSettings();
 
