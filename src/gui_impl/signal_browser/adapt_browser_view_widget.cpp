@@ -51,7 +51,7 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
     connect (settings_.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateValues()));
     connect (settings_.data(), SIGNAL(pixelsPerSampleChanged()), SLOT(updateValues()));
 
-    QSettings settings("SigViewer");
+    QSettings settings;
 
     settings.beginGroup("SignalBrowserModel");
     ui_.xGridCheckbox->setChecked(settings.value("show_x_grid", false).toBool());
@@ -75,7 +75,7 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
 
 AdaptBrowserViewWidget::~AdaptBrowserViewWidget()
 {
-    QSettings settings("SigViewer");
+    QSettings settings;
 
     settings.beginGroup("SignalBrowserModel");
 
@@ -188,7 +188,7 @@ void sigviewer::AdaptBrowserViewWidget::on_xGridCheckbox_stateChanged(int checkS
     {
         emit settings_->enableXGrid(false);
 
-        QSettings settings("SigViewer");
+        QSettings settings;
         settings.beginGroup("SignalBrowserModel");
         settings.setValue("show_x_grid", ui_.xGridCheckbox->checkState());
         settings.endGroup();
@@ -196,7 +196,7 @@ void sigviewer::AdaptBrowserViewWidget::on_xGridCheckbox_stateChanged(int checkS
     else if (checkState == Qt::Checked)
     {
         emit settings_->enableXGrid(true);
-        QSettings settings("SigViewer");
+        QSettings settings;
         settings.beginGroup("SignalBrowserModel");
         settings.setValue("show_x_grid", ui_.xGridCheckbox->checkState());
         settings.endGroup();
@@ -210,7 +210,7 @@ void sigviewer::AdaptBrowserViewWidget::on_yGridCheckbox_stateChanged(int checkS
         ui_.yGridSlider->setDisabled(true);
         emit settings_->enableYGrid(false);
 
-        QSettings settings("SigViewer");
+        QSettings settings;
         settings.beginGroup("SignalBrowserModel");
         settings.setValue("show_y_grid", ui_.yGridCheckbox->checkState());
         settings.endGroup();
@@ -221,7 +221,7 @@ void sigviewer::AdaptBrowserViewWidget::on_yGridCheckbox_stateChanged(int checkS
         ui_.yGridSlider->setEnabled(true);
         emit settings_->enableYGrid(true);
 
-        QSettings settings("SigViewer");
+        QSettings settings;
         settings.beginGroup("SignalBrowserModel");
         settings.setValue("show_y_grid", ui_.yGridCheckbox->checkState());
         settings.endGroup();
@@ -236,7 +236,7 @@ void sigviewer::AdaptBrowserViewWidget::on_border_checkBox__stateChanged(int che
         label_widget_->enableSeparator(false);
         emit settings_->separatorEnabled(false);
 
-        QSettings settings("SigViewer");
+        QSettings settings;
         settings.beginGroup("SignalBrowserModel");
         settings.setValue("show_separator", ui_.border_checkBox_->checkState());
         settings.endGroup();
@@ -248,7 +248,7 @@ void sigviewer::AdaptBrowserViewWidget::on_border_checkBox__stateChanged(int che
         label_widget_->enableSeparator(true);
         emit settings_->separatorEnabled(true);
 
-        QSettings settings("SigViewer");
+        QSettings settings;
         settings.beginGroup("SignalBrowserModel");
         settings.setValue("show_separator", ui_.border_checkBox_->checkState());
         settings.endGroup();

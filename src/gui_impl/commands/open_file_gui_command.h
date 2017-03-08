@@ -9,7 +9,7 @@
 #include "gui/gui_action_command.h"
 #include "gui/gui_action_factory_registrator.h"
 #include "file_handling/file_signal_reader.h"
-#include "gui_impl\dialogs\basic_header_info_dialog.h"
+#include "gui_impl/dialogs/basic_header_info_dialog.h"
 
 
 namespace sigviewer

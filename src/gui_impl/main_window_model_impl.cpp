@@ -44,7 +44,7 @@ MainWindowModelImpl::~MainWindowModelImpl ()
 //-----------------------------------------------------------------------------
 void MainWindowModelImpl::loadSettings()
 {
-    QSettings settings("SigViewer");
+    QSettings settings;
     settings.beginGroup("MainWindowModelImpl");
 
     int size = settings.beginReadArray("recent_file");
@@ -62,7 +62,7 @@ void MainWindowModelImpl::loadSettings()
 //-----------------------------------------------------------------------------
 void MainWindowModelImpl::saveSettings()
 {
-    QSettings settings("SigViewer");
+    QSettings settings;
     settings.beginGroup("MainWindowModelImpl");
     settings.beginWriteArray("recent_file");
 

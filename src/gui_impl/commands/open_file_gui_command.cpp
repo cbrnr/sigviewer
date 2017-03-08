@@ -54,7 +54,7 @@ GuiActionFactoryRegistrator OpenFileGuiCommand::registrator_ ("Opening",
 OpenFileGuiCommand::OpenFileGuiCommand ()
     : GuiActionCommand (ACTIONS_)
 {
-    QSettings settings("SigViewer");
+    QSettings settings;
     do_not_show_warning_message = settings.value("DoNotShowWarningMessage", false).toBool();
 }
 
@@ -143,7 +143,7 @@ void OpenFileGuiCommand::open ()
     QString extensions;
     foreach (QString extension, extension_list)
         extensions.append (extension + " ");
-    QSettings settings ("SigViewer");
+    QSettings settings;
     QString open_path = settings.value ("file_open_path").toString();
     if (!open_path.length())
         open_path = QDir::homePath ();
@@ -165,7 +165,7 @@ void OpenFileGuiCommand::open ()
 void OpenFileGuiCommand::importEvents ()
 {
     QString extensions = "*.csv";
-    QSettings settings ("SigViewer");
+    QSettings settings;
     QString open_path = settings.value ("file_open_path").toString();
     if (!open_path.length())
         open_path = QDir::homePath ();
@@ -219,7 +219,7 @@ void OpenFileGuiCommand::importEvents ()
                 {
                     if(dontShowCheckBox->checkState() == Qt::Checked)
                     {
-                        QSettings settings("SigViewer");
+                        QSettings settings;
                         settings.setValue("DoNotShowWarningMessage", true);
                         do_not_show_warning_message = true;
                     }
@@ -228,7 +228,7 @@ void OpenFileGuiCommand::importEvents ()
                 {
                     if(dontShowCheckBox->checkState() == Qt::Checked)
                     {
-                        QSettings settings("SigViewer");
+                        QSettings settings;
                         settings.setValue("DoNotShowWarningMessage", true);
 
                         do_not_show_warning_message = true;
@@ -310,7 +310,7 @@ void OpenFileGuiCommand::openFileImpl (QString file_path, bool instantly)
     QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
                                                  channel_manager, file_signal_reader->getBasicHeader()));
 
-    QSettings settings("SigViewer");
+    QSettings settings;
     settings.setValue("file_open_path", file_path.left (file_path.length() -
                                                         file_name.length()));
 
