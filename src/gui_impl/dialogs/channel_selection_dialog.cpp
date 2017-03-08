@@ -76,6 +76,8 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
                 }
             }
         }
+
+        ui_.toggle_button->setText(tr("Collapse All"));
     }
     else
     {
@@ -93,6 +95,8 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
                 channelItem->setForeground(1, Qt::white);
             row++;
         }
+
+        ui_.toggle_button->hide();
     }
 
     ui_.select_all_button_->setDisabled (true);
@@ -277,4 +281,18 @@ void ChannelSelectionDialog::updateColor (QTreeWidgetItem *item, QColor const& c
         item->setForeground(1, Qt::black);
 }
 
+}
+
+void sigviewer::ChannelSelectionDialog::on_toggle_button_clicked()
+{
+    if (ui_.toggle_button->text().compare("Collapse All") == 0)
+    {
+        ui_.treeWidget->collapseAll();
+        ui_.toggle_button->setText(tr("Expand All"));
+    }
+    else if (ui_.toggle_button->text().compare("Expand All") == 0)
+    {
+        ui_.treeWidget->expandAll();
+        ui_.toggle_button->setText(tr("Collapse All"));
+    }
 }
