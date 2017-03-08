@@ -1,3 +1,12 @@
+Version 0.6.0
+(+) Add support for XDF files
+(B) Properly handle missing data
+(+) Export and import events to/from CSV files
+(*) Redesign view options widget
+(*) New icon theme
+(*) Switch from Qt 4 to Qt 5
+(*) Many UI improvements (channel separators, grids, dialogs)
+
 Version 0.5.2
 (*) Integrated patches from the BioSig project
 
