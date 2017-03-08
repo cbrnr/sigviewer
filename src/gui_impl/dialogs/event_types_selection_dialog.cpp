@@ -92,10 +92,8 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
                                       Qt::ItemIsEnabled);
 
                 QColor color = color_manager_->getEventColor(event_type);
-                if (selected_types_.count(event_type))
-                    event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Checked);
-                else
-                    event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Unchecked);
+
+                event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Checked);
 
                 event_item->setText (NAME_COLUMN_INDEX_, event_name);
 
