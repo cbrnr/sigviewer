@@ -163,7 +163,7 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
         if (!connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int))))
             throw (Exception ("MainWindowModelImpl::createSignalVisualisationOfFile failed: connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)))"));
         connect (tab_widget_, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
-        tab_widget_->setTabsClosable (true);
+//        tab_widget_->setTabsClosable (true);
     }
 
     recent_file_list_.removeAll (file_ctx->getFilePathAndName());
