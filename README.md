@@ -8,7 +8,7 @@ Download
 - [SigViewer 0.6.0 (Windows)]() (Windows 7-10, 32bit)
 - [SigViewer 0.6.0 (macOS)]() (macOS 10.9-10.12, 64bit)
 - [SigViewer 0.6.0 (Linux)]() (64bit)
-
+- [SigViewer 0.6.0 (Source)]()
 
 Building SigViewer
 ------------------
