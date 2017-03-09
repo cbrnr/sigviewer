@@ -136,13 +136,19 @@ std::set<EventType> selectEventTypes (std::set<EventType> const& preselected_typ
     if (event_manager.isNull())
         return selected_types;
 
+    selected_types = preselected_type;
+
     EventTypesSelectionDialog dialog (QObject::tr("Select Event Types"),
                                       event_manager, preselected_type,
                                       color_manager, 0);
-    int result = dialog.exec();
-    selected_types = dialog.getSelectedTypes ();
-    if (result == QDialog::Accepted)
+
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        selected_types = dialog.getSelectedTypes ();
         dialog.storeColors ();
+        return selected_types;
+    }
+
     return selected_types;
 }
 
