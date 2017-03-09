@@ -12,7 +12,6 @@ Component.prototype.createOperations = function()
 
     if (systemInfo.productType === "windows") {
         component.addOperation("CreateShortcut", "@TargetDir@/sigviewer.exe", "@StartMenuDir@/SigViewer.lnk",
-            "workingDirectory=@TargetDir@", "iconPath=%SystemRoot%/system32/SHELL32.dll",
-            "iconId=2");
+            "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/sigviewer.ico");
     }
 }
