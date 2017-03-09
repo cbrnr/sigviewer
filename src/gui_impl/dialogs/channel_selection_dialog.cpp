@@ -45,13 +45,16 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
         for (size_t i = 0; i < XDFdata->streams.size(); i++)
         {
             QTreeWidgetItem* streamItem = new QTreeWidgetItem(ui_.treeWidget);
-            streamItem->setText(0, tr("Stream ").append(QString::number(i)));
+            streamItem->setText(0, tr("Stream ").append
+                                (QString::number(i).append(tr(" (")).append
+                                 (QString::fromStdString(XDFdata->streams[i].info.name))
+                                 .append(") ")));
             streamItem->setFlags(Qt::ItemIsAutoTristate | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
             streamItem->setExpanded(true);
             if (XDFdata->streams[i].info.channel_format.compare("string") == 0)
             {
                 streamItem->setForeground(0, NOT_VISIBLE_COLOR_);
-                streamItem->setText(0, streamItem->text(0).append(tr(" (text events only)")));
+                streamItem->setText(0, streamItem->text(0).append(tr(" -text events only")));
             }
             else
             {
