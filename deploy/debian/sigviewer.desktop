@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=SigViewer
+Version=1.0
+Comment=SigViewer is a viewing application for biosignals
+Exec=/usr/bin/sigviewer
+Icon=sigviewer128.png
+Type=Application
+Categories=Science

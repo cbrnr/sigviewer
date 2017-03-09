@@ -8,4 +8,4 @@ Replaces: sigviewer (<< <version>)
 Installed-Size: <bin-size-via-script>
 Maintainer: Clemens Brunner <clemens.brunner@gmail.com>
 Homepage: https://github.com/cbrnr/sigviewer
-Description: SigViewer is a viewing application for biosignals such as electroencephalographic (EEG) data.
+Description: SigViewer is a viewing application for biosignals.
