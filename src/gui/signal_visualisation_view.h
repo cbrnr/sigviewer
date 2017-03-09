@@ -6,6 +6,8 @@
 #ifndef SIGNAL_VISUALISATION_VIEW_H
 #define SIGNAL_VISUALISATION_VIEW_H
 
+#include "gui_impl\signal_browser\signal_browser_graphics_view.h"
+
 #include <QPainter>
 #include <QSharedPointer>
 #include <QImage>
@@ -24,6 +26,7 @@ public:
 
     virtual int getViewportHeight () const = 0;
     virtual int getViewportWidth () const = 0;
+    virtual SignalBrowserGraphicsView* getGraphicsView () const = 0;
 };
 
 }
