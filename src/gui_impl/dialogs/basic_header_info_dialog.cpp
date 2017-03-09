@@ -66,11 +66,30 @@ void BasicHeaderInfoDialog::toggleCollapseExpand()
     {
         info_tree_widget_->collapseAll();
         toggle_button_->setText("Expand All");
+        QTreeWidgetItemIterator it(info_tree_widget_, QTreeWidgetItemIterator::HasChildren);
+        while (*it)
+        {
+            if ((*it)->text(0).startsWith("Stream", Qt::CaseInsensitive))
+            {
+                int streamNumber = (*it)->text(0).remove("Stream ").toInt();
+                (*it)->setText(1, QString::fromStdString(XDFdata->streams[streamNumber].info.name));
+            }
+            ++it;
+        }
     }
     else if (toggle_button_->text().compare("Expand All") == 0)
     {
         info_tree_widget_->expandAll();
         toggle_button_->setText("Collapse All");
+        QTreeWidgetItemIterator it(info_tree_widget_, QTreeWidgetItemIterator::HasChildren);
+        while (*it)
+        {
+            if ((*it)->text(0).startsWith("Stream", Qt::CaseInsensitive))
+            {
+                (*it)->setText(1, "");
+            }
+            ++it;
+        }
     }
 }
 
