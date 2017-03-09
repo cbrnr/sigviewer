@@ -43,8 +43,8 @@ MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
     initMenus(application_context);
     setUnifiedTitleAndToolBarOnMac (true);
     
-    QSettings settings("SigViewer");
-    resize(settings.value("MainWindow/size", QSize(900, 800)).toSize());
+    QSettings settings;
+    resize(settings.value("MainWindow/size", QSize(1200, 800)).toSize());
     setMinimumSize(900, 800);
     restoreGeometry(settings.value("geometry").toByteArray());  //restore geometry and window state (full screen etc.)
     restoreState(settings.value("windowState").toByteArray());
@@ -66,7 +66,7 @@ void MainWindow::initStatusBar()
     status_bar_nr_channels_label_->setAlignment(Qt::AlignHCenter);
     status_bar->addPermanentWidget(status_bar_signal_length_label_);
     status_bar->addPermanentWidget(status_bar_nr_channels_label_);
-    QSettings settings ("SigViewer");
+    QSettings settings;
     status_bar->setVisible (settings.value ("MainWindow/statusbar", true).toBool());
 }
 
@@ -119,7 +119,7 @@ void MainWindow::initToolBars()
 void MainWindow::toggleStatusBar (bool visible)
 {
     statusBar()->setVisible (visible);
-    QSettings settings ("SigViewer");
+    QSettings settings;
     settings.setValue("MainWindow/statusbar", statusBar()->isVisible());
 }
 
@@ -225,7 +225,7 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     mouse_mode_menu_->addAction (action("View Options"));
 
 
-    QSettings settings ("SigViewer");
+    QSettings settings;
 
     QAction* toggle_status_bar = new QAction (tr("Statusbar"), this);
     toggle_status_bar->setCheckable (true);
@@ -269,7 +269,7 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
 //-----------------------------------------------------------------------------
 void MainWindow::closeEvent (QCloseEvent* event)
 {
-    QSettings settings("SigViewer");
+    QSettings settings;
     settings.setValue("geometry", saveGeometry());
     settings.setValue("windowState", saveState());
 
@@ -305,7 +305,7 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 //-----------------------------------------------------------------------------
 void MainWindow::resizeEvent (QResizeEvent* event)
 {
-    QSettings settings ("SigViewer");
+    QSettings settings;
     settings.setValue("MainWindow/size", event->size());
 }
 

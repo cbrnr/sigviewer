@@ -65,7 +65,7 @@ void AdaptChannelViewGuiCommand::init ()
     getQAction(SET_AUTO_SCALE_MAX_TO_MAX_)->setCheckable(true);
     getQAction(SET_AUTO_SCALE_MIN_TO_MAX_)->setCheckable(true);
     getQAction(ANIMATIONS_)->setCheckable(true);
-    QSettings settings ("SigViewer");
+    QSettings settings;
     settings.beginGroup("Animations");
     getQAction(ANIMATIONS_)->setChecked (settings.value("activated", false).toBool());
     settings.endGroup();
@@ -205,7 +205,7 @@ void AdaptChannelViewGuiCommand::setScaleModeZeroFitted ()
 //-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::toggleAnimations ()
 {
-    QSettings settings ("SigViewer");
+    QSettings settings;
     settings.beginGroup ("Animations");
     settings.setValue ("activated", getQAction(ANIMATIONS_)->isChecked ());
     settings.endGroup ();
@@ -214,11 +214,13 @@ void AdaptChannelViewGuiCommand::toggleAnimations ()
 //-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::setAnimationDuration ()
 {
-    QSettings settings ("SigViewer");
+    QSettings settings;
     settings.beginGroup ("Animations");
 
     bool ok = false;
-    int new_duration = QInputDialog::getInt(0, tr("Set Animation Duration"), tr("Milliseconds:"), settings.value("duration", 200).toInt(), 0, 1000, 100, &ok);
+    int new_duration = QInputDialog::getInt
+            (0, tr("Set Animation Duration"), tr("Milliseconds:"),
+             settings.value("duration", 200).toInt(), 0, 1000, 100, &ok);
     if (ok)
         settings.setValue ("duration", new_duration);
     settings.endGroup ();

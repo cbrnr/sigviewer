@@ -10,7 +10,6 @@
 #include <cmath>
 #include <algorithm>
 
-#include <QTreeWidget>
 #include <QDateTime>
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -40,37 +39,64 @@ BasicHeaderInfoDialog::BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header,
     top_layout->addLayout(button_layout);
     button_layout->addStretch(1);
     close_button_ = new QPushButton(tr("Close"), this);
+    toggle_button_ = new QPushButton(tr("Collapse All"), this);
+    button_layout->addWidget(toggle_button_);
     button_layout->addWidget(close_button_);
     button_layout->addStretch(1);
     buildTree();
     resize(850, 850);
     top_layout->activate();
+    readSettings();
     connect(close_button_, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(toggle_button_, SIGNAL(clicked()), this, SLOT(toggleCollapseExpand()));
+    connect(info_tree_widget_, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(showStreamName(QTreeWidgetItem*)));
+    connect(info_tree_widget_, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(hideStreamName(QTreeWidgetItem*)));
 }
 
-// load settings
-void BasicHeaderInfoDialog::loadSettings()
+BasicHeaderInfoDialog::~BasicHeaderInfoDialog()
 {
-    QSettings settings("SigViewer");
+    QSettings settings;
     settings.beginGroup("BasicHeaderInfoDialog");
-    resize(settings.value("size", QSize(850, 850)).toSize());
-    move(settings.value("pos", QPoint(200, 200)).toPoint());
-    info_tree_widget_->header()->resizeSection(0, settings.value("col0_width", 400).toInt());
-    info_tree_widget_->header()->resizeSection(1, settings.value("col1_width", 450).toInt());
-
+    settings.setValue("geometry", saveGeometry());
     settings.endGroup();
 }
 
-// save settings
-void BasicHeaderInfoDialog::saveSettings()
+void BasicHeaderInfoDialog::toggleCollapseExpand()
 {
-    QSettings settings("SigViewer");
-    settings.beginGroup("BasicHeaderInfoDialog");
-    settings.setValue("size", size());
-    settings.setValue("pos", pos());
-    settings.setValue("col0_width", info_tree_widget_->header()->sectionSize(0));
-    settings.setValue("col1_width", info_tree_widget_->header()->sectionSize(1));
+    if (toggle_button_->text().compare("Collapse All") == 0)
+    {
+        info_tree_widget_->collapseAll();
+        toggle_button_->setText("Expand All");
+    }
+    else if (toggle_button_->text().compare("Expand All") == 0)
+    {
+        info_tree_widget_->expandAll();
+        toggle_button_->setText("Collapse All");
+    }
+}
 
+void BasicHeaderInfoDialog::showStreamName(QTreeWidgetItem *item)
+{
+    if (item->text(0).startsWith("Stream", Qt::CaseInsensitive))
+    {
+        int streamNumber = item->text(0).remove("Stream ").toInt();
+        item->setText(1, QString::fromStdString(XDFdata->streams[streamNumber].info.name));
+    }
+}
+
+void BasicHeaderInfoDialog::hideStreamName(QTreeWidgetItem *item)
+{
+    if (item->text(0).startsWith("Stream", Qt::CaseInsensitive))
+    {
+        item->setText(1, "");
+    }
+}
+
+void BasicHeaderInfoDialog::readSettings()
+{
+    QSettings settings;
+    settings.beginGroup("BasicHeaderInfoDialog");
+    restoreGeometry(settings.value("geometry").toByteArray());
     settings.endGroup();
 }
 
@@ -84,7 +110,7 @@ void BasicHeaderInfoDialog::buildTree()
     info_tree_widget_->setHeaderLabels(header_labels);
 
     info_tree_widget_->header()->setSectionResizeMode(QHeaderView::Interactive);
-    info_tree_widget_->setColumnWidth(0, this->width()/1.6);
+    info_tree_widget_->setColumnWidth(0, width() * 0.65);
     info_tree_widget_->setAnimated(true);
 
     QTreeWidgetItem* root_item;

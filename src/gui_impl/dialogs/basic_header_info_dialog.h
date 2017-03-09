@@ -10,8 +10,8 @@
 
 #include <QDialog>
 #include <QSharedPointer>
+#include <QTreeWidget>
 
-class QTreeWidget;
 class QPushButton;
 
 namespace sigviewer
@@ -24,8 +24,13 @@ class BasicHeaderInfoDialog : public QDialog
 public:
     BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header, QWidget* parent = 0);
 
-    void loadSettings();
-    void saveSettings();
+    ~BasicHeaderInfoDialog();
+
+public slots:
+    void toggleCollapseExpand();
+
+    void showStreamName(QTreeWidgetItem* item);    //show Stream name when collapsed
+    void hideStreamName(QTreeWidgetItem* item);    //hide Stream name when expanded
 
 private:
     // not allowed
@@ -38,6 +43,9 @@ private:
     QSharedPointer<BasicHeader> basic_header_;
     QTreeWidget* info_tree_widget_;
     QPushButton* close_button_;
+    QPushButton* toggle_button_;    //toggle expand/collapse all
+
+    void readSettings();
 };
 
 }

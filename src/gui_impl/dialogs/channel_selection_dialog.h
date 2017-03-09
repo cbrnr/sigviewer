@@ -42,6 +42,8 @@ private slots:
    void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
    void on_treeWidget_itemChanged(QTreeWidgetItem *item, int column);
 
+   void on_toggle_button_clicked();
+
 private:
     void updateColor (QTreeWidgetItem *item, QColor const& color);
     void resizeEvent(QResizeEvent *event);

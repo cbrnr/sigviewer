@@ -29,7 +29,7 @@ void animateProperty (QObject* target, QByteArray const& property_name,
                       QVariant const& start_value, QVariant const& end_value,
                       QObject* call_back_object, char const* call_back_slot)
 {
-    QSettings settings ("SigViewer");
+    QSettings settings;
     settings.beginGroup("Animations");
     bool animations_activated = settings.value("activated", false).toBool();
     int animation_duration = settings.value("duration", 200).toInt();
@@ -136,13 +136,19 @@ std::set<EventType> selectEventTypes (std::set<EventType> const& preselected_typ
     if (event_manager.isNull())
         return selected_types;
 
+    selected_types = preselected_type;
+
     EventTypesSelectionDialog dialog (QObject::tr("Select Event Types"),
                                       event_manager, preselected_type,
                                       color_manager, 0);
-    int result = dialog.exec();
-    selected_types = dialog.getSelectedTypes ();
-    if (result == QDialog::Accepted)
+
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        selected_types = dialog.getSelectedTypes ();
         dialog.storeColors ();
+        return selected_types;
+    }
+
     return selected_types;
 }
 

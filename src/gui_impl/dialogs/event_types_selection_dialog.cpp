@@ -92,10 +92,8 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
                                       Qt::ItemIsEnabled);
 
                 QColor color = color_manager_->getEventColor(event_type);
-                if (selected_types_.count(event_type))
-                    event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Checked);
-                else
-                    event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Unchecked);
+
+                event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Checked);
 
                 event_item->setText (NAME_COLUMN_INDEX_, event_name);
 
@@ -275,5 +273,20 @@ void EventTypesSelectionDialog::handleAlpha (QTreeWidgetItem* item)
     item->setTextColor (ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
     item->setText (ALPHA_COLUMN_INDEX_, QString::number (color.alpha()));
 }
+
+}
+
+void sigviewer::EventTypesSelectionDialog::on_toggle_collapse_expand_button_clicked()
+{
+    if (ui_.toggle_collapse_expand_button->text().compare("Collapse All") == 0)
+    {
+        ui_.tree_widget_->collapseAll();
+        ui_.toggle_collapse_expand_button->setText("Expand All");
+    }
+    else if (ui_.toggle_collapse_expand_button->text().compare("Expand All") == 0)
+    {
+        ui_.tree_widget_->expandAll();
+        ui_.toggle_collapse_expand_button->setText("Collapse All");
+    }
 
 }

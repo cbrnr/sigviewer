@@ -9,6 +9,8 @@
 #include "gui/gui_action_command.h"
 #include "gui/gui_action_factory_registrator.h"
 #include "file_handling/file_signal_reader.h"
+#include "gui_impl/dialogs/basic_header_info_dialog.h"
+
 
 namespace sigviewer
 {
@@ -70,6 +72,8 @@ private:
     QString showOpenDialog (QString const& path, QString const& extensions);
 
     bool do_not_show_warning_message;
+
+    QSharedPointer<BasicHeaderInfoDialog> basic_header_info_dialog;
 };
 
 }
