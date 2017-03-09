@@ -7,7 +7,7 @@ Download
 --------
 - [SigViewer 0.6.0 (Windows)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.0/sigviewer-0.6.0-windows.exe) (Windows 7-10, 32bit)
 - [SigViewer 0.6.0 (macOS)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.0/sigviewer-0.6.0-macos.dmg) (macOS 10.9-10.12, 64bit)
-- [SigViewer 0.6.0 (Linux)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.0/sigviewer-0.6.0-linux.zip) (64bit)
+- [SigViewer 0.6.0 (Linux)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.0/sigviewer-0.6.0-linux.zip) (64bit) / [SigViewer 0.6.0 (Arch Linux AUR)](https://aur.archlinux.org/packages/sigviewer/)
 - [SigViewer 0.6.0 (Source)](https://github.com/cbrnr/sigviewer/archive/v0.6.0.zip)
 
 Building SigViewer
