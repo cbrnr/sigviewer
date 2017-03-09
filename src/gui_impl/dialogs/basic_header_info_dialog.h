@@ -10,8 +10,8 @@
 
 #include <QDialog>
 #include <QSharedPointer>
+#include <QTreeWidget>
 
-class QTreeWidget;
 class QPushButton;
 
 namespace sigviewer
@@ -28,6 +28,9 @@ public:
 
 public slots:
     void toggleCollapseExpand();
+
+    void showStreamName(QTreeWidgetItem* item);    //show Stream name when collapsed
+    void hideStreamName(QTreeWidgetItem* item);    //hide Stream name when expanded
 
 private:
     // not allowed

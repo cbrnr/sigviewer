@@ -10,7 +10,6 @@
 #include <cmath>
 #include <algorithm>
 
-#include <QTreeWidget>
 #include <QDateTime>
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -50,6 +49,8 @@ BasicHeaderInfoDialog::BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header,
     readSettings();
     connect(close_button_, SIGNAL(clicked()), this, SLOT(accept()));
     connect(toggle_button_, SIGNAL(clicked()), this, SLOT(toggleCollapseExpand()));
+    connect(info_tree_widget_, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(showStreamName(QTreeWidgetItem*)));
+    connect(info_tree_widget_, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(hideStreamName(QTreeWidgetItem*)));
 }
 
 BasicHeaderInfoDialog::~BasicHeaderInfoDialog()
@@ -66,30 +67,28 @@ void BasicHeaderInfoDialog::toggleCollapseExpand()
     {
         info_tree_widget_->collapseAll();
         toggle_button_->setText("Expand All");
-        QTreeWidgetItemIterator it(info_tree_widget_, QTreeWidgetItemIterator::HasChildren);
-        while (*it)
-        {
-            if ((*it)->text(0).startsWith("Stream", Qt::CaseInsensitive))
-            {
-                int streamNumber = (*it)->text(0).remove("Stream ").toInt();
-                (*it)->setText(1, QString::fromStdString(XDFdata->streams[streamNumber].info.name));
-            }
-            ++it;
-        }
     }
     else if (toggle_button_->text().compare("Expand All") == 0)
     {
         info_tree_widget_->expandAll();
         toggle_button_->setText("Collapse All");
-        QTreeWidgetItemIterator it(info_tree_widget_, QTreeWidgetItemIterator::HasChildren);
-        while (*it)
-        {
-            if ((*it)->text(0).startsWith("Stream", Qt::CaseInsensitive))
-            {
-                (*it)->setText(1, "");
-            }
-            ++it;
-        }
+    }
+}
+
+void BasicHeaderInfoDialog::showStreamName(QTreeWidgetItem *item)
+{
+    if (item->text(0).startsWith("Stream", Qt::CaseInsensitive))
+    {
+        int streamNumber = item->text(0).remove("Stream ").toInt();
+        item->setText(1, QString::fromStdString(XDFdata->streams[streamNumber].info.name));
+    }
+}
+
+void BasicHeaderInfoDialog::hideStreamName(QTreeWidgetItem *item)
+{
+    if (item->text(0).startsWith("Stream", Qt::CaseInsensitive))
+    {
+        item->setText(1, "");
     }
 }
 
