@@ -54,7 +54,7 @@ BasicHeaderInfoDialog::BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header,
 
 BasicHeaderInfoDialog::~BasicHeaderInfoDialog()
 {
-    QSettings settings("SigViewer");
+    QSettings settings;
     settings.beginGroup("BasicHeaderInfoDialog");
     settings.setValue("geometry", saveGeometry());
     settings.endGroup();
@@ -76,7 +76,7 @@ void BasicHeaderInfoDialog::toggleCollapseExpand()
 
 void BasicHeaderInfoDialog::readSettings()
 {
-    QSettings settings("SigViewer");
+    QSettings settings;
     settings.beginGroup("BasicHeaderInfoDialog");
     restoreGeometry(settings.value("geometry").toByteArray());
     settings.endGroup();

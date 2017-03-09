@@ -73,7 +73,7 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
     connect(signal_view_settings.data(), SIGNAL(gridColorChanged(QColor)), SLOT(updateGridColor(QColor)));
     connect(signal_view_settings.data(), SIGNAL(labelColorChanged(QColor)), SLOT(updateLabelColor(QColor)));
 
-    QSettings settings("SigViewer");
+    QSettings settings;
 
     settings.beginGroup("SignalBrowserModel");
     draw_x_grid_ = settings.value("show_x_grid", false).toBool();

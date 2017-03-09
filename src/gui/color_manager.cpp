@@ -48,7 +48,7 @@ QColor ColorManager::getDefaultChannelColor () const
 void ColorManager::setDefaultChannelColor (QColor const& color)
 {
     default_channel_color_ = color;
-    QSettings settings ("SigViewer");
+    QSettings settings;
     settings.beginGroup ("ColorManager");
     settings.setValue (DEFAULT_CHANNEL_COLOR_SETTING_, color);
     settings.endGroup ();
@@ -122,7 +122,7 @@ void ColorManager::loadSettings()
         event_type2color_[*it] = default_event_colors_[*it];
     }
 
-    QSettings settings("SigViewer");
+    QSettings settings;
     settings.beginGroup("ColorManager");
 
 
@@ -160,7 +160,7 @@ void ColorManager::loadSettings()
 void ColorManager::saveSettings()
 {
     qDebug() << "color manager save settings";
-    QSettings settings("SigViewer");
+    QSettings settings;
     settings.beginGroup("ColorManager");
     settings.beginWriteArray("event");
     int32 i = 0;
