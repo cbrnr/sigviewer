@@ -30,7 +30,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
 {
     ui_.setupUi (this);
 
-    setWindowTitle (tr("Channels"));
+    setWindowTitle (tr("Select Channels"));
 
     QStringList headerLabels;
     headerLabels << tr("Channel") << tr("Color");
