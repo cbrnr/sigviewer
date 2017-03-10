@@ -6,7 +6,7 @@
 #ifndef SIGNAL_VISUALISATION_VIEW_H
 #define SIGNAL_VISUALISATION_VIEW_H
 
-#include "gui_impl\signal_browser\signal_browser_graphics_view.h"
+#include "gui_impl/signal_browser/signal_browser_graphics_view.h"
 
 #include <QPainter>
 #include <QSharedPointer>
