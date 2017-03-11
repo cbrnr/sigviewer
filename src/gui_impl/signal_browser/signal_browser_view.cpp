@@ -12,6 +12,7 @@
 #include "event_creation_widget.h"
 #include "event_editing_widget.h"
 #include "adapt_browser_view_widget.h"
+//#include "gui_impl/gui_helper_functions.h"
 
 #include <QGraphicsLineItem>
 #include <QGridLayout>

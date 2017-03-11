@@ -44,9 +44,6 @@
          <property name="text">
           <string>Select All</string>
          </property>
-         <property name="autoDefault">
-          <bool>false</bool>
-         </property>
         </widget>
        </item>
        <item>
@@ -54,18 +51,12 @@
          <property name="text">
           <string>Unselect All</string>
          </property>
-         <property name="autoDefault">
-          <bool>false</bool>
-         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="toggle_button">
          <property name="text">
           <string>Collapse All</string>
-         </property>
-         <property name="autoDefault">
-          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -94,18 +85,12 @@
           <property name="text">
            <string>Reset All Colors</string>
           </property>
-          <property name="autoDefault">
-           <bool>false</bool>
-          </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="set_default_color_button_">
           <property name="text">
            <string>Set Default Color</string>
-          </property>
-          <property name="autoDefault">
-           <bool>false</bool>
           </property>
          </widget>
         </item>
