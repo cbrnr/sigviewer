@@ -68,8 +68,6 @@ public:
     virtual bool getLabelsVisibility () const;
     virtual int getViewportHeight () const;
     virtual int getViewportWidth () const;
-    virtual SignalBrowserGraphicsView* getGraphicsView () const {return graphics_view_;}
-
 
 public slots:
     void setMode (SignalVisualisationMode mode);
