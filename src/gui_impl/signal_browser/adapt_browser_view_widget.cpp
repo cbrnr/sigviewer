@@ -123,8 +123,8 @@ void AdaptBrowserViewWidget::on_channelsPerPageSpinbox_valueChanged (int value)
         return;
 
     self_updating_ = true;
-    int new_channel_height = signal_visualisation_view_->getViewportHeight() /
-                             value - 1; // - 1 to fit the lower border of the last channel
+    int new_channel_height = round(signal_visualisation_view_->getViewportHeight() / (double)value);
+
     GuiHelper::animateProperty (settings_.data(), "channelHeight", settings_->getChannelHeight(),
                                 new_channel_height, this, SLOT(selfUpdatingFinished()));
 }
@@ -154,8 +154,9 @@ void AdaptBrowserViewWidget::updateValues ()
     ui_.labels_checkbox_->setChecked (signal_visualisation_view_->getLabelsVisibility ());
     ui_.yGridSlider->setValue (settings_->getGridFragmentation(Qt::Vertical));
     //ui_.xGridSlider->setValue (settings_->getGridFragmentation(Qt::Horizontal));
-    ui_.channelsPerPageSpinbox->setValue (signal_visualisation_view_->getViewportHeight() /
-                                          settings_->getChannelHeight());
+    ui_.channelsPerPageSpinbox->setValue (round(signal_visualisation_view_->getViewportHeight() /
+                                          (double)settings_->getChannelHeight()));
+
     ui_.secsPerPageSpinbox->setValue ((signal_visualisation_view_->getViewportWidth() /
                                        settings_->getPixelsPerSample()) /
                                       settings_->getChannelManager().getSampleRate());
