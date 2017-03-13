@@ -10,6 +10,10 @@ Download
 - [SigViewer 0.6.0 (Linux)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.0/sigviewer-0.6.0-linux.zip) (64bit) / [SigViewer 0.6.0 (Arch Linux AUR)](https://aur.archlinux.org/packages/sigviewer/)
 - [SigViewer 0.6.0 (Source)](https://github.com/cbrnr/sigviewer/archive/v0.6.0.zip)
 
+Screenshots
+-----------
+![screenshot-1](https://github.com/cbrnr/sigviewer/raw/master/screenshot-1.png)
+
 Building SigViewer
 ------------------
 SigViewer requires a standard-compliant C++11 build toolchain, for example recent versions of [GCC](https://gcc.gnu.org/) or [Clang](https://clang.llvm.org/). Other compilers such as [MSVC](https://en.wikipedia.org/wiki/Visual_C%2B%2B) might work, but are not tested. Furthermore, SigViewer depends on [Qt](https://www.qt.io/). Current SigViewer builds use Qt 5.8 (previous or future versions are not guaranteed to work).
