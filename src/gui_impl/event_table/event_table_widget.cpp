@@ -44,7 +44,7 @@ EventTableWidget::EventTableWidget (QSharedPointer<TabContext> tab_context,
     ui_.event_table_->sortByColumn (POSITION_INDEX_);
     ui_.event_table_->hideColumn (ID_INDEX_);
     QToolBar* toolbar = new QToolBar (this);
-    toolbar->setToolButtonStyle (Qt::ToolButtonTextBesideIcon);
+    toolbar->setToolButtonStyle (Qt::ToolButtonTextUnderIcon);
     toolbar->setOrientation (Qt::Vertical);
     toolbar->addAction (GuiActionFactory::getInstance()->getQAction ("Delete"));
     toolbar->addAction (GuiActionFactory::getInstance()->getQAction ("Export Events..."));
