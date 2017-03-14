@@ -47,6 +47,7 @@ EventTableWidget::EventTableWidget (QSharedPointer<TabContext> tab_context,
     toolbar->setToolButtonStyle (Qt::ToolButtonTextBesideIcon);
     toolbar->setOrientation (Qt::Vertical);
     toolbar->addAction (GuiActionFactory::getInstance()->getQAction ("Delete"));
+    toolbar->addAction (GuiActionFactory::getInstance()->getQAction ("Export Events..."));
     ui_.horizontalLayout->addWidget (toolbar);
 }
 
