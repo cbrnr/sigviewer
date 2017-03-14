@@ -30,5 +30,6 @@
         <file>images/ic_help_outline_black_24dp.png</file>
         <file>color_settings.xml</file>
         <file>images/ic_file_upload_black_24dp.png</file>
+        <file>images/ic_file_download_black_24dp.png</file>
     </qresource>
 </RCC>
