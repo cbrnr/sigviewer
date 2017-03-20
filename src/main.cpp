@@ -33,8 +33,9 @@ int main(int argc, char* argv[])
     QApplication::setApplicationName("SigViewer");
     QApplication::setApplicationVersion(QString("%1.%2.%3").arg(VERSION_MAJOR).arg(VERSION_MINOR).arg(VERSION_BUILD));
 
-    if (QSysInfo::productType() == "macos" || QSysInfo::productType() == "osx")
+    #ifdef Q_OS_MAC
         QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
+    #endif
 
     QCommandLineParser parser;
     parser.setApplicationDescription("SigViewer - a biosignal viewer.");
