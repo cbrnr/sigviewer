@@ -71,7 +71,7 @@ To build libxdf from source, follow these steps:
 
 1. Download and unzip the [libxdf source](https://github.com/Yida-Lin/libxdf/archive/v0.92.zip) (SigViewer 0.6.0 uses libxdf 0.92).
 1. On the command line, run `qmake` followed by `mingw32-make` (or build the project with Qt Creator).
-2. Copy `xdf.h` into `$sigviewer/external/include` and `libbiosig.a` to `$sigviewer/external/lib`.
+2. Copy `xdf.h` into `$sigviewer/external/include` and `libxdf.a` to `$sigviewer/external/lib`.
 
 ### macOS
 To build libbiosig from source, follow these steps:
@@ -89,7 +89,7 @@ To build libxdf from source, follow these steps:
 
 1. Download and unzip the [libxdf source](https://github.com/Yida-Lin/libxdf/archive/v0.92.zip) (SigViewer 0.6.0 uses libxdf 0.92).
 1. In a terminal, run `qmake` followed by `make`.
-1. Copy `xdf.h` into `$sigviewer/external/include` and `libbiosig.a` to `$sigviewer/external/lib`.
+1. Copy `xdf.h` into `$sigviewer/external/include` and `libxdf.a` to `$sigviewer/external/lib`.
 
 ### Linux
 To build libbiosig from source, follow these steps:
