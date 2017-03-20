@@ -254,8 +254,49 @@ int XDFReader::setStreamColors()
     }
 
     //set event colors
+    srand (time(NULL));     /* initialize random seed: */
+
+    QVector<QColor> eventColorList = {"#0055ff", "#00aa00", "#aa00ff", "#ff0000", "#00557f",
+                                 "#5555ff", "#ff55ff", "#00aaff", "#00aa7f", "#ff5500"};
+
+    colorChoice = 5;    //Set the first event color to be pink
+
     for (size_t type = 0; type < 254; type++)
-        colorPicker->setEventColor(type, QColor(0, 85, 255, 80));
+    {
+        /* generate random number: */
+        int red = rand() % 41 + (-20);
+        int green = rand() % 41 + (-20);
+        int blue = rand() % 41 + (-20);
+
+        colorChoice++;
+        if (colorChoice == 10)   //we only have 10 basic colors
+            colorChoice = 0;
+
+        QColor color = eventColorList[colorChoice];
+
+        red += color.red();
+        green += color.green();
+        blue += color.blue();
+
+        if (red < 0)
+            red = 0;
+        if (red > 255)
+            red = 255;
+        if (green < 0)
+            green = 0;
+        if (green > 255)
+            green = 255;
+        if (blue < 0)
+            blue = 0;
+        if (blue > 255)
+            blue = 255;
+
+
+        color.setRgb(red, green, blue);
+        color.setAlpha(120);
+        colorPicker->setEventColor(type, color); //QColor(0, 85, 255, 80)
+        eventColorList[colorChoice] = color;
+    }
 
     colorPicker->saveSettings();
 
