@@ -11,6 +11,8 @@
 #include <QColorDialog>
 #include <QInputDialog>
 #include <QTreeWidget>
+#include <QtGlobal>
+
 
 namespace sigviewer
 {
@@ -49,7 +51,11 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
                                 (QString::number(i).append(tr(" (")).append
                                  (QString::fromStdString(XDFdata->streams[i].info.name))
                                  .append(") ")));
-            streamItem->setFlags(Qt::ItemIsAutoTristate | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+            #if QT_VERSION >= 0x050600
+                streamItem->setFlags(Qt::ItemIsAutoTristate | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+            #else
+                streamItem->setFlags(Qt::ItemIsTristate | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+            #endif
             streamItem->setExpanded(true);
             if (XDFdata->streams[i].info.channel_format.compare("string") == 0)
             {
@@ -69,7 +75,11 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
                     QTreeWidgetItem* channelItem = new QTreeWidgetItem(streamItem);
                     channelItem->setText(0, tr("Channel ").append(QString::number(channelCount)));
                     channelItem->setCheckState(0, Qt::Unchecked);
-                    channelItem->setFlags(Qt::ItemIsAutoTristate | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+                    #if QT_VERSION >= 0x050600
+                        channelItem->setFlags(Qt::ItemIsAutoTristate | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+                    #else
+                        channelItem->setFlags(Qt::ItemIsTristate | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+                    #endif
                     QColor color = color_manager_->getChannelColor (channelCount);
                     channelItem->setText(1, color.name());
                     channelItem->setBackgroundColor(1, color);
