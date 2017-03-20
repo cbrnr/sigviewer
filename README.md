@@ -105,4 +105,4 @@ To build libxdf from source, follow these steps:
 
 1. Download and unzip the [libxdf source](https://github.com/Yida-Lin/libxdf/archive/v0.92.zip) (SigViewer 0.6.0 uses libxdf 0.92).
 1. In a terminal, run `qmake` followed by `make`.
-1. Copy `xdf.h` into `$sigviewer/external/include` and `libbiosig.a` to `$sigviewer/external/lib`.
+1. Copy `xdf.h` into `$sigviewer/external/include` and `libxdf.a` to `$sigviewer/external/lib`.
