@@ -54,6 +54,8 @@ SaveGuiCommand::SaveGuiCommand ()
 void SaveGuiCommand::init ()
 {
     setIcon(SAVE_, QIcon (":/images/ic_save_black_24dp.png"));
+    setIcon(EXPORT_EVENTS_, QIcon (":/images/ic_file_upload_black_24dp.png"));
+
     setShortcut (SAVE_, QKeySequence::Save);
     setShortcut (SAVE_AS_, QKeySequence::SaveAs);
 
