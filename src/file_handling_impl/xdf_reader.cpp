@@ -379,8 +379,8 @@ void XDFReader::bufferAllChannels () const
                     if (i != stream.time_stamps.size() - 1)
                     {
                         //using linear interpolation to fill in the space between every two signals
-                        int interval = (stream.time_stamps[i+1]
-                                - stream.time_stamps[i]) * XDFdata->majSR;
+                        int interval = round((stream.time_stamps[i+1]
+                                - stream.time_stamps[i]) * XDFdata->majSR);
                         for (int interpolation = 1; interpolation <= interval; interpolation++)
                         {
                             *(pt + interpolation) = row[i] + interpolation * ((row[i+1] - row[i])) / (interval + 1);
