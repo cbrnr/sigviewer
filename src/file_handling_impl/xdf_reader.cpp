@@ -189,12 +189,11 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
             t = clock() - t - t2;
             std::cout << "it took " << ((float)t) / CLOCKS_PER_SEC << " additional seconds loading XDF header" << std::endl;
 
-//==============================================================================================================================
             bool showWarning = false;
 
             for (auto const stream : XDFdata->streams)
             {
-                if (abs(stream.info.effective_sample_rate - stream.info.nominal_srate) >
+                if (std::abs(stream.info.effective_sample_rate - stream.info.nominal_srate) >
                         stream.info.nominal_srate / 100)
                 {
                     showWarning = true;
@@ -203,9 +202,7 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
 
             if (showWarning)
                 QMessageBox::warning(0, "SigViewer",
-                                     "The effective sample rate is significantly different than nominal sample rate!\n"
-                                     "Signal visualization might be inaccurate.", QMessageBox::Ok, QMessageBox::Ok);
-//==============================================================================================================================
+                                     "The effective sampling rate of at least one stream is significantly different than the reported nominal sampling rate. Signal visualization might be inaccurate.", QMessageBox::Ok, QMessageBox::Ok);
 
             basic_header_ = QSharedPointer<BasicHeader>
                     (new BiosigBasicHeader ("XDF", file_path));
