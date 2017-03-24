@@ -263,7 +263,8 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     if (!channel_overlapping)
     {
         painter->setClipping(true);
-        painter->setClipRect(clip);
+//        painter->setClipRect(clip);
+        painter->setClipRect(0, 0, width_, height_ + 1);    // +1 to prevent overlapping
     }
 
     double pixel_per_sample = signal_view_settings_->getPixelsPerSample();
