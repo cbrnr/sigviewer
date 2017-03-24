@@ -17,8 +17,8 @@
 #include "editing_commands/macro_undo_command.h"
 #include "editing_commands/new_event_undo_command.h"
 #include "gui/progress_bar.h"
+#include "gui/color_manager.h"
 #include "close_file_gui_command.h"
-#include "xdf.h"
 #include "file_handling_impl/xdf_reader.h"
 
 #include <QFileDialog>
@@ -27,7 +27,6 @@
 #include <QCheckBox>
 
 #include <algorithm>
-#include "gui/color_manager.h"
 #include <fstream>
 
 namespace sigviewer
