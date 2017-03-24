@@ -194,7 +194,7 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
             for (auto const stream : XDFdata->streams)
             {
                 if (std::abs(stream.info.effective_sample_rate - stream.info.nominal_srate) >
-                        stream.info.nominal_srate / 100)
+                        stream.info.nominal_srate / 20)
                 {
                     showWarning = true;
                 }
