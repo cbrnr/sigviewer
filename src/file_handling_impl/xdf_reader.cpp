@@ -386,15 +386,15 @@ void XDFReader::bufferAllChannels () const
                 for (size_t i = 0; i < row.size(); i++)
                 {
                     //find out the position using the timestamp provided
-                    float* pt = raw_data->begin()  + (int)((stream.time_stamps[i]- XDFdata->minTS)* XDFdata->majSR);
+                    float* pt = raw_data->begin()  + (int)(round((stream.time_stamps[i]- XDFdata->minTS)* XDFdata->majSR));
                     *pt = row[i];
 
                     //if i is not the last element of the irregular time series
                     if (i != stream.time_stamps.size() - 1)
                     {
                         //using linear interpolation to fill in the space between every two signals
-                        int interval = (stream.time_stamps[i+1]
-                                - stream.time_stamps[i]) * XDFdata->majSR;
+                        int interval = round((stream.time_stamps[i+1]
+                                - stream.time_stamps[i]) * XDFdata->majSR);
                         for (int interpolation = 1; interpolation <= interval; interpolation++)
                         {
                             *(pt + interpolation) = row[i] + interpolation * ((row[i+1] - row[i])) / (interval + 1);
