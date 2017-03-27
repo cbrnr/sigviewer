@@ -191,7 +191,7 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
 
             bool showWarning = false;
 
-            for (auto const stream : XDFdata->streams)
+            for (auto const &stream : XDFdata->streams)
             {
                 if (std::abs(stream.info.effective_sample_rate - stream.info.nominal_srate) >
                         stream.info.nominal_srate / 20)
@@ -351,7 +351,7 @@ void XDFReader::bufferAllChannels () const
     {
         if (stream.info.nominal_srate != 0)
         {
-            int startingPosition = (stream.time_stamps.front() - XDFdata->minTS) * XDFdata->majSR;
+            int startingPosition = (stream.info.first_timestamp - XDFdata->minTS) * XDFdata->majSR;
 
             if (stream.time_series.front().size() > XDFdata->totalLen - startingPosition )
                 startingPosition = XDFdata->totalLen - stream.time_series.front().size();
@@ -371,7 +371,7 @@ void XDFReader::bufferAllChannels () const
                 std::vector<float> nothing;
                 row.swap(nothing);
             }
-            std::vector<float> nothing2;
+            std::vector<double> nothing2;
             stream.time_stamps.swap(nothing2);
         }
         //else if: irregualar samples
@@ -408,7 +408,7 @@ void XDFReader::bufferAllChannels () const
                 std::vector<float> nothing;
                 row.swap(nothing);
             }
-            std::vector<float> nothing2;
+            std::vector<double> nothing2;
             stream.time_stamps.swap(nothing2);
         }
     }
@@ -424,7 +424,7 @@ void XDFReader::bufferAllEvents () const
     for (unsigned index = 0; index < number_events; index++)
     {
         QSharedPointer<SignalEvent> event
-                (new SignalEvent ((XDFdata->eventMap[index].first.second - XDFdata->minTS) * XDFdata->majSR,
+                (new SignalEvent (round ((XDFdata->eventMap[index].first.second - XDFdata->minTS) * XDFdata->majSR),
                                                             XDFdata->eventType[index],
                                                             XDFdata->majSR, XDFdata->eventMap[index].second));
 
