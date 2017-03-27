@@ -47,7 +47,7 @@ void AdaptEventViewGuiCommand::init ()
 {
     setShortcut (GO_TO_NEXT_EVENT_, QKeySequence("Ctrl+Right"));
     setShortcut (GO_TO_PREVIOUS_EVENT_, QKeySequence("Ctrl+Left"));
-    setShortcut (SET_SHOWN_EVENTS_, tr("E"));
+    setShortcut (SET_SHOWN_EVENTS_, tr("Ctrl+E"));
 
     setIcon (GO_TO_NEXT_EVENT_, QIcon(":/images/ic_chevron_right_black_24dp.png"));
     setIcon (GO_TO_PREVIOUS_EVENT_, QIcon(":/images/ic_chevron_left_black_24dp.png"));

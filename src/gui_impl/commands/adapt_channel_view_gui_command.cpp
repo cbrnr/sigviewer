@@ -57,8 +57,8 @@ void AdaptChannelViewGuiCommand::init ()
     resetActionTriggerSlot (CHANGE_COLOR_, SLOT(changeColor()));
     resetActionTriggerSlot (SCALE_, SLOT(scale()));
     resetActionTriggerSlot (HIDE_, SLOT(hide()));
-    setShortcut (CHANNELS_, tr("C"));
-    setShortcut (SCALE_ALL_, tr("S"));
+    setShortcut (CHANNELS_, tr("Ctrl+C"));
+    setShortcut (SCALE_ALL_, tr("Ctrl+A"));
 
     QActionGroup* scale_mode_action_group = new QActionGroup (this);
     scale_mode_action_group->setExclusive(true);
