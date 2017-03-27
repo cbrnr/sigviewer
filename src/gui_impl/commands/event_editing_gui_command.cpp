@@ -65,7 +65,7 @@ void EventEditingGuiCommand::init ()
     getQAction (COPY_TO_CHANNELS_)->setIcon (QIcon (":/images/ic_content_copy_black_24dp.png"));
     getQAction (INSERT_OVER_)->setIcon (QIcon (":/images/ic_add_circle_outline_black_24dp.png"));
     getQAction (DELETE_)->setShortcut (QKeySequence::Delete);
-    getQAction (INSERT_OVER_)->setShortcut (QKeySequence("Ctrl+I"));
+//    getQAction (INSERT_OVER_)->setShortcut (QKeySequence("Ctrl+I"));
 }
 
 //-----------------------------------------------------------------------------
