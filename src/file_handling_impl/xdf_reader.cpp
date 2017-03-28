@@ -349,7 +349,7 @@ void XDFReader::bufferAllChannels () const
     unsigned channel_id = 0;
     for (auto &stream : XDFdata->streams)
     {
-        if (stream.info.nominal_srate != 0)
+        if (stream.info.nominal_srate != 0 && stream.info.channel_format.compare("string")) // filter the string streams
         {
             int startingPosition = (stream.info.first_timestamp - XDFdata->minTS) * XDFdata->majSR;
 
