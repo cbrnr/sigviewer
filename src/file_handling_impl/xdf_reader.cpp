@@ -191,7 +191,7 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
 
             bool showWarning = false;
 
-            for (auto const stream : XDFdata->streams)
+            for (auto const &stream : XDFdata->streams)
             {
                 if (std::abs(stream.info.effective_sample_rate - stream.info.nominal_srate) >
                         stream.info.nominal_srate / 20)
@@ -349,9 +349,9 @@ void XDFReader::bufferAllChannels () const
     unsigned channel_id = 0;
     for (auto &stream : XDFdata->streams)
     {
-        if (stream.info.nominal_srate != 0)
+        if (stream.info.nominal_srate != 0 && stream.info.channel_format.compare("string")) // filter the string streams
         {
-            int startingPosition = (stream.time_stamps.front() - XDFdata->minTS) * XDFdata->majSR;
+            int startingPosition = (stream.info.first_timestamp - XDFdata->minTS) * XDFdata->majSR;
 
             if (stream.time_series.front().size() > XDFdata->totalLen - startingPosition )
                 startingPosition = XDFdata->totalLen - stream.time_series.front().size();
@@ -371,7 +371,7 @@ void XDFReader::bufferAllChannels () const
                 std::vector<float> nothing;
                 row.swap(nothing);
             }
-            std::vector<float> nothing2;
+            std::vector<double> nothing2;
             stream.time_stamps.swap(nothing2);
         }
         //else if: irregualar samples
@@ -386,15 +386,15 @@ void XDFReader::bufferAllChannels () const
                 for (size_t i = 0; i < row.size(); i++)
                 {
                     //find out the position using the timestamp provided
-                    float* pt = raw_data->begin()  + (int)((stream.time_stamps[i]- XDFdata->minTS)* XDFdata->majSR);
+                    float* pt = raw_data->begin()  + (int)(round((stream.time_stamps[i]- XDFdata->minTS)* XDFdata->majSR));
                     *pt = row[i];
 
                     //if i is not the last element of the irregular time series
                     if (i != stream.time_stamps.size() - 1)
                     {
                         //using linear interpolation to fill in the space between every two signals
-                        int interval = (stream.time_stamps[i+1]
-                                - stream.time_stamps[i]) * XDFdata->majSR;
+                        int interval = round((stream.time_stamps[i+1]
+                                - stream.time_stamps[i]) * XDFdata->majSR);
                         for (int interpolation = 1; interpolation <= interval; interpolation++)
                         {
                             *(pt + interpolation) = row[i] + interpolation * ((row[i+1] - row[i])) / (interval + 1);
@@ -408,7 +408,7 @@ void XDFReader::bufferAllChannels () const
                 std::vector<float> nothing;
                 row.swap(nothing);
             }
-            std::vector<float> nothing2;
+            std::vector<double> nothing2;
             stream.time_stamps.swap(nothing2);
         }
     }
@@ -424,7 +424,7 @@ void XDFReader::bufferAllEvents () const
     for (unsigned index = 0; index < number_events; index++)
     {
         QSharedPointer<SignalEvent> event
-                (new SignalEvent ((XDFdata->eventMap[index].first.second - XDFdata->minTS) * XDFdata->majSR,
+                (new SignalEvent (round ((XDFdata->eventMap[index].first.second - XDFdata->minTS) * XDFdata->majSR),
                                                             XDFdata->eventType[index],
                                                             XDFdata->majSR, XDFdata->eventMap[index].second));
 
