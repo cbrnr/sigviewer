@@ -48,7 +48,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
         {
             QTreeWidgetItem* streamItem = new QTreeWidgetItem(ui_.treeWidget);
             streamItem->setText(0, tr("Stream ").append
-                                (QString::number(i).append(tr(" (")).append
+                                (QString::number(i + 1).append(tr(" (")).append     //+1 for user's convenience (1 based instead 0 based)
                                  (QString::fromStdString(XDFdata->streams[i].info.name))
                                  .append(") ")));
             #if QT_VERSION >= 0x050600
@@ -86,9 +86,9 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
                     }
 
                     if (channelLabel.isEmpty())
-                        channelItem->setText(0, tr("Channel ").append(QString::number(j)));
+                        channelItem->setText(0, tr("Channel ").append(QString::number(j + 1)));//+1 for user's convenience (1 based instead 0 based)
                     else
-                        channelItem->setText(0, tr("Ch").append(QString::number(j)).append("-").append(channelLabel));
+                        channelItem->setText(0, tr("Ch").append(QString::number(j + 1)).append("-").append(channelLabel));//+1 for user's convenience (1 based instead 0 based)
 
                     channelItem->setCheckState(0, Qt::Unchecked);
                     #if QT_VERSION >= 0x050600

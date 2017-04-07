@@ -50,7 +50,7 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
     for (size_t i = 0; i < XDFdata->streams.size(); i++)
     {
         QTreeWidgetItem* streamItem = new QTreeWidgetItem(ui->treeWidget);
-        streamItem->setText(0, "Stream "+QString::number(i));
+        streamItem->setText(0, "Stream "+QString::number(i+1));//+1 for user's convenience (1 based instead 0 based)
 //        streamItem->setIcon(0, QIcon(":/images/ic_flag_black_24dp.png"));
 
         QTreeWidgetItem* infoItem = new QTreeWidgetItem(streamItem);
