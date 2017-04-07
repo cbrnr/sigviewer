@@ -90,7 +90,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
                     else
                         channelItem->setText(0, tr("Channel ").append(QString::number(j + 1)).append("-").append(channelLabel));//+1 for user's convenience (1 based instead 0 based)
 
-                    channelItem->setCheckState(0, Qt::Unchecked);
+                    channelItem->setCheckState(0, Qt::Checked);
                     #if QT_VERSION >= 0x050600
                         channelItem->setFlags(Qt::ItemIsAutoTristate | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
                     #else
@@ -142,12 +142,17 @@ void ChannelSelectionDialog::resizeEvent(QResizeEvent *event) {
 bool ChannelSelectionDialog::isSelected (ChannelID channel_id)
 {
     QTreeWidgetItemIterator it(ui_.treeWidget);
+    int channelNumber = 0;
+
     while (*it)
     {
-        if ((*it)->text(0).compare("Channel "+ QString::number(channel_id), Qt::CaseInsensitive) == 0)
+        if ((*it)->text(0).startsWith("Channel ", Qt::CaseInsensitive))
         {
-            return (*it)->checkState(0) == Qt::Checked;
-            break;
+            if (channelNumber++ == channel_id)
+            {
+                return (*it)->checkState(0) == Qt::Checked;
+                break;
+            }
         }
         it++;
     }
@@ -159,13 +164,17 @@ void ChannelSelectionDialog::setSelected (ChannelID channel_id, bool selected)
 {
     Qt::CheckState state = selected ? Qt::Checked : Qt::Unchecked;
     QTreeWidgetItemIterator it(ui_.treeWidget);
-    QString temp = "Channel " + QString::number(channel_id);
+    int channelNumber = 0;
+
     while (*it)
     {
-        if ((*it)->text(0) == temp)
+        if ((*it)->text(0).startsWith("Channel ", Qt::CaseInsensitive))
         {
-            (*it)->setCheckState(0, state);
-            break;
+            if (channelNumber++ == channel_id)
+            {
+                (*it)->setCheckState(0, state);
+                break;
+            }
         }
         it++;
     }
@@ -217,12 +226,17 @@ void ChannelSelectionDialog::on_reset_colors_button__clicked ()
 void ChannelSelectionDialog::on_button_box__accepted ()
 {
     QTreeWidgetItemIterator it(ui_.treeWidget);
+
+    size_t channelNumber = 0;
+
     while (*it)
     {
         if ((*it)->text(0).startsWith("Channel"))
         {
-            unsigned channelNumber = (*it)->text(0).remove("Channel ", Qt::CaseInsensitive).toUInt();
-            color_manager_->setChannelColor(channelNumber, (*it)->backgroundColor(1));
+            if ((*it)->checkState(0) == Qt::Checked)
+                color_manager_->setChannelColor(channelNumber, (*it)->backgroundColor(1));
+
+            channelNumber++;
         }
         it++;
     }
