@@ -73,7 +73,23 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
                 for (int j = 0; j < XDFdata->streams[i].info.channel_count; j++)
                 {
                     QTreeWidgetItem* channelItem = new QTreeWidgetItem(streamItem);
-                    channelItem->setText(0, tr("Channel ").append(QString::number(channelCount)));
+
+                    QString channelLabel;
+
+                    if (!XDFdata->streams[i].info.channels.empty())
+                    {
+                        for (auto const &entry : XDFdata->streams[i].info.channels[j])
+                        {
+                            if (entry.second != "")
+                                channelLabel += QString::fromStdString(entry.second) + ' ';
+                        }
+                    }
+
+                    if (channelLabel.isEmpty())
+                        channelItem->setText(0, tr("Channel ").append(QString::number(j)));
+                    else
+                        channelItem->setText(0, tr("Ch").append(QString::number(j)).append("-").append(channelLabel));
+
                     channelItem->setCheckState(0, Qt::Unchecked);
                     #if QT_VERSION >= 0x050600
                         channelItem->setFlags(Qt::ItemIsAutoTristate | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
