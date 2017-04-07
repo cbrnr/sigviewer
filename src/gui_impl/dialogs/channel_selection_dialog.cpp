@@ -88,7 +88,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
                     if (channelLabel.isEmpty())
                         channelItem->setText(0, tr("Channel ").append(QString::number(j + 1)));//+1 for user's convenience (1 based instead 0 based)
                     else
-                        channelItem->setText(0, tr("Ch").append(QString::number(j + 1)).append("-").append(channelLabel));//+1 for user's convenience (1 based instead 0 based)
+                        channelItem->setText(0, tr("Channel ").append(QString::number(j + 1)).append("-").append(channelLabel));//+1 for user's convenience (1 based instead 0 based)
 
                     channelItem->setCheckState(0, Qt::Unchecked);
                     #if QT_VERSION >= 0x050600
