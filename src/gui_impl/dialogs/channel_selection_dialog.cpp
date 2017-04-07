@@ -80,7 +80,8 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
                     {
                         for (auto const &entry : XDFdata->streams[i].info.channels[j])
                         {
-                            if (entry.second != "")
+                            if ((entry.first.compare("label")==0 || entry.first.compare("type")==0)
+                                    && entry.second != "")
                                 channelLabel += QString::fromStdString(entry.second) + ' ';
                         }
                     }
