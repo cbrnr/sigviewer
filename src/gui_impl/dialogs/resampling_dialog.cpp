@@ -65,14 +65,11 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
         infoItem->setText(0, tr("Sample Rate"));
         infoItem->setText(1, QString::number(XDFdata->streams[i].info.nominal_srate).append(tr(" Hz")));
         if (XDFdata->streams[i].info.nominal_srate == 0)
-            infoItem->setText(1, infoItem->text(1).append(tr("  (Irregular Sample Rate)")));
+            infoItem->setText(1, tr("Irregular"));
 
         infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Channel Count"));
-        if (XDFdata->streams[i].info.channel_count <= 1)
-            infoItem->setText(1, QString::number(XDFdata->streams[i].info.channel_count).append(tr(" Channel")));
-        else
-            infoItem->setText(1, QString::number(XDFdata->streams[i].info.channel_count).append(tr(" Channels")));
+        infoItem->setText(1, QString::number(XDFdata->streams[i].info.channel_count));
 
         infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Channel Format"));
