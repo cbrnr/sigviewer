@@ -59,6 +59,7 @@ SignalBrowserView::SignalBrowserView (QSharedPointer<SignalVisualisationModel> s
     createLayout();
     connect (graphics_view_, SIGNAL(resized(QResizeEvent*)), SLOT(graphicsViewResized(QResizeEvent*)));
     horizontal_scrollbar_->setValue(0);
+    horizontal_scrollbar_->setSingleStep(80);
 }
 
 //-----------------------------------------------------------------------------

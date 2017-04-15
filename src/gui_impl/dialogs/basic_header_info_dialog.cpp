@@ -178,7 +178,7 @@ void BasicHeaderInfoDialog::buildTree()
         {
             // basic
             root_item = new QTreeWidgetItem(info_tree_widget_);
-            root_item->setText(0, "Stream "+QString::number(i));
+            root_item->setText(0, "Stream "+QString::number(i + 1));//+1 for user's convenience (1 based instead 0 based)
 //            root_item->setIcon(0, QIcon(":/images/ic_flag_black_24dp.png"));
 
             QDomDocument streamHeader;
