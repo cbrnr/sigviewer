@@ -89,7 +89,7 @@ void MainWindowModelImpl::tabChanged (int tab_index)
 //-----------------------------------------------------------------------------
 void MainWindowModelImpl::closeTab (int tab_index)
 {
-    if (tab_index == 0 | tab_index == 1)  // first two tabs are not closeable
+    if ((tab_index == 0) | (tab_index == 1))  // first two tabs are not closeable
         return;
     QWidget* widget = tab_widget_->widget (tab_index);
     browser_models_.erase (tab_index);
