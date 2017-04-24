@@ -89,12 +89,7 @@ void MainWindowModelImpl::tabChanged (int tab_index)
 //-----------------------------------------------------------------------------
 void MainWindowModelImpl::closeTab (int tab_index)
 {
-    if (tab_index == 0)
-    {
-        if (!(application_context_->getCurrentFileContext().isNull()))
-            GuiActionFactory::getInstance()->getQAction("Close")->trigger();
-        return;
-    } else if (tab_index == 1)
+    if (tab_index == 0 | tab_index == 1)  // first two tabs are not closeable
         return;
     QWidget* widget = tab_widget_->widget (tab_index);
     browser_models_.erase (tab_index);
@@ -163,7 +158,7 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
         if (!connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int))))
             throw (Exception ("MainWindowModelImpl::createSignalVisualisationOfFile failed: connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)))"));
         connect (tab_widget_, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
-//        tab_widget_->setTabsClosable (true);
+        tab_widget_->setTabsClosable (true);
     }
 
     recent_file_list_.removeAll (file_ctx->getFilePathAndName());
@@ -189,6 +184,8 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
     main_window_->setCentralWidget(tab_widget_);
     tab_widget_->show();
     tab_widget_->setTabText(tab_index, tab_title);
+    tab_widget_->tabBar()->setTabButton(0, QTabBar::RightSide, 0);
+    tab_widget_->tabBar()->setTabButton(0, QTabBar::LeftSide, 0);
 
     file_ctx->setMainVisualisationModel (browser_models_[tab_index]);
     return browser_models_[tab_index];
@@ -273,6 +270,8 @@ int MainWindowModelImpl::createSignalVisualisationImpl (ChannelManager const& ch
                                    SLOT(removeEventItem(EventID)));
         model->connect (event_manager.data(), SIGNAL(eventChanged(EventID)),
                                    SLOT(updateEvent(EventID)));
+        tab_widget_->tabBar()->setTabButton(1, QTabBar::RightSide, 0);
+        tab_widget_->tabBar()->setTabButton(1, QTabBar::LeftSide, 0);
     }
     storeAndInitTabContext (tab_context, tab_index);
     return tab_index;
