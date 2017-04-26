@@ -1,3 +1,7 @@
+Version 0.6.1
+(B) Fix many XDF-related bugs
+(*) Several minor GUI-related improvements
+
 Version 0.6.0
 (+) Add support for XDF files
 (B) Properly handle missing data
