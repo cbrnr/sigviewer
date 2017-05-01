@@ -72,7 +72,10 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
 
             QColor color = color_manager_->getEventColor(event_type);
 
-            event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Checked);
+            if (selected_types_.count(event_type))
+                event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Checked);
+            else
+                event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Unchecked);
 
             event_item->setText (NAME_COLUMN_INDEX_, event_name);
 
@@ -131,7 +134,10 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
 
                     QColor color = color_manager_->getEventColor(event_type);
 
-                    event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Checked);
+                    if (selected_types_.count(event_type))
+                        event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Checked);
+                    else
+                        event_item->setCheckState (CHECKBOX_COLUMN_INDEX_, Qt::Unchecked);
 
                     event_item->setText (NAME_COLUMN_INDEX_, event_name);
 
@@ -173,16 +179,30 @@ void EventTypesSelectionDialog::on_tree_widget__itemClicked(QTreeWidgetItem* ite
 //-----------------------------------------------------------------------------
 void EventTypesSelectionDialog::storeColors()
 {
-    for (int group_nr = 0; group_nr < ui_.tree_widget_->topLevelItemCount(); group_nr++)
+    if (event_manager_->getFileType().startsWith("xdf", Qt::CaseInsensitive))
     {
-        QTreeWidgetItem* group_item  = ui_.tree_widget_->topLevelItem (group_nr);
-
-        for (int nr = 0; nr < group_item->childCount(); nr++)
+        // in XDF files we don't display libbiosig event groups, so top level items are events
+        for (int nr = 0; nr < ui_.tree_widget_->topLevelItemCount(); nr++)
         {
-            QTreeWidgetItem* event_item = group_item->child(nr);
+            QTreeWidgetItem* event_item = ui_.tree_widget_->topLevelItem(nr);
             EventType type = event_item->text(ID_COLUMN_INDEX_).toUInt();
-            color_manager_->setEventColor (type,
-                                           event_item->backgroundColor(ALPHA_COLUMN_INDEX_));
+            color_manager_->setEventColor (type, event_item->backgroundColor(ALPHA_COLUMN_INDEX_));
+        }
+    }
+    else
+    {
+        // in non-XDF files, top level items are libbiosig event groups
+        for (int group_nr = 0; group_nr < ui_.tree_widget_->topLevelItemCount(); group_nr++)
+        {
+            QTreeWidgetItem* group_item  = ui_.tree_widget_->topLevelItem (group_nr);
+
+            for (int nr = 0; nr < group_item->childCount(); nr++)
+            {
+                QTreeWidgetItem* event_item = group_item->child(nr);
+                EventType type = event_item->text(ID_COLUMN_INDEX_).toUInt();
+                color_manager_->setEventColor (type,
+                                               event_item->backgroundColor(ALPHA_COLUMN_INDEX_));
+            }
         }
     }
     color_manager_->saveSettings();
