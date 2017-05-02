@@ -425,8 +425,9 @@ void XDFReader::bufferAllEvents () const
     {
         QSharedPointer<SignalEvent> event
                 (new SignalEvent (round ((XDFdata->eventMap[index].first.second - XDFdata->minTS) * XDFdata->majSR),
-                                                            XDFdata->eventType[index],
-                                                            XDFdata->majSR, XDFdata->eventMap[index].second));
+                                  XDFdata->eventType[index] + 1,//index+1 because in SigViewer and libbiosig
+                                  //0 is reserved for a special type of event. Thus we increment by 1
+                                  XDFdata->majSR, XDFdata->eventMap[index].second));
 
         event->setChannel (UNDEFINED_CHANNEL);
         event->setDuration (0);

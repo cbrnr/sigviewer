@@ -46,7 +46,9 @@ BiosigBasicHeader::BiosigBasicHeader (QString file_format, QString const& file_p
     {
         for (unsigned index = 0; index < XDFdata->dictionary.size(); index++)
         {
-            user_defined_event_map_[index] = QString::fromStdString(XDFdata->dictionary[index]);
+            //below we use index+1 because in SigViewer, 0 is reserved for a special event type.
+            //thus we count from 1
+            user_defined_event_map_[index + 1] = QString::fromStdString(XDFdata->dictionary[index]);
         }
     }
 
