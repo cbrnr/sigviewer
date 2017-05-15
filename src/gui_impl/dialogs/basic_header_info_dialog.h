@@ -24,13 +24,12 @@ class BasicHeaderInfoDialog : public QDialog
 public:
     BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header, QWidget* parent = 0);
 
-    ~BasicHeaderInfoDialog();
-
 public slots:
     void toggleCollapseExpand();
 
     void showStreamName(QTreeWidgetItem* item);    //show Stream name when collapsed
     void hideStreamName(QTreeWidgetItem* item);    //hide Stream name when expanded
+    void closeInfoDialog();
 
 private:
     // not allowed
