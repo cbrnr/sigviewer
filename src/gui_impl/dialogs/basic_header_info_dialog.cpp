@@ -79,7 +79,7 @@ void BasicHeaderInfoDialog::showStreamName(QTreeWidgetItem *item)
 {
     if (item->text(0).startsWith("Stream", Qt::CaseInsensitive))
     {
-        int streamNumber = item->text(0).remove("Stream ").toInt();
+        int streamNumber = item->text(0).remove("Stream ").toInt() - 1;//-1 to switch back to 0 index
         item->setText(1, QString::fromStdString(XDFdata->streams[streamNumber].info.name));
     }
 }
