@@ -47,18 +47,11 @@ BasicHeaderInfoDialog::BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header,
     resize(850, 850);
     top_layout->activate();
     readSettings();
-    connect(close_button_, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(close_button_, SIGNAL(clicked()), this, SLOT(closeInfoDialog()));
+    connect(this, SIGNAL(finished(int)), this, SLOT(closeInfoDialog()));
     connect(toggle_button_, SIGNAL(clicked()), this, SLOT(toggleCollapseExpand()));
     connect(info_tree_widget_, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(showStreamName(QTreeWidgetItem*)));
     connect(info_tree_widget_, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(hideStreamName(QTreeWidgetItem*)));
-}
-
-BasicHeaderInfoDialog::~BasicHeaderInfoDialog()
-{
-    QSettings settings;
-    settings.beginGroup("BasicHeaderInfoDialog");
-    settings.setValue("geometry", saveGeometry());
-    settings.endGroup();
 }
 
 void BasicHeaderInfoDialog::toggleCollapseExpand()
@@ -90,6 +83,16 @@ void BasicHeaderInfoDialog::hideStreamName(QTreeWidgetItem *item)
     {
         item->setText(1, "");
     }
+}
+
+void BasicHeaderInfoDialog::closeInfoDialog()
+{
+    QSettings settings;
+    settings.beginGroup("BasicHeaderInfoDialog");
+    settings.setValue("geometry", saveGeometry());
+    settings.endGroup();
+
+    close();
 }
 
 void BasicHeaderInfoDialog::readSettings()
