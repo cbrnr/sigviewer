@@ -47,8 +47,10 @@ public:
     virtual QSharedPointer<BasicHeader const> getBasicHeader () const {return basic_header_;}
 
     //-------------------------------------------------------------------------
-    //! Set a distinct color for each stream
-    int setStreamColors();
+    int setStreamColors();  /*!< Set a distinct color for each stream. */
+
+    //-------------------------------------------------------------------------
+    int setEventTypeColors();  /*!< Set a distinct color for each event type. */
 
     //-------------------------------------------------------------------------
     enum sampleRateTypes

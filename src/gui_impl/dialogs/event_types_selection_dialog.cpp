@@ -34,6 +34,7 @@ EventTypesSelectionDialog::EventTypesSelectionDialog (QString const& caption,
     ui_.setupUi (this);
     setWindowTitle (caption);
     buildTree (true);
+    color_manager_->loadSettings();
 }
 
 //-----------------------------------------------------------------------------
@@ -85,7 +86,7 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
             event_item->setTextColor (COLOR_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
             event_item->setText (COLOR_COLUMN_INDEX_, color.name());
 
-            color = color_manager_->getEventColor(event_type);
+            color = color_manager_->getEventColor(event_type);  //reselect the same color but less Alpha value
 
             event_item->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
             event_item->setTextColor(ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
@@ -147,7 +148,7 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
                     event_item->setTextColor (COLOR_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
                     event_item->setText (COLOR_COLUMN_INDEX_, color.name());
 
-                    color = color_manager_->getEventColor(event_type);
+                    color = color_manager_->getEventColor(event_type);  //reselect the same color but less Alpha value
 
                     event_item->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
                     event_item->setTextColor(ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);

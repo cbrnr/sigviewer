@@ -212,7 +212,6 @@ void ColorManager::loadDefaultEventColors ()
     default_color.setGreen (default_node.attribute("green").toUInt());
     default_color.setBlue (default_node.attribute("blue").toUInt());
 
-    default_event_colors_[UNDEFINED_EVENT_TYPE] = default_color;
     default_event_color_ = default_color;
 
     QDomNodeList event_elements = root.elementsByTagName("event");
