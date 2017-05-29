@@ -24,6 +24,7 @@ public:
     ~ColorManager ();
 
     void saveSettings();
+    void loadSettings();
 
     QColor getChannelColor (ChannelID channel_id) const;
     QColor getDefaultChannelColor () const;
@@ -38,7 +39,6 @@ public:
 private:
     Q_DISABLE_COPY(ColorManager)
 
-    void loadSettings();
     void loadDefaultEventColors ();
 
     static const char* DEFAULT_CHANNEL_COLOR_SETTING_;

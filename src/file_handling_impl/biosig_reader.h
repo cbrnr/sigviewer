@@ -41,9 +41,10 @@ public:
     virtual QSharedPointer<BasicHeader const> getBasicHeader () const {return basic_header_;}
 
     //-------------------------------------------------------------------------
-    //! Set the colors of all channels.
-    int setChannelColors();
+    int setChannelColors(); /*!< Set colors for all channels. */
 
+    //-------------------------------------------------------------------------
+    int setEventTypeColors();   /*!< Set the colors for events. */
 
 private:
     //-------------------------------------------------------------------------
