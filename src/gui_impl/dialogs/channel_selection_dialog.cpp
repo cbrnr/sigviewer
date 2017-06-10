@@ -111,7 +111,16 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
         foreach (ChannelID id, channel_manager_.getChannels())
         {
             QTreeWidgetItem* channelItem = new QTreeWidgetItem (ui_.treeWidget);
-            channelItem->setText(0, tr("Channel ").append(QString::number(id)));
+
+            QRegExp rx("(^channel\\s+\\d+)");
+            rx.setCaseSensitivity(Qt::CaseInsensitive);
+
+            if (channel_manager_.getChannelLabel(id).contains(rx))
+                channelItem->setText(0, channel_manager_.getChannelLabel(id));
+            else
+                channelItem->setText(0, tr("Channel ").append(QString::number(id)).append(" (").
+                                     append(channel_manager_.getChannelLabel(id)).append(")"));
+
             channelItem->setFlags((Qt::ItemIsEnabled | Qt::ItemIsUserCheckable));
 
             QColor color = color_manager_->getChannelColor (id);
