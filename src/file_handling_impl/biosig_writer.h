@@ -10,9 +10,6 @@
 
 #include <biosig.h>
 
-#include <QString>
-#include <QMutex>
-#include <set>
 
 namespace sigviewer 
 {

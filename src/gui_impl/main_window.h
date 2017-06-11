@@ -10,7 +10,6 @@
 #include "gui/application_context.h"
 
 #include <QMainWindow>
-#include <QSharedPointer>
 #include <QIcon>
 #include <QProgressBar>
 

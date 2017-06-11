@@ -7,12 +7,7 @@
 #define APPLICATION_CONTEXT_IMPL_H
 
 #include "base/application_states.h"
-#include "gui/color_manager.h"
-#include "gui/main_window_model.h"
 #include "gui/application_context.h"
-#include "file_context.h"
-#include "file_handling_impl/xdf_reader.h"
-#include "file_handling_impl/biosig_reader.h"
 
 #include <QObject>
 #include <QSharedPointer>
@@ -28,8 +23,6 @@ namespace sigviewer
 class ApplicationContextImpl : public QObject, public ApplicationContext
 {
     Q_OBJECT
-    friend class XDFReader;
-    friend class BioSigReader;
 public:
     //-------------------------------------------------------------------------
     static QSharedPointer<ApplicationContextImpl> getInstance (bool cleanup = false);
@@ -70,6 +63,8 @@ public:
     //-------------------------------------------------------------------------
     virtual QSharedPointer<ColorManager> getEventColorManager ();
 
+    QSharedPointer<ColorManager> color_manager_;
+
 signals:
     void stateChanged (ApplicationState state);
     void currentFileStateChanged (FileState state);
@@ -79,7 +74,6 @@ signals:
 private:
     void setState (ApplicationState state);
     std::set<ApplicationMode> activated_modes_;
-    QSharedPointer<ColorManager> color_manager_;
     QSharedPointer<MainWindowModel> main_window_model_;
     QSharedPointer<FileContext> current_file_context_;
     QSharedPointer<TabContext> current_tab_context_;

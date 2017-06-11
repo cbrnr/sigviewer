@@ -6,23 +6,12 @@
 #ifndef MAIN_WINDOW_MODEL_IMPL_H
 #define MAIN_WINDOW_MODEL_IMPL_H
 
-#include "base/sigviewer_user_types.h"
-#include "file_context.h"
-#include "tab_context.h"
-#include "file_handling/event_manager.h"
-#include "file_handling/channel_manager.h"
-#include "gui/signal_visualisation_model.h"
-#include "gui/main_window_model.h"
 #include "gui/application_context.h"
 
-#include <QObject>
 #include <QStringList>
-#include <QString>
-#include <QSharedPointer>
 #include <QTabWidget>
 #include <QMap>
 
-#include <map>
 
 class QAction;
 

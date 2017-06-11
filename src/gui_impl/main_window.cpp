@@ -8,12 +8,10 @@
 #include "gui/background_processes.h"
 #include "gui_impl/commands/open_file_gui_command.h"
 
-#include <QAction>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QComboBox>
 #include <QValidator>
-#include <QStringList>
 #include <QActionGroup>
 #include <QCloseEvent>
 #include <QToolBar>

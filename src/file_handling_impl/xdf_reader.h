@@ -8,7 +8,6 @@
 #define XDF_READER_H_
 
 #include "file_handling/file_signal_reader.h"
-#include "biosig.h"
 #include "xdf.h"
 
 #include <QFile>
@@ -48,9 +47,6 @@ public:
 
     //-------------------------------------------------------------------------
     int setStreamColors();  /*!< Set a distinct color for each stream. */
-
-    //-------------------------------------------------------------------------
-    int setEventTypeColors();  /*!< Set a distinct color for each event type. */
 
     //-------------------------------------------------------------------------
     enum sampleRateTypes

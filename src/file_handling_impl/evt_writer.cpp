@@ -6,8 +6,6 @@
 #include "evt_writer.h"
 #include "file_handling/file_signal_writer_factory.h"
 
-#include <QDebug>
-
 #include <biosig.h>
 
 namespace sigviewer

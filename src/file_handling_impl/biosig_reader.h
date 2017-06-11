@@ -7,11 +7,7 @@
 #define BIOSIG_READER_H_
 
 #include "file_handling/file_signal_reader.h"
-#include "biosig.h"
 
-#include <QFile>
-#include <QMutex>
-#include <QMap>
 
 namespace sigviewer
 {
@@ -42,9 +38,6 @@ public:
 
     //-------------------------------------------------------------------------
     int setChannelColors(); /*!< Set colors for all channels. */
-
-    //-------------------------------------------------------------------------
-    int setEventTypeColors();   /*!< Set the colors for events. */
 
 private:
     //-------------------------------------------------------------------------

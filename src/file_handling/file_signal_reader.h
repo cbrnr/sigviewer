@@ -8,6 +8,7 @@
 #include "basic_header.h"
 #include "base/signal_event.h"
 #include "base/data_block.h"
+#include "application_context_impl.h"
 
 #include <QVector>
 #include <QPointer>
@@ -41,6 +42,8 @@ public:
     virtual QSharedPointer<BasicHeader> getBasicHeader () = 0;
 
     virtual QSharedPointer<BasicHeader const> getBasicHeader () const = 0;
+
+    int setEventTypeColors();  /*!< Set a distinct color for each event type. */
 
 protected:
     FileSignalReader () {}

@@ -5,7 +5,6 @@
 
 #include "channel_manager_impl.h"
 
-#include <cmath>
 
 namespace sigviewer
 {

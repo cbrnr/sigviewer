@@ -7,11 +7,7 @@
 #include "file_handling_impl/xdf_reader.h"
 #include "application_context_impl.h"
 
-#include <QDebug>
 #include <QColorDialog>
-#include <QInputDialog>
-#include <QTreeWidget>
-#include <QtGlobal>
 
 
 namespace sigviewer

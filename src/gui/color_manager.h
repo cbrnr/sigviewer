@@ -6,7 +6,6 @@
 #ifndef EVENT_COLOR_MANAGER
 #define EVENT_COLOR_MANAGER
 
-#include "base/sigviewer_user_types.h"
 #include "file_handling_impl/event_table_file_reader.h"
 
 #include <QMap>
