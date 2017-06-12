@@ -71,7 +71,16 @@ void BasicHeaderInfoDialog::showStreamName(QTreeWidgetItem *item)
 {
     if (item->text(0).startsWith("Stream", Qt::CaseInsensitive))
     {
-        int streamNumber = item->text(0).remove("Stream ").toInt() - 1;//-1 to switch back to 0 index
+        QRegExp rx("(\\d+)");
+        int pos = rx.indexIn(item->text(0));
+        QString str;
+        if (pos > -1)
+        {
+            str = rx.cap(1);
+        }
+        int streamNumber = str.toInt() - 1; //-1 to switch back to 0-based indexing
+
+//        int streamNumber = item->text(0).remove("Stream ").toInt() - 1;//-1 to switch back to 0 index
         item->setText(1, QString::fromStdString(XDFdata->streams[streamNumber].info.name));
     }
 }
@@ -180,7 +189,10 @@ void BasicHeaderInfoDialog::buildTree()
         {
             // basic
             root_item = new QTreeWidgetItem(info_tree_widget_);
-            root_item->setText(0, "Stream "+QString::number(i + 1));//+1 for user's convenience (1 based instead 0 based)
+//            root_item->setText(0, "Stream "+QString::number(i + 1));//+1 for user's convenience (1 based instead 0 based)
+            root_item->setText(0, QString("Stream %1 (%2)").arg(QString::number(i+1)).        //+1 for 1-based indexing
+                                   arg(QString::fromStdString(XDFdata->streams[i].info.name)));
+
 //            root_item->setIcon(0, QIcon(":/images/ic_flag_black_24dp.png"));
 
             QDomDocument streamHeader;
