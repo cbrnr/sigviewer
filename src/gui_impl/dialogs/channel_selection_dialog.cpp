@@ -112,7 +112,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
         {
             QTreeWidgetItem* channelItem = new QTreeWidgetItem (ui_.treeWidget);
 
-            QRegExp rx("(^channel\\s+\\d+)");
+            QRegExp rx("(^channel\\s*\\d+)");
             rx.setCaseSensitivity(Qt::CaseInsensitive);
 
             if (channel_manager_.getChannelLabel(id).contains(rx))

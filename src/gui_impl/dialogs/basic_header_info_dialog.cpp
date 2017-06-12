@@ -277,7 +277,7 @@ void BasicHeaderInfoDialog::buildTree()
             QSharedPointer<SignalChannel const> channel = basic_header_->getChannel (channel_nr);
             channel_item = new QTreeWidgetItem(root_item);
 
-            QRegExp rx("(^channel\\s+\\d+)");
+            QRegExp rx("(^channel\\s*\\d+)");
             rx.setCaseSensitivity(Qt::CaseInsensitive);
 
             if (channel->getLabel().contains(rx))
