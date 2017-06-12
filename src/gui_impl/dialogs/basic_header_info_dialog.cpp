@@ -49,8 +49,8 @@ BasicHeaderInfoDialog::BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header,
     connect(close_button_, SIGNAL(clicked()), this, SLOT(closeInfoDialog()));
     connect(this, SIGNAL(finished(int)), this, SLOT(closeInfoDialog()));
     connect(toggle_button_, SIGNAL(clicked()), this, SLOT(toggleCollapseExpand()));
-    connect(info_tree_widget_, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(showStreamName(QTreeWidgetItem*)));
-    connect(info_tree_widget_, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(hideStreamName(QTreeWidgetItem*)));
+//    connect(info_tree_widget_, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(showStreamName(QTreeWidgetItem*)));
+//    connect(info_tree_widget_, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(hideStreamName(QTreeWidgetItem*)));
 }
 
 void BasicHeaderInfoDialog::toggleCollapseExpand()
