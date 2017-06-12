@@ -8,10 +8,6 @@
 
 #include "sigviewer_user_types.h"
 
-#include <list>
-#include <vector>
-#include <string>
-
 #include <QSharedPointer>
 #include <QMap>
 

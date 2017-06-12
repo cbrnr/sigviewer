@@ -8,7 +8,6 @@
 
 #include "base/signal_channel.h"
 
-#include <QString>
 #include <QList>
 #include <QDateTime>
 #include <QMap>

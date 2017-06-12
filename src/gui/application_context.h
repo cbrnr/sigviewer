@@ -8,7 +8,6 @@
 
 #include "color_manager.h"
 #include "main_window_model.h"
-#include "command_executer.h"
 #include "tab_context.h"
 
 #include <QSharedPointer>

@@ -12,4 +12,5 @@ SOURCES += \
     $$PWD/basic_header.cpp \
     $$PWD/channel_manager.cpp \
     $$PWD/file_signal_reader_factory.cpp \
-    $$PWD/file_signal_writer_factory.cpp
+    $$PWD/file_signal_writer_factory.cpp \
+    $$PWD/file_signal_reader.cpp

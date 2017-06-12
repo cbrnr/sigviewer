@@ -5,11 +5,6 @@
 
 #include "event_table_file_reader.h"
 
-#include <QFile>
-#include <QTextStream>
-#include <QRegExp>
-#include <QTextStream>
-#include <QSettings>
 
 namespace sigviewer
 {

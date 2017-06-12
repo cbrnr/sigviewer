@@ -10,7 +10,6 @@
 #include <cmath>
 #include <algorithm>
 
-#include <QDateTime>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QHBoxLayout>

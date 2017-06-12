@@ -6,13 +6,10 @@
 #include "open_file_command.h"
 
 #include "file_handling/file_signal_reader_factory.h"
-#include "file_handling/channel_manager.h"
 #include "file_handling_impl/channel_manager_impl.h"
 #include "file_handling_impl/event_manager_impl.h"
-#include "file_context.h"
 
 #include <QDir>
-#include <QSettings>
 
 namespace sigviewer
 {

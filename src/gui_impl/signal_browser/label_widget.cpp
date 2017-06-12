@@ -6,10 +6,6 @@
 #include "label_widget.h"
 #include "gui/gui_action_factory.h"
 
-#include <cmath>
-
-#include <QPainter>
-#include <QContextMenuEvent>
 
 namespace sigviewer
 {

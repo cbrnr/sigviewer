@@ -4,11 +4,7 @@
 
 
 #include "event_manager_impl.h"
-#include "file_handling/file_signal_reader.h"
-#include "base/exception.h"
-#include "gui/gui_action_command.h"
 
-#include <QMutexLocker>
 #include <QDebug>
 
 namespace sigviewer

@@ -8,7 +8,6 @@
 
 #include "gui/application_context.h"
 
-#include <QString>
 
 namespace sigviewer
 {

@@ -6,18 +6,11 @@
 #ifndef SIGNAL_VISUALISATION_MODEL_H
 #define SIGNAL_VISUALISATION_MODEL_H
 
-#include "base/sigviewer_user_types.h"
-#include "base/signal_event.h"
-#include "file_handling/channel_manager.h"
-#include "file_handling/event_manager.h"
 #include "signal_visualisation_modes.h"
 #include "signal_visualisation_view.h"
 #include "event_view.h"
 #include "signal_view_settings.h"
 
-#include <QObject>
-
-#include <set>
 
 namespace sigviewer
 {

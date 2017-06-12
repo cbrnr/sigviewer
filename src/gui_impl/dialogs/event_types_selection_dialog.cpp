@@ -5,14 +5,8 @@
 
 #include "event_types_selection_dialog.h"
 
-#include <QPushButton>
-#include <QPainter>
 #include <QColorDialog>
 #include <QInputDialog>
-#include <QMap>
-#include <QTreeWidget>
-#include <QHeaderView>
-#include <QSettings>
 
 #define max(a,b) ((a) > (b) ? (a) : (b))
 

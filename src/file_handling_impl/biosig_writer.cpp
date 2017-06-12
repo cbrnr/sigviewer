@@ -6,10 +6,6 @@
 #include "biosig_writer.h"
 #include "file_handler_factory_registrator.h"
 
-#include <QFile>
-#include <QMutexLocker>
-#include <QMessageBox>
-#include <QDebug>
 
 namespace sigviewer
 {
