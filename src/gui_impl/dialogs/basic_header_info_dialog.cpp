@@ -49,8 +49,8 @@ BasicHeaderInfoDialog::BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header,
     connect(close_button_, SIGNAL(clicked()), this, SLOT(closeInfoDialog()));
     connect(this, SIGNAL(finished(int)), this, SLOT(closeInfoDialog()));
     connect(toggle_button_, SIGNAL(clicked()), this, SLOT(toggleCollapseExpand()));
-    connect(info_tree_widget_, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(showStreamName(QTreeWidgetItem*)));
-    connect(info_tree_widget_, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(hideStreamName(QTreeWidgetItem*)));
+//    connect(info_tree_widget_, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(showStreamName(QTreeWidgetItem*)));
+//    connect(info_tree_widget_, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(hideStreamName(QTreeWidgetItem*)));
 }
 
 void BasicHeaderInfoDialog::toggleCollapseExpand()
@@ -71,7 +71,16 @@ void BasicHeaderInfoDialog::showStreamName(QTreeWidgetItem *item)
 {
     if (item->text(0).startsWith("Stream", Qt::CaseInsensitive))
     {
-        int streamNumber = item->text(0).remove("Stream ").toInt() - 1;//-1 to switch back to 0 index
+        QRegExp rx("(\\d+)");
+        int pos = rx.indexIn(item->text(0));
+        QString str;
+        if (pos > -1)
+        {
+            str = rx.cap(1);
+        }
+        int streamNumber = str.toInt() - 1; //-1 to switch back to 0-based indexing
+
+//        int streamNumber = item->text(0).remove("Stream ").toInt() - 1;//-1 to switch back to 0 index
         item->setText(1, QString::fromStdString(XDFdata->streams[streamNumber].info.name));
     }
 }
@@ -180,7 +189,10 @@ void BasicHeaderInfoDialog::buildTree()
         {
             // basic
             root_item = new QTreeWidgetItem(info_tree_widget_);
-            root_item->setText(0, "Stream "+QString::number(i + 1));//+1 for user's convenience (1 based instead 0 based)
+//            root_item->setText(0, "Stream "+QString::number(i + 1));//+1 for user's convenience (1 based instead 0 based)
+            root_item->setText(0, QString("Stream %1 (%2)").arg(QString::number(i+1)).        //+1 for 1-based indexing
+                                   arg(QString::fromStdString(XDFdata->streams[i].info.name)));
+
 //            root_item->setIcon(0, QIcon(":/images/ic_flag_black_24dp.png"));
 
             QDomDocument streamHeader;
@@ -264,7 +276,14 @@ void BasicHeaderInfoDialog::buildTree()
             QTreeWidgetItem* channel_item;
             QSharedPointer<SignalChannel const> channel = basic_header_->getChannel (channel_nr);
             channel_item = new QTreeWidgetItem(root_item);
-            channel_item->setText(0, QString("(%1) %2").arg(channel_nr + 1)
+
+//            QRegExp rx("(^channel\\s*\\d+)");
+//            rx.setCaseSensitivity(Qt::CaseInsensitive);
+
+//            if (channel->getLabel().contains(rx))
+//                channel_item->setText(0, channel->getLabel());
+//            else
+                channel_item->setText(0, QString("Channel %1 (%2)").arg(channel_nr + 1) // +1 for 1-based indexing
                                   .arg(channel->getLabel()));
 
             // channel basic
