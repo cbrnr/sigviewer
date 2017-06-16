@@ -201,12 +201,16 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
                 QMessageBox::warning(0, "SigViewer",
                                      "The effective sampling rate of at least one stream is significantly different than the reported nominal sampling rate. Signal visualization might be inaccurate.", QMessageBox::Ok, QMessageBox::Ok);
 
+
             basic_header_ = QSharedPointer<BasicHeader>
                     (new BiosigBasicHeader ("XDF", file_path));
 
             basic_header_->setNumberEvents(XDFdata->eventType.size());
 
-            basic_header_->setEventSamplerate(XDFdata->majSR);
+            if (XDFdata->fileEffectiveSampleRate)
+                basic_header_->setEventSamplerate(XDFdata->fileEffectiveSampleRate);
+            else
+                basic_header_->setEventSamplerate(XDFdata->majSR);
 
             return "";
         }
@@ -373,13 +377,20 @@ void XDFReader::bufferAllEvents () const
 {
     unsigned number_events = XDFdata->eventMap.size();
 
+    double eventSampleRate = 0;
+
+    if (XDFdata->fileEffectiveSampleRate)
+        eventSampleRate = XDFdata->fileEffectiveSampleRate;
+    else
+        eventSampleRate = XDFdata->majSR;
+
     for (unsigned index = 0; index < number_events; index++)
     {
         QSharedPointer<SignalEvent> event
-                (new SignalEvent (round ((XDFdata->eventMap[index].first.second - XDFdata->minTS) * XDFdata->majSR),
+                (new SignalEvent (round ((XDFdata->eventMap[index].first.second - XDFdata->minTS) * eventSampleRate),
                                   XDFdata->eventType[index] + 1,//index+1 because in SigViewer and libbiosig
                                   //0 is reserved for a special type of event. Thus we increment by 1
-                                  XDFdata->majSR, XDFdata->eventMap[index].second));
+                                  eventSampleRate, XDFdata->eventMap[index].second));
 
         event->setChannel (UNDEFINED_CHANNEL);
         event->setDuration (0);
