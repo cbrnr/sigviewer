@@ -96,6 +96,8 @@ public:
     size_t totalCh = 0;     /*!< The total number of channel count. */
     int majSR = 0;          /*!< The sample rate that has the most channels across all streams. */
     int maxSR = 0;          /*!< Highest sample rate across all streams. */
+    std::vector<double> effectiveSampleRateVector; /*!< Effective Sample Rate of each stream. */
+    double fileEffectiveSampleRate = 0; /*!< If effective sample rates in all the streams are the same, this is the value. */
     std::vector<int> streamMap;/*!< A vector indexes which channels belong to which stream.
                                 * The index is the same as channel number; the actual content is the stream Number */
 

@@ -838,6 +838,9 @@ void Xdf::calcEffectiveSrate()
                         = stream.info.sample_count /
                         (stream.info.last_timestamp - stream.info.first_timestamp);
 
+                if (stream.info.effective_sample_rate)
+                    effectiveSampleRateVector.emplace_back(stream.info.effective_sample_rate);
+
                 pugi::xml_document doc;
                 doc.load_string(stream.streamFooter.c_str());
                 pugi::xml_node sampleCount = doc.child("info").child("sample_count");
