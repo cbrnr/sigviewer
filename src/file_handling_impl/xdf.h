@@ -74,11 +74,11 @@ public:
             double last_timestamp;  /*!< Last time stamp of the stream. */
             int sample_count;       /*!< Sample count of the stream. */
             double measured_srate;  /*!< Measured sample rate of the stream. */
-            double effective_sample_rate;/*!< Effective sample rate. */
+            double effective_sample_rate = 0;/*!< Effective sample rate. */
         } info; /*!< Meta-data from the stream header of the current stream. */
 
-        float last_timestamp{ 0 };  /*!< For temporary use while loading the vector */
-        float sampling_interval;    /*!< If srate > 0, sampling_interval = 1/srate; otherwise 0 */
+        double last_timestamp{ 0 };  /*!< For temporary use while loading the vector */
+        double sampling_interval;    /*!< If srate > 0, sampling_interval = 1/srate; otherwise 0 */
         std::vector<double> clock_times;/*!< Vector of clock times from clock offset chunk (Tag 4). */
         std::vector<double> clock_values;/*!< Vector of clock values from clock offset chunk (Tag 4). */
     };
@@ -91,8 +91,8 @@ public:
     uint64_t totalLen = 0;  /*!< The total length is the product of the range between the smallest
                              *time stamp and the largest multiplied by the major sample rate. */
 
-    float minTS = 0;        /*!< The smallest time stamp across all streams. */
-    float maxTS = 0;        /*!< The largest time stamp across all streams. */
+    double minTS = 0;        /*!< The smallest time stamp across all streams. */
+    double maxTS = 0;        /*!< The largest time stamp across all streams. */
     size_t totalCh = 0;     /*!< The total number of channel count. */
     int majSR = 0;          /*!< The sample rate that has the most channels across all streams. */
     int maxSR = 0;          /*!< Highest sample rate across all streams. */
@@ -110,7 +110,7 @@ public:
      * in eventMap.
      * \sa eventMap
      */
-    typedef float eventTimeStamp;
+    typedef double eventTimeStamp;
 
     std::vector<std::pair<std::pair<eventName, eventTimeStamp>, int> > eventMap;/*!< The vector to store all the events across all streams.
                                                                                  * The format is <<events, timestamps>, streamNum>. */
