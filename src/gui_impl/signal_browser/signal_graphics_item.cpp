@@ -72,6 +72,7 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
     connect(signal_view_settings.data(), SIGNAL(separatorEnabled(bool)), SLOT(enableSeparator(bool)));
     connect(signal_view_settings.data(), SIGNAL(gridColorChanged(QColor)), SLOT(updateGridColor(QColor)));
     connect(signal_view_settings.data(), SIGNAL(labelColorChanged(QColor)), SLOT(updateLabelColor(QColor)));
+    setToolTip("Ctrl+mouse wheel up/down to scale an indivicual channel");
 
     QSettings settings;
 
