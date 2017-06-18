@@ -4,34 +4,18 @@
 
 
 #include "signal_graphics_item.h"
-#include "event_graphics_item.h"
 #include "signal_browser_model_4.h"
 #include "editing_commands/new_event_undo_command.h"
-#include "y_axis_widget_4.h"
-#include "file_handling/channel_manager.h"
-#include "command_executer.h"
-#include "base/signal_event.h"
-#include "base/signal_channel.h"
 #include "base/math_utils.h"
 #include "gui_impl/signal_browser_mouse_handling.h"
-#include "gui/color_manager.h"
 #include "gui/gui_action_factory.h"
 #include "file_handling_impl/xdf_reader.h"
 
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
-#include <QPoint>
-#include <QTime>
-#include <QObject>
-#include <QMenu>
-#include <QPainter>
-#include <QDebug>
 #include <QToolTip>
-#include <QSet>
 #include <QSettings>
 
-#include <cmath>
-#include <ctime> //to get current date when user add events
 
 namespace sigviewer
 {
