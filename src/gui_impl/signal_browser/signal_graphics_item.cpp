@@ -357,7 +357,7 @@ void SignalGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* event)
         move_start_point_ = p;
         move_start_point_ = p;
         y_offset_ = y_offset_ + dy;
-        update();
+        signal_browser_model_.update();
         emit shifting (id_);
     }
     else if (new_event_)
