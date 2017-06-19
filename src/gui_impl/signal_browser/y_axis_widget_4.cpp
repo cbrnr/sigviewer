@@ -156,16 +156,11 @@ void YAxisWidget::paintYAxisLabels (QPainter* painter, float64 offset,
                                     double value_range_fragment,
                                     QString const& unit_string, float64 channelHeight)
 {
-    painter->setClipping (true);
-
     //Below, 0 is the relative upper border of each channel.
     //despite being an absolute value, because the painter coordinates are readjusted
     //automatically every time it moves to a new channel, hence 0 is the
     //relative position of the upper border of each channel
 #define UPPER_BORDER 0
-
-    painter->setClipRect (0, UPPER_BORDER - 1,          // -1 to include the black border as well
-                          width(), channelHeight + 2);  //+2 include both upper and lower borders
 
     bool channel_overlapping = signal_view_settings_->getChannelOverlapping();
 

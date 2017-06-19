@@ -235,7 +235,7 @@ void SignalGraphicsItem::scaleImpl (double min, double max)
         y_offset_ = new_y_offset;
         updateYGridIntervall ();
     }
-    update ();
+    signal_browser_model_.update ();
 }
 
 //-----------------------------------------------------------------------------
@@ -259,13 +259,6 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
         painter->fillRect(new_signal_event_->getPosition(), 0, new_signal_event_->getDuration(), height_, new_event_color_);
 
     QRectF clip (option->exposedRect);
-
-    if (!channel_overlapping)
-    {
-        painter->setClipping(true);
-//        painter->setClipRect(clip);
-        painter->setClipRect(0, 0, width_, height_ + 1);    // +1 to prevent overlapping
-    }
 
     double pixel_per_sample = signal_view_settings_->getPixelsPerSample();
 
@@ -364,7 +357,7 @@ void SignalGraphicsItem::mouseMoveEvent (QGraphicsSceneMouseEvent* event)
         move_start_point_ = p;
         move_start_point_ = p;
         y_offset_ = y_offset_ + dy;
-        update();
+        signal_browser_model_.update();
         emit shifting (id_);
     }
     else if (new_event_)
