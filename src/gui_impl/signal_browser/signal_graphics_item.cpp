@@ -15,6 +15,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QToolTip>
 #include <QSettings>
+#include <cmath>
 
 
 namespace sigviewer
