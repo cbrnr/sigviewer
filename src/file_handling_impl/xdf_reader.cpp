@@ -151,6 +151,19 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
                 XDFdata->calcTotalLength(XDFdata->majSR);
 
                 XDFdata->adjustTotalLength();
+
+                if (XDFdata->effectiveSampleRateVector.size())
+                {
+                    /* If and only if the file contains only one sample rate, we use effective
+                    sample rate to more accurately display events. Effective sample rates
+                    can be slightly different across streams, so we calculate the mean here */
+
+                    double init = 0.0;
+                    XDFdata->fileEffectiveSampleRate =
+                            std::accumulate(XDFdata->effectiveSampleRateVector.begin(),
+                                            XDFdata->effectiveSampleRateVector.end(), init)
+                            / XDFdata->effectiveSampleRateVector.size();
+                }
             }
                 break;
             case Multi_Sample_Rate:
