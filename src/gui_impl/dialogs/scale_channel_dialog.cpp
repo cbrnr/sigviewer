@@ -6,6 +6,7 @@
 #include "scale_channel_dialog.h"
 
 #include <QDebug>
+#include <QSettings>
 
 #include <limits>
 
@@ -49,6 +50,12 @@ ScaleChannelDialog::ScaleChannelDialog (ChannelID preselected_channel,
 
     ui_.unitLabelLower->hide();
     ui_.unitLabelUpper->hide();
+
+    QSettings settings;
+    if (settings.value("autoScaling", true).toBool())
+        ui_.autoButton->setChecked(true);
+    else
+        ui_.fixedButton->setChecked(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -86,6 +93,9 @@ void ScaleChannelDialog::on_fixedButton_toggled (bool checked)
 
     ui_.upper_spinbox_->setValue (upper_value);
     ui_.lower_spinbox_->setValue (lower_value);
+
+    QSettings settings;
+    settings.setValue("autoScaling", false);
 }
 
 //-----------------------------------------------------------------------------
@@ -102,6 +112,9 @@ void ScaleChannelDialog::on_autoButton_toggled (bool checked)
     }
     ui_.upper_spinbox_->setValue (upper_value);
     ui_.lower_spinbox_->setValue (lower_value);
+
+    QSettings settings;
+    settings.setValue("autoScaling", true);
 }
 
 //-----------------------------------------------------------------------------
