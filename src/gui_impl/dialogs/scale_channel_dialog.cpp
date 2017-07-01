@@ -55,7 +55,7 @@ ScaleChannelDialog::ScaleChannelDialog (ChannelID preselected_channel,
     if (settings.value("autoScaling", true).toBool())
         ui_.autoButton->setChecked(true);
     else
-        ui_.fixedButton->setChecked(true);
+        ui_.manualButton->setChecked(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -84,7 +84,7 @@ float ScaleChannelDialog::lowerValue () const
 
 
 //-----------------------------------------------------------------------------
-void ScaleChannelDialog::on_fixedButton_toggled (bool checked)
+void ScaleChannelDialog::on_manualButton_toggled (bool checked)
 {
     if (!checked)
         return;
@@ -120,7 +120,7 @@ void ScaleChannelDialog::on_autoButton_toggled (bool checked)
 //-----------------------------------------------------------------------------
 void ScaleChannelDialog::storeAccepted ()
 {
-    if (ui_.fixedButton->isChecked())
+    if (ui_.manualButton->isChecked())
     {
         last_max_ = ui_.upper_spinbox_->value();
         last_min_ = ui_.lower_spinbox_->value();
