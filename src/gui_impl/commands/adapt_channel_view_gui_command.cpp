@@ -63,7 +63,7 @@ void AdaptChannelViewGuiCommand::init ()
     resetActionTriggerSlot (HOTKEYS_, SLOT(showHotkeyDialog()));
 
     setShortcut (CHANNELS_, tr("Ctrl+C"));
-    //setShortcut (SCALE_ALL_, tr("Ctrl+A"));
+    setShortcut (SCALE_ALL_, tr("Ctrl+A"));
     setShortcut (HOTKEYS_, tr("Ctrl+H"));
 
     QActionGroup* scale_mode_action_group = new QActionGroup (this);
