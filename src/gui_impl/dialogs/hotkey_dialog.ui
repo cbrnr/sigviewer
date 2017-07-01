@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>hotkey_dialog</class>
- <widget class="QDialog" name="hotkey_dialog">
+ <class>HotkeyDialog</class>
+ <widget class="QDialog" name="HotkeyDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="3">
-    <widget class="QListWidget" name="listWidget"/>
+    <widget class="QTableWidget" name="tableWidget"/>
    </item>
    <item row="1" column="0">
     <spacer name="horizontalSpacer">

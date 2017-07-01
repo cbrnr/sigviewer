@@ -8,6 +8,7 @@
 
 #include "gui/gui_action_command.h"
 #include "gui/gui_action_factory_registrator.h"
+#include "gui_impl/dialogs/hotkey_dialog.h"
 
 namespace sigviewer
 {
@@ -61,6 +62,9 @@ private slots:
     //-------------------------------------------------------------------------
     void setAnimationDuration ();
 
+    //-------------------------------------------------------------------------
+    void showHotkeyDialog ();
+
 private:
     static QString const CHANNELS_;
     static QString const CHANGE_COLOR_;
@@ -73,8 +77,11 @@ private:
     static QString const ANIMATIONS_;
     static QString const SET_ANIMATION_DURATION_;
     static QStringList const ACTIONS_;
+    static QString const HOTKEYS_;
 
     static GuiActionFactoryRegistrator registrator_;
+
+    HotkeyDialog* hotkeyDialog;
 };
 
 }
