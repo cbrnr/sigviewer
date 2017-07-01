@@ -238,8 +238,8 @@ void AdaptChannelViewGuiCommand::setAnimationDuration ()
 //-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::showHotkeyDialog()
 {
-    HotkeyDialog* hotkeyDialog = new HotkeyDialog();
-    hotkeyDialog->exec();
+    hotkey_dialog_ = new HotkeyDialog();
+    hotkey_dialog_->show();
 }
 
 }

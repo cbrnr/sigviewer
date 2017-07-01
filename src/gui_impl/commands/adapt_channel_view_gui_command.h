@@ -81,7 +81,7 @@ private:
 
     static GuiActionFactoryRegistrator registrator_;
 
-    HotkeyDialog* hotkeyDialog;
+    HotkeyDialog* hotkey_dialog_;
 };
 
 }
