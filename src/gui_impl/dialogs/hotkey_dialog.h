@@ -1,3 +1,8 @@
+// Copyright (c) 2016 The SigViewer Development Team
+// Licensed under the GNU General Public License (GPL)
+// https://www.gnu.org/licenses/gpl
+
+
 #ifndef HOTKEY_DIALOG_H
 #define HOTKEY_DIALOG_H
 

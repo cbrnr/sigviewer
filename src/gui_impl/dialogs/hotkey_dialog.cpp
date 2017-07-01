@@ -1,3 +1,8 @@
+// Copyright (c) 2016 The SigViewer Development Team
+// Licensed under the GNU General Public License (GPL)
+// https://www.gnu.org/licenses/gpl
+
+
 #include "hotkey_dialog.h"
 #include "ui_hotkey_dialog.h"
 
@@ -6,17 +11,8 @@ HotkeyDialog::HotkeyDialog(QWidget *parent) :
     ui(new Ui::HotkeyDialog)
 {
     ui->setupUi(this);
-
     resize(633, 744);
     this->setWindowTitle(tr("Hotkeys"));
-    ui->tableWidget->setRowCount(16);
-    ui->tableWidget->setColumnCount(2);
-    ui->tableWidget->horizontalHeader()->hide();
-    ui->tableWidget->verticalHeader()->hide();
-    ui->tableWidget->setShowGrid(false);
-    ui->tableWidget->setFocusPolicy(Qt::NoFocus);
-    ui->tableWidget->setColumnWidth(0, width() * 0.47);
-    ui->tableWidget->setColumnWidth(1, width() * 0.47);
 
 #if defined(Q_OS_MACOS)
     QString ctrl = "Cmd";
@@ -60,6 +56,15 @@ HotkeyDialog::HotkeyDialog(QWidget *parent) :
             << ctrl + "+3"
             << ctrl + "+4"
             << ctrl + "+F4";
+
+    ui->tableWidget->setRowCount(actionDescriptions.size());
+    ui->tableWidget->setColumnCount(2);
+    ui->tableWidget->horizontalHeader()->hide();
+    ui->tableWidget->verticalHeader()->hide();
+    ui->tableWidget->setShowGrid(false);
+    ui->tableWidget->setFocusPolicy(Qt::NoFocus);
+    ui->tableWidget->setColumnWidth(0, width() * 0.47);
+    ui->tableWidget->setColumnWidth(1, width() * 0.47);
 
     for (int row = 0; row < ui->tableWidget->rowCount(); row++)
     {
