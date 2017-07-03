@@ -14,12 +14,7 @@
 #include "commands/convert_file_command.h"
 
 #include <QApplication>
-#include <QSettings>
-#include <QDir>
-#include <QSysInfo>
 #include <QCommandLineParser>
-
-#include <iostream>
 
 
 using namespace sigviewer;
