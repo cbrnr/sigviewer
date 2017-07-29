@@ -13,9 +13,6 @@
 namespace sigviewer
 {
 
-double ScaleChannelDialog::last_min_ = 0;
-double ScaleChannelDialog::last_max_ = 0;
-
 //-----------------------------------------------------------------------------
 ScaleChannelDialog::ScaleChannelDialog (ChannelID preselected_channel,
                                         std::set<ChannelID> const& shown_channels,
@@ -56,6 +53,14 @@ ScaleChannelDialog::ScaleChannelDialog (ChannelID preselected_channel,
         ui_.autoButton->setChecked(true);
     else
         ui_.manualButton->setChecked(true);
+
+    last_max_ = settings.value("scaling_upper_value", 75).toDouble();
+    last_min_ = settings.value("scaling_lower_value", -75).toDouble();
+
+    ui_.upper_spinbox_->setValue(last_max_);
+    ui_.lower_spinbox_->setValue(last_min_);
+    ui_.upper_spinbox_->setMinimum(ui_.lower_spinbox_->value());
+    ui_.lower_spinbox_->setMaximum(ui_.upper_spinbox_->value());
 }
 
 //-----------------------------------------------------------------------------
@@ -82,17 +87,17 @@ float ScaleChannelDialog::lowerValue () const
     return ui_.lower_spinbox_->value();
 }
 
-
 //-----------------------------------------------------------------------------
 void ScaleChannelDialog::on_manualButton_toggled (bool checked)
 {
+    ui_.upper_spinbox_->setEnabled(checked);
+    ui_.lower_spinbox_->setEnabled(checked);
+
     if (!checked)
         return;
-    double upper_value = last_max_;
-    double lower_value = last_min_;
 
-    ui_.upper_spinbox_->setValue (upper_value);
-    ui_.lower_spinbox_->setValue (lower_value);
+    ui_.upper_spinbox_->setValue (last_max_);
+    ui_.lower_spinbox_->setValue (last_min_);
 
     QSettings settings;
     settings.setValue("autoScaling", false);
@@ -103,13 +108,21 @@ void ScaleChannelDialog::on_autoButton_toggled (bool checked)
 {
     if (!checked)
         return;
+
     double upper_value = 0;
     double lower_value = 0;
+
     if (selected_channel_ != UNDEFINED_CHANNEL)
     {
         upper_value = channel_manager_.getMaxValue (selected_channel_);
         lower_value = channel_manager_.getMinValue (selected_channel_);
     }
+    else
+    {
+        upper_value = last_max_;
+        lower_value = last_min_;
+    }
+
     ui_.upper_spinbox_->setValue (upper_value);
     ui_.lower_spinbox_->setValue (lower_value);
 
@@ -124,7 +137,24 @@ void ScaleChannelDialog::storeAccepted ()
     {
         last_max_ = ui_.upper_spinbox_->value();
         last_min_ = ui_.lower_spinbox_->value();
+
+        QSettings settings;
+        settings.setValue("scaling_upper_value", last_max_);
+        settings.setValue("scaling_lower_value", last_min_);
     }
 }
 
+//-----------------------------------------------------------------------------
+void ScaleChannelDialog::on_upper_spinbox__valueChanged(double arg1)
+{
+    ui_.lower_spinbox_->setMaximum(arg1);
 }
+
+//-----------------------------------------------------------------------------
+void ScaleChannelDialog::on_lower_spinbox__valueChanged(double arg1)
+{
+    ui_.upper_spinbox_->setMinimum(arg1);
+}
+
+}
+
