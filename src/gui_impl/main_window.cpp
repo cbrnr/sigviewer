@@ -101,11 +101,11 @@ void MainWindow::initToolBars()
     view_toolbar_->addAction(action("Events..."));
     view_toolbar_->addAction(action("Channels..."));
     view_toolbar_->addAction(action("Scale All..."));
-    view_toolbar_->addAction(action("Hotkeys..."));
     view_toolbar_->addAction(action("Zoom In Vertical"));
     view_toolbar_->addAction(action("Zoom Out Vertical"));
     view_toolbar_->addAction(action("Zoom In Horizontal"));
     view_toolbar_->addAction(action("Zoom Out Horizontal"));
+    view_toolbar_->addAction(action("Hotkeys..."));
 
     view_toolbar_views_menu_->addSeparator ();
     toggle_all_toolbars_ = new QAction (tr("Hide all Toolbars"), this);
