@@ -12,7 +12,7 @@ HotkeyDialog::HotkeyDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     resize(633, 744);
-    this->setWindowTitle(tr("Hotkeys"));
+    this->setWindowTitle(tr("Keyboard and Mouse Shortcuts"));
 
 #if defined(Q_OS_MACOS)
     QString ctrl = "Cmd";

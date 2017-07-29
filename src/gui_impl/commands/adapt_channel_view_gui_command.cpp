@@ -25,7 +25,7 @@ QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MAX_TO_MAX_ = "Zero Lin
 QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MIN_TO_MAX_ = "Zero Line Fitted";
 QString const AdaptChannelViewGuiCommand::ANIMATIONS_ = "Animations";
 QString const AdaptChannelViewGuiCommand::SET_ANIMATION_DURATION_ = "Set Animation Duration";
-QString const AdaptChannelViewGuiCommand::HOTKEYS_ = "Hotkeys...";
+QString const AdaptChannelViewGuiCommand::HOTKEYS_ = "Keyboard and Mouse Shortcuts";
 QStringList const AdaptChannelViewGuiCommand::ACTIONS_ = QStringList() <<
                                                          AdaptChannelViewGuiCommand::CHANNELS_ <<
                                                          AdaptChannelViewGuiCommand::SCALE_ALL_  <<

@@ -105,7 +105,7 @@ void MainWindow::initToolBars()
     view_toolbar_->addAction(action("Zoom Out Vertical"));
     view_toolbar_->addAction(action("Zoom In Horizontal"));
     view_toolbar_->addAction(action("Zoom Out Horizontal"));
-    view_toolbar_->addAction(action("Hotkeys..."));
+    view_toolbar_->addAction(action("Keyboard and Mouse Shortcuts"));
 
     view_toolbar_views_menu_->addSeparator ();
     toggle_all_toolbars_ = new QAction (tr("Hide all Toolbars"), this);
@@ -263,6 +263,7 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
         help_menu_->addSeparator();
     }
     help_menu_->addAction (action("About"));
+    help_menu_->addAction (action("Keyboard and Mouse Shortcuts"));
 }
 
 //-----------------------------------------------------------------------------
