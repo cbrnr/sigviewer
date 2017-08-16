@@ -90,6 +90,9 @@ void OpenFileGuiCommand::openFile (QString file_path)
     CloseFileGuiCommand closeObject;
     if (closeObject.closeCurrentFile())
     {
+        QSettings settings;
+        settings.setValue("autoScaling", true);
+
         instance_->openFileImpl (file_path);
     }
 }
@@ -159,6 +162,9 @@ void OpenFileGuiCommand::open ()
     CloseFileGuiCommand closeObject;
     if (closeObject.closeCurrentFile())
     {
+        QSettings settings;
+        settings.setValue("autoScaling", true);
+
         instance_->openFileImpl (file_path);
     }
 }

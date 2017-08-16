@@ -184,9 +184,10 @@ void AdaptChannelViewGuiCommand::scaleAll ()
             currentVisModel()->scaleChannel(UNDEFINED_CHANNEL);
         }
         else
-            currentVisModel()->scaleChannel (UNDEFINED_CHANNEL,
-                                             scale_dialog.lowerValue(),
-                                             scale_dialog.upperValue());
+        {
+            currentVisModel()->scaleChannel
+                    (UNDEFINED_CHANNEL, scale_dialog.lowerValue(), scale_dialog.upperValue());
+        }
     }
 }
 

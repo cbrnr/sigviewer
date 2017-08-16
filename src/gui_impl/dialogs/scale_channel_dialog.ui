@@ -37,9 +37,9 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QRadioButton" name="fixedButton">
+       <widget class="QRadioButton" name="manualButton">
         <property name="text">
-         <string>Fixed Scaling</string>
+         <string>Manual Scaling</string>
         </property>
        </widget>
       </item>
@@ -142,7 +142,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>fixedButton</sender>
+   <sender>manualButton</sender>
    <signal>toggled(bool)</signal>
    <receiver>lower_spinbox_</receiver>
    <slot>setEnabled(bool)</slot>
@@ -158,7 +158,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>fixedButton</sender>
+   <sender>manualButton</sender>
    <signal>toggled(bool)</signal>
    <receiver>upper_spinbox_</receiver>
    <slot>setEnabled(bool)</slot>

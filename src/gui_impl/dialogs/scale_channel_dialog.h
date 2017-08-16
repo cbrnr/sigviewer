@@ -32,9 +32,12 @@ public:
 signals:
 
 private slots:
-    void on_fixedButton_toggled (bool checked);
+    void on_manualButton_toggled (bool checked);
     void on_autoButton_toggled (bool checked);
     void storeAccepted ();
+    void on_upper_spinbox__valueChanged(double arg1);
+    void on_lower_spinbox__valueChanged(double arg1);
+
 private:
     ChannelID selected_channel_;
     std::set<ChannelID> const shown_channels_;
@@ -42,8 +45,8 @@ private:
 
     Ui::ScaleChannelDialog ui_;
 
-    static double last_min_;
-    static double last_max_;
+    double last_min_;
+    double last_max_;
 };
 
 }
