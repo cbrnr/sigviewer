@@ -16,8 +16,10 @@ HotkeyDialog::HotkeyDialog(QWidget *parent) :
 
 #if defined(Q_OS_MACOS)
     QString ctrl = "Cmd";
+    QString alt = "Option";
 #else
     QString ctrl = "Ctrl";
+    QString alt = "Alt";
 #endif
 
     QStringList actionDescriptions;
@@ -47,8 +49,8 @@ HotkeyDialog::HotkeyDialog(QWidget *parent) :
             << ctrl + "+E"
             << ctrl + "+O"
             << ctrl + "+A"
-            << "Alt++"
-            << "Alt+-"
+            << alt  + "++"
+            << alt  + "+-"
             << ctrl + "++"
             << ctrl + "+-"
             << ctrl + "+1"
