@@ -42,20 +42,20 @@ HotkeyDialog::HotkeyDialog(QWidget *parent) :
 
     hotkeys << ctrl + "+Mousewheel Up"
             << ctrl + "+Mousewheel Down"
-            << QKeySequence(tr("Ctrl+I")).toString()
-            << QKeySequence(tr("Ctrl+C")).toString()
-            << QKeySequence(tr("Ctrl+E")).toString()
-            << QKeySequence(tr("Ctrl+O")).toString()
-            << QKeySequence(tr("Ctrl+A")).toString()
-            << QKeySequence(tr("Alt++")).toString()
-            << QKeySequence(tr("Alt+-")).toString()
-            << QKeySequence(tr("Ctrl++")).toString()
-            << QKeySequence(tr("Ctrl+-")).toString()
-            << QKeySequence(tr("Ctrl+1")).toString()
-            << QKeySequence(tr("Ctrl+2")).toString()
-            << QKeySequence(tr("Ctrl+3")).toString()
-            << QKeySequence(tr("Ctrl+4")).toString()
-            << QKeySequence(tr("Ctrl+F4")).toString();
+            << ctrl + "+I"
+            << ctrl + "+C"
+            << ctrl + "+E"
+            << ctrl + "+O"
+            << ctrl + "+A"
+            << "Alt++"
+            << "Alt+-"
+            << ctrl + "++"
+            << ctrl + "+-"
+            << ctrl + "+1"
+            << ctrl + "+2"
+            << ctrl + "+3"
+            << ctrl + "+4"
+            << ctrl + "+F4";
 
     ui->tableWidget->setRowCount(actionDescriptions.size());
     ui->tableWidget->setColumnCount(2);
