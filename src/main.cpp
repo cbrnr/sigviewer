@@ -3,15 +3,7 @@
 // https://www.gnu.org/licenses/gpl
 
 
-#include "base/sigviewer_user_types.h"
-#include "base/exception.h"
-#include "gui_impl/main_window.h"
-#include "gui_impl/main_window_model_impl.h"
-#include "application_context_impl.h"
-#include "file_handling_impl/event_table_file_reader.h"
-#include "gui/gui_action_factory.h"
 #include "gui_impl/commands/open_file_gui_command.h"
-#include "commands/convert_file_command.h"
 
 #include <QApplication>
 #include <QCommandLineParser>
