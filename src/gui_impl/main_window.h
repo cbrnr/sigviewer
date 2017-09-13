@@ -6,11 +6,9 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include "base/sigviewer_user_types.h"
 #include "gui/application_context.h"
 
 #include <QMainWindow>
-#include <QIcon>
 #include <QProgressBar>
 
 class QAction;

@@ -4,27 +4,15 @@
 
 
 #include "main_window.h"
-#include "gui/gui_action_factory.h"
 #include "gui/background_processes.h"
 #include "gui_impl/commands/open_file_gui_command.h"
 
-#include <QMessageBox>
-#include <QFileDialog>
-#include <QComboBox>
-#include <QValidator>
-#include <QActionGroup>
-#include <QCloseEvent>
 #include <QToolBar>
 #include <QMenuBar>
-#include <QLineEdit>
-#include <QTextStream>
 #include <QStatusBar>
 #include <QLabel>
 #include <QSettings>
-#include <QApplication>
 #include <QMimeData>
-#include <QUrl>
-#include <QDebug>
 
 namespace sigviewer
 {
