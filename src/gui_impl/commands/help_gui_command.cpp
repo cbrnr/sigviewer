@@ -8,7 +8,7 @@
 #include "ui_about_dialog.h"
 
 #include <QMessageBox>
-
+#include <QDesktopWidget>
 
 namespace sigviewer
 {
@@ -48,7 +48,12 @@ void HelpGuiCommand::showAboutDialog ()
     ui.aboutLabel->setText(ui.aboutLabel->text().replace(QString("VERSION_MAJOR"), QString::number(VERSION_MAJOR))
                                                 .replace(QString("VERSION_MINOR"), QString::number(VERSION_MINOR))
                                                 .replace(QString("VERSION_BUILD"), QString::number(VERSION_BUILD)));
-    dialog_->setFixedSize(dialog_->minimumSizeHint());
+
+    QDesktopWidget dw;
+    int x=dw.width()*0.2;
+    int y=dw.height()*0.2;
+    dialog_->setFixedSize(x,y);
+
     dialog_->show();
 }
 
