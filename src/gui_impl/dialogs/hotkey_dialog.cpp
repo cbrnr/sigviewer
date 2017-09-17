@@ -86,6 +86,7 @@ HotkeyDialog::HotkeyDialog(QWidget *parent) :
     ui->tableWidget->setFocusPolicy(Qt::NoFocus);
     ui->tableWidget->setColumnWidth(0, width() * 0.47);
     ui->tableWidget->setColumnWidth(1, width() * 0.45);
+    ui->tableWidget->setSelectionMode(QAbstractItemView::NoSelection);
 
     for (int row = 0; row < ui->tableWidget->rowCount(); row++)
     {
