@@ -6,20 +6,29 @@
 #include "hotkey_dialog.h"
 #include "ui_hotkey_dialog.h"
 
+#include <QDesktopWidget>
+
 HotkeyDialog::HotkeyDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::HotkeyDialog)
 {
     ui->setupUi(this);
-    resize(633, 744);
+
+    QDesktopWidget dw;
+    int x=dw.width()*0.35;
+    int y=dw.height()*0.78;
+    setFixedSize(x,y);
+
     this->setWindowTitle(tr("Keyboard and Mouse Shortcuts"));
 
 #if defined(Q_OS_MACOS)
     QString ctrl = "Cmd";
     QString alt = "Option";
+    QString quit = "+Q"
 #else
     QString ctrl = "Ctrl";
     QString alt = "Alt";
+    QString quit = "+F4";
 #endif
 
     QStringList actionDescriptions;
@@ -27,6 +36,8 @@ HotkeyDialog::HotkeyDialog(QWidget *parent) :
 
     actionDescriptions << "Scale Individual Channel Up"
                        << "Scale Individual Channel Down"
+                       << "Scale All Channels Up"
+                       << "Scale All Channels Down"
                        << "Info Dialog"
                        << "Channel Dialog"
                        << "Event Dialog"
@@ -40,10 +51,15 @@ HotkeyDialog::HotkeyDialog(QWidget *parent) :
                        << "Edit Event Mode"
                        << "Scroll Mode"
                        << "View Options Mode"
+                       << "Undo"
+                       << "Redo"
+                       << "Close File"
                        << "Exit";
 
     hotkeys << ctrl + "+Mousewheel Up"
             << ctrl + "+Mousewheel Down"
+            << "Shift + Mousewheel Up"
+            << "Shift + Mousewheel Down"
             << ctrl + "+I"
             << ctrl + "+C"
             << ctrl + "+E"
@@ -57,7 +73,10 @@ HotkeyDialog::HotkeyDialog(QWidget *parent) :
             << ctrl + "+2"
             << ctrl + "+3"
             << ctrl + "+4"
-            << ctrl + "+F4";
+            << ctrl + "+Z"
+            << ctrl + "+Y"
+            << ctrl + "+W"
+            << ctrl + quit;
 
     ui->tableWidget->setRowCount(actionDescriptions.size());
     ui->tableWidget->setColumnCount(2);
@@ -66,7 +85,7 @@ HotkeyDialog::HotkeyDialog(QWidget *parent) :
     ui->tableWidget->setShowGrid(false);
     ui->tableWidget->setFocusPolicy(Qt::NoFocus);
     ui->tableWidget->setColumnWidth(0, width() * 0.47);
-    ui->tableWidget->setColumnWidth(1, width() * 0.47);
+    ui->tableWidget->setColumnWidth(1, width() * 0.45);
 
     for (int row = 0; row < ui->tableWidget->rowCount(); row++)
     {

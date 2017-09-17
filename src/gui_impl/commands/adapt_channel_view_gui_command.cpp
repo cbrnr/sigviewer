@@ -105,6 +105,7 @@ void AdaptChannelViewGuiCommand::evaluateEnabledness ()
     QStringList disabled_actions_if_no_file = ACTIONS_;
     disabled_actions_if_no_file.removeAll(ANIMATIONS_);
     disabled_actions_if_no_file.removeAll(SET_ANIMATION_DURATION_);
+    disabled_actions_if_no_file.removeAll(HOTKEYS_);
     disableIfNoFileIsOpened (disabled_actions_if_no_file);
     disableIfNoSignalIsVisualised (disabled_actions_if_no_file);
 
