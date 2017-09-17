@@ -13,6 +13,7 @@
 #include <QLabel>
 #include <QSettings>
 #include <QMimeData>
+#include <QDesktopWidget>
 
 namespace sigviewer
 {
@@ -29,8 +30,12 @@ MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
     initMenus(application_context);
     setUnifiedTitleAndToolBarOnMac (true);
     
+    QDesktopWidget dw;
+    int x=dw.width()*0.7;
+    int y=dw.height()*0.7;
+
     QSettings settings;
-    resize(settings.value("MainWindow/size", QSize(1200, 800)).toSize());
+    resize(settings.value("MainWindow/size", QSize(x, y)).toSize());
     setMinimumSize(900, 800);
     restoreGeometry(settings.value("geometry").toByteArray());  //restore geometry and window state (full screen etc.)
     restoreState(settings.value("windowState").toByteArray());
