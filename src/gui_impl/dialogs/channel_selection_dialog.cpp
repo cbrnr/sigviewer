@@ -38,7 +38,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
     QDesktopWidget dw;
     int x=dw.width()*0.35;
     int y=dw.height()*0.7;
-    setFixedSize(x,y);
+    resize(x,y);
 
     ui_.treeWidget->header()->resizeSection(0, width() * 0.4);
     ui_.treeWidget->setAnimated(true);

@@ -28,7 +28,7 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
     QDesktopWidget dw;
     int x=dw.width()*0.35;
     int y=dw.height()*0.6;
-    setFixedSize(x,y);
+    resize(x,y);
 
 
     if (XDFdata->sampleRateMap.size() > 1)

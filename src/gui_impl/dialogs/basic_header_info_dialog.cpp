@@ -47,7 +47,7 @@ BasicHeaderInfoDialog::BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header,
     QDesktopWidget dw;
     int x=dw.width()*0.45;
     int y=dw.height()*0.8;
-    setFixedSize(x,y);
+    resize(x,y);
 
     buildTree();
 

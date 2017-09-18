@@ -28,7 +28,7 @@ EventTimeSelectionDialog::EventTimeSelectionDialog (std::set<EventType> const& s
     QDesktopWidget dw;
     int x=dw.width()*0.3;
     int y=dw.height()*0.6;
-    setFixedSize(x,y);
+    resize(x,y);
 
     foreach (ChannelID channel_id, shown_channels)
     {

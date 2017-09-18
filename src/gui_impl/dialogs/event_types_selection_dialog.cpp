@@ -43,7 +43,7 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
     QDesktopWidget dw;
     int x=dw.width()*0.35;
     int y=dw.height()*0.7;
-    setFixedSize(x,y);
+    resize(x,y);
 
     ui_.tree_widget_->header()->setSectionResizeMode (QHeaderView::Interactive);
     ui_.tree_widget_->header()->resizeSection (NAME_COLUMN_INDEX_, width() * 0.6);

@@ -29,7 +29,7 @@ ScaleChannelDialog::ScaleChannelDialog (ChannelID preselected_channel,
     QDesktopWidget dw;
     int x=dw.width()*0.22;
     int y=dw.height()*0.22;
-    setFixedSize(x,y);
+    resize(x,y);
 
     if (selected_channel_ == UNDEFINED_CHANNEL)
         setWindowTitle (tr("Scale All Channels"));
