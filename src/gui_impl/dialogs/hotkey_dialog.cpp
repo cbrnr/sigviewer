@@ -17,7 +17,7 @@ HotkeyDialog::HotkeyDialog(QWidget *parent) :
     QDesktopWidget dw;
     int x=dw.width()*0.35;
     int y=dw.height()*0.78;
-    setFixedSize(x,y);
+    resize(x,y);
 
     this->setWindowTitle(tr("Keyboard and Mouse Shortcuts"));
 
