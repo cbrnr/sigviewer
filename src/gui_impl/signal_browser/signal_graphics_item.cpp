@@ -16,6 +16,7 @@
 #include <QToolTip>
 #include <QSettings>
 #include <cmath>
+#include <ctime>
 
 
 namespace sigviewer

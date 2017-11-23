@@ -11,7 +11,7 @@
 
 
 #include <QSettings>
-
+#include <QFileInfo>
 
 
 
@@ -139,7 +139,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     basic_header_ = QSharedPointer<BasicHeader>
                     (new BiosigBasicHeader (biosig_header_, file_name));
 
-    if (!QFile::exists(file_name))
+    if (!QFileInfo::exists(file_name))
     {
         sclose (biosig_header_);
         destructHDR(biosig_header_);
