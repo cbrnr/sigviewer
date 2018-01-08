@@ -157,7 +157,11 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         return "non-exist";
     }
 
+#if (BIOSIG_VERSION < 10400)
+    if (biosig_header_ == NULL || serror(biosig_header_))
+#else
     if (biosig_header_ == NULL || serror2(biosig_header_))
+#endif
     {
         sclose (biosig_header_);
         destructHDR(biosig_header_);

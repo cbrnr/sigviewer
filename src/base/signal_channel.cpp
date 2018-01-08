@@ -23,7 +23,7 @@ SignalChannel::SignalChannel(unsigned ch, const HDRTYPE* hdr) :
 {
 #if (BIOSIG_VERSION < 10400)
     char tmpstr[30];
-    PhysDim(hdr->CHANNEL[ch].PhysDimCode), tmpstr);
+    PhysDim(hdr->CHANNEL[ch].PhysDimCode, tmpstr);
 #else
     const char *tmpstr = PhysDim3(hdr->CHANNEL[ch].PhysDimCode);
 #endif
