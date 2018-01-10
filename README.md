@@ -5,9 +5,10 @@ SigViewer is a viewing application for biosignals such as EEG or MEG time series
 
 Download
 --------
-- [SigViewer 0.6.1 (Windows)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.1/sigviewer-0.6.1-windows.exe) (Windows 7-10, 32bit)
-- [SigViewer 0.6.1 (macOS)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.1/sigviewer-0.6.1-macos.dmg) (macOS 10.9-10.12, 64bit)
-- [SigViewer 0.6.1 (Linux)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.1/sigviewer-0.6.1-linux.zip) (64bit) / [SigViewer 0.6.1 (Arch Linux AUR)](https://aur.archlinux.org/packages/sigviewer/)
+- [SigViewer 0.6.1 (Windows 32bit)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.1/sigviewer-0.6.1-win32.exe) (Windows 7-10, 32bit)
+- [SigViewer 0.6.1 (Windows 64bit)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.1/sigviewer-0.6.1-win64.exe) (Windows 7-10, 32bit)
+- [SigViewer 0.6.1 (macOS 64bit)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.1/sigviewer-0.6.1-macos.dmg) (macOS 10.9-10.12, 64bit)
+- [SigViewer 0.6.1 (Linux 64bit)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.1/sigviewer-0.6.1-linux.zip) / [SigViewer 0.6.1 (Arch Linux AUR)](https://aur.archlinux.org/packages/sigviewer/)
 - [SigViewer 0.6.1 (Source)](https://github.com/cbrnr/sigviewer/archive/v0.6.1.zip)
 
 Screenshots
