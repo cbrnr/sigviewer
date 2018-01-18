@@ -24,6 +24,7 @@ SigViewer depends on [libbiosig](http://biosig.sourceforge.net/) and [libxdf](ht
 1. Build these dependencies yourself (see separate descriptions below).
 2. Use our pre-built binaries. The corresponding archive contains binary versions of libbiosig and libxdf and must be extracted into SigViewer’s source folder (which we denote as `$sigviewer`).
     - [External dependencies (Windows)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.1/external-0.6.1-win32.zip) (Windows 7-10, 32bit)
+    - [External dependencies (Windows)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.1/external-0.6.1-win64.zip) (Windows 7-10, 64bit)
     - [External dependencies (macOS)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.1/external-0.6.1-macos.zip) (macOS 10.9-10.12, 64bit)
     - [External dependencies (Linux)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.1/external-0.6.1-linux.zip) (64bit)
 
