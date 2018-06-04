@@ -592,7 +592,7 @@ void Xdf::syncTimeStamps()
     {
         if (!this->streams[elem.second].clock_times.empty())
         {
-            size_t k = 0;   // index iterating through streams[k].clock_times
+            size_t k = 0;   // index iterating through streams[elem.second].clock_times
 
             while (k < this->streams[elem.second].clock_times.size() - 1)
             {
