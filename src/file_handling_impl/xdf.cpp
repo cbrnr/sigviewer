@@ -569,8 +569,8 @@ void Xdf::syncTimeStamps()
     {
         if (!stream.clock_times.empty())
         {
-            size_t m = 0;   // index iterating through streams[k].time_stamps
-            size_t n = 0;   // index iterating through streams[k].clock_times
+            size_t m = 0;   // index iterating through stream.time_stamps
+            size_t n = 0;   // index iterating through stream.clock_times
 
             while (m < stream.time_stamps.size())
             {
