@@ -590,23 +590,26 @@ void Xdf::syncTimeStamps()
     // Sync event time stamps
     for (auto &elem : this->eventMap)
     {
-        size_t k = 0;   // index iterating through streams[k].clock_times
-
-        while (k < this->streams[elem.second].clock_times.size() - 1)
+        if (!this->streams[elem.second].clock_times.empty())
         {
-            if (this->streams[elem.second].clock_times[k+1] < elem.first.second)
-            {
-                k++;
-            }
-            else
-            {
-                break;
-            }
-        }
+            size_t k = 0;   // index iterating through streams[k].clock_times
 
-        if (this->streams[elem.second].clock_times[k] < elem.first.second)
-        {
-            elem.first.second += this->streams[elem.second].clock_values[k];
+            while (k < this->streams[elem.second].clock_times.size() - 1)
+            {
+                if (this->streams[elem.second].clock_times[k+1] < elem.first.second)
+                {
+                    k++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            if (this->streams[elem.second].clock_times[k] < elem.first.second)
+            {
+                elem.first.second += this->streams[elem.second].clock_values[k];
+            }
         }
     }
 
