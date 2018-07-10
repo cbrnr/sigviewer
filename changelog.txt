@@ -1,3 +1,10 @@
+Version 0.6.2
+(+) Store user-defined colors
+(+) Use effective sample rate in XDF files
+(B) Fix issues in some dialogs
+(B) Fix channel clipping
+(*) Refactoring (cleanups)
+
 Version 0.6.1
 (B) Fix many XDF-related bugs
 (*) Several minor GUI-related improvements
@@ -114,7 +121,7 @@ Version 0.2.0
 (+) Scrolling during creation of events is now possible
 (*) Standard zoom setting is now auto
 (*) Zero level on the y-axis is now in the middle of the channel window
-(+) Should now compile and work on big endian machines (e.g. PPC) 
+(+) Should now compile and work on big endian machines (e.g. PPC)
 
 Version 0.1.7
 (B) Fix export of EVT files with a sampling rate higher than 256Hz
