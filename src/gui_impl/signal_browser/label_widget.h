@@ -12,6 +12,7 @@
 #include <QMap>
 #include <QWidget>
 #include <QSharedPointer>
+#include <QContextMenuEvent>
 
 namespace sigviewer
 {
