@@ -55,8 +55,8 @@ public:
         //! A 2D vector which stores the time series of a stream. Each row represents a channel.
         std::vector<std::vector<float> > time_series;
         std::vector<double> time_stamps; /*!< A vector to store time stamps. */
-        std::string streamHeader;   /*!< Raw XDF of stream header chunk. */
-        std::string streamFooter;   /*!< Raw XDF of stream footer chunk. */
+        std::string streamHeader;   /*!< Raw XML of stream header chunk. */
+        std::string streamFooter;   /*!< Raw XML of stream footer chunk. */
 
         struct
         {
