@@ -582,6 +582,10 @@ void Xdf::syncTimeStamps()
                     }
                     stream.time_stamps[m] += stream.clock_values[n];
                 }
+                else if (n == 0)
+                {
+                    stream.time_stamps[m] += stream.clock_values[n];
+                }
                 m++;
             }
         }
