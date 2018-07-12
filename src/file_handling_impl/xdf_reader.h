@@ -8,7 +8,7 @@
 #define XDF_READER_H_
 
 #include "file_handling/file_signal_reader.h"
-#include "xdf.h"
+#include "./xdf.h"
 
 #include <QFile>
 #include <QMutex>
