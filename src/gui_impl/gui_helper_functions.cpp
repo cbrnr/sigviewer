@@ -12,11 +12,10 @@
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QDebug>
-#if QT_VERSION >= 0x040600
 #include <QPropertyAnimation>
-#endif
 #include <QSettings>
 #include <QMetaObject>
+#include <QAction>
 
 namespace sigviewer
 {
