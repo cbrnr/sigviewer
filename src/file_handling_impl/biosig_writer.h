@@ -8,10 +8,10 @@
 
 #include "file_handling/file_signal_writer.h"
 
-#include <biosig.h>
+#include "biosig.h"
 
 
-namespace sigviewer 
+namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
