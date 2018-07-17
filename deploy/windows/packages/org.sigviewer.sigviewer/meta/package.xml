@@ -2,7 +2,7 @@
 <Package>
     <DisplayName>SigViewer</DisplayName>
     <Description>SigViewer is a viewing application for biosignals</Description>
-    <Version>0.6.0</Version>
+    <Version>0.6.2</Version>
     <ReleaseDate>2017-03-09</ReleaseDate>
     <Default>true</Default>
     <Script>installscript.qs</Script>
