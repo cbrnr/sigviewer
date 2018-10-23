@@ -172,7 +172,7 @@ void OpenFileGuiCommand::open ()
 //-------------------------------------------------------------------------
 void OpenFileGuiCommand::importEvents ()
 {
-    QString extensions = "*.csv";
+    QString extensions = "*.csv *.evt *.gdf";
     QSettings settings;
     QString open_path = settings.value ("file_open_path").toString();
     if (!open_path.length())
@@ -181,6 +181,21 @@ void OpenFileGuiCommand::importEvents ()
 
     if (file_path.isEmpty())
         return;
+
+    FileSignalReader* file_signal_reader = FileSignalReaderFactory::getInstance()->getHandler (file_path);
+    if (file_signal_reader != 0) {
+        QList<QSharedPointer<SignalEvent const> > events = file_signal_reader->getEvents ();
+        QSharedPointer<EventManager> event_manager = applicationContext()->getCurrentFileContext()->getEventManager();
+        QList<QSharedPointer<QUndoCommand> > creation_commands;
+        foreach (QSharedPointer<SignalEvent const> event, events) {
+               QSharedPointer<QUndoCommand> creation_command (new NewEventUndoCommand (event_manager, event));
+               creation_commands.append (creation_command);
+        }
+        MacroUndoCommand* macro_command = new MacroUndoCommand (creation_commands);
+        applicationContext()->getCurrentCommandExecuter()->executeCommand (macro_command);
+        delete file_signal_reader;
+        return;
+    }
 
     std::fstream file;
     file.open(file_path.toStdString());
