@@ -457,8 +457,8 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
                     //check whether a user added stream has already been existing
                     XDFdata->userAddedStream = XDFdata->streams.size();
                     XDFdata->streams.emplace_back();
-                    std::time_t currentTime = std::time(nullptr);
-                    std::string timeString = std::asctime(std::localtime(&currentTime));
+                    time_t currentTime = time(nullptr);
+                    std::string timeString = asctime(localtime(&currentTime));
                     timeString.pop_back(); //we don't need '\n' at the end
                     XDFdata->streams.back().streamHeader =
                             "<?xml version='1.0'?>"
