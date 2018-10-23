@@ -40,7 +40,8 @@ public slots:
     void exportToGDF ();
 
     //-------------------------------------------------------------------------
-    void exportEvents ();
+    void exportEventsToCSV ();
+    void exportEventsToGDF ();
 
 protected:
     //-------------------------------------------------------------------------
@@ -55,7 +56,8 @@ private:
     static QString const SAVE_;
     static QString const EXPORT_TO_PNG_;
     static QString const EXPORT_TO_GDF_;
-    static QString const EXPORT_EVENTS_;
+    static QString const EXPORT_EVENTS_CSV_;
+    static QString const EXPORT_EVENTS_GDF_;
     static QStringList const ACTIONS_;
 
     static GuiActionFactoryRegistrator registrator_;
