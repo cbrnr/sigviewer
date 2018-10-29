@@ -69,9 +69,9 @@ void OpenFileGuiCommand::init ()
 {
     setShortcut (OPEN_, QKeySequence::Open);
     setShortcut (SHOW_FILE_INFO_, tr("Ctrl+I"));
-    setIcon (OPEN_, QIcon(":/images/ic_folder_open_black_24dp.png"));
-    setIcon (SHOW_FILE_INFO_, QIcon(":/images/ic_info_outline_black_24dp.png"));
-    setIcon (IMPORT_EVENTS_, QIcon(":/images/ic_file_download_black_24dp.png"));
+    setIcon (OPEN_, QIcon(":/images/baseline-folder_open-24px.svg"));
+    setIcon (SHOW_FILE_INFO_, QIcon(":/images/baseline-info-24px.svg"));
+    setIcon (IMPORT_EVENTS_, QIcon(":/images/baseline-cloud_download-24px.svg"));
 
 
     resetActionTriggerSlot (OPEN_, SLOT(open()));

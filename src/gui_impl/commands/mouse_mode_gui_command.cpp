@@ -52,10 +52,10 @@ void MouseModeGuiCommand::init ()
     QActionGroup* mouse_mode_action_group = new QActionGroup (this);
     mouse_mode_action_group->setExclusive(true);
 
-    getQAction (NEW_MODE_TEXT_)->setIcon (QIcon(":/images/ic_add_box_black_24dp.png"));
-    getQAction (POINTER_MODE_TEXT_)->setIcon (QIcon(":/images/ic_create_black_24dp.png"));
-    getQAction (HAND_MODE_TEXT_)->setIcon (QIcon(":/images/ic_pan_tool_black_24dp.png"));
-    getQAction (VIEW_OPTIONS_TEXT_)->setIcon (QIcon(":/images/ic_build_black_24dp.png"));
+    getQAction (NEW_MODE_TEXT_)->setIcon (QIcon(":/images/baseline-add_box-24px.svg"));
+    getQAction (POINTER_MODE_TEXT_)->setIcon (QIcon(":/images/baseline-create-24px.svg"));
+    getQAction (HAND_MODE_TEXT_)->setIcon (QIcon(":/images/baseline-pan_tool-24px.svg"));
+    getQAction (VIEW_OPTIONS_TEXT_)->setIcon (QIcon(":/images/baseline-build-24px.svg"));
 
     getQAction (NEW_MODE_TEXT_)->setShortcut (QString("Ctrl+1"));
     getQAction (POINTER_MODE_TEXT_)->setShortcut (QString("Ctrl+2"));

@@ -48,11 +48,11 @@ ZoomGuiCommand::ZoomGuiCommand ()
 //-----------------------------------------------------------------------------
 void ZoomGuiCommand::init ()
 {
-    getQAction (GOTO_)->setIcon (QIcon(":/images/ic_directions_run_black_24dp.png"));
-    getQAction (ZOOM_IN_VERTICAL_)->setIcon (QIcon(":/images/ic_zoom_in_v_black_24dp.png"));
-    getQAction (ZOOM_OUT_VERTICAL_)->setIcon (QIcon(":/images/ic_zoom_out_v_black_24dp.png"));
-    getQAction (ZOOM_IN_HORIZONTAL_)->setIcon (QIcon(":/images/ic_zoom_in_h_black_24dp.png"));
-    getQAction (ZOOM_OUT_HORIZONTAL_)->setIcon (QIcon(":/images/ic_zoom_out_h_black_24dp.png"));
+    getQAction (GOTO_)->setIcon (QIcon(":/images/baseline-directions_run-24px.svg"));
+    //getQAction (ZOOM_IN_VERTICAL_)->setIcon (QIcon(":/images/ic_zoom_in_v_black_24dp.png"));
+    //getQAction (ZOOM_OUT_VERTICAL_)->setIcon (QIcon(":/images/ic_zoom_out_v_black_24dp.png"));
+    //getQAction (ZOOM_IN_HORIZONTAL_)->setIcon (QIcon(":/images/ic_zoom_in_h_black_24dp.png"));
+    //getQAction (ZOOM_OUT_HORIZONTAL_)->setIcon (QIcon(":/images/ic_zoom_out_h_black_24dp.png"));
 
 
     QList<QKeySequence> zoomInVertical;

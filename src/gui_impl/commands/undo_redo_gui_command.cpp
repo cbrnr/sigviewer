@@ -34,8 +34,8 @@ void UndoRedoGuiCommand::init ()
 {
     setShortcut (UNDO_, QKeySequence::Undo);
     setShortcut (REDO_, QKeySequence::Redo);
-    setIcon (UNDO_, QIcon (":/images/ic_undo_black_24dp.png"));
-    setIcon (REDO_, QIcon (":/images/ic_redo_black_24dp.png"));
+    setIcon (UNDO_, QIcon (":/images/baseline-undo-24px.svg"));
+    setIcon (REDO_, QIcon (":/images/baseline-redo-24px.svg"));
 
     resetActionTriggerSlot (UNDO_, SLOT(undo()));
     resetActionTriggerSlot (REDO_, SLOT(redo()));

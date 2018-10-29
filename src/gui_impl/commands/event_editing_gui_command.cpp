@@ -60,10 +60,10 @@ void EventEditingGuiCommand::init ()
     resetActionTriggerSlot (COPY_TO_CHANNELS_, SLOT (copyToChannelsSelectedEvent()));
     resetActionTriggerSlot (INSERT_OVER_, SLOT (insertEventOverSelectedEvent()));
 
-    getQAction (DELETE_)->setIcon (QIcon(":/images/ic_delete_forever_black_24dp.png"));
-    getQAction (TO_ALL_CHANNEL_)->setIcon (QIcon (":/images/ic_font_download_black_24dp.png"));
-    getQAction (COPY_TO_CHANNELS_)->setIcon (QIcon (":/images/ic_content_copy_black_24dp.png"));
-    getQAction (INSERT_OVER_)->setIcon (QIcon (":/images/ic_add_circle_outline_black_24dp.png"));
+    getQAction (DELETE_)->setIcon (QIcon(":/images/baseline-delete_forever-24px.svg"));
+    getQAction (TO_ALL_CHANNEL_)->setIcon (QIcon (":/images/baseline-font_download-24px.svg"));
+    getQAction (COPY_TO_CHANNELS_)->setIcon (QIcon (":/images/baseline-file_copy-24px.svg"));
+    getQAction (INSERT_OVER_)->setIcon (QIcon (":/images/baseline-add_circle_outline-24px.svg"));
     getQAction (DELETE_)->setShortcut (QKeySequence::Delete);
 //    getQAction (INSERT_OVER_)->setShortcut (QKeySequence("Ctrl+I"));
 }

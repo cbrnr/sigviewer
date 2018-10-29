@@ -53,8 +53,8 @@ SaveGuiCommand::SaveGuiCommand ()
 //-----------------------------------------------------------------------------
 void SaveGuiCommand::init ()
 {
-    setIcon(SAVE_, QIcon (":/images/ic_save_black_24dp.png"));
-    setIcon(EXPORT_EVENTS_, QIcon (":/images/ic_file_upload_black_24dp.png"));
+    setIcon(SAVE_, QIcon (":/images/baseline-save_alt-24px.svg"));
+    setIcon(EXPORT_EVENTS_, QIcon (":/images/baseline-cloud_upload-24px.svg"));
 
     setShortcut (SAVE_, QKeySequence::Save);
     setShortcut (SAVE_AS_, QKeySequence::SaveAs);
@@ -314,7 +314,7 @@ void SaveGuiCommand::evaluateEnabledness ()
         no_gdf_file_open = !(applicationContext()->getCurrentFileContext()->getFileName().endsWith("gdf"));
         file_changed = (getFileState () == FILE_STATE_CHANGED);
         has_events = applicationContext()->getCurrentFileContext()->getEventManager()->getNumberOfEvents() > 0;
-      
+
         if (applicationContext()->getCurrentFileContext()->getFileName().endsWith("xdf"))
             no_gdf_file_open = false;//Disabled because currently XDF to GDF conversion doesn't work
     }

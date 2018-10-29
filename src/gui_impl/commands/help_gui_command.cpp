@@ -35,7 +35,7 @@ HelpGuiCommand::HelpGuiCommand ()
 void HelpGuiCommand::init ()
 {
     resetActionTriggerSlot (ABOUT_, SLOT(showAboutDialog()));
-    setIcon (ABOUT_, QIcon(":/images/ic_help_outline_black_24dp.png"));
+    setIcon (ABOUT_, QIcon(":/images/baseline-help_outline-24px.svg"));
     resetActionTriggerSlot (RUN_TESTS_, SLOT(runTests()));
 }
 
