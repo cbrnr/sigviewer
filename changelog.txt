@@ -1,3 +1,6 @@
+Version 0.6.3
+(B) libxdf update (improves stability)
+
 Version 0.6.2
 (+) Store user-defined colors
 (+) Use effective sample rate in XDF files
