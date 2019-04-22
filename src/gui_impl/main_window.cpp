@@ -188,7 +188,7 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     file_menu_->addSeparator ();
     file_menu_->addAction (action("Import Events..."));
     file_menu_->addAction (action("Export Events to CSV..."));
-    file_menu_->addAction (action("Export Events to GDF..."));
+    file_menu_->addAction (action("Export Events to EVT..."));
     // file_menu_->addAction (action("Export to GDF..."));
     file_menu_->addSeparator ();
     file_menu_->addAction (action("Exit"));

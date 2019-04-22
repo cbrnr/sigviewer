@@ -28,14 +28,14 @@ QString const SaveGuiCommand::SAVE_ = "Save";
 QString const SaveGuiCommand::EXPORT_TO_PNG_ = "Export to PNG...";
 QString const SaveGuiCommand::EXPORT_TO_GDF_ = "Export to GDF...";
 QString const SaveGuiCommand::EXPORT_EVENTS_CSV_ = "Export Events to CSV...";
-QString const SaveGuiCommand::EXPORT_EVENTS_GDF_ = "Export Events to GDF...";
+QString const SaveGuiCommand::EXPORT_EVENTS_EVT_ = "Export Events to EVT...";
 
 QStringList const SaveGuiCommand::ACTIONS_ = QStringList() <<
                                              SaveGuiCommand::SAVE_AS_ <<
                                              SaveGuiCommand::SAVE_ <<
                                              SaveGuiCommand::EXPORT_TO_GDF_ <<
                                              SaveGuiCommand::EXPORT_EVENTS_CSV_ <<
-                                             SaveGuiCommand::EXPORT_EVENTS_GDF_ <<
+                                             SaveGuiCommand::EXPORT_EVENTS_EVT_ <<
                                              SaveGuiCommand::EXPORT_TO_PNG_;
 
 
@@ -57,7 +57,7 @@ void SaveGuiCommand::init ()
 {
     setIcon(SAVE_, QIcon (":/images/ic_save_black_24dp.png"));
     setIcon(EXPORT_EVENTS_CSV_, QIcon (":/images/ic_file_upload_black_24dp.png"));
-    setIcon(EXPORT_EVENTS_GDF_, QIcon (":/images/ic_file_upload_black_24dp.png"));
+    setIcon(EXPORT_EVENTS_EVT_, QIcon (":/images/ic_file_upload_black_24dp.png"));
 
     setShortcut (SAVE_, QKeySequence::Save);
     setShortcut (SAVE_AS_, QKeySequence::SaveAs);
@@ -67,7 +67,7 @@ void SaveGuiCommand::init ()
     resetActionTriggerSlot (EXPORT_TO_PNG_, SLOT(exportToPNG()));
     resetActionTriggerSlot (EXPORT_TO_GDF_, SLOT(exportToGDF()));
     resetActionTriggerSlot (EXPORT_EVENTS_CSV_, SLOT(exportEventsToCSV()));
-    resetActionTriggerSlot (EXPORT_EVENTS_GDF_, SLOT(exportEventsToGDF()));
+    resetActionTriggerSlot (EXPORT_EVENTS_EVT_, SLOT(exportEventsToEVT()));
 }
 
 
@@ -234,11 +234,10 @@ void SaveGuiCommand::exportToGDF ()
 }
 
 //-------------------------------------------------------------------------
-void SaveGuiCommand::exportEventsToGDF ()
+void SaveGuiCommand::exportEventsToEVT ()
 {
-    std::set<EventType> types = GuiHelper::selectEventTypes (currentVisModel()->getShownEventTypes(),
-                                                             currentVisModel()->getEventManager(),
-                                                             applicationContext()->getEventColorManager());
+    QSharedPointer<EventManager> event_manager_pt = applicationContext()->getCurrentFileContext()->getEventManager();
+    std::set<EventType> types = event_manager_pt->getEventTypes();
 
     QString current_file_path = applicationContext()->getCurrentFileContext()->getFilePathAndName();
 
@@ -357,7 +356,7 @@ void SaveGuiCommand::evaluateEnabledness ()
     getQAction (SAVE_AS_)->setEnabled (file_open);
     getQAction (EXPORT_TO_GDF_)->setEnabled (no_gdf_file_open);
     getQAction (EXPORT_EVENTS_CSV_)->setEnabled (has_events);
-    getQAction (EXPORT_EVENTS_GDF_)->setEnabled (has_events);
+    getQAction (EXPORT_EVENTS_EVT_)->setEnabled (has_events);
 }
 
 }

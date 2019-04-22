@@ -210,7 +210,8 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::getCurrentSignalVi
     if (!tab_widget_)
         return QSharedPointer<SignalVisualisationModel>(0);
 
-    return browser_models_[tab_widget_->currentIndex()];
+    auto idx = 0;
+    return browser_models_[idx];
 }
 
 //-------------------------------------------------------------------------

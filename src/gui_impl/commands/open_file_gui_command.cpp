@@ -172,7 +172,7 @@ void OpenFileGuiCommand::open ()
 //-------------------------------------------------------------------------
 void OpenFileGuiCommand::importEvents ()
 {
-    QString extensions = "*.csv *.evt *.gdf";
+    QString extensions = "*.csv *.evt";
     QSettings settings;
     QString open_path = settings.value ("file_open_path").toString();
     if (!open_path.length())

@@ -49,7 +49,7 @@ EventTableWidget::EventTableWidget (QSharedPointer<TabContext> tab_context,
     toolbar->addAction (GuiActionFactory::getInstance()->getQAction ("Delete"));
     toolbar->addAction (GuiActionFactory::getInstance()->getQAction ("Import Events..."));
     toolbar->addAction (GuiActionFactory::getInstance()->getQAction ("Export Events to CSV..."));
-    toolbar->addAction (GuiActionFactory::getInstance()->getQAction ("Export Events to GDF..."));
+    toolbar->addAction (GuiActionFactory::getInstance()->getQAction ("Export Events to EVT..."));
     ui_.horizontalLayout->addWidget (toolbar);
 }
 
