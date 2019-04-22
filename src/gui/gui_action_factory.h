@@ -12,6 +12,7 @@
 #include <QString>
 #include <QMap>
 #include <QMenu>
+#include <QContextMenuEvent>
 
 namespace sigviewer
 {

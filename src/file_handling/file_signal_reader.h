@@ -10,6 +10,7 @@
 #include "base/data_block.h"
 #include "application_context_impl.h"
 
+#include <QFile>
 #include <QVector>
 #include <QPointer>
 #include <QSharedPointer>

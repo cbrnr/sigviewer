@@ -246,7 +246,12 @@ void BioSigReader::bufferAllEvents () const
 {
     unsigned number_events = biosig_header_->EVENT.N;
     // Hack Hack: Transforming Events to have the same sample rate as the signals
-    double rate_transition = basic_header_->getEventSamplerate() / biosig_header_->EVENT.SampleRate;
+    double rate_transition;
+    if ( ( biosig_header_->EVENT.SampleRate <= 0.0) ||
+         ( biosig_header_->EVENT.SampleRate != biosig_header_->EVENT.SampleRate))
+	rate_transition = 1;
+    else
+	rate_transition = basic_header_->getEventSamplerate() / biosig_header_->EVENT.SampleRate;
 
     for (unsigned index = 0; index < number_events; index++)
     {
