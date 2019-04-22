@@ -236,9 +236,9 @@ void SaveGuiCommand::exportToGDF ()
 //-------------------------------------------------------------------------
 void SaveGuiCommand::exportEventsToGDF ()
 {
-    std::set<EventType> types = GuiHelper::selectEventTypes (currentVisModel()->getShownEventTypes(),
-                                                             currentVisModel()->getEventManager(),
-                                                             applicationContext()->getEventColorManager());
+    QSharedPointer<EventManager> event_manager_pt = applicationContext()->getCurrentFileContext()->getEventManager();
+
+    std::set<EventType> types = event_manager_pt->getEventTypes();
 
     QString current_file_path = applicationContext()->getCurrentFileContext()->getFilePathAndName();
 
