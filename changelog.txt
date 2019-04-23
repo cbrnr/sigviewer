@@ -1,5 +1,7 @@
-Version 0.6.3
+Version 0.6.4
 (+) Re-enable import/export event from/to EVT
+
+Version 0.6.3
 (B) libxdf update (improves stability)
 
 Version 0.6.2
