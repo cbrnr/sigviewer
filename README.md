@@ -8,13 +8,7 @@ Download
 - [SigViewer 0.6.2 (Windows 64bit)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.2/sigviewer-0.6.2-win64.exe)
 - [SigViewer 0.6.2 (Windows 32bit)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.2/sigviewer-0.6.2-win32.exe)
 - [SigViewer 0.6.4 (macOS)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/sigviewer-0.6.4-macos.dmg)
-- [SigViewer 0.6.4 (Linux)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/sigviewer-0.6.4-linux.zip)
-    * [SigViewer 0.6.4 (Arch Linux AUR)](https://aur.archlinux.org/packages/sigviewer/)
-    * [SigViewer 0.5.1 (Debian Stable)](https://packages.debian.org/stretch/sigviewer)
-    * [SigViewer 0.6.2 (Debian Testing)](https://packages.debian.org/testing/science/sigviewer)
-    * [SigViewer 0.6.2 (Debian Unstable)](https://packages.debian.org/sid/science/sigviewer)
-    * [SigViewer 0.5.1 (Ubuntu 18.04 LTS)](https://packages.ubuntu.com/bionic/sigviewer)
-    * [SigViewer 0.6.2 (Ubuntu 19.04)](https://packages.ubuntu.com/disco/sigviewer)
+- [SigViewer 0.6.4 (Linux)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/sigviewer-0.6.4-linux.zip) ([Arch](https://aur.archlinux.org/packages/sigviewer/), [Debian](https://tracker.debian.org/pkg/sigviewer), [Ubuntu](https://launchpad.net/ubuntu/+source/sigviewer))
 - [SigViewer 0.6.4 (Source)](https://github.com/cbrnr/sigviewer/archive/v0.6.4.zip)
 
 Screenshots
