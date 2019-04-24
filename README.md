@@ -5,8 +5,7 @@ SigViewer is a viewing application for biosignals such as EEG or MEG time series
 
 Download
 --------
-- [SigViewer 0.6.2 (Windows 64bit)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.2/sigviewer-0.6.2-win64.exe)
-- [SigViewer 0.6.2 (Windows 32bit)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.2/sigviewer-0.6.2-win32.exe)
+- [SigViewer 0.6.4 (Windows)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/sigviewer-0.6.4-win64.exe)
 - [SigViewer 0.6.4 (macOS)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/sigviewer-0.6.4-macos.dmg)
 - [SigViewer 0.6.4 (Linux)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/sigviewer-0.6.4-linux.zip) ([Arch](https://aur.archlinux.org/packages/sigviewer/), [Debian](https://tracker.debian.org/pkg/sigviewer), [Ubuntu](https://launchpad.net/ubuntu/+source/sigviewer))
 - [SigViewer 0.6.4 (Source)](https://github.com/cbrnr/sigviewer/archive/v0.6.4.zip)
@@ -23,21 +22,11 @@ SigViewer also depends on [libbiosig](http://biosig.sourceforge.net/) and [libxd
 
 1. Build these dependencies yourself (see separate descriptions below).
 2. Use our pre-built binaries. The corresponding archive contains binary versions of libbiosig and libxdf and must be extracted into SigViewer’s source folder (which we denote as `$sigviewer`).
-    - [External dependencies (Windows 64bit)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.2/external-0.6.2-win64.zip)
-    - [External dependencies (Windows 32bit)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.2/external-0.6.2-win32.zip)
     - [External dependencies (macOS)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/external-0.6.4-macos.zip)
     - [External dependencies (Linux)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/external-0.6.4-linux.zip)
 
 ### Windows
-SigViewer requires Windows 7 or Windows 10. Other versions might work, but have not been tested. First, download the offline installer for [Qt 5.9.6 for Windows](http://download.qt.io/official_releases/qt/5.9/5.9.6/qt-opensource-windows-x86-5.9.6.exe). Run the installation wizard and make sure to also select MinGW 5.3 in the Tools group. Once the installation is completed, a new folder _Qt 5.9.6_ is added to the Start menu. It contains the command prompt _Qt 5.9.6 for Desktop_, which has all required build tools (`qmake` and `mingw32-make`) added to its path. Make sure you use this command prompt if you want to build on the command line. Alternatively, you can build SigViewer with Qt Creator, which is installed along with Qt by default. Here, we describe the build process using Qt Creator.
-
-1. Download and unzip the [SigViewer source](https://github.com/cbrnr/sigviewer/archive/v0.6.2.zip).
-1. Provide all external dependencies by downloading the [external archive](https://github.com/cbrnr/sigviewer/releases/download/v0.6.2/external-0.6.2-win32.zip) and extracting it inside `$sigviewer` (see below for more details and options regarding the external dependencies).
-1. Open `sigviewer.pro` in Qt Creator.
-1. Accept the default configuration by clicking on _Configure Project_.
-1. Click on _Build Project_ (the hammer icon) to build SigViewer.
-1. Click on _Run_ (the play icon) to start SigViewer.
-1. To create a stand-alone version of SigViewer, open the _Qt 5.9.6 for Desktop_ command prompt, change into `$sigviewer/bin/release`, and run `windeployqt sigviewer.exe`. SigViewer now runs on any Windows machine (no previous Qt installation is required) if the contents of this directory is distributed together with `sigviewer.exe` (see `$sigviewer/deploy/windows/README.md` for details on how to create a stand-alone installer package).
+Building SigViewer on Windows is currently not supported. We provide binaries created with the [MXE](https://mxe.cc/) cross compilation environment.
 
 
 ### macOS
@@ -64,11 +53,11 @@ Install the GNU build toolchain and Qt 5 with your native package manager. You c
 Building external dependencies
 ------------------------------
 ### Windows
-Building libbiosig on Windows is currently not possible. Please use our pre-built binary included in the [external archive](https://github.com/cbrnr/sigviewer/releases/download/v0.6.2/external-0.6.2-windows.zip), which we built using [MXE](http://mxe.cc/).
+Building libbiosig on Windows is currently not supported.
 
 To build libxdf from source, follow these steps:
 
-1. Download and unzip the [libxdf source](https://github.com/Yida-Lin/libxdf/archive/v0.98.zip) (SigViewer 0.6.2 uses libxdf 0.98).
+1. Download and unzip the [libxdf source](https://github.com/xdf-modules/libxdf/archive/v0.99.zip) (SigViewer 0.6.4 uses libxdf 0.99).
 1. On the command line, run `qmake` followed by `mingw32-make` (or build the project with Qt Creator) (instead of `qmake`, you can also run `cmake .`).
 2. Copy `xdf.h` into `$sigviewer/external/include` and `libxdf.a` to `$sigviewer/external/lib`.
 
