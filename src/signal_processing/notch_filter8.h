@@ -22,7 +22,7 @@
 
 //---------------------------------------------------------------------------------------
 
-#include "base/filter.h"
+// #include "base/filter.h"
 
 #include <vector>
 #include <boost/circular_buffer.hpp>
@@ -31,7 +31,7 @@ namespace SigViewer_
 {
 
 //---------------------------------------------------------------------------------------
-class NotchFilter8 : public Filter
+class NotchFilter8 // : public Filter
 {
   public:
     NotchFilter8(double fs, double freq);

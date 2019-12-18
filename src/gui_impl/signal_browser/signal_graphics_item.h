@@ -25,7 +25,6 @@ class EventGraphicsItem;
 class SignalGraphicsItem : public QGraphicsObject
 {
     Q_OBJECT
-    Q_INTERFACES(QGraphicsItem)
 public:
     SignalGraphicsItem(QSharedPointer<SignalViewSettings const> signal_view_settings,
                        QSharedPointer<EventManager> event_manager,

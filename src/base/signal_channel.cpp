@@ -9,6 +9,7 @@
 namespace sigviewer
 {
 
+#ifndef NOBIOSIG
 //!Constructor for libbiosig---------------------------------------------------
 SignalChannel::SignalChannel(unsigned ch, const HDRTYPE* hdr) :
     label_ (QString(hdr->CHANNEL[ch].Label).trimmed()),
@@ -30,6 +31,7 @@ SignalChannel::SignalChannel(unsigned ch, const HDRTYPE* hdr) :
     phys_y_dimension_label_ = QString(tmpstr);
     samplerate_ = hdr->SampleRate * hdr->CHANNEL[ch].SPR / hdr->SPR;
 }
+#endif
 
 //!Constructor for XDF format---------------------------------------------------
 SignalChannel::SignalChannel(unsigned ch, QString file_format) :
