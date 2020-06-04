@@ -299,14 +299,17 @@ void SaveGuiCommand::exportEventsToCSV ()
 
         for (unsigned int i = 0; i < event_manager_pt->getNumberOfEvents(); i++)
         {
-            row tmp = {
-                event_manager_pt->getEvent(i)->getPosition(),
-                event_manager_pt->getEvent(i)->getDuration(),
-                event_manager_pt->getEvent(i)->getChannel(),
-                event_manager_pt->getEvent(i)->getType(),
-                event_manager_pt->getNameOfEvent(i)
-            };
-            events.append(tmp);
+            auto evt = event_manager_pt->getEvent();
+            if (evt != NULL) {
+                row tmp = {
+                    evt->getPosition(),
+                    evt->getDuration(),
+                    evt->getChannel(),
+                    evt->getType(),
+                    event_manager_pt->getNameOfEvent(i)
+                };
+                events.append(tmp);
+            }
         }
 
         std::sort(events.begin(),
