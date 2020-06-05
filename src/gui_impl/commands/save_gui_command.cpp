@@ -299,7 +299,7 @@ void SaveGuiCommand::exportEventsToCSV ()
 
         for (unsigned int i = 0; i < event_manager_pt->getNumberOfEvents(); i++)
         {
-            auto evt = event_manager_pt->getEvent();
+            auto evt = event_manager_pt->getEvent(i);
             if (evt != NULL) {
                 row tmp = {
                     evt->getPosition(),
@@ -350,7 +350,7 @@ void SaveGuiCommand::evaluateEnabledness ()
         no_gdf_file_open = !(applicationContext()->getCurrentFileContext()->getFileName().endsWith("gdf"));
         file_changed = (getFileState () == FILE_STATE_CHANGED);
         has_events = applicationContext()->getCurrentFileContext()->getEventManager()->getNumberOfEvents() > 0;
-      
+
         if (applicationContext()->getCurrentFileContext()->getFileName().endsWith("xdf"))
             no_gdf_file_open = false;//Disabled because currently XDF to GDF conversion doesn't work
     }
