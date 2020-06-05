@@ -1,3 +1,6 @@
+Version X.X.X
+(B) Fix crash when exporting events to CSV
+
 Version 0.6.4
 (+) Re-enable import/export event from/to EVT
 
