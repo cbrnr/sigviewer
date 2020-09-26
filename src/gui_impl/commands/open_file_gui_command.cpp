@@ -2,7 +2,7 @@
 // Licensed under the GNU General Public License (GPL)
 // https://www.gnu.org/licenses/gpl
 
-
+#include <biosig.h>
 #include "open_file_gui_command.h"
 #include "gui_impl/gui_helper_functions.h"
 
@@ -182,26 +182,83 @@ void OpenFileGuiCommand::importEvents ()
     if (file_path.isEmpty())
         return;
 
-    FileSignalReader* file_signal_reader = FileSignalReaderFactory::getInstance()->getHandler (file_path);
-    if (file_signal_reader != 0) {
-        QList<QSharedPointer<SignalEvent const> > events = file_signal_reader->getEvents ();
-        QSharedPointer<EventManager> event_manager = applicationContext()->getCurrentFileContext()->getEventManager();
-        QList<QSharedPointer<QUndoCommand> > creation_commands;
-        foreach (QSharedPointer<SignalEvent const> event, events) {
-               QSharedPointer<QUndoCommand> creation_command (new NewEventUndoCommand (event_manager, event));
-               creation_commands.append (creation_command);
+    QList<QSharedPointer<SignalEvent const> > events;
+    QSharedPointer<EventManager> event_manager = applicationContext()->getCurrentFileContext()->getEventManager();
+    double sampleRate = event_manager->getSampleRate();
+    std::set<EventType> types = event_manager->getEventTypes();
+    int numberChannels = applicationContext()->getCurrentFileContext()->getChannelManager().getNumberChannels();
+
+    // try reading event file through biosig
+    HDRTYPE* evtHDR = sopen(file_path.toStdString().c_str(), "r", NULL );
+    if (!serror2(evtHDR)) {
+        /* Note: evtSampleRate and transition rate can be NaN,
+           indicating sample rate is not specified in event file
+         */
+	double evtSampleRate   = biosig_get_eventtable_samplerate(evtHDR);
+	double transition_rate = sampleRate / evtSampleRate;
+	size_t NumEvents       = biosig_get_number_of_events(evtHDR);
+	for (size_t k = 0; k < NumEvents; k++) {
+            uint16_t typ; uint32_t pos; uint16_t chn; uint32_t dur;
+            gdf_time timestamp;
+            const char *desc;
+            biosig_get_nth_event(evtHDR, k, &typ, &pos, &chn, &dur, &timestamp, &desc);
+
+            if (transition_rate > 0) {
+                pos = lround(pos*transition_rate);
+                dur = lround(dur*transition_rate);
+            }
+
+            if (typ <= 254 && do_not_show_warning_message == false) {
+                QMessageBox msgBox;
+                msgBox.setText("Currently customized event text cannot be properly imported.");
+                msgBox.setIcon(QMessageBox::Warning);
+                msgBox.addButton(QMessageBox::Ok);
+                msgBox.addButton(QMessageBox::Cancel);
+                msgBox.setDefaultButton(QMessageBox::Cancel);
+                QCheckBox* dontShowCheckBox = new QCheckBox("Don't show this message again");
+                msgBox.setCheckBox(dontShowCheckBox);
+                int32_t userReply = msgBox.exec();
+                if (userReply == QMessageBox::Ok) {
+                    if(dontShowCheckBox->checkState() == Qt::Checked) {
+                        QSettings settings;
+                        settings.setValue("DoNotShowWarningMessage", true);
+                        do_not_show_warning_message = true;
+                    }
+                }
+                else if (userReply == QMessageBox::Cancel) {
+                    if(dontShowCheckBox->checkState() == Qt::Checked) {
+                        QSettings settings;
+                        settings.setValue("DoNotShowWarningMessage", true);
+                        do_not_show_warning_message = true;
+                    }
+                    destructHDR(evtHDR);
+                    return;
+                }
+            }
+
+            //boundary check & error handling
+            if (pos > event_manager->getMaxEventPosition()
+                    || pos + dur > event_manager->getMaxEventPosition()
+                    || chn >= numberChannels
+                    || !types.count(typ))
+                continue;
+
+            QSharedPointer<SignalEvent> event = QSharedPointer<SignalEvent>(new SignalEvent(pos,
+                    typ, sampleRate, chn, dur));
+
+            events << event;
         }
-        MacroUndoCommand* macro_command = new MacroUndoCommand (creation_commands);
-        applicationContext()->getCurrentCommandExecuter()->executeCommand (macro_command);
-        delete file_signal_reader;
-        return;
-    }
-
-    std::fstream file;
-    file.open(file_path.toStdString());
-
-    if (file.is_open())
+        sclose(evtHDR);
+        destructHDR(evtHDR);
+    } else
     {
+        // if the file can not be read with biosig, try this approach
+        destructHDR(evtHDR);
+#if BIOSIG_VERSION<10903
+        std::fstream file;
+        file.open(file_path.toStdString());
+
+    if (file.is_open()) {
         std::string line;
         std::getline(file, line);
 
@@ -210,13 +267,6 @@ void OpenFileGuiCommand::importEvents ()
             QMessageBox::critical(0, file_path, tr("This is not a valid event CSV file!"));
             return;
         }
-
-        QList<QSharedPointer<SignalEvent const> > events;
-        QSharedPointer<EventManager> event_manager
-                = applicationContext()->getCurrentFileContext()->getEventManager();
-        double sampleRate = event_manager->getSampleRate();
-        std::set<EventType> types = event_manager->getEventTypes();
-        int numberChannels = applicationContext()->getCurrentFileContext()->getChannelManager().getNumberChannels();
 
         while (std::getline(file, line))
         {
@@ -274,22 +324,25 @@ void OpenFileGuiCommand::importEvents ()
 
             events << event;
         }
-
-
-        QList<QSharedPointer<QUndoCommand> > creation_commands;
-        foreach (QSharedPointer<SignalEvent const> event, events)
-        {
-            QSharedPointer<QUndoCommand> creation_command (new NewEventUndoCommand (event_manager, event));
-            creation_commands.append (creation_command);
-        }
-        MacroUndoCommand* macro_command = new MacroUndoCommand (creation_commands);
-        applicationContext()->getCurrentCommandExecuter()->executeCommand (macro_command);
     }
     else
     {
+#endif
         QMessageBox::critical(0, file_path, tr("Cannot open file.\nIs the target file open in another application?"));
         return;
+#if BIOSIG_VERSION<10903
     }
+#endif
+    }
+
+    QList<QSharedPointer<QUndoCommand> > creation_commands;
+    foreach (QSharedPointer<SignalEvent const> event, events)
+    {
+            QSharedPointer<QUndoCommand> creation_command (new NewEventUndoCommand (event_manager, event));
+            creation_commands.append (creation_command);
+    }
+    MacroUndoCommand* macro_command = new MacroUndoCommand (creation_commands);
+    applicationContext()->getCurrentCommandExecuter()->executeCommand (macro_command);
 }
 
 //-------------------------------------------------------------------------
