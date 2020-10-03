@@ -236,15 +236,17 @@ void OpenFileGuiCommand::importEvents ()
                 }
             }
 
+            /* biosig uses a 1-based channel index, and 0 refers to all channels,
+               sigviewer uses a 0-based indexing, and -1 indicates all channels */
             //boundary check & error handling
             if (pos > event_manager->getMaxEventPosition()
                     || pos + dur > event_manager->getMaxEventPosition()
-                    || chn >= numberChannels
+                    || chn > numberChannels
                     || !types.count(typ))
                 continue;
 
             QSharedPointer<SignalEvent> event = QSharedPointer<SignalEvent>(new SignalEvent(pos,
-                    typ, sampleRate, chn, dur));
+                    typ, sampleRate, -1, chn-1, dur));
 
             events << event;
         }
