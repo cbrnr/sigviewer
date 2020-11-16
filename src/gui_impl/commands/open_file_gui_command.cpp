@@ -208,34 +208,6 @@ void OpenFileGuiCommand::importEvents ()
                 dur = lround(dur*transition_rate);
             }
 
-            if (typ <= 254 && do_not_show_warning_message == false) {
-                QMessageBox msgBox;
-                msgBox.setText("Currently customized event text cannot be properly imported.");
-                msgBox.setIcon(QMessageBox::Warning);
-                msgBox.addButton(QMessageBox::Ok);
-                msgBox.addButton(QMessageBox::Cancel);
-                msgBox.setDefaultButton(QMessageBox::Cancel);
-                QCheckBox* dontShowCheckBox = new QCheckBox("Don't show this message again");
-                msgBox.setCheckBox(dontShowCheckBox);
-                int32_t userReply = msgBox.exec();
-                if (userReply == QMessageBox::Ok) {
-                    if(dontShowCheckBox->checkState() == Qt::Checked) {
-                        QSettings settings;
-                        settings.setValue("DoNotShowWarningMessage", true);
-                        do_not_show_warning_message = true;
-                    }
-                }
-                else if (userReply == QMessageBox::Cancel) {
-                    if(dontShowCheckBox->checkState() == Qt::Checked) {
-                        QSettings settings;
-                        settings.setValue("DoNotShowWarningMessage", true);
-                        do_not_show_warning_message = true;
-                    }
-                    destructHDR(evtHDR);
-                    return;
-                }
-            }
-
             /* biosig uses a 1-based channel index, and 0 refers to all channels,
                sigviewer uses a 0-based indexing, and -1 indicates all channels */
             //boundary check & error handling
@@ -256,85 +228,8 @@ void OpenFileGuiCommand::importEvents ()
     {
         // if the file can not be read with biosig, try this approach
         destructHDR(evtHDR);
-#if BIOSIG_VERSION<10903
-        std::fstream file;
-        file.open(file_path.toStdString());
-
-    if (file.is_open()) {
-        std::string line;
-        std::getline(file, line);
-
-        if (line.compare("position,duration,channel,type,name"))
-        {
-            QMessageBox::critical(0, file_path, tr("This is not a valid event CSV file!"));
-            return;
-        }
-
-        while (std::getline(file, line))
-        {
-            QStringList Qline = QString::fromStdString(line).split(',');
-
-            size_t position = Qline[0].toUInt();
-            size_t duration = Qline[1].toULongLong();
-            ChannelID channel = Qline[2].toInt();
-            EventType type = Qline[3].toInt();
-
-            if (type <= 254 && do_not_show_warning_message == false)
-            {
-                QMessageBox msgBox;
-                msgBox.setText("Currently customized event text cannot be properly imported.");
-                msgBox.setIcon(QMessageBox::Warning);
-                msgBox.addButton(QMessageBox::Ok);
-                msgBox.addButton(QMessageBox::Cancel);
-                msgBox.setDefaultButton(QMessageBox::Cancel);
-                QCheckBox* dontShowCheckBox = new QCheckBox("Don't show this message again");
-                msgBox.setCheckBox(dontShowCheckBox);
-                int32_t userReply = msgBox.exec();
-                if (userReply == QMessageBox::Ok)
-                {
-                    if(dontShowCheckBox->checkState() == Qt::Checked)
-                    {
-                        QSettings settings;
-                        settings.setValue("DoNotShowWarningMessage", true);
-                        do_not_show_warning_message = true;
-                    }
-                }
-                else if (userReply == QMessageBox::Cancel)
-                {
-                    if(dontShowCheckBox->checkState() == Qt::Checked)
-                    {
-                        QSettings settings;
-                        settings.setValue("DoNotShowWarningMessage", true);
-
-                        do_not_show_warning_message = true;
-                        return;
-                    }
-
-                    return;
-                }
-            }
-
-            //boundary check & error handling
-            if (position > event_manager->getMaxEventPosition()
-                    || position + duration > event_manager->getMaxEventPosition()
-                    || channel >= numberChannels
-                    || !types.count(type))
-                continue;
-
-            QSharedPointer<SignalEvent> event = QSharedPointer<SignalEvent>(new SignalEvent(position,
-                    type, sampleRate, channel, duration));
-
-            events << event;
-        }
-    }
-    else
-    {
-#endif
         QMessageBox::critical(0, file_path, tr("Cannot open file.\nIs the target file open in another application?"));
         return;
-#if BIOSIG_VERSION<10903
-    }
-#endif
     }
 
     QList<QSharedPointer<QUndoCommand> > creation_commands;
