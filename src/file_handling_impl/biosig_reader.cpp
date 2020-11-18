@@ -121,10 +121,6 @@ QString BioSigReader::open (QString const& file_name)
 QString BioSigReader::loadFixedHeader(const QString& file_name)
 {
     QMutexLocker locker (&biosig_access_lock_);
-    char *c_file_name = new char[file_name.length() + 1];
-    strcpy (c_file_name, file_name.toLocal8Bit ().data());
-    c_file_name[file_name.length()] = '\0';
-
     tzset();
 
     if(biosig_header_==NULL)
@@ -134,7 +130,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         biosig_header_->FLAG.OVERFLOWDETECTION = 1;
     }
 
-    biosig_header_ = sopen(c_file_name, "r", biosig_header_ );
+    biosig_header_ = sopen(file_name.toStdString().c_str(), "r", biosig_header_ );
 
     basic_header_ = QSharedPointer<BasicHeader>
                     (new BiosigBasicHeader (biosig_header_, file_name));
@@ -144,8 +140,6 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         sclose (biosig_header_);
         destructHDR(biosig_header_);
         biosig_header_ = NULL;
-
-        delete[] c_file_name;
 
         qDebug() << "File doesn't exist.";
         QMessageBox msgBox;
@@ -167,16 +161,10 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         destructHDR(biosig_header_);
         biosig_header_ = NULL;
 
-        delete[] c_file_name;
-
         return "file not supported";
     }
 
     convert2to4_eventtable(biosig_header_);
-
-    delete[] c_file_name;
-
-    c_file_name = NULL;
 
     basic_header_->setNumberEvents(biosig_header_->EVENT.N);
 

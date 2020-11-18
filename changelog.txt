@@ -1,5 +1,6 @@
 Version X.X.X
 (B) Fix crash when exporting events to CSV
+(B) Fix evt import when sampling rates differ
 
 Version 0.6.4
 (+) Re-enable import/export event from/to EVT
