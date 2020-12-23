@@ -30,6 +30,7 @@ EventTableFileReader::~EventTableFileReader()
 // load
 bool EventTableFileReader::load()
 {
+#ifndef NOBIOSIG
     char g[10];
     uint16_t k;
     for (k = 0; EventCodeGroups[k].groupid < 0xffff; k++) {
@@ -47,6 +48,7 @@ bool EventTableFileReader::load()
         event_type2name_[ETD[k].typ] = item;
         event_types_ << ETD[k].typ;
     }
+#endif
     return true;
 }
 

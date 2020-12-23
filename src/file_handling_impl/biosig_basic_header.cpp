@@ -13,6 +13,7 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
+#ifndef NOBIOSIG
 BiosigBasicHeader::BiosigBasicHeader (HDRTYPE* raw_header, QString const& file_path)
     : BasicHeader (file_path),
       number_samples_ (raw_header->NRec * raw_header->SPR)
@@ -36,6 +37,7 @@ BiosigBasicHeader::BiosigBasicHeader (HDRTYPE* raw_header, QString const& file_p
     readPatientInfo (raw_header);
     readRecordingInfo (raw_header);
 }
+#endif
 
 //!alternative for XDF---------------------------------------------------------
 BiosigBasicHeader::BiosigBasicHeader (QString file_format, QString const& file_path)
@@ -75,8 +77,10 @@ QMap<unsigned, QString> BiosigBasicHeader::getNamesOfUserSpecificEvents () const
 }
 
 //-----------------------------------------------------------------------------
+
 void BiosigBasicHeader::readChannelsInfo (HDRTYPE const* raw_header)
 {
+#ifndef NOBIOSIG
     unsigned ch = 0;
     for (unsigned channel_index = 0; channel_index < raw_header->NS; channel_index++)
         if (raw_header->CHANNEL[channel_index].OnOff)
@@ -84,6 +88,7 @@ void BiosigBasicHeader::readChannelsInfo (HDRTYPE const* raw_header)
             QSharedPointer<SignalChannel> channel(new SignalChannel(channel_index, raw_header));
             addChannel(ch++, channel);
         }
+#endif
 }
 
 //-------------------------------------------------------------------------
@@ -100,6 +105,7 @@ void BiosigBasicHeader::readChannelsInfo (QString file_format)
 //-------------------------------------------------------------------------
 void BiosigBasicHeader::readPatientInfo (HDRTYPE const* raw_header)
 {
+#ifndef NOBIOSIG
     switch (raw_header->Patient.Handedness)
     {
     case 1:
@@ -148,17 +154,20 @@ void BiosigBasicHeader::readPatientInfo (HDRTYPE const* raw_header)
         addPatientInfo ("Weight", QString::number(raw_header->Patient.Weight).append("kg"));
     if (raw_header->Patient.Height)
         addPatientInfo ("Height", QString::number(raw_header->Patient.Height).append("cm"));
+#endif
 }
 
 
 //-------------------------------------------------------------------------
 void BiosigBasicHeader::readRecordingInfo (HDRTYPE const* raw_header)
 {
+#ifndef NOBIOSIG
     if (raw_header->T0)
     {
         time_t recording_t = mktime(gdf_time2tm_time (raw_header->T0));
         addRecordingInfo("Recording Time", QString (ctime(&recording_t)).trimmed());
     }
+#endif
 }
 
 }

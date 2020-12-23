@@ -5,7 +5,9 @@
 
 
 #include "xdf_reader.h"
+#ifndef NO_BIOSIG
 #include "biosig_basic_header.h"
+#endif
 #include "file_handler_factory_registrator.h"
 #include "gui/progress_bar.h"
 #include "base/fixed_data_block.h"

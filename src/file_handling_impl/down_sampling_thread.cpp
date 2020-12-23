@@ -97,13 +97,13 @@ void DownSamplingThread::downsampleAllOnBasisData ()
     {
         for (int channel = 0; channel < data_.size(); channel++)
         {
-            max_channel_length = std::max (max_channel_length, basis_data_[channel]->size());
+            max_channel_length = std::max<unsigned int>(max_channel_length, basis_data_[channel]->size());
             sample_rates[downsampling_factor].append (basis_data_[channel]->getSampleRatePerUnit() / downsampling_factor);
 
             QSharedPointer<QVector<float32> > raw_data_vector (new QVector<float32> (static_cast<int>(basis_data_[channel]->size () / downsampling_factor) + 1));
 
             QSharedPointer<DataBlock> downsampled_data (new FixedDataBlock (raw_data_vector, sample_rates[downsampling_factor][channel]));
-            basis_data_[channel]->addDownSampledVersion (downsampled_data, downsampling_factor);
+            // basis_data_[channel]->addDownSampledVersion (downsampled_data, downsampling_factor);
 
             raw_downsampled_data[downsampling_factor].append (raw_data_vector);
             low_pass_filters[downsampling_factor].append (QSharedPointer<SPUC::butterworth<float32> > (new SPUC::butterworth<float32> (0.5 / downsampling_factor, 4, 3)));
@@ -146,7 +146,7 @@ void DownSamplingThread::downsampleOnDownsampledData ()
 
         for (int channel = 0; channel < data_.size(); channel++)
         {
-            max_channel_length = std::max (max_channel_length, data_[channel]->size());
+            max_channel_length = std::max<unsigned int>(max_channel_length, data_[channel]->size());
             raw_downsampled_data.append (QSharedPointer<QVector<float32> > (new QVector<float32> (static_cast<int>(data_[channel]->size () / downsampling_step_) + 1)));
             low_pass_filters.append (QSharedPointer<SPUC::butterworth<float32> > (new SPUC::butterworth<float32> (0.9 / downsampling_step_, 4, 3)));
             sample_rates_.append (data_[channel]->getSampleRatePerUnit() / downsampling_step_);
@@ -170,7 +170,7 @@ void DownSamplingThread::downsampleOnDownsampledData ()
         for (int channel = 0; channel < raw_downsampled_data.size(); channel++)
         {
             QSharedPointer<DataBlock> downsampled_data (new FixedDataBlock (raw_downsampled_data[channel], sample_rates_[channel]));
-            basis_data_[channel]->addDownSampledVersion (downsampled_data, downsampling_factor);
+            // basis_data_[channel]->addDownSampledVersion (downsampled_data, downsampling_factor);
             data_.append (downsampled_data);
         }
     }

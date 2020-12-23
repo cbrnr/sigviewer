@@ -7,7 +7,11 @@
 #define BIOSIG_BASIC_HEADER_H
 
 #include "file_handling/basic_header.h"
+#ifdef NOBIOSIG
+struct HDRTYPE {};
+#else
 #include "biosig.h"
+#endif
 
 namespace sigviewer
 {

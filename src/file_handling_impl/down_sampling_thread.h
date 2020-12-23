@@ -29,6 +29,8 @@
 #include <QVector>
 #include <QList>
 
+using namespace sigviewer;
+
 namespace SigViewer_
 {
 

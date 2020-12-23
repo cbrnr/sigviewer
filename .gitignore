@@ -10,3 +10,7 @@ bin/
 .qmake.stash
 Makefile
 src/Makefile
+/libxdf
+/.vs
+/out
+/CMakeSettings.json

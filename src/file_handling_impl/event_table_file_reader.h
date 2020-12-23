@@ -7,7 +7,9 @@
 #define EVENT_TABLE_FILE_READER
 
 #include "base/sigviewer_user_types.h"
+#ifndef NOBIOSIG
 #include "biosig.h"
+#endif
 
 #include <QStringList>
 #include <QMap>

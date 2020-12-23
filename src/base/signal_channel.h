@@ -7,7 +7,9 @@
 #define SIGNAL_CHANNEL_H
 
 #include "sigviewer_user_types.h"
+#ifndef NOBIOSIG
 #include "biosig.h"
+#endif
 
 #include <QString>
 #include <QMutex>
@@ -22,7 +24,9 @@ class SignalChannel
 {
 public:
     //-------------------------------------------------------------------------
+#ifndef NOBIOSIG
     SignalChannel(unsigned ch, const HDRTYPE* hdr);
+#endif
     SignalChannel(unsigned ch, QString file_format);
 //    SignalChannel(unsigned number, CHANNEL_TYPE C);  /* obsolete, deprecated */
 
