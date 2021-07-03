@@ -25,6 +25,7 @@ QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MAX_TO_MAX_ = "Zero Lin
 QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MIN_TO_MAX_ = "Zero Line Fitted";
 QString const AdaptChannelViewGuiCommand::ANIMATIONS_ = "Animations";
 QString const AdaptChannelViewGuiCommand::SET_ANIMATION_DURATION_ = "Set Animation Duration";
+QString const AdaptChannelViewGuiCommand::HOTKEYS_ = "Keyboard and Mouse Shortcuts";
 QStringList const AdaptChannelViewGuiCommand::ACTIONS_ = QStringList() <<
                                                          AdaptChannelViewGuiCommand::CHANNELS_ <<
                                                          AdaptChannelViewGuiCommand::SCALE_ALL_  <<
@@ -34,7 +35,8 @@ QStringList const AdaptChannelViewGuiCommand::ACTIONS_ = QStringList() <<
                                                          AdaptChannelViewGuiCommand::SCALE_ <<
                                                          AdaptChannelViewGuiCommand::HIDE_ <<
                                                          AdaptChannelViewGuiCommand::ANIMATIONS_ <<
-                                                         AdaptChannelViewGuiCommand::SET_ANIMATION_DURATION_;
+                                                         AdaptChannelViewGuiCommand::SET_ANIMATION_DURATION_ <<
+                                                         AdaptChannelViewGuiCommand::HOTKEYS_;
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator registrator_ ("Adapt Channel View",
@@ -52,13 +54,17 @@ void AdaptChannelViewGuiCommand::init ()
 {
     setIcon (CHANNELS_, QIcon(":/images/ic_reorder_black_24dp.png"));
     setIcon (SCALE_ALL_, QIcon(":/images/ic_autoscale_black_24dp.png"));
+    setIcon (HOTKEYS_, QIcon(":/images/ic_help_outline_black_24dp.png"));
     resetActionTriggerSlot (CHANNELS_, SLOT(selectShownChannels()));
     resetActionTriggerSlot (SCALE_ALL_, SLOT(scaleAll()));
     resetActionTriggerSlot (CHANGE_COLOR_, SLOT(changeColor()));
     resetActionTriggerSlot (SCALE_, SLOT(scale()));
     resetActionTriggerSlot (HIDE_, SLOT(hide()));
+    resetActionTriggerSlot (HOTKEYS_, SLOT(showHotkeyDialog()));
+
     setShortcut (CHANNELS_, tr("Ctrl+C"));
-    //setShortcut (SCALE_ALL_, tr("Ctrl+A"));
+    setShortcut (SCALE_ALL_, tr("Ctrl+A"));
+    setShortcut (HOTKEYS_, tr("Ctrl+H"));
 
     QActionGroup* scale_mode_action_group = new QActionGroup (this);
     scale_mode_action_group->setExclusive(true);
@@ -99,6 +105,7 @@ void AdaptChannelViewGuiCommand::evaluateEnabledness ()
     QStringList disabled_actions_if_no_file = ACTIONS_;
     disabled_actions_if_no_file.removeAll(ANIMATIONS_);
     disabled_actions_if_no_file.removeAll(SET_ANIMATION_DURATION_);
+    disabled_actions_if_no_file.removeAll(HOTKEYS_);
     disableIfNoFileIsOpened (disabled_actions_if_no_file);
     disableIfNoSignalIsVisualised (disabled_actions_if_no_file);
 
@@ -227,6 +234,13 @@ void AdaptChannelViewGuiCommand::setAnimationDuration ()
     if (ok)
         settings.setValue ("duration", new_duration);
     settings.endGroup ();
+}
+
+//-------------------------------------------------------------------------
+void AdaptChannelViewGuiCommand::showHotkeyDialog()
+{
+    hotkey_dialog_ = new HotkeyDialog();
+    hotkey_dialog_->show();
 }
 
 }
