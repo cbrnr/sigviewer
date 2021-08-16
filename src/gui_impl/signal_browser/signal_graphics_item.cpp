@@ -402,9 +402,7 @@ void SignalGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent* event)
         {
             if (event_string.size())
                 event_string += "<br /><br />";
-            event_string += "<b>" + event_manager_->getNameOfEvent (event) + "</b><br />";
-            event_string += "Start: " + QString::number(signal_event->getPositionInSec()) + "s; ";
-            event_string += "Duration: " + QString::number(signal_event->getDurationInSec()) + "s";
+            event_string += tr("<b>%1</b><br />Start: %2s; Duration: %3s").arg(event_manager_->getNameOfEvent (event)).arg(signal_event->getPositionInSec()).arg(signal_event->getDurationInSec());
         }
     }
 
@@ -533,12 +531,12 @@ void SignalGraphicsItem::contextMenuEvent (QGraphicsSceneContextMenuEvent * even
 {
     signal_browser_model_.selectChannel (id_);
     QMenu* context_menu = new QMenu (channel_manager_.getChannelLabel(id_));
-    context_menu->addAction(GuiActionFactory::getInstance()->getQAction("Change Color..."));
-    context_menu->addAction(GuiActionFactory::getInstance()->getQAction("Scale..."));
+    context_menu->addAction(GuiActionFactory::getInstance()->getQAction(tr("Change Color...")));
+    context_menu->addAction(GuiActionFactory::getInstance()->getQAction(tr("Scale...")));
     if (signal_browser_model_.getShownChannels().size() > 1)
     {
         context_menu->addSeparator ();
-        context_menu->addAction(GuiActionFactory::getInstance()->getQAction("Hide Channel"));
+        context_menu->addAction(GuiActionFactory::getInstance()->getQAction(tr("Hide Channel")));
     }
 
     if (!EventGraphicsItem::displayContextMenu (event, context_menu))

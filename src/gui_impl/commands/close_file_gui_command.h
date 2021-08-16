@@ -47,9 +47,9 @@ protected:
 
 
 private:
-    static QString const CLOSE_FILE_;
-    static QString const EXIT_APPLICATION_;
-    static QStringList const ACTIONS_;
+    static QString const CLOSE_FILE_();
+    static QString const EXIT_APPLICATION_();
+    static QStringList const ACTIONS_();
 
     static GuiActionFactoryRegistrator registrator_;
 

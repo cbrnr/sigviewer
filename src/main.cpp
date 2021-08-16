@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     }
 
     QCommandLineParser parser;
-    parser.setApplicationDescription("SigViewer - a biosignal viewer.");
+    parser.setApplicationDescription(QObject::tr("SigViewer - a biosignal viewer."));
     parser.addPositionalArgument("file", QApplication::translate("main", "Input file (optional)."));
     parser.addHelpOption();
     parser.addVersionOption();

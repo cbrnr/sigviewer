@@ -33,13 +33,37 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
-QString const OpenFileGuiCommand::IMPORT_EVENTS_ = "Import Events...";
-QString const OpenFileGuiCommand::OPEN_ = "Open...";
-QString const OpenFileGuiCommand::SHOW_FILE_INFO_ = "Info...";
-QStringList const OpenFileGuiCommand::ACTIONS_ = QStringList() <<
-                                                 OpenFileGuiCommand::IMPORT_EVENTS_ <<
-                                                 OpenFileGuiCommand::OPEN_ <<
-                                                 OpenFileGuiCommand::SHOW_FILE_INFO_;
+QString const OpenFileGuiCommand::IMPORT_EVENTS_()
+{
+    static QString value = tr("Import Events...");
+
+    return value;
+}
+
+QString const OpenFileGuiCommand::OPEN_()
+{
+    static QString value = tr("Open...");
+
+    return value;
+}
+
+QString const OpenFileGuiCommand::SHOW_FILE_INFO_()
+{
+    static QString value = tr("Info...");
+
+    return value;
+}
+
+QStringList const OpenFileGuiCommand::ACTIONS_()
+{
+    static QStringList result = {
+        OpenFileGuiCommand::IMPORT_EVENTS_(),
+        OpenFileGuiCommand::OPEN_(),
+        OpenFileGuiCommand::SHOW_FILE_INFO_(),
+    };
+
+    return result;
+}
 
 //-----------------------------------------------------------------------------
 QSharedPointer<OpenFileGuiCommand> OpenFileGuiCommand::instance_ = QSharedPointer<OpenFileGuiCommand> (new OpenFileGuiCommand);
@@ -51,7 +75,7 @@ GuiActionFactoryRegistrator OpenFileGuiCommand::registrator_ ("Opening",
 
 //-----------------------------------------------------------------------------
 OpenFileGuiCommand::OpenFileGuiCommand ()
-    : GuiActionCommand (ACTIONS_)
+    : GuiActionCommand (ACTIONS_())
 {
     QSettings settings;
     do_not_show_warning_message = settings.value("DoNotShowWarningMessage", false).toBool();
@@ -67,16 +91,16 @@ OpenFileGuiCommand::~OpenFileGuiCommand ()
 //-----------------------------------------------------------------------------
 void OpenFileGuiCommand::init ()
 {
-    setShortcut (OPEN_, QKeySequence::Open);
-    setShortcut (SHOW_FILE_INFO_, tr("Ctrl+I"));
-    setIcon (OPEN_, QIcon(":/images/ic_folder_open_black_24dp.png"));
-    setIcon (SHOW_FILE_INFO_, QIcon(":/images/ic_info_outline_black_24dp.png"));
-    setIcon (IMPORT_EVENTS_, QIcon(":/images/ic_file_download_black_24dp.png"));
+    setShortcut (OPEN_(), QKeySequence::Open);
+    setShortcut (SHOW_FILE_INFO_(), tr("Ctrl+I"));
+    setIcon (OPEN_(), QIcon(":/images/ic_folder_open_black_24dp.png"));
+    setIcon (SHOW_FILE_INFO_(), QIcon(":/images/ic_info_outline_black_24dp.png"));
+    setIcon (IMPORT_EVENTS_(), QIcon(":/images/ic_file_download_black_24dp.png"));
 
 
-    resetActionTriggerSlot (OPEN_, SLOT(open()));
-    resetActionTriggerSlot (IMPORT_EVENTS_, SLOT(importEvents()));
-    resetActionTriggerSlot (SHOW_FILE_INFO_, SLOT(showFileInfo()));
+    resetActionTriggerSlot (OPEN_(), SLOT(open()));
+    resetActionTriggerSlot (IMPORT_EVENTS_(), SLOT(importEvents()));
+    resetActionTriggerSlot (SHOW_FILE_INFO_(), SLOT(showFileInfo()));
 }
 
 //-----------------------------------------------------------------------------
@@ -133,8 +157,8 @@ void OpenFileGuiCommand::evaluateEnabledness ()
             enable_import_events = false;//Disabled because currently XDF files doesn't support importing events
     }
 
-    getQAction (IMPORT_EVENTS_)->setEnabled (enable_import_events);
-    getQAction (SHOW_FILE_INFO_)->setEnabled (file_opened);
+    getQAction (IMPORT_EVENTS_())->setEnabled (enable_import_events);
+    getQAction (SHOW_FILE_INFO_())->setEnabled (file_opened);
 }
 
 

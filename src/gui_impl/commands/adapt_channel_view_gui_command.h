@@ -62,17 +62,17 @@ private slots:
     void setAnimationDuration ();
 
 private:
-    static QString const CHANNELS_;
-    static QString const CHANGE_COLOR_;
-    static QString const SCALE_;
-    static QString const APPLY_SCALE_TO_OTHER_CHANNELS_;
-    static QString const HIDE_;
-    static QString const SCALE_ALL_;
-    static QString const SET_AUTO_SCALE_MAX_TO_MAX_;
-    static QString const SET_AUTO_SCALE_MIN_TO_MAX_;
-    static QString const ANIMATIONS_;
-    static QString const SET_ANIMATION_DURATION_;
-    static QStringList const ACTIONS_;
+    static QString const CHANNELS_();
+    static QString const CHANGE_COLOR_();
+    static QString const SCALE_();
+    static QString const APPLY_SCALE_TO_OTHER_CHANNELS_();
+    static QString const HIDE_();
+    static QString const SCALE_ALL_();
+    static QString const SET_AUTO_SCALE_MAX_TO_MAX_();
+    static QString const SET_AUTO_SCALE_MIN_TO_MAX_();
+    static QString const ANIMATIONS_();
+    static QString const SET_ANIMATION_DURATION_();
+    static QStringList const ACTIONS_();
 
     static GuiActionFactoryRegistrator registrator_;
 };

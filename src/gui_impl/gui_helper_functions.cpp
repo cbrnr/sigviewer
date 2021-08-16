@@ -245,7 +245,7 @@ QString getFilePathFromSaveAsDialog (QString const& path,
                                      QString const& extensions,
                                      QString const& file_type_description)
 {
-    QString extension_selection = file_type_description + QObject::tr(" (%1)").arg(extensions);
+    QString extension_selection = file_type_description + QString(" (%1)").arg(extensions);
     QStringList ext_list = extensions.split (" ");
     for (QStringList::iterator it = ext_list.begin();
          it != ext_list.end();

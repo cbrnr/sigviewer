@@ -103,34 +103,34 @@ void BiosigBasicHeader::readPatientInfo (HDRTYPE const* raw_header)
     switch (raw_header->Patient.Handedness)
     {
     case 1:
-        addPatientInfo ("Handedness", "Right"); break;
+        addPatientInfo (QObject::tr("Handedness"), QObject::tr("Right")); break;
     case 2:
-        addPatientInfo ("Handedness", "Left"); break;
+        addPatientInfo (QObject::tr("Handedness"), QObject::tr("Left")); break;
     case 3:
-        addPatientInfo ("Handedness", "Equal"); break;
+        addPatientInfo (QObject::tr("Handedness"), QObject::tr("Equal")); break;
     }
 
     switch (raw_header->Patient.Sex)
     {
     case 1:
-        addPatientInfo ("Sex", "Male"); break;
+        addPatientInfo (QObject::tr("Sex"), QObject::tr("Male")); break;
     case 2:
-        addPatientInfo ("Sex", "Female"); break;
+        addPatientInfo (QObject::tr("Sex"), QObject::tr("Female")); break;
     }
 
     switch (raw_header->Patient.Smoking)
     {
     case 1:
-        addPatientInfo ("Smoking", "No"); break;
+        addPatientInfo (QObject::tr("Smoking"), QObject::tr("No")); break;
     case 2:
-        addPatientInfo ("Smoking", "Yes"); break;
+        addPatientInfo (QObject::tr("Smoking"), QObject::tr("Yes")); break;
     }
     switch (raw_header->Patient.Smoking)
     {
     case 1:
-        addPatientInfo ("Smoking", "No"); break;
+        addPatientInfo (QObject::tr("Smoking"), QObject::tr("No")); break;
     case 2:
-        addPatientInfo ("Smoking", "Yes"); break;
+        addPatientInfo (QObject::tr("Smoking"), QObject::tr("Yes")); break;
     }
 
     QString patient_id;
@@ -141,13 +141,13 @@ void BiosigBasicHeader::readPatientInfo (HDRTYPE const* raw_header)
     if (raw_header->Patient.Birthday)
     {
         time_t birthday_t = mktime(gdf_time2tm_time (raw_header->Patient.Birthday));
-        addPatientInfo ("Birthday", QString (ctime(&birthday_t)).trimmed());
+        addPatientInfo (QObject::tr("Birthday"), QString (ctime(&birthday_t)).trimmed());
     }
 
     if (raw_header->Patient.Weight)
-        addPatientInfo ("Weight", QString::number(raw_header->Patient.Weight).append("kg"));
+        addPatientInfo (QObject::tr("Weight"), QString::number(raw_header->Patient.Weight).append("kg"));
     if (raw_header->Patient.Height)
-        addPatientInfo ("Height", QString::number(raw_header->Patient.Height).append("cm"));
+        addPatientInfo (QObject::tr("Height"), QString::number(raw_header->Patient.Height).append("cm"));
 }
 
 
@@ -157,7 +157,7 @@ void BiosigBasicHeader::readRecordingInfo (HDRTYPE const* raw_header)
     if (raw_header->T0)
     {
         time_t recording_t = mktime(gdf_time2tm_time (raw_header->T0));
-        addRecordingInfo("Recording Time", QString (ctime(&recording_t)).trimmed());
+        addRecordingInfo(QObject::tr("Recording Time"), QString (ctime(&recording_t)).trimmed());
     }
 }
 

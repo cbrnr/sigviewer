@@ -39,9 +39,9 @@ protected:
 
 private:
     //-------------------------------------------------------------------------
-    static QString const UNDO_;
-    static QString const REDO_;
-    static QStringList const ACTIONS_;
+    static QString const UNDO_();
+    static QString const REDO_();
+    static QStringList const ACTIONS_();
 
     static GuiActionFactoryRegistrator registrator_;
 };

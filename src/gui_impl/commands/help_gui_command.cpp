@@ -14,11 +14,29 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
-QString const HelpGuiCommand::ABOUT_ = "About";
-QString const HelpGuiCommand::RUN_TESTS_ = "Run Tests...";
-QStringList const HelpGuiCommand::ACTIONS_ = QStringList() <<
-                                             HelpGuiCommand::ABOUT_ <<
-                                             HelpGuiCommand::RUN_TESTS_;
+QString const HelpGuiCommand::ABOUT_()
+{
+    static QString value = tr("About");
+
+    return value;
+}
+
+QString const HelpGuiCommand::RUN_TESTS_()
+{
+    static QString value = tr("Run Tests...");
+
+    return value;
+}
+
+QStringList const HelpGuiCommand::ACTIONS_()
+{
+    static QStringList result = {
+        HelpGuiCommand::ABOUT_(),
+        HelpGuiCommand::RUN_TESTS_(),
+    };
+
+    return result;
+}
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator HelpGuiCommand::registrator_ ("Help",
@@ -26,7 +44,7 @@ GuiActionFactoryRegistrator HelpGuiCommand::registrator_ ("Help",
 
 //-----------------------------------------------------------------------------
 HelpGuiCommand::HelpGuiCommand ()
-    : GuiActionCommand (ACTIONS_)
+    : GuiActionCommand (ACTIONS_())
 {
     // nothing to do here
 }
@@ -34,9 +52,9 @@ HelpGuiCommand::HelpGuiCommand ()
 //-----------------------------------------------------------------------------
 void HelpGuiCommand::init ()
 {
-    resetActionTriggerSlot (ABOUT_, SLOT(showAboutDialog()));
-    setIcon (ABOUT_, QIcon(":/images/ic_help_outline_black_24dp.png"));
-    resetActionTriggerSlot (RUN_TESTS_, SLOT(runTests()));
+    resetActionTriggerSlot (ABOUT_(), SLOT(showAboutDialog()));
+    setIcon (ABOUT_(), QIcon(":/images/ic_help_outline_black_24dp.png"));
+    resetActionTriggerSlot (RUN_TESTS_(), SLOT(runTests()));
 }
 
 //-----------------------------------------------------------------------------

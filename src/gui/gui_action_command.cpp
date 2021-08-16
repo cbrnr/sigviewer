@@ -8,6 +8,7 @@
 #include "application_context_impl.h"
 
 #include <QDebug>
+#include <QObject>
 
 namespace sigviewer
 {
@@ -16,8 +17,8 @@ class GuiActionCommandException : public Exception
 {
 public:
     explicit GuiActionCommandException (QString const& action_id,
-                                        std::string const& error) :
-    Exception (std::string ("GuiActionCommand: \"") + action_id.toStdString () + "\" failed: " + error)
+                                        QString const& error) :
+    Exception (QObject::tr("GuiActionCommand: \"%1\" failed: %2").arg(action_id).arg(error).toStdString())
     {}
 };
 
@@ -47,18 +48,18 @@ void GuiActionCommand::initConnections()
 	qDebug() << "GuiActionCommand::GuiActionCommand connecting to ApplicationContextImpl::getInstance() = " << ApplicationContextImpl::getInstance();
 	if (!connect(ApplicationContextImpl::getInstance().data(), SIGNAL(stateChanged(ApplicationState)),
 		SLOT(updateEnablednessToApplicationState(ApplicationState))))
-		throw (GuiActionCommandException(firstActionId, "connect to signal stateChanged(ApplicationState)"));
+		throw (GuiActionCommandException(firstActionId, tr("connect to signal stateChanged(ApplicationState)")));
 	else
 		qDebug() << "GuiActionCommand::GuiActionCommand connect to signal stateChanged(ApplicationState) = true";
 	if (!connect(ApplicationContextImpl::getInstance().data(), SIGNAL(currentTabSelectionStateChanged(TabSelectionState)),
 		SLOT(updateEnablednessToTabSelectionState(TabSelectionState))))
-		throw (GuiActionCommandException(firstActionId, "connect to signal currentTabSelectionStateChanged(TabSelectionState)"));
+		throw (GuiActionCommandException(firstActionId, tr("connect to signal currentTabSelectionStateChanged(TabSelectionState)")));
 	if (!connect(ApplicationContextImpl::getInstance().data(), SIGNAL(currentTabEditStateChanged(TabEditState)),
 		SLOT(updateEnablednessToTabEditState(TabEditState))))
-		throw (GuiActionCommandException(firstActionId, "connect to signal currentTabEditStateChanged(TabEditState)"));
+		throw (GuiActionCommandException(firstActionId, tr("connect to signal currentTabEditStateChanged(TabEditState)")));
 	if (!connect(ApplicationContextImpl::getInstance().data(), SIGNAL(currentFileStateChanged(FileState)),
 		SLOT(updateEnablednessToFileState(FileState))))
-		throw (GuiActionCommandException(firstActionId, "connect to signal currentFileStateChanged(FileState)"));
+		throw (GuiActionCommandException(firstActionId, tr("connect to signal currentFileStateChanged(FileState)")));
 }
 
 //-----------------------------------------------------------------------------
@@ -80,7 +81,7 @@ QAction* GuiActionCommand::getQAction (QString const& id)
     if (action_map_.contains (id))
         return action_map_[id];
     else
-        throw GuiActionCommandException (id, "not exists");
+        throw GuiActionCommandException (id, tr("not exists"));
     return 0;
 }
 
@@ -120,11 +121,11 @@ void GuiActionCommand::resetActionTriggerSlot (QString const& action_id,
                                               const char* slot)
 {
     if (!action_map_.contains (action_id))
-        throw (GuiActionCommandException (action_id, "resetActionTriggerSlot, action not exists"));
+        throw (GuiActionCommandException (action_id, tr("resetActionTriggerSlot, action not exists")));
     QAction* action = action_map_[action_id];
     action->disconnect (SIGNAL(triggered()));
     if (!connect (action, SIGNAL(triggered()), slot))
-        throw (GuiActionCommandException (action_id, std::string ("connect triggered to ") + slot));
+        throw (GuiActionCommandException (action_id, tr("connect triggered to %1").arg(slot)));
 }
 
 //-----------------------------------------------------------------------------
@@ -132,7 +133,7 @@ void GuiActionCommand::setShortcut (QString const& action_id,
                                     QKeySequence const& key_sequence)
 {
     if (!action_map_.contains (action_id))
-        throw (GuiActionCommandException (action_id, "setting shortcut, action not exists"));
+        throw (GuiActionCommandException (action_id, tr("setting shortcut, action not exists")));
     action_map_[action_id]->setShortcut (key_sequence);
 }
 
@@ -140,7 +141,7 @@ void GuiActionCommand::setShortcut (QString const& action_id,
 void GuiActionCommand::setIcon (QString const& action_id, QIcon const& icon)
 {
     if (!action_map_.contains (action_id))
-        throw (GuiActionCommandException (action_id, "setting icon, action not exists"));
+        throw (GuiActionCommandException (action_id, tr("setting icon, action not exists")));
     action_map_[action_id]->setIcon (icon);
 }
 

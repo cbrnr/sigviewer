@@ -13,23 +13,76 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
-QString const ZoomGuiCommand::GOTO_ = "Go to...";
-QString const ZoomGuiCommand::ZOOM_IN_VERTICAL_ = "Zoom In Vertical";
-QString const ZoomGuiCommand::ZOOM_OUT_VERTICAL_ = "Zoom Out Vertical";
-QString const ZoomGuiCommand::ZOOM_IN_HORIZONTAL_ = "Zoom In Horizontal";
-QString const ZoomGuiCommand::ZOOM_OUT_HORIZONTAL_ = "Zoom Out Horizontal";
-QString const ZoomGuiCommand::SCALE_X_AXIS_ = "Scale X Axis";
-QString const ZoomGuiCommand::CHANNEL_PER_PAGE_ = "Channels per Page...";
-QString const ZoomGuiCommand::AUTO_ZOOM_VERTICAL_ = "Auto Zoom Vertical";
+QString const ZoomGuiCommand::GOTO_()
+{
+    static QString value = tr("Go to...");
 
+    return value;
+}
 
-QStringList const ZoomGuiCommand::ACTIONS_ = QStringList() << ZoomGuiCommand::ZOOM_IN_VERTICAL_
-                                           << ZoomGuiCommand::ZOOM_OUT_VERTICAL_
-                                           << ZoomGuiCommand::ZOOM_IN_HORIZONTAL_
-                                           << ZoomGuiCommand::ZOOM_OUT_HORIZONTAL_
-                                           << ZoomGuiCommand::GOTO_
-                                           << ZoomGuiCommand::SCALE_X_AXIS_
-                                           << ZoomGuiCommand::CHANNEL_PER_PAGE_;
+QString const ZoomGuiCommand::ZOOM_IN_VERTICAL_()
+{
+    static QString value = tr("Zoom In Vertical");
+
+    return value;
+}
+
+QString const ZoomGuiCommand::ZOOM_OUT_VERTICAL_()
+{
+    static QString value = tr("Zoom Out Vertical");
+
+    return value;
+}
+
+QString const ZoomGuiCommand::ZOOM_IN_HORIZONTAL_()
+{
+    static QString value = tr("Zoom In Horizontal");
+
+    return value;
+}
+
+QString const ZoomGuiCommand::ZOOM_OUT_HORIZONTAL_()
+{
+    static QString value = tr("Zoom Out Horizontal");
+
+    return value;
+}
+
+QString const ZoomGuiCommand::SCALE_X_AXIS_()
+{
+    static QString value = tr("Scale X Axis");
+
+    return value;
+}
+
+QString const ZoomGuiCommand::CHANNEL_PER_PAGE_()
+{
+    static QString value = tr("Channels per Page...");
+
+    return value;
+}
+
+QString const ZoomGuiCommand::AUTO_ZOOM_VERTICAL_()
+{
+    static QString value = tr("Auto Zoom Vertical");
+
+    return value;
+}
+
+QStringList const ZoomGuiCommand::ACTIONS_()
+{
+    static QStringList result = {
+        ZoomGuiCommand::ZOOM_IN_VERTICAL_(),
+        ZoomGuiCommand::ZOOM_OUT_VERTICAL_(),
+        ZoomGuiCommand::ZOOM_IN_HORIZONTAL_(),
+        ZoomGuiCommand::ZOOM_OUT_HORIZONTAL_(),
+        ZoomGuiCommand::GOTO_(),
+        ZoomGuiCommand::SCALE_X_AXIS_(),
+        ZoomGuiCommand::CHANNEL_PER_PAGE_(),
+    };
+
+    return result;
+}
 
 
 //-----------------------------------------------------------------------------
@@ -40,7 +93,7 @@ GuiActionFactoryRegistrator ZoomGuiCommand::registrator_ ("Zooming",
 
 //-----------------------------------------------------------------------------
 ZoomGuiCommand::ZoomGuiCommand ()
-    : GuiActionCommand (ACTIONS_)
+    : GuiActionCommand (ACTIONS_())
 {
     // nothing to do here
 }
@@ -48,37 +101,37 @@ ZoomGuiCommand::ZoomGuiCommand ()
 //-----------------------------------------------------------------------------
 void ZoomGuiCommand::init ()
 {
-    getQAction (GOTO_)->setIcon (QIcon(":/images/ic_directions_run_black_24dp.png"));
-    getQAction (ZOOM_IN_VERTICAL_)->setIcon (QIcon(":/images/ic_zoom_in_v_black_24dp.png"));
-    getQAction (ZOOM_OUT_VERTICAL_)->setIcon (QIcon(":/images/ic_zoom_out_v_black_24dp.png"));
-    getQAction (ZOOM_IN_HORIZONTAL_)->setIcon (QIcon(":/images/ic_zoom_in_h_black_24dp.png"));
-    getQAction (ZOOM_OUT_HORIZONTAL_)->setIcon (QIcon(":/images/ic_zoom_out_h_black_24dp.png"));
+    getQAction (GOTO_())->setIcon (QIcon(":/images/ic_directions_run_black_24dp.png"));
+    getQAction (ZOOM_IN_VERTICAL_())->setIcon (QIcon(":/images/ic_zoom_in_v_black_24dp.png"));
+    getQAction (ZOOM_OUT_VERTICAL_())->setIcon (QIcon(":/images/ic_zoom_out_v_black_24dp.png"));
+    getQAction (ZOOM_IN_HORIZONTAL_())->setIcon (QIcon(":/images/ic_zoom_in_h_black_24dp.png"));
+    getQAction (ZOOM_OUT_HORIZONTAL_())->setIcon (QIcon(":/images/ic_zoom_out_h_black_24dp.png"));
 
 
     QList<QKeySequence> zoomInVertical;
     zoomInVertical << QKeySequence::ZoomIn << Qt::CTRL + Qt::Key_Equal;
-    getQAction(ZOOM_IN_VERTICAL_)->setShortcuts(zoomInVertical);
+    getQAction(ZOOM_IN_VERTICAL_())->setShortcuts(zoomInVertical);
 
     QList<QKeySequence> zoomInHorizontal;
     zoomInHorizontal << Qt::ALT + Qt::Key_Plus << Qt::ALT + Qt::Key_Equal;
-    getQAction(ZOOM_IN_HORIZONTAL_)->setShortcuts(zoomInHorizontal);
+    getQAction(ZOOM_IN_HORIZONTAL_())->setShortcuts(zoomInHorizontal);
 
-    setShortcut (ZOOM_OUT_VERTICAL_, QKeySequence::ZoomOut);
-    setShortcut (ZOOM_OUT_HORIZONTAL_, Qt::ALT + Qt::Key_Minus);
+    setShortcut (ZOOM_OUT_VERTICAL_(), QKeySequence::ZoomOut);
+    setShortcut (ZOOM_OUT_HORIZONTAL_(), Qt::ALT + Qt::Key_Minus);
 
-    resetActionTriggerSlot (GOTO_, SLOT(goTo()));
-    resetActionTriggerSlot (ZOOM_IN_VERTICAL_, SLOT(zoomInVertical()));
-    resetActionTriggerSlot (ZOOM_OUT_VERTICAL_, SLOT(zoomOutVertical()));
-    resetActionTriggerSlot (ZOOM_IN_HORIZONTAL_, SLOT(zoomInHorizontal()));
-    resetActionTriggerSlot (ZOOM_OUT_HORIZONTAL_, SLOT(zoomOutHorizontal()));
-    resetActionTriggerSlot (SCALE_X_AXIS_, SLOT(scaleXAxis()));
-    resetActionTriggerSlot (CHANNEL_PER_PAGE_, SLOT(setChannelsPerPage()));
+    resetActionTriggerSlot (GOTO_(), SLOT(goTo()));
+    resetActionTriggerSlot (ZOOM_IN_VERTICAL_(), SLOT(zoomInVertical()));
+    resetActionTriggerSlot (ZOOM_OUT_VERTICAL_(), SLOT(zoomOutVertical()));
+    resetActionTriggerSlot (ZOOM_IN_HORIZONTAL_(), SLOT(zoomInHorizontal()));
+    resetActionTriggerSlot (ZOOM_OUT_HORIZONTAL_(), SLOT(zoomOutHorizontal()));
+    resetActionTriggerSlot (SCALE_X_AXIS_(), SLOT(scaleXAxis()));
+    resetActionTriggerSlot (CHANNEL_PER_PAGE_(), SLOT(setChannelsPerPage()));
 }
 
 //-------------------------------------------------------------------------
 void ZoomGuiCommand::evaluateEnabledness ()
 {
-    if (disableIfNoSignalIsVisualised (ACTIONS_))
+    if (disableIfNoSignalIsVisualised (ACTIONS_()))
         return;
 
     qDebug () << "blaaahaha";
@@ -99,11 +152,11 @@ void ZoomGuiCommand::evaluateEnabledness ()
         zoom_in_horizontal_possible = vis->getPixelsPerSample() < maxPixelPerSample();
     }
 
-    getQAction (ZOOM_OUT_VERTICAL_)->setEnabled (zoom_out_vertical_possible);
-    getQAction (ZOOM_IN_VERTICAL_)->setEnabled (zoom_in_vertical_possible);
-    getQAction (ZOOM_OUT_HORIZONTAL_)->setEnabled (zoom_out_horizontal_possible);
-    getQAction (ZOOM_IN_HORIZONTAL_)->setEnabled (zoom_in_horizontal_possible);
-    disableIfNoFileIsOpened (QStringList() << GOTO_ << SCALE_X_AXIS_ << CHANNEL_PER_PAGE_);
+    getQAction (ZOOM_OUT_VERTICAL_())->setEnabled (zoom_out_vertical_possible);
+    getQAction (ZOOM_IN_VERTICAL_())->setEnabled (zoom_in_vertical_possible);
+    getQAction (ZOOM_OUT_HORIZONTAL_())->setEnabled (zoom_out_horizontal_possible);
+    getQAction (ZOOM_IN_HORIZONTAL_())->setEnabled (zoom_in_horizontal_possible);
+    disableIfNoFileIsOpened (QStringList() << GOTO_() << SCALE_X_AXIS_() << CHANNEL_PER_PAGE_());
 }
 
 //-------------------------------------------------------------------------

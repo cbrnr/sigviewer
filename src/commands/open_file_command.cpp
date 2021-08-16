@@ -20,7 +20,7 @@ QString OpenFileCommand::execute ()
     QString file_path = QDir::toNativeSeparators (filename_and_path_);
     FileSignalReader* file_signal_reader (FileSignalReaderFactory::getInstance()->getHandler (file_path));
     if (file_signal_reader == 0)
-        return QString ("Can't open file ") + file_path;
+        return QObject::tr("Can't open file %1").arg(file_path);
 
     ChannelManager* channel_manager (new ChannelManagerImpl (file_signal_reader));
     QSharedPointer<EventManager> event_manager (new EventManagerImpl (*file_signal_reader));

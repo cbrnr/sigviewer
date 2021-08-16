@@ -52,13 +52,13 @@ private:
     //-------------------------------------------------------------------------
 
 
-    static QString const SAVE_AS_;
-    static QString const SAVE_;
-    static QString const EXPORT_TO_PNG_;
-    static QString const EXPORT_TO_GDF_;
-    static QString const EXPORT_EVENTS_CSV_;
-    static QString const EXPORT_EVENTS_EVT_;
-    static QStringList const ACTIONS_;
+    static QString const SAVE_AS_();
+    static QString const SAVE_();
+    static QString const EXPORT_TO_PNG_();
+    static QString const EXPORT_TO_GDF_();
+    static QString const EXPORT_EVENTS_CSV_();
+    static QString const EXPORT_EVENTS_EVT_();
+    static QStringList const ACTIONS_();
 
     static GuiActionFactoryRegistrator registrator_;
 };

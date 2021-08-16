@@ -65,15 +65,15 @@ private:
     static int const ZOOM_FACTOR_ = 2;
     static int const MAX_HORIZONTAL_ZOOM_IN_ = 32;
 
-    static QString const GOTO_;
-    static QString const ZOOM_IN_VERTICAL_;
-    static QString const ZOOM_OUT_VERTICAL_;
-    static QString const ZOOM_IN_HORIZONTAL_;
-    static QString const ZOOM_OUT_HORIZONTAL_;
-    static QString const SCALE_X_AXIS_;
-    static QString const CHANNEL_PER_PAGE_;
-    static QString const AUTO_ZOOM_VERTICAL_;
-    static QStringList const ACTIONS_;
+    static QString const GOTO_();
+    static QString const ZOOM_IN_VERTICAL_();
+    static QString const ZOOM_OUT_VERTICAL_();
+    static QString const ZOOM_IN_HORIZONTAL_();
+    static QString const ZOOM_OUT_HORIZONTAL_();
+    static QString const SCALE_X_AXIS_();
+    static QString const CHANNEL_PER_PAGE_();
+    static QString const AUTO_ZOOM_VERTICAL_();
+    static QStringList const ACTIONS_();
 
     static GuiActionFactoryRegistrator registrator_;
 };

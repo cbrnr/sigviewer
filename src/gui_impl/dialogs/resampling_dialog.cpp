@@ -21,24 +21,24 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
     ui(new Ui::ResamplingDialog)
 {
     ui->setupUi(this);
-    this->setWindowTitle("Resampling");
+    this->setWindowTitle(tr("Resampling"));
 
     if (XDFdata->sampleRateMap.size() > 1)
     {
-        QString text = "This file contains signals of multiple sample rates.<br> "
-                       "Sigviewer needs to resample all channels to a unified sample rate in order to display them.<br> "
-                       "Please choose a sample rate below (This won't change the actual file content):";
+        QString text = tr("This file contains signals of multiple sample rates.<br> "
+                                   "Sigviewer needs to resample all channels to a unified sample rate in order to display them.<br> "
+                                   "Please choose a sample rate below (This won't change the actual file content):");
         ui->label->setText(text);
     }
     else if (XDFdata->sampleRateMap.size() == 1 &&
              XDFdata->sampleRateMap.count(0))
     {
-        ui->label->setText("The nominal sample rate of this file is 0.\n"
-                           "Please choose a preferred sample rate:");
+        ui->label->setText(tr("The nominal sample rate of this file is 0.\n"
+                                       "Please choose a preferred sample rate:"));
     }
     else
     {
-        QString text = "Would you like to resample this file? (This won't change the actual file content) ";
+        QString text = tr("Would you like to resample this file? (This won't change the actual file content) ");
         ui->label->setText(text);
     }
     ui->treeWidget->setColumnCount(2);
@@ -50,7 +50,7 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
     for (size_t i = 0; i < XDFdata->streams.size(); i++)
     {
         QTreeWidgetItem* streamItem = new QTreeWidgetItem(ui->treeWidget);
-        streamItem->setText(0, "Stream "+QString::number(i+1));//+1 for user's convenience (1 based instead 0 based)
+        streamItem->setText(0, tr("Stream %1").arg(i+1));//+1 for user's convenience (1 based instead 0 based)
 //        streamItem->setIcon(0, QIcon(":/images/ic_flag_black_24dp.png"));
 
         QTreeWidgetItem* infoItem = new QTreeWidgetItem(streamItem);

@@ -63,13 +63,13 @@ private:
 
 
     //-------------------------------------------------------------------------
-    static QString const FIT_TO_EVENT_;
-    static QString const HIDE_EVENTS_OF_OTHER_TYPE_;
-    static QString const SHOW_ALL_EVENTS_;
-    static QString const GO_TO_NEXT_EVENT_;
-    static QString const GO_TO_PREVIOUS_EVENT_;
-    static QString const SET_SHOWN_EVENTS_;
-    static QStringList const ACTIONS_;
+    static QString const FIT_TO_EVENT_();
+    static QString const HIDE_EVENTS_OF_OTHER_TYPE_();
+    static QString const SHOW_ALL_EVENTS_();
+    static QString const GO_TO_NEXT_EVENT_();
+    static QString const GO_TO_PREVIOUS_EVENT_();
+    static QString const SET_SHOWN_EVENTS_();
+    static QStringList const ACTIONS_();
 
     static GuiActionFactoryRegistrator registrator_;
 };

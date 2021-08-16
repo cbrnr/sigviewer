@@ -24,7 +24,7 @@ EventCreationWidget::EventCreationWidget (QSharedPointer<SignalVisualisationMode
     ui_.setupUi (this);
     if (event_manager_->getFileType().startsWith("XDF", Qt::CaseInsensitive))
     {
-        ui_.lineEdit->setPlaceholderText("Customize Event Text");
+        ui_.lineEdit->setPlaceholderText(tr("Customize Event Text"));
         customized_event_id_ = XDFdata->dictionary.size();
         ui_.groupBox->setToolTip("Select or customize an event type then click anywhere on the signals to create new events");
     }

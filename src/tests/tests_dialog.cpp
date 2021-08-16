@@ -43,7 +43,7 @@ void TestsDialog::runTests ()
         }
         else
         {
-            test_name += tr(": passed ") + QString::number(test->passed()) + tr(" verifications");
+            test_name += tr(": passed %1 verifications").arg(test->passed());
             color = QColor (0, 255, 0, 50);
         }
         ui_.listWidget->addItem (test_name);
@@ -51,9 +51,9 @@ void TestsDialog::runTests ()
         ui_.progressBar->setValue(ui_.progressBar->value()+1);
     }
     if (fails)
-        ui_.listWidget->addItem(QString::number(fails) + " tests failed!");
+        ui_.listWidget->addItem(tr("%1 tests failed!").arg(fails));
     else
-        ui_.listWidget->addItem("All tests passed!");
+        ui_.listWidget->addItem(tr("All tests passed!"));
 }
 
 //-----------------------------------------------------------------------------

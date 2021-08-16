@@ -144,7 +144,7 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         qDebug() << "File doesn't exist.";
         QMessageBox msgBox;
         msgBox.setIcon(QMessageBox::Warning);
-        msgBox.setText("File does not exist.");
+        msgBox.setText(QObject::tr("File does not exist."));
         msgBox.setStandardButtons(QMessageBox::Ok);
         msgBox.exec();
 

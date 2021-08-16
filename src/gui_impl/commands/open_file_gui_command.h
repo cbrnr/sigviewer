@@ -55,10 +55,10 @@ private slots:
 
 private:
 
-    static QString const IMPORT_EVENTS_;
-    static QString const OPEN_;
-    static QString const SHOW_FILE_INFO_;
-    static QStringList const ACTIONS_;
+    static QString const IMPORT_EVENTS_();
+    static QString const OPEN_();
+    static QString const SHOW_FILE_INFO_();
+    static QStringList const ACTIONS_();
 
 
     static QSharedPointer<OpenFileGuiCommand> instance_;

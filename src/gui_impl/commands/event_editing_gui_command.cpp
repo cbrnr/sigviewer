@@ -17,19 +17,61 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
-QString const EventEditingGuiCommand::DELETE_ = "Delete";
-QString const EventEditingGuiCommand::CHANGE_TYPE_ = "Change Type...";
-QString const EventEditingGuiCommand::CHANGE_CHANNEL_ = "Change Channel...";
-QString const EventEditingGuiCommand::TO_ALL_CHANNEL_ = "To all Channels";
-QString const EventEditingGuiCommand::COPY_TO_CHANNELS_ = "Copy to Channels...";
-QString const EventEditingGuiCommand::INSERT_OVER_ = "Insert Over";
-QStringList const EventEditingGuiCommand::ACTIONS_ = QStringList () <<
-                                                     EventEditingGuiCommand::DELETE_ <<
-                                                     EventEditingGuiCommand::CHANGE_TYPE_ <<
-                                                     EventEditingGuiCommand::CHANGE_CHANNEL_ <<
-                                                     EventEditingGuiCommand::TO_ALL_CHANNEL_ <<
-                                                     EventEditingGuiCommand::COPY_TO_CHANNELS_ <<
-                                                     EventEditingGuiCommand::INSERT_OVER_;
+QString const EventEditingGuiCommand::DELETE_()
+{
+    static QString value = tr("Delete");
+
+    return value;
+}
+
+QString const EventEditingGuiCommand::CHANGE_TYPE_()
+{
+    static QString value = tr("Change Type...");
+
+    return value;
+}
+
+QString const EventEditingGuiCommand::CHANGE_CHANNEL_()
+{
+    static QString value = tr("Change Channel...");
+
+    return value;
+}
+
+QString const EventEditingGuiCommand::TO_ALL_CHANNEL_()
+{
+    static QString value = tr("To all Channels");
+
+    return value;
+}
+
+QString const EventEditingGuiCommand::COPY_TO_CHANNELS_()
+{
+    static QString value = tr("Copy to Channels...");
+
+    return value;
+}
+
+QString const EventEditingGuiCommand::INSERT_OVER_()
+{
+    static QString value = tr("Insert Over");
+
+    return value;
+}
+
+QStringList const EventEditingGuiCommand::ACTIONS_()
+{
+    static QStringList result = {
+        EventEditingGuiCommand::DELETE_(),
+        EventEditingGuiCommand::CHANGE_TYPE_(),
+        EventEditingGuiCommand::CHANGE_CHANNEL_(),
+        EventEditingGuiCommand::TO_ALL_CHANNEL_(),
+        EventEditingGuiCommand::COPY_TO_CHANNELS_(),
+        EventEditingGuiCommand::INSERT_OVER_(),
+    };
+
+    return result;
+}
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator EventEditingGuiCommand::registrator_ ("Event Editing",
@@ -38,7 +80,7 @@ GuiActionFactoryRegistrator EventEditingGuiCommand::registrator_ ("Event Editing
 
 //-----------------------------------------------------------------------------
 EventEditingGuiCommand::EventEditingGuiCommand ()
-    : GuiActionCommand (ACTIONS_)
+    : GuiActionCommand (ACTIONS_())
 {
     // nothing to do here
 }
@@ -53,19 +95,19 @@ EventEditingGuiCommand::~EventEditingGuiCommand ()
 //-----------------------------------------------------------------------------
 void EventEditingGuiCommand::init ()
 {
-    resetActionTriggerSlot (DELETE_, SLOT (deleteSelectedEvent()));
-    resetActionTriggerSlot (CHANGE_TYPE_, SLOT (changeTypeSelectedEvent()));
-    resetActionTriggerSlot (CHANGE_CHANNEL_, SLOT (changeChannelSelectedEvent()));
-    resetActionTriggerSlot (TO_ALL_CHANNEL_, SLOT (toAllChannelsSelectedEvent()));
-    resetActionTriggerSlot (COPY_TO_CHANNELS_, SLOT (copyToChannelsSelectedEvent()));
-    resetActionTriggerSlot (INSERT_OVER_, SLOT (insertEventOverSelectedEvent()));
+    resetActionTriggerSlot (DELETE_(), SLOT (deleteSelectedEvent()));
+    resetActionTriggerSlot (CHANGE_TYPE_(), SLOT (changeTypeSelectedEvent()));
+    resetActionTriggerSlot (CHANGE_CHANNEL_(), SLOT (changeChannelSelectedEvent()));
+    resetActionTriggerSlot (TO_ALL_CHANNEL_(), SLOT (toAllChannelsSelectedEvent()));
+    resetActionTriggerSlot (COPY_TO_CHANNELS_(), SLOT (copyToChannelsSelectedEvent()));
+    resetActionTriggerSlot (INSERT_OVER_(), SLOT (insertEventOverSelectedEvent()));
 
-    getQAction (DELETE_)->setIcon (QIcon(":/images/ic_delete_forever_black_24dp.png"));
-    getQAction (TO_ALL_CHANNEL_)->setIcon (QIcon (":/images/ic_font_download_black_24dp.png"));
-    getQAction (COPY_TO_CHANNELS_)->setIcon (QIcon (":/images/ic_content_copy_black_24dp.png"));
-    getQAction (INSERT_OVER_)->setIcon (QIcon (":/images/ic_add_circle_outline_black_24dp.png"));
-    getQAction (DELETE_)->setShortcut (QKeySequence::Delete);
-//    getQAction (INSERT_OVER_)->setShortcut (QKeySequence("Ctrl+I"));
+    getQAction (DELETE_())->setIcon (QIcon(":/images/ic_delete_forever_black_24dp.png"));
+    getQAction (TO_ALL_CHANNEL_())->setIcon (QIcon (":/images/ic_font_download_black_24dp.png"));
+    getQAction (COPY_TO_CHANNELS_())->setIcon (QIcon (":/images/ic_content_copy_black_24dp.png"));
+    getQAction (INSERT_OVER_())->setIcon (QIcon (":/images/ic_add_circle_outline_black_24dp.png"));
+    getQAction (DELETE_())->setShortcut (QKeySequence::Delete);
+//    getQAction (INSERT_OVER_())->setShortcut (QKeySequence("Ctrl+I"));
 }
 
 //-----------------------------------------------------------------------------
@@ -193,18 +235,18 @@ void EventEditingGuiCommand::insertEventOverSelectedEvent ()
 //-------------------------------------------------------------------------
 void EventEditingGuiCommand::evaluateEnabledness ()
 {
-    if (disableIfNoFileIsOpened (ACTIONS_))
+    if (disableIfNoFileIsOpened (ACTIONS_()))
         return;
-    if (disableIfNoEventsPossible (ACTIONS_))
+    if (disableIfNoEventsPossible (ACTIONS_()))
         return;
 
     bool event_one_channel_selected = (getTabSelectionState() == TAB_STATE_EVENT_SELECTED_ONE_CHANNEL);
 
-    getQAction(COPY_TO_CHANNELS_)->setEnabled(event_one_channel_selected);
-    getQAction(TO_ALL_CHANNEL_)->setEnabled(event_one_channel_selected);
-    disableIfNoEventSelected (QStringList() << INSERT_OVER_ <<
-                              CHANGE_CHANNEL_ << CHANGE_TYPE_ <<
-                              DELETE_);
+    getQAction(COPY_TO_CHANNELS_())->setEnabled(event_one_channel_selected);
+    getQAction(TO_ALL_CHANNEL_())->setEnabled(event_one_channel_selected);
+    disableIfNoEventSelected (QStringList() << INSERT_OVER_() <<
+                              CHANGE_CHANNEL_() << CHANGE_TYPE_() <<
+                              DELETE_());
 }
 
 

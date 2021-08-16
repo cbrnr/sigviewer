@@ -59,8 +59,6 @@ public:
 private:
     bool load();
 
-    static QString const UNKNOWN_GROUP_ID;
-
     struct EventItem
     {
         QString name;

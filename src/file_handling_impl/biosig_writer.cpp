@@ -82,7 +82,7 @@ QString BioSigWriter::saveEventsToSignalFile (QSharedPointer<EventManager const>
 
     int error = sflush_gdf_event_table (header);
     if (error)
-        QMessageBox::critical(0, "Events not saved!!!", QString::number(error));
+        QMessageBox::critical(0, QObject::tr("Events not saved!!!"), QString::number(error));
 
     destructHDR (header);
 

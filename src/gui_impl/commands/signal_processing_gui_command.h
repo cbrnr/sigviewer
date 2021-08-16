@@ -42,9 +42,9 @@ private:
     //-------------------------------------------------------------------------
     void createVisualisation (QString const& title, ChannelManager const& channel_manager);
 
-    static QString const MEAN_;
-    static QString const POWER_SPECTRUM_;
-    static QStringList const ACTIONS_;
+    static QString const MEAN_();
+    static QString const POWER_SPECTRUM_();
+    static QStringList const ACTIONS_();
 
     static GuiActionFactoryRegistrator registrator_;
 };

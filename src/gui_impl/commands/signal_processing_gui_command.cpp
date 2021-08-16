@@ -15,11 +15,29 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
-QString const SignalProcessingGuiCommand::MEAN_ = "Calculate Mean...";
-QString const SignalProcessingGuiCommand::POWER_SPECTRUM_ = "Power Spectrum...";
-QStringList const SignalProcessingGuiCommand::ACTIONS_ = QStringList () <<
-                                                         SignalProcessingGuiCommand::MEAN_ <<
-                                                         SignalProcessingGuiCommand::POWER_SPECTRUM_;
+QString const SignalProcessingGuiCommand::MEAN_()
+{
+    static QString value = tr("Calculate Mean...");
+
+    return value;
+}
+
+QString const SignalProcessingGuiCommand::POWER_SPECTRUM_()
+{
+    static QString value = tr("Power Spectrum...");
+
+    return value;
+}
+
+QStringList const SignalProcessingGuiCommand::ACTIONS_()
+{
+    static QStringList result = {
+        SignalProcessingGuiCommand::MEAN_(),
+        SignalProcessingGuiCommand::POWER_SPECTRUM_(),
+    };
+
+    return result;
+}
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator SignalProcessingGuiCommand::registrator_ ("Signal Processing",
@@ -27,7 +45,7 @@ GuiActionFactoryRegistrator SignalProcessingGuiCommand::registrator_ ("Signal Pr
 
 //-----------------------------------------------------------------------------
 SignalProcessingGuiCommand::SignalProcessingGuiCommand ()
-    : GuiActionCommand (ACTIONS_)
+    : GuiActionCommand (ACTIONS_())
 {
     // nothing to do here
 }
@@ -35,14 +53,14 @@ SignalProcessingGuiCommand::SignalProcessingGuiCommand ()
 //-----------------------------------------------------------------------------
 void SignalProcessingGuiCommand::init ()
 {
-    resetActionTriggerSlot (MEAN_, SLOT(calculateMeanAndStandardDeviation()));
-    resetActionTriggerSlot (POWER_SPECTRUM_, SLOT(calculatePowerSpectrum()));
+    resetActionTriggerSlot (MEAN_(), SLOT(calculateMeanAndStandardDeviation()));
+    resetActionTriggerSlot (POWER_SPECTRUM_(), SLOT(calculatePowerSpectrum()));
 }
 
 //-----------------------------------------------------------------------------
 void SignalProcessingGuiCommand::evaluateEnabledness ()
 {
-    disableIfNoFileIsOpened (ACTIONS_);
+    disableIfNoFileIsOpened (ACTIONS_());
 }
 
 
@@ -73,7 +91,7 @@ void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation ()
 
             if (event->getPosition () < samples_before)
             {
-                QMessageBox::warning (0, "Warning", QString("Event at ").append(QString::number(event->getPositionInSec())).append("s will be ignored! (because no data can be added in front of this event)"));
+                QMessageBox::warning (0, tr("Warning"), tr("Event at %1s will be ignored! (because no data can be added in front of this event)").arg(QString::number(event->getPositionInSec())));
                 continue;
             }
 
@@ -133,7 +151,7 @@ void SignalProcessingGuiCommand::calculatePowerSpectrum ()
             QSharedPointer<SignalEvent const> event = event_manager->getEvent (event_id);
             if (event->getPosition () < samples_before)
             {
-                QMessageBox::warning (0, "Warning", QString("Event at ").append(QString::number(event->getPositionInSec())).append("s will be ignored! (because no data can be added in front of this event)"));
+                QMessageBox::warning (0, tr("Warning"), QString("Event at %1s will be ignored! (because no data can be added in front of this event)").arg(QString::number(event->getPositionInSec())));
                 continue;
             }
             QSharedPointer<DataBlock const> data_block = channel_manager.getData (channel_id,
