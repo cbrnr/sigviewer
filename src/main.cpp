@@ -7,6 +7,9 @@
 
 #include <QApplication>
 #include <QCommandLineParser>
+#include <QTranslator>
+#include <QLocale>
+#include <QLibraryInfo>
 
 
 using namespace sigviewer;
@@ -23,6 +26,12 @@ int main(int argc, char* argv[])
     #ifdef Q_OS_MACOS
         QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
     #endif
+
+    QTranslator translator;
+    if (translator.load(QLocale::system(), QStringLiteral("sigviewer"), QStringLiteral("_"), QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+    {
+        QCoreApplication::installTranslator(&translator);
+    }
 
     QCommandLineParser parser;
     parser.setApplicationDescription("SigViewer - a biosignal viewer.");
