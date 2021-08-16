@@ -266,11 +266,6 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     QSharedPointer<DataBlock const> data_block = channel_manager_.getData (id_, start_sample, length);
 
-    last_x = start_sample * pixel_per_sample;
-
-    float64 last_y = (*data_block)[0];
-    float64 new_y = 0;
-
     if (draw_x_grid_)
         drawXGrid (painter, option);
 
@@ -289,6 +284,13 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     painter->translate (0, height_ / 2.0f);
     painter->setPen (color_manager_->getChannelColor (id_));
 
+    if (!data_block)
+        return;
+
+    last_x = start_sample * pixel_per_sample;
+
+    float64 last_y = (*data_block)[0];
+    float64 new_y = 0;
 
     for (int index = 0;
          index < static_cast<int>(data_block->size()) - 1;
