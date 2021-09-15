@@ -61,7 +61,7 @@ private:
     static QStringList const ACTIONS_();
 
 
-    static QSharedPointer<OpenFileGuiCommand> instance_;
+    static QSharedPointer<OpenFileGuiCommand> instance_();
 
     static GuiActionFactoryRegistrator registrator_;
 

@@ -17,6 +17,19 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
+namespace {
+
+class EventEditingGuiCommandFactory: public GuiActionCommandFactory
+{
+public:
+    QSharedPointer<GuiActionCommand> createCommand() override
+    {
+        return QSharedPointer<EventEditingGuiCommand> (new EventEditingGuiCommand);
+    }
+};
+
+} // unnamed namespace
+
 QString const EventEditingGuiCommand::DELETE_()
 {
     static QString value = tr("Delete");
@@ -75,7 +88,7 @@ QStringList const EventEditingGuiCommand::ACTIONS_()
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator EventEditingGuiCommand::registrator_ ("Event Editing",
-                                                                  QSharedPointer<EventEditingGuiCommand> (new EventEditingGuiCommand));
+                                                                  QSharedPointer<EventEditingGuiCommandFactory> (new EventEditingGuiCommandFactory));
 
 
 //-----------------------------------------------------------------------------

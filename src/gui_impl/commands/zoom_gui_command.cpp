@@ -13,6 +13,19 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
+namespace {
+
+class ZoomGuiCommandFactory: public GuiActionCommandFactory
+{
+public:
+    QSharedPointer<GuiActionCommand> createCommand() override
+    {
+        return QSharedPointer<ZoomGuiCommand> (new ZoomGuiCommand);
+    }
+};
+
+} // unnamed namespace
+
 QString const ZoomGuiCommand::GOTO_()
 {
     static QString value = tr("Go to...");
@@ -87,7 +100,7 @@ QStringList const ZoomGuiCommand::ACTIONS_()
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator ZoomGuiCommand::registrator_ ("Zooming",
-                                                          QSharedPointer<ZoomGuiCommand> (new ZoomGuiCommand));
+                                                          QSharedPointer<ZoomGuiCommandFactory> (new ZoomGuiCommandFactory));
 
 
 

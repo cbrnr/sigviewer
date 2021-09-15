@@ -14,6 +14,19 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
+namespace {
+
+class HelpGuiCommandFactory: public GuiActionCommandFactory
+{
+public:
+    QSharedPointer<GuiActionCommand> createCommand() override
+    {
+        return QSharedPointer<HelpGuiCommand> (new HelpGuiCommand);
+    }
+};
+
+} // unnamed namespace
+
 QString const HelpGuiCommand::ABOUT_()
 {
     static QString value = tr("About");
@@ -40,7 +53,7 @@ QStringList const HelpGuiCommand::ACTIONS_()
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator HelpGuiCommand::registrator_ ("Help",
-                                                          QSharedPointer<HelpGuiCommand>(new HelpGuiCommand));
+                                                          QSharedPointer<HelpGuiCommandFactory>(new HelpGuiCommandFactory));
 
 //-----------------------------------------------------------------------------
 HelpGuiCommand::HelpGuiCommand ()

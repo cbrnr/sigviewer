@@ -11,6 +11,19 @@ namespace sigviewer
 
 
 //-----------------------------------------------------------------------------
+namespace {
+
+class MouseModeGuiCommandFactory: public GuiActionCommandFactory
+{
+public:
+    QSharedPointer<GuiActionCommand> createCommand() override
+    {
+        return QSharedPointer<MouseModeGuiCommand> (new MouseModeGuiCommand);
+    }
+};
+
+} // unnamed namespace
+
 QString const MouseModeGuiCommand::NEW_MODE_TEXT_()
 {
     static QString value = tr("New Event");
@@ -61,7 +74,7 @@ QStringList const MouseModeGuiCommand::MODE_TEXTS_()
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator MouseModeGuiCommand::registrator_ ("Mouse Modes",
-                                                                  QSharedPointer<MouseModeGuiCommand> (new MouseModeGuiCommand));
+                                                                  QSharedPointer<MouseModeGuiCommandFactory> (new MouseModeGuiCommandFactory));
 
 
 //-----------------------------------------------------------------------------

@@ -33,6 +33,8 @@ int main(int argc, char* argv[])
         QCoreApplication::installTranslator(&translator);
     }
 
+    GuiActionFactoryRegistrator::registerActions();
+
     QCommandLineParser parser;
     parser.setApplicationDescription(QObject::tr("SigViewer - a biosignal viewer."));
     parser.addPositionalArgument("file", QApplication::translate("main", "Input file (optional)."));

@@ -16,6 +16,19 @@ namespace sigviewer
 
 //-----------------------------------------------------------------------------
 
+namespace {
+
+class AdaptChannelViewGuiCommandFactory: public GuiActionCommandFactory
+{
+public:
+    QSharedPointer<GuiActionCommand> createCommand() override
+    {
+        return QSharedPointer<AdaptChannelViewGuiCommand> (new AdaptChannelViewGuiCommand);
+    }
+};
+
+} // unnamed namespace
+
 QString const AdaptChannelViewGuiCommand::CHANNELS_()
 {
     static QString value = tr("Channels...");
@@ -105,7 +118,7 @@ QStringList const AdaptChannelViewGuiCommand::ACTIONS_()
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator registrator_ ("Adapt Channel View",
-                                          QSharedPointer<AdaptChannelViewGuiCommand> (new AdaptChannelViewGuiCommand));
+                                          QSharedPointer<AdaptChannelViewGuiCommandFactory> (new AdaptChannelViewGuiCommandFactory));
 
 //-----------------------------------------------------------------------------
 AdaptChannelViewGuiCommand::AdaptChannelViewGuiCommand ()

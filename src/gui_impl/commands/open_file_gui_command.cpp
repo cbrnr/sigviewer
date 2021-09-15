@@ -33,6 +33,19 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
+namespace {
+
+class OpenFileGuiCommandFactory: public GuiActionCommandFactory
+{
+public:
+    QSharedPointer<GuiActionCommand> createCommand() override
+    {
+        return QSharedPointer<OpenFileGuiCommand> (new OpenFileGuiCommand);
+    }
+};
+
+} // unnamed namespace
+
 QString const OpenFileGuiCommand::IMPORT_EVENTS_()
 {
     static QString value = tr("Import Events...");
@@ -66,11 +79,16 @@ QStringList const OpenFileGuiCommand::ACTIONS_()
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<OpenFileGuiCommand> OpenFileGuiCommand::instance_ = QSharedPointer<OpenFileGuiCommand> (new OpenFileGuiCommand);
+QSharedPointer<OpenFileGuiCommand> OpenFileGuiCommand::instance_()
+{
+    static QSharedPointer<OpenFileGuiCommand> value{new OpenFileGuiCommand};
+
+    return value;
+}
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator OpenFileGuiCommand::registrator_ ("Opening",
-                                                              OpenFileGuiCommand::instance_);
+                                                              QSharedPointer<OpenFileGuiCommandFactory> (new OpenFileGuiCommandFactory));
 
 
 //-----------------------------------------------------------------------------
@@ -106,7 +124,7 @@ void OpenFileGuiCommand::init ()
 //-----------------------------------------------------------------------------
 void OpenFileGuiCommand::openFile (QString file_path)
 {
-    if (!instance_->confirmClosingOldFile())   /*!< In case the user decides not to close the old file, return. */
+    if (!instance_()->confirmClosingOldFile())   /*!< In case the user decides not to close the old file, return. */
         return;
 
     //close the previous file before opening a new one
@@ -117,7 +135,7 @@ void OpenFileGuiCommand::openFile (QString file_path)
         QSettings settings;
         settings.setValue("autoScaling", true);
 
-        instance_->openFileImpl (file_path);
+        instance_()->openFileImpl (file_path);
     }
 }
 
@@ -165,7 +183,7 @@ void OpenFileGuiCommand::evaluateEnabledness ()
 //-------------------------------------------------------------------------
 void OpenFileGuiCommand::open ()
 {
-    if (!instance_->confirmClosingOldFile())   /*!< In case the user decides not to close the old file, return. */
+    if (!instance_()->confirmClosingOldFile())   /*!< In case the user decides not to close the old file, return. */
         return;
 
     QStringList extension_list = FileSignalReaderFactory::getInstance()->getAllFileEndingsWithWildcards();
@@ -189,7 +207,7 @@ void OpenFileGuiCommand::open ()
         QSettings settings;
         settings.setValue("autoScaling", true);
 
-        instance_->openFileImpl (file_path);
+        instance_()->openFileImpl (file_path);
     }
 }
 

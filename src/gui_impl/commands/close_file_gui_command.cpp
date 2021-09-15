@@ -13,6 +13,19 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
+namespace {
+
+class CloseFileGuiCommandFactory: public GuiActionCommandFactory
+{
+public:
+    QSharedPointer<GuiActionCommand> createCommand() override
+    {
+        return QSharedPointer<CloseFileGuiCommand> (new CloseFileGuiCommand);
+    }
+};
+
+} // unnamed namespace
+
 QString const CloseFileGuiCommand::CLOSE_FILE_()
 {
     static QString value = tr("Close");
@@ -40,7 +53,7 @@ QStringList const CloseFileGuiCommand::ACTIONS_()
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator CloseFileGuiCommand::registrator_ ("Closing",
-                                                               QSharedPointer<CloseFileGuiCommand> (new CloseFileGuiCommand));
+                                                               QSharedPointer<CloseFileGuiCommandFactory> (new CloseFileGuiCommandFactory));
 
 //-----------------------------------------------------------------------------
 CloseFileGuiCommand::CloseFileGuiCommand ()

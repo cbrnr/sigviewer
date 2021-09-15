@@ -13,6 +13,19 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
+namespace {
+
+class AdaptEventViewGuiCommandFactory: public GuiActionCommandFactory
+{
+public:
+    QSharedPointer<GuiActionCommand> createCommand() override
+    {
+        return QSharedPointer<AdaptEventViewGuiCommand> (new AdaptEventViewGuiCommand);
+    }
+};
+
+} // unnamed namespace
+
 QString const AdaptEventViewGuiCommand::FIT_TO_EVENT_()
 {
     static QString value = tr("Fit View to Selected Event");
@@ -71,7 +84,7 @@ QStringList const AdaptEventViewGuiCommand::ACTIONS_()
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator AdaptEventViewGuiCommand::registrator_ ("Adapt Event View",
-    QSharedPointer<AdaptEventViewGuiCommand> (new AdaptEventViewGuiCommand));
+    QSharedPointer<AdaptEventViewGuiCommandFactory> (new AdaptEventViewGuiCommandFactory));
 
 
 //-----------------------------------------------------------------------------

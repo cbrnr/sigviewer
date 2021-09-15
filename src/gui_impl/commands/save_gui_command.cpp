@@ -23,6 +23,19 @@
 namespace sigviewer
 {
 
+namespace {
+
+class SaveGuiCommandFactory: public GuiActionCommandFactory
+{
+public:
+    QSharedPointer<GuiActionCommand> createCommand() override
+    {
+        return QSharedPointer<SaveGuiCommand> (new SaveGuiCommand);
+    }
+};
+
+} // unnamed namespace
+
 QString const SaveGuiCommand::SAVE_AS_()
 {
     static QString value = tr("Save as...");
@@ -82,7 +95,7 @@ QStringList const SaveGuiCommand::ACTIONS_()
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator SaveGuiCommand::registrator_ ("Saving",
-                                                          QSharedPointer<SaveGuiCommand> (new SaveGuiCommand));
+                                                          QSharedPointer<SaveGuiCommandFactory> (new SaveGuiCommandFactory));
 
 
 //-----------------------------------------------------------------------------

@@ -15,6 +15,19 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
+namespace {
+
+class SignalProcessingGuiCommandFactory: public GuiActionCommandFactory
+{
+public:
+    QSharedPointer<GuiActionCommand> createCommand() override
+    {
+        return QSharedPointer<SignalProcessingGuiCommand> (new SignalProcessingGuiCommand);
+    }
+};
+
+} // unnamed namespace
+
 QString const SignalProcessingGuiCommand::MEAN_()
 {
     static QString value = tr("Calculate Mean...");
@@ -41,7 +54,7 @@ QStringList const SignalProcessingGuiCommand::ACTIONS_()
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator SignalProcessingGuiCommand::registrator_ ("Signal Processing",
-                                                                      QSharedPointer<GuiActionCommand>(new SignalProcessingGuiCommand));
+                                                                      QSharedPointer<GuiActionCommandFactory>(new SignalProcessingGuiCommandFactory));
 
 //-----------------------------------------------------------------------------
 SignalProcessingGuiCommand::SignalProcessingGuiCommand ()

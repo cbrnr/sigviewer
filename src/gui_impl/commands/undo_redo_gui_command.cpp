@@ -9,6 +9,19 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
+namespace {
+
+class UndoRedoGuiCommandFactory: public GuiActionCommandFactory
+{
+public:
+    QSharedPointer<GuiActionCommand> createCommand() override
+    {
+        return QSharedPointer<UndoRedoGuiCommand> (new UndoRedoGuiCommand);
+    }
+};
+
+} // unnamed namespace
+
 QString const UndoRedoGuiCommand::UNDO_()
 {
     static QString value = tr("Undo");
@@ -35,7 +48,7 @@ QStringList const UndoRedoGuiCommand::ACTIONS_()
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator UndoRedoGuiCommand::registrator_ ("UndoRedo",
-                                                              QSharedPointer<UndoRedoGuiCommand> (new UndoRedoGuiCommand));
+                                                              QSharedPointer<UndoRedoGuiCommandFactory> (new UndoRedoGuiCommandFactory));
 
 
 
