@@ -15,34 +15,114 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
-QString const AdaptChannelViewGuiCommand::CHANNELS_ = "Channels...";
-QString const AdaptChannelViewGuiCommand::CHANGE_COLOR_ = "Change Color...";
-QString const AdaptChannelViewGuiCommand::SCALE_ = "Scale...";
-QString const AdaptChannelViewGuiCommand::APPLY_SCALE_TO_OTHER_CHANNELS_ = "Apply Scale to Other Channels";
-QString const AdaptChannelViewGuiCommand::HIDE_ = "Hide Channel";
-QString const AdaptChannelViewGuiCommand::SCALE_ALL_ = "Scale All...";
-QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MAX_TO_MAX_ = "Zero Line Centered";
-QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MIN_TO_MAX_ = "Zero Line Fitted";
-QString const AdaptChannelViewGuiCommand::ANIMATIONS_ = "Animations";
-QString const AdaptChannelViewGuiCommand::SET_ANIMATION_DURATION_ = "Set Animation Duration";
-QStringList const AdaptChannelViewGuiCommand::ACTIONS_ = QStringList() <<
-                                                         AdaptChannelViewGuiCommand::CHANNELS_ <<
-                                                         AdaptChannelViewGuiCommand::SCALE_ALL_  <<
-                                                         AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MAX_TO_MAX_ <<
-                                                         AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MIN_TO_MAX_ <<
-                                                         AdaptChannelViewGuiCommand::CHANGE_COLOR_ <<
-                                                         AdaptChannelViewGuiCommand::SCALE_ <<
-                                                         AdaptChannelViewGuiCommand::HIDE_ <<
-                                                         AdaptChannelViewGuiCommand::ANIMATIONS_ <<
-                                                         AdaptChannelViewGuiCommand::SET_ANIMATION_DURATION_;
+
+namespace {
+
+class AdaptChannelViewGuiCommandFactory: public GuiActionCommandFactory
+{
+public:
+    QSharedPointer<GuiActionCommand> createCommand() override
+    {
+        return QSharedPointer<AdaptChannelViewGuiCommand> (new AdaptChannelViewGuiCommand);
+    }
+};
+
+} // unnamed namespace
+
+QString const AdaptChannelViewGuiCommand::CHANNELS_()
+{
+    static QString value = tr("Channels...");
+
+    return value;
+}
+
+QString const AdaptChannelViewGuiCommand::CHANGE_COLOR_()
+{
+    static QString value = tr("Change Color...");
+
+    return value;
+}
+
+QString const AdaptChannelViewGuiCommand::SCALE_()
+{
+    static QString value = tr("Scale...");
+
+    return value;
+}
+
+QString const AdaptChannelViewGuiCommand::APPLY_SCALE_TO_OTHER_CHANNELS_()
+{
+    static QString value = tr("Apply Scale to Other Channels");
+
+    return value;
+}
+
+QString const AdaptChannelViewGuiCommand::HIDE_()
+{
+    static QString value = tr("Hide Channel");
+
+    return value;
+}
+
+QString const AdaptChannelViewGuiCommand::SCALE_ALL_()
+{
+    static QString value = tr("Scale All...");
+
+    return value;
+}
+
+QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MAX_TO_MAX_()
+{
+    static QString value = tr("Zero Line Centered");
+
+    return value;
+}
+
+QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MIN_TO_MAX_()
+{
+    static QString value = tr("Zero Line Fitted");
+
+    return value;
+}
+
+QString const AdaptChannelViewGuiCommand::ANIMATIONS_()
+{
+    static QString value = tr("Animations");
+
+    return value;
+}
+
+QString const AdaptChannelViewGuiCommand::SET_ANIMATION_DURATION_()
+{
+    static QString value = tr("Set Animation Duration");
+
+    return value;
+}
+
+QStringList const AdaptChannelViewGuiCommand::ACTIONS_()
+{
+    static QStringList result = {
+        AdaptChannelViewGuiCommand::CHANNELS_(),
+        AdaptChannelViewGuiCommand::SCALE_ALL_(),
+        AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MAX_TO_MAX_(),
+        AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MIN_TO_MAX_(),
+        AdaptChannelViewGuiCommand::CHANGE_COLOR_(),
+        AdaptChannelViewGuiCommand::SCALE_(),
+        AdaptChannelViewGuiCommand::HIDE_(),
+        AdaptChannelViewGuiCommand::ANIMATIONS_(),
+        AdaptChannelViewGuiCommand::SET_ANIMATION_DURATION_(),
+    };
+
+    return result;
+}
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator registrator_ ("Adapt Channel View",
-                                          QSharedPointer<AdaptChannelViewGuiCommand> (new AdaptChannelViewGuiCommand));
+                                          QSharedPointer<AdaptChannelViewGuiCommandFactory> (new AdaptChannelViewGuiCommandFactory));
 
 //-----------------------------------------------------------------------------
 AdaptChannelViewGuiCommand::AdaptChannelViewGuiCommand ()
-    : GuiActionCommand (ACTIONS_)
+    : GuiActionCommand (ACTIONS_())
 {
     // nothing to do here
 }
@@ -50,32 +130,32 @@ AdaptChannelViewGuiCommand::AdaptChannelViewGuiCommand ()
 //-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::init ()
 {
-    setIcon (CHANNELS_, QIcon(":/images/ic_reorder_black_24dp.png"));
-    setIcon (SCALE_ALL_, QIcon(":/images/ic_autoscale_black_24dp.png"));
-    resetActionTriggerSlot (CHANNELS_, SLOT(selectShownChannels()));
-    resetActionTriggerSlot (SCALE_ALL_, SLOT(scaleAll()));
-    resetActionTriggerSlot (CHANGE_COLOR_, SLOT(changeColor()));
-    resetActionTriggerSlot (SCALE_, SLOT(scale()));
-    resetActionTriggerSlot (HIDE_, SLOT(hide()));
-    setShortcut (CHANNELS_, tr("Ctrl+C"));
-    //setShortcut (SCALE_ALL_, tr("Ctrl+A"));
+    setIcon (CHANNELS_(), QIcon(":/images/ic_reorder_black_24dp.png"));
+    setIcon (SCALE_ALL_(), QIcon(":/images/ic_autoscale_black_24dp.png"));
+    resetActionTriggerSlot (CHANNELS_(), SLOT(selectShownChannels()));
+    resetActionTriggerSlot (SCALE_ALL_(), SLOT(scaleAll()));
+    resetActionTriggerSlot (CHANGE_COLOR_(), SLOT(changeColor()));
+    resetActionTriggerSlot (SCALE_(), SLOT(scale()));
+    resetActionTriggerSlot (HIDE_(), SLOT(hide()));
+    setShortcut (CHANNELS_(), tr("Ctrl+C"));
+    //setShortcut (SCALE_ALL_(), tr("Ctrl+A"));
 
     QActionGroup* scale_mode_action_group = new QActionGroup (this);
     scale_mode_action_group->setExclusive(true);
-    scale_mode_action_group->addAction (getQAction(SET_AUTO_SCALE_MAX_TO_MAX_));
-    scale_mode_action_group->addAction (getQAction(SET_AUTO_SCALE_MIN_TO_MAX_));
-    getQAction(SET_AUTO_SCALE_MAX_TO_MAX_)->setCheckable(true);
-    getQAction(SET_AUTO_SCALE_MIN_TO_MAX_)->setCheckable(true);
-    getQAction(ANIMATIONS_)->setCheckable(true);
+    scale_mode_action_group->addAction (getQAction(SET_AUTO_SCALE_MAX_TO_MAX_()));
+    scale_mode_action_group->addAction (getQAction(SET_AUTO_SCALE_MIN_TO_MAX_()));
+    getQAction(SET_AUTO_SCALE_MAX_TO_MAX_())->setCheckable(true);
+    getQAction(SET_AUTO_SCALE_MIN_TO_MAX_())->setCheckable(true);
+    getQAction(ANIMATIONS_())->setCheckable(true);
     QSettings settings;
     settings.beginGroup("Animations");
-    getQAction(ANIMATIONS_)->setChecked (settings.value("activated", false).toBool());
+    getQAction(ANIMATIONS_())->setChecked (settings.value("activated", false).toBool());
     settings.endGroup();
 
-    resetActionTriggerSlot (SET_AUTO_SCALE_MAX_TO_MAX_, SLOT(setScaleModeZeroCentered()));
-    resetActionTriggerSlot (SET_AUTO_SCALE_MIN_TO_MAX_, SLOT(setScaleModeZeroFitted()));
-    resetActionTriggerSlot (ANIMATIONS_, SLOT(toggleAnimations()));
-    resetActionTriggerSlot (SET_ANIMATION_DURATION_, SLOT(setAnimationDuration()));
+    resetActionTriggerSlot (SET_AUTO_SCALE_MAX_TO_MAX_(), SLOT(setScaleModeZeroCentered()));
+    resetActionTriggerSlot (SET_AUTO_SCALE_MIN_TO_MAX_(), SLOT(setScaleModeZeroFitted()));
+    resetActionTriggerSlot (ANIMATIONS_(), SLOT(toggleAnimations()));
+    resetActionTriggerSlot (SET_ANIMATION_DURATION_(), SLOT(setAnimationDuration()));
 }
 
 //-------------------------------------------------------------------------
@@ -96,17 +176,17 @@ void AdaptChannelViewGuiCommand::selectShownChannels ()
 //-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::evaluateEnabledness ()
 {
-    QStringList disabled_actions_if_no_file = ACTIONS_;
-    disabled_actions_if_no_file.removeAll(ANIMATIONS_);
-    disabled_actions_if_no_file.removeAll(SET_ANIMATION_DURATION_);
+    QStringList disabled_actions_if_no_file = ACTIONS_();
+    disabled_actions_if_no_file.removeAll(ANIMATIONS_());
+    disabled_actions_if_no_file.removeAll(SET_ANIMATION_DURATION_());
     disableIfNoFileIsOpened (disabled_actions_if_no_file);
     disableIfNoSignalIsVisualised (disabled_actions_if_no_file);
 
     if (!currentVisModel().isNull())
     {
-        getQAction (SET_AUTO_SCALE_MAX_TO_MAX_)->setChecked (currentVisModel()->getAutoScaleMode()
+        getQAction (SET_AUTO_SCALE_MAX_TO_MAX_())->setChecked (currentVisModel()->getAutoScaleMode()
                                                              == MAX_TO_MAX);
-        getQAction (SET_AUTO_SCALE_MIN_TO_MAX_)->setChecked (currentVisModel()->getAutoScaleMode()
+        getQAction (SET_AUTO_SCALE_MIN_TO_MAX_())->setChecked (currentVisModel()->getAutoScaleMode()
                                                              == MIN_TO_MAX);
     }
 }
@@ -210,7 +290,7 @@ void AdaptChannelViewGuiCommand::toggleAnimations ()
 {
     QSettings settings;
     settings.beginGroup ("Animations");
-    settings.setValue ("activated", getQAction(ANIMATIONS_)->isChecked ());
+    settings.setValue ("activated", getQAction(ANIMATIONS_())->isChecked ());
     settings.endGroup ();
 }
 

@@ -138,31 +138,31 @@ void EventContextMenu::addActionsToMenu (QMenu& menu, EventID event)
 
     if (event_manager_->getEvent(event)->getChannel() != UNDEFINED_CHANNEL)
     {
-        actions.append (GuiActionFactory::getInstance()->getQAction("To all Channels"));
-        actions.append (GuiActionFactory::getInstance()->getQAction("Copy to Channels..."));
+        actions.append (GuiActionFactory::getInstance()->getQAction(tr("To all Channels")));
+        actions.append (GuiActionFactory::getInstance()->getQAction(tr("Copy to Channels...")));
     }
-    actions.append (GuiActionFactory::getInstance()->getQAction("Delete"));
-    actions.append (GuiActionFactory::getInstance()->getQAction("Change Channel..."));
-    actions.append (GuiActionFactory::getInstance()->getQAction("Change Type..."));
+    actions.append (GuiActionFactory::getInstance()->getQAction(tr("Delete")));
+    actions.append (GuiActionFactory::getInstance()->getQAction(tr("Change Channel...")));
+    actions.append (GuiActionFactory::getInstance()->getQAction(tr("Change Type...")));
     actions.append (new QAction (this));
     actions.last()->setSeparator(true);
-    actions.append (GuiActionFactory::getInstance()->getQAction("Insert Over"));
+    actions.append (GuiActionFactory::getInstance()->getQAction(tr("Insert Over")));
     actions.append (new QAction (this));
     actions.last()->setSeparator(true);
     if (event_manager_->getNextEventOfSameType (event) != UNDEFINED_EVENT_ID)
-        actions.append (GuiActionFactory::getInstance()->getQAction("Goto and Select Next Event"));
+        actions.append (GuiActionFactory::getInstance()->getQAction(tr("Goto and Select Next Event")));
     if (event_manager_->getPreviousEventOfSameType (event) != UNDEFINED_EVENT_ID)
-        actions.append (GuiActionFactory::getInstance()->getQAction("Goto and Select Previous Event"));
+        actions.append (GuiActionFactory::getInstance()->getQAction(tr("Goto and Select Previous Event")));
     if (!actions.last()->isSeparator())
     {
         actions.append (new QAction (this));
         actions.last()->setSeparator(true);
     }
     if (browser_model_.getShownEventTypes().size() > 1)
-        actions.append (GuiActionFactory::getInstance()->getQAction("Hide Events of other Type"));
+        actions.append (GuiActionFactory::getInstance()->getQAction(tr("Hide Events of other Type")));
     else
-        actions.append (GuiActionFactory::getInstance()->getQAction("Show all Events"));
-    actions.append (GuiActionFactory::getInstance()->getQAction("Fit View to Selected Event"));
+        actions.append (GuiActionFactory::getInstance()->getQAction(tr("Show all Events")));
+    actions.append (GuiActionFactory::getInstance()->getQAction(tr("Fit View to Selected Event")));
 
     foreach (QAction* action, actions)
         menu.addAction (action);

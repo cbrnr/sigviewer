@@ -15,7 +15,7 @@ namespace Tests_
 class EditingCommandsTests : public Test
 {
 public:
-    EditingCommandsTests () : Test ("Editing Commands Tests") {}
+    EditingCommandsTests () : Test (tr("Editing Commands Tests")) {}
 
     virtual QString run ();
 };

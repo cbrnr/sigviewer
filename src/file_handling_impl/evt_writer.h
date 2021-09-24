@@ -31,7 +31,7 @@ public:
 
     //-------------------------------------------------------------------------
     virtual QString saveEventsToSignalFile (QSharedPointer<EventManager const>,
-                                            std::set<EventType> const&) {return "not implemented!";}
+                                            std::set<EventType> const&) {return QObject::tr("not implemented!");}
 
     //-------------------------------------------------------------------------
     virtual QString save (QSharedPointer<FileContext const> file_context,

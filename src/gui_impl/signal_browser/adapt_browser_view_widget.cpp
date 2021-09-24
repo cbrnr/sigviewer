@@ -36,13 +36,13 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
 {
     ui_.setupUi (this);
     if (!connect (ui_.x_axis_checkbox_, SIGNAL(toggled(bool)), SIGNAL(xAxisVisibilityChanged(bool))))
-        throw (Exception ("connect failed: x_axis_checkbox_"));
+        throw (Exception (tr("connect failed: x_axis_checkbox_").toStdString()));
     if (!connect (ui_.y_axis_checkbox_, SIGNAL(toggled(bool)), SIGNAL(yAxisVisibilityChanged(bool))))
-        throw (Exception ("connect failed: y_axis_checkbox_"));
+        throw (Exception (tr("connect failed: y_axis_checkbox_").toStdString()));
     if (!connect (ui_.labels_checkbox_, SIGNAL(toggled(bool)), SIGNAL(labelsVisibilityChanged(bool))))
-        throw (Exception ("connect failed: labels_checkbox_"));
-    offset_centered_ =  GuiActionFactory::getInstance()->getQAction("Zero Line Centered");
-    offset_fitted_ =  GuiActionFactory::getInstance()->getQAction("Zero Line Fitted");
+        throw (Exception (tr("connect failed: labels_checkbox_").toStdString()));
+    offset_centered_ =  GuiActionFactory::getInstance()->getQAction(tr("Zero Line Centered"));
+    offset_fitted_ =  GuiActionFactory::getInstance()->getQAction(tr("Zero Line Fitted"));
     ui_.channelsPerPageSpinbox->setMaximum (setting->getChannelManager().getNumberChannels());
     ui_.secsPerPageSpinbox->setMaximum (settings_->getChannelManager().getDurationInSec());
     connect(ui_.offsetCheckBox, SIGNAL(stateChanged(int)), SLOT(on_offsetCheckBox_stateChanged(int)));
@@ -67,7 +67,7 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
     //Zero line fitted mode should always be default
     ui_.offsetCheckBox->setChecked(true);
 
-    ui_.yGridSlider->setToolTip("Slide to change the density of Y grids");
+    ui_.yGridSlider->setToolTip(tr("Slide to change the density of Y grids"));
 
     ui_.colors_groupbox->hide();    //currently the color button is immature, hide it temporarily
     ui_.color_checkBox->hide();

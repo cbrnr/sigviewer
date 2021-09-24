@@ -5,12 +5,13 @@
 
 #include "event_table_file_reader.h"
 
+#include <QObject>
 
 namespace sigviewer
 {
 
 //-------------------------------------------------------------------------------------------------
-QString const EventTableFileReader::UNKNOWN_GROUP_ID = "Unknown Group";
+#define UNKNOWN_GROUP_ID QObject::tr("Unknown Group")
 
 
 //-------------------------------------------------------------------------------------------------
@@ -79,7 +80,7 @@ QString EventTableFileReader::getEventName(uint16 event_type_id) const
 {
     Int2EventItemMap::const_iterator it = event_type2name_.find(event_type_id);
     return it != event_type2name_.end() ? it.value().name
-                                        : "NO SUCH EVENT TYPE";
+                                        : QObject::tr("NO SUCH EVENT TYPE");
 }
 
 //-----------------------------------------------------------------------------

@@ -28,7 +28,7 @@ ScaleChannelDialog::ScaleChannelDialog (ChannelID preselected_channel,
     if (selected_channel_ == UNDEFINED_CHANNEL)
         setWindowTitle (tr("Scale All Channels"));
     else
-        setWindowTitle (tr("Scale Channel ").append(channel_manager_.getChannelLabel(preselected_channel)));
+        setWindowTitle (tr("Scale Channel %1").arg(channel_manager_.getChannelLabel(preselected_channel)));
 
     ui_.upper_spinbox_->setMaximum (std::numeric_limits<double>::max());
     ui_.upper_spinbox_->setMinimum (-std::numeric_limits<double>::max());

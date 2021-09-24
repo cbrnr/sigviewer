@@ -23,31 +23,84 @@
 namespace sigviewer
 {
 
-QString const SaveGuiCommand::SAVE_AS_ = "Save as...";
-QString const SaveGuiCommand::SAVE_ = "Save";
-QString const SaveGuiCommand::EXPORT_TO_PNG_ = "Export to PNG...";
-QString const SaveGuiCommand::EXPORT_TO_GDF_ = "Export to GDF...";
-QString const SaveGuiCommand::EXPORT_EVENTS_CSV_ = "Export Events to CSV...";
-QString const SaveGuiCommand::EXPORT_EVENTS_EVT_ = "Export Events to EVT...";
+namespace {
 
-QStringList const SaveGuiCommand::ACTIONS_ = QStringList() <<
-                                             SaveGuiCommand::SAVE_AS_ <<
-                                             SaveGuiCommand::SAVE_ <<
-                                             SaveGuiCommand::EXPORT_TO_GDF_ <<
-                                             SaveGuiCommand::EXPORT_EVENTS_CSV_ <<
-                                             SaveGuiCommand::EXPORT_EVENTS_EVT_ <<
-                                             SaveGuiCommand::EXPORT_TO_PNG_;
+class SaveGuiCommandFactory: public GuiActionCommandFactory
+{
+public:
+    QSharedPointer<GuiActionCommand> createCommand() override
+    {
+        return QSharedPointer<SaveGuiCommand> (new SaveGuiCommand);
+    }
+};
 
+} // unnamed namespace
+
+QString const SaveGuiCommand::SAVE_AS_()
+{
+    static QString value = tr("Save as...");
+
+    return value;
+}
+
+QString const SaveGuiCommand::SAVE_()
+{
+    static QString value = tr("Save");
+
+    return value;
+}
+
+QString const SaveGuiCommand::EXPORT_TO_PNG_()
+{
+    static QString value = tr("Export to PNG...");
+
+    return value;
+}
+
+QString const SaveGuiCommand::EXPORT_TO_GDF_()
+{
+    static QString value = tr("Export to GDF...");
+
+    return value;
+}
+
+QString const SaveGuiCommand::EXPORT_EVENTS_CSV_()
+{
+    static QString value = tr("Export Events to CSV...");
+
+    return value;
+}
+
+QString const SaveGuiCommand::EXPORT_EVENTS_EVT_()
+{
+    static QString value = tr("Export Events to EVT...");
+
+    return value;
+}
+
+QStringList const SaveGuiCommand::ACTIONS_()
+{
+    static QStringList result = {
+        SaveGuiCommand::SAVE_AS_(),
+        SaveGuiCommand::SAVE_(),
+        SaveGuiCommand::EXPORT_TO_GDF_(),
+        SaveGuiCommand::EXPORT_EVENTS_CSV_(),
+        SaveGuiCommand::EXPORT_EVENTS_EVT_(),
+        SaveGuiCommand::EXPORT_TO_PNG_(),
+    };
+
+    return result;
+}
 
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator SaveGuiCommand::registrator_ ("Saving",
-                                                          QSharedPointer<SaveGuiCommand> (new SaveGuiCommand));
+                                                          QSharedPointer<SaveGuiCommandFactory> (new SaveGuiCommandFactory));
 
 
 //-----------------------------------------------------------------------------
 SaveGuiCommand::SaveGuiCommand ()
-    : GuiActionCommand (ACTIONS_)
+    : GuiActionCommand (ACTIONS_())
 {
     // nothing to do here
 }
@@ -55,19 +108,19 @@ SaveGuiCommand::SaveGuiCommand ()
 //-----------------------------------------------------------------------------
 void SaveGuiCommand::init ()
 {
-    setIcon(SAVE_, QIcon (":/images/ic_save_black_24dp.png"));
-    setIcon(EXPORT_EVENTS_CSV_, QIcon (":/images/ic_file_upload_black_24dp.png"));
-    setIcon(EXPORT_EVENTS_EVT_, QIcon (":/images/ic_file_upload_black_24dp.png"));
+    setIcon(SAVE_(), QIcon (":/images/ic_save_black_24dp.png"));
+    setIcon(EXPORT_EVENTS_CSV_(), QIcon (":/images/ic_file_upload_black_24dp.png"));
+    setIcon(EXPORT_EVENTS_EVT_(), QIcon (":/images/ic_file_upload_black_24dp.png"));
 
-    setShortcut (SAVE_, QKeySequence::Save);
-    setShortcut (SAVE_AS_, QKeySequence::SaveAs);
+    setShortcut (SAVE_(), QKeySequence::Save);
+    setShortcut (SAVE_AS_(), QKeySequence::SaveAs);
 
-    resetActionTriggerSlot (SAVE_AS_, SLOT(saveAs()));
-    resetActionTriggerSlot (SAVE_, SLOT(save()));
-    resetActionTriggerSlot (EXPORT_TO_PNG_, SLOT(exportToPNG()));
-    resetActionTriggerSlot (EXPORT_TO_GDF_, SLOT(exportToGDF()));
-    resetActionTriggerSlot (EXPORT_EVENTS_CSV_, SLOT(exportEventsToCSV()));
-    resetActionTriggerSlot (EXPORT_EVENTS_EVT_, SLOT(exportEventsToEVT()));
+    resetActionTriggerSlot (SAVE_AS_(), SLOT(saveAs()));
+    resetActionTriggerSlot (SAVE_(), SLOT(save()));
+    resetActionTriggerSlot (EXPORT_TO_PNG_(), SLOT(exportToPNG()));
+    resetActionTriggerSlot (EXPORT_TO_GDF_(), SLOT(exportToGDF()));
+    resetActionTriggerSlot (EXPORT_EVENTS_CSV_(), SLOT(exportEventsToCSV()));
+    resetActionTriggerSlot (EXPORT_EVENTS_EVT_(), SLOT(exportEventsToEVT()));
 }
 
 
@@ -132,12 +185,12 @@ void SaveGuiCommand::saveAs ()
                 }
             }
             else if (event_mgr->getNumberOfEvents() > 0)
-                QMessageBox::information(0, "", "Events not stored to " + new_file_path + "\n If you want to store events export the file to GDF or export the events into a EVT file!");
+                QMessageBox::information(0, "", tr("Events not stored to %1\n If you want to store events export the file to GDF or export the events into a EVT file!").arg(new_file_path));
             delete writer;
         }
     }
     else
-        QMessageBox::critical(0, "Saving.... failed!", "Could not save " + file_name + " to " + new_file_path);
+        QMessageBox::critical(0, tr("Saving.... failed!"), tr("Could not save %1 to %2").arg(file_name).arg(new_file_path));
 }
 
 //-----------------------------------------------------------------------------
@@ -198,7 +251,7 @@ void SaveGuiCommand::exportToPNG ()
 //-----------------------------------------------------------------------------
 void SaveGuiCommand::exportToGDF ()
 {
-    QMessageBox::information (0, "Information", "Attention: Converting to GDF is in testing phase. Meta-data will not be converted.");
+    QMessageBox::information (0, tr("Information"), tr("Attention: Converting to GDF is in testing phase. Meta-data will not be converted."));
     QString extensions = "*.gdf";
     QString current_file_path = applicationContext()->getCurrentFileContext()->getFilePathAndName();
     QString current_file_name = applicationContext()->getCurrentFileContext()->getFileName();
@@ -221,8 +274,7 @@ void SaveGuiCommand::exportToGDF ()
     QString error = writer->save (applicationContext()->getCurrentFileContext(), event_mgr->getEventTypes());
     if (error.size() == 0)
     {
-        QMessageBox::StandardButton pressed_button = QMessageBox::question(0, current_file_name, current_file_name + tr(" has been converted into GDF and stored in:\n") + new_file_path
-                                                                           + tr("\n\nDo you want to open the GDF file?"),
+        QMessageBox::StandardButton pressed_button = QMessageBox::question(0, current_file_name, tr("%1 has been converted into GDF and stored in:\n%2\n\nDo you want to open the GDF file?").arg(current_file_name).arg(new_file_path),
                                                                            QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
         if (pressed_button == QMessageBox::Yes)
             OpenFileGuiCommand::openFile (new_file_path);
@@ -338,8 +390,8 @@ void SaveGuiCommand::exportEventsToCSV ()
 //-------------------------------------------------------------------------
 void SaveGuiCommand::evaluateEnabledness ()
 {
-    disableIfNoFileIsOpened (QStringList() << EXPORT_TO_PNG_);
-    disableIfNoSignalIsVisualised (QStringList() << EXPORT_TO_PNG_);
+    disableIfNoFileIsOpened (QStringList() << EXPORT_TO_PNG_());
+    disableIfNoSignalIsVisualised (QStringList() << EXPORT_TO_PNG_());
     bool file_open = getApplicationState () == APP_STATE_FILE_OPEN;
     bool no_gdf_file_open = false;
     bool file_changed = false;
@@ -355,11 +407,11 @@ void SaveGuiCommand::evaluateEnabledness ()
             no_gdf_file_open = false;//Disabled because currently XDF to GDF conversion doesn't work
     }
 
-    getQAction (SAVE_)->setEnabled (file_changed);
-    getQAction (SAVE_AS_)->setEnabled (file_open);
-    getQAction (EXPORT_TO_GDF_)->setEnabled (no_gdf_file_open);
-    getQAction (EXPORT_EVENTS_CSV_)->setEnabled (has_events);
-    getQAction (EXPORT_EVENTS_EVT_)->setEnabled (has_events);
+    getQAction (SAVE_())->setEnabled (file_changed);
+    getQAction (SAVE_AS_())->setEnabled (file_open);
+    getQAction (EXPORT_TO_GDF_())->setEnabled (no_gdf_file_open);
+    getQAction (EXPORT_EVENTS_CSV_())->setEnabled (has_events);
+    getQAction (EXPORT_EVENTS_EVT_())->setEnabled (has_events);
 }
 
 }

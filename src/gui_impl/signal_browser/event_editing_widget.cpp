@@ -27,9 +27,9 @@ EventEditingWidget::EventEditingWidget (QSharedPointer<EventManager> event_manag
 {
     ui_.setupUi (this);
 
-    ui_.previous_button_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Goto and Select Previous Event"));
-    ui_.next_button_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Goto and Select Next Event"));
-    ui_.fit_button_->setDefaultAction (GuiActionFactory::getInstance()->getQAction("Fit View to Selected Event"));
+    ui_.previous_button_->setDefaultAction (GuiActionFactory::getInstance()->getQAction(tr("Goto and Select Previous Event")));
+    ui_.next_button_->setDefaultAction (GuiActionFactory::getInstance()->getQAction(tr("Goto and Select Next Event")));
+    ui_.fit_button_->setDefaultAction (GuiActionFactory::getInstance()->getQAction(tr("Fit View to Selected Event")));
 
     unsigned precision = MathUtils_::sampleRateToDecimalPrecision(event_manager_->getSampleRate());
     ui_.begin_spinbox_->setDecimals (precision);
@@ -81,7 +81,7 @@ void EventEditingWidget::updateSelectedEventInfo (QSharedPointer<SignalEvent con
     else if (event_manager_->getFileType().startsWith("XDF", Qt::CaseInsensitive))
     {
         ui_.selection_frame_->setDisabled(true);//Editing events are not allowed in XDF files
-        ui_.selection_frame_->setToolTip("Editing events are not allowed in XDF files");
+        ui_.selection_frame_->setToolTip(tr("Editing events are not allowed in XDF files"));
     }
     else
     {

@@ -13,20 +13,51 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
-QString const CloseFileGuiCommand::CLOSE_FILE_ = "Close";
-QString const CloseFileGuiCommand::EXIT_APPLICATION_ = "Exit";
-QStringList const CloseFileGuiCommand::ACTIONS_ = QStringList() <<
-                                                  CloseFileGuiCommand::CLOSE_FILE_ <<
-                                                  CloseFileGuiCommand::EXIT_APPLICATION_;
+namespace {
+
+class CloseFileGuiCommandFactory: public GuiActionCommandFactory
+{
+public:
+    QSharedPointer<GuiActionCommand> createCommand() override
+    {
+        return QSharedPointer<CloseFileGuiCommand> (new CloseFileGuiCommand);
+    }
+};
+
+} // unnamed namespace
+
+QString const CloseFileGuiCommand::CLOSE_FILE_()
+{
+    static QString value = tr("Close");
+
+    return value;
+}
+
+QString const CloseFileGuiCommand::EXIT_APPLICATION_()
+{
+    static QString value = tr("Exit");
+
+    return value;
+}
+
+QStringList const CloseFileGuiCommand::ACTIONS_()
+{
+    static QStringList result = {
+        CloseFileGuiCommand::CLOSE_FILE_(),
+        CloseFileGuiCommand::EXIT_APPLICATION_(),
+    };
+
+    return result;
+}
 
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator CloseFileGuiCommand::registrator_ ("Closing",
-                                                               QSharedPointer<CloseFileGuiCommand> (new CloseFileGuiCommand));
+                                                               QSharedPointer<CloseFileGuiCommandFactory> (new CloseFileGuiCommandFactory));
 
 //-----------------------------------------------------------------------------
 CloseFileGuiCommand::CloseFileGuiCommand ()
-    : GuiActionCommand (ACTIONS_)
+    : GuiActionCommand (ACTIONS_())
 {
     // nothing to do here
 }
@@ -34,12 +65,12 @@ CloseFileGuiCommand::CloseFileGuiCommand ()
 //-----------------------------------------------------------------------------
 void CloseFileGuiCommand::init ()
 {
-    getQAction(CLOSE_FILE_)->setShortcut (QKeySequence::Close);
-    getQAction(CLOSE_FILE_)->setIcon (QIcon(":/images/ic_clear_black_24dp.png"));
-    getQAction(EXIT_APPLICATION_)->setShortcut (QKeySequence::Quit);
+    getQAction(CLOSE_FILE_())->setShortcut (QKeySequence::Close);
+    getQAction(CLOSE_FILE_())->setIcon (QIcon(":/images/ic_clear_black_24dp.png"));
+    getQAction(EXIT_APPLICATION_())->setShortcut (QKeySequence::Quit);
 
-    resetActionTriggerSlot(CLOSE_FILE_, SLOT(closeFile()));
-    resetActionTriggerSlot(EXIT_APPLICATION_, SLOT(exitApplication()));
+    resetActionTriggerSlot(CLOSE_FILE_(), SLOT(closeFile()));
+    resetActionTriggerSlot(EXIT_APPLICATION_(), SLOT(exitApplication()));
 }
 
 
@@ -92,7 +123,7 @@ void CloseFileGuiCommand::exitApplication ()
 //-------------------------------------------------------------------------
 void CloseFileGuiCommand::evaluateEnabledness ()
 {
-    disableIfNoFileIsOpened (QStringList() << CLOSE_FILE_);
+    disableIfNoFileIsOpened (QStringList() << CLOSE_FILE_());
 }
 
 }

@@ -57,7 +57,7 @@ QString ChannelManagerImpl::getChannelLabel (ChannelID id, int streamNumber) con
         if (streamNumber == -1)
             return QObject::tr("All Channels");
         else
-            return QObject::tr("Stream ").append(QString::number(streamNumber+1));//+1 for user's convenience (1 based instead 0 based)
+            return QObject::tr("Stream %1").arg(QString::number(streamNumber+1));//+1 for user's convenience (1 based instead 0 based)
     }
     else if (!reader_->getBasicHeader()->getChannel (id).isNull())
         return reader_->getBasicHeader()->getChannel (id)->getLabel();
