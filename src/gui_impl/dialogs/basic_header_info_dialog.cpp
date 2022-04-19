@@ -17,6 +17,7 @@
 #include <QSettings>
 #include <QFileInfo>
 #include <QtXml>
+#include <QDesktopWidget>
 
 namespace sigviewer
 {
@@ -42,8 +43,14 @@ BasicHeaderInfoDialog::BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header,
     button_layout->addWidget(toggle_button_);
     button_layout->addWidget(close_button_);
     button_layout->addStretch(1);
+
+    QDesktopWidget dw;
+    int x=dw.width()*0.45;
+    int y=dw.height()*0.8;
+    resize(x,y);
+
     buildTree();
-    resize(850, 850);
+
     top_layout->activate();
     readSettings();
     connect(close_button_, SIGNAL(clicked()), this, SLOT(closeInfoDialog()));
@@ -121,7 +128,7 @@ void BasicHeaderInfoDialog::buildTree()
     info_tree_widget_->setHeaderLabels(header_labels);
 
     info_tree_widget_->header()->setSectionResizeMode(QHeaderView::Interactive);
-    info_tree_widget_->setColumnWidth(0, width() * 0.65);
+    info_tree_widget_->setColumnWidth(0, width() * 0.5);
     info_tree_widget_->setAnimated(true);
 
     QTreeWidgetItem* root_item;

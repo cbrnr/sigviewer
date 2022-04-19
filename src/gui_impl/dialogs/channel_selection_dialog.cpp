@@ -8,7 +8,7 @@
 #include "application_context_impl.h"
 
 #include <QColorDialog>
-
+#include <QDesktopWidget>
 
 namespace sigviewer
 {
@@ -34,7 +34,13 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
     headerLabels << tr("Channel") << tr("Color");
     ui_.treeWidget->setHeaderLabels(headerLabels);
     ui_.treeWidget->setColumnCount(2);
-    ui_.treeWidget->header()->resizeSection(0, width() * 0.6);
+
+    QDesktopWidget dw;
+    int x=dw.width()*0.35;
+    int y=dw.height()*0.7;
+    resize(x,y);
+
+    ui_.treeWidget->header()->resizeSection(0, width() * 0.4);
     ui_.treeWidget->setAnimated(true);
 
     if (ApplicationContextImpl::getInstance()->getCurrentFileContext()->getFileName().endsWith("XDF", Qt::CaseInsensitive))

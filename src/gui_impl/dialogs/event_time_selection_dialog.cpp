@@ -7,6 +7,7 @@
 #include "file_handling/event_manager.h"
 
 #include <QPushButton>
+#include <QDesktopWidget>
 #include <limits>
 
 namespace sigviewer
@@ -23,6 +24,11 @@ EventTimeSelectionDialog::EventTimeSelectionDialog (std::set<EventType> const& s
       start_before_value_ (0)
 {
     ui_.setupUi (this);
+
+    QDesktopWidget dw;
+    int x=dw.width()*0.3;
+    int y=dw.height()*0.6;
+    resize(x,y);
 
     foreach (ChannelID channel_id, shown_channels)
     {

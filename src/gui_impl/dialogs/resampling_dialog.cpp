@@ -7,6 +7,8 @@
 #include "ui_resampling_dialog.h"
 #include "file_handling_impl/xdf_reader.h"
 
+#include <QDesktopWidget>
+
 namespace sigviewer {
 
 ResamplingDialog::ResamplingDialog(QWidget *parent) :
@@ -22,6 +24,12 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
 {
     ui->setupUi(this);
     this->setWindowTitle(tr("Resampling"));
+
+    QDesktopWidget dw;
+    int x=dw.width()*0.35;
+    int y=dw.height()*0.6;
+    resize(x,y);
+
 
     if (XDFdata->sampleRateMap.size() > 1)
     {
@@ -42,7 +50,7 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
         ui->label->setText(text);
     }
     ui->treeWidget->setColumnCount(2);
-    ui->treeWidget->setColumnWidth(0, this->width()/2.15);
+    ui->treeWidget->setColumnWidth(0, this->width() * 0.48);
     ui->treeWidget->setAnimated(true);
     QStringList headers;
     headers << "Stream" << "Info";

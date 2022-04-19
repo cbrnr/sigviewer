@@ -7,6 +7,7 @@
 
 #include <QDebug>
 #include <QSettings>
+#include <QDesktopWidget>
 
 #include <limits>
 
@@ -24,6 +25,11 @@ ScaleChannelDialog::ScaleChannelDialog (ChannelID preselected_channel,
     channel_manager_ (channel_manager)
 {
     ui_.setupUi (this);
+
+    QDesktopWidget dw;
+    int x=dw.width()*0.22;
+    int y=dw.height()*0.22;
+    resize(x,y);
 
     if (selected_channel_ == UNDEFINED_CHANNEL)
         setWindowTitle (tr("Scale All Channels"));

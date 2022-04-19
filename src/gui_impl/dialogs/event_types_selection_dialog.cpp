@@ -7,6 +7,7 @@
 
 #include <QColorDialog>
 #include <QInputDialog>
+#include <QDesktopWidget>
 
 #define max(a,b) ((a) > (b) ? (a) : (b))
 
@@ -38,6 +39,11 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
     header_labels << tr("Event Type") << tr("Color") << tr("Alpha") << tr("Type Id");
     ui_.tree_widget_->setHeaderLabels (header_labels);
     ui_.tree_widget_->setColumnWidth(ID_COLUMN_INDEX_, 0);
+
+    QDesktopWidget dw;
+    int x=dw.width()*0.35;
+    int y=dw.height()*0.7;
+    resize(x,y);
 
     ui_.tree_widget_->header()->setSectionResizeMode (QHeaderView::Interactive);
     ui_.tree_widget_->header()->resizeSection (NAME_COLUMN_INDEX_, width() * 0.6);
