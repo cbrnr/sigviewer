@@ -90,7 +90,8 @@ void BiosigBasicHeader::readChannelsInfo (HDRTYPE const* raw_header)
 void BiosigBasicHeader::readChannelsInfo (QString file_format)
 {
     unsigned ch = 0;
-    for (unsigned channel_index = 0; channel_index < XDFdata->totalCh; channel_index++)
+    for (unsigned channel_index = 0; channel_index < XDFdata->numerical_channel_count_;
+         channel_index++)
     {
         QSharedPointer<SignalChannel> channel(new SignalChannel(channel_index, file_format));
         addChannel(ch++, channel);

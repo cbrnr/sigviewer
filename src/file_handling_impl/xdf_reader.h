@@ -18,7 +18,7 @@ namespace sigviewer
 {
 
 //the object to store XDF data
-extern QSharedPointer<Xdf> XDFdata;
+extern QSharedPointer<xdf::Xdf> XDFdata;
 
 //XDFReader, modeled  on BiosigReader
 class XDFReader : public FileSignalReader
