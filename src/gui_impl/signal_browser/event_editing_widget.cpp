@@ -15,6 +15,23 @@
 
 namespace sigviewer
 {
+namespace
+{
+
+[[nodiscard]] int totalEventCount()
+{
+    int count = 0;
+    for (const auto& [stream_id, stream] : XDFdata->streams)
+    {
+        if (stream.info.channel_format == "string")
+        {
+            count += stream.info.sample_count;
+        }
+    }
+    return count;
+}
+
+} // namespace
 
 //-----------------------------------------------------------------------------
 EventEditingWidget::EventEditingWidget (QSharedPointer<EventManager> event_manager,
@@ -120,8 +137,7 @@ void EventEditingWidget::on_type_combobox__currentIndexChanged (int combo_box_in
         {
             if (selected_signal_event_->getStream() == XDFdata->userAddedStream)
             {
-//                int index = selected_signal_event_->getId() - XDFdata->eventType.size();
-                int index = 0;
+                const int index = selected_signal_event_->getId() - totalEventCount();
                 XDFdata->userCreatedEvents[index].first =
                         event_manager_->getNameOfEventType(event_type).toStdString();
             }
@@ -150,10 +166,10 @@ void EventEditingWidget::on_begin_spinbox__editingFinished ()
     {
         if (selected_signal_event_->getStream() == XDFdata->userAddedStream)
         {
-//            int index = selected_signal_event_->getId() - XDFdata->eventType.size();
-//            XDFdata->userCreatedEvents[index].second =
-//                    event_manager_->getEvent(selected_signal_event_->getId())->getPositionInSec()
-//                    + XDFdata->minTS;
+            const int index = selected_signal_event_->getId() - totalEventCount();
+            XDFdata->userCreatedEvents[index].second =
+                    event_manager_->getEvent(selected_signal_event_->getId())->getPositionInSec()
+                    + XDFdata->minTS;
         }
     }
 }
