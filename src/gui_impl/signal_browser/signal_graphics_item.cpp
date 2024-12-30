@@ -454,28 +454,31 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
                 //and later store back to the XDF file
                 if (!XDFdata->userAddedStream)
                 {
-                    //check whether a user added stream has already been existing
-                    XDFdata->userAddedStream = XDFdata->streams.size();
-//                    XDFdata->streams.emplace_back();
+                    int max_stream_id = 0;
+                    for (const auto& [stream_id, stream] : XDFdata->streams)
+                    {
+                        max_stream_id = std::max(max_stream_id, stream_id);
+                    }
+                    XDFdata->userAddedStream = max_stream_id + 1;
                     time_t currentTime = time(nullptr);
                     std::string timeString = asctime(localtime(&currentTime));
                     timeString.pop_back(); //we don't need '\n' at the end
-//                    XDFdata->streams.back().streamHeader =
-//                            "<?xml version='1.0'?>"
-//                            "<info>"
-//                                "<name>User Created Event Stream</name>"
-//                                "<type>Events</type>"
-//                                "<channel_count>1</channel_count>"
-//                                "<nominal_srate>0</nominal_srate>"
-//                                "<channel_format>string</channel_format>"
-//                                "<source_id>User Added Events</source_id>"
-//                                "<version>1</version>"
-//                                "<created_at>" + timeString + "</created_at>"
-//                                "<uid/>"
-//                                "<session_id/>"
-//                                "<hostname/>"
-//                                "<desc />"
-//                            "</info>";
+                    XDFdata->streams[XDFdata->userAddedStream].streamHeader =
+                            "<?xml version='1.0'?>"
+                            "<info>"
+                                "<name>User Created Event Stream</name>"
+                                "<type>Events</type>"
+                                "<channel_count>1</channel_count>"
+                                "<nominal_srate>0</nominal_srate>"
+                                "<channel_format>string</channel_format>"
+                                "<source_id>User Added Events</source_id>"
+                                "<version>1</version>"
+                                "<created_at>" + timeString + "</created_at>"
+                                "<uid/>"
+                                "<session_id/>"
+                                "<hostname/>"
+                                "<desc />"
+                            "</info>";
                 }
                 new_signal_event_ = QSharedPointer<SignalEvent>
                         (new SignalEvent(sample_cleaned_pos,
