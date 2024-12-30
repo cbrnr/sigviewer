@@ -65,34 +65,34 @@ void MainWindow::initToolBars()
     file_toolbar_->setObjectName("File");
     file_toolbar_->setMovable(false);
     view_toolbar_views_menu_->addAction (file_toolbar_->toggleViewAction());
-    file_toolbar_->addAction (action("Open..."));
-    file_toolbar_->addAction (action("Save"));
-    file_toolbar_->addAction (action("Info..."));
-    file_toolbar_->addAction (action("Undo"));
-    file_toolbar_->addAction (action("Redo"));
-    // file_toolbar_->addAction (action("Close"));
+    file_toolbar_->addAction (action(tr("Open...")));
+    file_toolbar_->addAction (action(tr("Save")));
+    file_toolbar_->addAction (action(tr("Info...")));
+    file_toolbar_->addAction (action(tr("Undo")));
+    file_toolbar_->addAction (action(tr("Redo")));
+    // file_toolbar_->addAction (action(tr("Close")));
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
     mouse_mode_toolbar_->setObjectName("Mode");
     mouse_mode_toolbar_->setMovable(false);
     view_toolbar_views_menu_->addAction (mouse_mode_toolbar_->toggleViewAction());
-    mouse_mode_toolbar_->addAction (action("New Event"));
-    mouse_mode_toolbar_->addAction (action("Edit Event"));
-    mouse_mode_toolbar_->addAction (action("Scroll"));
-    mouse_mode_toolbar_->addAction (action("View Options"));
+    mouse_mode_toolbar_->addAction (action(tr("New Event")));
+    mouse_mode_toolbar_->addAction (action(tr("Edit Event")));
+    mouse_mode_toolbar_->addAction (action(tr("Scroll")));
+    mouse_mode_toolbar_->addAction (action(tr("View Options")));
 
 
     view_toolbar_ = addToolBar(tr("View"));
     view_toolbar_->setObjectName("View");
     view_toolbar_->setMovable(false);
     view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
-    view_toolbar_->addAction(action("Events..."));
-    view_toolbar_->addAction(action("Channels..."));
-    view_toolbar_->addAction(action("Scale All..."));
-    view_toolbar_->addAction(action("Zoom In Vertical"));
-    view_toolbar_->addAction(action("Zoom Out Vertical"));
-    view_toolbar_->addAction(action("Zoom In Horizontal"));
-    view_toolbar_->addAction(action("Zoom Out Horizontal"));
+    view_toolbar_->addAction(action(tr("Events...")));
+    view_toolbar_->addAction(action(tr("Channels...")));
+    view_toolbar_->addAction(action(tr("Scale All...")));
+    view_toolbar_->addAction(action(tr("Zoom In Vertical")));
+    view_toolbar_->addAction(action(tr("Zoom Out Vertical")));
+    view_toolbar_->addAction(action(tr("Zoom In Horizontal")));
+    view_toolbar_->addAction(action(tr("Zoom Out Horizontal")));
 
     view_toolbar_views_menu_->addSeparator ();
     toggle_all_toolbars_ = new QAction (tr("Hide all Toolbars"), this);
@@ -179,37 +179,37 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
             SIGNAL(recentFileActivated(QAction*)));
 
     file_menu_ = menuBar()->addMenu(tr("&File"));
-    file_menu_->addAction(action("Open..."));
+    file_menu_->addAction(action(tr("Open...")));
     file_menu_->addMenu (file_recent_files_menu_);
-    file_menu_->addAction (action("Save"));
-    file_menu_->addAction (action("Save as..."));
-    file_menu_->addAction (action("Info..."));
-    file_menu_->addAction (action("Close"));
+    file_menu_->addAction (action(tr("Save")));
+    file_menu_->addAction (action(tr("Save as...")));
+    file_menu_->addAction (action(tr("Info...")));
+    file_menu_->addAction (action(tr("Close")));
     file_menu_->addSeparator ();
-    file_menu_->addAction (action("Import Events..."));
-    file_menu_->addAction (action("Export Events to CSV..."));
-    file_menu_->addAction (action("Export Events to EVT..."));
-    // file_menu_->addAction (action("Export to GDF..."));
+    file_menu_->addAction (action(tr("Import Events...")));
+    file_menu_->addAction (action(tr("Export Events to CSV...")));
+    file_menu_->addAction (action(tr("Export Events to EVT...")));
+    // file_menu_->addAction (action(tr("Export to GDF...")));
     file_menu_->addSeparator ();
-    file_menu_->addAction (action("Exit"));
+    file_menu_->addAction (action(tr("Exit")));
 
     edit_menu_ = menuBar()->addMenu(tr("&Edit"));
-    edit_menu_->addAction (action("Undo"));
-    edit_menu_->addAction (action("Redo"));
+    edit_menu_->addAction (action(tr("Undo")));
+    edit_menu_->addAction (action(tr("Redo")));
     edit_menu_->addSeparator ();
-    edit_menu_->addAction (action("To all Channels"));
-    edit_menu_->addAction (action("Copy to Channels..."));
-    edit_menu_->addAction (action("Delete"));
-    edit_menu_->addAction (action("Change Channel..."));
-    edit_menu_->addAction (action("Change Type..."));
+    edit_menu_->addAction (action(tr("To all Channels")));
+    edit_menu_->addAction (action(tr("Copy to Channels...")));
+    edit_menu_->addAction (action(tr("Delete")));
+    edit_menu_->addAction (action(tr("Change Channel...")));
+    edit_menu_->addAction (action(tr("Change Type...")));
     edit_menu_->addSeparator ();
-    edit_menu_->addAction (action("Insert Over"));
+    edit_menu_->addAction (action(tr("Insert Over")));
 
     mouse_mode_menu_ = menuBar()->addMenu(tr("&Mode"));
-    mouse_mode_menu_->addAction (action("New Event"));
-    mouse_mode_menu_->addAction (action("Edit Event"));
-    mouse_mode_menu_->addAction (action("Scroll"));
-    mouse_mode_menu_->addAction (action("View Options"));
+    mouse_mode_menu_->addAction (action(tr("New Event")));
+    mouse_mode_menu_->addAction (action(tr("Edit Event")));
+    mouse_mode_menu_->addAction (action(tr("Scroll")));
+    mouse_mode_menu_->addAction (action(tr("View Options")));
 
 
     QSettings settings;
@@ -223,23 +223,23 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     view_menu_->addMenu (view_toolbar_views_menu_);
     view_menu_->addAction(toggle_status_bar);
     view_menu_->addSeparator();
-    view_menu_->addAction(action("Events..."));
-    view_menu_->addAction(action("Channels..."));
-    view_menu_->addAction(action("Scale All..."));
+    view_menu_->addAction(action(tr("Events...")));
+    view_menu_->addAction(action(tr("Channels...")));
+    view_menu_->addAction(action(tr("Scale All...")));
     view_menu_->addSeparator();
-    view_menu_->addAction(action("Zoom In Vertical"));
-    view_menu_->addAction(action("Zoom Out Vertical"));
-    view_menu_->addAction(action("Zoom In Horizontal"));
-    view_menu_->addAction(action("Zoom Out Horizontal"));
+    view_menu_->addAction(action(tr("Zoom In Vertical")));
+    view_menu_->addAction(action(tr("Zoom Out Vertical")));
+    view_menu_->addAction(action(tr("Zoom In Horizontal")));
+    view_menu_->addAction(action(tr("Zoom Out Horizontal")));
     view_menu_->addSeparator();
-    view_menu_->addAction(action("Go to..."));
+    view_menu_->addAction(action(tr("Go to...")));
     view_menu_->addSeparator();
-    view_menu_->addAction(action("Goto and Select Next Event"));
-    view_menu_->addAction(action("Goto and Select Previous Event"));
+    view_menu_->addAction(action(tr("Goto and Select Next Event")));
+    view_menu_->addAction(action(tr("Goto and Select Previous Event")));
     view_menu_->addSeparator();
-    view_menu_->addAction(action("Fit View to Selected Event"));
-    view_menu_->addAction(action("Hide Events of other Type"));
-    view_menu_->addAction(action("Show all Events"));
+    view_menu_->addAction(action(tr("Fit View to Selected Event")));
+    view_menu_->addAction(action(tr("Hide Events of other Type")));
+    view_menu_->addAction(action(tr("Show all Events")));
 
     tools_menu_ = menuBar()->addMenu(tr("&Tools"));
     tools_menu_->addActions(GuiActionFactory::getInstance()->getQActions("Signal Processing"));
@@ -247,10 +247,10 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     help_menu_ = menuBar()->addMenu(tr("&Help"));
     if (application_context->modeActivated (APPLICATION_TEST_MODE))
     {
-        help_menu_->addAction (action("Run Tests..."));
+        help_menu_->addAction (action(tr("Run Tests...")));
         help_menu_->addSeparator();
     }
-    help_menu_->addAction (action("About"));
+    help_menu_->addAction (action(tr("About")));
 }
 
 //-----------------------------------------------------------------------------
@@ -260,7 +260,7 @@ void MainWindow::closeEvent (QCloseEvent* event)
     settings.setValue("geometry", saveGeometry());
     settings.setValue("windowState", saveState());
 
-    GuiActionFactory::getInstance()->getQAction("Exit")->trigger();
+    GuiActionFactory::getInstance()->getQAction(tr("Exit"))->trigger();
     event->ignore ();
 }
 
@@ -312,7 +312,7 @@ void MainWindow::setRecentFiles(const QStringList& recent_file_list)
 void MainWindow::setStatusBarSignalLength(float64 length)
 {
     if (length > 0)
-        status_bar_signal_length_label_->setText (tr("Length: ") + QString::number(length, 'f', 1) + "s");
+        status_bar_signal_length_label_->setText (tr("Length: %1s").arg(QString::number(length, 'f', 1)));
     status_bar_signal_length_label_->setVisible (length > 0);
 }
 
@@ -320,7 +320,7 @@ void MainWindow::setStatusBarSignalLength(float64 length)
 void MainWindow::setStatusBarNrChannels(int32 nr_channels)
 {
     if (nr_channels > 0)
-        status_bar_nr_channels_label_->setText (tr("Channels: ") + QString::number(nr_channels));
+        status_bar_nr_channels_label_->setText (tr("Channels: %1").arg(nr_channels));
     status_bar_nr_channels_label_->setVisible (nr_channels > 0);
 }
 

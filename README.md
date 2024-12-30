@@ -12,7 +12,7 @@ Download
 
 Screenshots
 -----------
-![screenshot-1](https://github.com/cbrnr/sigviewer/raw/master/screenshot-1.png)
+![screenshot-1](https://github.com/cbrnr/sigviewer/raw/main/screenshot-1.png)
 
 Building SigViewer
 ------------------

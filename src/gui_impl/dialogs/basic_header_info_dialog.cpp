@@ -55,21 +55,21 @@ BasicHeaderInfoDialog::BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header,
 
 void BasicHeaderInfoDialog::toggleCollapseExpand()
 {
-    if (toggle_button_->text().compare("Collapse All") == 0)
+    if (toggle_button_->text().compare(tr("Collapse All")) == 0)
     {
         info_tree_widget_->collapseAll();
-        toggle_button_->setText("Expand All");
+        toggle_button_->setText(tr("Expand All"));
     }
-    else if (toggle_button_->text().compare("Expand All") == 0)
+    else if (toggle_button_->text().compare(tr("Expand All")) == 0)
     {
         info_tree_widget_->expandAll();
-        toggle_button_->setText("Collapse All");
+        toggle_button_->setText(tr("Collapse All"));
     }
 }
 
 void BasicHeaderInfoDialog::showStreamName(QTreeWidgetItem *item)
 {
-    if (item->text(0).startsWith("Stream", Qt::CaseInsensitive))
+    if (item->text(0).contains(tr("Stream"), Qt::CaseInsensitive))
     {
         QRegExp rx("(\\d+)");
         int pos = rx.indexIn(item->text(0));
@@ -87,7 +87,7 @@ void BasicHeaderInfoDialog::showStreamName(QTreeWidgetItem *item)
 
 void BasicHeaderInfoDialog::hideStreamName(QTreeWidgetItem *item)
 {
-    if (item->text(0).startsWith("Stream", Qt::CaseInsensitive))
+    if (item->text(0).contains(tr("Stream"), Qt::CaseInsensitive))
     {
         item->setText(1, "");
     }
@@ -166,7 +166,7 @@ void BasicHeaderInfoDialog::buildTree()
     tmp_item = new QTreeWidgetItem(root_item);
     tmp_item->setText(0, tr("Size"));
     QFileInfo file_info (basic_header_->getFilePath());
-    tmp_item->setText(1, QString::number(file_info.size() / 1024).append(tr(" KB")));
+    tmp_item->setText(1, tr("%1 KB").arg(file_info.size() / 1024));
     tmp_item->setText(0, tr("File Size"));
 
     // events
@@ -176,21 +176,21 @@ void BasicHeaderInfoDialog::buildTree()
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Number"));
-    tmp_item->setText(1, QString::number(basic_header_->getNumberEvents()).append(tr(" events")));
+    tmp_item->setText(1, tr("%1 events").arg(basic_header_->getNumberEvents()));
     tmp_item = new QTreeWidgetItem(root_item);
     // tmp_item ->setTextAlignment(1, Qt::AlignRight);
     tmp_item->setText(0, tr("Sample Rate"));
-    tmp_item->setText(1, QString::number(basic_header_->getEventSamplerate()).append(tr(" Hz")));
+    tmp_item->setText(1, tr("%1 Hz").arg(basic_header_->getEventSamplerate()));
 
     //exclusively for XDF
     if (basic_header_->getFileTypeString().startsWith("XDF", Qt::CaseInsensitive))
     {
-        for (size_t i =0; i < XDFdata->streams.size(); i++)
+        for (size_t i = 0; i < XDFdata->streams.size(); i++)
         {
             // basic
             root_item = new QTreeWidgetItem(info_tree_widget_);
 //            root_item->setText(0, "Stream "+QString::number(i + 1));//+1 for user's convenience (1 based instead 0 based)
-            root_item->setText(0, QString("Stream %1 (%2)").arg(QString::number(i+1)).        //+1 for 1-based indexing
+            root_item->setText(0, tr("Stream %1 (%2)").arg(QString::number(i+1)).        //+1 for 1-based indexing
                                    arg(QString::fromStdString(XDFdata->streams[i].info.name)));
 
 //            root_item->setIcon(0, QIcon(":/images/ic_flag_black_24dp.png"));
@@ -283,7 +283,7 @@ void BasicHeaderInfoDialog::buildTree()
 //            if (channel->getLabel().contains(rx))
 //                channel_item->setText(0, channel->getLabel());
 //            else
-                channel_item->setText(0, QString("Channel %1 (%2)").arg(channel_nr + 1) // +1 for 1-based indexing
+                channel_item->setText(0, tr("Channel %1 (%2)").arg(channel_nr + 1) // +1 for 1-based indexing
                                   .arg(channel->getLabel()));
 
             // channel basic
@@ -297,7 +297,7 @@ void BasicHeaderInfoDialog::buildTree()
             float64 fs = channel->getSampleRate();
             if (fs < 0.0)
                 fs = basic_header_->getSampleRate();
-            tmp_item->setText(1, QString::number(fs).append(tr(" Hz")));
+            tmp_item->setText(1, tr("%1 Hz").arg(fs));
 
             tmp_item = new QTreeWidgetItem(channel_item);
             // tmp_item ->setTextAlignment(1, Qt::AlignRight);

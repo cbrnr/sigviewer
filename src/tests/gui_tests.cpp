@@ -16,9 +16,9 @@ namespace Tests_
 void GuiTests::init ()
 {
     animations_triggered_ = false;
-    if (action("Animations")->isChecked())
+    if (action(tr("Animations"))->isChecked())
     {
-        action("Animations")->trigger();
+        action(tr("Animations"))->trigger();
         animations_triggered_ = true;
     }
 }
@@ -49,7 +49,7 @@ QString GuiTests::run ()
 void GuiTests::cleanup ()
 {
     if (animations_triggered_)
-        action ("Animations")->trigger();
+        action (tr("Animations"))->trigger();
 }
 
 //-----------------------------------------------------------------------------
@@ -83,10 +83,10 @@ QString GuiTests::testZooming ()
 QString GuiTests::testEventEditing ()
 {
     currentVisModel()->selectEvent(1);
-    action ("Delete")->trigger();
+    action (tr("Delete"))->trigger();
     VERIFY (currentVisModel()->getEventManager()->getEvent(1).isNull(), "delete event");
 
-    action ("Undo")->trigger();
+    action (tr("Undo"))->trigger();
     VERIFY (currentVisModel()->getEventManager()->getEvent(1).isNull() == false, "undo delete event");
 
     applicationContext()->getCurrentFileContext()->setState(FILE_STATE_UNCHANGED);
@@ -98,16 +98,16 @@ QString GuiTests::testEventEditing ()
 QString GuiTests::testEnablednessNoOpenFile ()
 {
     QStringList enabled_on_startup;
-    enabled_on_startup << "Animations"
-                       << "Open..."
-                       << "Set Animation Duration"
-                       << "About"
-                       << "Run Tests..."
-                       << "Exit";
+    enabled_on_startup << tr("Animations")
+                       << tr("Open...")
+                       << tr("Set Animation Duration")
+                       << tr("About")
+                       << tr("Run Tests...")
+                       << tr("Exit");
     QList<QAction*> actions = GuiActionFactory::getInstance()->getQActions();
     foreach (QAction* action, actions)
     {
-        VERIFY (((action->isEnabled() && enabled_on_startup.contains(action->text())) || ((action->isEnabled() == false) && (!enabled_on_startup.contains(action->text())))), QString("Action not disabled: ").append(action->text()))
+        VERIFY (((action->isEnabled() && enabled_on_startup.contains(action->text())) || ((action->isEnabled() == false) && (!enabled_on_startup.contains(action->text())))), tr("Action not disabled: %1").arg(action->text()))
     }
     return "";
 }

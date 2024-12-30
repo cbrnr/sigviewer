@@ -75,9 +75,9 @@ void ApplicationContextImpl::setCurrentTabContext (QSharedPointer<TabContext> ta
         current_tab_context_->disconnect (this);
     current_tab_context_ = tab_context;
     if (!connect (current_tab_context_.data(), SIGNAL(selectionStateChanged(TabSelectionState)), SIGNAL(currentTabSelectionStateChanged(TabSelectionState))))
-        throw (Exception ("ApplicationContext::setCurrentTabContext failed to connect to selectionStateChanged"));
+        throw (Exception (tr("ApplicationContext::setCurrentTabContext failed to connect to selectionStateChanged").toStdString()));
     if (!connect (current_tab_context_.data(), SIGNAL(editStateChanged(TabEditState)), SIGNAL(currentTabEditStateChanged(TabEditState))))
-        throw (Exception ("ApplicationContext::setCurrentTabContext failed to connect to editStateChanged"));
+        throw (Exception (tr("ApplicationContext::setCurrentTabContext failed to connect to editStateChanged").toStdString()));
 }
 
 //-------------------------------------------------------------------------
@@ -91,7 +91,7 @@ void ApplicationContextImpl::addFileContext (QSharedPointer<FileContext>file_con
 {
     current_file_context_ = file_context;
     if (!connect (current_file_context_.data(), SIGNAL(stateChanged(FileState)), SIGNAL(currentFileStateChanged(FileState))))
-        throw (Exception ("ApplicationContext::addFileContext faild to connect stateChanged(FileState)"));
+        throw (Exception (tr("ApplicationContext::addFileContext faild to connect stateChanged(FileState)").toStdString()));
     setState (APP_STATE_FILE_OPEN);
 }
 

@@ -54,13 +54,13 @@ protected:
 private:
     void executeCommands (QList<QSharedPointer<QUndoCommand> > commands);
 
-    static QString const DELETE_;
-    static QString const CHANGE_TYPE_;
-    static QString const CHANGE_CHANNEL_;
-    static QString const TO_ALL_CHANNEL_;
-    static QString const COPY_TO_CHANNELS_;
-    static QString const INSERT_OVER_;
-    static QStringList const ACTIONS_;
+    static QString const DELETE_();
+    static QString const CHANGE_TYPE_();
+    static QString const CHANGE_CHANNEL_();
+    static QString const TO_ALL_CHANNEL_();
+    static QString const COPY_TO_CHANNELS_();
+    static QString const INSERT_OVER_();
+    static QStringList const ACTIONS_();
 
     static GuiActionFactoryRegistrator registrator_;
 };

@@ -43,10 +43,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
         for (size_t i = 0; i < XDFdata->streams.size(); i++)
         {
             QTreeWidgetItem* streamItem = new QTreeWidgetItem(ui_.treeWidget);
-            streamItem->setText(0, tr("Stream ").append
-                                (QString::number(i + 1).append(tr(" (")).append     //+1 for user's convenience (1 based instead 0 based)
-                                 (QString::fromStdString(XDFdata->streams[i].info.name))
-                                 .append(") ")));
+            streamItem->setText(0, tr("Stream %1 (%2)").arg(i+1).arg(QString::fromStdString(XDFdata->streams[i].info.name))); //+1 for user's convenience (1 based instead 0 based)
             #if QT_VERSION >= 0x050600
                 streamItem->setFlags(Qt::ItemIsAutoTristate | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
             #else
@@ -83,9 +80,9 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
                     }
 
                     if (channelLabel.isEmpty())
-                        channelItem->setText(0, tr("Channel ").append(QString::number(j + 1)));//+1 for user's convenience (1 based instead 0 based)
+                        channelItem->setText(0, tr("Channel %1").arg(j + 1));//+1 for user's convenience (1 based instead 0 based)
                     else
-                        channelItem->setText(0, tr("Channel ").append(QString::number(j + 1)).append(" (").append(channelLabel.trimmed()).append(")"));//+1 for user's convenience (1 based instead 0 based)
+                        channelItem->setText(0, tr("Channel %1 (%2)").arg(j + 1).arg(channelLabel.trimmed()));//+1 for user's convenience (1 based instead 0 based)
 
                     channelItem->setCheckState(0, Qt::Checked);
                     #if QT_VERSION >= 0x050600
@@ -118,8 +115,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
 //            if (channel_manager_.getChannelLabel(id).contains(rx))
 //                channelItem->setText(0, channel_manager_.getChannelLabel(id));
 //            else
-                channelItem->setText(0, tr("Channel ").append(QString::number(id+1)).   //+1 for 1-based index
-                                     append(" (").append(channel_manager_.getChannelLabel(id)).append(")"));
+                channelItem->setText(0, tr("Channel %1 (%2)").arg(id+1).arg(channel_manager_.getChannelLabel(id)));   //+1 for 1-based index
 
             channelItem->setFlags((Qt::ItemIsEnabled | Qt::ItemIsUserCheckable));
 
@@ -152,7 +148,7 @@ bool ChannelSelectionDialog::isSelected (ChannelID channel_id)
 
     while (*it)
     {
-        if ((*it)->text(0).startsWith("Channel ", Qt::CaseInsensitive))
+        if ((*it)->text(0).contains(tr("Channel"), Qt::CaseInsensitive))
         {
             if (channelNumber++ == channel_id)
             {
@@ -174,7 +170,7 @@ void ChannelSelectionDialog::setSelected (ChannelID channel_id, bool selected)
 
     while (*it)
     {
-        if ((*it)->text(0).startsWith("Channel ", Qt::CaseInsensitive))
+        if ((*it)->text(0).contains(tr("Channel"), Qt::CaseInsensitive))
         {
             if (channelNumber++ == channel_id)
             {
@@ -237,7 +233,7 @@ void ChannelSelectionDialog::on_button_box__accepted ()
 
     while (*it)
     {
-        if ((*it)->text(0).startsWith("Channel"))
+        if ((*it)->text(0).contains(tr("Channel")))
         {
             if ((*it)->checkState(0) == Qt::Checked)
                 color_manager_->setChannelColor(channelNumber, (*it)->backgroundColor(1));
@@ -264,14 +260,14 @@ void ChannelSelectionDialog::on_treeWidget_itemClicked(QTreeWidgetItem *item, in
 {
     if (column == COLOR_INDEX_)
     {
-        if (item->text(0).startsWith("Channel", Qt::CaseInsensitive))
+        if (item->text(0).contains(tr("Channel"), Qt::CaseInsensitive))
         {
             QColorDialog color_dialog (item->backgroundColor (1), this);
             color_dialog.setOption(QColorDialog::ShowAlphaChannel);
             if (color_dialog.exec () == QDialog::Accepted)
                 updateColor(item, color_dialog.selectedColor());
         }
-        else if (item->text(0).startsWith("Stream", Qt::CaseInsensitive) && item->childCount())
+        else if (item->text(0).contains(tr("Stream"), Qt::CaseInsensitive) && item->childCount())
         {
             QColorDialog color_dialog (item->backgroundColor (1), this);
             color_dialog.setOption(QColorDialog::ShowAlphaChannel);
@@ -334,12 +330,12 @@ void ChannelSelectionDialog::updateColor (QTreeWidgetItem *item, QColor const& c
 
 void sigviewer::ChannelSelectionDialog::on_toggle_button_clicked()
 {
-    if (ui_.toggle_button->text().compare("Collapse All") == 0)
+    if (ui_.toggle_button->text().compare(tr("Collapse All")) == 0)
     {
         ui_.treeWidget->collapseAll();
         ui_.toggle_button->setText(tr("Expand All"));
     }
-    else if (ui_.toggle_button->text().compare("Expand All") == 0)
+    else if (ui_.toggle_button->text().compare(tr("Expand All")) == 0)
     {
         ui_.treeWidget->expandAll();
         ui_.toggle_button->setText(tr("Collapse All"));

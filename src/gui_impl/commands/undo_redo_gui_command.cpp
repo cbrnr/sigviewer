@@ -9,21 +9,52 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
-QString const UndoRedoGuiCommand::UNDO_ = "Undo";
-QString const UndoRedoGuiCommand::REDO_ = "Redo";
-QStringList const UndoRedoGuiCommand::ACTIONS_ = QStringList () <<
-                                                 UndoRedoGuiCommand::UNDO_ <<
-                                                 UndoRedoGuiCommand::REDO_;
+namespace {
+
+class UndoRedoGuiCommandFactory: public GuiActionCommandFactory
+{
+public:
+    QSharedPointer<GuiActionCommand> createCommand() override
+    {
+        return QSharedPointer<UndoRedoGuiCommand> (new UndoRedoGuiCommand);
+    }
+};
+
+} // unnamed namespace
+
+QString const UndoRedoGuiCommand::UNDO_()
+{
+    static QString value = tr("Undo");
+
+    return value;
+}
+
+QString const UndoRedoGuiCommand::REDO_()
+{
+    static QString value = tr("Redo");
+
+    return value;
+}
+
+QStringList const UndoRedoGuiCommand::ACTIONS_()
+{
+    static QStringList result = {
+        UndoRedoGuiCommand::UNDO_(),
+        UndoRedoGuiCommand::REDO_(),
+    };
+
+    return result;
+}
 
 //-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator UndoRedoGuiCommand::registrator_ ("UndoRedo",
-                                                              QSharedPointer<UndoRedoGuiCommand> (new UndoRedoGuiCommand));
+                                                              QSharedPointer<UndoRedoGuiCommandFactory> (new UndoRedoGuiCommandFactory));
 
 
 
 //-----------------------------------------------------------------------------
 UndoRedoGuiCommand::UndoRedoGuiCommand ()
-    : GuiActionCommand (ACTIONS_)
+    : GuiActionCommand (ACTIONS_())
 {
     // nothing to do here
 }
@@ -32,13 +63,13 @@ UndoRedoGuiCommand::UndoRedoGuiCommand ()
 //-----------------------------------------------------------------------------
 void UndoRedoGuiCommand::init ()
 {
-    setShortcut (UNDO_, QKeySequence::Undo);
-    setShortcut (REDO_, QKeySequence::Redo);
-    setIcon (UNDO_, QIcon (":/images/ic_undo_black_24dp.png"));
-    setIcon (REDO_, QIcon (":/images/ic_redo_black_24dp.png"));
+    setShortcut (UNDO_(), QKeySequence::Undo);
+    setShortcut (REDO_(), QKeySequence::Redo);
+    setIcon (UNDO_(), QIcon (":/images/ic_undo_black_24dp.png"));
+    setIcon (REDO_(), QIcon (":/images/ic_redo_black_24dp.png"));
 
-    resetActionTriggerSlot (UNDO_, SLOT(undo()));
-    resetActionTriggerSlot (REDO_, SLOT(redo()));
+    resetActionTriggerSlot (UNDO_(), SLOT(undo()));
+    resetActionTriggerSlot (REDO_(), SLOT(redo()));
 }
 
 //-----------------------------------------------------------------------------
@@ -66,8 +97,8 @@ void UndoRedoGuiCommand::evaluateEnabledness ()
                     getTabEditState() != NO_TAB_EDIT_STATE &&
                     getApplicationState() == APP_STATE_FILE_OPEN;
 
-    getQAction (UNDO_)->setEnabled (can_undo);
-    getQAction (REDO_)->setEnabled (can_redo);
+    getQAction (UNDO_())->setEnabled (can_undo);
+    getQAction (REDO_())->setEnabled (can_redo);
 }
 
 }

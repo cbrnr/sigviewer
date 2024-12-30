@@ -123,7 +123,7 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
             {
                 QMessageBox msgBox;
                 msgBox.setIcon(QMessageBox::Warning);
-                msgBox.setText("No Stream Found");
+                msgBox.setText(QObject::tr("No Stream Found"));
                 msgBox.setStandardButtons(QMessageBox::Ok);
                 msgBox.exec();
 
@@ -212,7 +212,7 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
 
             if (showWarning)
                 QMessageBox::warning(0, "SigViewer",
-                                     "The effective sampling rate of at least one stream is significantly different than the reported nominal sampling rate. Signal visualization might be inaccurate.", QMessageBox::Ok, QMessageBox::Ok);
+                                     QObject::tr("The effective sampling rate of at least one stream is significantly different than the reported nominal sampling rate. Signal visualization might be inaccurate."), QMessageBox::Ok, QMessageBox::Ok);
 
 
             basic_header_ = QSharedPointer<BasicHeader>
@@ -238,7 +238,7 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
         {
             QMessageBox msgBox;
             msgBox.setIcon(QMessageBox::Warning);
-            msgBox.setText("Unable to open file.");
+            msgBox.setText(QObject::tr("Unable to open file."));
             msgBox.setStandardButtons(QMessageBox::Ok);
             msgBox.exec();
 
@@ -249,7 +249,7 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
     {
         QMessageBox msgBox;
         msgBox.setIcon(QMessageBox::Warning);
-        msgBox.setText("File does not exist.");
+        msgBox.setText(QObject::tr("File does not exist."));
         msgBox.setStandardButtons(QMessageBox::Ok);
         msgBox.exec();
 

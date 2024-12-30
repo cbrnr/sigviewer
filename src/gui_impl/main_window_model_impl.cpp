@@ -153,7 +153,7 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
     {
         tab_widget_ = new QTabWidget (main_window_);
         if (!connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int))))
-            throw (Exception ("MainWindowModelImpl::createSignalVisualisationOfFile failed: connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)))"));
+            throw (Exception (tr("MainWindowModelImpl::createSignalVisualisationOfFile failed: connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)))").toStdString()));
         connect (tab_widget_, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
         tab_widget_->setTabsClosable (true);
     }
@@ -176,7 +176,7 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
     connect (file_ctx.data(), SIGNAL(fileNameChanged(QString const&)), SLOT(resetCurrentFileName(QString const&)));
 
     int tab_index = createSignalVisualisationImpl (file_ctx->getChannelManager(), file_ctx->getEventManager());
-    QString tab_title ("Signal Data");
+    QString tab_title (tr("Signal Data"));
 
     main_window_->setCentralWidget(tab_widget_);
     tab_widget_->show();
@@ -229,9 +229,9 @@ QSharedPointer<EventView> MainWindowModelImpl::getCurrentEventView ()
 void MainWindowModelImpl::resetCurrentFileName (QString const& file_name)
 {
     if (file_name.size() == 0)
-        main_window_->setWindowTitle (tr("SigViewer"));
+        main_window_->setWindowTitle (QString("SigViewer"));
     else
-        main_window_->setWindowTitle (file_name + tr(" - SigViewer"));
+        main_window_->setWindowTitle (QString("%1 - SigViewer").arg(file_name));
 }
 
 //-------------------------------------------------------------------------
