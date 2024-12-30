@@ -23,15 +23,15 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
     ui->setupUi(this);
     this->setWindowTitle("Resampling");
 
-    if (XDFdata->sampleRateMap.size() > 1)
+    if (XDFdata->sample_rates.size() > 1)
     {
         QString text = "This file contains signals of multiple sample rates.<br> "
                        "Sigviewer needs to resample all channels to a unified sample rate in order to display them.<br> "
                        "Please choose a sample rate below (This won't change the actual file content):";
         ui->label->setText(text);
     }
-    else if (XDFdata->sampleRateMap.size() == 1 &&
-             XDFdata->sampleRateMap.count(0))
+    else if (XDFdata->sample_rates.size() == 1 &&
+             XDFdata->sample_rates.count(0))
     {
         ui->label->setText("The nominal sample rate of this file is 0.\n"
                            "Please choose a preferred sample rate:");

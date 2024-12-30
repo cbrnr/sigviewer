@@ -120,7 +120,8 @@ void EventEditingWidget::on_type_combobox__currentIndexChanged (int combo_box_in
         {
             if (selected_signal_event_->getStream() == XDFdata->userAddedStream)
             {
-                int index = selected_signal_event_->getId() - XDFdata->eventType.size();
+//                int index = selected_signal_event_->getId() - XDFdata->eventType.size();
+                int index = 0;
                 XDFdata->userCreatedEvents[index].first =
                         event_manager_->getNameOfEventType(event_type).toStdString();
             }
@@ -149,10 +150,10 @@ void EventEditingWidget::on_begin_spinbox__editingFinished ()
     {
         if (selected_signal_event_->getStream() == XDFdata->userAddedStream)
         {
-            int index = selected_signal_event_->getId() - XDFdata->eventType.size();
-            XDFdata->userCreatedEvents[index].second =
-                    event_manager_->getEvent(selected_signal_event_->getId())->getPositionInSec()
-                    + XDFdata->minTS;
+//            int index = selected_signal_event_->getId() - XDFdata->eventType.size();
+//            XDFdata->userCreatedEvents[index].second =
+//                    event_manager_->getEvent(selected_signal_event_->getId())->getPositionInSec()
+//                    + XDFdata->minTS;
         }
     }
 }

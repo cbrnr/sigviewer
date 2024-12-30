@@ -456,26 +456,26 @@ void SignalGraphicsItem::mousePressEvent (QGraphicsSceneMouseEvent * event )
                 {
                     //check whether a user added stream has already been existing
                     XDFdata->userAddedStream = XDFdata->streams.size();
-                    XDFdata->streams.emplace_back();
+//                    XDFdata->streams.emplace_back();
                     time_t currentTime = time(nullptr);
                     std::string timeString = asctime(localtime(&currentTime));
                     timeString.pop_back(); //we don't need '\n' at the end
-                    XDFdata->streams.back().streamHeader =
-                            "<?xml version='1.0'?>"
-                            "<info>"
-                                "<name>User Created Event Stream</name>"
-                                "<type>Events</type>"
-                                "<channel_count>1</channel_count>"
-                                "<nominal_srate>0</nominal_srate>"
-                                "<channel_format>string</channel_format>"
-                                "<source_id>User Added Events</source_id>"
-                                "<version>1</version>"
-                                "<created_at>" + timeString + "</created_at>"
-                                "<uid/>"
-                                "<session_id/>"
-                                "<hostname/>"
-                                "<desc />"
-                            "</info>";
+//                    XDFdata->streams.back().streamHeader =
+//                            "<?xml version='1.0'?>"
+//                            "<info>"
+//                                "<name>User Created Event Stream</name>"
+//                                "<type>Events</type>"
+//                                "<channel_count>1</channel_count>"
+//                                "<nominal_srate>0</nominal_srate>"
+//                                "<channel_format>string</channel_format>"
+//                                "<source_id>User Added Events</source_id>"
+//                                "<version>1</version>"
+//                                "<created_at>" + timeString + "</created_at>"
+//                                "<uid/>"
+//                                "<session_id/>"
+//                                "<hostname/>"
+//                                "<desc />"
+//                            "</info>";
                 }
                 new_signal_event_ = QSharedPointer<SignalEvent>
                         (new SignalEvent(sample_cleaned_pos,
