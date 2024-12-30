@@ -42,14 +42,30 @@ BiosigBasicHeader::BiosigBasicHeader (QString file_format, QString const& file_p
     : BasicHeader (file_path),
       number_samples_ (XDFdata->totalLen)
 {
-    if (XDFdata->dictionary.size())
+    std::unordered_set<std::string> event_types;
+    for (const auto& [stream_id, stream] : XDFdata->streams)
     {
-        for (unsigned index = 0; index < XDFdata->dictionary.size(); index++)
+        if (std::holds_alternative<std::vector<std::vector<std::string>>>(
+                stream.time_series))
         {
-            //below we use index+1 because in SigViewer, 0 is reserved for a special event type.
-            //thus we count from 1
-            user_defined_event_map_[index + 1] = QString::fromStdString(XDFdata->dictionary[index]);
+            const auto& time_series = std::get<std::vector<std::vector<std::string>>>(
+                stream.time_series);
+            for (const std::vector<std::string>& channel : time_series)
+            {
+                for (const std::string& event : channel)
+                {
+                    event_types.insert(event);
+                }
+            }
         }
+    }
+
+    for (unsigned index = 0; const std::string& event_type : event_types)
+    {
+        //below we use index+1 because in SigViewer, 0 is reserved for a special event type.
+        //thus we count from 1
+        user_defined_event_map_[index + 1] = QString::fromStdString(event_type);
+        index++;
     }
 
     QString fileType = "XDF v" + QString::number(XDFdata->version, 'f', 1);
@@ -89,12 +105,13 @@ void BiosigBasicHeader::readChannelsInfo (HDRTYPE const* raw_header)
 //-------------------------------------------------------------------------
 void BiosigBasicHeader::readChannelsInfo (QString file_format)
 {
-    unsigned ch = 0;
-    for (unsigned channel_index = 0; channel_index < XDFdata->numerical_channel_count_;
-         channel_index++)
+    int channel_index = 0;
+    for (const auto& [stream_id, stream] : XDFdata->streams)
     {
+        if (stream.info.channel_format == "string") continue;
         QSharedPointer<SignalChannel> channel(new SignalChannel(channel_index, file_format));
-        addChannel(ch++, channel);
+        addChannel(channel_index, channel);
+        channel_index++;
     }
 }
 
