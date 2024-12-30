@@ -7,6 +7,7 @@ sigviewer.pro.user
 *.o
 tmp/
 bin/
+build/
 .qmake.stash
 Makefile
 src/Makefile
