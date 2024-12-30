@@ -37,7 +37,7 @@ void NewEventUndoCommand::undo ()
         XDFdata->userCreatedEvents.pop_back();
         if (XDFdata->userCreatedEvents.empty())
         {
-            XDFdata->streams.pop_back();
+            XDFdata->streams.erase(XDFdata->userAddedStream);
             XDFdata->userAddedStream = 0;
         }
     }

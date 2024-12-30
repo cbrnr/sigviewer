@@ -24,9 +24,26 @@
 
 namespace sigviewer
 {
+namespace
+{
+
+[[nodiscard]] std::unordered_set<double> getUniqueSampleRates()
+{
+    std::unordered_set<double> sample_rates;
+    for (const auto& [stream_id, stream] : XDFdata->streams)
+    {
+        if (stream.info.channel_format != "string")
+        {
+            sample_rates.insert(stream.info.nominal_srate);
+        }
+    }
+    return sample_rates;
+}
+
+} // namespace
 
 //the object to store XDF data
-QSharedPointer<Xdf> XDFdata = QSharedPointer<Xdf>(new Xdf);
+QSharedPointer<xdf::Xdf> XDFdata = QSharedPointer<xdf::Xdf>(new xdf::Xdf);
 
 
 //-----------------------------------------------------------------------------
@@ -140,7 +157,7 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
                 }
                 else
                 {
-                    Xdf empty;
+                    xdf::Xdf empty;
                     std::swap(*XDFdata, empty);
                     return "Cancelled";
                 }
@@ -177,7 +194,7 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
                 }
                 else
                 {
-                    Xdf empty;
+                    xdf::Xdf empty;
                     std::swap(*XDFdata, empty);
                     return "Cancelled";
                 }
@@ -201,7 +218,7 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
 
             bool showWarning = false;
 
-            for (auto const &stream : XDFdata->streams)
+            for (const auto& [stream_id, stream] : XDFdata->streams)
             {
                 if (std::abs(stream.info.effective_sample_rate - stream.info.nominal_srate) >
                         stream.info.nominal_srate / 20)
@@ -218,7 +235,14 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
             basic_header_ = QSharedPointer<BasicHeader>
                     (new BiosigBasicHeader ("XDF", file_path));
 
-            basic_header_->setNumberEvents(XDFdata->eventType.size());
+            size_t num_events = 0;
+            for (const auto& [stream_id, stream] : XDFdata->streams)
+            {
+                if (stream.info.channel_format != "string") continue;
+                num_events += stream.info.sample_count;
+            }
+
+            basic_header_->setNumberEvents(num_events);
 
             if (XDFdata->fileEffectiveSampleRate)
                 basic_header_->setEventSamplerate(XDFdata->fileEffectiveSampleRate);
@@ -268,17 +292,15 @@ int XDFReader::setStreamColors()
     //some streams contains text only and no channels, so we skip those streams
     //because the colors I picked look the best when they are sorted in order
     int colorChoice = -1;
-    int stream = -1;
-    for (size_t i = 0; i < XDFdata->totalCh; i++)
+    int channel_index = 0;
+    for (const auto& [stream_id, stream] : XDFdata->streams)
     {
-        if (stream != XDFdata->streamMap[i])
+        colorChoice++;
+        if (colorChoice == 8)   //we only have 8 colors
         {
-            stream = XDFdata->streamMap[i];
-            colorChoice++;
-            if (colorChoice == 8)   //we only have 8 colors
-                colorChoice = 0;
+            colorChoice = 0;
         }
-        colorPicker->setChannelColor(i, colorList[colorChoice]);
+        colorPicker->setChannelColor(channel_index++, colorList[colorChoice]);
     }
 
     colorPicker->saveSettings();
@@ -289,16 +311,18 @@ int XDFReader::setStreamColors()
 //-----------------------------------------------------------------------------
 XDFReader::sampleRateTypes XDFReader::selectSampleRateType()
 {
-    switch (XDFdata->sampleRateMap.size()) {
+    const std::unordered_set<double> unique_sample_rates =
+            getUniqueSampleRates();
+    switch (unique_sample_rates.size()) {
     case 0:
         return No_streams_found;
     case 1:
-        if (XDFdata->sampleRateMap.count(0))
+        if (unique_sample_rates.count(0))
             return Zero_Hz_Only;
         else
             return Mono_Sample_Rate;
     case 2:
-        if (XDFdata->sampleRateMap.count(0))
+        if (unique_sample_rates.count(0))
             return Mono_Sample_Rate;
         else
             return Multi_Sample_Rate;
@@ -310,75 +334,85 @@ XDFReader::sampleRateTypes XDFReader::selectSampleRateType()
 //-----------------------------------------------------------------------------
 void XDFReader::bufferAllChannels () const
 {
-    size_t numberOfSamples = XDFdata->totalLen;
+    const size_t samples_count = XDFdata->totalLen;
 
     QString progress_name = QObject::tr("Loading data...");
 
     //load all signals channel by channel
     unsigned channel_id = 0;
-    for (auto &stream : XDFdata->streams)
+    for (const std::pair<int, xdf::Xdf::Stream>& entry : XDFdata->streams)
     {
-        if (stream.info.nominal_srate != 0 && stream.info.channel_format.compare("string")) // filter the string streams
+        const auto& [stream_id, stream] = entry;
+        if (stream.info.nominal_srate != 0 && stream.info.channel_format != "string")
         {
-            int startingPosition = (stream.info.first_timestamp - XDFdata->minTS) * XDFdata->majSR;
+            std::visit([&](auto&& time_series) {
+                const auto& [stream_id, stream] = entry;
+                using T = typename std::remove_reference_t<decltype(time_series)>
+                    ::value_type::value_type;
+                if constexpr (std::is_arithmetic_v<T>) {
+                    int startingPosition = (stream.info.first_timestamp - XDFdata->minTS)
+                            * XDFdata->majSR;
 
-            if (stream.time_series.front().size() > XDFdata->totalLen - startingPosition )
-                startingPosition = XDFdata->totalLen - stream.time_series.front().size();
-
-            for (auto &row : stream.time_series)
-            {
-                ProgressBar::instance().increaseValue (1, progress_name);
-
-                QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples, NAN));
-
-                std::copy(row.begin(), row.end(), raw_data->begin() + startingPosition);
-                QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata->majSR));
-
-                channel_map_[channel_id] = data_block;
-                channel_id++;
-
-                std::vector<float> nothing;
-                row.swap(nothing);
-            }
-            std::vector<double> nothing2;
-            stream.time_stamps.swap(nothing2);
-        }
-        //else if: irregualar samples
-        else if (stream.info.nominal_srate == 0 && !stream.time_series.empty())
-        {
-            for (auto &row : stream.time_series)
-            {
-                ProgressBar::instance().increaseValue (1, progress_name);
-
-                QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples, NAN));
-
-                for (size_t i = 0; i < row.size(); i++)
-                {
-                    //find out the position using the timestamp provided
-                    float* pt = raw_data->begin()  + (int)(round((stream.time_stamps[i]- XDFdata->minTS)* XDFdata->majSR));
-                    *pt = row[i];
-
-                    //if i is not the last element of the irregular time series
-                    if (i != stream.time_stamps.size() - 1)
+                    if (time_series.front().size() > samples_count - startingPosition )
                     {
-                        //using linear interpolation to fill in the space between every two signals
-                        int interval = round((stream.time_stamps[i+1]
-                                - stream.time_stamps[i]) * XDFdata->majSR);
-                        for (int interpolation = 1; interpolation <= interval; interpolation++)
-                        {
-                            *(pt + interpolation) = row[i] + interpolation * ((row[i+1] - row[i])) / (interval + 1);
-                        }
+                        startingPosition = samples_count - time_series.front().size();
+                    }
+
+                    for (auto& row : time_series)
+                    {
+                        ProgressBar::instance().increaseValue (1, progress_name);
+
+                        QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (samples_count, NAN));
+
+                        std::copy(row.begin(), row.end(), raw_data->begin() + startingPosition);
+                        QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata->majSR));
+
+                        channel_map_[channel_id] = data_block;
+                        channel_id++;
                     }
                 }
-                QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata->majSR));
-                channel_map_[channel_id] = data_block;
-                channel_id++;
+            }, stream.time_series);
+        }
+        //else if: irregualar samples
+        else if (stream.info.nominal_srate == 0 &&
+                 stream.time_series.index() != std::variant_npos)
+        {
+            std::visit([&](auto&& time_series) {
+                const auto& [stream_id, stream] = entry;
+                using T = typename std::remove_reference_t<decltype(time_series)>
+                    ::value_type::value_type;
+                if constexpr (std::is_arithmetic_v<T>) {
+                    for (auto &row : time_series)
+                    {
+                        ProgressBar::instance().increaseValue (1, progress_name);
 
-                std::vector<float> nothing;
-                row.swap(nothing);
-            }
-            std::vector<double> nothing2;
-            stream.time_stamps.swap(nothing2);
+                        QSharedPointer<QVector<float32> > raw_data(
+                            new QVector<float32> (samples_count, NAN));
+
+                        for (size_t i = 0; i < row.size(); i++)
+                        {
+                            //find out the position using the timestamp provided
+                            float* pt = raw_data->begin()  + (int)(round((stream.time_stamps[i]- XDFdata->minTS)* XDFdata->majSR));
+                            *pt = static_cast<float>(row[i]);
+
+                            //if i is not the last element of the irregular time series
+                            if (i != stream.time_stamps.size() - 1)
+                            {
+                                //using linear interpolation to fill in the space between every two signals
+                                int interval = round((stream.time_stamps[i+1]
+                                                      - stream.time_stamps[i]) * XDFdata->majSR);
+                                for (int interpolation = 1; interpolation <= interval; interpolation++)
+                                {
+                                    *(pt + interpolation) = row[i] + interpolation * ((row[i+1] - row[i])) / (interval + 1);
+                                }
+                            }
+                        }
+                        QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, XDFdata->majSR));
+                        channel_map_[channel_id] = data_block;
+                        channel_id++;
+                    }
+                }
+            }, stream.time_series);
         }
     }
 
@@ -388,7 +422,12 @@ void XDFReader::bufferAllChannels () const
 //-------------------------------------------------------------------------
 void XDFReader::bufferAllEvents () const
 {
-    unsigned number_events = XDFdata->eventMap.size();
+    size_t num_events = 0;
+    for (const auto& [stream_id, stream] : XDFdata->streams)
+    {
+        if (stream.info.channel_format != "string") continue;
+        num_events += stream.info.sample_count;
+    }
 
     double eventSampleRate = 0;
 
@@ -397,17 +436,49 @@ void XDFReader::bufferAllEvents () const
     else
         eventSampleRate = XDFdata->majSR;
 
-    for (unsigned index = 0; index < number_events; index++)
-    {
-        QSharedPointer<SignalEvent> event
-                (new SignalEvent (round ((XDFdata->eventMap[index].first.second - XDFdata->minTS) * eventSampleRate),
-                                  XDFdata->eventType[index] + 1,//index+1 because in SigViewer and libbiosig
-                                  //0 is reserved for a special type of event. Thus we increment by 1
-                                  eventSampleRate, XDFdata->eventMap[index].second));
+    int event_index = 0;
+    // Starting from 1 because in SigViewer and libbiosig,
+    // 0 is reserved for a special type of event.
+    EventType next_event_type = 1;
+    std::unordered_map<std::string, EventType> event_type_map;
 
-        event->setChannel (UNDEFINED_CHANNEL);
-        event->setDuration (0);
-        events_.append (event);
+    for (const auto& [stream_id, stream] : XDFdata->streams)
+    {
+        if (std::holds_alternative<std::vector<std::vector<std::string>>>(
+                stream.time_series))
+        {
+            const auto& time_series = std::get<std::vector<std::vector<std::string>>>(
+                stream.time_series);
+            for (const std::vector<std::string>& channel : time_series)
+            {
+                for (int i = 0; i < channel.size(); i++)
+                {
+                    const std::string& sample = channel[i];
+                    EventType event_type;
+                    if (const auto it = event_type_map.find(sample);
+                        it != event_type_map.end())
+                    {
+                        event_type = it->second;
+                    }
+                    else
+                    {
+                        event_type = next_event_type;
+                        event_type_map[sample] = next_event_type;
+                        next_event_type++;
+                    }
+                    QSharedPointer<SignalEvent> event(new SignalEvent (
+                        /*position=*/round ((stream.time_stamps[i] - XDFdata->minTS) * eventSampleRate),
+                        /*type=*/event_type,
+                        /*sample_rate=*/eventSampleRate,
+                        /*streamNumber=*/stream_id));
+
+                    event->setChannel (UNDEFINED_CHANNEL);
+                    event->setDuration (0);
+                    events_.append (event);
+                    event_index++;
+                }
+            }
+        }
     }
 
     buffered_all_events_ = true;
