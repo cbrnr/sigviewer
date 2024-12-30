@@ -321,11 +321,13 @@ void XDFReader::bufferAllChannels () const
 
     //load all signals channel by channel
     unsigned channel_id = 0;
-    for (const auto& [stream_id, stream] : XDFdata->streams)
+    for (const std::pair<int, xdf::Xdf::Stream>& entry : XDFdata->streams)
     {
+        const auto& [stream_id, stream] = entry;
         if (stream.info.nominal_srate != 0 && stream.info.channel_format != "string")
         {
             std::visit([&](auto&& time_series) {
+                const auto& [stream_id, stream] = entry;
                 using T = typename std::remove_reference_t<decltype(time_series)>
                     ::value_type::value_type;
                 if constexpr (std::is_arithmetic_v<T>) {
@@ -357,6 +359,7 @@ void XDFReader::bufferAllChannels () const
                  stream.time_series.index() != std::variant_npos)
         {
             std::visit([&](auto&& time_series) {
+                const auto& [stream_id, stream] = entry;
                 using T = typename std::remove_reference_t<decltype(time_series)>
                     ::value_type::value_type;
                 if constexpr (std::is_arithmetic_v<T>) {
