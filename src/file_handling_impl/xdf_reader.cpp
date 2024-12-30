@@ -24,6 +24,23 @@
 
 namespace sigviewer
 {
+namespace
+{
+
+[[nodiscard]] std::unordered_set<double> getUniqueSampleRates()
+{
+    std::unordered_set<double> sample_rates;
+    for (const auto& [stream_id, stream] : XDFdata->streams)
+    {
+        if (stream.info.channel_format != "string")
+        {
+            sample_rates.insert(stream.info.nominal_srate);
+        }
+    }
+    return sample_rates;
+}
+
+} // namespace
 
 //the object to store XDF data
 QSharedPointer<xdf::Xdf> XDFdata = QSharedPointer<xdf::Xdf>(new xdf::Xdf);
@@ -294,16 +311,18 @@ int XDFReader::setStreamColors()
 //-----------------------------------------------------------------------------
 XDFReader::sampleRateTypes XDFReader::selectSampleRateType()
 {
-    switch (XDFdata->sample_rates.size()) {
+    const std::unordered_set<double> unique_sample_rates =
+            getUniqueSampleRates();
+    switch (unique_sample_rates.size()) {
     case 0:
         return No_streams_found;
     case 1:
-        if (XDFdata->sample_rates.count(0))
+        if (unique_sample_rates.count(0))
             return Zero_Hz_Only;
         else
             return Mono_Sample_Rate;
     case 2:
-        if (XDFdata->sample_rates.count(0))
+        if (unique_sample_rates.count(0))
             return Mono_Sample_Rate;
         else
             return Multi_Sample_Rate;

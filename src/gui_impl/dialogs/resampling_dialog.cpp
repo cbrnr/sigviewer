@@ -2,12 +2,31 @@
 // Licensed under the GNU General Public License (GPL)
 // https://www.gnu.org/licenses/gpl
 
+#include <unordered_set>
 
 #include "resampling_dialog.h"
 #include "ui_resampling_dialog.h"
 #include "file_handling_impl/xdf_reader.h"
 
-namespace sigviewer {
+namespace sigviewer
+{
+namespace
+{
+
+[[nodiscard]] std::unordered_set<double> getUniqueSampleRates()
+{
+    std::unordered_set<double> sample_rates;
+    for (const auto& [stream_id, stream] : XDFdata->streams)
+    {
+        if (stream.info.channel_format != "string")
+        {
+            sample_rates.insert(stream.info.nominal_srate);
+        }
+    }
+    return sample_rates;
+}
+
+} // namespace
 
 ResamplingDialog::ResamplingDialog(QWidget *parent) :
     QDialog(parent),
@@ -23,15 +42,17 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
     ui->setupUi(this);
     this->setWindowTitle(tr("Resampling"));
 
-    if (XDFdata->sample_rates.size() > 1)
+    const std::unordered_set<double> unique_sample_rates =
+            getUniqueSampleRates();
+    if (unique_sample_rates.size() > 1)
     {
         QString text = tr("This file contains signals of multiple sample rates.<br> "
                                    "Sigviewer needs to resample all channels to a unified sample rate in order to display them.<br> "
                                    "Please choose a sample rate below (This won't change the actual file content):");
         ui->label->setText(text);
     }
-    else if (XDFdata->sample_rates.size() == 1 &&
-             XDFdata->sample_rates.count(0))
+    else if (unique_sample_rates.size() == 1 &&
+             unique_sample_rates.count(0))
     {
         ui->label->setText(tr("The nominal sample rate of this file is 0.\n"
                                        "Please choose a preferred sample rate:"));

@@ -60,7 +60,8 @@ BiosigBasicHeader::BiosigBasicHeader (QString file_format, QString const& file_p
         }
     }
 
-    for (unsigned index = 0; const std::string& event_type : event_types)
+    unsigned index = 0;
+    for (const std::string& event_type : event_types)
     {
         //below we use index+1 because in SigViewer, 0 is reserved for a special event type.
         //thus we count from 1
