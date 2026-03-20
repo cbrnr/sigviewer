@@ -1,4 +1,5 @@
 Version X.X.X
+(*) Switch from Qt5 to Qt6
 (B) Fix crash when exporting events to CSV
 (B) Fix evt import when sampling rates differ
 
