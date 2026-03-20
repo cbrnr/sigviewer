@@ -2,4 +2,4 @@
 
 cd "$(git rev-parse --show-toplevel)"
 
-lupdate-qt5 $(git ls-files | egrep '\.cpp$|\.h$|\.ui$') -ts $(git ls-files | egrep '\.ts$') "${@}"
+lupdate $(git ls-files | grep -E '\.cpp$|\.h$|\.ui$') -ts $(git ls-files | grep -E '\.ts$') "${@}"

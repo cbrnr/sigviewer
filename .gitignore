@@ -1,4 +1,7 @@
 build/
 external/
-.qmake.stash
 Makefile
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
