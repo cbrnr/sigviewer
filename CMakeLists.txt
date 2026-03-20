@@ -26,7 +26,7 @@ qt_standard_project_setup()
 set(DEPS_DIR "${CMAKE_SOURCE_DIR}/external"
     CACHE PATH "Directory containing pre-built libxdf and libbiosig")
 
-# The versions.cmake file is written by cmake/download_deps.cmake and records
+# The versions.cmake file is written by download_deps.cmake and records
 # the versions of the libraries that are actually present in DEPS_DIR.
 set(_DEPS_VERSIONS_FILE "${DEPS_DIR}/versions.cmake")
 if(NOT EXISTS "${_DEPS_VERSIONS_FILE}")
@@ -34,7 +34,7 @@ if(NOT EXISTS "${_DEPS_VERSIONS_FILE}")
         "Dependency version file not found:\n"
         "  ${_DEPS_VERSIONS_FILE}\n\n"
         "Run the following command to fetch the required pre-built libraries:\n"
-        "  cmake -P cmake/download_deps.cmake\n\n"
+        "  cmake -P download_deps.cmake\n\n"
         "Or manually place the libraries in ${DEPS_DIR} and create\n"
         "versions.cmake with:\n"
         "  set(LIBXDF_VERSION_INSTALLED    \"${LIBXDF_VERSION}\")\n"
@@ -51,7 +51,7 @@ foreach(_lib IN ITEMS LIBXDF LIBBIOSIG)
             "${_lib} version mismatch.\n"
             "  Required : ${_required}\n"
             "  Installed: ${_found}\n\n"
-            "Run cmake -P cmake/download_deps.cmake to install the correct version."
+            "Run cmake -P download_deps.cmake to install the correct version."
         )
     endif()
 endforeach()
