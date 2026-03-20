@@ -8,7 +8,7 @@
 
 #include "base/sigviewer_user_types.h"
 #include "biosig.h"
-
+#undef isfinite
 #include <QStringList>
 #include <QMap>
 #include <QList>
