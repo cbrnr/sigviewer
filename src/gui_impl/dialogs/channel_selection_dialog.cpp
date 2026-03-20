@@ -59,7 +59,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
             {
                 QColor streamColor = color_manager_->getChannelColor (channelCount);
                 streamItem->setText(1, streamColor.name());
-                streamItem->setBackgroundColor(1, streamColor);
+                streamItem->setBackground(1, QBrush(streamColor));
                 if (ColorManager::isDark(streamColor))
                     streamItem->setForeground(1, Qt::white);
 
@@ -92,7 +92,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
                     #endif
                     QColor color = color_manager_->getChannelColor (channelCount);
                     channelItem->setText(1, color.name());
-                    channelItem->setBackgroundColor(1, color);
+                    channelItem->setBackground(1, QBrush(color));
                     if (ColorManager::isDark(color))
                         channelItem->setForeground(1, Qt::white);
                     channelCount++;
@@ -121,7 +121,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
 
             QColor color = color_manager_->getChannelColor (id);
             channelItem->setText(1, color.name());
-            channelItem->setBackgroundColor(1, color);
+            channelItem->setBackground(1, QBrush(color));
             if (ColorManager::isDark(color))
                 channelItem->setForeground(1, Qt::white);
             row++;
@@ -236,7 +236,7 @@ void ChannelSelectionDialog::on_button_box__accepted ()
         if ((*it)->text(0).contains(tr("Channel")))
         {
             if ((*it)->checkState(0) == Qt::Checked)
-                color_manager_->setChannelColor(channelNumber, (*it)->backgroundColor(1));
+                color_manager_->setChannelColor(channelNumber, (*it)->background(1).color());
 
             channelNumber++;
         }
@@ -262,14 +262,14 @@ void ChannelSelectionDialog::on_treeWidget_itemClicked(QTreeWidgetItem *item, in
     {
         if (item->text(0).contains(tr("Channel"), Qt::CaseInsensitive))
         {
-            QColorDialog color_dialog (item->backgroundColor (1), this);
+            QColorDialog color_dialog (item->background(1).color(), this);
             color_dialog.setOption(QColorDialog::ShowAlphaChannel);
             if (color_dialog.exec () == QDialog::Accepted)
                 updateColor(item, color_dialog.selectedColor());
         }
         else if (item->text(0).contains(tr("Stream"), Qt::CaseInsensitive) && item->childCount())
         {
-            QColorDialog color_dialog (item->backgroundColor (1), this);
+            QColorDialog color_dialog (item->background(1).color(), this);
             color_dialog.setOption(QColorDialog::ShowAlphaChannel);
             if (color_dialog.exec () == QDialog::Accepted)
             {
@@ -318,7 +318,7 @@ void ChannelSelectionDialog::on_treeWidget_itemChanged(QTreeWidgetItem *item, in
 //-----------------------------------------------------------------------------
 void ChannelSelectionDialog::updateColor (QTreeWidgetItem *item, QColor const& color)
 {
-    item->setBackgroundColor(1, color);
+    item->setBackground(1, QBrush(color));
     item->setText(1, color.name());
     if (ColorManager::isDark(color))
         item->setForeground(1, Qt::white);

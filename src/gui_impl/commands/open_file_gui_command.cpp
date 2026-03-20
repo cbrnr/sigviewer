@@ -3,6 +3,7 @@
 // https://www.gnu.org/licenses/gpl
 
 #include <biosig.h>
+#undef isfinite
 #include "open_file_gui_command.h"
 #include "gui_impl/gui_helper_functions.h"
 

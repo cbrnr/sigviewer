@@ -7,6 +7,7 @@
 #include "gui_impl/gui_helper_functions.h"
 #include "gui_impl/dialogs/scale_channel_dialog.h"
 
+#include <QActionGroup>
 #include <QColorDialog>
 #include <QSettings>
 #include <QInputDialog>

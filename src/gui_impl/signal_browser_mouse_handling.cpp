@@ -15,14 +15,14 @@ namespace sigviewer
 SignalBrowserMouseHandling::Action SignalBrowserMouseHandling::getAction(QGraphicsSceneMouseEvent* e, SignalVisualisationMode mode)
 {
         // hand scroll
-    if ((e->button() == Qt::MidButton  && e->modifiers() == Qt::NoModifier) ||
+    if ((e->button() == Qt::MiddleButton  && e->modifiers() == Qt::NoModifier) ||
         (mode == MODE_HAND && e->button() == Qt::LeftButton))
     {
         return HAND_SCROLL_ACTION;
     }
 
     // shift channel
-    if ((e->button() == Qt::MidButton && e->modifiers().testFlag(Qt::ShiftModifier)) ||
+    if ((e->button() == Qt::MiddleButton && e->modifiers().testFlag(Qt::ShiftModifier)) ||
         (mode == MODE_VIEW_OPTIONS && e->button() == Qt::LeftButton))
     {
         return SHIFT_CHANNEL_ACTION;

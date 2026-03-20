@@ -47,7 +47,7 @@ void TestsDialog::runTests ()
             color = QColor (0, 255, 0, 50);
         }
         ui_.listWidget->addItem (test_name);
-        ui_.listWidget->item (ui_.listWidget->count() - 1)->setBackgroundColor (color);
+        ui_.listWidget->item (ui_.listWidget->count() - 1)->setBackground (QBrush(color));
         ui_.progressBar->setValue(ui_.progressBar->value()+1);
     }
     if (fails)

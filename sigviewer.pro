@@ -33,10 +33,10 @@ CONFIG(release, debug|release) {
     UI_DIR = $$BUILD_DIR/release
 }
 
-CONFIG += warn_on link_prl qt thread c++11
+CONFIG += warn_on link_prl qt thread c++17
 
 macx {
-    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 11
     LIBS += -liconv
 }
 

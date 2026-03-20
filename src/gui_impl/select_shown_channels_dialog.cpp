@@ -22,7 +22,7 @@ SelectShownChannelsDialog::SelectShownChannelsDialog (QString const& dialog_titl
 {
     setWindowTitle (dialog_title);
     QVBoxLayout* top_layout = new QVBoxLayout(this);
-    top_layout->setMargin(10);
+    top_layout->setContentsMargins(10, 10, 10, 10);
     top_layout->setSpacing(10);
     channel_list_widget_ = new QListWidget(this);
     channel_list_widget_->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -38,7 +38,7 @@ SelectShownChannelsDialog::SelectShownChannelsDialog (QString const& dialog_titl
 
     top_layout->addWidget (channel_list_widget_);
     QHBoxLayout* button_layout = new QHBoxLayout(this);
-    button_layout->setMargin(10);
+    button_layout->setContentsMargins(10, 10, 10, 10);
     button_layout->addStretch(1);
     ok_button_ = new QPushButton(tr("OK"), this);
     button_layout->addWidget(ok_button_);
@@ -65,7 +65,7 @@ std::set<ChannelID> SelectShownChannelsDialog::getSelectedChannels () const
             ->findItems(QString("(%1)").arg(*channel_iter + 1),
                         Qt::MatchStartsWith);
         if (find_list.size() > 0 &&
-            channel_list_widget_->isItemSelected(find_list[0]))
+            find_list[0]->isSelected())
             selected_channels.insert (*channel_iter);
     }
     return selected_channels;

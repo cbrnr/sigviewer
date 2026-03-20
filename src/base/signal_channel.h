@@ -8,7 +8,7 @@
 
 #include "sigviewer_user_types.h"
 #include "biosig.h"
-
+#undef isfinite
 #include <QString>
 #include <QMutex>
 

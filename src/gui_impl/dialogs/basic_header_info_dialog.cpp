@@ -14,6 +14,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QRegularExpression>
 #include <QSettings>
 #include <QFileInfo>
 #include <QtXml>
@@ -29,12 +30,12 @@ BasicHeaderInfoDialog::BasicHeaderInfoDialog(QSharedPointer<BasicHeader> header,
 {
     setWindowTitle(tr("Basic Header Info"));
     QVBoxLayout* top_layout = new QVBoxLayout(this);
-    top_layout->setMargin(10);
+    top_layout->setContentsMargins(10, 10, 10, 10);
     top_layout->setSpacing(10);
     info_tree_widget_ = new QTreeWidget(this);
     top_layout->addWidget(info_tree_widget_);
     QHBoxLayout* button_layout = new QHBoxLayout;
-    button_layout->setMargin(0);
+    button_layout->setContentsMargins(0, 0, 0, 0);
     top_layout->addLayout(button_layout);
     button_layout->addStretch(1);
     close_button_ = new QPushButton(tr("Close"), this);
@@ -71,12 +72,12 @@ void BasicHeaderInfoDialog::showStreamName(QTreeWidgetItem *item)
 {
     if (item->text(0).contains(tr("Stream"), Qt::CaseInsensitive))
     {
-        QRegExp rx("(\\d+)");
-        int pos = rx.indexIn(item->text(0));
+        QRegularExpression rx("(\\d+)");
+        QRegularExpressionMatch match = rx.match(item->text(0));
         QString str;
-        if (pos > -1)
+        if (match.hasMatch())
         {
-            str = rx.cap(1);
+            str = match.captured(1);
         }
         int streamNumber = str.toInt() - 1; //-1 to switch back to 0-based indexing
 
