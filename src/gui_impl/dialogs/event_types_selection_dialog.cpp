@@ -76,14 +76,14 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
 
             color.setAlpha (255);
 
-            event_item->setBackgroundColor (COLOR_COLUMN_INDEX_, color);
-            event_item->setTextColor (COLOR_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
+            event_item->setBackground(COLOR_COLUMN_INDEX_, QBrush(color));
+            event_item->setForeground(COLOR_COLUMN_INDEX_, QBrush(ColorManager::isDark(color) ? Qt::white : Qt::black));
             event_item->setText (COLOR_COLUMN_INDEX_, color.name());
 
             color = color_manager_->getEventColor(event_type);  //reselect the same color but less Alpha value
 
-            event_item->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
-            event_item->setTextColor(ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
+            event_item->setBackground(ALPHA_COLUMN_INDEX_, QBrush(color));
+            event_item->setForeground(ALPHA_COLUMN_INDEX_, QBrush(ColorManager::isDark(color) ? Qt::white : Qt::black));
             event_item->setText(ALPHA_COLUMN_INDEX_, QString("%1").arg(color.alpha()));
 
             event_item->setText (ID_COLUMN_INDEX_, QString::number(event_type));
@@ -107,7 +107,7 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
             {
                 QTreeWidgetItem * group_item = new QTreeWidgetItem(ui_.tree_widget_);
                 group_item->setFlags (Qt::ItemIsUserCheckable |
-                                      Qt::ItemIsTristate |
+                                      Qt::ItemIsUserTristate |
                                       Qt::ItemIsEnabled);
                 group_item->setText (NAME_COLUMN_INDEX_, group_name);
                 group_item->setExpanded (true);
@@ -138,14 +138,14 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
 
                     color.setAlpha (255);
 
-                    event_item->setBackgroundColor (COLOR_COLUMN_INDEX_, color);
-                    event_item->setTextColor (COLOR_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
+                    event_item->setBackground(COLOR_COLUMN_INDEX_, QBrush(color));
+                    event_item->setForeground(COLOR_COLUMN_INDEX_, QBrush(ColorManager::isDark(color) ? Qt::white : Qt::black));
                     event_item->setText (COLOR_COLUMN_INDEX_, color.name());
 
                     color = color_manager_->getEventColor(event_type);  //reselect the same color but less Alpha value
 
-                    event_item->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
-                    event_item->setTextColor(ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
+                    event_item->setBackground(ALPHA_COLUMN_INDEX_, QBrush(color));
+                    event_item->setForeground(ALPHA_COLUMN_INDEX_, QBrush(ColorManager::isDark(color) ? Qt::white : Qt::black));
                     event_item->setText(ALPHA_COLUMN_INDEX_, QString("%1").arg(color.alpha()));
 
                     event_item->setText (ID_COLUMN_INDEX_, QString::number(event_type));
@@ -181,7 +181,7 @@ void EventTypesSelectionDialog::storeColors()
         {
             QTreeWidgetItem* event_item = ui_.tree_widget_->topLevelItem(nr);
             EventType type = event_item->text(ID_COLUMN_INDEX_).toUInt();
-            color_manager_->setEventColor (type, event_item->backgroundColor(ALPHA_COLUMN_INDEX_));
+            color_manager_->setEventColor (type, event_item->background(ALPHA_COLUMN_INDEX_).color());
         }
     }
     else
@@ -196,7 +196,7 @@ void EventTypesSelectionDialog::storeColors()
                 QTreeWidgetItem* event_item = group_item->child(nr);
                 EventType type = event_item->text(ID_COLUMN_INDEX_).toUInt();
                 color_manager_->setEventColor (type,
-                                               event_item->backgroundColor(ALPHA_COLUMN_INDEX_));
+                                               event_item->background(ALPHA_COLUMN_INDEX_).color());
             }
         }
     }
@@ -263,8 +263,8 @@ void EventTypesSelectionDialog::on_reset_colors_button__clicked ()
     {
         QColor color = color_manager_->getDefaultEventColor((*color_iterator)->text (ID_COLUMN_INDEX_).toUInt ());
         color.setAlpha (255);
-        (*color_iterator)->setBackgroundColor (COLOR_COLUMN_INDEX_, color);
-        (*color_iterator)->setTextColor (COLOR_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
+        (*color_iterator)->setBackground(COLOR_COLUMN_INDEX_, QBrush(color));
+        (*color_iterator)->setForeground(COLOR_COLUMN_INDEX_, QBrush(ColorManager::isDark(color) ? Qt::white : Qt::black));
         (*color_iterator)->setText (COLOR_COLUMN_INDEX_, color.name());
         ++color_iterator;
     }
@@ -273,8 +273,8 @@ void EventTypesSelectionDialog::on_reset_colors_button__clicked ()
     while (*alpha_iterator)
     {
         QColor color = color_manager_->getDefaultEventColor((*alpha_iterator)->text (ID_COLUMN_INDEX_).toUInt ());
-        (*alpha_iterator)->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
-        (*alpha_iterator)->setTextColor(ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
+        (*alpha_iterator)->setBackground(ALPHA_COLUMN_INDEX_, QBrush(color));
+        (*alpha_iterator)->setForeground(ALPHA_COLUMN_INDEX_, QBrush(ColorManager::isDark(color) ? Qt::white : Qt::black));
         (*alpha_iterator)->setText(ALPHA_COLUMN_INDEX_, QString("%1").arg(color.alpha()));
         ++alpha_iterator;
     }
@@ -295,19 +295,19 @@ void EventTypesSelectionDialog::handleColor (QTreeWidgetItem* item)
     if (item->text(ID_COLUMN_INDEX_).size() == 0)
         return;
 
-    QColor color = item->backgroundColor (COLOR_COLUMN_INDEX_);
+    QColor color = item->background(COLOR_COLUMN_INDEX_).color();
 
     color = QColorDialog::getColor (color, this, tr("Event Color"), QColorDialog::ShowAlphaChannel);
     if (!color.isValid())
         return;
 
-    item->setBackgroundColor (COLOR_COLUMN_INDEX_, color);
-    item->setTextColor (COLOR_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
+    item->setBackground(COLOR_COLUMN_INDEX_, QBrush(color));
+    item->setForeground(COLOR_COLUMN_INDEX_, QBrush(ColorManager::isDark(color) ? Qt::white : Qt::black));
     item->setText (COLOR_COLUMN_INDEX_, QString("%1").arg(color.name()));
 
     color.setAlpha (item->text(ALPHA_COLUMN_INDEX_).toInt());
-    item->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
-    item->setTextColor (ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
+    item->setBackground(ALPHA_COLUMN_INDEX_, QBrush(color));
+    item->setForeground(ALPHA_COLUMN_INDEX_, QBrush(ColorManager::isDark(color) ? Qt::white : Qt::black));
     item->setText (ALPHA_COLUMN_INDEX_, QString::number (color.alpha()));
 }
 
@@ -317,14 +317,14 @@ void EventTypesSelectionDialog::handleAlpha (QTreeWidgetItem* item)
     if (item->text(ID_COLUMN_INDEX_).size() == 0)
         return;
 
-    QColor color = item->backgroundColor (ALPHA_COLUMN_INDEX_);
+    QColor color = item->background(ALPHA_COLUMN_INDEX_).color();
 
     color.setAlpha (QInputDialog::getInt(this, tr("Alpha"), tr("Enter new Value"),
                                          color.alpha(), 0, 255, 25));
 
 
-    item->setBackgroundColor (ALPHA_COLUMN_INDEX_, color);
-    item->setTextColor (ALPHA_COLUMN_INDEX_, ColorManager::isDark(color) ? Qt::white : Qt::black);
+    item->setBackground(ALPHA_COLUMN_INDEX_, QBrush(color));
+    item->setForeground(ALPHA_COLUMN_INDEX_, QBrush(ColorManager::isDark(color) ? Qt::white : Qt::black));
     item->setText (ALPHA_COLUMN_INDEX_, QString::number (color.alpha()));
 }
 

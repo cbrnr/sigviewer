@@ -424,7 +424,7 @@ void SignalBrowserView::createLayout()
 {
     layout_ = new QGridLayout(this);
 
-    layout_->setMargin(0);
+    layout_->setContentsMargins(0, 0, 0, 0);
     layout_->setSpacing(0);
     layout_->setVerticalSpacing(0);
     layout_->setHorizontalSpacing(0);

@@ -355,7 +355,7 @@ void XDFReader::bufferAllChannels () const
                 for (size_t i = 0; i < row.size(); i++)
                 {
                     //find out the position using the timestamp provided
-                    float* pt = raw_data->begin()  + (int)(round((stream.time_stamps[i]- XDFdata->minTS)* XDFdata->majSR));
+                    float* pt = raw_data->data() + (int)(round((stream.time_stamps[i]- XDFdata->minTS)* XDFdata->majSR));
                     *pt = row[i];
 
                     //if i is not the last element of the irregular time series
