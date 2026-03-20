@@ -1,12 +1,4 @@
-.directory
-.DS_Store
-*~
+build/
 external/
-sigviewer.pro.user
-*.a
-*.o
-tmp/
-bin/
 .qmake.stash
 Makefile
-src/Makefile

@@ -1,10 +1,10 @@
 TEMPLATE = app
-DESTDIR = bin
 TARGET = sigviewer
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 6
 VERSION_BUILD = 4
+VERSION = $$VERSION_MAJOR.$$VERSION_MINOR.$$VERSION_BUILD
 
 DEFINES += \
     "VERSION_MAJOR=$$VERSION_MAJOR" \
@@ -13,27 +13,26 @@ DEFINES += \
 
 QT += core gui widgets xml
 
-BUILD_DIR = $$PWD/tmp
-TARGET_DIR = $$PWD/bin
+BUILD_DIR = $$PWD/build
 
 CONFIG(debug, debug|release) {
     DEFINES -= QT_NO_DEBUG_OUTPUT
-    DESTDIR = $$TARGET_DIR/debug
-    OBJECTS_DIR = $$BUILD_DIR/debug
-    MOC_DIR = $$BUILD_DIR/debug
-    RCC_DIR = $$BUILD_DIR/debug
-    UI_DIR = $$BUILD_DIR/debug
+    DESTDIR     = $$BUILD_DIR/debug
+    OBJECTS_DIR = $$BUILD_DIR/debug/obj
+    MOC_DIR     = $$BUILD_DIR/debug/moc
+    RCC_DIR     = $$BUILD_DIR/debug/rcc
+    UI_DIR      = $$BUILD_DIR/debug/ui
 }
 CONFIG(release, debug|release) {
     DEFINES += QT_NO_DEBUG_OUTPUT
-    DESTDIR = $$TARGET_DIR/release
-    OBJECTS_DIR = $$BUILD_DIR/release
-    MOC_DIR = $$BUILD_DIR/release
-    RCC_DIR = $$BUILD_DIR/release
-    UI_DIR = $$BUILD_DIR/release
+    DESTDIR     = $$BUILD_DIR/release
+    OBJECTS_DIR = $$BUILD_DIR/release/obj
+    MOC_DIR     = $$BUILD_DIR/release/moc
+    RCC_DIR     = $$BUILD_DIR/release/rcc
+    UI_DIR      = $$BUILD_DIR/release/ui
 }
 
-CONFIG += warn_on link_prl qt thread c++17
+CONFIG += c++17 link_prl
 
 macx {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 11
@@ -78,4 +77,4 @@ SOURCES += \
     $$PWD/src/file_context.cpp \
     $$PWD/src/tab_context.cpp
 
-QMAKE_CFLAGS += -std=c99
+QMAKE_CFLAGS += -std=c11
