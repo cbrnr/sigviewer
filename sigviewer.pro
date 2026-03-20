@@ -53,7 +53,8 @@ ICON = $$PWD/src/sigviewer.icns
 
 TRANSLATIONS += \
     $$PWD/src/translations/sigviewer_de.ts \
-    $$PWD/src/translations/sigviewer_en.ts
+    $$PWD/src/translations/sigviewer_en.ts \
+    $$PWD/src/translations/sigviewer_ru.ts
 
 include($$PWD/src/base/base.pri)
 include($$PWD/src/signal_processing/signal_processing.pri)
