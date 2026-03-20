@@ -29,7 +29,7 @@ EventManagerImpl::EventManagerImpl (FileSignalReader const& reader)
                            QSharedPointer<QMutex> (
                                    new QMutex));
 
-        position_event_map_.insertMulti (signal_events[index]->getPosition (), next_free_id_);
+        position_event_map_.insert (signal_events[index]->getPosition (), next_free_id_);
         if (!event_table_reader_.entryExists (signal_events[index]->getType()))
             event_table_reader_.addEntry (signal_events[index]->getType());
 
@@ -83,7 +83,7 @@ void EventManagerImpl::updateAndUnlockEvent (EventID id)
         return;
     position_event_map_.remove (temp_event_position_map_[id], id);
     temp_event_position_map_.remove (id);
-    position_event_map_.insertMulti (event_map_[id]->getPosition (), id);
+    position_event_map_.insert (event_map_[id]->getPosition (), id);
     mutex_map_[id]->unlock ();
     emit eventChanged (id);
     emit changed ();
@@ -107,7 +107,7 @@ QSharedPointer<SignalEvent const> EventManagerImpl::createEvent (
             new SignalEvent(pos, type, sample_rate_, stream_id, channel_id, duration, id));
     event_map_[id] = new_event;
     mutex_map_[id] = QSharedPointer<QMutex> (new QMutex);
-    position_event_map_.insertMulti (pos, id);
+    position_event_map_.insert (pos, id);
 
     emit eventCreated (new_event);
     emit changed ();

@@ -208,9 +208,10 @@ bool GuiActionCommand::disableIfNoSignalIsVisualised (QStringList const &actions
 {
     bool no_signal_is_visualised = currentVisModel().isNull();
 
-    if (no_signal_is_visualised)
-        foreach (QString action, actions)
+    if (no_signal_is_visualised) {
+        for (const auto& action : actions)
             action_map_[action]->setDisabled (no_signal_is_visualised);
+    }
 
     return no_signal_is_visualised;
 }

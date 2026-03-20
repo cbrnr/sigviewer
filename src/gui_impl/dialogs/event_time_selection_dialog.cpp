@@ -24,13 +24,13 @@ EventTimeSelectionDialog::EventTimeSelectionDialog (std::set<EventType> const& s
 {
     ui_.setupUi (this);
 
-    foreach (ChannelID channel_id, shown_channels)
+    for (const auto channel_id : shown_channels)
     {
         QListWidgetItem* item = new QListWidgetItem (channel_manager.getChannelLabel(channel_id), ui_.list_widget_);
         item->setData (Qt::UserRole, channel_id);
     }
 
-    foreach (EventType event_type, shown_event_types_)
+    for (const auto event_type : shown_event_types_)
     {
         if (event_manager_->getEvents (event_type).count ())
             ui_.event_combo_box_->addItem (event_manager_->getNameOfEventType(event_type), QVariant(event_type));

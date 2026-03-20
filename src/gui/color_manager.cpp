@@ -197,9 +197,7 @@ void ColorManager::loadDefaultEventColors ()
 {
     QFile color_settings_file (":/color_settings.xml");
     QDomDocument color_doc;
-    QString error_msg;
-    int error_line;
-    color_doc.setContent (&color_settings_file, true, &error_msg, &error_line);
+    color_doc.setContent(&color_settings_file, QDomDocument::ParseOption::UseNamespaceProcessing);
     QDomElement root = color_doc.documentElement();
 
     QDomNodeList default_elements = root.elementsByTagName("default");

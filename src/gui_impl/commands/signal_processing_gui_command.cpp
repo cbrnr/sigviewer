@@ -94,7 +94,7 @@ void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation ()
     processed_channel_manager->setXAxisUnitLabel(channel_manager.getXAxisUnitLabel());
     ChannelID new_channel_id = 0;
     QList<EventID> events (event_manager->getEvents(event_dialog->getSelectedEventType ()));
-    foreach (ChannelID channel_id, event_dialog->getSelectedChannels ())
+    for (const auto channel_id : event_dialog->getSelectedChannels ())
     {
         std::list<QSharedPointer<DataBlock const> > data;
 
@@ -154,7 +154,7 @@ void SignalProcessingGuiCommand::calculatePowerSpectrum ()
 
     ProgressBar::instance().initAndShow (event_dialog->getSelectedChannels ().size(), tr("Fourier Transformation"),
                                          applicationContext());
-    foreach (ChannelID channel_id, event_dialog->getSelectedChannels ())
+    for (const auto channel_id : event_dialog->getSelectedChannels ())
     {
         ProgressBar::instance().increaseValue (1, channel_manager.getChannelLabel(channel_id));
         std::list<QSharedPointer<DataBlock const> > data;

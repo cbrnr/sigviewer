@@ -53,7 +53,7 @@ QString EVTWriter::save(QSharedPointer<FileContext const> file_context,
 {
     QSharedPointer<EventManager const> event_manager = file_context->getEventManager();
     QList<EventID> events;
-    foreach (EventType type, types)
+    for (const auto type : types)
         events.append(event_manager->getEvents(type));
     unsigned number_events = events.size();
 
