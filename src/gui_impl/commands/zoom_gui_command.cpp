@@ -122,15 +122,15 @@ void ZoomGuiCommand::init ()
 
 
     QList<QKeySequence> zoomInVertical;
-    zoomInVertical << QKeySequence::ZoomIn << Qt::CTRL + Qt::Key_Equal;
+    zoomInVertical << QKeySequence::ZoomIn << (Qt::CTRL | Qt::Key_Equal);
     getQAction(ZOOM_IN_VERTICAL_())->setShortcuts(zoomInVertical);
 
     QList<QKeySequence> zoomInHorizontal;
-    zoomInHorizontal << Qt::ALT + Qt::Key_Plus << Qt::ALT + Qt::Key_Equal;
+    zoomInHorizontal << (Qt::ALT | Qt::Key_Plus) << (Qt::ALT | Qt::Key_Equal);
     getQAction(ZOOM_IN_HORIZONTAL_())->setShortcuts(zoomInHorizontal);
 
     setShortcut (ZOOM_OUT_VERTICAL_(), QKeySequence::ZoomOut);
-    setShortcut (ZOOM_OUT_HORIZONTAL_(), Qt::ALT + Qt::Key_Minus);
+    setShortcut (ZOOM_OUT_HORIZONTAL_(), Qt::ALT | Qt::Key_Minus);
 
     resetActionTriggerSlot (GOTO_(), SLOT(goTo()));
     resetActionTriggerSlot (ZOOM_IN_VERTICAL_(), SLOT(zoomInVertical()));

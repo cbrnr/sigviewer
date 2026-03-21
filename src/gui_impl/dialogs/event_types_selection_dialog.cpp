@@ -52,7 +52,7 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
 
     if (event_manager_->getFileType().startsWith("xdf", Qt::CaseInsensitive))
     {
-        foreach (EventType event_type, event_manager_->getEventTypes ())
+        for (const auto event_type : event_manager_->getEventTypes ())
         {
             if (only_existing_events && !existing_types.count(event_type))
                 continue;
@@ -93,13 +93,13 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
     {
         QMap<QString, QTreeWidgetItem*> group_id2list_item;
 
-        foreach (QString group_id, event_manager_->getEventTypeGroupIDs())
+        for (const auto& group_id : event_manager_->getEventTypeGroupIDs())
         {
             QString group_name = group_id;
             // TODO: event_table_file_reader.getEventGroupName(*group_it);
 
             bool show_group = !only_existing_events;
-            foreach (EventType group_type, event_manager_->getEventTypes (group_id))
+            for (const auto group_type : event_manager_->getEventTypes (group_id))
                 if (existing_types.count(group_type) && only_existing_events)
                     show_group = true;
 
@@ -113,7 +113,7 @@ void EventTypesSelectionDialog::buildTree (bool only_existing_events)
                 group_item->setExpanded (true);
                 group_id2list_item[group_id] = group_item;
 
-                foreach (EventType event_type, event_manager_->getEventTypes (group_id))
+                for (const auto event_type : event_manager_->getEventTypes (group_id))
                 {
                     if (only_existing_events && !existing_types.count(event_type))
                         continue;

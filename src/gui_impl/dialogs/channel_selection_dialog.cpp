@@ -105,7 +105,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
     else
     {
         int row = 0;
-        foreach (ChannelID id, channel_manager_.getChannels())
+        for (const auto id : channel_manager_.getChannels())
         {
             QTreeWidgetItem* channelItem = new QTreeWidgetItem (ui_.treeWidget);
 

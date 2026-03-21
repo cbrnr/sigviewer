@@ -63,7 +63,7 @@ void EventEditingWidget::updateShownEventTypes (std::set<EventType> const& shown
     setSelfUpdating (true);
 
     ui_.type_combobox_->clear ();
-    foreach (EventType type, shown_event_types)
+    for (const auto type : shown_event_types)
         ui_.type_combobox_->addItem (event_manager_->getNameOfEventType (type),
                                      QVariant (type));
 
