@@ -7,7 +7,7 @@
 #
 # Usage (from the repository root):
 #
-#   cmake [-DDEPS_DIR=<path>] -P download_deps.cmake
+#   cmake [-DDEPS_DIR=<path>] -P external/download_deps.cmake
 #
 # DEPS_DIR defaults to <repo>/external. Override it if you want the
 # artifacts placed elsewhere and will pass the same path via -DDEPS_DIR=
@@ -120,7 +120,7 @@ function(_fetch_dep lib_upper_name version platform dest_dir)
     if(_sha256 MATCHES "^TODO_")
         message(FATAL_ERROR
             "No pre-built artifact configured for ${lib_upper_name} on ${platform}.\n"
-            "See download_deps.cmake for instructions on adding one.")
+            "See external/download_deps.cmake for instructions on adding one.")
     endif()
 
     message(STATUS "Downloading ${lib_upper_name} ${version} for ${platform}…")

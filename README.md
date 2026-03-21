@@ -15,7 +15,7 @@ SigViewer requires a standard-compliant C++17 build toolchain, for example recen
 SigViewer also depends on pre-built versions of [libbiosig](http://biosig.sourceforge.net/) and [libxdf](https://github.com/xdf-modules/libxdf). These are fetched automatically by running:
 
 ```
-cmake -P cmake/download_deps.cmake
+cmake -P external/download_deps.cmake
 ```
 
 This downloads the correct pre-built archives for your platform, verifies their checksums, and installs them into the `external/` directory. You only need to run this once (or again when the pinned versions change).
@@ -32,7 +32,7 @@ brew install qt cmake
 Then build SigViewer:
 
 ```
-cmake -P cmake/download_deps.cmake
+cmake -P external/download_deps.cmake
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j$(sysctl -n hw.logicalcpu)
 ```
@@ -49,7 +49,7 @@ macdeployqt build/sigviewer.app -dmg
 Install a C++ toolchain, Qt 6, and CMake with your package manager. Then build SigViewer:
 
 ```
-cmake -P cmake/download_deps.cmake
+cmake -P external/download_deps.cmake
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j$(nproc)
 ```

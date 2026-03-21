@@ -1,7 +1,9 @@
 build/
-external/
-Makefile
-CMakeCache.txt
 CMakeFiles/
+external/include/
+external/lib/
+external/versions.cmake
+CMakeCache.txt
 cmake_install.cmake
 CTestTestfile.cmake
+Makefile
