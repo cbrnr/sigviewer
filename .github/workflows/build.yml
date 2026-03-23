@@ -48,7 +48,7 @@ jobs:
             cmake \
             build-essential \
             qt6-base-dev \
-            qt6-l10n-tools
+            qt6-tools-dev
 
       # -----------------------------------------------------------------------
       # Build external dependencies
