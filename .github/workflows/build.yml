@@ -24,7 +24,7 @@ jobs:
             platform_id: linux-x86_64
             os: linux
 
-          - name: Linux aarch64
+          - name: Linux ARM64
             runner: ubuntu-24.04-arm
             platform_id: linux-aarch64
             os: linux
@@ -48,6 +48,7 @@ jobs:
             cmake \
             build-essential \
             qt6-base-dev \
+            libqt6xml6-dev \
             qt6-tools-dev
 
       # -----------------------------------------------------------------------
