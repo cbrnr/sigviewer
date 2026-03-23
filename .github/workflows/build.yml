@@ -100,6 +100,10 @@ jobs:
         if: matrix.os == 'macos'
         run: $(brew --prefix qt)/bin/macdeployqt build/sigviewer.app
 
+      - name: Sign .app bundle (macOS)
+        if: matrix.os == 'macos'
+        run: codesign --deep --force --sign - build/sigviewer.app
+
       - name: Zip .app bundle (macOS)
         if: matrix.os == 'macos'
         run: ditto -c -k --sequesterRsrc --keepParent build/sigviewer.app build/sigviewer.zip
