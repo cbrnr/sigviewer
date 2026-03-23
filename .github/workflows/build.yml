@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
 
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         include:
           - name: macOS ARM64
