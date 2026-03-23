@@ -33,8 +33,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Cache Homebrew downloads
+        if: matrix.os == 'macos'
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: brew-qt-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.github/workflows/build.yml') }}
+          restore-keys: brew-qt-${{ runner.os }}-${{ runner.arch }}-
+
       - name: Install dependencies (macOS)
         if: matrix.os == 'macos'
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+          HOMEBREW_NO_INSTALL_CLEANUP: "1"
         run: brew install qt
 
       - name: Install dependencies (Linux)
