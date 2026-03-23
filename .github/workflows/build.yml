@@ -96,9 +96,13 @@ jobs:
           name: sigviewer-${{ matrix.platform_id }}
           path: build/sigviewer
 
+      - name: Zip .app bundle (macOS)
+        if: matrix.os == 'macos'
+        run: cd build && zip -r sigviewer.zip sigviewer.app
+
       - name: Upload SigViewer artifact (macOS)
         if: matrix.os == 'macos'
         uses: actions/upload-artifact@v7
         with:
           name: sigviewer-${{ matrix.platform_id }}
-          path: build/sigviewer.app
+          path: build/sigviewer.zip
