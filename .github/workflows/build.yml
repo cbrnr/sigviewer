@@ -48,7 +48,6 @@ jobs:
             cmake \
             build-essential \
             qt6-base-dev \
-            libqt6xml6-dev \
             qt6-tools-dev
 
       # -----------------------------------------------------------------------
