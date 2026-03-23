@@ -65,7 +65,7 @@ jobs:
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
-        run: cmake --build build --parallel
+        run: cmake --build build
 
       - name: Upload libxdf artifact
         uses: actions/upload-artifact@v7
