@@ -31,14 +31,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      # -----------------------------------------------------------------------
-      # System dependencies
-      # -----------------------------------------------------------------------
       - name: Install dependencies (macOS)
         if: matrix.os == 'macos'
-        run: brew install qt cmake
+        run: |
+            brew list
+            brew install qt
 
       - name: Install dependencies (Linux)
         if: matrix.os == 'linux'
@@ -50,26 +49,17 @@ jobs:
             qt6-base-dev \
             qt6-tools-dev
 
-      # -----------------------------------------------------------------------
-      # Build external dependencies
-      # -----------------------------------------------------------------------
       - name: Build dependencies
         run: cmake -P external/build_deps.cmake
 
-      # -----------------------------------------------------------------------
-      # Configure and build SigViewer
-      # -----------------------------------------------------------------------
       - name: Configure
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
         run: cmake --build build --parallel
 
-      # -----------------------------------------------------------------------
-      # Collect artifacts
-      # -----------------------------------------------------------------------
       - name: Upload libxdf artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: libxdf-${{ matrix.platform_id }}
           path: |
@@ -77,7 +67,7 @@ jobs:
             external/include/xdf.h
 
       - name: Upload libbiosig artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: libbiosig-${{ matrix.platform_id }}
           path: |
@@ -92,14 +82,14 @@ jobs:
 
       - name: Upload SigViewer artifact (Linux)
         if: matrix.os == 'linux'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sigviewer-${{ matrix.platform_id }}
           path: build/sigviewer
 
       - name: Upload SigViewer artifact (macOS)
         if: matrix.os == 'macos'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sigviewer-${{ matrix.platform_id }}
           path: build/sigviewer.app
