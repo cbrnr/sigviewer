@@ -57,4 +57,4 @@ cmake --build build -j$(nproc)
 
 ### Windows
 
-Building on Windows is currently not supported.
+Building on Windows is currently not supported (coming soon).
