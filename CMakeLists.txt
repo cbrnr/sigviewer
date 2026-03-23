@@ -22,21 +22,22 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Xml LinguistTools)
 qt_standard_project_setup()
 
 # -- External pre-built dependencies -----------------------------------------
-# Override with -DDEPS_DIR=<path> if your pre-built artifacts live elsewhere.
+# Override with -DDEPS_DIR=<path> if the libraries were built elsewhere.
 set(DEPS_DIR "${CMAKE_SOURCE_DIR}/external"
-    CACHE PATH "Directory containing pre-built libxdf and libbiosig")
+    CACHE PATH "Directory containing built libxdf and libbiosig")
 
-# The versions.cmake file is written by external/download_deps.cmake and records
+# The versions.cmake file is written by external/build_deps.cmake and records
 # the versions of the libraries that are actually present in DEPS_DIR.
 set(_DEPS_VERSIONS_FILE "${DEPS_DIR}/versions.cmake")
 if(NOT EXISTS "${_DEPS_VERSIONS_FILE}")
     message(FATAL_ERROR
         "Dependency version file not found:\n"
         "  ${_DEPS_VERSIONS_FILE}\n\n"
-        "Run the following command to fetch the required pre-built libraries:\n"
-        "  cmake -P external/download_deps.cmake\n\n"
-        "Or manually place the libraries in ${DEPS_DIR} and create\n"
-        "versions.cmake with:\n"
+        "Run the following command to build the required libraries:\n"
+        "  cmake -P external/build_deps.cmake\n"
+        "Or manually place the libraries in\n"
+        "${DEPS_DIR}\n"
+        "and create external/versions.cmake with:\n"
         "  set(LIBXDF_VERSION_INSTALLED    \"${LIBXDF_VERSION}\")\n"
         "  set(LIBBIOSIG_VERSION_INSTALLED \"${LIBBIOSIG_VERSION}\")"
     )
@@ -51,7 +52,7 @@ foreach(_lib IN ITEMS LIBXDF LIBBIOSIG)
             "${_lib} version mismatch.\n"
             "  Required : ${_required}\n"
             "  Installed: ${_found}\n\n"
-            "Run cmake -P external/download_deps.cmake to install the correct version."
+            "Run cmake -P external/build_deps.cmake to install the correct version."
         )
     endif()
 endforeach()

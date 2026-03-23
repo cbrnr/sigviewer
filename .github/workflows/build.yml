@@ -1,0 +1,105 @@
+name: Build
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS ARM64
+            runner: macos-14
+            platform_id: macos-arm64
+            os: macos
+
+          - name: Linux x86-64
+            runner: ubuntu-24.04
+            platform_id: linux-x86_64
+            os: linux
+
+          - name: Linux aarch64
+            runner: ubuntu-24.04-arm
+            platform_id: linux-aarch64
+            os: linux
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # -----------------------------------------------------------------------
+      # System dependencies
+      # -----------------------------------------------------------------------
+      - name: Install dependencies (macOS)
+        if: matrix.os == 'macos'
+        run: brew install qt cmake
+
+      - name: Install dependencies (Linux)
+        if: matrix.os == 'linux'
+        run: |
+          sudo apt update -qq
+          sudo apt install -y \
+            cmake \
+            build-essential \
+            qt6-base-dev \
+            qt6-l10n-tools
+
+      # -----------------------------------------------------------------------
+      # Build external dependencies
+      # -----------------------------------------------------------------------
+      - name: Build dependencies
+        run: cmake -P external/build_deps.cmake
+
+      # -----------------------------------------------------------------------
+      # Configure and build SigViewer
+      # -----------------------------------------------------------------------
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      # -----------------------------------------------------------------------
+      # Collect artifacts
+      # -----------------------------------------------------------------------
+      - name: Upload libxdf artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libxdf-${{ matrix.platform_id }}
+          path: |
+            external/lib/libxdf.a
+            external/include/xdf.h
+
+      - name: Upload libbiosig artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libbiosig-${{ matrix.platform_id }}
+          path: |
+            external/lib/libbiosig.a
+            external/include/biosig.h
+            external/include/biosig-dev.h
+            external/include/biosig-network.h
+            external/include/biosig2.h
+            external/include/gdftime.h
+            external/include/mdc_ecg_codes.h
+            external/include/physicalunits.h
+
+      - name: Upload SigViewer artifact (Linux)
+        if: matrix.os == 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sigviewer-${{ matrix.platform_id }}
+          path: build/sigviewer
+
+      - name: Upload SigViewer artifact (macOS)
+        if: matrix.os == 'macos'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sigviewer-${{ matrix.platform_id }}
+          path: build/sigviewer.app

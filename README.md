@@ -12,13 +12,13 @@ SigViewer is an application for viewing biosignals such as EEG or MEG time serie
 
 SigViewer requires a standard-compliant C++17 build toolchain, for example recent versions of [GCC](https://gcc.gnu.org/) or [Clang](https://clang.llvm.org/). Furthermore, SigViewer depends on [Qt 6](https://www.qt.io/) and [CMake](https://cmake.org/) 3.21 or later.
 
-SigViewer also depends on pre-built versions of [libbiosig](http://biosig.sourceforge.net/) and [libxdf](https://github.com/xdf-modules/libxdf). These are fetched automatically by running:
+SigViewer also depends on [libbiosig](http://biosig.sourceforge.net/) and [libxdf](https://github.com/xdf-modules/libxdf), which are built from source automatically by running:
 
 ```
-cmake -P external/download_deps.cmake
+cmake -P external/build_deps.cmake
 ```
 
-This downloads the correct pre-built archives for your platform, verifies their checksums, and installs them into the `external/` directory. You only need to run this once (or again when the pinned versions change).
+This downloads the source releases, builds them, and installs the resulting libraries into the `external/` directory. You only need to run this once (or again when the pinned versions change).
 
 
 ### macOS
@@ -32,7 +32,7 @@ brew install qt cmake
 Then build SigViewer:
 
 ```
-cmake -P external/download_deps.cmake
+cmake -P external/build_deps.cmake
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j$(sysctl -n hw.logicalcpu)
 ```
@@ -49,7 +49,7 @@ macdeployqt build/sigviewer.app -dmg
 Install a C++ toolchain, Qt 6, and CMake with your package manager. Then build SigViewer:
 
 ```
-cmake -P external/download_deps.cmake
+cmake -P external/build_deps.cmake
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j$(nproc)
 ```
