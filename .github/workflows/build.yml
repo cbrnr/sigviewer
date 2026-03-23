@@ -35,9 +35,7 @@ jobs:
 
       - name: Install dependencies (macOS)
         if: matrix.os == 'macos'
-        run: |
-            brew list
-            brew install qt
+        run: brew install qt
 
       - name: Install dependencies (Linux)
         if: matrix.os == 'linux'
