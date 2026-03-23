@@ -98,7 +98,7 @@ jobs:
 
       - name: Zip .app bundle (macOS)
         if: matrix.os == 'macos'
-        run: cd build && zip -r sigviewer.zip sigviewer.app
+        run: ditto -c -k --sequesterRsrc --keepParent build/sigviewer.app build/sigviewer.zip
 
       - name: Upload SigViewer artifact (macOS)
         if: matrix.os == 'macos'
