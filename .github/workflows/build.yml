@@ -115,7 +115,7 @@ jobs:
 
       - name: Sign .app bundle (macOS)
         if: matrix.os == 'macos'
-        run: codesign --deep --force --options runtime --sign "Developer ID Application: CLEMENS BRUNNER (9UC2D22DW3)" build/sigviewer.app
+        run: 'codesign --deep --force --options runtime --sign "Developer ID Application: CLEMENS BRUNNER (9UC2D22DW3)" build/sigviewer.app'
 
       - name: Zip .app bundle (macOS)
         if: matrix.os == 'macos'
