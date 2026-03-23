@@ -96,6 +96,10 @@ jobs:
           name: sigviewer-${{ matrix.platform_id }}
           path: build/sigviewer
 
+      - name: Deploy Qt frameworks (macOS)
+        if: matrix.os == 'macos'
+        run: $(brew --prefix qt)/bin/macdeployqt build/sigviewer.app
+
       - name: Zip .app bundle (macOS)
         if: matrix.os == 'macos'
         run: ditto -c -k --sequesterRsrc --keepParent build/sigviewer.app build/sigviewer.zip
