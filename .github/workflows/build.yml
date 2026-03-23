@@ -15,7 +15,7 @@ jobs:
       matrix:
         include:
           - name: macOS ARM64
-            runner: macos-26
+            runner: macos-15
             platform_id: macos-arm64
             os: macos
 
