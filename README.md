@@ -2,10 +2,10 @@
 
 SigViewer is an application for viewing biosignals such as EEG or MEG time series. In addition to viewing raw data, SigViewer can also create, edit, and display events (such as annotations or artifact selections).
 
-- [SigViewer 0.6.4 (Windows)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/sigviewer-0.6.4-win64.exe)
-- [SigViewer 0.6.4 (macOS)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/sigviewer-0.6.4-macos.dmg)
-- [SigViewer 0.6.4 (Linux)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/sigviewer-0.6.4-linux.zip) ([Arch](https://aur.archlinux.org/packages/sigviewer/), [Debian](https://tracker.debian.org/pkg/sigviewer), [Ubuntu](https://launchpad.net/ubuntu/+source/sigviewer))
-- [SigViewer 0.6.4 (Source)](https://github.com/cbrnr/sigviewer/archive/v0.6.4.zip)
+- [SigViewer 0.6.5 (Windows)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.5/sigviewer-0.6.5-windows-x86_64.exe)
+- [SigViewer 0.6.5 (macOS)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.5/sigviewer-0.6.5-macos-arm64.dmg)
+- [SigViewer 0.6.5 (Linux)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.5/sigviewer-0.6.5-linux-x86_64.zip) ([Arch](https://aur.archlinux.org/packages/sigviewer/), [Debian](https://tracker.debian.org/pkg/sigviewer), [Ubuntu](https://launchpad.net/ubuntu/+source/sigviewer))
+- [SigViewer 0.6.5 (Source)](https://github.com/cbrnr/sigviewer/archive/v0.6.5.zip)
 
 
 ## Building SigViewer
@@ -46,7 +46,7 @@ For a production release the app bundle must be **code-signed** with a Developer
 3. Staple the notarization ticket to the `.app` with `xcrun stapler`
 4. Create the DMG from the stapled `.app`
 
-See `.github/workflows/build.yml` for the exact commands used in CI.
+See `.github/workflows/release.yml` for the exact commands used in CI.
 
 Once the app is signed, notarized, and stapled, create the disk image:
 
@@ -124,6 +124,33 @@ Then build the installer using [Inno Setup](https://jrsoftware.org/isinfo.php) (
 ```
 
 The installer is written to `build/SigViewer-<version>.exe`.
+
+
+## Creating a release
+
+To publish a new release:
+
+1. Update the `VERSION` field in `CMakeLists.txt` to the new version number.
+2. Commit the change:
+   ```
+   git commit -am "Release <version>"
+   ```
+3. Tag the commit and push both the commit and the tag:
+   ```
+   git tag v<version>
+   git push origin main --tags
+   ```
+
+Pushing the tag triggers the `.github/workflows/release.yml` workflow, which builds SigViewer on all three platforms (Linux x86-64, Linux ARM64, macOS ARM64, Windows x86-64), packages the release artifacts, and publishes a new GitHub release with the following assets attached:
+
+- `sigviewer-<version>-linux-x86_64.zip`
+- `sigviewer-<version>-linux-aarch64.zip`
+- `sigviewer-<version>-macos-arm64.dmg`
+- `sigviewer-<version>-windows-x86_64.exe`
+- `libbiosig-<version>-<platform>.zip` (all four platforms)
+- `libxdf-<version>-<platform>.zip` (all four platforms)
+
+Release notes are generated automatically from the merged pull requests and commits since the previous tag.
 
 
 ## Updating translations

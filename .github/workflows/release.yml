@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  linux:
+    uses: ./.github/workflows/build-linux.yml
+
+  macos:
+    uses: ./.github/workflows/build-macos.yml
+    secrets: inherit
+
+  windows:
+    uses: ./.github/workflows/build-windows.yml
+
+  release:
+    name: Create GitHub Release
+    needs: [linux, macos, windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: artifacts/
+
+      - name: Prepare release assets
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          mkdir -p release-assets
+
+          # SigViewer binaries
+          zip -j release-assets/sigviewer-${VERSION}-linux-x86_64.zip \
+            artifacts/sigviewer-linux-x86_64/build/sigviewer
+          zip -j release-assets/sigviewer-${VERSION}-linux-aarch64.zip \
+            artifacts/sigviewer-linux-aarch64/build/sigviewer
+          find artifacts/sigviewer-macos-arm64 -name '*.dmg' \
+            -exec cp {} release-assets/sigviewer-${VERSION}-macos-arm64.dmg \;
+          find artifacts/sigviewer-windows-x86_64 -name '*.exe' \
+            -exec cp {} release-assets/sigviewer-${VERSION}-windows-x86_64.exe \;
+
+          # Library archives — preserve external/lib and external/include structure
+          for platform in linux-x86_64 linux-aarch64 macos-arm64 windows-x86_64; do
+            (cd artifacts/libxdf-${platform} && zip -r ../../../release-assets/libxdf-${VERSION}-${platform}.zip external)
+            (cd artifacts/libbiosig-${platform} && zip -r ../../../release-assets/libbiosig-${VERSION}-${platform}.zip external)
+          done
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create ${{ github.ref_name }} \
+            --repo ${{ github.repository }} \
+            --generate-notes \
+            release-assets/*

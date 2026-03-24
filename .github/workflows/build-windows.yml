@@ -1,13 +1,14 @@
-name: Windows
+name: Build Windows
 
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_call:
 
 jobs:
   build:
-    name: x86-64
+    name: Windows x86-64
     runs-on: windows-2025
 
     steps:

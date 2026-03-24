@@ -1,13 +1,14 @@
-name: macOS
+name: Build macOS
 
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_call:
 
 jobs:
   build:
-    name: ARM64
+    name: macOS ARM64
     runs-on: macos-15
 
     steps:

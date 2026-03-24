@@ -1,9 +1,10 @@
-name: Linux
+name: Build Linux
 
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_call:
 
 jobs:
   build:
@@ -14,11 +15,11 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - name: x86-64
+          - name: Linux x86-64
             runner: ubuntu-24.04
             platform_id: linux-x86_64
 
-          - name: ARM64
+          - name: Linux AARCH64
             runner: ubuntu-24.04-arm
             platform_id: linux-aarch64
 
