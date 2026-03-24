@@ -181,17 +181,19 @@ function(_build_libbiosig_from_source version dest_dir)
 
     find_program(_make_exe NAMES make gmake REQUIRED)
 
-    # biosig4c++ uses a hand-written Makefile that does not receive flags from
-    # ./configure.  On MinGW-w64, getdelim() is a GNU extension that is only
-    # declared when _GNU_SOURCE is set, so pass it straight to make.
-    set(_make_extra_flags "")
+    # win32/getline.c calls getdelim() without including <stdio.h>, so the
+    # compiler sees an implicit declaration.  On MinGW-w64, getdelim() is
+    # exposed by <stdio.h> via __USE_MINGW_ANSI_STDIO (enabled by default in
+    # MSYS2).  Prepend the include before building.
     if(CMAKE_HOST_WIN32)
-        set(_make_extra_flags "CFLAGS=-D_GNU_SOURCE" "CXXFLAGS=-D_GNU_SOURCE")
+        set(_getline_c "${_src_dir}/biosig4c++/win32/getline.c")
+        file(READ "${_getline_c}" _getline_content)
+        file(WRITE "${_getline_c}" "#include <stdio.h>\n${_getline_content}")
     endif()
 
     message(STATUS "Building libbiosig…")
     execute_process(
-        COMMAND "${_make_exe}" lib ${_make_extra_flags}
+        COMMAND "${_make_exe}" lib
         WORKING_DIRECTORY "${_src_dir}"
         RESULT_VARIABLE _bld_result
     )
