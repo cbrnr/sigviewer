@@ -1,0 +1,106 @@
+name: macOS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    name: macOS ARM64
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Cache Homebrew downloads
+        uses: actions/cache@v5
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: brew-qt-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.github/workflows/macos.yml') }}
+          restore-keys: brew-qt-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Install dependencies
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+          HOMEBREW_NO_INSTALL_CLEANUP: "1"
+        run: brew install qt cmake
+
+      - name: Build dependencies
+        run: cmake -P external/build_deps.cmake
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Upload libxdf artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: libxdf-macos-arm64
+          path: |
+            external/lib/libxdf.a
+            external/include/xdf.h
+
+      - name: Upload libbiosig artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: libbiosig-macos-arm64
+          path: |
+            external/lib/libbiosig.a
+            external/include/biosig.h
+            external/include/biosig-dev.h
+            external/include/biosig-network.h
+            external/include/biosig2.h
+            external/include/gdftime.h
+            external/include/mdc_ecg_codes.h
+            external/include/physicalunits.h
+
+      - name: Extract version
+        run: |
+          VERSION=$(sed -n 's/.*VERSION \([0-9][0-9.]*\).*/\1/p' CMakeLists.txt | head -1)
+          echo "APP_VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Deploy Qt frameworks
+        run: $(brew --prefix qt)/bin/macdeployqt build/SigViewer.app
+
+      - name: Import Developer ID certificate
+        env:
+          MACOS_CERT_P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }}
+          MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+        run: |
+          echo "$MACOS_CERT_P12_BASE64" | base64 --decode > certificate.p12
+          security create-keychain -p "" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          security import certificate.p12 -k build.keychain -P "$MACOS_CERT_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "" build.keychain
+
+      - name: Sign .app bundle
+        run: 'codesign --deep --force --options runtime --sign "Developer ID Application: CLEMENS BRUNNER (9UC2D22DW3)" build/SigViewer.app'
+
+      - name: Notarize .app bundle
+        env:
+          AC_USERNAME: ${{ secrets.AC_USERNAME }}
+          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent build/SigViewer.app build/SigViewer.zip
+          xcrun notarytool submit build/SigViewer.zip \
+            --apple-id "$AC_USERNAME" \
+            --password "$AC_PASSWORD" \
+            --team-id 9UC2D22DW3 \
+            --wait
+
+      - name: Staple .app bundle
+        run: xcrun stapler staple build/SigViewer.app
+
+      - name: Create DMG
+        run: hdiutil create -volname "SigViewer" -srcfolder build/SigViewer.app -ov -format UDZO build/SigViewer-${{ env.APP_VERSION }}.dmg
+
+      - name: Upload SigViewer artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: sigviewer-macos-arm64
+          path: build/SigViewer-${{ env.APP_VERSION }}.dmg

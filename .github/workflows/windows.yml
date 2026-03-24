@@ -1,0 +1,95 @@
+name: Windows
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    name: Windows x86-64
+    runs-on: windows-2025
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          cache: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-qt6-base
+            mingw-w64-x86_64-qt6-tools
+            mingw-w64-x86_64-libiconv
+            autoconf
+            automake
+            make
+
+      - name: Build dependencies
+        shell: msys2 {0}
+        run: cmake -P external/build_deps.cmake
+
+      - name: Configure
+        shell: msys2 {0}
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -G Ninja
+
+      - name: Build
+        shell: msys2 {0}
+        run: cmake --build build
+
+      - name: Upload libxdf artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: libxdf-windows-x86_64
+          path: |
+            external/lib/libxdf.a
+            external/include/xdf.h
+
+      - name: Upload libbiosig artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: libbiosig-windows-x86_64
+          path: |
+            external/lib/libbiosig.a
+            external/include/biosig.h
+            external/include/biosig-dev.h
+            external/include/biosig-network.h
+            external/include/biosig2.h
+            external/include/gdftime.h
+            external/include/mdc_ecg_codes.h
+            external/include/physicalunits.h
+
+      - name: Deploy Qt DLLs
+        shell: msys2 {0}
+        run: |
+          mkdir -p build/sigviewer-windows
+          cp build/sigviewer.exe build/sigviewer-windows/
+          cp src/images/sigviewer.ico build/sigviewer-windows/
+          windeployqt6 --release build/sigviewer-windows/sigviewer.exe
+          # Copy all MinGW DLL dependencies (including those of Qt plugin DLLs in subdirectories)
+          find build/sigviewer-windows \( -name '*.exe' -o -name '*.dll' \) | xargs ldd 2>/dev/null \
+            | awk '$3 ~ /\/mingw64\//' \
+            | awk '{print $3}' \
+            | sort -u \
+            | while IFS= read -r dep; do
+                dest="build/sigviewer-windows/$(basename "$dep")"
+                [ -f "$dest" ] || cp "$dep" "$dest"
+              done
+
+      - name: Create installer
+        shell: pwsh
+        run: |
+          $version = (Get-Content CMakeLists.txt | Select-String '^\s+VERSION\s+([\d.]+)').Matches[0].Groups[1].Value
+          & 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' /Dversion=$version deploy\windows\sigviewer-windows.iss
+
+      - name: Upload SigViewer artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: sigviewer-windows-x86_64
+          path: build/SigViewer-*.exe
