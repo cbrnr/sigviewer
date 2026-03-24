@@ -147,8 +147,6 @@ Pushing the tag triggers the `.github/workflows/release.yml` workflow, which bui
 - `sigviewer-<version>-linux-aarch64.tar.gz`
 - `sigviewer-<version>-macos-arm64.dmg`
 - `sigviewer-<version>-windows-x86_64.exe`
-- `libbiosig-<version>-<platform>.zip` (all four platforms)
-- `libxdf-<version>-<platform>.zip` (all four platforms)
 
 Release notes are generated automatically from the merged pull requests and commits since the previous tag.
 
