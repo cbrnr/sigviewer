@@ -45,9 +45,14 @@ jobs:
             -exec cp {} release-assets/sigviewer-${VERSION}-windows-x86_64.exe \;
 
           # Library archives — preserve external/lib and external/include structure
+          # upload-artifact strips the common 'external/' prefix, so we recreate it
           for platform in linux-x86_64 linux-aarch64 macos-arm64 windows-x86_64; do
-            (cd artifacts/libxdf-${platform} && zip -r ../../../release-assets/libxdf-${VERSION}-${platform}.zip external)
-            (cd artifacts/libbiosig-${platform} && zip -r ../../../release-assets/libbiosig-${VERSION}-${platform}.zip external)
+            mkdir -p staging/external
+            cp -r artifacts/libxdf-${platform}/. staging/external/
+            (cd staging && zip -r ../release-assets/libxdf-${VERSION}-${platform}.zip external)
+            cp -r artifacts/libbiosig-${platform}/. staging/external/
+            (cd staging && zip -r ../release-assets/libbiosig-${VERSION}-${platform}.zip external)
+            rm -rf staging
           done
 
       - name: Create GitHub release
