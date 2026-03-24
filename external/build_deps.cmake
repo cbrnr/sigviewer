@@ -23,7 +23,7 @@
 #
 # Requirements:
 #   libxdf    — CMake, a C++20-capable compiler
-#   libbiosig — autoconf, make, a C/C++ compiler (Unix/macOS only; not Windows)
+#   libbiosig — autoconf, make, a C/C++ compiler (Unix, macOS, or MSYS2 on Windows)
 #
 # -- Maintainer notes --------------------------------------------------------
 # Both libraries are built from source; only the version numbers ever need
@@ -142,12 +142,6 @@ endfunction()
 
 # -- Helper: build libbiosig from source -------------------------------------
 function(_build_libbiosig_from_source version dest_dir)
-    if(CMAKE_HOST_WIN32)
-        message(FATAL_ERROR
-            "Building libbiosig from source requires autoconf and make, "
-            "which are not supported on Windows.")
-    endif()
-
     set(_src_url     "https://sourceforge.net/projects/biosig/files/BioSig%20for%20C_C%2B%2B/src/biosig-${version}.src.tar.xz/download")
     set(_src_archive "${dest_dir}/_libbiosig-${version}-src.tar.xz")
     set(_tmp_dir     "${dest_dir}/_libbiosig-${version}-tmp")

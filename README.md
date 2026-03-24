@@ -57,4 +57,32 @@ cmake --build build -j$(nproc)
 
 ### Windows
 
-Building on Windows is currently not supported (coming soon).
+Install [MSYS2](https://www.msys2.org/) and open the **MINGW64** shell. Install the required dependencies:
+
+```
+pacman -S --needed \
+    mingw-w64-x86_64-gcc \
+    mingw-w64-x86_64-cmake \
+    mingw-w64-x86_64-ninja \
+    mingw-w64-x86_64-qt6-base \
+    mingw-w64-x86_64-qt6-tools \
+    autoconf \
+    automake \
+    make
+```
+
+Then build SigViewer from the **MINGW64** shell:
+
+```
+cmake -P external/build_deps.cmake
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -G Ninja
+cmake --build build
+```
+
+The executable is produced at `build/sigviewer.exe`. To create a stand-alone distributable folder with all required Qt DLLs, run:
+
+```
+mkdir build/sigviewer-dist
+cp build/sigviewer.exe build/sigviewer-dist/
+windeployqt6 --release build/sigviewer-dist/sigviewer.exe
+```

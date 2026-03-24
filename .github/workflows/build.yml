@@ -29,6 +29,11 @@ jobs:
             platform_id: linux-aarch64
             os: linux
 
+          - name: Windows x86-64
+            runner: windows-2025
+            platform_id: windows-x86_64
+            os: windows
+
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -58,13 +63,47 @@ jobs:
             qt6-base-dev \
             qt6-tools-dev
 
-      - name: Build dependencies
+      - name: Set up MSYS2 (Windows)
+        if: matrix.os == 'windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-qt6-base
+            mingw-w64-x86_64-qt6-tools
+            autoconf
+            automake
+            make
+
+      - name: Build dependencies (Windows)
+        if: matrix.os == 'windows'
+        shell: msys2 {0}
         run: cmake -P external/build_deps.cmake
 
+      - name: Build dependencies
+        if: matrix.os != 'windows'
+        run: cmake -P external/build_deps.cmake
+
+      - name: Configure (Windows)
+        if: matrix.os == 'windows'
+        shell: msys2 {0}
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -G Ninja
+
       - name: Configure
+        if: matrix.os != 'windows'
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
+      - name: Build (Windows)
+        if: matrix.os == 'windows'
+        shell: msys2 {0}
+        run: cmake --build build
+
       - name: Build
+        if: matrix.os != 'windows'
         run: cmake --build build
 
       - name: Upload libxdf artifact
@@ -143,6 +182,26 @@ jobs:
 
       - name: Upload SigViewer artifact (macOS)
         if: matrix.os == 'macos'
+        uses: actions/upload-artifact@v7
+        with:
+          name: sigviewer-${{ matrix.platform_id }}
+          path: build/sigviewer.zip
+
+      - name: Deploy Qt DLLs (Windows)
+        if: matrix.os == 'windows'
+        shell: msys2 {0}
+        run: |
+          mkdir -p build/sigviewer-windows
+          cp build/sigviewer.exe build/sigviewer-windows/
+          windeployqt6 --release build/sigviewer-windows/sigviewer.exe
+
+      - name: Zip SigViewer (Windows)
+        if: matrix.os == 'windows'
+        run: Compress-Archive -Path build\sigviewer-windows\* -DestinationPath build\sigviewer.zip
+        shell: pwsh
+
+      - name: Upload SigViewer artifact (Windows)
+        if: matrix.os == 'windows'
         uses: actions/upload-artifact@v7
         with:
           name: sigviewer-${{ matrix.platform_id }}
