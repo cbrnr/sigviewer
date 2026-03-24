@@ -123,4 +123,4 @@ The pinned versions are defined in two places that must always be kept in sync:
 - `CMakeLists.txt` (`LIBXDF_VERSION` and `LIBBIOSIG_VERSION` near the top of the file)
 - `external/build_deps.cmake` (the same two variables near the top of that file)
 
-To upgrade a dependency, update both of those variables to the new version and re-run `cmake -P external/build_deps.cmake`. Pass `-DFORCE_REBUILD=ON` to force a full rebuild even if the stamp file already records the same version, or use `-DFORCE_REBUILD_LIBXDF=ON` / `-DFORCE_REBUILD_LIBBIOSIG=ON` to rebuild only one of the two libraries.
+To upgrade a dependency, update both of those variables to the new version and re-run `cmake -P external/build_deps.cmake`. Pass `-DFORCE_REBUILD=ON` to force a full rebuild even if the stamp file `external/versions.cmake` already records the same version, or use `-DFORCE_REBUILD_LIBXDF=ON` / `-DFORCE_REBUILD_LIBBIOSIG=ON` to rebuild only one of the two libraries.
