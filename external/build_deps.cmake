@@ -167,14 +167,11 @@ function(_build_libbiosig_from_source version dest_dir)
     file(GLOB _src_dirs LIST_DIRECTORIES true "${_tmp_dir}/*")
     list(GET _src_dirs 0 _src_dir)
 
-    find_program(_configure_sh NAMES configure sh)
-    if(NOT _configure_sh)
-        message(FATAL_ERROR "Cannot find sh to run configure")
-    endif()
+    find_program(_sh NAMES sh bash REQUIRED)
 
     message(STATUS "Configuring libbiosig…")
     execute_process(
-        COMMAND "${_src_dir}/configure"
+        COMMAND "${_sh}" "${_src_dir}/configure"
         WORKING_DIRECTORY "${_src_dir}"
         RESULT_VARIABLE _cfg_result
     )
