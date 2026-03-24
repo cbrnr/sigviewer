@@ -181,10 +181,17 @@ function(_build_libbiosig_from_source version dest_dir)
 
     find_program(_make_exe NAMES make gmake REQUIRED)
 
-    # win32/getline.c defines getline() first and getdelim() afterward, with no
-    # forward declaration between them.  GCC 14+ treats the resulting implicit
-    # declaration of getdelim as a hard error.  Prepend the necessary headers
-    # and a forward declaration so getdelim is known when getline calls it.
+    # GCC 14 made implicit function declarations a hard error.  biosig4c++
+    # was written for older compilers and has two related problems:
+    #
+    # 1. win32/getline.c defines getline() before getdelim(), with no forward
+    #    declaration between them, so GCC sees an implicit declaration of
+    #    getdelim inside getline.  Fix: prepend a forward declaration.
+    #
+    # 2. Several other source files (e.g. t210/sopen_abf_read.c) call getline()
+    #    without including any header that declares it.  Fix: patch the
+    #    hand-written biosig4c++/Makefile to add the flag that downgrades the
+    #    error back to a warning, which is all older GCC ever emitted for this.
     if(CMAKE_HOST_WIN32)
         set(_getline_c "${_src_dir}/biosig4c++/win32/getline.c")
         file(READ "${_getline_c}" _getline_content)
@@ -194,6 +201,12 @@ function(_build_libbiosig_from_source version dest_dir)
             "ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream);\n"
             "${_getline_content}"
         )
+
+        set(_biosig_mf "${_src_dir}/biosig4c++/Makefile")
+        file(READ "${_biosig_mf}" _mf_content)
+        string(REPLACE "-Wno-deprecated" "-Wno-deprecated -Wno-implicit-function-declaration"
+            _mf_content "${_mf_content}")
+        file(WRITE "${_biosig_mf}" "${_mf_content}")
     endif()
 
     message(STATUS "Building libbiosig…")
