@@ -321,6 +321,7 @@ if(APPLE)
     target_link_libraries(sigviewer PRIVATE iconv)
 elseif(WIN32)
     target_sources(sigviewer PRIVATE src/src.rc)
+    set_target_properties(sigviewer PROPERTIES WIN32_EXECUTABLE TRUE)
 endif()
 
 # -- Compile definitions -----------------------------------------------------

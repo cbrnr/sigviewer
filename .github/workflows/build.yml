@@ -193,8 +193,8 @@ jobs:
           cp build/sigviewer.exe build/sigviewer-windows/
           cp src/images/sigviewer.ico build/sigviewer-windows/
           windeployqt6 --release build/sigviewer-windows/sigviewer.exe
-          # Copy all MinGW DLL dependencies that windeployqt6 does not bundle
-          ldd build/sigviewer-windows/*.exe build/sigviewer-windows/*.dll 2>/dev/null \
+          # Copy all MinGW DLL dependencies (including those of Qt plugin DLLs in subdirectories)
+          find build/sigviewer-windows \( -name '*.exe' -o -name '*.dll' \) | xargs ldd 2>/dev/null \
             | awk '$3 ~ /\/mingw64\//' \
             | awk '{print $3}' \
             | sort -u \
@@ -207,20 +207,12 @@ jobs:
         if: matrix.os == 'windows'
         shell: pwsh
         run: |
-          pip install --quiet aqtinstall
-          aqt install-tool windows desktop tools_ifw --outputdir C:/Qt
-          $binarycreator = Get-ChildItem C:/Qt/Tools/QtInstallerFramework -Filter binarycreator.exe -Recurse |
-            Select-Object -First 1 -ExpandProperty FullName
-          New-Item -ItemType Directory -Force -Path deploy/windows/packages/org.sigviewer.sigviewer/data
-          Copy-Item -Path build/sigviewer-windows/* -Destination deploy/windows/packages/org.sigviewer.sigviewer/data/
-          & $binarycreator --offline-only `
-            -c deploy/windows/config/config.xml `
-            -p deploy/windows/packages `
-            build/sigviewer-installer.exe
+          $version = (Get-Content CMakeLists.txt | Select-String '^\s+VERSION\s+([\d.]+)').Matches[0].Groups[1].Value
+          & 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' /Dversion=$version deploy\windows\sigviewer-windows.iss
 
       - name: Upload SigViewer artifact (Windows)
         if: matrix.os == 'windows'
         uses: actions/upload-artifact@v7
         with:
           name: sigviewer-${{ matrix.platform_id }}
-          path: build/sigviewer-installer.exe
+          path: build/SigViewer-*.exe
