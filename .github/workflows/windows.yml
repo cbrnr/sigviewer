@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Windows x86-64
+    name: x86-64
     runs-on: windows-2025
 
     steps:
