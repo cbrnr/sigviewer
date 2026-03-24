@@ -169,9 +169,17 @@ function(_build_libbiosig_from_source version dest_dir)
 
     find_program(_sh NAMES sh bash REQUIRED)
 
+    # On MinGW-w64, getdelim (called by win32/getline.c) is a GNU extension
+    # that is only declared when _GNU_SOURCE is defined.
+    set(_configure_args)
+    if(CMAKE_HOST_WIN32)
+        list(APPEND _configure_args "CFLAGS=-D_GNU_SOURCE")
+        list(APPEND _configure_args "CXXFLAGS=-D_GNU_SOURCE")
+    endif()
+
     message(STATUS "Configuring libbiosig…")
     execute_process(
-        COMMAND "${_sh}" "${_src_dir}/configure"
+        COMMAND "${_sh}" "${_src_dir}/configure" ${_configure_args}
         WORKING_DIRECTORY "${_src_dir}"
         RESULT_VARIABLE _cfg_result
     )
