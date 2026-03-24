@@ -317,6 +317,7 @@ if(APPLE)
         MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
         MACOSX_DEPLOYMENT_TARGET        "11"
         MACOSX_BUNDLE_ICON_FILE         "sigviewer.icns"
+        OUTPUT_NAME                     "SigViewer"
     )
     target_link_libraries(sigviewer PRIVATE iconv)
 elseif(WIN32)
