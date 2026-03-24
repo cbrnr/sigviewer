@@ -158,36 +158,32 @@ jobs:
         if: matrix.os == 'macos'
         run: 'codesign --deep --force --options runtime --sign "Developer ID Application: CLEMENS BRUNNER (9UC2D22DW3)" build/sigviewer.app'
 
-      - name: Zip .app bundle (macOS)
+      - name: Create DMG (macOS)
         if: matrix.os == 'macos'
-        run: ditto -c -k --sequesterRsrc --keepParent build/sigviewer.app build/sigviewer.zip
+        run: hdiutil create -volname "SigViewer" -srcfolder build/sigviewer.app -ov -format UDZO build/sigviewer.dmg
 
-      - name: Notarize app (macOS)
+      - name: Notarize DMG (macOS)
         if: matrix.os == 'macos'
         env:
           AC_USERNAME: ${{ secrets.AC_USERNAME }}
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
         run: |
-          xcrun notarytool submit build/sigviewer.zip \
+          xcrun notarytool submit build/sigviewer.dmg \
             --apple-id "$AC_USERNAME" \
             --password "$AC_PASSWORD" \
             --team-id 9UC2D22DW3 \
             --wait
 
-      - name: Staple notarization ticket (macOS)
+      - name: Staple DMG (macOS)
         if: matrix.os == 'macos'
-        run: xcrun stapler staple build/sigviewer.app
-
-      - name: Zip signed and notarized .app bundle (macOS)
-        if: matrix.os == 'macos'
-        run: ditto -c -k --sequesterRsrc --keepParent build/sigviewer.app build/sigviewer.zip
+        run: xcrun stapler staple build/sigviewer.dmg
 
       - name: Upload SigViewer artifact (macOS)
         if: matrix.os == 'macos'
         uses: actions/upload-artifact@v7
         with:
           name: sigviewer-${{ matrix.platform_id }}
-          path: build/sigviewer.zip
+          path: build/sigviewer.dmg
 
       - name: Deploy Qt DLLs (Windows)
         if: matrix.os == 'windows'
@@ -195,22 +191,36 @@ jobs:
         run: |
           mkdir -p build/sigviewer-windows
           cp build/sigviewer.exe build/sigviewer-windows/
+          cp src/images/sigviewer.ico build/sigviewer-windows/
           windeployqt6 --release build/sigviewer-windows/sigviewer.exe
-          # Copy MinGW runtime and libiconv DLLs that windeployqt6 does not include
-          MINGW_BIN="$(cygpath -u $MINGW_PREFIX)/bin"
-          cp "$MINGW_BIN/libgcc_s_seh-1.dll" build/sigviewer-windows/
-          cp "$MINGW_BIN/libstdc++-6.dll"    build/sigviewer-windows/
-          cp "$MINGW_BIN/libwinpthread-1.dll" build/sigviewer-windows/
-          cp "$MINGW_BIN/libiconv-2.dll"      build/sigviewer-windows/
+          # Copy all MinGW DLL dependencies that windeployqt6 does not bundle
+          ldd build/sigviewer-windows/*.exe build/sigviewer-windows/*.dll 2>/dev/null \
+            | awk '$3 ~ /\/mingw64\//' \
+            | awk '{print $3}' \
+            | sort -u \
+            | while IFS= read -r dep; do
+                dest="build/sigviewer-windows/$(basename "$dep")"
+                [ -f "$dest" ] || cp "$dep" "$dest"
+              done
 
-      - name: Zip SigViewer (Windows)
+      - name: Create installer (Windows)
         if: matrix.os == 'windows'
-        run: Compress-Archive -Path build\sigviewer-windows\* -DestinationPath build\sigviewer.zip
         shell: pwsh
+        run: |
+          pip install --quiet aqtinstall
+          aqt install-tool windows desktop tools_ifw --outputdir C:/Qt
+          $binarycreator = Get-ChildItem C:/Qt/Tools/QtInstallerFramework -Filter binarycreator.exe -Recurse |
+            Select-Object -First 1 -ExpandProperty FullName
+          New-Item -ItemType Directory -Force -Path deploy/windows/packages/org.sigviewer.sigviewer/data
+          Copy-Item -Path build/sigviewer-windows/* -Destination deploy/windows/packages/org.sigviewer.sigviewer/data/
+          & $binarycreator --offline-only `
+            -c deploy/windows/config/config.xml `
+            -p deploy/windows/packages `
+            build/sigviewer-installer.exe
 
       - name: Upload SigViewer artifact (Windows)
         if: matrix.os == 'windows'
         uses: actions/upload-artifact@v7
         with:
           name: sigviewer-${{ matrix.platform_id }}
-          path: build/sigviewer.zip
+          path: build/sigviewer-installer.exe
