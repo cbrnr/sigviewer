@@ -68,7 +68,7 @@ QString GDFFileSignalWriter::saveEventsToSignalFile (QSharedPointer<EventManager
     event_header->setSamplingRate (event_sampling_rate);
 
     QList<EventID> events;
-    foreach (EventType type, types)
+    for (const auto type : types)
         events.append(event_manager->getEvents(type));
 
     for (int index = 0; index < events.size(); index++)
@@ -105,7 +105,7 @@ QString GDFFileSignalWriter::save (QSharedPointer<FileContext const> file_contex
 
     ChannelManager const& channel_manager = file_context->getChannelManager();
 
-    foreach (ChannelID channel, channel_manager.getChannels())
+    for (const auto channel : channel_manager.getChannels())
     {
         writer.createSignal (channel);
         writer.getSignalHeader(channel).set_label (channel_manager.getChannelLabel (channel).toStdString());
@@ -146,7 +146,7 @@ QString GDFFileSignalWriter::save (QSharedPointer<FileContext const> file_contex
         QString progressbar_string = "Writing samples...";
         for (unsigned sample_index = 0; sample_index < channel_manager.getNumberSamples(); sample_index++)
         {
-            foreach (ChannelID channel_id, channel_manager.getChannels())
+            for (const auto channel_id : channel_manager.getChannels())
             {
                 writer.addSamplePhys (channel_id, (*(channel_manager.getData (channel_id, sample_index, 1)))[0]);
             }

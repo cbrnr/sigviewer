@@ -1,5 +1,7 @@
 Version X.X.X
 (*) Switch from Qt5 to Qt6
+(*) Switch to CMake
+(*) Building works again on Windows (in addition to Linux and macOS)
 (B) Fix crash when exporting events to CSV
 (B) Fix evt import when sampling rates differ
 

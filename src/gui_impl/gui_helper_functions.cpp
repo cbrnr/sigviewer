@@ -218,7 +218,7 @@ std::set<ChannelID> selectChannels (ChannelManager const& channel_manager,
 
     bool empty_selection = (pre_selected_channels.size () == 0);
 
-    foreach (ChannelID channel_id, channel_manager.getChannels())
+    for (const auto channel_id : channel_manager.getChannels())
     {
         bool show_channel = (empty_selection ||
                              (pre_selected_channels.count(channel_id) > 0));
@@ -232,7 +232,7 @@ std::set<ChannelID> selectChannels (ChannelManager const& channel_manager,
         return pre_selected_channels;
 
     std::set<ChannelID> selected_channels;
-    foreach (ChannelID channel_id, channel_manager.getChannels())
+    for (const auto channel_id : channel_manager.getChannels())
     {
         if (channel_dialog.isSelected (channel_id))
             selected_channels.insert (channel_id);

@@ -65,7 +65,7 @@ float64 ChannelManager::getMinValue (std::set<ChannelID> const& channels) const
     if (!min_max_initialized_)
         initMinMax();
     float64 min = std::numeric_limits<float64>::max();
-    foreach (ChannelID channel, channels)
+    for (const auto channel : channels)
         min = std::min (min, min_values_[channel]);
     return min;
 }
@@ -77,7 +77,7 @@ float64 ChannelManager::getMaxValue (std::set<ChannelID> const& channels) const
         initMinMax();
 
     float64 max = std::numeric_limits<float64>::min();
-    foreach (ChannelID channel, channels)
+    for (const auto channel : channels)
         max = std::max (max, max_values_[channel]);
     return max;
 }
@@ -111,7 +111,7 @@ void ChannelManager::initMinMax () const
 {
     if (min_max_initialized_)
         return;
-    foreach (ChannelID id, getChannels())
+    for (const auto id : getChannels())
     {
         QSharedPointer<DataBlock const> data = getData (id, 0, getNumberSamples ());
         max_values_[id] = data->getMax ();

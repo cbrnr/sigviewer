@@ -119,7 +119,7 @@ void SignalBrowserModel::setShownChannels (std::set<ChannelID> const&
 
     getSignalViewSettings()->setChannelHeight (std::max<unsigned>(120, new_channel_height));
 
-    foreach (ChannelID channel, new_shown_channels)
+    for (const auto channel : new_shown_channels)
     {
         ProgressBar::instance().increaseValue (1, tr("Creating view..."));
         if (channel2signal_item_.count (channel) == 0)

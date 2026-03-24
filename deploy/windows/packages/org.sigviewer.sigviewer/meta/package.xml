@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Package>
-    <DisplayName>SigViewer</DisplayName>
-    <Description>SigViewer is a viewing application for biosignals</Description>
-    <Version>0.6.4</Version>
-    <ReleaseDate>2019-04-23</ReleaseDate>
-    <Default>true</Default>
-    <Script>installscript.qs</Script>
-</Package>

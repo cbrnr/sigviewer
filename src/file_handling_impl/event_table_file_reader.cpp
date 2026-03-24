@@ -34,14 +34,14 @@ bool EventTableFileReader::load()
     char g[10];
     uint16_t k;
     for (k = 0; EventCodeGroups[k].groupid < 0xffff; k++) {
-        sprintf(g, "0x%04x", EventCodeGroups[k].groupid);
+        snprintf(g, sizeof(g), "0x%04x", EventCodeGroups[k].groupid);
         QString group_id = QString(g);
         group_id2name_[group_id] = QString(EventCodeGroups[k].GroupDescription);
         event_group_ids_ << group_id;
     }
     EventItem item;
     for (k = 0; ETD[k].typ ; k++) {
-        sprintf(g, "0x%04x", ETD[k].groupid);
+        snprintf(g, sizeof(g), "0x%04x", ETD[k].groupid);
         QString group_id = QString(g);
         item.name     =  QString(ETD[k].desc);
         item.group_id = group_id;

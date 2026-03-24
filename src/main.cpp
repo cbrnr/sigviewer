@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
     #endif
 
     QTranslator translator;
-    if (translator.load(QLocale::system(), QStringLiteral("sigviewer"), QStringLiteral("_"), QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+    if (translator.load(QLocale::system(), QStringLiteral("sigviewer"), QStringLiteral("_"), QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
     {
         QCoreApplication::installTranslator(&translator);
     }

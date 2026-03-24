@@ -1,0 +1,73 @@
+name: Linux
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - name: x86-64
+            runner: ubuntu-24.04
+            platform_id: linux-x86_64
+
+          - name: ARM64
+            runner: ubuntu-24.04-arm
+            platform_id: linux-aarch64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: |
+          sudo apt update -qq
+          sudo apt install -y \
+            cmake \
+            build-essential \
+            qt6-base-dev \
+            qt6-tools-dev
+
+      - name: Build dependencies
+        run: cmake -P external/build_deps.cmake
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Upload libxdf artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: libxdf-${{ matrix.platform_id }}
+          path: |
+            external/lib/libxdf.a
+            external/include/xdf.h
+
+      - name: Upload libbiosig artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: libbiosig-${{ matrix.platform_id }}
+          path: |
+            external/lib/libbiosig.a
+            external/include/biosig.h
+            external/include/biosig-dev.h
+            external/include/biosig-network.h
+            external/include/biosig2.h
+            external/include/gdftime.h
+            external/include/mdc_ecg_codes.h
+            external/include/physicalunits.h
+
+      - name: Upload SigViewer artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: sigviewer-${{ matrix.platform_id }}
+          path: build/sigviewer

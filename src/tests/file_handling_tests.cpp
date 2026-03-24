@@ -40,7 +40,7 @@ void FileHandlingTests::cleanup ()
 QString FileHandlingTests::testEventExportingImporting ()
 {
     QTemporaryFile event_file ("XXXXXX.evt");
-    event_file.open();
+    (void)event_file.open();
     event_file.close();
     QSharedPointer<FileSignalWriter> writer (FileSignalWriterFactory::getInstance()->getHandler(event_file.fileName()));
     VERIFY (writer.isNull() == false, "EVT writer not created")
@@ -55,7 +55,7 @@ QString FileHandlingTests::testEventExportingImporting ()
 
 
     QTemporaryFile event_file_2 ("XXXXXX.evt");
-    event_file_2.open();
+    (void)event_file_2.open();
     event_file_2.close();
     QSharedPointer<FileSignalWriter> writer_2 (FileSignalWriterFactory::getInstance()->getHandler(event_file_2.fileName()));
     VERIFY (writer_2.isNull() == false, "EVT writer 2 not created")

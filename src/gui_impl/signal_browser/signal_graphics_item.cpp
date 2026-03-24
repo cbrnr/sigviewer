@@ -395,7 +395,7 @@ void SignalGraphicsItem::hoverMoveEvent (QGraphicsSceneHoverEvent* event)
     std::set<EventID> events = event_manager_->getEventsAt (sample_pos, id_);
     std::set<EventType> shown_types = signal_browser_model_.getShownEventTypes();
     QString event_string;
-    foreach (EventID event, events)
+    for (const auto event : events)
     {
         QSharedPointer<SignalEvent const> signal_event = event_manager_->getEvent(event);
         if (shown_types.count(signal_event->getType()))

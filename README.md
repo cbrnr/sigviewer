@@ -1,91 +1,149 @@
-SigViewer
-=========
+# SigViewer
 
-SigViewer is a viewing application for biosignals such as EEG or MEG time series. In addition to viewing raw data, SigViewer can also create, edit, and display event information (such as annotations or artifact selections).
+SigViewer is an application for viewing biosignals such as EEG or MEG time series. In addition to viewing raw data, SigViewer can also create, edit, and display events (such as annotations or artifact selections).
 
-Download
---------
 - [SigViewer 0.6.4 (Windows)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/sigviewer-0.6.4-win64.exe)
 - [SigViewer 0.6.4 (macOS)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/sigviewer-0.6.4-macos.dmg)
 - [SigViewer 0.6.4 (Linux)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/sigviewer-0.6.4-linux.zip) ([Arch](https://aur.archlinux.org/packages/sigviewer/), [Debian](https://tracker.debian.org/pkg/sigviewer), [Ubuntu](https://launchpad.net/ubuntu/+source/sigviewer))
 - [SigViewer 0.6.4 (Source)](https://github.com/cbrnr/sigviewer/archive/v0.6.4.zip)
 
-Screenshots
------------
-![screenshot-1](https://github.com/cbrnr/sigviewer/raw/main/screenshot-1.png)
 
-Building SigViewer
-------------------
-SigViewer requires a standard-compliant C++11 build toolchain, for example recent versions of [GCC](https://gcc.gnu.org/) or [Clang](https://clang.llvm.org/). Other compilers such as [MSVC](https://en.wikipedia.org/wiki/Visual_C%2B%2B) might work, but are not tested. Furthermore, SigViewer depends on [Qt](https://www.qt.io/). Current SigViewer builds use Qt 5.12 (previous or future versions are not guaranteed to work).
+## Building SigViewer
 
-SigViewer also depends on [libbiosig](http://biosig.sourceforge.net/) and [libxdf](https://github.com/xdf-modules/libxdf). There are two options to get these external dependencies for your platform:
+SigViewer requires a standard-compliant C++17 build toolchain, for example recent versions of [GCC](https://gcc.gnu.org/) or [Clang](https://clang.llvm.org/). Furthermore, SigViewer depends on [Qt 6](https://www.qt.io/) and [CMake](https://cmake.org/) 3.21 or later.
 
-1. Build these dependencies yourself (see separate descriptions below).
-2. Use our pre-built binaries. The corresponding archive contains binary versions of libbiosig and libxdf and must be extracted into SigViewer’s source folder (which we denote as `$sigviewer`).
-    - [External dependencies (macOS)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/external-0.6.4-macos.zip)
-    - [External dependencies (Linux)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/external-0.6.4-linux.zip)
-
-### Windows
-Building SigViewer on Windows is currently not supported. We provide binaries created with the [MXE](https://mxe.cc/) cross compilation environment.
+In addition, SigViewer depends on [libbiosig](http://biosig.sourceforge.net/) and [libxdf](https://github.com/xdf-modules/libxdf), which are built from source automatically.
 
 
 ### macOS
-SigViewer requires Mac OS X (now renamed to macOS) 10.9 or later. First, install XCode from the App Store. Next, download and install [Qt 5.12.3 for macOS](http://download.qt.io/official_releases/qt/5.12/5.12.3/qt-opensource-mac-x64-5.12.3.dmg) or install Qt via [Homebrew](https://brew.sh/) by running `brew install qt` in a terminal. Make sure that `qmake` is available on the path if you want to build SigViewer in a terminal. Alternatively, you can build SigViewer with Qt Creator (please refer to the description for building SigViewer on Windows).
 
-1. Download and unzip the [SigViewer source](https://github.com/cbrnr/sigviewer/archive/v0.6.4.zip).
-1. Provide all external dependencies:
-    - Either download the [external archive](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/external-0.6.4-macos.zip) and extract it inside `$sigviewer`.
-    - Or copy the necessary files from libbiosig and libxdf builds to the corresponding folders as detailed in the build descriptions for libbiosig and libxdf below.
-1. In a terminal, change to `$sigviewer` and run `qmake`.
-1. Run `make` (or if you want to use more cores to build in parallel, run `make -j4` if you want to use four cores). The SigViewer binary is built in the `bin/release` folder.
-1. To create a stand-alone version of SigViewer, open a terminal, change into `$sigviewer/bin/release` and run `macdeployqt sigviewer.app -dmg`. This creates a disk image with the app, which can then be dragged to the Applications folder.
+Install the Xcode Command Line Tools by running `xcode-select --install`, then install Qt 6 and CMake via [Homebrew](https://brew.sh/):
+
+```
+brew install qt cmake
+```
+
+Then build SigViewer:
+
+```
+cmake -P external/build_deps.cmake
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j$(sysctl -n hw.logicalcpu)
+```
+
+The application bundle is produced at `build/SigViewer.app`.
+
+To create a disk image that can be distributed, first bundle all required Qt frameworks into the app:
+
+```
+$(brew --prefix qt)/bin/macdeployqt build/SigViewer.app
+```
+
+For a production release the app bundle must be **code-signed** with a Developer ID certificate, **notarized** with Apple, and **stapled** before the DMG is created. Distributing an unsigned or un-notarized app will trigger Gatekeeper warnings. The order is:
+
+1. Sign the `.app` with `codesign`
+2. Submit the `.app` (as a zip) to `xcrun notarytool` and wait for approval
+3. Staple the notarization ticket to the `.app` with `xcrun stapler`
+4. Create the DMG from the stapled `.app`
+
+See `.github/workflows/build.yml` for the exact commands used in CI.
+
+Once the app is signed, notarized, and stapled, create the disk image:
+
+```
+hdiutil create -volname "SigViewer" -srcfolder build/SigViewer.app -ov -format UDZO build/SigViewer-<version>.dmg
+```
+
 
 ### Linux
-Install the GNU build toolchain and Qt 5 with your native package manager. You can either build on the command line or with Qt Creator (which you then need to install).
 
-1. Download and unzip the [SigViewer source](https://github.com/cbrnr/sigviewer/archive/v0.6.4.zip).
-1. Provide all external dependencies:
-    - Either download the [external archive](https://github.com/cbrnr/sigviewer/releases/download/v0.6.4/external-0.6.4-linux.zip) and extract it inside `$sigviewer`.
-    - Or copy the necessary files from libbiosig and libxdf builds to the corresponding folders as detailed in the build descriptions for libbiosig and libxdf below.
-1. In a terminal, change to `$sigviewer` and run `qmake`.
-1. Run `make` (or if you want to use more cores to build in parallel, run `make -j 4` if you want to use four cores). The SigViewer binary is built in the `bin/release` folder.
+Install a C++ toolchain, Qt 6, and CMake with your package manager. On Debian/Ubuntu:
 
-Building external dependencies
-------------------------------
+```
+sudo apt install cmake build-essential qt6-base-dev qt6-tools-dev
+```
+
+Then build SigViewer:
+
+```
+cmake -P external/build_deps.cmake
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j$(nproc)
+```
+
+The executable is produced at `build/sigviewer`.
+
+
 ### Windows
-Building libbiosig on Windows is currently not supported.
 
-To build libxdf from source, follow these steps:
+Install [MSYS2](https://www.msys2.org/) and open the MINGW64 shell. Install the required dependencies:
 
-1. Download and unzip the [libxdf source](https://github.com/xdf-modules/libxdf/archive/v0.99.zip) (SigViewer 0.6.4 uses libxdf 0.99).
-1. On the command line, run `qmake` followed by `mingw32-make` (or build the project with Qt Creator) (instead of `qmake`, you can also run `cmake .`).
-2. Copy `xdf.h` into `$sigviewer/external/include` and `libxdf.a` to `$sigviewer/external/lib`.
+```
+pacman -S --needed \
+    mingw-w64-x86_64-gcc \
+    mingw-w64-x86_64-cmake \
+    mingw-w64-x86_64-ninja \
+    mingw-w64-x86_64-qt6-base \
+    mingw-w64-x86_64-qt6-tools \
+    mingw-w64-x86_64-libiconv \
+    autoconf \
+    automake \
+    make
+```
 
-### macOS
-To build libbiosig from source, follow these steps:
+Then build SigViewer from the MINGW64 shell:
 
-1. Download and unzip [BioSig for C/C++](https://sourceforge.net/projects/biosig/files/BioSig%20for%20C_C%2B%2B/src/biosig4c%2B%2B-1.9.4.src.tar.gz) into `$libbiosig` (SigViewer 0.6.4 uses libbiosig 1.9.4).
-1. Change line 156 of `Makefile.in` to `CFLAGS        += -mmacosx-version-min=10.9` (replace `10.13` with `10.9`).
-1. In a terminal, change to `$libbiosig` and run `./configure`.
-1. Run `make`.
-1. Copy `biosig.h`, `biosig-dev.h`, `gdftime.h`, and `physicalunits.h` to `$sigviewer/external/include` and `libbiosig.a` to `$sigviewer/external/lib`.
+```
+cmake -P external/build_deps.cmake
+cmake -B build -DCMAKE_BUILD_TYPE=Release -G Ninja
+cmake --build build
+```
 
-To build libxdf from source, follow these steps:
+The executable is produced at `build/sigviewer.exe`.
 
-1. Download and unzip the [libxdf source](https://github.com/xdf-modules/libxdf/archive/v0.99.zip) to `$libxdf` (SigViewer 0.6.4 uses libxdf 0.99).
-1. In a terminal, change to `$libxdf` and run `qmake` followed by `make` (instead of `qmake`, you can also run `cmake .`).
-1. Copy `xdf.h` into `$sigviewer/external/include` and `libxdf.a` to `$sigviewer/external/lib`.
+Collect the executable together with all required Qt DLLs and MinGW runtime libraries into a staging folder:
 
-### Linux
-To build libbiosig from source, follow these steps:
+```
+mkdir -p build/sigviewer-windows
+cp build/sigviewer.exe build/sigviewer-windows/
+cp src/images/sigviewer.ico build/sigviewer-windows/
+windeployqt6 --release build/sigviewer-windows/sigviewer.exe
+# Copy any remaining MinGW DLL dependencies
+find build/sigviewer-windows \( -name '*.exe' -o -name '*.dll' \) | xargs ldd 2>/dev/null \
+    | awk '$3 ~ /\/mingw64\//' | awk '{print $3}' | sort -u \
+    | while IFS= read -r dep; do
+        dest="build/sigviewer-windows/$(basename "$dep")"
+        [ -f "$dest" ] || cp "$dep" "$dest"
+      done
+```
 
-1. Download and unzip [BioSig for C/C++](https://sourceforge.net/projects/biosig/files/BioSig%20for%20C_C%2B%2B/src/biosig4c%2B%2B-1.9.4.src.tar.gz) into `$libbiosig` (SigViewer 0.6.4 uses libbiosig 1.9.4).
-1. In a terminal, change to `$libbiosig` and run `./configure`.
-1. Run `make`.
-1. Copy `biosig.h`, `biosig-dev.h`, `gdftime.h`, and `physicalunits.h` to `$sigviewer/external/include` and `libbiosig.a` to `$sigviewer/external/lib`.
+Then build the installer using [Inno Setup](https://jrsoftware.org/isinfo.php) (available from `winget install JRSoftware.InnoSetup`):
 
-To build libxdf from source, follow these steps:
+```
+& 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' /Dversion=<version> deploy\windows\sigviewer-windows.iss
+```
 
-1. Download and unzip the [libxdf source](https://github.com/xdf-modules/libxdf/archive/v0.99.zip) to `$libxdf` (SigViewer 0.6.4 uses libxdf 0.99).
-1. In a terminal, change to `$libxdf` and run `qmake` followed by `make` (instead of `qmake`, you can also run `cmake .`).
-1. Copy `xdf.h` into `$sigviewer/external/include` and `libxdf.a` to `$sigviewer/external/lib`.
+The installer is written to `build/SigViewer-<version>.exe`.
+
+
+## Updating translations
+
+SigViewer's UI strings are kept in `.ts` files under `src/translations/`. After adding or changing translatable strings in the source code, update the `.ts` files by running:
+
+```
+cmake --build build --target sigviewer_lupdate
+```
+
+The resulting `.ts` files should be committed to the repository. The `.qm` binary files are compiled automatically from them during the regular build.
+
+
+## Updating dependencies
+
+The script `external/build_deps.cmake` downloads the pinned source releases, builds them, and installs the resulting static libraries into the `external/` directory. You only need to run this once (or again after changing the pinned versions).
+
+The pinned versions are defined in two places that must always be kept in sync:
+
+- `CMakeLists.txt` (`LIBXDF_VERSION` and `LIBBIOSIG_VERSION` near the top of the file)
+- `external/build_deps.cmake` (the same two variables near the top of that file)
+
+To upgrade a dependency, update both of those variables to the new version and re-run `cmake -P external/build_deps.cmake`. Pass `-DFORCE_REBUILD=ON` to force a full rebuild even if the stamp file `external/versions.cmake` already records the same version, or use `-DFORCE_REBUILD_LIBXDF=ON` / `-DFORCE_REBUILD_LIBBIOSIG=ON` to rebuild only one of the two libraries.
