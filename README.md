@@ -4,7 +4,8 @@ SigViewer is an application for viewing biosignals such as EEG or MEG time serie
 
 - [SigViewer 0.6.5 (Windows)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.5/sigviewer-0.6.5-windows-x86_64.exe)
 - [SigViewer 0.6.5 (macOS)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.5/sigviewer-0.6.5-macos-arm64.dmg)
-- [SigViewer 0.6.5 (Linux)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.5/sigviewer-0.6.5-linux-x86_64.tar.gz)
+- [SigViewer 0.6.5 (Linux x86-64)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.5/sigviewer-0.6.5-linux-x86_64.tar.gz)
+- [SigViewer 0.6.5 (Linux AARCH64)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.5/sigviewer-0.6.5-linux-aarch64.tar.gz)
 - [SigViewer 0.6.5 (Source)](https://github.com/cbrnr/sigviewer/archive/v0.6.5.zip)
 
 
