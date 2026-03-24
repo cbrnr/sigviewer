@@ -69,6 +69,7 @@ jobs:
         with:
           msystem: MINGW64
           update: true
+          cache: true
           install: >-
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-cmake
