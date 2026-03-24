@@ -19,7 +19,7 @@ jobs:
             runner: ubuntu-24.04
             platform_id: linux-x86_64
 
-          - name: ARM64
+          - name: arm64
             runner: ubuntu-24.04-arm
             platform_id: linux-aarch64
 
