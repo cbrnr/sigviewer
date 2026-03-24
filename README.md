@@ -33,14 +33,26 @@ cmake --build build -j$(sysctl -n hw.logicalcpu)
 
 The application bundle is produced at `build/SigViewer.app`.
 
-Bundle all Qt frameworks into the app and create a disk image:
+To create a disk image that can be distributed, first bundle all required Qt frameworks into the app:
 
 ```
 $(brew --prefix qt)/bin/macdeployqt build/SigViewer.app
-hdiutil create -volname "SigViewer" -srcfolder build/SigViewer.app -ov -format UDZO build/SigViewer-$(cmake --system-information | grep CMAKE_PROJECT_VERSION | awk '{print $2}').dmg
 ```
 
-The disk image is produced at `build/SigViewer-<version>.dmg`.
+For a production release the app bundle must be **code-signed** with a Developer ID certificate, **notarized** with Apple, and **stapled** before the DMG is created. Distributing an unsigned or un-notarized app will trigger Gatekeeper warnings. The order is:
+
+1. Sign the `.app` with `codesign`
+2. Submit the `.app` (as a zip) to `xcrun notarytool` and wait for approval
+3. Staple the notarization ticket to the `.app` with `xcrun stapler`
+4. Create the DMG from the stapled `.app`
+
+See `.github/workflows/build.yml` for the exact commands used in CI.
+
+Once the app is signed, notarized, and stapled, create the disk image:
+
+```
+hdiutil create -volname "SigViewer" -srcfolder build/SigViewer.app -ov -format UDZO build/SigViewer-<version>.dmg
+```
 
 
 ### Linux
