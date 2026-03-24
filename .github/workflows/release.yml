@@ -36,9 +36,9 @@ jobs:
           mkdir -p release-assets
 
           find artifacts/sigviewer-linux-x86_64 -type f -name 'sigviewer' \
-            -exec zip -j release-assets/sigviewer-${VERSION}-linux-x86_64.zip {} \;
+            -exec tar -czf release-assets/sigviewer-${VERSION}-linux-x86_64.tar.gz -C "$(dirname {})" sigviewer \;
           find artifacts/sigviewer-linux-aarch64 -type f -name 'sigviewer' \
-            -exec zip -j release-assets/sigviewer-${VERSION}-linux-aarch64.zip {} \;
+            -exec tar -czf release-assets/sigviewer-${VERSION}-linux-aarch64.tar.gz -C "$(dirname {})" sigviewer \;
           find artifacts/sigviewer-macos-arm64 -name '*.dmg' \
             -exec cp {} release-assets/sigviewer-${VERSION}-macos-arm64.dmg \;
           find artifacts/sigviewer-windows-x86_64 -name '*.exe' \

@@ -4,7 +4,7 @@ SigViewer is an application for viewing biosignals such as EEG or MEG time serie
 
 - [SigViewer 0.6.5 (Windows)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.5/sigviewer-0.6.5-windows-x86_64.exe)
 - [SigViewer 0.6.5 (macOS)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.5/sigviewer-0.6.5-macos-arm64.dmg)
-- [SigViewer 0.6.5 (Linux)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.5/sigviewer-0.6.5-linux-x86_64.zip) ([Arch](https://aur.archlinux.org/packages/sigviewer/), [Debian](https://tracker.debian.org/pkg/sigviewer), [Ubuntu](https://launchpad.net/ubuntu/+source/sigviewer))
+- [SigViewer 0.6.5 (Linux)](https://github.com/cbrnr/sigviewer/releases/download/v0.6.5/sigviewer-0.6.5-linux-x86_64.tar.gz)
 - [SigViewer 0.6.5 (Source)](https://github.com/cbrnr/sigviewer/archive/v0.6.5.zip)
 
 
@@ -143,8 +143,8 @@ To publish a new release:
 
 Pushing the tag triggers the `.github/workflows/release.yml` workflow, which builds SigViewer on all three platforms (Linux x86-64, Linux ARM64, macOS ARM64, Windows x86-64), packages the release artifacts, and publishes a new GitHub release with the following assets attached:
 
-- `sigviewer-<version>-linux-x86_64.zip`
-- `sigviewer-<version>-linux-aarch64.zip`
+- `sigviewer-<version>-linux-x86_64.tar.gz`
+- `sigviewer-<version>-linux-aarch64.tar.gz`
 - `sigviewer-<version>-macos-arm64.dmg`
 - `sigviewer-<version>-windows-x86_64.exe`
 - `libbiosig-<version>-<platform>.zip` (all four platforms)
