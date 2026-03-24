@@ -196,6 +196,12 @@ jobs:
           mkdir -p build/sigviewer-windows
           cp build/sigviewer.exe build/sigviewer-windows/
           windeployqt6 --release build/sigviewer-windows/sigviewer.exe
+          # Copy MinGW runtime and libiconv DLLs that windeployqt6 does not include
+          MINGW_BIN="$(cygpath -u $MINGW_PREFIX)/bin"
+          cp "$MINGW_BIN/libgcc_s_seh-1.dll" build/sigviewer-windows/
+          cp "$MINGW_BIN/libstdc++-6.dll"    build/sigviewer-windows/
+          cp "$MINGW_BIN/libwinpthread-1.dll" build/sigviewer-windows/
+          cp "$MINGW_BIN/libiconv-2.dll"      build/sigviewer-windows/
 
       - name: Zip SigViewer (Windows)
         if: matrix.os == 'windows'
