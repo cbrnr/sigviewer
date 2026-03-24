@@ -321,6 +321,10 @@ if(APPLE)
     target_link_libraries(sigviewer PRIVATE iconv)
 elseif(WIN32)
     target_sources(sigviewer PRIVATE src/src.rc)
+    # libbiosig uses Winsock (ntohl/ntohs/getaddrinfo) and libiconv internally;
+    # as a static library it cannot carry these dependencies itself, so we must
+    # link them explicitly here.
+    target_link_libraries(sigviewer PRIVATE ws2_32 iconv)
 endif()
 
 # -- Compile definitions -----------------------------------------------------
