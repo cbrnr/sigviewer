@@ -340,8 +340,8 @@ void SaveGuiCommand::exportEventsToCSV ()
                 ->getCurrentFileContext()->getEventManager();
 
         struct row {
-            unsigned long pos;
-            unsigned long dur;
+            size_t pos;
+            size_t dur;
             int chan;
             int id;
             QString name;
