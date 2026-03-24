@@ -126,6 +126,17 @@ Then build the installer using [Inno Setup](https://jrsoftware.org/isinfo.php) (
 The installer is written to `build/SigViewer-<version>.exe`.
 
 
+## Updating translations
+
+SigViewer's UI strings are kept in `.ts` files under `src/translations/`. After adding or changing translatable strings in the source code, update the `.ts` files by running:
+
+```
+cmake --build build --target sigviewer_lupdate
+```
+
+The resulting `.ts` files should be committed to the repository. The `.qm` binary files are compiled automatically from them during the regular build.
+
+
 ## Updating dependencies
 
 The script `external/build_deps.cmake` downloads the pinned source releases, builds them, and installs the resulting static libraries into the `external/` directory. You only need to run this once (or again after changing the pinned versions).
