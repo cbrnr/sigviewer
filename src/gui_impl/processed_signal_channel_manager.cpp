@@ -71,7 +71,14 @@ QSharedPointer<DataBlock const> ProcessedSignalChannelManager::getData (ChannelI
                                                  unsigned start_pos,
                                                  unsigned length) const
 {
-    return channels_[id]->createSubBlock (start_pos, length);
+    if (((start_pos + length) > getNumberSamples()) || length == 0)
+        return QSharedPointer<DataBlock const> (nullptr);
+
+    auto channel_iter = channels_.find(id);
+    if ((channel_iter == channels_.end()) || (!channel_iter.value()))
+        return QSharedPointer<DataBlock const> (nullptr);
+
+    return channel_iter.value()->createSubBlock (start_pos, length);
 }
 
 //-------------------------------------------------------------------------

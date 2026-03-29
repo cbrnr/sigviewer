@@ -406,8 +406,11 @@ void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager,
             this, SLOT(verticalSrollbarMoved(int)));
 
     //! To sync event creation widget and editing widget
-    connect(event_creation_widget_, SIGNAL(newEventType(std::set<EventType>)),
-            event_editing_widget_, SLOT(updateShownEventTypes(std::set<EventType>)));
+    if ((event_creation_widget_ != nullptr) && (event_editing_widget_ != nullptr))
+    {
+        connect(event_creation_widget_, SIGNAL(newEventType(std::set<EventType>)),
+                event_editing_widget_, SLOT(updateShownEventTypes(std::set<EventType>)));
+    }
 
     connect(this, SIGNAL(visibleXChanged(int32)), x_axis_widget_, SLOT(changeXStart(int32)));
     connect(model_->getSignalViewSettings().data(), SIGNAL(pixelsPerSampleChanged()), x_axis_widget_, SLOT(update()));
