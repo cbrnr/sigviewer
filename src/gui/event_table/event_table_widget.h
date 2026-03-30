@@ -19,12 +19,12 @@
 namespace sigviewer
 {
 
-namespace Tests_ { class EventTableWidgetTests;}
+class TestEventTableWidget;
 
 //-----------------------------------------------------------------------------
 class EventTableWidget : public QWidget
 {
-    friend class sigviewer::Tests_::EventTableWidgetTests;
+    friend class TestEventTableWidget;
 
     Q_OBJECT
 

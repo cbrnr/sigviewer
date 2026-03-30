@@ -18,7 +18,7 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 # -- Qt ----------------------------------------------------------------------
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Xml LinguistTools)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Xml LinguistTools Test)
 qt_standard_project_setup()
 
 # -- External pre-built dependencies -----------------------------------------
@@ -75,8 +75,7 @@ set_target_properties(dep_libbiosig PROPERTIES
 )
 
 # -- Sources -----------------------------------------------------------------
-qt_add_executable(sigviewer
-    src/main.cpp
+qt_add_library(sigviewer_objects OBJECT
     src/application_context.cpp
     src/application_context.h
     src/command_executer.h
@@ -273,33 +272,45 @@ qt_add_executable(sigviewer
     # signal_processing
     src/signal_processing/FFTReal.cpp
     src/signal_processing/FFTReal.h
-
-    # tests
-    src/tests/color_manager_tests.cpp
-    src/tests/color_manager_tests.h
-    src/tests/data_block_tests.cpp
-    src/tests/data_block_tests.h
-    src/tests/editing_commands_tests.cpp
-    src/tests/editing_commands_tests.h
-    src/tests/event_manager_tests.cpp
-    src/tests/event_manager_tests.h
-    src/tests/event_table_widget_tests.cpp
-    src/tests/event_table_widget_tests.h
-    src/tests/file_handling_tests.cpp
-    src/tests/file_handling_tests.h
-    src/tests/gui_tests.cpp
-    src/tests/gui_tests.h
-    src/tests/test.cpp
-    src/tests/test.h
-    src/tests/tests_dialog.cpp
-    src/tests/tests_dialog.h
-    src/tests/tests_dialog.ui
-    src/tests/tests_factory.h
-
 )
 
 qt_add_resources(SIGVIEWER_RESOURCES src/src.qrc)
-target_sources(sigviewer PRIVATE ${SIGVIEWER_RESOURCES})
+target_sources(sigviewer_objects PRIVATE ${SIGVIEWER_RESOURCES})
+
+# AUTOUIC needs to know every directory that contains a .ui file.
+set_target_properties(sigviewer_objects PROPERTIES
+    AUTOUIC_SEARCH_PATHS
+        "${CMAKE_SOURCE_DIR}/src/gui/dialogs;${CMAKE_SOURCE_DIR}/src/gui/event_table;${CMAKE_SOURCE_DIR}/src/gui/signal_browser;${CMAKE_SOURCE_DIR}/src/gui/info_widgets"
+)
+
+# -- Compile definitions -----------------------------------------------------
+target_compile_definitions(sigviewer_objects PRIVATE
+    VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
+    VERSION_MINOR=${PROJECT_VERSION_MINOR}
+    VERSION_BUILD=${PROJECT_VERSION_PATCH}
+    $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT>
+)
+
+# -- Include paths and link libraries ----------------------------------------
+target_include_directories(sigviewer_objects PUBLIC src)
+
+target_link_libraries(sigviewer_objects PUBLIC
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::Xml
+    dep_libxdf
+    dep_libbiosig
+    # libbiosig is a static library and cannot carry its own transitive
+    # dependencies.  On macOS and Windows it uses libiconv; on Windows it also
+    # uses Winsock (ntohl/htonl/getaddrinfo).
+    $<$<OR:$<PLATFORM_ID:Darwin>,$<PLATFORM_ID:Windows>>:iconv>
+    $<$<PLATFORM_ID:Windows>:ws2_32>
+)
+
+# -- Main application --------------------------------------------------------
+qt_add_executable(sigviewer src/main.cpp)
+target_link_libraries(sigviewer PRIVATE sigviewer_objects)
 
 # -- Platform-specific sources -----------------------------------------------
 if(APPLE)
@@ -315,42 +326,10 @@ if(APPLE)
         MACOSX_BUNDLE_ICON_FILE         "sigviewer.icns"
         OUTPUT_NAME                     "SigViewer"
     )
-    target_link_libraries(sigviewer PRIVATE iconv)
 elseif(WIN32)
     target_sources(sigviewer PRIVATE src/src.rc)
     set_target_properties(sigviewer PROPERTIES WIN32_EXECUTABLE TRUE)
 endif()
-
-# -- Compile definitions -----------------------------------------------------
-target_compile_definitions(sigviewer PRIVATE
-    VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
-    VERSION_MINOR=${PROJECT_VERSION_MINOR}
-    VERSION_BUILD=${PROJECT_VERSION_PATCH}
-    $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT>
-)
-
-# -- Include paths and link libraries ----------------------------------------
-target_include_directories(sigviewer PRIVATE src)
-
-# AUTOUIC needs to know every directory that contains a .ui file.
-set_target_properties(sigviewer PROPERTIES
-    AUTOUIC_SEARCH_PATHS
-        "${CMAKE_SOURCE_DIR}/src/gui/dialogs;${CMAKE_SOURCE_DIR}/src/gui/event_table;${CMAKE_SOURCE_DIR}/src/gui/signal_browser;${CMAKE_SOURCE_DIR}/src/gui/info_widgets;${CMAKE_SOURCE_DIR}/src/tests"
-)
-
-target_link_libraries(sigviewer PRIVATE
-    Qt6::Core
-    Qt6::Gui
-    Qt6::Widgets
-    Qt6::Xml
-    dep_libxdf
-    dep_libbiosig
-    # libbiosig is a static library and cannot carry its own transitive
-    # dependencies.  On Windows it uses Winsock (ntohl/htonl/getaddrinfo)
-    # and libiconv, which must be listed after it so GNU ld can resolve them.
-    $<$<PLATFORM_ID:Windows>:ws2_32>
-    $<$<PLATFORM_ID:Windows>:iconv>
-)
 
 # -- Translations ------------------------------------------------------------
 qt_add_translations(sigviewer
@@ -359,3 +338,21 @@ qt_add_translations(sigviewer
         src/translations/sigviewer_en.ts
         src/translations/sigviewer_ru.ts
 )
+
+# -- Tests -------------------------------------------------------------------
+enable_testing()
+
+function(add_sigviewer_test name source)
+    qt_add_executable(${name} ${source})
+    target_link_libraries(${name} PRIVATE sigviewer_objects Qt6::Test)
+    add_test(NAME ${name} COMMAND ${name})
+    set_tests_properties(${name} PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+endfunction()
+
+add_sigviewer_test(tst_data_block           src/tests/tst_data_block.cpp)
+add_sigviewer_test(tst_color_manager        src/tests/tst_color_manager.cpp)
+add_sigviewer_test(tst_event_manager        src/tests/tst_event_manager.cpp)
+add_sigviewer_test(tst_editing_commands     src/tests/tst_editing_commands.cpp)
+add_sigviewer_test(tst_event_table_widget   src/tests/tst_event_table_widget.cpp)
+add_sigviewer_test(tst_file_handling        src/tests/tst_file_handling.cpp)
+add_sigviewer_test(tst_gui                  src/tests/tst_gui.cpp)
