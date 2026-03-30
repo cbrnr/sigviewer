@@ -284,7 +284,7 @@ set_target_properties(sigviewer_objects PROPERTIES
 )
 
 # -- Compile definitions -----------------------------------------------------
-target_compile_definitions(sigviewer_objects PRIVATE
+target_compile_definitions(sigviewer_objects PUBLIC
     VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
     VERSION_MINOR=${PROJECT_VERSION_MINOR}
     VERSION_BUILD=${PROJECT_VERSION_PATCH}
@@ -292,7 +292,12 @@ target_compile_definitions(sigviewer_objects PRIVATE
 )
 
 # -- Include paths and link libraries ----------------------------------------
-target_include_directories(sigviewer_objects PUBLIC src)
+# The autogen include dir (for generated ui_*.h headers) must be propagated
+# explicitly so that test targets that consume sigviewer_objects can find them.
+target_include_directories(sigviewer_objects PUBLIC
+    src
+    "${CMAKE_CURRENT_BINARY_DIR}/sigviewer_objects_autogen/include"
+)
 
 target_link_libraries(sigviewer_objects PUBLIC
     Qt6::Core
@@ -349,10 +354,10 @@ function(add_sigviewer_test name source)
     set_tests_properties(${name} PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
 endfunction()
 
-add_sigviewer_test(tst_data_block           src/tests/tst_data_block.cpp)
-add_sigviewer_test(tst_color_manager        src/tests/tst_color_manager.cpp)
-add_sigviewer_test(tst_event_manager        src/tests/tst_event_manager.cpp)
-add_sigviewer_test(tst_editing_commands     src/tests/tst_editing_commands.cpp)
-add_sigviewer_test(tst_event_table_widget   src/tests/tst_event_table_widget.cpp)
-add_sigviewer_test(tst_file_handling        src/tests/tst_file_handling.cpp)
-add_sigviewer_test(tst_gui                  src/tests/tst_gui.cpp)
+add_sigviewer_test(test_data_block           src/tests/test_data_block.cpp)
+add_sigviewer_test(test_color_manager        src/tests/test_color_manager.cpp)
+add_sigviewer_test(test_event_manager        src/tests/test_event_manager.cpp)
+add_sigviewer_test(test_editing_commands     src/tests/test_editing_commands.cpp)
+add_sigviewer_test(test_event_table_widget   src/tests/test_event_table_widget.cpp)
+add_sigviewer_test(test_file_handling        src/tests/test_file_handling.cpp)
+add_sigviewer_test(test_gui                  src/tests/test_gui.cpp)

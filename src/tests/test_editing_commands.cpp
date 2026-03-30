@@ -5,6 +5,7 @@
 #include "file_handling/event_manager.h"
 #include "file_handling/file_signal_reader_factory.h"
 #include "base/signal_event.h"
+#include "mock_file_signal_reader.h"
 #include "editing_commands/change_channel_undo_command.h"
 #include "editing_commands/change_type_undo_command.h"
 #include "editing_commands/delete_event_undo_command.h"
@@ -91,8 +92,9 @@ private slots:
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
+    sigviewer::registerMockFileSignalReader();
     TestEditingCommands test;
     return QTest::qExec(&test, argc, argv);
 }
 
-#include "tst_editing_commands.moc"
+#include "test_editing_commands.moc"

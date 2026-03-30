@@ -21,8 +21,11 @@ jobs:
           - name: macOS
             runner: macos-15
 
-          - name: Linux
+          - name: Linux x86-64
             runner: ubuntu-24.04
+
+          - name: Linux arm64
+            runner: ubuntu-24.04-arm
 
           - name: Windows
             runner: windows-2025

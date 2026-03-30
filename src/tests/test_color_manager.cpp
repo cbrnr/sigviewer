@@ -35,13 +35,13 @@ private slots:
     void defaultColor()
     {
         auto cm = ApplicationContext::getInstance()->getEventColorManager();
-        QCOMPARE(cm->getDefaultEventColor(), QColor(200, 0, 0, 30));
+        QCOMPARE(cm->getDefaultEventColor(), QColor(0, 0, 255, 20));
     }
 
     void startOfTrialColor()
     {
         auto cm = ApplicationContext::getInstance()->getEventColorManager();
-        QCOMPARE(cm->getDefaultEventColor(0x0300), QColor(0, 0, 200, 30));
+        QCOMPARE(cm->getDefaultEventColor(0x0300), QColor(0, 85, 127, 20));
     }
 };
 
@@ -57,4 +57,4 @@ int main(int argc, char* argv[])
     return QTest::qExec(&test, argc, argv);
 }
 
-#include "tst_color_manager.moc"
+#include "test_color_manager.moc"

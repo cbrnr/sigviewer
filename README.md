@@ -144,10 +144,10 @@ ctest --test-dir build -V
 To run a single test by name (e.g. just the data block tests):
 
 ```
-ctest --test-dir build -R tst_data_block
+ctest --test-dir build -R test_data_block
 ```
 
-The test executables (`tst_data_block`, `tst_color_manager`, `tst_event_manager`, `tst_editing_commands`, `tst_event_table_widget`, `tst_file_handling`, `tst_gui`) can also be run directly — CTest sets `QT_QPA_PLATFORM=offscreen` automatically so no real display is required.
+The test executables (`test_data_block`, `test_color_manager`, `test_event_manager`, `test_editing_commands`, `test_event_table_widget`, `test_file_handling`, `test_gui`) can also be run directly — CTest sets `QT_QPA_PLATFORM=offscreen` automatically so no real display is required.
 
 
 ## Creating a release

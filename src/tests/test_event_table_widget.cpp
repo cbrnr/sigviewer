@@ -7,12 +7,15 @@
 #include "file_handling/file_channel_manager.h"
 #include "file_handling/file_signal_reader_factory.h"
 #include "tab_context.h"
+#include "mock_file_signal_reader.h"
 
 #include <QApplication>
 #include <QTableWidget>
 #include <QtTest>
 
 using namespace sigviewer;
+
+namespace sigviewer {
 
 // Forward-declared as friend in EventTableWidget.
 class TestEventTableWidget : public QObject
@@ -114,11 +117,14 @@ private slots:
     }
 };
 
+} // namespace sigviewer
+
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
-    TestEventTableWidget test;
+    sigviewer::registerMockFileSignalReader();
+    sigviewer::TestEventTableWidget test;
     return QTest::qExec(&test, argc, argv);
 }
 
-#include "tst_event_table_widget.moc"
+#include "test_event_table_widget.moc"

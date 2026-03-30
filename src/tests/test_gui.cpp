@@ -3,11 +3,13 @@
 // License: GPL-3.0
 
 #include "application_context.h"
+#include "gui/main_window_model.h"
 #include "gui/gui_action_factory.h"
 #include "gui/gui_action_factory_registrator.h"
 #include "gui/commands/open_file_gui_command.h"
 #include "file_context.h"
 #include "base/file_states.h"
+#include "mock_file_signal_reader.h"
 
 #include <QApplication>
 #include <QAction>
@@ -53,7 +55,7 @@ private slots:
         QVERIFY(!ApplicationContext::getInstance()->getCurrentFileContext().isNull());
 
         // Delete an event and undo
-        ApplicationContext::getInstance()
+        ApplicationContext::getInstance()->getMainWindowModel()
             ->getCurrentSignalVisualisationModel()
             ->selectEvent(1);
         GuiActionFactory::getInstance()->getQAction(tr("Delete"))->trigger();
@@ -74,11 +76,11 @@ private slots:
             ->setState(FILE_STATE_UNCHANGED);
 
         // Hide a channel
-        ApplicationContext::getInstance()
+        ApplicationContext::getInstance()->getMainWindowModel()
             ->getCurrentSignalVisualisationModel()
             ->selectChannel(1);
         GuiActionFactory::getInstance()->getQAction(tr("Hide Channel"))->trigger();
-        QVERIFY(ApplicationContext::getInstance()
+        QVERIFY(ApplicationContext::getInstance()->getMainWindowModel()
                     ->getCurrentSignalVisualisationModel()
                     ->getShownChannels()
                     .count(1) == 0);
@@ -96,8 +98,9 @@ int main(int argc, char* argv[])
     QApplication::setApplicationName("SigViewer");
     GuiActionFactoryRegistrator::registerActions();
     GuiActionFactory::getInstance()->initAllCommands();
+    sigviewer::registerMockFileSignalReader();
     TestGui test;
     return QTest::qExec(&test, argc, argv);
 }
 
-#include "tst_gui.moc"
+#include "test_gui.moc"

@@ -90,4 +90,4 @@ private slots:
 };
 
 QTEST_GUILESS_MAIN(TestDataBlock)
-#include "tst_data_block.moc"
+#include "test_data_block.moc"

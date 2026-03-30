@@ -5,6 +5,7 @@
 #include "file_handling/event_manager.h"
 #include "file_handling/file_signal_reader_factory.h"
 #include "base/sigviewer_user_types.h"
+#include "mock_file_signal_reader.h"
 
 #include <QApplication>
 #include <QtTest>
@@ -56,8 +57,9 @@ private slots:
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
+    sigviewer::registerMockFileSignalReader();
     TestEventManager test;
     return QTest::qExec(&test, argc, argv);
 }
 
-#include "tst_event_manager.moc"
+#include "test_event_manager.moc"

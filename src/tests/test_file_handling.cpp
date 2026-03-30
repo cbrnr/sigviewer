@@ -8,6 +8,7 @@
 #include "gui/commands/open_file_gui_command.h"
 #include "gui/gui_action_factory.h"
 #include "gui/gui_action_factory_registrator.h"
+#include "mock_file_signal_reader.h"
 
 #include <QApplication>
 #include <QTemporaryFile>
@@ -96,8 +97,9 @@ int main(int argc, char* argv[])
     QApplication::setApplicationName("SigViewer");
     GuiActionFactoryRegistrator::registerActions();
     GuiActionFactory::getInstance()->initAllCommands();
+    sigviewer::registerMockFileSignalReader();
     TestFileHandling test;
     return QTest::qExec(&test, argc, argv);
 }
 
-#include "tst_file_handling.moc"
+#include "test_file_handling.moc"
