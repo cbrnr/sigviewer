@@ -4,7 +4,7 @@
 
 
 #include "file_handling_tests.h"
-#include "gui_impl/commands/open_file_gui_command.h"
+#include "gui/commands/open_file_gui_command.h"
 #include "file_handling/file_signal_writer_factory.h"
 #include "file_handling/file_signal_reader_factory.h"
 

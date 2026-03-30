@@ -3,7 +3,7 @@
 // https://www.gnu.org/licenses/gpl
 
 
-#include "gui_impl/commands/open_file_gui_command.h"
+#include "gui/commands/open_file_gui_command.h"
 
 #include <QApplication>
 #include <QCommandLineParser>
@@ -46,14 +46,14 @@ int main(int argc, char* argv[])
 
     GuiActionFactory::getInstance()->initAllCommands();
     std::set<ApplicationMode> app_modes;
-    ApplicationContextImpl::init(app_modes);
+    ApplicationContext::init(app_modes);
 
     if (!args.isEmpty())
         OpenFileGuiCommand::openFile(args[0]);
 
     int result = app.exec();
 
-    ApplicationContextImpl::cleanup();
+    ApplicationContext::cleanup();
 
     return result;
 }

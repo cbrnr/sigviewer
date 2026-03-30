@@ -8,7 +8,6 @@
 #include "basic_header.h"
 #include "base/signal_event.h"
 #include "base/data_block.h"
-#include "application_context_impl.h"
 
 #include <QFile>
 #include <QVector>

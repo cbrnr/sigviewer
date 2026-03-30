@@ -9,33 +9,81 @@
 #include "signal_visualisation_model.h"
 #include "event_view.h"
 #include "file_context.h"
+#include "file_handling/channel_manager.h"
+#include "file_handling/event_manager.h"
+#include "tab_context.h"
+
+#include <QObject>
+#include <QStringList>
+#include <QTabWidget>
+#include <QMap>
+
+
+class QAction;
 
 namespace sigviewer
 {
 
-class MainWindowModel
+class ApplicationContext;
+class MainWindow;
+
+class MainWindowModel : public QObject
 {
+    Q_OBJECT
 public:
+    MainWindowModel (QSharedPointer<ApplicationContext> application_context);
 
-    //-------------------------------------------------------------------------
-    virtual ~MainWindowModel() {}
+    ~MainWindowModel ();
 
-    //-------------------------------------------------------------------------
-    virtual void closeCurrentFileTabs() = 0;
+    QSharedPointer<SignalVisualisationModel> createSignalVisualisation (QString const& title,
+                                                                        ChannelManager const& channel_manager);
 
-    //-------------------------------------------------------------------------
-    virtual QSharedPointer<SignalVisualisationModel> createSignalVisualisation(QString const& title, ChannelManager const& channel_manager) = 0;
+    QSharedPointer<SignalVisualisationModel> createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx);
 
-    //-------------------------------------------------------------------------
-    virtual QSharedPointer<SignalVisualisationModel> createSignalVisualisationOfFile(QSharedPointer<FileContext> file_ctx) = 0;
+    void closeCurrentFileTabs ();
 
-    //-------------------------------------------------------------------------
-    virtual QSharedPointer<SignalVisualisationModel> getCurrentSignalVisualisationModel() = 0;
+    QSharedPointer<SignalVisualisationModel> getCurrentSignalVisualisationModel ();
 
-    //-------------------------------------------------------------------------
-    virtual QSharedPointer<EventView> getCurrentEventView() = 0;
+    QSharedPointer<EventView> getCurrentEventView ();
+
+public slots:
+    void tabChanged (int tab_index);
+
+    void closeTab (int tab_index);
+
+private slots:
+    void recentFileActivated(QAction* recent_file_action);
+
+    void recentFileMenuAboutToShow();
+
+    void resetCurrentFileName (QString const& file_name);
+
+private:
+    void loadSettings();
+
+    void saveSettings();
+
+    int createSignalVisualisationImpl (ChannelManager const& channel_manager,
+                                       QSharedPointer<EventManager> event_manager);
+
+    void storeAndInitTabContext (QSharedPointer<TabContext> context, int tab_index);
+
+    static int const NUMBER_RECENT_FILES_;
+
+    QSharedPointer<ApplicationContext> application_context_;
+    MainWindow* main_window_;
+    QTabWidget* tab_widget_;
+    QStringList recent_file_list_;
+    std::map<int, QSharedPointer<SignalVisualisationModel> > browser_models_;
+    QMap<int, QSharedPointer<EventView> > event_views_;
+    std::map<int, QSharedPointer<TabContext> > tab_contexts_;
+
+    // not allowed
+    MainWindowModel(const MainWindowModel&);
+    const MainWindowModel& operator=(const MainWindowModel&);
 };
 
 }
 
 #endif // MAIN_WINDOW_MODEL_H
+

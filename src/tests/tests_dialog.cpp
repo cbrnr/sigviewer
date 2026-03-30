@@ -5,7 +5,7 @@
 
 #include "tests_dialog.h"
 #include "tests_factory.h"
-#include "gui_impl/commands/open_file_gui_command.h"
+#include "gui/commands/open_file_gui_command.h"
 
 namespace sigviewer
 {

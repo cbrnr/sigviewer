@@ -6,7 +6,7 @@
 #ifndef OPEN_FILE_COMMAND_H
 #define OPEN_FILE_COMMAND_H
 
-#include "gui/application_context.h"
+#include "application_context.h"
 
 
 namespace sigviewer
