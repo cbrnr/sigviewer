@@ -1,6 +1,7 @@
-// Copyright (c) 2016 The SigViewer Development Team
-// Licensed under the GNU General Public License (GPL)
-// https://www.gnu.org/licenses/gpl
+// © SigViewer developers
+//
+// License: GPL-3.0
+
 
 #ifndef FILE_SIGNAL_READER_H
 #define FILE_SIGNAL_READER_H

@@ -1,6 +1,6 @@
-// Copyright (c) 2016 The SigViewer Development Team
-// Licensed under the GNU General Public License (GPL)
-// https://www.gnu.org/licenses/gpl
+// © SigViewer developers
+//
+// License: GPL-3.0
 
 
 #ifndef ADAPT_BROWSER_VIEW_WIDGET_H

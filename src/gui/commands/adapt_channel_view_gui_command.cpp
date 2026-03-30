@@ -1,6 +1,6 @@
-// Copyright (c) 2016 The SigViewer Development Team
-// Licensed under the GNU General Public License (GPL)
-// https://www.gnu.org/licenses/gpl
+// © SigViewer developers
+//
+// License: GPL-3.0
 
 
 #include "adapt_channel_view_gui_command.h"
