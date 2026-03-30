@@ -245,11 +245,6 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     tools_menu_->addActions(GuiActionFactory::getInstance()->getQActions("Signal Processing"));
 
     help_menu_ = menuBar()->addMenu(tr("&Help"));
-    if (application_context->modeActivated (APPLICATION_TEST_MODE))
-    {
-        help_menu_->addAction (action(tr("Run Tests...")));
-        help_menu_->addSeparator();
-    }
     help_menu_->addAction (action(tr("About")));
 }
 

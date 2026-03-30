@@ -135,22 +135,6 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     basic_header_ = QSharedPointer<BasicHeader>
                     (new BiosigBasicHeader (biosig_header_, file_name));
 
-    if (!QFile::exists(file_name))
-    {
-        sclose (biosig_header_);
-        destructHDR(biosig_header_);
-        biosig_header_ = NULL;
-
-        qDebug() << "File doesn't exist.";
-        QMessageBox msgBox;
-        msgBox.setIcon(QMessageBox::Warning);
-        msgBox.setText(QObject::tr("File does not exist."));
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.exec();
-
-        return "non-exist";
-    }
-
 #if (BIOSIG_VERSION < 10400)
     if (biosig_header_ == NULL || serror(biosig_header_))
 #else
@@ -161,6 +145,16 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
         destructHDR(biosig_header_);
         biosig_header_ = NULL;
 
+        if (!QFile::exists(file_name))
+        {
+            qDebug() << "File doesn't exist.";
+            QMessageBox msgBox;
+            msgBox.setIcon(QMessageBox::Warning);
+            msgBox.setText(QObject::tr("File does not exist."));
+            msgBox.setStandardButtons(QMessageBox::Ok);
+            msgBox.exec();
+            return "non-exist";
+        }
         return "file not supported";
     }
 

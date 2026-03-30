@@ -44,6 +44,10 @@ jobs:
         shell: msys2 {0}
         run: cmake --build build
 
+      - name: Run tests
+        shell: msys2 {0}
+        run: ctest --test-dir build --output-on-failure
+
       - name: Upload libxdf artifact
         uses: actions/upload-artifact@v7
         with:

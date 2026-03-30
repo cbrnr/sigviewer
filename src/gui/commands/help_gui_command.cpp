@@ -4,7 +4,6 @@
 
 
 #include "help_gui_command.h"
-#include "tests/tests_dialog.h"
 #include "ui_about_dialog.h"
 
 #include <QMessageBox>
@@ -30,24 +29,12 @@ public:
 QString const HelpGuiCommand::ABOUT_()
 {
     static QString value = tr("About");
-
-    return value;
-}
-
-QString const HelpGuiCommand::RUN_TESTS_()
-{
-    static QString value = tr("Run Tests...");
-
     return value;
 }
 
 QStringList const HelpGuiCommand::ACTIONS_()
 {
-    static QStringList result = {
-        HelpGuiCommand::ABOUT_(),
-        HelpGuiCommand::RUN_TESTS_(),
-    };
-
+    static QStringList result = {HelpGuiCommand::ABOUT_()};
     return result;
 }
 
@@ -67,7 +54,6 @@ void HelpGuiCommand::init ()
 {
     resetActionTriggerSlot (ABOUT_(), SLOT(showAboutDialog()));
     setIcon (ABOUT_(), QIcon(":/images/ic_help_outline_black_24dp.png"));
-    resetActionTriggerSlot (RUN_TESTS_(), SLOT(runTests()));
 }
 
 //-----------------------------------------------------------------------------
@@ -81,13 +67,6 @@ void HelpGuiCommand::showAboutDialog ()
                                                 .replace(QString("VERSION_BUILD"), QString::number(VERSION_BUILD)));
     dialog_->setFixedSize(dialog_->minimumSizeHint());
     dialog_->show();
-}
-
-//-----------------------------------------------------------------------------
-void HelpGuiCommand::runTests ()
-{
-    TestsDialog tests_dialog;
-    tests_dialog.exec ();
 }
 
 }

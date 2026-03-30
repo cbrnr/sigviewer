@@ -22,7 +22,6 @@ namespace sigviewer
 
 enum ApplicationMode
 {
-    APPLICATION_TEST_MODE,
     APPLICATION_NON_GUI_MODE
 };
 

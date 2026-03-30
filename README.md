@@ -127,6 +127,29 @@ Then build the installer using [Inno Setup](https://jrsoftware.org/isinfo.php) (
 The installer is written to `build/SigViewer-<version>.exe`.
 
 
+## Testing
+
+The test suite uses [Qt Test](https://doc.qt.io/qt-6/qttest-index.html) and [CTest](https://cmake.org/cmake/help/latest/manual/ctest.1.html). After building, run all tests from the `build/` directory:
+
+```
+ctest --test-dir build
+```
+
+For verbose output:
+
+```
+ctest --test-dir build -V
+```
+
+To run a single test by name (e.g. just the data block tests):
+
+```
+ctest --test-dir build -R test_data_block
+```
+
+The test executables (`test_data_block`, `test_color_manager`, `test_event_manager`, `test_editing_commands`, `test_event_table_widget`, `test_file_handling`, `test_gui`) can also be run directly — CTest sets `QT_QPA_PLATFORM=offscreen` automatically so no real display is required.
+
+
 ## Creating a release
 
 To publish a new release:

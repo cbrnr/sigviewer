@@ -43,6 +43,16 @@ SignalChannel::SignalChannel(unsigned ch, QString file_format) :
     }
 }
 
+//-----------------------------------------------------------------------------
+SignalChannel::SignalChannel(QString label, float64 sample_rate, QString physical_dim)
+    : label_(std::move(label)),
+      phys_y_dimension_label_(std::move(physical_dim)),
+      physical_maximum_(1000.0), digital_maximum_(32767.0),
+      physical_minimum_(-1000.0), digital_minimum_(-32768.0),
+      data_type_(3), lowpass_(70.0), highpass_(0.5),
+      samplerate_(sample_rate), notch_(false)
+{}
+
 //SignalChannel::SignalChannel(unsigned number, CHANNEL_TYPE C) :
 //    /* obsolete */
 //    label_ (QString(C.Label).trimmed()),

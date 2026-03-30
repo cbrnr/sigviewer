@@ -29,12 +29,8 @@ private slots:
     //-------------------------------------------------------------------------
     void showAboutDialog ();
 
-    //-------------------------------------------------------------------------
-    void runTests ();
-
 private:
     static QString const ABOUT_();
-    static QString const RUN_TESTS_();
     static QStringList const ACTIONS_();
 
     static GuiActionFactoryRegistrator registrator_;
