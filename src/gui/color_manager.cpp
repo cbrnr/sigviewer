@@ -196,6 +196,7 @@ void ColorManager::saveSettings()
 void ColorManager::loadDefaultEventColors ()
 {
     QFile color_settings_file (":/color_settings.xml");
+    color_settings_file.open (QIODevice::ReadOnly);
     QDomDocument color_doc;
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
     color_doc.setContent(&color_settings_file, QDomDocument::ParseOption::UseNamespaceProcessing);
