@@ -4,7 +4,7 @@
 
 
 #include "event_creation_widget.h"
-#include "file_handling_impl/xdf_reader.h"
+#include "file_handling/xdf_reader.h"
 #include "event_editing_widget.h" //to sync the event type combobox
 
 #include <QMutexLocker>

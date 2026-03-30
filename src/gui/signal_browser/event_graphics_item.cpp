@@ -10,7 +10,7 @@
 #include "event_context_menu.h"
 #include "base/signal_event.h"
 
-#include "gui_impl/signal_browser_mouse_handling.h"
+#include "gui/signal_browser_mouse_handling.h"
 
 #include <QRectF>
 #include <QStyleOptionGraphicsItem>

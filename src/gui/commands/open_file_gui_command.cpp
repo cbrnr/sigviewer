@@ -5,13 +5,13 @@
 #include <biosig.h>
 #undef isfinite
 #include "open_file_gui_command.h"
-#include "gui_impl/gui_helper_functions.h"
+#include "gui/gui_helper_functions.h"
 
-#include "gui_impl/dialogs/basic_header_info_dialog.h"
+#include "gui/dialogs/basic_header_info_dialog.h"
 #include "gui/signal_visualisation_model.h"
 #include "file_handling/file_signal_reader_factory.h"
-#include "file_handling_impl/event_manager_impl.h"
-#include "file_handling_impl/channel_manager_impl.h"
+#include "file_handling/event_manager.h"
+#include "file_handling/file_channel_manager.h"
 #include "tab_context.h"
 #include "file_context.h"
 #include "gui/main_window_model.h"
@@ -20,7 +20,7 @@
 #include "gui/progress_bar.h"
 #include "gui/color_manager.h"
 #include "close_file_gui_command.h"
-#include "file_handling_impl/xdf_reader.h"
+#include "file_handling/xdf_reader.h"
 
 #include <QFileDialog>
 #include <QSettings>
@@ -305,7 +305,7 @@ void OpenFileGuiCommand::openFileImpl (QString file_path, bool instantly)
 
     QString file_name = file_path.section (QDir::separator(), -1);
 
-    ChannelManager* channel_manager (new ChannelManagerImpl (file_signal_reader));
+    ChannelManager* channel_manager (new FileChannelManager (file_signal_reader));
 
     std::set<ChannelID> shown_channels;
     if (instantly)
@@ -322,7 +322,7 @@ void OpenFileGuiCommand::openFileImpl (QString file_path, bool instantly)
 
     ProgressBar::instance().initAndShow (channel_manager->getNumberChannels() * 3, tr("Opening ") + file_name,
                                          applicationContext());
-    QSharedPointer<EventManager> event_manager (new EventManagerImpl (*file_signal_reader));
+    QSharedPointer<EventManager> event_manager (new EventManager (*file_signal_reader));
     QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
                                                  channel_manager, file_signal_reader->getBasicHeader()));
 

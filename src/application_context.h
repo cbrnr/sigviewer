@@ -3,65 +3,65 @@
 // https://www.gnu.org/licenses/gpl
 
 
-#ifndef APPLICATION_CONTEXT_IMPL_H
-#define APPLICATION_CONTEXT_IMPL_H
+#ifndef APPLICATION_CONTEXT_H
+#define APPLICATION_CONTEXT_H
 
 #include "base/application_states.h"
-#include "gui/application_context.h"
+#include "gui/color_manager.h"
+#include "tab_context.h"
+#include "file_context.h"
+#include "command_executer.h"
 
 #include <QObject>
 #include <QSharedPointer>
 
+#include <set>
 
 namespace sigviewer
 {
+
+enum ApplicationMode
+{
+    APPLICATION_TEST_MODE,
+    APPLICATION_NON_GUI_MODE
+};
+
+class MainWindowModel;
 
 //-----------------------------------------------------------------------------
 /// ApplicationContext
 ///
 /// exists once in an application
-class ApplicationContextImpl : public QObject, public ApplicationContext
+class ApplicationContext : public QObject
 {
     Q_OBJECT
 public:
-    //-------------------------------------------------------------------------
-    static QSharedPointer<ApplicationContextImpl> getInstance (bool cleanup = false);
+    static QSharedPointer<ApplicationContext> getInstance (bool cleanup = false);
 
-    //-------------------------------------------------------------------------
     static void init (std::set<ApplicationMode> activated_modes);
 
-    //-------------------------------------------------------------------------
     static void cleanup ();
 
-    //-------------------------------------------------------------------------
-    ApplicationContextImpl () {}
-    virtual ~ApplicationContextImpl ();
+    ApplicationContext () {}
+    ~ApplicationContext ();
 
-    //-------------------------------------------------------------------------
-    virtual bool modeActivated (ApplicationMode mode) const;
+    bool modeActivated (ApplicationMode mode) const;
 
-    //-------------------------------------------------------------------------
-    virtual QSharedPointer<FileContext> getCurrentFileContext ();
+    QSharedPointer<FileContext> getCurrentFileContext ();
 
-    //-------------------------------------------------------------------------
-    virtual void setCurrentTabContext (QSharedPointer<TabContext> tab_context);
+    void setCurrentTabContext (QSharedPointer<TabContext> tab_context);
 
-    //-------------------------------------------------------------------------
-    virtual QSharedPointer<CommandExecuter> getCurrentCommandExecuter ();
+    QSharedPointer<CommandExecuter> getCurrentCommandExecuter ();
 
-    //-------------------------------------------------------------------------
     /// NO MULTI-FILE SUPPORT IMPLEMENTED YET!!!
     /// THIS CALL WILL REPLACE ACTUAL FILE CONTEXT
-    virtual void addFileContext (QSharedPointer<FileContext> file_context);
+    void addFileContext (QSharedPointer<FileContext> file_context);
 
-    //-------------------------------------------------------------------------
-    virtual void removeCurrentFileContext ();
+    void removeCurrentFileContext ();
 
-    //-------------------------------------------------------------------------
-    virtual QSharedPointer<MainWindowModel> getMainWindowModel ();
+    QSharedPointer<MainWindowModel> getMainWindowModel ();
 
-    //-------------------------------------------------------------------------
-    virtual QSharedPointer<ColorManager> getEventColorManager ();
+    QSharedPointer<ColorManager> getEventColorManager ();
 
     QSharedPointer<ColorManager> color_manager_;
 
@@ -82,4 +82,4 @@ private:
 
 }
 
-#endif // APPLICATION_CONTEXT_IMPL_H
+#endif // APPLICATION_CONTEXT_H

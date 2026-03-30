@@ -6,7 +6,7 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include "gui/application_context.h"
+#include "application_context.h"
 
 #include <QMainWindow>
 #include <QProgressBar>

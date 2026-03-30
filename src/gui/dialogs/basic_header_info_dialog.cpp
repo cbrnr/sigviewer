@@ -5,7 +5,7 @@
 
 #include "basic_header_info_dialog.h"
 #include "file_handling/basic_header.h"
-#include "file_handling_impl/xdf_reader.h"
+#include "file_handling/xdf_reader.h"
 
 #include <cmath>
 #include <algorithm>

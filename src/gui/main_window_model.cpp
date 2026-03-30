@@ -3,14 +3,15 @@
 // https://www.gnu.org/licenses/gpl
 
 
-#include "main_window_model_impl.h"
+#include "main_window_model.h"
+#include "application_context.h"
 #include "main_window.h"
 
-#include "gui_impl/commands/open_file_gui_command.h"
+#include "gui/commands/open_file_gui_command.h"
 
-#include "gui_impl/signal_browser/signal_browser_model_4.h"
-#include "gui_impl/signal_browser/signal_browser_view.h"
-#include "gui_impl/event_table/event_table_widget.h"
+#include "gui/signal_browser/signal_browser_model_4.h"
+#include "gui/signal_browser/signal_browser_view.h"
+#include "gui/event_table/event_table_widget.h"
 
 #include <QSettings>
 #include <QDebug>
@@ -18,10 +19,10 @@
 namespace sigviewer
 {
 
-int const MainWindowModelImpl::NUMBER_RECENT_FILES_ = 8;
+int const MainWindowModel::NUMBER_RECENT_FILES_ = 8;
 
 //-----------------------------------------------------------------------------
-MainWindowModelImpl::MainWindowModelImpl (QSharedPointer<ApplicationContext> application_context)
+MainWindowModel::MainWindowModel (QSharedPointer<ApplicationContext> application_context)
 : application_context_ (application_context),
   main_window_ (new MainWindow (application_context)),
   tab_widget_ (0)
@@ -33,16 +34,16 @@ MainWindowModelImpl::MainWindowModelImpl (QSharedPointer<ApplicationContext> app
 }
 
 //-----------------------------------------------------------------------------
-MainWindowModelImpl::~MainWindowModelImpl ()
+MainWindowModel::~MainWindowModel ()
 {
-    qDebug () << "deleting MainWindowModelImpl";
+    qDebug () << "deleting MainWindowModel";
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModelImpl::loadSettings()
+void MainWindowModel::loadSettings()
 {
     QSettings settings;
-    settings.beginGroup("MainWindowModelImpl");
+    settings.beginGroup("MainWindowModel");
 
     int size = settings.beginReadArray("recent_file");
     for (int i = 0; i < size; i++)
@@ -57,10 +58,10 @@ void MainWindowModelImpl::loadSettings()
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModelImpl::saveSettings()
+void MainWindowModel::saveSettings()
 {
     QSettings settings;
-    settings.beginGroup("MainWindowModelImpl");
+    settings.beginGroup("MainWindowModel");
     settings.beginWriteArray("recent_file");
 
     for (int i = 0; i < recent_file_list_.size(); i++)
@@ -74,7 +75,7 @@ void MainWindowModelImpl::saveSettings()
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModelImpl::tabChanged (int tab_index)
+void MainWindowModel::tabChanged (int tab_index)
 {
     if (tab_contexts_.find(tab_index) != tab_contexts_.end ())
     {
@@ -84,7 +85,7 @@ void MainWindowModelImpl::tabChanged (int tab_index)
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModelImpl::closeTab (int tab_index)
+void MainWindowModel::closeTab (int tab_index)
 {
     if ((tab_index == 0) | (tab_index == 1))  // first two tabs are not closeable
         return;
@@ -108,19 +109,19 @@ void MainWindowModelImpl::closeTab (int tab_index)
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModelImpl::recentFileMenuAboutToShow()
+void MainWindowModel::recentFileMenuAboutToShow()
 {
     main_window_->setRecentFiles(recent_file_list_);
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModelImpl::recentFileActivated(QAction* recent_file_action)
+void MainWindowModel::recentFileActivated(QAction* recent_file_action)
 {
     OpenFileGuiCommand::openFile (recent_file_action->text());
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModelImpl::storeAndInitTabContext (QSharedPointer<TabContext> context, int tab_index)
+void MainWindowModel::storeAndInitTabContext (QSharedPointer<TabContext> context, int tab_index)
 {
     tab_contexts_[tab_index] = context;
 
@@ -131,7 +132,7 @@ void MainWindowModelImpl::storeAndInitTabContext (QSharedPointer<TabContext> con
 }
 
 //-------------------------------------------------------------------------
-QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisualisation (QString const& title, ChannelManager const& channel_manager)
+QSharedPointer<SignalVisualisationModel> MainWindowModel::createSignalVisualisation (QString const& title, ChannelManager const& channel_manager)
 {
     int tab_index = createSignalVisualisationImpl (channel_manager, QSharedPointer<EventManager>(0));
     tab_widget_->setTabText(tab_index, title);
@@ -140,7 +141,7 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx)
+QSharedPointer<SignalVisualisationModel> MainWindowModel::createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx)
 {
     // waldesel:
     // --begin
@@ -153,7 +154,7 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
     {
         tab_widget_ = new QTabWidget (main_window_);
         if (!connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int))))
-            throw (Exception (tr("MainWindowModelImpl::createSignalVisualisationOfFile failed: connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)))").toStdString()));
+            throw (Exception (tr("MainWindowModel::createSignalVisualisationOfFile failed: connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)))").toStdString()));
         connect (tab_widget_, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
         tab_widget_->setTabsClosable (true);
     }
@@ -189,7 +190,7 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::createSignalVisual
 }
 
 //-----------------------------------------------------------------------------
-void MainWindowModelImpl::closeCurrentFileTabs ()
+void MainWindowModel::closeCurrentFileTabs ()
 {
     // waldesel:
     // --begin
@@ -205,7 +206,7 @@ void MainWindowModelImpl::closeCurrentFileTabs ()
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::getCurrentSignalVisualisationModel ()
+QSharedPointer<SignalVisualisationModel> MainWindowModel::getCurrentSignalVisualisationModel ()
 {
     if (!tab_widget_)
         return QSharedPointer<SignalVisualisationModel>(0);
@@ -214,7 +215,7 @@ QSharedPointer<SignalVisualisationModel> MainWindowModelImpl::getCurrentSignalVi
 }
 
 //-------------------------------------------------------------------------
-QSharedPointer<EventView> MainWindowModelImpl::getCurrentEventView ()
+QSharedPointer<EventView> MainWindowModel::getCurrentEventView ()
 {
     if (!tab_widget_)
         return QSharedPointer<EventView>(0);
@@ -226,7 +227,7 @@ QSharedPointer<EventView> MainWindowModelImpl::getCurrentEventView ()
 }
 
 //-------------------------------------------------------------------------
-void MainWindowModelImpl::resetCurrentFileName (QString const& file_name)
+void MainWindowModel::resetCurrentFileName (QString const& file_name)
 {
     if (file_name.size() == 0)
         main_window_->setWindowTitle (QString("SigViewer"));
@@ -235,7 +236,7 @@ void MainWindowModelImpl::resetCurrentFileName (QString const& file_name)
 }
 
 //-------------------------------------------------------------------------
-int MainWindowModelImpl::createSignalVisualisationImpl (ChannelManager const& channel_manager,
+int MainWindowModel::createSignalVisualisationImpl (ChannelManager const& channel_manager,
                                                         QSharedPointer<EventManager> event_manager)
 {
     QSharedPointer<TabContext> tab_context (new TabContext);

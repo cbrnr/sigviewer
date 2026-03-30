@@ -3,30 +3,30 @@
 // https://www.gnu.org/licenses/gpl
 
 
-#ifndef CHANNEL_MANAGER_IMPL_H
-#define CHANNEL_MANAGER_IMPL_H
+#ifndef FILE_CHANNEL_MANAGER_H
+#define FILE_CHANNEL_MANAGER_H
 
-#include "file_handling/channel_manager.h"
-#include "file_handling/file_signal_reader.h"
+#include "channel_manager.h"
+#include "file_signal_reader.h"
 
 namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
-/// ChannelManagerImpl
+/// FileChannelManager
 ///
 /// implementation of ChannelManager
 ///
-class ChannelManagerImpl : public ChannelManager
+class FileChannelManager : public ChannelManager
 {
 public:
     //---------------------------------------------------------------------------------------------
-    /// @param file_signal_reader the ChannelManagerImpl takes ownership of the given FileSignalReader
-    ///                           and destroys it if the ChannelManagerImpl is destructed
-    ChannelManagerImpl (FileSignalReader* file_signal_reader);
+    /// @param file_signal_reader the FileChannelManager takes ownership of the given FileSignalReader
+    ///                           and destroys it if the FileChannelManager is destructed
+    FileChannelManager (FileSignalReader* file_signal_reader);
 
     //---------------------------------------------------------------------------------------------
-    virtual ~ChannelManagerImpl ();
+    virtual ~FileChannelManager ();
 
     //-------------------------------------------------------------------------
     virtual std::set<ChannelID> getChannels () const;

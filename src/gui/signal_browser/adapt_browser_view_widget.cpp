@@ -7,7 +7,7 @@
 #include "gui/gui_action_factory.h"
 #include "base/exception.h"
 #include "base/math_utils.h"
-#include "gui_impl/gui_helper_functions.h"
+#include "gui/gui_helper_functions.h"
 
 #include <QSettings>
 #include <QDebug>

@@ -5,7 +5,7 @@
 
 #include "resampling_dialog.h"
 #include "ui_resampling_dialog.h"
-#include "file_handling_impl/xdf_reader.h"
+#include "file_handling/xdf_reader.h"
 
 namespace sigviewer {
 

@@ -3,10 +3,10 @@
 // https://www.gnu.org/licenses/gpl
 
 
-#include "application_context_impl.h"
+#include "application_context.h"
 #include "base/exception.h"
 
-#include "gui_impl/main_window_model_impl.h"
+#include "gui/main_window_model.h"
 
 #include <QDebug>
 
@@ -15,61 +15,61 @@ namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
-QSharedPointer<ApplicationContextImpl> ApplicationContextImpl::getInstance (bool cleanup)
+QSharedPointer<ApplicationContext> ApplicationContext::getInstance (bool cleanup)
 {
-    static QSharedPointer<ApplicationContextImpl> instance (new ApplicationContextImpl);
+    static QSharedPointer<ApplicationContext> instance (new ApplicationContext);
     if (cleanup)
         instance.clear();
     if (instance.isNull ())
     {
-        instance = QSharedPointer<ApplicationContextImpl> (new ApplicationContextImpl);
-        qDebug () << "ApplicationContextImpl::getInstance() created new instance = " << instance.data();
+        instance = QSharedPointer<ApplicationContext> (new ApplicationContext);
+        qDebug () << "ApplicationContext::getInstance() created new instance = " << instance.data();
     }
     return instance;
 }
 
 //-------------------------------------------------------------------------
-void ApplicationContextImpl::init (std::set<ApplicationMode> activated_modes)
+void ApplicationContext::init (std::set<ApplicationMode> activated_modes)
 {
-    qDebug () << "ApplicationContextImpl::init() instance = " << getInstance();
+    qDebug () << "ApplicationContext::init() instance = " << getInstance();
 
     getInstance()->activated_modes_ = activated_modes;
     getInstance()->setState (APP_STATE_NO_FILE_OPEN);
     if (activated_modes.count (APPLICATION_NON_GUI_MODE) == 0)
     {
         getInstance()->color_manager_ = QSharedPointer<ColorManager> (new ColorManager);
-        getInstance()->main_window_model_ = QSharedPointer<MainWindowModel> (new MainWindowModelImpl (getInstance()));
+        getInstance()->main_window_model_ = QSharedPointer<MainWindowModel> (new MainWindowModel (getInstance()));
     }
 }
 
 //-------------------------------------------------------------------------
-void ApplicationContextImpl::cleanup ()
+void ApplicationContext::cleanup ()
 {
-    qDebug () << "ApplicationContextImpl::cleanup()";
+    qDebug () << "ApplicationContext::cleanup()";
     getInstance (true);
 }
 
 
 //-----------------------------------------------------------------------------
-ApplicationContextImpl::~ApplicationContextImpl ()
+ApplicationContext::~ApplicationContext ()
 {
-    qDebug () << "deleting ApplicationContextImpl";
+    qDebug () << "deleting ApplicationContext";
 }
 
 //-------------------------------------------------------------------------
-bool ApplicationContextImpl::modeActivated (ApplicationMode mode) const
+bool ApplicationContext::modeActivated (ApplicationMode mode) const
 {
     return activated_modes_.count (mode) > 0;
 }
 
 //-------------------------------------------------------------------------
-QSharedPointer<FileContext> ApplicationContextImpl::getCurrentFileContext ()
+QSharedPointer<FileContext> ApplicationContext::getCurrentFileContext ()
 {
     return current_file_context_;
 }
 
 //-------------------------------------------------------------------------
-void ApplicationContextImpl::setCurrentTabContext (QSharedPointer<TabContext> tab_context)
+void ApplicationContext::setCurrentTabContext (QSharedPointer<TabContext> tab_context)
 {
     if (!current_tab_context_.isNull())
         current_tab_context_->disconnect (this);
@@ -81,13 +81,13 @@ void ApplicationContextImpl::setCurrentTabContext (QSharedPointer<TabContext> ta
 }
 
 //-------------------------------------------------------------------------
-QSharedPointer<CommandExecuter> ApplicationContextImpl::getCurrentCommandExecuter ()
+QSharedPointer<CommandExecuter> ApplicationContext::getCurrentCommandExecuter ()
 {
     return current_tab_context_;
 }
 
 //-------------------------------------------------------------------------
-void ApplicationContextImpl::addFileContext (QSharedPointer<FileContext>file_context)
+void ApplicationContext::addFileContext (QSharedPointer<FileContext>file_context)
 {
     current_file_context_ = file_context;
     if (!connect (current_file_context_.data(), SIGNAL(stateChanged(FileState)), SIGNAL(currentFileStateChanged(FileState))))
@@ -96,7 +96,7 @@ void ApplicationContextImpl::addFileContext (QSharedPointer<FileContext>file_con
 }
 
 //-------------------------------------------------------------------------
-void ApplicationContextImpl::removeCurrentFileContext ()
+void ApplicationContext::removeCurrentFileContext ()
 {
     if (!current_file_context_.isNull())
         current_file_context_->disconnect ();
@@ -105,21 +105,21 @@ void ApplicationContextImpl::removeCurrentFileContext ()
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<MainWindowModel> ApplicationContextImpl::getMainWindowModel ()
+QSharedPointer<MainWindowModel> ApplicationContext::getMainWindowModel ()
 {
     return main_window_model_;
 }
 
 //-------------------------------------------------------------------------
-QSharedPointer<ColorManager> ApplicationContextImpl::getEventColorManager ()
+QSharedPointer<ColorManager> ApplicationContext::getEventColorManager ()
 {
     return color_manager_;
 }
 
 //-----------------------------------------------------------------------------
-void ApplicationContextImpl::setState (ApplicationState state)
+void ApplicationContext::setState (ApplicationState state)
 {
-    qDebug () << "ApplicationContextImpl::setState " << state << "; this = " << this;
+    qDebug () << "ApplicationContext::setState " << state << "; this = " << this;
     state_ = state;
     emit stateChanged (state_);
 }

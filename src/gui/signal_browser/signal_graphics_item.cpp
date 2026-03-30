@@ -7,9 +7,9 @@
 #include "signal_browser_model_4.h"
 #include "editing_commands/new_event_undo_command.h"
 #include "base/math_utils.h"
-#include "gui_impl/signal_browser_mouse_handling.h"
+#include "gui/signal_browser_mouse_handling.h"
 #include "gui/gui_action_factory.h"
-#include "file_handling_impl/xdf_reader.h"
+#include "file_handling/xdf_reader.h"
 
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsSceneMouseEvent>

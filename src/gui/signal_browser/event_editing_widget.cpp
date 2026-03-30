@@ -8,7 +8,7 @@
 #include "editing_commands/change_type_undo_command.h"
 #include "editing_commands/resize_event_undo_command.h"
 #include "base/math_utils.h"
-#include "file_handling_impl/xdf_reader.h"
+#include "file_handling/xdf_reader.h"
 
 #include <QMutexLocker>
 #include <QDebug>

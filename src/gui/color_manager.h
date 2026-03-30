@@ -6,7 +6,7 @@
 #ifndef EVENT_COLOR_MANAGER
 #define EVENT_COLOR_MANAGER
 
-#include "file_handling_impl/event_table_file_reader.h"
+#include "file_handling/event_table_file_reader.h"
 
 #include <QMap>
 #include <QColor>

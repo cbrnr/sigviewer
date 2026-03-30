@@ -4,7 +4,8 @@
 
 
 #include "close_file_gui_command.h"
-#include "file_handling_impl/xdf_reader.h"
+#include "file_handling/xdf_reader.h"
+#include "gui/main_window_model.h"
 
 #include <QApplication>
 #include <QMessageBox>

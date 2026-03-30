@@ -9,7 +9,7 @@
 #include "file_handler_factory_registrator.h"
 #include "gui/progress_bar.h"
 #include "base/fixed_data_block.h"
-#include "gui_impl/dialogs/resampling_dialog.h"
+#include "gui/dialogs/resampling_dialog.h"
 
 #include <QTextStream>
 #include <QTranslator>
@@ -261,7 +261,7 @@ QSharedPointer<BasicHeader> XDFReader::getBasicHeader ()
 int XDFReader::setStreamColors()
 {
     // Display each stream in a distinct color
-    QSharedPointer<ColorManager> colorPicker = ApplicationContextImpl::getInstance()->color_manager_;
+    QSharedPointer<ColorManager> colorPicker = ApplicationContext::getInstance()->color_manager_;
     QVector<QColor> colorList = {"#0055ff", "#00aa00", "#aa00ff", "#00557f",
                                  "#5555ff", "#ff55ff", "#00aaff", "#00aa7f"};
 

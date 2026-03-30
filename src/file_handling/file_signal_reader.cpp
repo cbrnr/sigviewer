@@ -4,6 +4,7 @@
 
 
 #include "file_signal_reader.h"
+#include "application_context.h"
 #include <QSettings>
 
 
@@ -12,7 +13,7 @@ namespace sigviewer {
 int FileSignalReader::setEventTypeColors()
 {
     // Display each event type in a distinct color
-    QSharedPointer<ColorManager> colorPicker = ApplicationContextImpl::getInstance()->color_manager_;
+    QSharedPointer<ColorManager> colorPicker = ApplicationContext::getInstance()->color_manager_;
 
     //set event colors
     srand (time(NULL));     /* initialize random seed: */

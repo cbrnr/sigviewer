@@ -12,7 +12,7 @@
 #include "gui/progress_bar.h"
 #include "base/signal_event.h"
 #include "base/math_utils.h"
-#include "gui_impl/gui_helper_functions.h"
+#include "gui/gui_helper_functions.h"
 
 #include <QTextStream>
 #include <QApplication>

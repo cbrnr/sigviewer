@@ -3,102 +3,81 @@
 // https://www.gnu.org/licenses/gpl
 
 
-#ifndef EVENT_MANAGER_IMPL_H
-#define EVENT_MANAGER_IMPL_H
+#ifndef EVENT_MANAGER_H
+#define EVENT_MANAGER_H
 
-#include "file_handling/event_manager.h"
-#include "file_handling/file_signal_reader.h"
+#include "base/sigviewer_user_types.h"
+#include "base/signal_event.h"
+#include "file_signal_reader.h"
 #include "event_table_file_reader.h"
 
+#include <QObject>
 #include <QSharedPointer>
+#include <QList>
 #include <QMap>
 #include <QMutex>
+
+#include <set>
 
 namespace sigviewer
 {
 
-class EventManagerImpl : public EventManager
+class EventManager : public QObject
 {
+    Q_OBJECT
 public:
-    EventManagerImpl (FileSignalReader const& reader);
+    EventManager (FileSignalReader const& reader);
 
-    virtual ~EventManagerImpl ();
+    ~EventManager ();
 
-    //-------------------------------------------------------------------------
-    /// see base class
-    virtual QSharedPointer<SignalEvent const> getEvent (EventID id) const;
+    QSharedPointer<SignalEvent const> getEvent (EventID id) const;
 
-    //-------------------------------------------------------------------------
-    /// see base class
-    virtual QSharedPointer<SignalEvent> getAndLockEventForEditing (EventID id);
+    QSharedPointer<SignalEvent> getAndLockEventForEditing (EventID id);
 
-    //-------------------------------------------------------------------------
-    /// see base class
-    virtual void updateAndUnlockEvent (EventID id);
+    void updateAndUnlockEvent (EventID id);
 
-    //-------------------------------------------------------------------------
-    /// see base class
-    virtual QSharedPointer<SignalEvent const> createEvent (ChannelID channel_id,
-                                                           unsigned pos,
-                                                           unsigned length,
-                                                           EventType type,
-                                                           int stream_id,
-                                                           EventID id = UNDEFINED_EVENT_ID);
+    QSharedPointer<SignalEvent const> createEvent (ChannelID channel_id,
+                                                   unsigned pos,
+                                                   unsigned length,
+                                                   EventType type,
+                                                   int stream_id,
+                                                   EventID id = UNDEFINED_EVENT_ID);
 
-    //-------------------------------------------------------------------------
-    /// see base class
-    virtual void removeEvent (EventID id);
+    void removeEvent (EventID id);
 
-    //-------------------------------------------------------------------------
-    /// see base class
-    virtual std::set<EventID> getEventsAt (unsigned pos, ChannelID channel_id) const;
+    std::set<EventID> getEventsAt (unsigned pos, ChannelID channel_id) const;
 
-    //-------------------------------------------------------------------------
-    /// see base class
-    virtual double getSampleRate () const;
+    double getSampleRate () const;
 
-    //-------------------------------------------------------------------------
-    virtual unsigned getMaxEventPosition () const;
+    unsigned getMaxEventPosition () const;
 
-    //-------------------------------------------------------------------------
-    /// see base class
-    virtual QString getNameOfEventType (EventType type) const;
+    QString getNameOfEventType (EventType type) const;
 
-    //-------------------------------------------------------------------------
-    /// see base class
-    virtual QString getNameOfEvent (EventID event) const;
+    QString getNameOfEvent (EventID event) const;
 
-    //-------------------------------------------------------------------------
-    /// see base class
-    virtual QList<EventID> getAllEvents () const;
+    QList<EventID> getAllEvents () const;
 
-    //-------------------------------------------------------------------------
-    /// see base class
-    virtual unsigned getNumberOfEvents () const;
+    unsigned getNumberOfEvents () const;
 
-    //-------------------------------------------------------------------------
-    /// see base class
-    virtual std::set<EventType> getEventTypes (QString group_id = "") const;
+    std::set<EventType> getEventTypes (QString group_id = "") const;
 
-    //-------------------------------------------------------------------------
-    virtual std::set<QString> getEventTypeGroupIDs () const;
+    std::set<QString> getEventTypeGroupIDs () const;
 
-    //-------------------------------------------------------------------------
-    /// see base class
-    virtual QList<EventID> getEvents (EventType type) const;
+    QList<EventID> getEvents (EventType type) const;
 
-    //-------------------------------------------------------------------------
-    virtual EventID getNextEventOfSameType (EventID id) const;
+    EventID getNextEventOfSameType (EventID id) const;
 
-    //-------------------------------------------------------------------------
-    virtual EventID getPreviousEventOfSameType (EventID id) const;
+    EventID getPreviousEventOfSameType (EventID id) const;
 
-    //-------------------------------------------------------------------------
-    virtual QString getFileType () const;
+    QString getFileType () const;
 
-    //-------------------------------------------------------------------------
-    virtual void setEventName (EventType event_type_id, QString const& name);
+    void setEventName (EventType event_type_id, QString const& name);
 
+signals:
+    void eventChanged (EventID id);
+    void eventCreated (QSharedPointer<SignalEvent const> event);
+    void eventRemoved (EventID id);
+    void changed ();
 
 private:
     EventTableFileReader event_table_reader_;
@@ -121,4 +100,4 @@ private:
 
 }
 
-#endif
+#endif // EVENT_MANAGER_H

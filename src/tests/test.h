@@ -7,7 +7,7 @@
 #define TEST_H
 
 #include "file_handling/event_manager.h"
-#include "gui/application_context.h"
+#include "application_context.h"
 
 #include <QSharedPointer>
 #include <QObject>

@@ -189,7 +189,7 @@ QSharedPointer<BasicHeader> BioSigReader::getBasicHeader ()
 //-----------------------------------------------------------------------------
 int BioSigReader::setChannelColors()
 {
-    QSharedPointer<ColorManager> colorPicker = ApplicationContextImpl::getInstance()->color_manager_;
+    QSharedPointer<ColorManager> colorPicker = ApplicationContext::getInstance()->color_manager_;
     for (size_t i = 0; i < basic_header_->getNumberChannels(); i++)
         colorPicker->setChannelColor(i, colorPicker->getDefaultChannelColor());
 

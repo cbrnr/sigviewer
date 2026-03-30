@@ -4,7 +4,7 @@
 
 
 #include "event_table_widget_tests.h"
-#include "gui_impl/event_table/event_table_widget.h"
+#include "gui/event_table/event_table_widget.h"
 
 namespace sigviewer
 {

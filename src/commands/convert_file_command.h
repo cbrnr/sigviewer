@@ -6,7 +6,7 @@
 #ifndef CONVERT_FILE_COMMAND_H
 #define CONVERT_FILE_COMMAND_H
 
-#include "gui/application_context.h"
+#include "application_context.h"
 
 #include <QString>
 

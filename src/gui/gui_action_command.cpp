@@ -5,7 +5,8 @@
 
 #include "gui_action_command.h"
 #include "gui_action_factory.h"
-#include "application_context_impl.h"
+#include "application_context.h"
+#include "main_window_model.h"
 
 #include <QDebug>
 #include <QObject>
@@ -45,19 +46,19 @@ void GuiActionCommand::initConnections()
 		connect (con, SIGNAL(triggered(QString const&)), SLOT(trigger(QString const&)));
 	}
 	QString firstActionId = connectors_.first()->getName();
-	qDebug() << "GuiActionCommand::GuiActionCommand connecting to ApplicationContextImpl::getInstance() = " << ApplicationContextImpl::getInstance();
-	if (!connect(ApplicationContextImpl::getInstance().data(), SIGNAL(stateChanged(ApplicationState)),
+	qDebug() << "GuiActionCommand::GuiActionCommand connecting to ApplicationContext::getInstance() = " << ApplicationContext::getInstance();
+	if (!connect(ApplicationContext::getInstance().data(), SIGNAL(stateChanged(ApplicationState)),
 		SLOT(updateEnablednessToApplicationState(ApplicationState))))
 		throw (GuiActionCommandException(firstActionId, tr("connect to signal stateChanged(ApplicationState)")));
 	else
 		qDebug() << "GuiActionCommand::GuiActionCommand connect to signal stateChanged(ApplicationState) = true";
-	if (!connect(ApplicationContextImpl::getInstance().data(), SIGNAL(currentTabSelectionStateChanged(TabSelectionState)),
+	if (!connect(ApplicationContext::getInstance().data(), SIGNAL(currentTabSelectionStateChanged(TabSelectionState)),
 		SLOT(updateEnablednessToTabSelectionState(TabSelectionState))))
 		throw (GuiActionCommandException(firstActionId, tr("connect to signal currentTabSelectionStateChanged(TabSelectionState)")));
-	if (!connect(ApplicationContextImpl::getInstance().data(), SIGNAL(currentTabEditStateChanged(TabEditState)),
+	if (!connect(ApplicationContext::getInstance().data(), SIGNAL(currentTabEditStateChanged(TabEditState)),
 		SLOT(updateEnablednessToTabEditState(TabEditState))))
 		throw (GuiActionCommandException(firstActionId, tr("connect to signal currentTabEditStateChanged(TabEditState)")));
-	if (!connect(ApplicationContextImpl::getInstance().data(), SIGNAL(currentFileStateChanged(FileState)),
+	if (!connect(ApplicationContext::getInstance().data(), SIGNAL(currentFileStateChanged(FileState)),
 		SLOT(updateEnablednessToFileState(FileState))))
 		throw (GuiActionCommandException(firstActionId, tr("connect to signal currentFileStateChanged(FileState)")));
 }
@@ -157,7 +158,7 @@ QSharedPointer<EventView> GuiActionCommand::currentEventView ()
     QSharedPointer<EventView> event_view;
 
     QSharedPointer<MainWindowModel> main_window_model =
-        ApplicationContextImpl::getInstance()->getMainWindowModel ();
+        ApplicationContext::getInstance()->getMainWindowModel ();
 
     if (!main_window_model.isNull())
         event_view = main_window_model->getCurrentEventView ();
@@ -171,7 +172,7 @@ QSharedPointer<SignalVisualisationModel> GuiActionCommand::currentVisModel ()
     QSharedPointer<SignalVisualisationModel> model;
 
     QSharedPointer<MainWindowModel> main_window_model =
-        ApplicationContextImpl::getInstance()->getMainWindowModel ();
+        ApplicationContext::getInstance()->getMainWindowModel ();
 
     if (!main_window_model.isNull())
         model = main_window_model->getCurrentSignalVisualisationModel();
@@ -194,13 +195,13 @@ QSharedPointer<SignalViewSettings> GuiActionCommand::currentSignalViewSettings (
 //-------------------------------------------------------------------------
 QSharedPointer<FileContext> GuiActionCommand::currentFileContext ()
 {
-    return ApplicationContextImpl::getInstance()->getCurrentFileContext();
+    return ApplicationContext::getInstance()->getCurrentFileContext();
 }
 
 //-------------------------------------------------------------------------
 QSharedPointer<ApplicationContext> GuiActionCommand::applicationContext ()
 {
-    return ApplicationContextImpl::getInstance();
+    return ApplicationContext::getInstance();
 }
 
 //-------------------------------------------------------------------------

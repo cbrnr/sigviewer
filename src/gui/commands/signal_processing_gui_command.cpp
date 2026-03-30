@@ -4,9 +4,10 @@
 
 
 #include "signal_processing_gui_command.h"
-#include "gui_impl/gui_helper_functions.h"
-#include "gui_impl/processed_signal_channel_manager.h"
+#include "gui/gui_helper_functions.h"
+#include "gui/processed_signal_channel_manager.h"
 #include "gui/progress_bar.h"
+#include "gui/main_window_model.h"
 #include "base/fixed_data_block.h"
 
 #include <QMessageBox>

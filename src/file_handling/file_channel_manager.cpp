@@ -3,14 +3,14 @@
 // https://www.gnu.org/licenses/gpl
 
 
-#include "channel_manager_impl.h"
+#include "file_channel_manager.h"
 
 
 namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
-ChannelManagerImpl::ChannelManagerImpl (FileSignalReader* file_signal_reader)
+FileChannelManager::FileChannelManager (FileSignalReader* file_signal_reader)
     : reader_ (file_signal_reader)
 {
     setXAxisUnitLabel ("s");
@@ -18,13 +18,13 @@ ChannelManagerImpl::ChannelManagerImpl (FileSignalReader* file_signal_reader)
 
 
 //-----------------------------------------------------------------------------
-ChannelManagerImpl::~ChannelManagerImpl ()
+FileChannelManager::~FileChannelManager ()
 {
     delete reader_;
 }
 
 //-------------------------------------------------------------------------
-std::set<ChannelID> ChannelManagerImpl::getChannels () const
+std::set<ChannelID> FileChannelManager::getChannels () const
 {
     std::set<ChannelID> channels;
     for (ChannelID id = 0; id < static_cast<int>(reader_->getBasicHeader()->getNumberChannels()); ++id)
@@ -33,13 +33,13 @@ std::set<ChannelID> ChannelManagerImpl::getChannels () const
 }
 
 //-----------------------------------------------------------------------------
-uint32 ChannelManagerImpl::getNumberChannels () const
+uint32 FileChannelManager::getNumberChannels () const
 {
     return reader_->getBasicHeader()->getNumberChannels();
 }
 
 //-------------------------------------------------------------------------
-QString ChannelManagerImpl::getChannelLabel (ChannelID id) const
+QString FileChannelManager::getChannelLabel (ChannelID id) const
 {
     if (id == UNDEFINED_CHANNEL)
         return QObject::tr("All Channels");
@@ -50,7 +50,7 @@ QString ChannelManagerImpl::getChannelLabel (ChannelID id) const
 }
 
 //-------------------------------------------------------------------------
-QString ChannelManagerImpl::getChannelLabel (ChannelID id, int streamNumber) const
+QString FileChannelManager::getChannelLabel (ChannelID id, int streamNumber) const
 {
     if (id == UNDEFINED_CHANNEL)
     {
@@ -66,7 +66,7 @@ QString ChannelManagerImpl::getChannelLabel (ChannelID id, int streamNumber) con
 }
 
 //-------------------------------------------------------------------------
-QString ChannelManagerImpl::getChannelYUnitString (ChannelID id) const
+QString FileChannelManager::getChannelYUnitString (ChannelID id) const
 {
     if (id != UNDEFINED_CHANNEL)
         return reader_->getBasicHeader()->getChannel(id)->getPhysicalDim();
@@ -77,7 +77,7 @@ QString ChannelManagerImpl::getChannelYUnitString (ChannelID id) const
 
 
 //-----------------------------------------------------------------------------
-QSharedPointer<DataBlock const> ChannelManagerImpl::getData (ChannelID id, unsigned start_pos, unsigned length) const
+QSharedPointer<DataBlock const> FileChannelManager::getData (ChannelID id, unsigned start_pos, unsigned length) const
 {
     if (((start_pos + length) > getNumberSamples()) || length == 0)
         return QSharedPointer<DataBlock const> (0);
@@ -86,7 +86,7 @@ QSharedPointer<DataBlock const> ChannelManagerImpl::getData (ChannelID id, unsig
 }
 
 //-----------------------------------------------------------------------------
-float64 ChannelManagerImpl::getDurationInSec () const
+float64 FileChannelManager::getDurationInSec () const
 {
     return reader_->getBasicHeader()->getNumberOfSamples() /
            reader_->getBasicHeader()->getSampleRate();
@@ -94,13 +94,13 @@ float64 ChannelManagerImpl::getDurationInSec () const
 
 
 //-----------------------------------------------------------------------------
-size_t ChannelManagerImpl::getNumberSamples () const
+size_t FileChannelManager::getNumberSamples () const
 {
     return reader_->getBasicHeader()->getNumberOfSamples();
 }
 
 //-----------------------------------------------------------------------------
-float64 ChannelManagerImpl::getSampleRate () const
+float64 FileChannelManager::getSampleRate () const
 {
     return reader_->getBasicHeader()->getSampleRate();
 }

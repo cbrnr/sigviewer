@@ -4,7 +4,7 @@
 
 
 #include "signal_channel.h"
-#include "file_handling_impl/xdf_reader.h"
+#include "file_handling/xdf_reader.h"
 
 namespace sigviewer
 {

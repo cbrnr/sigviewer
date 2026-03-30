@@ -3,11 +3,11 @@
 // https://www.gnu.org/licenses/gpl
 
 
-#include "gui_impl/gui_helper_functions.h"
+#include "gui/gui_helper_functions.h"
 #include "dialogs/channel_selection_dialog.h"
 #include "select_shown_channels_dialog.h"
 #include "dialogs/event_types_selection_dialog.h"
-#include "application_context_impl.h"
+#include "application_context.h"
 
 #include <QInputDialog>
 #include <QFileDialog>

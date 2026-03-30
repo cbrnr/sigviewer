@@ -4,7 +4,7 @@
 
 
 #include "adapt_event_view_gui_command.h"
-#include "gui_impl/gui_helper_functions.h"
+#include "gui/gui_helper_functions.h"
 #include "gui/signal_visualisation_model.h"
 
 #include <QDebug>

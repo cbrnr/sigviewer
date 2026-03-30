@@ -6,7 +6,7 @@
 #ifndef BIOSIG_BASIC_HEADER_H
 #define BIOSIG_BASIC_HEADER_H
 
-#include "file_handling/basic_header.h"
+#include "basic_header.h"
 #include "biosig.h"
 
 namespace sigviewer

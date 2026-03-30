@@ -20,7 +20,7 @@
 #ifndef GDF_FILE_SIGNAL_READER_H
 #define GDF_FILE_SIGNAL_READER_H
 
-#include "file_handling/file_signal_reader.h"
+#include "../file_signal_reader.h"
 #include "gdf_basic_header.h"
 #include "gdf_signal_cache.h"
 #include "gdf_data_block.h"

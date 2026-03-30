@@ -6,8 +6,8 @@
 #ifndef FILE_HANDLER_FACTORY_REGISTRATOR_H
 #define FILE_HANDLER_FACTORY_REGISTRATOR_H
 
-#include "file_handling/file_signal_writer_factory.h"
-#include "file_handling/file_signal_reader_factory.h"
+#include "file_signal_writer_factory.h"
+#include "file_signal_reader_factory.h"
 
 namespace sigviewer
 {

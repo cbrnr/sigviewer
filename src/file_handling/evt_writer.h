@@ -6,7 +6,7 @@
 #ifndef EVT_WRITER_H
 #define EVT_WRITER_H
 
-#include "file_handling/file_signal_writer.h"
+#include "file_signal_writer.h"
 
 #include <QFile>
 

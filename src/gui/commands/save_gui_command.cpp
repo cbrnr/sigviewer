@@ -4,10 +4,10 @@
 
 
 #include "save_gui_command.h"
-#include "gui_impl/gui_helper_functions.h"
+#include "gui/gui_helper_functions.h"
 #include "file_handling/file_signal_writer_factory.h"
 #include "open_file_gui_command.h"
-#include "file_handling_impl/xdf_reader.h"
+#include "file_handling/xdf_reader.h"
 #include "fstream"
 
 #include <QMessageBox>

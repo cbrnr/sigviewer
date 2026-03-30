@@ -21,7 +21,7 @@
 #define DOWN_SAMPLING_THREAD_H
 
 #include "base/data_block.h"
-#include "file_handling/channel_manager.h"
+#include "channel_manager.h"
 
 #include <QThread>
 #include <QMutex>

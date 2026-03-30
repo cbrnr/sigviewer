@@ -4,8 +4,8 @@
 
 
 #include "channel_selection_dialog.h"
-#include "file_handling_impl/xdf_reader.h"
-#include "application_context_impl.h"
+#include "file_handling/xdf_reader.h"
+#include "application_context.h"
 
 #include <QColorDialog>
 
@@ -37,7 +37,7 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
     ui_.treeWidget->header()->resizeSection(0, width() * 0.6);
     ui_.treeWidget->setAnimated(true);
 
-    if (ApplicationContextImpl::getInstance()->getCurrentFileContext()->getFileName().endsWith("XDF", Qt::CaseInsensitive))
+    if (ApplicationContext::getInstance()->getCurrentFileContext()->getFileName().endsWith("XDF", Qt::CaseInsensitive))
     {
         int channelCount = 0;
         for (size_t i = 0; i < XDFdata->streams.size(); i++)
