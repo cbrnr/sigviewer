@@ -9,6 +9,7 @@
 
 ### 🔧 Fixed
 - Fix label colors in dark mode (they are now light)
+- Show µV instead of uV in y-axis labels
 
 ## [0.6.5] · 2026-03-24
 ### 🌀 Changed
