@@ -7,10 +7,11 @@
 #include "gui/gui_helper_functions.h"
 #include "gui/dialogs/scale_channel_dialog.h"
 
-#include <QActionGroup>
 #include <QColorDialog>
 #include <QSettings>
 #include <QInputDialog>
+
+#include <cmath>
 
 namespace sigviewer
 {
@@ -51,37 +52,9 @@ QString const AdaptChannelViewGuiCommand::SCALE_()
     return value;
 }
 
-QString const AdaptChannelViewGuiCommand::APPLY_SCALE_TO_OTHER_CHANNELS_()
-{
-    static QString value = tr("Apply Scale to Other Channels");
-
-    return value;
-}
-
 QString const AdaptChannelViewGuiCommand::HIDE_()
 {
     static QString value = tr("Hide Channel");
-
-    return value;
-}
-
-QString const AdaptChannelViewGuiCommand::SCALE_ALL_()
-{
-    static QString value = tr("Scale All...");
-
-    return value;
-}
-
-QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MAX_TO_MAX_()
-{
-    static QString value = tr("Zero Line Centered");
-
-    return value;
-}
-
-QString const AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MIN_TO_MAX_()
-{
-    static QString value = tr("Zero Line Fitted");
 
     return value;
 }
@@ -104,11 +77,8 @@ QStringList const AdaptChannelViewGuiCommand::ACTIONS_()
 {
     static QStringList result = {
         AdaptChannelViewGuiCommand::CHANNELS_(),
-        AdaptChannelViewGuiCommand::SCALE_ALL_(),
-        AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MAX_TO_MAX_(),
-        AdaptChannelViewGuiCommand::SET_AUTO_SCALE_MIN_TO_MAX_(),
-        AdaptChannelViewGuiCommand::CHANGE_COLOR_(),
         AdaptChannelViewGuiCommand::SCALE_(),
+        AdaptChannelViewGuiCommand::CHANGE_COLOR_(),
         AdaptChannelViewGuiCommand::HIDE_(),
         AdaptChannelViewGuiCommand::ANIMATIONS_(),
         AdaptChannelViewGuiCommand::SET_ANIMATION_DURATION_(),
@@ -132,29 +102,19 @@ AdaptChannelViewGuiCommand::AdaptChannelViewGuiCommand ()
 void AdaptChannelViewGuiCommand::init ()
 {
     setIcon (CHANNELS_(), QIcon::fromTheme("reorder"));
-    setIcon (SCALE_ALL_(), QIcon::fromTheme("fit_page_height"));
+    setIcon (SCALE_(), QIcon::fromTheme("fit_page_height"));
     resetActionTriggerSlot (CHANNELS_(), SLOT(selectShownChannels()));
-    resetActionTriggerSlot (SCALE_ALL_(), SLOT(scaleAll()));
-    resetActionTriggerSlot (CHANGE_COLOR_(), SLOT(changeColor()));
     resetActionTriggerSlot (SCALE_(), SLOT(scale()));
+    resetActionTriggerSlot (CHANGE_COLOR_(), SLOT(changeColor()));
     resetActionTriggerSlot (HIDE_(), SLOT(hide()));
     setShortcut (CHANNELS_(), tr("Ctrl+C"));
-    //setShortcut (SCALE_ALL_(), tr("Ctrl+A"));
 
-    QActionGroup* scale_mode_action_group = new QActionGroup (this);
-    scale_mode_action_group->setExclusive(true);
-    scale_mode_action_group->addAction (getQAction(SET_AUTO_SCALE_MAX_TO_MAX_()));
-    scale_mode_action_group->addAction (getQAction(SET_AUTO_SCALE_MIN_TO_MAX_()));
-    getQAction(SET_AUTO_SCALE_MAX_TO_MAX_())->setCheckable(true);
-    getQAction(SET_AUTO_SCALE_MIN_TO_MAX_())->setCheckable(true);
     getQAction(ANIMATIONS_())->setCheckable(true);
     QSettings settings;
     settings.beginGroup("Animations");
     getQAction(ANIMATIONS_())->setChecked (settings.value("activated", false).toBool());
     settings.endGroup();
 
-    resetActionTriggerSlot (SET_AUTO_SCALE_MAX_TO_MAX_(), SLOT(setScaleModeZeroCentered()));
-    resetActionTriggerSlot (SET_AUTO_SCALE_MIN_TO_MAX_(), SLOT(setScaleModeZeroFitted()));
     resetActionTriggerSlot (ANIMATIONS_(), SLOT(toggleAnimations()));
     resetActionTriggerSlot (SET_ANIMATION_DURATION_(), SLOT(setAnimationDuration()));
 }
@@ -183,13 +143,7 @@ void AdaptChannelViewGuiCommand::evaluateEnabledness ()
     disableIfNoFileIsOpened (disabled_actions_if_no_file);
     disableIfNoSignalIsVisualised (disabled_actions_if_no_file);
 
-    if (!currentVisModel().isNull())
-    {
-        getQAction (SET_AUTO_SCALE_MAX_TO_MAX_())->setChecked (currentVisModel()->getAutoScaleMode()
-                                                             == MAX_TO_MAX);
-        getQAction (SET_AUTO_SCALE_MIN_TO_MAX_())->setChecked (currentVisModel()->getAutoScaleMode()
-                                                             == MIN_TO_MAX);
-    }
+
 }
 
 //-------------------------------------------------------------------------
@@ -216,27 +170,51 @@ void AdaptChannelViewGuiCommand::changeColor ()
 //-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::scale ()
 {
-    ChannelID channel = currentVisModel()->getSelectedChannel();
-    if (channel == UNDEFINED_CHANNEL)
-        return;
-    ScaleChannelDialog scale_dialog (channel, currentVisModel()->getShownChannels(),
-                                     currentVisModel()->getChannelManager());
-    if (scale_dialog.exec() == QDialog::Accepted)
+    QSharedPointer<SignalVisualisationModel> sv_model = currentVisModel();
+    if (sv_model.isNull()) return;
+
+    ChannelID selected = sv_model->getSelectedChannel();
+    std::set<ChannelID> preselect;
+    if (selected != UNDEFINED_CHANNEL)
+        preselect = { selected };
+
+    ScaleChannelDialog dialog (sv_model->getShownChannels(), sv_model->getChannelManager(), preselect);
+    if (dialog.exec() != QDialog::Accepted) return;
+
+    std::set<ChannelID> channels = dialog.selectedChannels();
+    if (channels.empty()) return;
+
+    switch (dialog.scalingMode())
     {
-        currentVisModel()->scaleChannel (channel,
-                                         scale_dialog.lowerValue(),
-                                         scale_dialog.upperValue());
+    case ScaleChannelDialog::AUTO_PER_CHANNEL:
+    {
+        ScaleMode mode = dialog.symmetric() ? MAX_TO_MAX : MIN_TO_MAX;
+        sv_model->setAutoScaleMode(mode);
+        for (ChannelID ch : channels)
+            sv_model->scaleChannel(ch);
+        break;
     }
-}
-
-//-------------------------------------------------------------------------
-void AdaptChannelViewGuiCommand::applyScaleToOtherChannels ()
-{
-    ChannelID channel = currentVisModel()->getSelectedChannel();
-    if (channel == UNDEFINED_CHANNEL)
-        return;
-
-    // TODO: implement!
+    case ScaleChannelDialog::AUTO_SHARED_RANGE:
+    {
+        ChannelManager const& cm = sv_model->getChannelManager();
+        float64 lo = cm.getMinValue(channels);
+        float64 hi = cm.getMaxValue(channels);
+        if (dialog.symmetric())
+        {
+            double absMax = std::max(std::fabs(lo), std::fabs(hi));
+            lo = -absMax;
+            hi =  absMax;
+        }
+        for (ChannelID ch : channels)
+            sv_model->scaleChannel(ch, static_cast<float32>(lo), static_cast<float32>(hi));
+        break;
+    }
+    case ScaleChannelDialog::MANUAL:
+        for (ChannelID ch : channels)
+            sv_model->scaleChannel(ch, static_cast<float32>(dialog.lowerValue()),
+                                       static_cast<float32>(dialog.upperValue()));
+        break;
+    }
 }
 
 //-------------------------------------------------------------------------
@@ -250,40 +228,6 @@ void AdaptChannelViewGuiCommand::hide ()
     shown_channels.erase (channel);
     currentVisModel()->setShownChannels (shown_channels);
     currentVisModel()->update();
-}
-
-//-------------------------------------------------------------------------
-void AdaptChannelViewGuiCommand::scaleAll ()
-{
-    ScaleChannelDialog scale_dialog (UNDEFINED_CHANNEL, currentVisModel()->getShownChannels(),
-                                     currentVisModel()->getChannelManager());
-    if (scale_dialog.exec() == QDialog::Accepted)
-    {
-        if (scale_dialog.autoScaling())
-        {
-            currentVisModel()->setAutoScaleMode (MIN_TO_MAX);
-            currentVisModel()->scaleChannel(UNDEFINED_CHANNEL);
-        }
-        else
-        {
-            currentVisModel()->scaleChannel
-                    (UNDEFINED_CHANNEL, scale_dialog.lowerValue(), scale_dialog.upperValue());
-        }
-    }
-}
-
-//-------------------------------------------------------------------------
-void AdaptChannelViewGuiCommand::setScaleModeZeroCentered ()
-{
-    currentVisModel()->setAutoScaleMode (MAX_TO_MAX);
-    currentVisModel()->scaleChannel(UNDEFINED_CHANNEL);
-}
-
-//-------------------------------------------------------------------------
-void AdaptChannelViewGuiCommand::setScaleModeZeroFitted ()
-{
-    currentVisModel()->setAutoScaleMode (MIN_TO_MAX);
-    currentVisModel()->scaleChannel(UNDEFINED_CHANNEL);
 }
 
 //-------------------------------------------------------------------------

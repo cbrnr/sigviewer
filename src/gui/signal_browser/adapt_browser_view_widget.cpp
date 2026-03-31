@@ -4,7 +4,6 @@
 
 
 #include "adapt_browser_view_widget.h"
-#include "gui/gui_action_factory.h"
 #include "base/exception.h"
 #include "base/math_utils.h"
 #include "gui/gui_helper_functions.h"
@@ -41,12 +40,8 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
         throw (Exception (tr("connect failed: y_axis_checkbox_").toStdString()));
     if (!connect (ui_.labels_checkbox_, SIGNAL(toggled(bool)), SIGNAL(labelsVisibilityChanged(bool))))
         throw (Exception (tr("connect failed: labels_checkbox_").toStdString()));
-    offset_centered_ =  GuiActionFactory::getInstance()->getQAction(tr("Zero Line Centered"));
-    offset_fitted_ =  GuiActionFactory::getInstance()->getQAction(tr("Zero Line Fitted"));
     ui_.channelsPerPageSpinbox->setMaximum (setting->getChannelManager().getNumberChannels());
     ui_.secsPerPageSpinbox->setMaximum (settings_->getChannelManager().getDurationInSec());
-    connect(ui_.offsetCheckBox, SIGNAL(stateChanged(int)), SLOT(on_offsetCheckBox_stateChanged(int)));
-
     connect (settings_.data(), SIGNAL(channelHeightChanged()), SLOT(updateValues()));
     connect (settings_.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateValues()));
     connect (settings_.data(), SIGNAL(pixelsPerSampleChanged()), SLOT(updateValues()));
@@ -63,9 +58,6 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
     y_axis_widget_->enableSeparator(ui_.border_checkBox_->checkState());
     label_widget_->enableSeparator(ui_.border_checkBox_->checkState());
     settings_->separatorEnabled(ui_.border_checkBox_->checkState());
-
-    //Zero line fitted mode should always be default
-    ui_.offsetCheckBox->setChecked(true);
 
     ui_.yGridSlider->setToolTip(tr("Slide to change the density of Y grids"));
 
@@ -169,18 +161,6 @@ void AdaptBrowserViewWidget::selfUpdatingFinished ()
     self_updating_ = false;
 }
 
-}
-
-void sigviewer::AdaptBrowserViewWidget::on_offsetCheckBox_stateChanged(int checkState)
-{
-    if (checkState == Qt::Unchecked)
-    {
-        offset_centered_->activate(QAction::Trigger);
-    }
-    else if (checkState == Qt::Checked)
-    {
-        offset_fitted_->activate(QAction::Trigger);
-    }
 }
 
 void sigviewer::AdaptBrowserViewWidget::on_xGridCheckbox_stateChanged(int checkState)

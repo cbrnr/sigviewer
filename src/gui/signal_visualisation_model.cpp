@@ -18,7 +18,7 @@ SignalVisualisationModel::SignalVisualisationModel (std::set<EventType> const& s
       mode_ (MODE_HAND),
       event_creation_type_ (1),
       shown_event_types_ (shown_types),
-      scale_mode_ (MIN_TO_MAX),
+      scale_mode_ (MAX_TO_MAX),
       selected_channel_ (UNDEFINED_CHANNEL),
       info_widget_ (0)
 {

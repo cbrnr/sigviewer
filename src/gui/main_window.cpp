@@ -131,7 +131,7 @@ void MainWindow::initToolBars()
     file_toolbar_->addAction(action(tr("Events...")));
     file_toolbar_->addSeparator();
     file_toolbar_->addAction(action(tr("Channels...")));
-    file_toolbar_->addAction(action(tr("Scale All...")));
+    file_toolbar_->addAction(action(tr("Scale...")));
     file_toolbar_->addAction(action(tr("Zoom In Channels")));
     file_toolbar_->addAction(action(tr("Zoom Out Channels")));
     file_toolbar_->addAction(action(tr("Zoom In Time")));
@@ -250,7 +250,7 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     view_menu_->addSeparator();
     view_menu_->addAction(action(tr("Events...")));
     view_menu_->addAction(action(tr("Channels...")));
-    view_menu_->addAction(action(tr("Scale All...")));
+    view_menu_->addAction(action(tr("Scale...")));
     view_menu_->addSeparator();
     view_menu_->addAction(action(tr("Zoom In Channels")));
     view_menu_->addAction(action(tr("Zoom Out Channels")));

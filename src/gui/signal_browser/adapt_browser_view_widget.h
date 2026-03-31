@@ -71,9 +71,6 @@ private slots:
     void on_yGridCheckbox_stateChanged(int checkState);
 
     //-------------------------------------------------------------------------
-    void on_offsetCheckBox_stateChanged(int checkState);
-
-    //-------------------------------------------------------------------------
     void on_border_checkBox__stateChanged(int checkState);
 
     void on_grid_color_button_clicked();
@@ -91,8 +88,6 @@ private:
     Ui::AdaptBrowserViewWidget ui_;
     bool self_updating_;
     bool updating_values_;
-    QAction* offset_centered_;
-    QAction* offset_fitted_;
     XAxisWidget* x_axis_widget_;
     YAxisWidget* y_axis_widget_;
     LabelWidget* label_widget_;
