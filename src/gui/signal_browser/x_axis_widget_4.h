@@ -34,6 +34,7 @@ private:
     virtual void paintEvent(QPaintEvent*);
     virtual void contextMenuEvent (QContextMenuEvent* event);
     virtual void timerEvent (QTimerEvent* event);
+    virtual void changeEvent(QEvent* event);
 
     QSharedPointer<SignalViewSettings const> signal_view_settings_;
     float64 intervall_;

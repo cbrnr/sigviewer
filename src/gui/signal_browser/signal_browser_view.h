@@ -83,6 +83,7 @@ private slots:
     void verticalScrollBarRangeChaned (int min, int max);
     virtual void dropEvent (QDropEvent* event);
     virtual void dragEnterEvent(QDragEnterEvent *event);
+    virtual void changeEvent(QEvent* event);
     void graphicsViewResized (QResizeEvent* event);
     void toggleXWidget(bool enabled);
 

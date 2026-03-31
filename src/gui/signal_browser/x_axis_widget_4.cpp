@@ -34,7 +34,7 @@ XAxisWidget::XAxisWidget (QSharedPointer<SignalViewSettings const> signal_view_s
     length_in_sec_ (0),
     highlighting_enabled_ (false),
     time_to_highlight_ (0),
-    label_color_ (Qt::black)
+    label_color_ (palette().color(QPalette::WindowText))
 {
 
 }
@@ -80,6 +80,16 @@ void XAxisWidget::changeLabelColor(QColor labelColor)
 {
     label_color_ = labelColor;
     update();
+}
+
+void XAxisWidget::changeEvent(QEvent* event)
+{
+    if (event->type() == QEvent::PaletteChange)
+    {
+        label_color_ = palette().color(QPalette::WindowText);
+        update();
+    }
+    QWidget::changeEvent(event);
 }
 
 //-----------------------------------------------------------------------------

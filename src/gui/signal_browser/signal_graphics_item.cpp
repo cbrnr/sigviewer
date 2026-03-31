@@ -15,6 +15,8 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QToolTip>
 #include <QSettings>
+#include <QApplication>
+#include <QPalette>
 #include <cmath>
 #include <limits>
 
@@ -48,7 +50,7 @@ SignalGraphicsItem::SignalGraphicsItem (QSharedPointer<SignalViewSettings const>
   created_event_item_ (0),
   hand_tool_on_ (false),
   grid_color_ (QColor(220, 220, 220, 50)),   //set the default grid color
-  label_color_ (Qt::black)
+  label_color_ (QApplication::palette().color(QPalette::WindowText))
 {
     setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
     setAcceptHoverEvents(false);

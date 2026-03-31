@@ -15,7 +15,7 @@ LabelWidget::LabelWidget (QSharedPointer<SignalViewSettings const> signal_view_s
 : signal_view_settings_ (signal_view_settings),
   y_start_ (0),
   enable_separator_ (true),
-  label_color_ (Qt::black)
+  label_color_ (palette().color(QPalette::WindowText))
 {
     // nothing to do here
 }
@@ -38,6 +38,16 @@ void LabelWidget::changeLabelColor(QColor labelColor)
 {
     label_color_ = labelColor;
     update();
+}
+
+void LabelWidget::changeEvent(QEvent* event)
+{
+    if (event->type() == QEvent::PaletteChange)
+    {
+        label_color_ = palette().color(QPalette::WindowText);
+        update();
+    }
+    QWidget::changeEvent(event);
 }
 
 
