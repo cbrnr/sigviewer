@@ -268,9 +268,6 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     last_x = start_sample * pixel_per_sample;
 
-    float64 last_y = (*data_block)[0];
-    float64 new_y = 0;
-
     if (draw_x_grid_)
         drawXGrid (painter, option);
 
@@ -289,21 +286,77 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     painter->translate (0, height_ / 2.0f);
     painter->setPen (color_manager_->getChannelColor (id_));
 
-
-    for (int index = 0;
-         index < static_cast<int>(data_block->size()) - 1;
-         index++)
+    if (pixel_per_sample >= 1.0)
     {
-        new_y = (*data_block)[index+1];
+        // Full-resolution path: draw one line segment per sample pair
+        float64 last_y = (*data_block)[0];
+        float64 new_y = 0;
 
-        //!Draw nothing if NAN
-        if (!std::isnan(last_y) && !std::isnan(new_y))
+        for (int index = 0;
+             index < static_cast<int>(data_block->size()) - 1;
+             index++)
         {
-            painter->drawLine(last_x, y_offset_ - (y_zoom_ * last_y), last_x + pixel_per_sample, y_offset_ - (y_zoom_ * new_y));
-        }
+            new_y = (*data_block)[index+1];
 
-        last_x += pixel_per_sample;
-        last_y = new_y;
+            //!Draw nothing if NAN
+            if (!std::isnan(last_y) && !std::isnan(new_y))
+            {
+                painter->drawLine(last_x, y_offset_ - (y_zoom_ * last_y), last_x + pixel_per_sample, y_offset_ - (y_zoom_ * new_y));
+            }
+
+            last_x += pixel_per_sample;
+            last_y = new_y;
+        }
+    }
+    else
+    {
+        // Min-max envelope path: draw one vertical line per screen pixel column.
+        // Each column spans the min-to-max range of all samples that map to that pixel.
+        // This reduces draw calls from O(samples) to O(screen_width_pixels).
+        int first_pixel = static_cast<int>(std::floor(clip.x()));
+        int last_pixel  = static_cast<int>(std::ceil(clip.x() + clip.width()));
+
+        for (int px = first_pixel; px <= last_pixel; px++)
+        {
+            // Determine the range of data block indices whose screen x falls in [px, px+1)
+            int j_start = static_cast<int>(std::floor(static_cast<double>(px) / pixel_per_sample))
+                          - static_cast<int>(start_sample);
+            int j_end   = static_cast<int>(std::ceil(static_cast<double>(px + 1) / pixel_per_sample))
+                          - static_cast<int>(start_sample);
+            j_start = std::max(j_start, 0);
+            j_end   = std::min(j_end, static_cast<int>(data_block->size()));
+
+            if (j_start >= j_end)
+                continue;
+
+            float32 ymin = 0.0f, ymax = 0.0f;
+            bool has_valid = false;
+
+            for (int j = j_start; j < j_end; j++)
+            {
+                float32 v = (*data_block)[j];
+                if (!std::isnan(v))
+                {
+                    if (!has_valid)
+                    {
+                        ymin = ymax = v;
+                        has_valid = true;
+                    }
+                    else
+                    {
+                        if (v < ymin) ymin = v;
+                        if (v > ymax) ymax = v;
+                    }
+                }
+            }
+
+            if (has_valid)
+            {
+                double screen_x = px + 0.5;
+                painter->drawLine(QPointF(screen_x, y_offset_ - y_zoom_ * ymax),
+                                  QPointF(screen_x, y_offset_ - y_zoom_ * ymin));
+            }
+        }
     }
 
     return;
