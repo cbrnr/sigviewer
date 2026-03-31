@@ -117,6 +117,26 @@ void FileContext::precomputeDetrendChannel (double cutoff_hz, ChannelID id)
 }
 
 //-------------------------------------------------------------------------
+void FileContext::ensureDetrendManager (double cutoff_hz)
+{
+    if (!detrend_manager_ || detrend_manager_->hpCutoff () != cutoff_hz)
+    {
+        delete detrend_manager_;
+        detrend_manager_   = new DetrendChannelManager (channel_manager_, cutoff_hz);
+        detrend_cutoff_hz_ = cutoff_hz;
+    }
+}
+
+//-------------------------------------------------------------------------
+void FileContext::precomputeDetrendChannelFromRaw (ChannelID id,
+                                                   QSharedPointer<DataBlock const> raw)
+{
+    // detrend_manager_ must already exist (call ensureDetrendManager first).
+    if (detrend_manager_)
+        detrend_manager_->precomputeFromRawData (id, raw);
+}
+
+//-------------------------------------------------------------------------
 bool FileContext::setDetrendEnabled (bool enabled, double hp_cutoff_hz)
 {
     detrend_enabled_   = enabled;

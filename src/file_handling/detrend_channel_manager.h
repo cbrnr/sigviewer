@@ -76,6 +76,12 @@ public:
     virtual float64 getMinValue (ChannelID id) const override;
     virtual float64 getMaxValue (ChannelID id) const override;
 
+    //-------------------------------------------------------------------------
+    /// Pre-compute the processed channel from already-read raw data.
+    /// Called from the parallel file-open phase to avoid a second disk read.
+    /// Thread-safe: multiple channels can be processed concurrently.
+    void precomputeFromRawData (ChannelID id, QSharedPointer<DataBlock const> raw) const;
+
 private:
     //-------------------------------------------------------------------------
     /// Returns (or computes and caches) the fully processed data for a channel.

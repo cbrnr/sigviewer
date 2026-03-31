@@ -11,6 +11,7 @@
 #include "file_handling/channel_manager.h"
 #include "file_handling/channel_manager_proxy.h"
 #include "file_handling/detrend_channel_manager.h"
+#include "base/data_block.h"
 #include "gui/signal_visualisation_model.h"
 #include "base/file_states.h"
 
@@ -88,6 +89,19 @@ public:
     /// Creates the DetrendChannelManager if it does not yet exist or if the
     /// cutoff changed.  Does NOT enable detrend — user still toggles it on.
     void precomputeDetrendChannel (double cutoff_hz, ChannelID id);
+
+    //-------------------------------------------------------------------------
+    /// Ensures the DetrendChannelManager exists with the given cutoff.
+    /// Must be called on the main thread before any parallel
+    /// precomputeDetrendChannelFromRaw() calls.
+    void ensureDetrendManager (double cutoff_hz);
+
+    //-------------------------------------------------------------------------
+    /// Pre-compute a single channel from already-read raw data.
+    /// Thread-safe — multiple channels can be processed concurrently once
+    /// ensureDetrendManager() has been called on the main thread.
+    void precomputeDetrendChannelFromRaw (ChannelID id,
+                                          QSharedPointer<DataBlock const> raw);
 
     //-------------------------------------------------------------------------
     bool isDetrendEnabled () const { return detrend_enabled_; }

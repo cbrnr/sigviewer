@@ -11,7 +11,12 @@
 #include <vector>
 #include <limits>
 #include <cmath>
+#include <atomic>
 #include <QDebug>
+#include <QCoreApplication>
+#include <QRunnable>
+#include <QThreadPool>
+#include <QThread>
 
 // SPUC headers define macros (E, PI, ...) that must come after Qt/STL headers
 // to avoid corrupting Qt6's C++20 constructs in C++17 mode.
@@ -81,111 +86,162 @@ void DownSamplingThread::minMaxDownsampling ()
     size_t num_samples = channel_manager_->getNumberSamples ();
     double sample_rate = channel_manager_->getSampleRate ();
 
-    for (ChannelID id : channels)
+    if (channels.empty ())
+        return;
+
+    // Pre-trigger bufferAllChannels() on the calling thread so that subsequent
+    // getData() calls from worker threads are O(1) mutex-guarded map lookups
+    // rather than a file read.  The first call reads all channels in one shot;
+    // subsequent calls just return a cached QSharedPointer.
+    channel_manager_->getData (*channels.begin (), 0,
+                               static_cast<unsigned> (num_samples));
+
+    // Per-channel results collected by worker threads, merged serially afterwards.
+    struct PerChannelResult
     {
-        QSharedPointer<DataBlock const> full_data =
-            channel_manager_->getData (id, 0, static_cast<unsigned>(num_samples));
-        if (full_data.isNull () || full_data->size () == 0)
-            continue;
-
-        size_t cur_size = full_data->size ();
-
-        // Seed working buffers from the raw samples.
-        // NaN values propagate: a downsampled window is NaN only when every
-        // raw sample inside it is NaN.
-        // We also track the global per-channel min/max here so the ChannelManager
-        // base-class cache is pre-populated and initMinMax() (an expensive second
-        // full file scan) is never called.
-        QVector<float32> cur_min (static_cast<int>(cur_size));
-        QVector<float32> cur_max (static_cast<int>(cur_size));
+        ChannelID id = 0;
+        QSharedPointer<DataBlock const> full_data;
         float32 global_min =  std::numeric_limits<float32>::max ();
         float32 global_max = -std::numeric_limits<float32>::max ();
-        for (size_t i = 0; i < cur_size; i++)
-        {
-            float32 v = (*full_data)[i];
-            cur_min[static_cast<int>(i)] = v;
-            cur_max[static_cast<int>(i)] = v;
-            if (!std::isnan (v))
-            {
-                if (v < global_min) global_min = v;
-                if (v > global_max) global_max = v;
-            }
-        }
-        if (global_min <= global_max)
-            channel_manager_->setChannelMinMax (id,
-                                                static_cast<double>(global_min),
-                                                static_cast<double>(global_max));
+        struct Level {
+            unsigned factor;
+            QSharedPointer<DataBlock const> min_block;
+            QSharedPointer<DataBlock const> max_block;
+        };
+        QVector<Level> levels;
+    };
 
-        if (per_channel_hook_)
-            per_channel_hook_ (id);
-        else
-            ProgressBar::instance().increaseValue (1, QObject::tr ("Searching for Min-Max"));
-
-        // Build the min/max pyramid hierarchically: each level aggregates the
-        // previous one by downsampling_step_, so total work is O(N) per channel
-        // (geometric series: N + N/step + N/step^2 + ...).
-        for (unsigned factor = downsampling_step_;
-             factor < downsampling_max_ && cur_size > 1;
-             factor *= downsampling_step_)
-        {
-            size_t next_size = (cur_size + downsampling_step_ - 1) / downsampling_step_;
-            QVector<float32> next_min (static_cast<int>(next_size));
-            QVector<float32> next_max (static_cast<int>(next_size));
-
-            for (size_t i = 0; i < next_size; i++)
-            {
-                size_t j0 = i * downsampling_step_;
-                size_t j1 = std::min (j0 + static_cast<size_t>(downsampling_step_), cur_size);
-
-                float32 vmin = std::numeric_limits<float32>::quiet_NaN ();
-                float32 vmax = std::numeric_limits<float32>::quiet_NaN ();
-
-                for (size_t j = j0; j < j1; j++)
-                {
-                    float32 lo = cur_min[static_cast<int>(j)];
-                    float32 hi = cur_max[static_cast<int>(j)];
-                    if (!std::isnan (lo))
-                    {
-                        if (std::isnan (vmin))
-                        {
-                            vmin = lo;
-                            vmax = hi;
-                        }
-                        else
-                        {
-                            if (lo < vmin) vmin = lo;
-                            if (hi > vmax) vmax = hi;
-                        }
-                    }
-                }
-
-                next_min[static_cast<int>(i)] = vmin;
-                next_max[static_cast<int>(i)] = vmax;
-            }
-
-            // Persist this level – copy into fresh QVectors so the working
-            // buffers below can be moved cheaply on the next iteration.
-            auto stored_min = QSharedPointer<QVector<float32>> (
-                                  new QVector<float32> (next_min));
-            auto stored_max = QSharedPointer<QVector<float32>> (
-                                  new QVector<float32> (next_max));
-
-            double ds_rate = sample_rate / factor;
-            channel_manager_->addDownsampledMinMaxVersion (
-                id,
-                QSharedPointer<DataBlock const> (new FixedDataBlock (stored_min, ds_rate)),
-                QSharedPointer<DataBlock const> (new FixedDataBlock (stored_max, ds_rate)),
-                factor);
-
-            // Advance working buffers to this level for the next iteration.
-            cur_min = std::move (next_min);
-            cur_max = std::move (next_max);
-            cur_size = next_size;
-        }
+    QVector<PerChannelResult> results;
+    results.resize (static_cast<int> (channels.size ()));
+    {
+        int i = 0;
+        for (ChannelID id : channels)
+            results[i++].id = id;
     }
 
-    // All channels have been scanned – mark the base-class min/max cache as
-    // fully built so that ChannelManager::initMinMax() is never triggered.
+    std::atomic<int> n_done {0};
+    auto* pool = QThreadPool::globalInstance ();
+    int n_channels = results.size ();
+
+    for (int i = 0; i < n_channels; ++i)
+    {
+        PerChannelResult* r = &results[i];
+        unsigned ds_step = downsampling_step_;
+        unsigned ds_max  = downsampling_max_;
+
+        pool->start (QRunnable::create ([this, r, num_samples, sample_rate,
+                                         ds_step, ds_max, &n_done] ()
+        {
+            r->full_data = channel_manager_->getData (r->id, 0,
+                                                      static_cast<unsigned> (num_samples));
+            if (r->full_data.isNull () || r->full_data->size () == 0)
+            {
+                n_done.fetch_add (1, std::memory_order_release);
+                return;
+            }
+
+            size_t cur_size = r->full_data->size ();
+            QVector<float32> cur_min (static_cast<int> (cur_size));
+            QVector<float32> cur_max (static_cast<int> (cur_size));
+
+            for (size_t k = 0; k < cur_size; ++k)
+            {
+                float32 v = (*r->full_data)[static_cast<int> (k)];
+                cur_min[static_cast<int> (k)] = v;
+                cur_max[static_cast<int> (k)] = v;
+                if (!std::isnan (v))
+                {
+                    if (v < r->global_min) r->global_min = v;
+                    if (v > r->global_max) r->global_max = v;
+                }
+            }
+
+            for (unsigned factor = ds_step;
+                 factor < ds_max && cur_size > 1;
+                 factor *= ds_step)
+            {
+                size_t next_size = (cur_size + ds_step - 1) / ds_step;
+                QVector<float32> next_min (static_cast<int> (next_size));
+                QVector<float32> next_max (static_cast<int> (next_size));
+
+                for (size_t ii = 0; ii < next_size; ++ii)
+                {
+                    size_t j0 = ii * ds_step;
+                    size_t j1 = std::min (j0 + static_cast<size_t> (ds_step), cur_size);
+
+                    float32 vmin = std::numeric_limits<float32>::quiet_NaN ();
+                    float32 vmax = std::numeric_limits<float32>::quiet_NaN ();
+
+                    for (size_t j = j0; j < j1; ++j)
+                    {
+                        float32 lo = cur_min[static_cast<int> (j)];
+                        float32 hi = cur_max[static_cast<int> (j)];
+                        if (!std::isnan (lo))
+                        {
+                            if (std::isnan (vmin)) { vmin = lo; vmax = hi; }
+                            else { if (lo < vmin) vmin = lo; if (hi > vmax) vmax = hi; }
+                        }
+                    }
+                    next_min[static_cast<int> (ii)] = vmin;
+                    next_max[static_cast<int> (ii)] = vmax;
+                }
+
+                double ds_rate = sample_rate / factor;
+                // Store a copy for the pyramid block, then advance working buffers.
+                auto stored_min = QSharedPointer<QVector<float32>> (
+                                      new QVector<float32> (next_min));
+                auto stored_max = QSharedPointer<QVector<float32>> (
+                                      new QVector<float32> (next_max));
+                r->levels.append ({
+                    factor,
+                    QSharedPointer<DataBlock const> (new FixedDataBlock (stored_min, ds_rate)),
+                    QSharedPointer<DataBlock const> (new FixedDataBlock (stored_max, ds_rate))
+                });
+
+                cur_min  = std::move (next_min);
+                cur_max  = std::move (next_max);
+                cur_size = next_size;
+            }
+
+            n_done.fetch_add (1, std::memory_order_release);
+        }));
+    }
+
+    // Poll while the thread pool works; update progress bar as channels complete.
+    int last_reported = 0;
+    while (last_reported < n_channels)
+    {
+        int n = n_done.load (std::memory_order_acquire);
+        if (n > last_reported)
+        {
+            ProgressBar::instance ().increaseValue (n - last_reported,
+                                                    QObject::tr ("Processing channels..."));
+            last_reported = n;
+        }
+        if (last_reported < n_channels)
+        {
+            QCoreApplication::processEvents ();
+            QThread::msleep (8);
+        }
+    }
+    pool->waitForDone ();
+
+    // Serial merge: write results to channel_manager_ (its maps are not thread-safe).
+    for (auto& r : results)
+    {
+        if (r.global_min <= r.global_max)
+            channel_manager_->setChannelMinMax (r.id,
+                                                static_cast<double> (r.global_min),
+                                                static_cast<double> (r.global_max));
+        for (auto& lv : r.levels)
+            channel_manager_->addDownsampledMinMaxVersion (r.id,
+                                                           lv.min_block, lv.max_block,
+                                                           lv.factor);
+        if (per_channel_hook_)
+            per_channel_hook_ (r.id, r.full_data);
+    }
+
+    // All channels processed — mark base-class min/max cache as fully built.
     channel_manager_->markMinMaxInitialized ();
 }
 

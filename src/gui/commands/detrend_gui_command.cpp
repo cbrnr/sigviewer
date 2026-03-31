@@ -64,6 +64,7 @@ DetrendGuiCommand::DetrendGuiCommand ()
 void DetrendGuiCommand::init ()
 {
     getQAction (TOGGLE_DETREND_())->setCheckable (true);
+    getQAction (TOGGLE_DETREND_())->setIcon (QIcon::fromTheme ("trending_down"));
     resetActionTriggerSlot (TOGGLE_DETREND_(), SLOT(toggleDetrend()));
     resetActionTriggerSlot (SET_CUTOFF_(),     SLOT(setCutoff()));
 }

@@ -30,6 +30,7 @@
         <file>icons/light/actions/zoom_in_vertical.svg</file>
         <file>icons/light/actions/zoom_out_horizontal.svg</file>
         <file>icons/light/actions/zoom_out_vertical.svg</file>
+        <file>icons/light/actions/trending_down.svg</file>
         <file>icons/dark/index.theme</file>
         <file>icons/dark/actions/reorder.svg</file>
         <file>icons/dark/actions/add_circle.svg</file>
@@ -60,6 +61,7 @@
         <file>icons/dark/actions/zoom_in_vertical.svg</file>
         <file>icons/dark/actions/zoom_out_horizontal.svg</file>
         <file>icons/dark/actions/zoom_out_vertical.svg</file>
+        <file>icons/dark/actions/trending_down.svg</file>
         <file>images/sigviewer16.png</file>
         <file>images/sigviewer128.png</file>
         <file>color_settings.xml</file>

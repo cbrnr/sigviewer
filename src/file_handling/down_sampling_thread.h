@@ -45,8 +45,10 @@ public:
 
     //-------------------------------------------------------------------------
     /// Optional callback invoked once per channel after its min/max pyramid
-    /// has been built.  The hook is responsible for any progress bar update.
-    void setPerChannelHook (std::function<void(ChannelID)> hook) { per_channel_hook_ = std::move(hook); }
+    /// has been built.  The second argument is the full raw DataBlock that was
+    /// already read from disk – callers can use it without a second getData()
+    /// call.  The hook is responsible for any progress bar update.
+    void setPerChannelHook (std::function<void(ChannelID, QSharedPointer<DataBlock const>)> hook) { per_channel_hook_ = std::move(hook); }
 
 signals:
     //-------------------------------------------------------------------------
@@ -67,7 +69,7 @@ private:
 
     //-------------------------------------------------------------------------
     QSharedPointer<ChannelManager> channel_manager_;
-    std::function<void(ChannelID)> per_channel_hook_;
+    std::function<void(ChannelID, QSharedPointer<DataBlock const>)> per_channel_hook_;
     QList<QSharedPointer<DataBlock> > basis_data_;
     QList<QSharedPointer<DataBlock> > data_;
     QList<QSharedPointer<DataBlock> > new_data_;

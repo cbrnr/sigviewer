@@ -56,12 +56,27 @@ MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
     setUnifiedTitleAndToolBarOnMac (true);
 #ifdef Q_OS_MACOS
     const QString toolbar_style = R"(
+        QToolButton {
+            border: 1px solid transparent;
+            border-radius: 4px;
+            padding: 2px;
+        }
         QToolButton:hover {
             background: rgba(128, 128, 128, 0.2);
             border-radius: 4px;
         }
         QToolButton:pressed {
             background: rgba(128, 128, 128, 0.35);
+            border-radius: 4px;
+        }
+        QToolButton:checked {
+            background: rgba(128, 128, 128, 0.25);
+            border: 1px solid rgba(128, 128, 128, 0.5);
+            border-radius: 4px;
+        }
+        QToolButton:checked:hover {
+            background: rgba(128, 128, 128, 0.35);
+            border: 1px solid rgba(128, 128, 128, 0.6);
             border-radius: 4px;
         }
     )";
@@ -121,6 +136,8 @@ void MainWindow::initToolBars()
     file_toolbar_->addAction(action(tr("Zoom Out Channels")));
     file_toolbar_->addAction(action(tr("Zoom In Time")));
     file_toolbar_->addAction(action(tr("Zoom Out Time")));
+    file_toolbar_->addSeparator();
+    file_toolbar_->addAction(action(tr("Remove Offset")));
 }
 
 //-------------------------------------------------------------------

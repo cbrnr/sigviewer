@@ -152,31 +152,32 @@ float64 DetrendChannelManager::getMaxValue (ChannelID id) const
 // Private helpers
 //-----------------------------------------------------------------------------
 
-QSharedPointer<QVector<float32>> DetrendChannelManager::processedChannel (ChannelID id) const
+void DetrendChannelManager::precomputeFromRawData (ChannelID id, QSharedPointer<DataBlock const> raw) const
 {
+    // Fast path: already cached (double-checked under lock below).
     {
         QMutexLocker lock (&cache_mutex_);
         if (cache_.contains (id))
-            return cache_[id];
+            return;
     }
-
-    // --- load the full channel from source ------------------------------------
-    size_t total = source_->getNumberSamples ();
-    QSharedPointer<DataBlock const> raw = source_->getData (id, 0, static_cast<unsigned>(total));
     if (raw.isNull ())
-        return QSharedPointer<QVector<float32>> ();
+        return;
+
+    size_t total = static_cast<size_t>(raw->size ());
+    if (total == 0)
+        return;
 
     // Copy into a double-precision work buffer.
     std::vector<double> work (total);
     for (size_t i = 0; i < total; ++i)
         work[i] = static_cast<double>((*raw)[i]);
 
-    // --- remove mean (DC offset) ---------------------------------------------
+    // Remove mean (DC offset).
     double mean = std::accumulate (work.begin (), work.end (), 0.0) / static_cast<double>(total);
     for (auto& v : work)
         v -= mean;
 
-    // --- optional zero-phase FIR high-pass filter ----------------------------
+    // Optional zero-phase FIR high-pass filter.
     std::vector<double> kernel = buildFirKernel ();
     if (!kernel.empty ())
         applyZeroPhaseFFT (kernel, work);
@@ -197,10 +198,28 @@ QSharedPointer<QVector<float32>> DetrendChannelManager::processedChannel (Channe
     }
 
     QMutexLocker lock (&cache_mutex_);
-    cache_[id]             = result;
-    channel_min_cache_[id] = static_cast<float64>(mn);
-    channel_max_cache_[id] = static_cast<float64>(mx);
-    return result;
+    if (!cache_.contains (id))   // guard against a concurrent call winning the race
+    {
+        cache_[id]             = result;
+        channel_min_cache_[id] = static_cast<float64>(mn);
+        channel_max_cache_[id] = static_cast<float64>(mx);
+    }
+}
+
+QSharedPointer<QVector<float32>> DetrendChannelManager::processedChannel (ChannelID id) const
+{
+    {
+        QMutexLocker lock (&cache_mutex_);
+        if (cache_.contains (id))
+            return cache_[id];
+    }
+
+    size_t total = source_->getNumberSamples ();
+    QSharedPointer<DataBlock const> raw = source_->getData (id, 0, static_cast<unsigned>(total));
+    precomputeFromRawData (id, raw);
+
+    QMutexLocker lock (&cache_mutex_);
+    return cache_.value (id);
 }
 
 //-----------------------------------------------------------------------------
