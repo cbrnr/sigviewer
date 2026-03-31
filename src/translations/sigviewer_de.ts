@@ -1168,23 +1168,19 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Zoom In Vertical</source>
+        <source>Zoom In Channels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Zoom Out Vertical</source>
+        <source>Zoom Out Channels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Zoom In Horizontal</source>
+        <source>Zoom In Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Zoom Out Horizontal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save as...</source>
+        <source>Zoom Out Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1751,19 +1747,19 @@ Do you want to open the GDF file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Zoom In Vertical</source>
+        <source>Zoom In Channels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Zoom Out Vertical</source>
+        <source>Zoom Out Channels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Zoom In Horizontal</source>
+        <source>Zoom In Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Zoom Out Horizontal</source>
+        <source>Zoom Out Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

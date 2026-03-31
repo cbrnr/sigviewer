@@ -1169,24 +1169,20 @@
         <translation>Масштабировать все...</translation>
     </message>
     <message>
-        <source>Zoom In Vertical</source>
-        <translation>Увеличить по вертикали</translation>
+        <source>Zoom In Channels</source>
+        <translation>Увеличить масштаб каналов</translation>
     </message>
     <message>
-        <source>Zoom Out Vertical</source>
-        <translation>Уменьшить по вертикали</translation>
+        <source>Zoom Out Channels</source>
+        <translation>Уменьшить масштаб каналов</translation>
     </message>
     <message>
-        <source>Zoom In Horizontal</source>
-        <translation>Увеличить по горизонтали</translation>
+        <source>Zoom In Time</source>
+        <translation>Увеличить масштаб времени</translation>
     </message>
     <message>
-        <source>Zoom Out Horizontal</source>
-        <translation>Уменьшить по горизонтали</translation>
-    </message>
-    <message>
-        <source>Save as...</source>
-        <translation>Сохранить как...</translation>
+        <source>Zoom Out Time</source>
+        <translation>Уменьшить масштаб времени</translation>
     </message>
     <message>
         <source>Close</source>
@@ -1761,20 +1757,20 @@ Do you want to open the GDF file?</source>
         <translation>Количество отображаемых каналов</translation>
     </message>
     <message>
-        <source>Zoom In Vertical</source>
-        <translation>Увеличить по вертикали</translation>
+        <source>Zoom In Channels</source>
+        <translation>Увеличить масштаб каналов</translation>
     </message>
     <message>
-        <source>Zoom Out Vertical</source>
-        <translation>Уменьшить по вертикали</translation>
+        <source>Zoom Out Channels</source>
+        <translation>Уменьшить масштаб каналов</translation>
     </message>
     <message>
-        <source>Zoom In Horizontal</source>
-        <translation>Увеличить по горизонтали</translation>
+        <source>Zoom In Time</source>
+        <translation>Увеличить масштаб времени</translation>
     </message>
     <message>
-        <source>Zoom Out Horizontal</source>
-        <translation>Уменьшить по горизонтали</translation>
+        <source>Zoom Out Time</source>
+        <translation>Уменьшить масштаб времени</translation>
     </message>
     <message>
         <source>Channels per Page...</source>

@@ -131,8 +131,8 @@ AdaptChannelViewGuiCommand::AdaptChannelViewGuiCommand ()
 //-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::init ()
 {
-    setIcon (CHANNELS_(), QIcon(":/images/ic_reorder_black_24dp.png"));
-    setIcon (SCALE_ALL_(), QIcon(":/images/ic_autoscale_black_24dp.png"));
+    setIcon (CHANNELS_(), QIcon::fromTheme("reorder"));
+    setIcon (SCALE_ALL_(), QIcon::fromTheme("fit_page_height"));
     resetActionTriggerSlot (CHANNELS_(), SLOT(selectShownChannels()));
     resetActionTriggerSlot (SCALE_ALL_(), SLOT(scaleAll()));
     resetActionTriggerSlot (CHANGE_COLOR_(), SLOT(changeColor()));

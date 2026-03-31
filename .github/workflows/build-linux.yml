@@ -34,7 +34,8 @@ jobs:
             cmake \
             build-essential \
             qt6-base-dev \
-            qt6-tools-dev
+            qt6-tools-dev \
+            libqt6svg6-dev
 
       - name: Build dependencies
         run: cmake -P external/build_deps.cmake

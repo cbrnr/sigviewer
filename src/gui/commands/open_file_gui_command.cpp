@@ -113,9 +113,9 @@ void OpenFileGuiCommand::init ()
 {
     setShortcut (OPEN_(), QKeySequence::Open);
     setShortcut (SHOW_FILE_INFO_(), tr("Ctrl+I"));
-    setIcon (OPEN_(), QIcon(":/images/ic_folder_open_black_24dp.png"));
-    setIcon (SHOW_FILE_INFO_(), QIcon(":/images/ic_info_outline_black_24dp.png"));
-    setIcon (IMPORT_EVENTS_(), QIcon(":/images/ic_file_download_black_24dp.png"));
+    setIcon (OPEN_(), QIcon::fromTheme("file_open"));
+    setIcon (SHOW_FILE_INFO_(), QIcon::fromTheme("info"));
+    setIcon (IMPORT_EVENTS_(), QIcon::fromTheme("download"));
 
 
     resetActionTriggerSlot (OPEN_(), SLOT(open()));

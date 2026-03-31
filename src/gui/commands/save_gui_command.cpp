@@ -108,9 +108,9 @@ SaveGuiCommand::SaveGuiCommand ()
 //-----------------------------------------------------------------------------
 void SaveGuiCommand::init ()
 {
-    setIcon(SAVE_(), QIcon (":/images/ic_save_black_24dp.png"));
-    setIcon(EXPORT_EVENTS_CSV_(), QIcon (":/images/ic_file_upload_black_24dp.png"));
-    setIcon(EXPORT_EVENTS_EVT_(), QIcon (":/images/ic_file_upload_black_24dp.png"));
+    setIcon(SAVE_(), QIcon::fromTheme("file_save"));
+    setIcon(EXPORT_EVENTS_CSV_(), QIcon::fromTheme("upload"));
+    setIcon(EXPORT_EVENTS_EVT_(), QIcon::fromTheme("upload"));
 
     setShortcut (SAVE_(), QKeySequence::Save);
     setShortcut (SAVE_AS_(), QKeySequence::SaveAs);

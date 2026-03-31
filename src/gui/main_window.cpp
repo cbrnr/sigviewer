@@ -13,6 +13,8 @@
 #include <QLabel>
 #include <QSettings>
 #include <QMimeData>
+#include <QIcon>
+#include <QPalette>
 
 namespace sigviewer
 {
@@ -68,8 +70,14 @@ void MainWindow::initToolBars()
     file_toolbar_->addAction (action(tr("Open...")));
     file_toolbar_->addAction (action(tr("Save")));
     file_toolbar_->addAction (action(tr("Info...")));
+#ifdef Q_OS_MACOS
+    file_toolbar_->addSeparator();
+#endif
     file_toolbar_->addAction (action(tr("Undo")));
     file_toolbar_->addAction (action(tr("Redo")));
+#ifdef Q_OS_MACOS
+    file_toolbar_->addSeparator();
+#endif
     // file_toolbar_->addAction (action(tr("Close")));
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
@@ -87,12 +95,15 @@ void MainWindow::initToolBars()
     view_toolbar_->setMovable(false);
     view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
     view_toolbar_->addAction(action(tr("Events...")));
+#ifdef Q_OS_MACOS
+    view_toolbar_->addSeparator();
+#endif
     view_toolbar_->addAction(action(tr("Channels...")));
     view_toolbar_->addAction(action(tr("Scale All...")));
-    view_toolbar_->addAction(action(tr("Zoom In Vertical")));
-    view_toolbar_->addAction(action(tr("Zoom Out Vertical")));
-    view_toolbar_->addAction(action(tr("Zoom In Horizontal")));
-    view_toolbar_->addAction(action(tr("Zoom Out Horizontal")));
+    view_toolbar_->addAction(action(tr("Zoom In Channels")));
+    view_toolbar_->addAction(action(tr("Zoom Out Channels")));
+    view_toolbar_->addAction(action(tr("Zoom In Time")));
+    view_toolbar_->addAction(action(tr("Zoom Out Time")));
 
     view_toolbar_views_menu_->addSeparator ();
     toggle_all_toolbars_ = new QAction (tr("Hide all Toolbars"), this);
@@ -227,10 +238,10 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     view_menu_->addAction(action(tr("Channels...")));
     view_menu_->addAction(action(tr("Scale All...")));
     view_menu_->addSeparator();
-    view_menu_->addAction(action(tr("Zoom In Vertical")));
-    view_menu_->addAction(action(tr("Zoom Out Vertical")));
-    view_menu_->addAction(action(tr("Zoom In Horizontal")));
-    view_menu_->addAction(action(tr("Zoom Out Horizontal")));
+    view_menu_->addAction(action(tr("Zoom In Channels")));
+    view_menu_->addAction(action(tr("Zoom Out Channels")));
+    view_menu_->addAction(action(tr("Zoom In Time")));
+    view_menu_->addAction(action(tr("Zoom Out Time")));
     view_menu_->addSeparator();
     view_menu_->addAction(action(tr("Go to...")));
     view_menu_->addSeparator();
@@ -289,6 +300,16 @@ void MainWindow::resizeEvent (QResizeEvent* event)
 {
     QSettings settings;
     settings.setValue("MainWindow/size", event->size());
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::changeEvent(QEvent* event)
+{
+    if (event->type() == QEvent::PaletteChange) {
+        const bool dark = palette().color(QPalette::Window).lightness() < 128;
+        QIcon::setThemeName(dark ? "dark" : "light");
+    }
+    QMainWindow::changeEvent(event);
 }
 
 //-----------------------------------------------------------------------------

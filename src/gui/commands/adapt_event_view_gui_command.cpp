@@ -104,10 +104,10 @@ void AdaptEventViewGuiCommand::init ()
     setShortcut (GO_TO_PREVIOUS_EVENT_(), QKeySequence("Ctrl+Left"));
     setShortcut (SET_SHOWN_EVENTS_(), tr("Ctrl+E"));
 
-    setIcon (GO_TO_NEXT_EVENT_(), QIcon(":/images/ic_chevron_right_black_24dp.png"));
-    setIcon (GO_TO_PREVIOUS_EVENT_(), QIcon(":/images/ic_chevron_left_black_24dp.png"));
-    setIcon (SET_SHOWN_EVENTS_(), QIcon(":/images/ic_flag_black_24dp.png"));
-    setIcon (FIT_TO_EVENT_(), QIcon(":/images/ic_zoom_out_map_black_24dp.png"));
+    setIcon (GO_TO_NEXT_EVENT_(), QIcon::fromTheme("chevron_forward"));
+    setIcon (GO_TO_PREVIOUS_EVENT_(), QIcon::fromTheme("chevron_backward"));
+    setIcon (SET_SHOWN_EVENTS_(), QIcon::fromTheme("label"));
+    setIcon (FIT_TO_EVENT_(), QIcon::fromTheme("zoom_out_map"));
 
     resetActionTriggerSlot (HIDE_EVENTS_OF_OTHER_TYPE_(), SLOT(hideEventsOfOtherType()));
     resetActionTriggerSlot (SHOW_ALL_EVENTS_(), SLOT(showAllEvents()));

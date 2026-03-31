@@ -7,9 +7,11 @@
 
 #include <QApplication>
 #include <QCommandLineParser>
+#include <QIcon>
 #include <QTranslator>
 #include <QLocale>
 #include <QLibraryInfo>
+#include <QPalette>
 
 
 using namespace sigviewer;
@@ -34,6 +36,12 @@ int main(int argc, char* argv[])
     }
 
     GuiActionFactoryRegistrator::registerActions();
+
+    // Initialize icon theme for light/dark mode support
+    QIcon::setThemeSearchPaths(QStringList{":/icons"} + QIcon::themeSearchPaths());
+    QIcon::setFallbackThemeName("light");
+    const bool darkMode = app.palette().color(QPalette::Window).lightness() < 128;
+    QIcon::setThemeName(darkMode ? "dark" : "light");
 
     QCommandLineParser parser;
     parser.setApplicationDescription(QObject::tr("SigViewer - a biosignal viewer."));

@@ -1,4 +1,7 @@
-Version X.X.X
+Version x.x.x
+(*) Use SVG icons with support for light and dark themes
+
+Version 0.6.5
 (*) Switch from Qt5 to Qt6
 (*) Switch to CMake
 (*) Building works again on Windows (in addition to Linux and macOS)
