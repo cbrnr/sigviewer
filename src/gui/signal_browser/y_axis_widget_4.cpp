@@ -25,7 +25,7 @@ YAxisWidget::YAxisWidget (QWidget* parent, QSharedPointer<const SignalViewSettin
     channel_height_ (0),
     y_start_ (0),
     signal_view_settings_ (signal_view_settings),
-    label_color_ (Qt::black)
+    label_color_ (palette().color(QPalette::WindowText))
 {
     // nothing to do here
 }
@@ -81,6 +81,16 @@ void YAxisWidget::changeLabelColor(QColor labelColor)
 {
     label_color_ = labelColor;
     update();
+}
+
+void YAxisWidget::changeEvent(QEvent* event)
+{
+    if (event->type() == QEvent::PaletteChange)
+    {
+        label_color_ = palette().color(QPalette::WindowText);
+        update();
+    }
+    QWidget::changeEvent(event);
 }
 
 //!this section is set to be consistent with label_widget.cpp----------------

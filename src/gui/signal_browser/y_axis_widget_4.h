@@ -39,6 +39,7 @@ public slots:
 private:
     virtual void paintEvent (QPaintEvent* event = 0);
     virtual void contextMenuEvent (QContextMenuEvent* event);
+    virtual void changeEvent(QEvent* event);
 
     void paintYAxisLabels (QPainter* painter, float64 offset,
                            float64 y_grid_pixel_intervall,

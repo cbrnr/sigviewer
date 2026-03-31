@@ -22,6 +22,8 @@
 #include <QDebug>
 #include <QResizeEvent>
 #include <QGraphicsLinearLayout>
+#include <QApplication>
+#include <QPalette>
 
 #include <math.h>       /* round */
 
@@ -340,6 +342,14 @@ void SignalBrowserView::verticalScrollBarRangeChaned (int min, int max)
 void SignalBrowserView::dropEvent (QDropEvent* event)
 {
     event->ignore();
+}
+
+//-----------------------------------------------------------------------------
+void SignalBrowserView::changeEvent(QEvent* event)
+{
+    if (event->type() == QEvent::PaletteChange)
+        emit model_->getSignalViewSettings()->labelColorChanged(palette().color(QPalette::WindowText));
+    QFrame::changeEvent(event);
 }
 
 //-----------------------------------------------------------------------------

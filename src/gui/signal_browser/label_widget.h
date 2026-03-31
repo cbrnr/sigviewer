@@ -34,6 +34,7 @@ public slots:
 protected:
     void paintEvent(QPaintEvent* pe);
     virtual void contextMenuEvent (QContextMenuEvent* event);
+    virtual void changeEvent(QEvent* event);
 
 private:
     QSharedPointer<SignalViewSettings const> signal_view_settings_;
