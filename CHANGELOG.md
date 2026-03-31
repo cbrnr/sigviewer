@@ -7,6 +7,9 @@
 ### 🌀 Changed
 - Faster scrolling/zooming for long recordings at high zoom-out levels (uses a per-pixel min–max envelope with automatic downsampling depending on the zoom level)
 
+### 🔧 Fixed
+- Fix label colors in dark mode (they are now light)
+
 ## [0.6.5] · 2026-03-24
 ### 🌀 Changed
 - Switch from Qt 5 to Qt 6
