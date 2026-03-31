@@ -288,25 +288,33 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     if (pixel_per_sample >= 1.0)
     {
-        // Full-resolution path: draw one line segment per sample pair
-        float64 last_y = (*data_block)[0];
-        float64 new_y = 0;
+        // Full-resolution path: accumulate points and draw as a single polyline per
+        // contiguous (non-NaN) segment. One drawPolyline call replaces O(N) drawLine
+        // calls, significantly reducing QPainter overhead.
+        QPolygonF points;
+        points.reserve(static_cast<int>(data_block->size()));
 
-        for (int index = 0;
-             index < static_cast<int>(data_block->size()) - 1;
-             index++)
+        for (int index = 0; index < static_cast<int>(data_block->size()); index++)
         {
-            new_y = (*data_block)[index+1];
-
-            //!Draw nothing if NAN
-            if (!std::isnan(last_y) && !std::isnan(new_y))
+            float64 y = (*data_block)[index];
+            if (std::isnan(y))
             {
-                painter->drawLine(last_x, y_offset_ - (y_zoom_ * last_y), last_x + pixel_per_sample, y_offset_ - (y_zoom_ * new_y));
+                if (points.size() > 1)
+                    painter->drawPolyline(points);
+                else if (points.size() == 1)
+                    painter->drawPoint(points.first());
+                points.clear();
             }
-
+            else
+            {
+                points.append(QPointF(last_x, y_offset_ - y_zoom_ * y));
+            }
             last_x += pixel_per_sample;
-            last_y = new_y;
         }
+        if (points.size() > 1)
+            painter->drawPolyline(points);
+        else if (points.size() == 1)
+            painter->drawPoint(points.first());
     }
     else
     {
