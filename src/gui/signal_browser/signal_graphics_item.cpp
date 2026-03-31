@@ -290,37 +290,124 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 //    }
 
     painter->translate (0, height_ / 2.0f);
+
+    // When y_zoom_ is very large (zoomed in on amplitude), sample values outside
+    // the visible amplitude window map to screen Y coordinates of millions of
+    // pixels. We must clamp them before giving them to QPainter, because its
+    // internal 26.6 fixed-point arithmetic overflows beyond ~33 million px, and
+    // even well short of that the rasterizer spends significant time processing
+    // enormous geometry.
+    //
+    // We do NOT set a vertical painter clip here: signals are intentionally
+    // allowed to "overflow" visually into neighbouring channel lanes, so the
+    // only hard boundary we enforce is a large-but-finite coordinate clamp.
+    // The clamp value is chosen so that any line crossing the channel boundary
+    // is rasterised with the correct entry-angle (the clamped end-point is far
+    // enough off-screen that the intersection geometry is exact).
+    const double SCENE_HALF_H = 32000.0;   // well within QPainter's fixed-point range
+    const double YMIN = -SCENE_HALF_H;
+    const double YMAX =  SCENE_HALF_H;
+    // Y_OVERDRAW is unused in the polyline path but kept for the minmax path below.
+    const double Y_OVERDRAW = (double)height_;
+
     painter->setPen (color_manager_->getChannelColor (id_));
 
-    if (pixel_per_sample >= 1.0)
+    // On HiDPI / Retina displays the same logical canvas is rendered at a higher
+    // physical pixel density.  The polyline path (connected per-sample points)
+    // only produces a visibly smoother result than the minmax envelope path when
+    // there is at least one *physical* device pixel per sample.  Below that
+    // density the two paths are indistinguishable — at pixel_per_sample == 1.0
+    // on a 2× Retina screen every logical-pixel column still contains exactly
+    // one sample, so min == max and the minmax bar is a single point, identical
+    // to the polyline point — but the polyline path is more expensive because
+    // CoreGraphics must compute miter joints for every connected segment at full
+    // physical resolution.  Using the device pixel ratio as the threshold lets
+    // the cheaper minmax path handle the common "default zoom" case on Retina.
+    const double dpr = std::max(1.0, painter->device()->devicePixelRatioF());
+
+    if (pixel_per_sample >= dpr)
     {
-        // Full-resolution path: accumulate points and draw as a single polyline per
-        // contiguous (non-NaN) segment. One drawPolyline call replaces O(N) drawLine
-        // calls, significantly reducing QPainter overhead.
+        // Full-resolution path: build a polyline per contiguous (non-NaN) segment.
+        //
+        // When the signal is zoomed in vertically, many consecutive samples share
+        // the same clamped OOB Y value (all above or all below the visible range).
+        // Drawing all such points is wasteful — a run of N identical-Y points is
+        // just a horizontal line segment that only needs its first and last endpoints.
+        // We collapse each OOB run down to at most 2 points, keeping the polygon
+        // size proportional to the number of vertically-visible samples rather than
+        // the total number of samples in the horizontal clip window.
         QPolygonF points;
         points.reserve(static_cast<int>(data_block->size()));
+
+        const double oob_above_y = YMIN - Y_OVERDRAW;  // clamped Y for above-range samples
+        const double oob_below_y = YMAX + Y_OVERDRAW;  // clamped Y for below-range samples
+
+        // State for the current OOB run.
+        bool   in_oob_run    = false;
+        double oob_run_y     = 0.0;  // clamped Y of the active OOB run
+        double oob_run_end_x = 0.0;  // X of the most-recent sample in this run
+
+        // Emit the pending OOB run end-point (if different from the run start).
+        // Called whenever we leave an OOB run: back in-range, direction change, or NaN.
+        auto flush_oob_endpoint = [&]() {
+            if (in_oob_run) {
+                if (!points.empty() && points.last().x() != oob_run_end_x)
+                    points.append(QPointF(oob_run_end_x, oob_run_y));
+                in_oob_run = false;
+            }
+        };
+        auto flush_segment = [&]() {
+            flush_oob_endpoint();
+            if (points.size() > 1)
+                painter->drawPolyline(points);
+            else if (points.size() == 1)
+                painter->drawPoint(points.first());
+            points.clear();
+        };
 
         for (int index = 0; index < static_cast<int>(data_block->size()); index++)
         {
             float64 y = (*data_block)[index];
             if (std::isnan(y))
             {
-                if (points.size() > 1)
-                    painter->drawPolyline(points);
-                else if (points.size() == 1)
-                    painter->drawPoint(points.first());
-                points.clear();
+                flush_segment();
             }
             else
             {
-                points.append(QPointF(last_x, y_offset_ - y_zoom_ * y));
+                double raw_y = y_offset_ - y_zoom_ * y;
+                double clamped_y;
+                if (raw_y < oob_above_y)       clamped_y = oob_above_y;
+                else if (raw_y > oob_below_y)  clamped_y = oob_below_y;
+                else                           clamped_y = raw_y;
+
+                const bool is_oob = (raw_y < oob_above_y || raw_y > oob_below_y);
+
+                if (is_oob && in_oob_run && clamped_y == oob_run_y)
+                {
+                    // Continuing the same OOB run: just slide the pending end-point.
+                    oob_run_end_x = last_x;
+                }
+                else if (is_oob)
+                {
+                    // New OOB run (or direction change): close the previous OOB run
+                    // and open a new one, emitting the first point immediately.
+                    flush_oob_endpoint();
+                    points.append(QPointF(last_x, clamped_y));
+                    in_oob_run    = true;
+                    oob_run_y     = clamped_y;
+                    oob_run_end_x = last_x;
+                }
+                else
+                {
+                    // In-range point: close any OOB run first (emits its end-point),
+                    // then add this point normally.
+                    flush_oob_endpoint();
+                    points.append(QPointF(last_x, clamped_y));
+                }
             }
             last_x += pixel_per_sample;
         }
-        if (points.size() > 1)
-            painter->drawPolyline(points);
-        else if (points.size() == 1)
-            painter->drawPoint(points.first());
+        flush_segment();
     }
     else
     {
@@ -414,13 +501,25 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
                 double sy_max = y_offset_ - y_zoom_ * ymax;
                 double sy_min = y_offset_ - y_zoom_ * ymin;
 
+                // sy_max is the screen-Y of the amplitude maximum (top of bar,
+                // smaller Y value); sy_min is the screen-Y of the amplitude
+                // minimum (bottom of bar, larger Y value).
+                // Clamp to the safe coordinate range to prevent QPainter 26.6
+                // fixed-point overflow when y_zoom_ is very large.
+                sy_max = std::max(sy_max, YMIN);
+                sy_min = std::min(sy_min, YMAX);
+
                 // Draw a diagonal connector from the midpoint of the previous
                 // bar to the midpoint of this bar. This fills any vertical gap
                 // between adjacent non-overlapping bars without inflating the
                 // shown amplitude range.
                 if (!std::isnan(prev_mid))
-                    painter->drawLine(QPointF(screen_x - 1.0, y_offset_ - y_zoom_ * prev_mid),
-                                      QPointF(screen_x,       y_offset_ - y_zoom_ * cur_mid));
+                {
+                    double prev_sy = std::max(YMIN, std::min(YMAX, y_offset_ - y_zoom_ * (double)prev_mid));
+                    double cur_sy  = std::max(YMIN, std::min(YMAX, y_offset_ - y_zoom_ * (double)cur_mid));
+                    painter->drawLine(QPointF(screen_x - 1.0, prev_sy),
+                                      QPointF(screen_x,       cur_sy));
+                }
 
                 // Overdraw the precise min–max bar on top.
                 painter->drawLine(QPointF(screen_x, sy_max),
