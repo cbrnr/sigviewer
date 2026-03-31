@@ -10,7 +10,7 @@
 #include "gdf_basic_header.h"
 #include "gdf_signal_cache.h"
 #include "gdf_data_block.h"
-#include "../down_sampling_thread.h"
+#include "../downsampling_thread.h"
 
 #include "GDF/Reader.h"
 

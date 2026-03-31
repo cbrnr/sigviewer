@@ -3,8 +3,8 @@
 // License: GPL-3.0
 
 
-#ifndef DOWN_SAMPLING_THREAD_H
-#define DOWN_SAMPLING_THREAD_H
+#ifndef DOWNSAMPLING_THREAD_H
+#define DOWNSAMPLING_THREAD_H
 
 #include "base/data_block.h"
 #include "channel_manager.h"
@@ -82,4 +82,4 @@ private:
 
 }
 
-#endif // DOWN_SAMPLING_THREAD_H
+#endif // DOWNSAMPLING_THREAD_H

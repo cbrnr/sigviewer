@@ -3,7 +3,7 @@
 // License: GPL-3.0
 
 
-#include "down_sampling_thread.h"
+#include "downsampling_thread.h"
 #include "base/fixed_data_block.h"
 #include "gui/background_processes.h"
 #include "gui/progress_bar.h"

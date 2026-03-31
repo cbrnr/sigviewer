@@ -13,7 +13,7 @@
 #include "file_handling/file_signal_reader_factory.h"
 #include "file_handling/event_manager.h"
 #include "file_handling/file_channel_manager.h"
-#include "file_handling/down_sampling_thread.h"
+#include "file_handling/downsampling_thread.h"
 #include "tab_context.h"
 #include "file_context.h"
 #include "gui/main_window_model.h"
