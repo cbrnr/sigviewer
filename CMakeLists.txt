@@ -18,7 +18,7 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 # -- Qt ----------------------------------------------------------------------
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Xml LinguistTools Test)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Xml Svg LinguistTools Test)
 qt_standard_project_setup()
 
 # -- External pre-built dependencies -----------------------------------------
@@ -304,6 +304,7 @@ target_link_libraries(sigviewer_objects PUBLIC
     Qt6::Gui
     Qt6::Widgets
     Qt6::Xml
+    Qt6::Svg
     dep_libxdf
     dep_libbiosig
     # libbiosig is a static library and cannot carry its own transitive

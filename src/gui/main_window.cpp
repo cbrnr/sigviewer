@@ -13,6 +13,8 @@
 #include <QLabel>
 #include <QSettings>
 #include <QMimeData>
+#include <QIcon>
+#include <QPalette>
 
 namespace sigviewer
 {
@@ -68,8 +70,14 @@ void MainWindow::initToolBars()
     file_toolbar_->addAction (action(tr("Open...")));
     file_toolbar_->addAction (action(tr("Save")));
     file_toolbar_->addAction (action(tr("Info...")));
+#ifdef Q_OS_MACOS
+    file_toolbar_->addSeparator();
+#endif
     file_toolbar_->addAction (action(tr("Undo")));
     file_toolbar_->addAction (action(tr("Redo")));
+#ifdef Q_OS_MACOS
+    file_toolbar_->addSeparator();
+#endif
     // file_toolbar_->addAction (action(tr("Close")));
 
     mouse_mode_toolbar_ = addToolBar(tr("Mode"));
@@ -87,6 +95,9 @@ void MainWindow::initToolBars()
     view_toolbar_->setMovable(false);
     view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
     view_toolbar_->addAction(action(tr("Events...")));
+#ifdef Q_OS_MACOS
+    view_toolbar_->addSeparator();
+#endif
     view_toolbar_->addAction(action(tr("Channels...")));
     view_toolbar_->addAction(action(tr("Scale All...")));
     view_toolbar_->addAction(action(tr("Zoom In Vertical")));
@@ -289,6 +300,16 @@ void MainWindow::resizeEvent (QResizeEvent* event)
 {
     QSettings settings;
     settings.setValue("MainWindow/size", event->size());
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::changeEvent(QEvent* event)
+{
+    if (event->type() == QEvent::PaletteChange) {
+        const bool dark = palette().color(QPalette::Window).lightness() < 128;
+        QIcon::setThemeName(dark ? "dark" : "light");
+    }
+    QMainWindow::changeEvent(event);
 }
 
 //-----------------------------------------------------------------------------

@@ -114,11 +114,11 @@ ZoomGuiCommand::ZoomGuiCommand ()
 //-----------------------------------------------------------------------------
 void ZoomGuiCommand::init ()
 {
-    getQAction (GOTO_())->setIcon (QIcon(":/images/ic_directions_run_black_24dp.png"));
-    getQAction (ZOOM_IN_VERTICAL_())->setIcon (QIcon(":/images/ic_zoom_in_v_black_24dp.png"));
-    getQAction (ZOOM_OUT_VERTICAL_())->setIcon (QIcon(":/images/ic_zoom_out_v_black_24dp.png"));
-    getQAction (ZOOM_IN_HORIZONTAL_())->setIcon (QIcon(":/images/ic_zoom_in_h_black_24dp.png"));
-    getQAction (ZOOM_OUT_HORIZONTAL_())->setIcon (QIcon(":/images/ic_zoom_out_h_black_24dp.png"));
+    getQAction (GOTO_())->setIcon (QIcon::fromTheme("directions_walk"));
+    getQAction (ZOOM_IN_VERTICAL_())->setIcon (QIcon::fromTheme("zoom_in_vertical"));
+    getQAction (ZOOM_OUT_VERTICAL_())->setIcon (QIcon::fromTheme("zoom_out_vertical"));
+    getQAction (ZOOM_IN_HORIZONTAL_())->setIcon (QIcon::fromTheme("zoom_in_horizontal"));
+    getQAction (ZOOM_OUT_HORIZONTAL_())->setIcon (QIcon::fromTheme("zoom_out_horizontal"));
 
 
     QList<QKeySequence> zoomInVertical;
@@ -146,8 +146,6 @@ void ZoomGuiCommand::evaluateEnabledness ()
 {
     if (disableIfNoSignalIsVisualised (ACTIONS_()))
         return;
-
-    qDebug () << "blaaahaha";
 
     QSharedPointer<SignalViewSettings> vis = currentSignalViewSettings ();
     QSharedPointer<SignalVisualisationModel> vis_model = currentVisModel();
