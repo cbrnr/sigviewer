@@ -15,6 +15,7 @@ class QAction;
 class QComboBox;
 class QMenu;
 class QLabel;
+class QToolButton;
 
 namespace sigviewer
 {
@@ -47,6 +48,7 @@ protected:
 private slots:
     void toggleStatusBar (bool visible);
     void toggleAllToolbars ();
+    void toggleMenuBar ();
     void addBackgroundProcessToStatusBar (QString name, int max);
     void updateBackgroundProcessonStatusBar (QString name, int value);
     void removeBackgroundProcessFromStatusBar (QString name);
@@ -60,6 +62,7 @@ private:
     void initActions();
     void initToolBars();
     void initMenus (QSharedPointer<ApplicationContext> application_context);
+    void initHamburgerMenu();
     void initStatusBar();
 
     QMenu* file_menu_;
@@ -79,6 +82,10 @@ private:
     QLabel* status_bar_nr_channels_label_;
 
     QAction* toggle_all_toolbars_;
+    QAction* toggle_menubar_;
+    QAction* hamburger_spacer_action_;
+    QAction* hamburger_action_;
+    QToolButton* hamburger_button_;
     QMap<QString, QProgressBar*> background_processes_progressbars_;
     QMap<QString, QLabel*> background_processes_labels_;
 };

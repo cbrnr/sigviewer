@@ -26,6 +26,7 @@
         <file>icons/light/actions/tv_options_input_settings.svg</file>
         <file>icons/light/actions/undo.svg</file>
         <file>icons/light/actions/zoom_in_horizontal.svg</file>
+        <file>icons/light/actions/menu.svg</file>
         <file>icons/light/actions/zoom_in_vertical.svg</file>
         <file>icons/light/actions/zoom_out_horizontal.svg</file>
         <file>icons/light/actions/zoom_out_vertical.svg</file>
@@ -55,6 +56,7 @@
         <file>icons/dark/actions/tv_options_input_settings.svg</file>
         <file>icons/dark/actions/undo.svg</file>
         <file>icons/dark/actions/zoom_in_horizontal.svg</file>
+        <file>icons/dark/actions/menu.svg</file>
         <file>icons/dark/actions/zoom_in_vertical.svg</file>
         <file>icons/dark/actions/zoom_out_horizontal.svg</file>
         <file>icons/dark/actions/zoom_out_vertical.svg</file>

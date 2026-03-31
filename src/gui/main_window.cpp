@@ -15,6 +15,29 @@
 #include <QMimeData>
 #include <QIcon>
 #include <QPalette>
+#include <QSizePolicy>
+#include <QStyle>
+#include <QStyleOption>
+#include <QToolButton>
+#include <QProxyStyle>
+
+namespace
+{
+
+class MenuPaddingStyle : public QProxyStyle
+{
+public:
+    QSize sizeFromContents(ContentsType type, const QStyleOption* option,
+                           const QSize& size, const QWidget* widget) const override
+    {
+        QSize base = QProxyStyle::sizeFromContents(type, option, size, widget);
+        if (type == CT_MenuItem)
+            base.setWidth(base.width() + 30);
+        return base;
+    }
+};
+
+} // anonymous namespace
 
 namespace sigviewer
 {
@@ -29,7 +52,23 @@ MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
     initStatusBar();
     initToolBars();
     initMenus(application_context);
+    initHamburgerMenu();
     setUnifiedTitleAndToolBarOnMac (true);
+#ifdef Q_OS_MACOS
+    const QString toolbar_style = R"(
+        QToolButton:hover {
+            background: rgba(128, 128, 128, 0.2);
+            border-radius: 4px;
+        }
+        QToolButton:pressed {
+            background: rgba(128, 128, 128, 0.35);
+            border-radius: 4px;
+        }
+    )";
+    file_toolbar_->setStyleSheet(toolbar_style);
+    mouse_mode_toolbar_->setStyleSheet(toolbar_style);
+    view_toolbar_->setStyleSheet(toolbar_style);
+#endif
     
     QSettings settings;
     resize(settings.value("MainWindow/size", QSize(1200, 800)).toSize());
@@ -233,6 +272,13 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     view_menu_ = menuBar()->addMenu(tr("&View"));
     view_menu_->addMenu (view_toolbar_views_menu_);
     view_menu_->addAction(toggle_status_bar);
+#ifndef Q_OS_MACOS
+    toggle_menubar_ = new QAction(tr("Menubar"), this);
+    toggle_menubar_->setCheckable(true);
+    toggle_menubar_->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_M));
+    connect(toggle_menubar_, &QAction::triggered, this, &MainWindow::toggleMenuBar);
+    view_menu_->addAction(toggle_menubar_);
+#endif
     view_menu_->addSeparator();
     view_menu_->addAction(action(tr("Events...")));
     view_menu_->addAction(action(tr("Channels...")));
@@ -257,6 +303,56 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
 
     help_menu_ = menuBar()->addMenu(tr("&Help"));
     help_menu_->addAction (action(tr("About")));
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::initHamburgerMenu()
+{
+#ifndef Q_OS_MACOS
+    QSettings settings;
+    bool show_menubar = settings.value("MainWindow/menubar", true).toBool();
+
+    // Expanding spacer to push the hamburger button to the right
+    QWidget* hamburger_spacer = new QWidget(this);
+    hamburger_spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    hamburger_spacer_action_ = file_toolbar_->addWidget(hamburger_spacer);
+
+    // Hamburger button with popup menu
+    hamburger_button_ = new QToolButton(this);
+    hamburger_button_->setIcon(QIcon::fromTheme("menu"));
+    hamburger_button_->setToolTip(tr("Menu"));
+    QMenu* hamburger_popup = new QMenu(this);
+    for (QAction* menu_action : menuBar()->actions())
+    {
+        if (QMenu* submenu = menu_action->menu())
+            hamburger_popup->addMenu(submenu);
+    }
+    hamburger_popup->setStyle(new MenuPaddingStyle);
+    hamburger_button_->setMenu(hamburger_popup);
+    hamburger_button_->setPopupMode(QToolButton::InstantPopup);
+    hamburger_action_ = file_toolbar_->addWidget(hamburger_button_);
+
+    bool hamburger_enabled = !show_menubar;
+    hamburger_spacer_action_->setVisible(hamburger_enabled);
+    hamburger_action_->setVisible(hamburger_enabled);
+    menuBar()->setVisible(show_menubar);
+    toggle_menubar_->setChecked(show_menubar);
+#endif
+}
+
+//-------------------------------------------------------------------
+void MainWindow::toggleMenuBar()
+{
+#ifndef Q_OS_MACOS
+    bool menubar_visible = menuBar()->isVisible();
+    menuBar()->setVisible(!menubar_visible);
+    bool hamburger_enabled = menubar_visible;
+    hamburger_spacer_action_->setVisible(hamburger_enabled);
+    hamburger_action_->setVisible(hamburger_enabled);
+    toggle_menubar_->setChecked(!menubar_visible);
+    QSettings settings;
+    settings.setValue("MainWindow/menubar", !hamburger_enabled);
+#endif
 }
 
 //-----------------------------------------------------------------------------
