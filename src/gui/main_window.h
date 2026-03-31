@@ -47,7 +47,6 @@ protected:
     virtual void changeEvent(QEvent* event);
 private slots:
     void toggleStatusBar (bool visible);
-    void toggleAllToolbars ();
     void toggleMenuBar ();
     void addBackgroundProcessToStatusBar (QString name, int max);
     void updateBackgroundProcessonStatusBar (QString name, int value);
@@ -70,18 +69,14 @@ private:
     QMenu* edit_menu_;
     QMenu* mouse_mode_menu_;
     QMenu* view_menu_;
-    QMenu* view_toolbar_views_menu_;
     QMenu* tools_menu_;
     QMenu* help_menu_;
 
     QToolBar* file_toolbar_;
-    QToolBar* mouse_mode_toolbar_;
-    QToolBar* view_toolbar_;
 
     QLabel* status_bar_signal_length_label_;
     QLabel* status_bar_nr_channels_label_;
 
-    QAction* toggle_all_toolbars_;
     QAction* toggle_menubar_;
     QAction* hamburger_spacer_action_;
     QAction* hamburger_action_;

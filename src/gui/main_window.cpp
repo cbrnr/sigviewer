@@ -66,8 +66,6 @@ MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
         }
     )";
     file_toolbar_->setStyleSheet(toolbar_style);
-    mouse_mode_toolbar_->setStyleSheet(toolbar_style);
-    view_toolbar_->setStyleSheet(toolbar_style);
 #endif
     
     QSettings settings;
@@ -100,55 +98,29 @@ void MainWindow::initStatusBar()
 //-----------------------------------------------------------------------------
 void MainWindow::initToolBars()
 {
-    view_toolbar_views_menu_ = new QMenu (tr("Toolbars"), this);
-
-    file_toolbar_ = addToolBar(tr("File"));
-    file_toolbar_->setObjectName("File");
+    file_toolbar_ = addToolBar(tr("Toolbar"));
+    file_toolbar_->setObjectName("Toolbar");
     file_toolbar_->setMovable(false);
-    view_toolbar_views_menu_->addAction (file_toolbar_->toggleViewAction());
-    file_toolbar_->addAction (action(tr("Open...")));
-    file_toolbar_->addAction (action(tr("Save")));
-    file_toolbar_->addAction (action(tr("Info...")));
-#ifdef Q_OS_MACOS
+    file_toolbar_->addAction(action(tr("Open...")));
+    file_toolbar_->addAction(action(tr("Save")));
+    file_toolbar_->addAction(action(tr("Info...")));
     file_toolbar_->addSeparator();
-#endif
-    file_toolbar_->addAction (action(tr("Undo")));
-    file_toolbar_->addAction (action(tr("Redo")));
-#ifdef Q_OS_MACOS
+    file_toolbar_->addAction(action(tr("Undo")));
+    file_toolbar_->addAction(action(tr("Redo")));
     file_toolbar_->addSeparator();
-#endif
-    // file_toolbar_->addAction (action(tr("Close")));
-
-    mouse_mode_toolbar_ = addToolBar(tr("Mode"));
-    mouse_mode_toolbar_->setObjectName("Mode");
-    mouse_mode_toolbar_->setMovable(false);
-    view_toolbar_views_menu_->addAction (mouse_mode_toolbar_->toggleViewAction());
-    mouse_mode_toolbar_->addAction (action(tr("New Event")));
-    mouse_mode_toolbar_->addAction (action(tr("Edit Event")));
-    mouse_mode_toolbar_->addAction (action(tr("Scroll")));
-    mouse_mode_toolbar_->addAction (action(tr("View Options")));
-
-
-    view_toolbar_ = addToolBar(tr("View"));
-    view_toolbar_->setObjectName("View");
-    view_toolbar_->setMovable(false);
-    view_toolbar_views_menu_->addAction (view_toolbar_->toggleViewAction());
-    view_toolbar_->addAction(action(tr("Events...")));
-#ifdef Q_OS_MACOS
-    view_toolbar_->addSeparator();
-#endif
-    view_toolbar_->addAction(action(tr("Channels...")));
-    view_toolbar_->addAction(action(tr("Scale All...")));
-    view_toolbar_->addAction(action(tr("Zoom In Channels")));
-    view_toolbar_->addAction(action(tr("Zoom Out Channels")));
-    view_toolbar_->addAction(action(tr("Zoom In Time")));
-    view_toolbar_->addAction(action(tr("Zoom Out Time")));
-
-    view_toolbar_views_menu_->addSeparator ();
-    toggle_all_toolbars_ = new QAction (tr("Hide all Toolbars"), this);
-    connect (toggle_all_toolbars_, SIGNAL(triggered()), SLOT(toggleAllToolbars()));
-    toggle_all_toolbars_->setData (true);
-    view_toolbar_views_menu_->addAction (toggle_all_toolbars_);
+    file_toolbar_->addAction(action(tr("New Event")));
+    file_toolbar_->addAction(action(tr("Edit Event")));
+    file_toolbar_->addAction(action(tr("Scroll")));
+    file_toolbar_->addAction(action(tr("View Options")));
+    file_toolbar_->addSeparator();
+    file_toolbar_->addAction(action(tr("Events...")));
+    file_toolbar_->addSeparator();
+    file_toolbar_->addAction(action(tr("Channels...")));
+    file_toolbar_->addAction(action(tr("Scale All...")));
+    file_toolbar_->addAction(action(tr("Zoom In Channels")));
+    file_toolbar_->addAction(action(tr("Zoom Out Channels")));
+    file_toolbar_->addAction(action(tr("Zoom In Time")));
+    file_toolbar_->addAction(action(tr("Zoom Out Time")));
 }
 
 //-------------------------------------------------------------------
@@ -157,27 +129,6 @@ void MainWindow::toggleStatusBar (bool visible)
     statusBar()->setVisible (visible);
     QSettings settings;
     settings.setValue("MainWindow/statusbar", statusBar()->isVisible());
-}
-
-//-------------------------------------------------------------------
-void MainWindow::toggleAllToolbars ()
-{
-    if (toggle_all_toolbars_->data().toBool())
-    {
-        toggle_all_toolbars_->setData (false);
-        toggle_all_toolbars_->setText(tr("Show all Toolbars"));
-        foreach (QAction* toggle_action, view_toolbar_views_menu_->actions())
-            if (toggle_action->isCheckable() && toggle_action->isChecked())
-                toggle_action->trigger ();
-    }
-    else
-    {
-        toggle_all_toolbars_->setData (true);
-        toggle_all_toolbars_->setText(tr("Hide all Toolbars"));
-        foreach (QAction* toggle_action, view_toolbar_views_menu_->actions())
-            if (toggle_action->isCheckable() && !toggle_action->isChecked())
-                toggle_action->trigger ();
-    }
 }
 
 
@@ -270,7 +221,7 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     connect (toggle_status_bar, SIGNAL(toggled(bool)), this, SLOT(toggleStatusBar(bool)));
 
     view_menu_ = menuBar()->addMenu(tr("&View"));
-    view_menu_->addMenu (view_toolbar_views_menu_);
+    view_menu_->addAction(file_toolbar_->toggleViewAction());
     view_menu_->addAction(toggle_status_bar);
 #ifndef Q_OS_MACOS
     toggle_menubar_ = new QAction(tr("Menubar"), this);
