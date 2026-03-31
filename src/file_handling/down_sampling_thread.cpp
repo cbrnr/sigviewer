@@ -4,19 +4,23 @@
 
 
 #include "down_sampling_thread.h"
-
-#include <fstream>
-
-#include "signal_processing/SPUC/butterworth.h"
 #include "base/fixed_data_block.h"
 #include "gui/background_processes.h"
 
 #include <vector>
-#include <QMessageBox>
+#include <limits>
+#include <cmath>
 #include <QDebug>
+
+// SPUC headers define macros (E, PI, ...) that must come after Qt/STL headers
+// to avoid corrupting Qt6's C++20 constructs in C++17 mode.
+#include <fstream>
+#include "signal_processing/SPUC/butterworth.h"
 
 namespace SigViewer_
 {
+
+using namespace sigviewer;
 
 QString DownSamplingThread::PROCESS_NAME_ ("Downsampling...");
 
@@ -64,9 +68,101 @@ void DownSamplingThread::run ()
 }
 
 //-------------------------------------------------------------------------
+void DownSamplingThread::runSynchronously ()
+{
+    minMaxDownsampling ();
+}
+
+//-------------------------------------------------------------------------
 void DownSamplingThread::minMaxDownsampling ()
 {
+    std::set<ChannelID> channels = channel_manager_->getChannels ();
+    size_t num_samples = channel_manager_->getNumberSamples ();
+    double sample_rate = channel_manager_->getSampleRate ();
 
+    for (ChannelID id : channels)
+    {
+        QSharedPointer<DataBlock const> full_data =
+            channel_manager_->getData (id, 0, static_cast<unsigned>(num_samples));
+        if (full_data.isNull () || full_data->size () == 0)
+            continue;
+
+        size_t cur_size = full_data->size ();
+
+        // Seed working buffers from the raw samples.
+        // NaN values propagate: a downsampled window is NaN only when every
+        // raw sample inside it is NaN.
+        QVector<float32> cur_min (static_cast<int>(cur_size));
+        QVector<float32> cur_max (static_cast<int>(cur_size));
+        for (size_t i = 0; i < cur_size; i++)
+        {
+            float32 v = (*full_data)[i];
+            cur_min[static_cast<int>(i)] = v;
+            cur_max[static_cast<int>(i)] = v;
+        }
+
+        // Build the min/max pyramid hierarchically: each level aggregates the
+        // previous one by downsampling_step_, so total work is O(N) per channel
+        // (geometric series: N + N/step + N/step^2 + ...).
+        for (unsigned factor = downsampling_step_;
+             factor < downsampling_max_ && cur_size > 1;
+             factor *= downsampling_step_)
+        {
+            size_t next_size = (cur_size + downsampling_step_ - 1) / downsampling_step_;
+            QVector<float32> next_min (static_cast<int>(next_size));
+            QVector<float32> next_max (static_cast<int>(next_size));
+
+            for (size_t i = 0; i < next_size; i++)
+            {
+                size_t j0 = i * downsampling_step_;
+                size_t j1 = std::min (j0 + static_cast<size_t>(downsampling_step_), cur_size);
+
+                float32 vmin = std::numeric_limits<float32>::quiet_NaN ();
+                float32 vmax = std::numeric_limits<float32>::quiet_NaN ();
+
+                for (size_t j = j0; j < j1; j++)
+                {
+                    float32 lo = cur_min[static_cast<int>(j)];
+                    float32 hi = cur_max[static_cast<int>(j)];
+                    if (!std::isnan (lo))
+                    {
+                        if (std::isnan (vmin))
+                        {
+                            vmin = lo;
+                            vmax = hi;
+                        }
+                        else
+                        {
+                            if (lo < vmin) vmin = lo;
+                            if (hi > vmax) vmax = hi;
+                        }
+                    }
+                }
+
+                next_min[static_cast<int>(i)] = vmin;
+                next_max[static_cast<int>(i)] = vmax;
+            }
+
+            // Persist this level – copy into fresh QVectors so the working
+            // buffers below can be moved cheaply on the next iteration.
+            auto stored_min = QSharedPointer<QVector<float32>> (
+                                  new QVector<float32> (next_min));
+            auto stored_max = QSharedPointer<QVector<float32>> (
+                                  new QVector<float32> (next_max));
+
+            double ds_rate = sample_rate / factor;
+            channel_manager_->addDownsampledMinMaxVersion (
+                id,
+                QSharedPointer<DataBlock const> (new FixedDataBlock (stored_min, ds_rate)),
+                QSharedPointer<DataBlock const> (new FixedDataBlock (stored_max, ds_rate)),
+                factor);
+
+            // Advance working buffers to this level for the next iteration.
+            cur_min = std::move (next_min);
+            cur_max = std::move (next_max);
+            cur_size = next_size;
+        }
+    }
 }
 
 //-------------------------------------------------------------------------
@@ -83,13 +179,10 @@ void DownSamplingThread::downsampleAllOnBasisData ()
     {
         for (int channel = 0; channel < data_.size(); channel++)
         {
-            max_channel_length = std::max (max_channel_length, basis_data_[channel]->size());
+            max_channel_length = std::max (max_channel_length, static_cast<unsigned>(basis_data_[channel]->size()));
             sample_rates[downsampling_factor].append (basis_data_[channel]->getSampleRatePerUnit() / downsampling_factor);
 
             QSharedPointer<QVector<float32> > raw_data_vector (new QVector<float32> (static_cast<int>(basis_data_[channel]->size () / downsampling_factor) + 1));
-
-            QSharedPointer<DataBlock> downsampled_data (new FixedDataBlock (raw_data_vector, sample_rates[downsampling_factor][channel]));
-            basis_data_[channel]->addDownSampledVersion (downsampled_data, downsampling_factor);
 
             raw_downsampled_data[downsampling_factor].append (raw_data_vector);
             low_pass_filters[downsampling_factor].append (QSharedPointer<SPUC::butterworth<float32> > (new SPUC::butterworth<float32> (0.5 / downsampling_factor, 4, 3)));
@@ -132,7 +225,7 @@ void DownSamplingThread::downsampleOnDownsampledData ()
 
         for (int channel = 0; channel < data_.size(); channel++)
         {
-            max_channel_length = std::max (max_channel_length, data_[channel]->size());
+            max_channel_length = std::max (max_channel_length, static_cast<unsigned>(data_[channel]->size()));
             raw_downsampled_data.append (QSharedPointer<QVector<float32> > (new QVector<float32> (static_cast<int>(data_[channel]->size () / downsampling_step_) + 1)));
             low_pass_filters.append (QSharedPointer<SPUC::butterworth<float32> > (new SPUC::butterworth<float32> (0.9 / downsampling_step_, 4, 3)));
             sample_rates_.append (data_[channel]->getSampleRatePerUnit() / downsampling_step_);
@@ -156,7 +249,6 @@ void DownSamplingThread::downsampleOnDownsampledData ()
         for (int channel = 0; channel < raw_downsampled_data.size(); channel++)
         {
             QSharedPointer<DataBlock> downsampled_data (new FixedDataBlock (raw_downsampled_data[channel], sample_rates_[channel]));
-            basis_data_[channel]->addDownSampledVersion (downsampled_data, downsampling_factor);
             data_.append (downsampled_data);
         }
     }
