@@ -35,28 +35,28 @@ QString const ZoomGuiCommand::GOTO_()
 
 QString const ZoomGuiCommand::ZOOM_IN_VERTICAL_()
 {
-    static QString value = tr("Zoom In Vertical");
+    static QString value = tr("Zoom In Channels");
 
     return value;
 }
 
 QString const ZoomGuiCommand::ZOOM_OUT_VERTICAL_()
 {
-    static QString value = tr("Zoom Out Vertical");
+    static QString value = tr("Zoom Out Channels");
 
     return value;
 }
 
 QString const ZoomGuiCommand::ZOOM_IN_HORIZONTAL_()
 {
-    static QString value = tr("Zoom In Horizontal");
+    static QString value = tr("Zoom In Time");
 
     return value;
 }
 
 QString const ZoomGuiCommand::ZOOM_OUT_HORIZONTAL_()
 {
-    static QString value = tr("Zoom Out Horizontal");
+    static QString value = tr("Zoom Out Time");
 
     return value;
 }

@@ -100,10 +100,10 @@ void MainWindow::initToolBars()
 #endif
     view_toolbar_->addAction(action(tr("Channels...")));
     view_toolbar_->addAction(action(tr("Scale All...")));
-    view_toolbar_->addAction(action(tr("Zoom In Vertical")));
-    view_toolbar_->addAction(action(tr("Zoom Out Vertical")));
-    view_toolbar_->addAction(action(tr("Zoom In Horizontal")));
-    view_toolbar_->addAction(action(tr("Zoom Out Horizontal")));
+    view_toolbar_->addAction(action(tr("Zoom In Channels")));
+    view_toolbar_->addAction(action(tr("Zoom Out Channels")));
+    view_toolbar_->addAction(action(tr("Zoom In Time")));
+    view_toolbar_->addAction(action(tr("Zoom Out Time")));
 
     view_toolbar_views_menu_->addSeparator ();
     toggle_all_toolbars_ = new QAction (tr("Hide all Toolbars"), this);
@@ -238,10 +238,10 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     view_menu_->addAction(action(tr("Channels...")));
     view_menu_->addAction(action(tr("Scale All...")));
     view_menu_->addSeparator();
-    view_menu_->addAction(action(tr("Zoom In Vertical")));
-    view_menu_->addAction(action(tr("Zoom Out Vertical")));
-    view_menu_->addAction(action(tr("Zoom In Horizontal")));
-    view_menu_->addAction(action(tr("Zoom Out Horizontal")));
+    view_menu_->addAction(action(tr("Zoom In Channels")));
+    view_menu_->addAction(action(tr("Zoom Out Channels")));
+    view_menu_->addAction(action(tr("Zoom In Time")));
+    view_menu_->addAction(action(tr("Zoom Out Time")));
     view_menu_->addSeparator();
     view_menu_->addAction(action(tr("Go to...")));
     view_menu_->addSeparator();
