@@ -6,96 +6,159 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>426</width>
-    <height>238</height>
+    <width>480</width>
+    <height>380</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Scale Channel</string>
+   <string>Scale Channels</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>Scaling</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QRadioButton" name="autoButton">
-        <property name="text">
-         <string>Auto Scaling</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QRadioButton" name="manualButton">
-        <property name="text">
-         <string>Manual Scaling</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Upper Value</string>
+  <layout class="QVBoxLayout" name="mainVLayout">
+   <item>
+    <layout class="QHBoxLayout" name="topHLayout">
+     <item>
+      <widget class="QGroupBox" name="channelsGroupBox">
+       <property name="title">
+        <string>Channels</string>
        </property>
+       <layout class="QVBoxLayout" name="channelsVLayout">
+        <item>
+         <widget class="QListWidget" name="channelList"/>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="selectButtonsHLayout">
+          <item>
+           <widget class="QPushButton" name="selectAllButton">
+            <property name="text">
+             <string>Select All</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="selectNoneButton">
+            <property name="text">
+             <string>Select None</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="unitLabelUpper">
-       <property name="text">
-        <string/>
+     <item>
+      <widget class="QGroupBox" name="scalingGroupBox">
+       <property name="title">
+        <string>Scaling</string>
        </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QDoubleSpinBox" name="upper_spinbox_">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Lower Value</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLabel" name="unitLabelLower">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QDoubleSpinBox" name="lower_spinbox_">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="minimum">
-        <double>-23.000000000000000</double>
-       </property>
+       <layout class="QVBoxLayout" name="scalingVLayout">
+        <item>
+         <widget class="QRadioButton" name="autoPerChannelButton">
+          <property name="text">
+           <string>Auto (per channel)</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="autoSharedRangeButton">
+          <property name="text">
+           <string>Auto (shared range)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="symmetricCheckBox">
+          <property name="text">
+           <string>Symmetric</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="scalingVerticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>25</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="manualButton">
+          <property name="text">
+           <string>Manual</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="manualGridLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="upperLabel">
+            <property name="text">
+             <string>Upper value:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="upperSpinBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="decimals">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="lowerLabel">
+            <property name="text">
+             <string>Lower value:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="lowerSpinBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="decimals">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -138,38 +201,6 @@
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>manualButton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>lower_spinbox_</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>135</x>
-     <y>39</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>201</x>
-     <y>98</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>manualButton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>upper_spinbox_</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>135</x>
-     <y>39</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>201</x>
-     <y>67</y>
     </hint>
    </hints>
   </connection>

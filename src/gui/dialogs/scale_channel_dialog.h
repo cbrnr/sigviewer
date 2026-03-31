@@ -3,8 +3,8 @@
 // License: GPL-3.0
 
 
-#ifndef SCALEC_HANNEL_DIALOG_H
-#define SCALEC_HANNEL_DIALOG_H
+#ifndef SCALE_CHANNEL_DIALOG_H
+#define SCALE_CHANNEL_DIALOG_H
 
 #include "base/sigviewer_user_types.h"
 #include "file_handling/channel_manager.h"
@@ -12,43 +12,48 @@
 #include "ui_scale_channel_dialog.h"
 
 #include <QDialog>
+#include <set>
 
 namespace sigviewer
 {
 
 class ScaleChannelDialog : public QDialog
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-    explicit ScaleChannelDialog (ChannelID preselected_channel,
-                                 std::set<ChannelID> const& shown_channels,
-                                 ChannelManager const& channel_manager,
-                                 QWidget *parent = 0);
+    enum ScalingMode { AUTO_PER_CHANNEL, AUTO_SHARED_RANGE, MANUAL };
 
-    bool autoScaling () const;
-    bool physAutoScaling () const;
-    float upperValue () const;
-    float lowerValue () const;
-signals:
+    explicit ScaleChannelDialog (std::set<ChannelID> const& shown_channels,
+                                 ChannelManager const& channel_manager,
+                                 std::set<ChannelID> const& preselected = {},
+                                 QWidget* parent = nullptr);
+
+    ScalingMode scalingMode () const;
+    bool symmetric () const;
+    std::set<ChannelID> selectedChannels () const;
+    float64 upperValue () const;
+    float64 lowerValue () const;
 
 private slots:
+    void on_autoPerChannelButton_toggled (bool checked);
+    void on_autoSharedRangeButton_toggled (bool checked);
     void on_manualButton_toggled (bool checked);
-    void on_autoButton_toggled (bool checked);
+    void on_selectAllButton_clicked ();
+    void on_selectNoneButton_clicked ();
+    void on_upperSpinBox_valueChanged (double value);
+    void on_lowerSpinBox_valueChanged (double value);
     void storeAccepted ();
-    void on_upper_spinbox__valueChanged(double arg1);
-    void on_lower_spinbox__valueChanged(double arg1);
 
 private:
-    ChannelID selected_channel_;
+    void setManualControlsEnabled (bool enabled);
+    void setSymmetricEnabled (bool enabled);
+
     std::set<ChannelID> const shown_channels_;
     ChannelManager const& channel_manager_;
 
     Ui::ScaleChannelDialog ui_;
-
-    double last_min_;
-    double last_max_;
 };
 
 }
 
-#endif
+#endif // SCALE_CHANNEL_DIALOG_H

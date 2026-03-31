@@ -5,156 +5,197 @@
 
 #include "scale_channel_dialog.h"
 
-#include <QDebug>
+#include <QListWidgetItem>
 #include <QSettings>
 
+#include <cmath>
 #include <limits>
 
 namespace sigviewer
 {
 
 //-----------------------------------------------------------------------------
-ScaleChannelDialog::ScaleChannelDialog (ChannelID preselected_channel,
-                                        std::set<ChannelID> const& shown_channels,
+// In-process memory: persists across dialog openings, reset when app exits.
+static std::set<ChannelID> s_lastSelection;
+
+//-----------------------------------------------------------------------------
+ScaleChannelDialog::ScaleChannelDialog (std::set<ChannelID> const& shown_channels,
                                         ChannelManager const& channel_manager,
-                                        QWidget *parent) :
+                                        std::set<ChannelID> const& preselected,
+                                        QWidget* parent) :
     QDialog(parent),
-    selected_channel_ (preselected_channel),
-    shown_channels_ (shown_channels),
-    channel_manager_ (channel_manager)
+    shown_channels_(shown_channels),
+    channel_manager_(channel_manager)
 {
-    ui_.setupUi (this);
+    ui_.setupUi(this);
+    setWindowTitle(tr("Scale Channels"));
 
-    if (selected_channel_ == UNDEFINED_CHANNEL)
-        setWindowTitle (tr("Scale All Channels"));
-    else
-        setWindowTitle (tr("Scale Channel %1").arg(channel_manager_.getChannelLabel(preselected_channel)));
+    ui_.upperSpinBox->setMaximum(std::numeric_limits<double>::max());
+    ui_.upperSpinBox->setMinimum(-std::numeric_limits<double>::max());
+    ui_.lowerSpinBox->setMaximum(std::numeric_limits<double>::max());
+    ui_.lowerSpinBox->setMinimum(-std::numeric_limits<double>::max());
 
-    ui_.upper_spinbox_->setMaximum (std::numeric_limits<double>::max());
-    ui_.upper_spinbox_->setMinimum (-std::numeric_limits<double>::max());
-    ui_.lower_spinbox_->setMaximum (std::numeric_limits<double>::max());
-    ui_.lower_spinbox_->setMinimum (-std::numeric_limits<double>::max());
-    QString unit_string = channel_manager_.getChannelYUnitString (selected_channel_);
-    if (unit_string.size())
-        ui_.unitLabelLower->setText (QString ("(").append (unit_string).append (")"));
-    ui_.unitLabelUpper->setText (ui_.unitLabelLower->text());
-    if (selected_channel_ != UNDEFINED_CHANNEL)
+    // Determine which channels to pre-check:
+    //   - explicit preselected set (e.g. from right-click) → use it as-is
+    //   - otherwise restore the last in-process selection (all checked on first open)
+    std::set<ChannelID> const& toCheck =
+        !preselected.empty() ? preselected
+        : (!s_lastSelection.empty() ? s_lastSelection : shown_channels_);
+
+    for (ChannelID id : shown_channels_)
     {
-        ui_.upper_spinbox_->setValue (channel_manager_.getMaxValue (selected_channel_));
-        ui_.lower_spinbox_->setValue (channel_manager_.getMinValue (selected_channel_));
+        auto* item = new QListWidgetItem(channel_manager_.getChannelLabel(id), ui_.channelList);
+        item->setData(Qt::UserRole, id);
+        item->setCheckState(toCheck.count(id) ? Qt::Checked : Qt::Unchecked);
     }
-    connect (this, SIGNAL(accepted()), SLOT(storeAccepted()));
 
-    ui_.unitLabelLower->hide();
-    ui_.unitLabelUpper->hide();
-
+    // Restore last-used settings
     QSettings settings;
-    if (settings.value("autoScaling", true).toBool())
-        ui_.autoButton->setChecked(true);
-    else
+    int modeIndex  = settings.value("ScaleDialog/mode", 0).toInt();
+    bool sym       = settings.value("ScaleDialog/symmetric", true).toBool();
+    double lastUpper = settings.value("ScaleDialog/upperValue",  75.0).toDouble();
+    double lastLower = settings.value("ScaleDialog/lowerValue", -75.0).toDouble();
+
+    ui_.upperSpinBox->setValue(lastUpper);
+    ui_.lowerSpinBox->setValue(lastLower);
+    ui_.symmetricCheckBox->setChecked(sym);
+
+    if (modeIndex == 1)
+        ui_.autoSharedRangeButton->setChecked(true);
+    else if (modeIndex == 2)
         ui_.manualButton->setChecked(true);
+    else
+        ui_.autoPerChannelButton->setChecked(true);
 
-    last_max_ = settings.value("scaling_upper_value", 75).toDouble();
-    last_min_ = settings.value("scaling_lower_value", -75).toDouble();
+    bool isManual = (modeIndex == 2);
+    setManualControlsEnabled(isManual);
+    setSymmetricEnabled(!isManual);
 
-    ui_.upper_spinbox_->setValue(last_max_);
-    ui_.lower_spinbox_->setValue(last_min_);
-    ui_.upper_spinbox_->setMinimum(ui_.lower_spinbox_->value());
-    ui_.lower_spinbox_->setMaximum(ui_.upper_spinbox_->value());
+    connect(this, SIGNAL(accepted()), SLOT(storeAccepted()));
 }
 
 //-----------------------------------------------------------------------------
-bool ScaleChannelDialog::autoScaling () const
+ScaleChannelDialog::ScalingMode ScaleChannelDialog::scalingMode () const
 {
-    return ui_.autoButton->isChecked ();
+    if (ui_.autoSharedRangeButton->isChecked()) return AUTO_SHARED_RANGE;
+    if (ui_.manualButton->isChecked())          return MANUAL;
+    return AUTO_PER_CHANNEL;
 }
 
 //-----------------------------------------------------------------------------
-bool ScaleChannelDialog::physAutoScaling () const
+bool ScaleChannelDialog::symmetric () const
 {
-    return false;//ui_.physButton->isChecked();
+    return ui_.symmetricCheckBox->isChecked();
 }
 
 //-----------------------------------------------------------------------------
-float ScaleChannelDialog::upperValue () const
+std::set<ChannelID> ScaleChannelDialog::selectedChannels () const
 {
-    return ui_.upper_spinbox_->value();
+    std::set<ChannelID> result;
+    for (int i = 0; i < ui_.channelList->count(); ++i)
+    {
+        QListWidgetItem* item = ui_.channelList->item(i);
+        if (item->checkState() == Qt::Checked)
+            result.insert(item->data(Qt::UserRole).toInt());
+    }
+    return result;
 }
 
 //-----------------------------------------------------------------------------
-float ScaleChannelDialog::lowerValue () const
+float64 ScaleChannelDialog::upperValue () const
 {
-    return ui_.lower_spinbox_->value();
+    return ui_.upperSpinBox->value();
+}
+
+//-----------------------------------------------------------------------------
+float64 ScaleChannelDialog::lowerValue () const
+{
+    return ui_.lowerSpinBox->value();
+}
+
+//-----------------------------------------------------------------------------
+void ScaleChannelDialog::on_autoPerChannelButton_toggled (bool checked)
+{
+    if (!checked) return;
+    setManualControlsEnabled(false);
+    setSymmetricEnabled(true);
+}
+
+//-----------------------------------------------------------------------------
+void ScaleChannelDialog::on_autoSharedRangeButton_toggled (bool checked)
+{
+    if (!checked) return;
+    setManualControlsEnabled(false);
+    setSymmetricEnabled(true);
 }
 
 //-----------------------------------------------------------------------------
 void ScaleChannelDialog::on_manualButton_toggled (bool checked)
 {
-    ui_.upper_spinbox_->setEnabled(checked);
-    ui_.lower_spinbox_->setEnabled(checked);
-
-    if (!checked)
-        return;
-
-    ui_.upper_spinbox_->setValue (last_max_);
-    ui_.lower_spinbox_->setValue (last_min_);
-
-    QSettings settings;
-    settings.setValue("autoScaling", false);
+    if (!checked) return;
+    setManualControlsEnabled(true);
+    setSymmetricEnabled(false);
 }
 
 //-----------------------------------------------------------------------------
-void ScaleChannelDialog::on_autoButton_toggled (bool checked)
+void ScaleChannelDialog::on_selectAllButton_clicked ()
 {
-    if (!checked)
-        return;
+    for (int i = 0; i < ui_.channelList->count(); ++i)
+        ui_.channelList->item(i)->setCheckState(Qt::Checked);
+}
 
-    double upper_value = 0;
-    double lower_value = 0;
+//-----------------------------------------------------------------------------
+void ScaleChannelDialog::on_selectNoneButton_clicked ()
+{
+    for (int i = 0; i < ui_.channelList->count(); ++i)
+        ui_.channelList->item(i)->setCheckState(Qt::Unchecked);
+}
 
-    if (selected_channel_ != UNDEFINED_CHANNEL)
-    {
-        upper_value = channel_manager_.getMaxValue (selected_channel_);
-        lower_value = channel_manager_.getMinValue (selected_channel_);
-    }
-    else
-    {
-        upper_value = last_max_;
-        lower_value = last_min_;
-    }
+//-----------------------------------------------------------------------------
+void ScaleChannelDialog::on_upperSpinBox_valueChanged (double value)
+{
+    ui_.lowerSpinBox->setMaximum(value);
+}
 
-    ui_.upper_spinbox_->setValue (upper_value);
-    ui_.lower_spinbox_->setValue (lower_value);
-
-    QSettings settings;
-    settings.setValue("autoScaling", true);
+//-----------------------------------------------------------------------------
+void ScaleChannelDialog::on_lowerSpinBox_valueChanged (double value)
+{
+    ui_.upperSpinBox->setMinimum(value);
 }
 
 //-----------------------------------------------------------------------------
 void ScaleChannelDialog::storeAccepted ()
 {
+    // Persist channel selection in-process
+    s_lastSelection = selectedChannels();
+
+    QSettings settings;
+    int modeIndex = (scalingMode() == AUTO_PER_CHANNEL) ? 0 :
+                    (scalingMode() == AUTO_SHARED_RANGE) ? 1 : 2;
+    settings.setValue("ScaleDialog/mode", modeIndex);
+    settings.setValue("ScaleDialog/symmetric", ui_.symmetricCheckBox->isChecked());
     if (ui_.manualButton->isChecked())
     {
-        last_max_ = ui_.upper_spinbox_->value();
-        last_min_ = ui_.lower_spinbox_->value();
-
-        QSettings settings;
-        settings.setValue("scaling_upper_value", last_max_);
-        settings.setValue("scaling_lower_value", last_min_);
+        settings.setValue("ScaleDialog/upperValue", ui_.upperSpinBox->value());
+        settings.setValue("ScaleDialog/lowerValue", ui_.lowerSpinBox->value());
     }
 }
 
 //-----------------------------------------------------------------------------
-void ScaleChannelDialog::on_upper_spinbox__valueChanged(double arg1)
+void ScaleChannelDialog::setManualControlsEnabled (bool enabled)
 {
-    ui_.lower_spinbox_->setMaximum(arg1);
+    ui_.upperLabel->setEnabled(enabled);
+    ui_.lowerLabel->setEnabled(enabled);
+    ui_.upperSpinBox->setEnabled(enabled);
+    ui_.lowerSpinBox->setEnabled(enabled);
 }
 
 //-----------------------------------------------------------------------------
-void ScaleChannelDialog::on_lower_spinbox__valueChanged(double arg1)
+void ScaleChannelDialog::setSymmetricEnabled (bool enabled)
 {
-    ui_.upper_spinbox_->setMinimum(arg1);
+    ui_.symmetricCheckBox->setEnabled(enabled);
 }
 
 }
+
 

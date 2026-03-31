@@ -405,7 +405,17 @@ void OpenFileGuiCommand::openFileImpl (QString file_path, bool instantly)
 
     signal_visualisation_model->setShownChannels (shown_channels);
     signal_visualisation_model->update();
+
+    // Enable Remove Offset before addFileContext so that the evaluateEnabledness
+    // call triggered by stateChanged already sees detrend_enabled_ = true.
+    file_context->setDetrendEnabled (true, cutoff_hz);
+
     applicationContext()->addFileContext (file_context);
+
+    // Rescale using the detrended data range and refresh the view.
+    signal_visualisation_model->scaleChannel (UNDEFINED_CHANNEL);
+    signal_visualisation_model->update ();
+
     ProgressBar::instance().close();
 }
 
