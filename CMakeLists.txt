@@ -144,6 +144,10 @@ qt_add_library(sigviewer_objects OBJECT
     src/file_handling/biosig_reader.h
     src/file_handling/biosig_writer.cpp
     src/file_handling/biosig_writer.h
+    src/file_handling/channel_manager_proxy.cpp
+    src/file_handling/channel_manager_proxy.h
+    src/file_handling/detrend_channel_manager.cpp
+    src/file_handling/detrend_channel_manager.h
     src/file_handling/file_channel_manager.cpp
     src/file_handling/file_channel_manager.h
     src/file_handling/event_manager.cpp
@@ -197,6 +201,8 @@ qt_add_library(sigviewer_objects OBJECT
     src/gui/commands/adapt_event_view_gui_command.h
     src/gui/commands/close_file_gui_command.cpp
     src/gui/commands/close_file_gui_command.h
+    src/gui/commands/detrend_gui_command.cpp
+    src/gui/commands/detrend_gui_command.h
     src/gui/commands/event_editing_gui_command.cpp
     src/gui/commands/event_editing_gui_command.h
     src/gui/commands/help_gui_command.cpp

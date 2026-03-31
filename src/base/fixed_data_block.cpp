@@ -49,23 +49,22 @@ float32 const& FixedDataBlock::operator[] (size_t index) const
 //! Get the minimal value in a data block, excluding any NANs
 float32 FixedDataBlock::getMin () const
 {
+    size_t len = size ();
     float32 min = 0;
-    for (auto const elem : *data_)
+    for (size_t i = 0; i < len; ++i)
     {
-        if (!std::isnan(elem))
+        float32 v = (*data_)[start_index_ + i];
+        if (!std::isnan (v))
         {
-            min = elem;
+            min = v;
             break;
         }
     }
-
-    for (auto const elem : *data_)
+    for (size_t i = 0; i < len; ++i)
     {
-        if (!std::isnan(elem))
-        {
-            if (elem < min)
-                min = elem;
-        }
+        float32 v = (*data_)[start_index_ + i];
+        if (!std::isnan (v) && v < min)
+            min = v;
     }
     return min;
 }
@@ -74,23 +73,22 @@ float32 FixedDataBlock::getMin () const
 //! Get the maximal value in a data block, excluding any NANs
 float32 FixedDataBlock::getMax () const
 {
+    size_t len = size ();
     float32 max = 0;
-    for (auto const elem : *data_)
+    for (size_t i = 0; i < len; ++i)
     {
-        if (!std::isnan(elem))
+        float32 v = (*data_)[start_index_ + i];
+        if (!std::isnan (v))
         {
-            max = elem;
+            max = v;
             break;
         }
     }
-
-    for (auto const elem : *data_)
+    for (size_t i = 0; i < len; ++i)
     {
-        if (!std::isnan(elem))
-        {
-            if (elem > max)
-                max = elem;
-        }
+        float32 v = (*data_)[start_index_ + i];
+        if (!std::isnan (v) && v > max)
+            max = v;
     }
     return max;
 }

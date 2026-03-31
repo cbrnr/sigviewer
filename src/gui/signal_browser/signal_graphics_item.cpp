@@ -221,7 +221,10 @@ void SignalGraphicsItem::scaleImpl (double min, double max)
         y_offset_ = new_y_offset;
         updateYGridIntervall ();
     }
-    signal_browser_model_.update ();
+    // Schedule a repaint of this item only — do NOT call
+    // signal_browser_model_.update() here as that re-layouts the entire scene
+    // for every channel in a multi-channel scale loop (O(N²)).
+    update ();
 }
 
 //-----------------------------------------------------------------------------

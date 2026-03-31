@@ -34,7 +34,9 @@ public:
             return;
         progress_dialog_ = new QProgressDialog;
         progress_dialog_->setModal (true);
-        progress_dialog_->setMinimumDuration (2000);
+        progress_dialog_->setMinimumDuration (0);
+        progress_dialog_->setAutoReset (false);
+        progress_dialog_->setAutoClose (false);
         progress_dialog_->setWindowTitle (title);
         progress_dialog_->setMinimum (value_);
         progress_dialog_->setMaximum (max_value);

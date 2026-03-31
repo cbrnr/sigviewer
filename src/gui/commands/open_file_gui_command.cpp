@@ -28,6 +28,7 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QCheckBox>
+#include <QCoreApplication>
 
 #include <algorithm>
 #include <fstream>
@@ -322,21 +323,31 @@ void OpenFileGuiCommand::openFileImpl (QString file_path, bool instantly)
         return;
     }
 
-    ProgressBar::instance().initAndShow (channel_manager->getNumberChannels() * 3, tr("Opening ") + file_name,
+    ProgressBar::instance().initAndShow (channel_manager->getNumberChannels() * 2, tr("Opening ") + file_name,
                                          applicationContext());
-
-    // Build the min/max downsampling pyramid used by the zoomed-out rendering
-    // path.  Runs synchronously so the data is ready before the first paint.
-    {
-        QSharedPointer<ChannelManager> cm (channel_manager, [] (ChannelManager*) {});
-        SigViewer_::DownSamplingThread ds_thread (cm, 2,
-            static_cast<unsigned> (channel_manager->getNumberSamples ()) + 1u);
-        ds_thread.runSynchronously ();
-    }
 
     QSharedPointer<EventManager> event_manager (new EventManager (*file_signal_reader));
     QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
                                                  channel_manager, file_signal_reader->getBasicHeader()));
+
+    // Build the min/max downsampling pyramid AND pre-compute the detrend filter
+    // for every channel in a single combined pass — one progress step per channel.
+    {
+        QSettings settings;
+        double cutoff_hz = settings.value ("Detrend/cutoff_hz", 0.1).toDouble ();
+
+        QSharedPointer<ChannelManager> cm (channel_manager, [] (ChannelManager*) {});
+        SigViewer_::DownSamplingThread ds_thread (cm, 2,
+            static_cast<unsigned> (channel_manager->getNumberSamples ()) + 1u);
+
+        ds_thread.setPerChannelHook ([&] (ChannelID id) {
+            file_context->precomputeDetrendChannel (cutoff_hz, id);
+            ProgressBar::instance().increaseValue (1, tr ("Processing channels..."));
+            QCoreApplication::processEvents ();
+        });
+
+        ds_thread.runSynchronously ();
+    }
 
     QSettings settings;
     settings.setValue("file_open_path", file_path.left (file_path.length() -

@@ -251,6 +251,8 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
 
     tools_menu_ = menuBar()->addMenu(tr("&Tools"));
     tools_menu_->addActions(GuiActionFactory::getInstance()->getQActions("Signal Processing"));
+    tools_menu_->addSeparator();
+    tools_menu_->addActions(GuiActionFactory::getInstance()->getQActions("Detrend"));
 
     help_menu_ = menuBar()->addMenu(tr("&Help"));
     help_menu_->addAction (action(tr("About")));

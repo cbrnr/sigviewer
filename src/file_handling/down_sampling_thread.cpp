@@ -6,6 +6,7 @@
 #include "down_sampling_thread.h"
 #include "base/fixed_data_block.h"
 #include "gui/background_processes.h"
+#include "gui/progress_bar.h"
 
 #include <vector>
 #include <limits>
@@ -92,14 +93,33 @@ void DownSamplingThread::minMaxDownsampling ()
         // Seed working buffers from the raw samples.
         // NaN values propagate: a downsampled window is NaN only when every
         // raw sample inside it is NaN.
+        // We also track the global per-channel min/max here so the ChannelManager
+        // base-class cache is pre-populated and initMinMax() (an expensive second
+        // full file scan) is never called.
         QVector<float32> cur_min (static_cast<int>(cur_size));
         QVector<float32> cur_max (static_cast<int>(cur_size));
+        float32 global_min =  std::numeric_limits<float32>::max ();
+        float32 global_max = -std::numeric_limits<float32>::max ();
         for (size_t i = 0; i < cur_size; i++)
         {
             float32 v = (*full_data)[i];
             cur_min[static_cast<int>(i)] = v;
             cur_max[static_cast<int>(i)] = v;
+            if (!std::isnan (v))
+            {
+                if (v < global_min) global_min = v;
+                if (v > global_max) global_max = v;
+            }
         }
+        if (global_min <= global_max)
+            channel_manager_->setChannelMinMax (id,
+                                                static_cast<double>(global_min),
+                                                static_cast<double>(global_max));
+
+        if (per_channel_hook_)
+            per_channel_hook_ (id);
+        else
+            ProgressBar::instance().increaseValue (1, QObject::tr ("Searching for Min-Max"));
 
         // Build the min/max pyramid hierarchically: each level aggregates the
         // previous one by downsampling_step_, so total work is O(N) per channel
@@ -163,6 +183,10 @@ void DownSamplingThread::minMaxDownsampling ()
             cur_size = next_size;
         }
     }
+
+    // All channels have been scanned – mark the base-class min/max cache as
+    // fully built so that ChannelManager::initMinMax() is never triggered.
+    channel_manager_->markMinMaxInitialized ();
 }
 
 //-------------------------------------------------------------------------

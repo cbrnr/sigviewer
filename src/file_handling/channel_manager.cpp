@@ -107,6 +107,25 @@ float64 ChannelManager::getMaxValue (ChannelID channel_id) const
 }
 
 //-------------------------------------------------------------------------
+void ChannelManager::invalidateMinMaxCache ()
+{
+    min_max_initialized_ = false;
+    min_values_.clear ();
+    max_values_.clear ();
+    offsets_.clear ();
+}
+
+void ChannelManager::setChannelMinMax (ChannelID id, float64 min_val, float64 max_val)
+{
+    min_values_[id] = min_val;
+    max_values_[id] = max_val;
+}
+
+void ChannelManager::markMinMaxInitialized ()
+{
+    min_max_initialized_ = true;
+}
+
 void ChannelManager::initMinMax () const
 {
     if (min_max_initialized_)
