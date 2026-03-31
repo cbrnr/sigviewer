@@ -291,26 +291,41 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     painter->translate (0, height_ / 2.0f);
 
-    // Clip all signal drawing to the channel's vertical extent. When y_zoom_ is
-    // large (zoomed in on amplitude), sample values outside the visible range map
-    // to screen coordinates of millions of pixels. Without an explicit clip rect,
-    // QPainter's rasterizer receives these extreme values and must process them
-    // entirely — its internal 26.6 fixed-point arithmetic can overflow, and even
-    // short of overflow the clipping work for huge lines is significant. Setting
-    // the clip rect here lets Qt efficiently discard out-of-range geometry and
-    // compute precise entry/exit intersections for lines that cross the boundary.
-    const double YMIN = -(double)height_ * 0.5;
-    const double YMAX =  (double)height_ * 0.5;
-    // Y_OVERDRAW: allow points this far outside the clip boundary. Qt uses the
-    // overdraw region to compute correct clip-intersection geometry, so the
-    // rendered result at the clip edge is exact even though the true sample
-    // coordinate may be orders of magnitude further away.
+    // When y_zoom_ is very large (zoomed in on amplitude), sample values outside
+    // the visible amplitude window map to screen Y coordinates of millions of
+    // pixels. We must clamp them before giving them to QPainter, because its
+    // internal 26.6 fixed-point arithmetic overflows beyond ~33 million px, and
+    // even well short of that the rasterizer spends significant time processing
+    // enormous geometry.
+    //
+    // We do NOT set a vertical painter clip here: signals are intentionally
+    // allowed to "overflow" visually into neighbouring channel lanes, so the
+    // only hard boundary we enforce is a large-but-finite coordinate clamp.
+    // The clamp value is chosen so that any line crossing the channel boundary
+    // is rasterised with the correct entry-angle (the clamped end-point is far
+    // enough off-screen that the intersection geometry is exact).
+    const double SCENE_HALF_H = 32000.0;   // well within QPainter's fixed-point range
+    const double YMIN = -SCENE_HALF_H;
+    const double YMAX =  SCENE_HALF_H;
+    // Y_OVERDRAW is unused in the polyline path but kept for the minmax path below.
     const double Y_OVERDRAW = (double)height_;
-    painter->setClipRect(QRectF(clip.x(), YMIN, clip.width(), (double)height_));
 
     painter->setPen (color_manager_->getChannelColor (id_));
 
-    if (pixel_per_sample >= 1.0)
+    // On HiDPI / Retina displays the same logical canvas is rendered at a higher
+    // physical pixel density.  The polyline path (connected per-sample points)
+    // only produces a visibly smoother result than the minmax envelope path when
+    // there is at least one *physical* device pixel per sample.  Below that
+    // density the two paths are indistinguishable — at pixel_per_sample == 1.0
+    // on a 2× Retina screen every logical-pixel column still contains exactly
+    // one sample, so min == max and the minmax bar is a single point, identical
+    // to the polyline point — but the polyline path is more expensive because
+    // CoreGraphics must compute miter joints for every connected segment at full
+    // physical resolution.  Using the device pixel ratio as the threshold lets
+    // the cheaper minmax path handle the common "default zoom" case on Retina.
+    const double dpr = std::max(1.0, painter->device()->devicePixelRatioF());
+
+    if (pixel_per_sample >= dpr)
     {
         // Full-resolution path: build a polyline per contiguous (non-NaN) segment.
         //
@@ -489,31 +504,26 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
                 // sy_max is the screen-Y of the amplitude maximum (top of bar,
                 // smaller Y value); sy_min is the screen-Y of the amplitude
                 // minimum (bottom of bar, larger Y value).
-                // Skip bars that lie entirely outside the visible vertical range.
-                if (sy_min >= YMIN && sy_max <= YMAX)
+                // Clamp to the safe coordinate range to prevent QPainter 26.6
+                // fixed-point overflow when y_zoom_ is very large.
+                sy_max = std::max(sy_max, YMIN);
+                sy_min = std::min(sy_min, YMAX);
+
+                // Draw a diagonal connector from the midpoint of the previous
+                // bar to the midpoint of this bar. This fills any vertical gap
+                // between adjacent non-overlapping bars without inflating the
+                // shown amplitude range.
+                if (!std::isnan(prev_mid))
                 {
-                    // Clamp the bar endpoints to the visible range. For a vertical
-                    // bar this is exact: we're simply showing the portion of the
-                    // amplitude range that falls within the display window.
-                    sy_max = std::max(sy_max, YMIN);
-                    sy_min = std::min(sy_min, YMAX);
-
-                    // Draw a diagonal connector from the midpoint of the previous
-                    // bar to the midpoint of this bar. This fills any vertical gap
-                    // between adjacent non-overlapping bars without inflating the
-                    // shown amplitude range.
-                    if (!std::isnan(prev_mid))
-                    {
-                        double prev_sy = std::max(YMIN, std::min(YMAX, y_offset_ - y_zoom_ * (double)prev_mid));
-                        double cur_sy  = std::max(YMIN, std::min(YMAX, y_offset_ - y_zoom_ * (double)cur_mid));
-                        painter->drawLine(QPointF(screen_x - 1.0, prev_sy),
-                                          QPointF(screen_x,       cur_sy));
-                    }
-
-                    // Overdraw the precise min–max bar on top.
-                    painter->drawLine(QPointF(screen_x, sy_max),
-                                      QPointF(screen_x, sy_min));
+                    double prev_sy = std::max(YMIN, std::min(YMAX, y_offset_ - y_zoom_ * (double)prev_mid));
+                    double cur_sy  = std::max(YMIN, std::min(YMAX, y_offset_ - y_zoom_ * (double)cur_mid));
+                    painter->drawLine(QPointF(screen_x - 1.0, prev_sy),
+                                      QPointF(screen_x,       cur_sy));
                 }
+
+                // Overdraw the precise min–max bar on top.
+                painter->drawLine(QPointF(screen_x, sy_max),
+                                  QPointF(screen_x, sy_min));
 
                 prev_mid = cur_mid;
             }
