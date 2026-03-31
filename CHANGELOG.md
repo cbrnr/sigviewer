@@ -6,6 +6,7 @@
 
 ### 🌀 Changed
 - Faster scrolling/zooming for long recordings at high zoom-out levels (uses a per-pixel min–max envelope with automatic downsampling depending on the zoom level)
+- Revamp channel scaling with a unified "Scale..." dialog supporting any subset of channels, with per-channel auto, shared-range auto, or manual scaling options (each optionally symmetric/zero-centered), with symmetric auto-scaling now the default
 
 ### 🔧 Fixed
 - Fix label colors in dark mode (they are now light)
