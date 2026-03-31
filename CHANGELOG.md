@@ -2,6 +2,7 @@
 ### ✨ Added
 - Use SVG icons with support for light and dark themes
 - Add option to toggle between showing the menubar and using a hamburger menu on Windows and Linux
+- Add option to remove offsets from signals for display
 
 ### 🌀 Changed
 - Faster scrolling/zooming for long recordings at high zoom-out levels (uses a per-pixel min–max envelope with automatic downsampling depending on the zoom level)
