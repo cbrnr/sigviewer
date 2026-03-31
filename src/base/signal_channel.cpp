@@ -28,6 +28,8 @@ SignalChannel::SignalChannel(unsigned ch, const HDRTYPE* hdr) :
     const char *tmpstr = PhysDim3(hdr->CHANNEL[ch].PhysDimCode);
 #endif
     phys_y_dimension_label_ = QString(tmpstr);
+    if (phys_y_dimension_label_.startsWith('u'))
+        phys_y_dimension_label_[0] = QChar(0x00B5);  // µ (micro sign)
     samplerate_ = hdr->SampleRate * hdr->CHANNEL[ch].SPR / hdr->SPR;
 }
 
