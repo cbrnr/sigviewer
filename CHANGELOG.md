@@ -1,6 +1,7 @@
 ## [UNRELEASED] · YYYY-MM-DD
 ### ✨ Added
 - Use SVG icons with support for light and dark themes
+- Add option to toggle between showing the menubar and using a hamburger menu on Windows and Linux
 
 ## [0.6.5] · 2026-03-24
 ### 🌀 Changed
