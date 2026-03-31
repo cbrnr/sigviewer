@@ -9,6 +9,9 @@
 #include "file_handling/event_manager.h"
 #include "file_handling/basic_header.h"
 #include "file_handling/channel_manager.h"
+#include "file_handling/channel_manager_proxy.h"
+#include "file_handling/detrend_channel_manager.h"
+#include "base/data_block.h"
 #include "gui/signal_visualisation_model.h"
 #include "base/file_states.h"
 
@@ -75,6 +78,38 @@ public:
     ChannelManager& getChannelManager ();
 
     //-------------------------------------------------------------------------
+    /// Enable or disable offset removal (mean subtraction + optional FIR
+    /// high-pass filter).  A high-pass cutoff of 0.0 means mean-only.
+    /// Returns true if the filter was (re)built, false if the existing cache
+    /// was reused (e.g. toggling off then back on with the same parameters).
+    bool setDetrendEnabled (bool enabled, double hp_cutoff_hz = 0.0);
+
+    //-------------------------------------------------------------------------
+    /// Pre-warms the detrend manager for a single channel during file load.
+    /// Creates the DetrendChannelManager if it does not yet exist or if the
+    /// cutoff changed.  Does NOT enable detrend — user still toggles it on.
+    void precomputeDetrendChannel (double cutoff_hz, ChannelID id);
+
+    //-------------------------------------------------------------------------
+    /// Ensures the DetrendChannelManager exists with the given cutoff.
+    /// Must be called on the main thread before any parallel
+    /// precomputeDetrendChannelFromRaw() calls.
+    void ensureDetrendManager (double cutoff_hz);
+
+    //-------------------------------------------------------------------------
+    /// Pre-compute a single channel from already-read raw data.
+    /// Thread-safe — multiple channels can be processed concurrently once
+    /// ensureDetrendManager() has been called on the main thread.
+    void precomputeDetrendChannelFromRaw (ChannelID id,
+                                          QSharedPointer<DataBlock const> raw);
+
+    //-------------------------------------------------------------------------
+    bool isDetrendEnabled () const { return detrend_enabled_; }
+
+    //-------------------------------------------------------------------------
+    double getDetrendCutoffHz () const { return detrend_cutoff_hz_; }
+
+    //-------------------------------------------------------------------------
     QSharedPointer<BasicHeader> getHeader () {return basic_header_;}
 
     //-------------------------------------------------------------------------
@@ -103,7 +138,11 @@ private:
     FileState state_;
     QString file_path_and_name_;
     QSharedPointer<EventManager> event_manager_;
-    ChannelManager* channel_manager_;
+    ChannelManager* channel_manager_;          ///< raw source (owned)
+    DetrendChannelManager* detrend_manager_;   ///< detrend wrapper (owned, may be null)
+    ChannelManagerProxy* proxy_manager_;       ///< stable pointer given to views (owned)
+    bool detrend_enabled_;
+    double detrend_cutoff_hz_;
     QSharedPointer<BasicHeader> basic_header_;
     QSharedPointer<SignalVisualisationModel> main_signal_vis_model_;
 };

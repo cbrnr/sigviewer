@@ -28,7 +28,12 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QCheckBox>
+#include <QCoreApplication>
+#include <QThreadPool>
+#include <QRunnable>
+#include <QThread>
 
+#include <atomic>
 #include <algorithm>
 #include <fstream>
 
@@ -325,22 +330,75 @@ void OpenFileGuiCommand::openFileImpl (QString file_path, bool instantly)
     ProgressBar::instance().initAndShow (channel_manager->getNumberChannels() * 3, tr("Opening ") + file_name,
                                          applicationContext());
 
-    // Build the min/max downsampling pyramid used by the zoomed-out rendering
-    // path.  Runs synchronously so the data is ready before the first paint.
-    {
-        QSharedPointer<ChannelManager> cm (channel_manager, [] (ChannelManager*) {});
-        SigViewer_::DownSamplingThread ds_thread (cm, 2,
-            static_cast<unsigned> (channel_manager->getNumberSamples ()) + 1u);
-        ds_thread.runSynchronously ();
-    }
-
     QSharedPointer<EventManager> event_manager (new EventManager (*file_signal_reader));
     QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
                                                  channel_manager, file_signal_reader->getBasicHeader()));
 
+    // ---- Phase 1 (serial, I/O-bound): read each channel from disk, build the
+    // min/max downsampling pyramid, and collect the raw buffer for phase 2. ----
     QSettings settings;
-    settings.setValue("file_open_path", file_path.left (file_path.length() -
-                                                        file_name.length()));
+    double cutoff_hz = settings.value ("Detrend/cutoff_hz", 0.1).toDouble ();
+    file_context->ensureDetrendManager (cutoff_hz);   // create on main thread before parallel phase
+
+    QVector<QPair<ChannelID, QSharedPointer<DataBlock const>>> raw_data;
+    raw_data.reserve (static_cast<int>(channel_manager->getNumberChannels ()));
+
+    {
+        QSharedPointer<ChannelManager> cm (channel_manager, [] (ChannelManager*) {});
+        SigViewer_::DownSamplingThread ds_thread (cm, 2,
+            static_cast<unsigned> (channel_manager->getNumberSamples ()) + 1u);
+
+        ds_thread.setPerChannelHook ([&] (ChannelID id, QSharedPointer<DataBlock const> raw) {
+            raw_data.append ({id, raw});
+        });
+
+        ds_thread.runSynchronously ();
+    }
+
+    // ---- Phase 2 (parallel, CPU-bound): apply detrend FFT to every channel
+    // simultaneously using Qt's global thread pool (sized to hardware_concurrency).
+    // The raw buffers collected in phase 1 are reused — no second disk read. ----
+    {
+        std::atomic<int> n_done {0};
+        auto* pool = QThreadPool::globalInstance ();
+
+        for (int i = 0; i < raw_data.size (); ++i)
+        {
+            ChannelID id   = raw_data[i].first;
+            auto      raw  = raw_data[i].second;   // QSharedPointer copy — ref-counted, no alloc
+            FileContext*  fc = file_context.get ();
+
+            pool->start (QRunnable::create ([fc, cutoff_hz, id, raw, &n_done] () {
+                fc->precomputeDetrendChannelFromRaw (id, raw);
+                n_done.fetch_add (1, std::memory_order_relaxed);
+            }));
+        }
+
+        // Poll on the main thread so the progress bar stays responsive.
+        int last_reported = 0;
+        int n_total = raw_data.size ();
+        while (last_reported < n_total)
+        {
+            int n = n_done.load (std::memory_order_relaxed);
+            while (last_reported < n)
+            {
+                ProgressBar::instance().increaseValue (1, tr ("Applying detrend filter..."));
+                ++last_reported;
+            }
+            if (last_reported < n_total)
+            {
+                QCoreApplication::processEvents ();
+                QThread::msleep (8);
+            }
+        }
+        pool->waitForDone ();   // ensure every QRunnable has fully returned
+    }
+
+    {
+        QSettings s;
+        s.setValue("file_open_path", file_path.left (file_path.length() -
+                                                     file_name.length()));
+    }
 
     QSharedPointer<SignalVisualisationModel> signal_visualisation_model =
             applicationContext()->getMainWindowModel()->createSignalVisualisationOfFile (file_context);

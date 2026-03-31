@@ -270,20 +270,12 @@ void SignalBrowserModel::scaleChannel (ChannelID id, float32 lower_value, float3
 {
     if (id == UNDEFINED_CHANNEL)
     {
-        QProgressDialog progress;
-        progress.setMaximum (channel2signal_item_.size());
-        progress.setMinimum (0);
-        progress.setModal (true);
-        progress.setLabelText (tr("Scaling..."));
-        progress.show ();
         for (SignalGraphicsItemMap::iterator it =
              channel2signal_item_.begin(); it != channel2signal_item_.end();
             ++it)
         {
             it.value()->scale (lower_value, upper_value);
-            progress.setValue (progress.value() + 1);
         }
-        progress.setValue (progress.maximum ());
     }
     else
         channel2signal_item_[id]->scale (lower_value, upper_value);
@@ -294,20 +286,12 @@ void SignalBrowserModel::scaleChannel (ChannelID id)
 {
     if (id == UNDEFINED_CHANNEL)
     {
-        QProgressDialog progress;
-        progress.setMaximum (channel2signal_item_.size());
-        progress.setMinimum (0);
-        progress.setModal (true);
-        progress.setLabelText (tr("Scaling..."));
-        progress.show ();
         for (SignalGraphicsItemMap::iterator it =
              channel2signal_item_.begin(); it != channel2signal_item_.end();
             ++it)
         {
             it.value()->autoScale (getAutoScaleMode());
-            progress.setValue (progress.value() + 1);
         }
-        progress.setValue (progress.maximum ());
     }
     else
         channel2signal_item_[id]->autoScale (getAutoScaleMode());

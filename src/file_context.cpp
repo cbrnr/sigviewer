@@ -21,6 +21,10 @@ FileContext::FileContext (QString const& file_path_and_name,
       file_path_and_name_ (file_path_and_name),
       event_manager_ (event_manager),
       channel_manager_ (channel_manager),
+      detrend_manager_ (nullptr),
+      proxy_manager_ (new ChannelManagerProxy (channel_manager)),
+      detrend_enabled_ (false),
+      detrend_cutoff_hz_ (0.0),
       basic_header_ (header)
 {
     connect (event_manager_.data(), SIGNAL(changed()), SLOT(setAsChanged()));
@@ -30,6 +34,8 @@ FileContext::FileContext (QString const& file_path_and_name,
 FileContext::~FileContext ()
 {
     qDebug () << "deleting FileContext";
+    delete proxy_manager_;
+    delete detrend_manager_;
     delete channel_manager_;
 }
 
@@ -87,13 +93,73 @@ QSharedPointer<EventManager> FileContext::getEventManager ()
 //-----------------------------------------------------------------------------
 ChannelManager const& FileContext::getChannelManager () const
 {
-    return *channel_manager_;
+    return *proxy_manager_;
 }
 
 //-----------------------------------------------------------------------------
 ChannelManager& FileContext::getChannelManager ()
 {
-    return *channel_manager_;
+    return *proxy_manager_;
+}
+
+//-------------------------------------------------------------------------
+void FileContext::precomputeDetrendChannel (double cutoff_hz, ChannelID id)
+{
+    if (!detrend_manager_ || detrend_manager_->hpCutoff () != cutoff_hz)
+    {
+        delete detrend_manager_;
+        detrend_manager_  = new DetrendChannelManager (channel_manager_, cutoff_hz);
+        detrend_cutoff_hz_ = cutoff_hz;
+    }
+    // A getData(id, 0, 1) call is enough to trigger and cache processedChannel()
+    // which also populates the per-channel min/max cache.
+    detrend_manager_->getData (id, 0, 1);
+}
+
+//-------------------------------------------------------------------------
+void FileContext::ensureDetrendManager (double cutoff_hz)
+{
+    if (!detrend_manager_ || detrend_manager_->hpCutoff () != cutoff_hz)
+    {
+        delete detrend_manager_;
+        detrend_manager_   = new DetrendChannelManager (channel_manager_, cutoff_hz);
+        detrend_cutoff_hz_ = cutoff_hz;
+    }
+}
+
+//-------------------------------------------------------------------------
+void FileContext::precomputeDetrendChannelFromRaw (ChannelID id,
+                                                   QSharedPointer<DataBlock const> raw)
+{
+    // detrend_manager_ must already exist (call ensureDetrendManager first).
+    if (detrend_manager_)
+        detrend_manager_->precomputeFromRawData (id, raw);
+}
+
+//-------------------------------------------------------------------------
+bool FileContext::setDetrendEnabled (bool enabled, double hp_cutoff_hz)
+{
+    detrend_enabled_   = enabled;
+    detrend_cutoff_hz_ = hp_cutoff_hz;
+
+    bool rebuilt = false;
+    if (enabled)
+    {
+        // Only rebuild if parameters changed or no manager exists yet.
+        if (!detrend_manager_ || detrend_manager_->hpCutoff () != hp_cutoff_hz)
+        {
+            delete detrend_manager_;
+            detrend_manager_ = new DetrendChannelManager (channel_manager_, hp_cutoff_hz);
+            rebuilt = true;
+        }
+        proxy_manager_->setTarget (detrend_manager_);
+    }
+    else
+    {
+        proxy_manager_->setTarget (channel_manager_);
+        // Keep detrend_manager_ alive so toggling back on reuses the cache.
+    }
+    return rebuilt;
 }
 
 //-------------------------------------------------------------------------

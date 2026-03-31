@@ -57,32 +57,46 @@ public:
     virtual float64 getSampleRate () const = 0;
 
     //-------------------------------------------------------------------------
-    void addDownsampledMinMaxVersion (ChannelID id, QSharedPointer<DataBlock const> min,
+    virtual void addDownsampledMinMaxVersion (ChannelID id, QSharedPointer<DataBlock const> min,
                                       QSharedPointer<DataBlock const> max, unsigned factor);
 
     //-------------------------------------------------------------------------
-    unsigned getNearestDownsamplingFactor (ChannelID id, unsigned factor) const;
+    virtual unsigned getNearestDownsamplingFactor (ChannelID id, unsigned factor) const;
 
     //-------------------------------------------------------------------------
-    QSharedPointer<DataBlock const> getDownsampledMin (ChannelID id, unsigned factor) const;
+    virtual QSharedPointer<DataBlock const> getDownsampledMin (ChannelID id, unsigned factor) const;
 
     //-------------------------------------------------------------------------
-    QSharedPointer<DataBlock const> getDownsampledMax (ChannelID id, unsigned factor) const;
+    virtual QSharedPointer<DataBlock const> getDownsampledMax (ChannelID id, unsigned factor) const;
+
+    //-------------------------------------------------------------------------
+    /// Clears the cached min/max values so they are recomputed on the next
+    /// access. Call this when the underlying data source changes.
+    void invalidateMinMaxCache ();
+
+    //-------------------------------------------------------------------------
+    /// Pre-populate one channel's min/max entry.  Call markMinMaxInitialized()
+    /// once all channels have been set to skip the lazy per-channel file scan.
+    void setChannelMinMax (ChannelID id, float64 min_val, float64 max_val);
+
+    //-------------------------------------------------------------------------
+    /// Mark the min/max cache as fully built so initMinMax() is never called.
+    void markMinMaxInitialized ();
 
     //-------------------------------------------------------------------------
     float64 getValueRange (std::set<ChannelID> const& channels) const;
 
     //-------------------------------------------------------------------------
-    float64 getMinValue (std::set<ChannelID> const& channels) const;
+    virtual float64 getMinValue (std::set<ChannelID> const& channels) const;
 
     //-------------------------------------------------------------------------
-    float64 getMaxValue (std::set<ChannelID> const& channels) const;
+    virtual float64 getMaxValue (std::set<ChannelID> const& channels) const;
 
     //-------------------------------------------------------------------------
-    float64 getMinValue (ChannelID channel_id) const;
+    virtual float64 getMinValue (ChannelID channel_id) const;
 
     //-------------------------------------------------------------------------
-    float64 getMaxValue (ChannelID channel_id) const;
+    virtual float64 getMaxValue (ChannelID channel_id) const;
 
     //-------------------------------------------------------------------------
     void setXAxisUnitLabel (QString const& label) {x_axis_unit_label_ = label;}

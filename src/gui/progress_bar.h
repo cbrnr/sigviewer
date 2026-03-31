@@ -10,6 +10,7 @@
 
 #include <QProgressDialog>
 #include <QPointer>
+#include <QElapsedTimer>
 #include <QDebug>
 
 namespace sigviewer
@@ -34,11 +35,14 @@ public:
             return;
         progress_dialog_ = new QProgressDialog;
         progress_dialog_->setModal (true);
-        progress_dialog_->setMinimumDuration (2000);
+        progress_dialog_->setMinimumDuration (0);
+        progress_dialog_->setAutoReset (false);
+        progress_dialog_->setAutoClose (false);
         progress_dialog_->setWindowTitle (title);
         progress_dialog_->setMinimum (value_);
         progress_dialog_->setMaximum (max_value);
         progress_dialog_->setValue (value_);
+        last_update_.start ();
         qDebug () << title << ": max_value = " << max_value;
     }
 
@@ -57,13 +61,21 @@ public:
 
         if (progress_dialog_->wasCanceled())
             return false;
-        progress_dialog_->setLabelText (description);
-        progress_dialog_->setValue (value_);
+        // Rate-limit UI updates to ≤25/s — QProgressDialog::setValue() calls
+        // processEvents() internally, so calling it on every channel would
+        // pump the event loop N times and cause N full-scene repaints.
+        if (last_update_.elapsed() >= 40 || value_ >= max_value_)
+        {
+            progress_dialog_->setLabelText (description);
+            progress_dialog_->setValue (value_);
+            last_update_.restart ();
+        }
         return true;
     }
 
 private:
     QPointer<QProgressDialog> progress_dialog_;
+    QElapsedTimer last_update_;
     bool non_gui_mode_;
     int max_value_;
     int value_;
