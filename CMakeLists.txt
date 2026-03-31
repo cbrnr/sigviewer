@@ -153,6 +153,8 @@ qt_add_library(sigviewer_objects OBJECT
     src/file_handling/evt_writer.cpp
     src/file_handling/evt_writer.h
     src/file_handling/file_handler_factory_registrator.h
+    src/file_handling/down_sampling_thread.cpp
+    src/file_handling/down_sampling_thread.h
     src/file_handling/xdf_reader.cpp
     src/file_handling/xdf_reader.h
 

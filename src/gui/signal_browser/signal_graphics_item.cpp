@@ -16,6 +16,7 @@
 #include <QToolTip>
 #include <QSettings>
 #include <cmath>
+#include <limits>
 
 
 namespace sigviewer
@@ -268,9 +269,6 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
 
     last_x = start_sample * pixel_per_sample;
 
-    float64 last_y = (*data_block)[0];
-    float64 new_y = 0;
-
     if (draw_x_grid_)
         drawXGrid (painter, option);
 
@@ -289,21 +287,147 @@ void SignalGraphicsItem::paint (QPainter* painter, const QStyleOptionGraphicsIte
     painter->translate (0, height_ / 2.0f);
     painter->setPen (color_manager_->getChannelColor (id_));
 
-
-    for (int index = 0;
-         index < static_cast<int>(data_block->size()) - 1;
-         index++)
+    if (pixel_per_sample >= 1.0)
     {
-        new_y = (*data_block)[index+1];
+        // Full-resolution path: accumulate points and draw as a single polyline per
+        // contiguous (non-NaN) segment. One drawPolyline call replaces O(N) drawLine
+        // calls, significantly reducing QPainter overhead.
+        QPolygonF points;
+        points.reserve(static_cast<int>(data_block->size()));
 
-        //!Draw nothing if NAN
-        if (!std::isnan(last_y) && !std::isnan(new_y))
+        for (int index = 0; index < static_cast<int>(data_block->size()); index++)
         {
-            painter->drawLine(last_x, y_offset_ - (y_zoom_ * last_y), last_x + pixel_per_sample, y_offset_ - (y_zoom_ * new_y));
+            float64 y = (*data_block)[index];
+            if (std::isnan(y))
+            {
+                if (points.size() > 1)
+                    painter->drawPolyline(points);
+                else if (points.size() == 1)
+                    painter->drawPoint(points.first());
+                points.clear();
+            }
+            else
+            {
+                points.append(QPointF(last_x, y_offset_ - y_zoom_ * y));
+            }
+            last_x += pixel_per_sample;
+        }
+        if (points.size() > 1)
+            painter->drawPolyline(points);
+        else if (points.size() == 1)
+            painter->drawPoint(points.first());
+    }
+    else
+    {
+        // Min-max envelope path: draw one vertical line per screen pixel column.
+        //
+        // When pre-computed downsampled data is available (built on file open)
+        // each pixel inspects O(1) downsampled entries instead of O(N) raw
+        // samples, making per-paint cost independent of zoom level.
+        int samples_per_pixel = static_cast<int>(std::ceil(1.0 / pixel_per_sample));
+        unsigned ds_factor = channel_manager_.getNearestDownsamplingFactor (
+                                 id_, static_cast<unsigned>(samples_per_pixel));
+
+        QSharedPointer<DataBlock const> ds_min, ds_max;
+        if (ds_factor > 1)
+        {
+            ds_min = channel_manager_.getDownsampledMin (id_, ds_factor);
+            ds_max = channel_manager_.getDownsampledMax (id_, ds_factor);
         }
 
-        last_x += pixel_per_sample;
-        last_y = new_y;
+        int first_pixel = static_cast<int>(std::floor(clip.x()));
+        int last_pixel  = static_cast<int>(std::ceil(clip.x() + clip.width()));
+
+        // Per-pixel envelope values, used to connect adjacent bars with a
+        // diagonal line so steep transitions don't leave visible gaps.
+        float32 prev_mid = std::numeric_limits<float32>::quiet_NaN();
+
+        for (int px = first_pixel; px <= last_pixel; px++)
+        {
+            float32 ymin = 0.0f, ymax = 0.0f;
+            bool has_valid = false;
+
+            if (ds_min && ds_max)
+            {
+                // Convert this pixel column's screen-x range to absolute raw
+                // sample indices, then to downsampled indices.
+                double raw_start = static_cast<double>(px) / pixel_per_sample;
+                double raw_end   = static_cast<double>(px + 1) / pixel_per_sample;
+                int di_start = static_cast<int>(std::floor(raw_start / ds_factor));
+                int di_end   = static_cast<int>(std::ceil (raw_end   / ds_factor));
+                di_start = std::max(di_start, 0);
+                di_end   = std::min(di_end, static_cast<int>(ds_min->size()));
+
+                for (int di = di_start; di < di_end; di++)
+                {
+                    float32 lo = (*ds_min)[di];
+                    float32 hi = (*ds_max)[di];
+                    if (!std::isnan(lo))
+                    {
+                        if (!has_valid)
+                        {
+                            ymin = lo; ymax = hi;
+                            has_valid = true;
+                        }
+                        else
+                        {
+                            if (lo < ymin) ymin = lo;
+                            if (hi > ymax) ymax = hi;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // On-the-fly fallback when pre-computed data is not available.
+                int j_start = static_cast<int>(std::floor(static_cast<double>(px) / pixel_per_sample))
+                              - static_cast<int>(start_sample);
+                int j_end   = static_cast<int>(std::ceil(static_cast<double>(px + 1) / pixel_per_sample))
+                              - static_cast<int>(start_sample);
+                j_start = std::max(j_start, 0);
+                j_end   = std::min(j_end, static_cast<int>(data_block->size()));
+
+                for (int j = j_start; j < j_end; j++)
+                {
+                    float32 v = (*data_block)[j];
+                    if (!std::isnan(v))
+                    {
+                        if (!has_valid) { ymin = ymax = v; has_valid = true; }
+                        else
+                        {
+                            if (v < ymin) ymin = v;
+                            if (v > ymax) ymax = v;
+                        }
+                    }
+                }
+            }
+
+            if (has_valid)
+            {
+                float32 cur_mid = (ymin + ymax) * 0.5f;
+                double screen_x = px + 0.5;
+                double sy_max = y_offset_ - y_zoom_ * ymax;
+                double sy_min = y_offset_ - y_zoom_ * ymin;
+
+                // Draw a diagonal connector from the midpoint of the previous
+                // bar to the midpoint of this bar. This fills any vertical gap
+                // between adjacent non-overlapping bars without inflating the
+                // shown amplitude range.
+                if (!std::isnan(prev_mid))
+                    painter->drawLine(QPointF(screen_x - 1.0, y_offset_ - y_zoom_ * prev_mid),
+                                      QPointF(screen_x,       y_offset_ - y_zoom_ * cur_mid));
+
+                // Overdraw the precise min–max bar on top.
+                painter->drawLine(QPointF(screen_x, sy_max),
+                                  QPointF(screen_x, sy_min));
+
+                prev_mid = cur_mid;
+            }
+            else
+            {
+                prev_mid = std::numeric_limits<float32>::quiet_NaN();
+            }
+        }
     }
 
     return;

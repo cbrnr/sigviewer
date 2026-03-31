@@ -18,6 +18,10 @@
 namespace SigViewer_
 {
 
+using sigviewer::DataBlock;
+using sigviewer::ChannelManager;
+using sigviewer::ChannelID;
+
 class DownSamplingThread : public QThread
 {
     Q_OBJECT
@@ -30,6 +34,12 @@ public:
 
     //-------------------------------------------------------------------------
     virtual ~DownSamplingThread ();
+
+    //-------------------------------------------------------------------------
+    /// Run minMaxDownsampling() directly on the calling thread.
+    /// Use this instead of start()+wait() when already on the main thread to
+    /// avoid Qt widgets being instantiated on a background thread.
+    void runSynchronously ();
 
 signals:
     //-------------------------------------------------------------------------

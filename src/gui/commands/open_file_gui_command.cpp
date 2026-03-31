@@ -13,6 +13,7 @@
 #include "file_handling/file_signal_reader_factory.h"
 #include "file_handling/event_manager.h"
 #include "file_handling/file_channel_manager.h"
+#include "file_handling/down_sampling_thread.h"
 #include "tab_context.h"
 #include "file_context.h"
 #include "gui/main_window_model.h"
@@ -323,6 +324,16 @@ void OpenFileGuiCommand::openFileImpl (QString file_path, bool instantly)
 
     ProgressBar::instance().initAndShow (channel_manager->getNumberChannels() * 3, tr("Opening ") + file_name,
                                          applicationContext());
+
+    // Build the min/max downsampling pyramid used by the zoomed-out rendering
+    // path.  Runs synchronously so the data is ready before the first paint.
+    {
+        QSharedPointer<ChannelManager> cm (channel_manager, [] (ChannelManager*) {});
+        SigViewer_::DownSamplingThread ds_thread (cm, 2,
+            static_cast<unsigned> (channel_manager->getNumberSamples ()) + 1u);
+        ds_thread.runSynchronously ();
+    }
+
     QSharedPointer<EventManager> event_manager (new EventManager (*file_signal_reader));
     QSharedPointer<FileContext> file_context (new FileContext (file_path, event_manager,
                                                  channel_manager, file_signal_reader->getBasicHeader()));
