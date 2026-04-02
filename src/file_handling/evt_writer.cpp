@@ -9,36 +9,29 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 EVTWriter EVTWriter::prototype_instance_(true);
 
-//-----------------------------------------------------------------------------
 EVTWriter::EVTWriter() {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 EVTWriter::EVTWriter(bool) {
     FileSignalWriterFactory::getInstance()
         ->registerHandler("evt", QSharedPointer<EVTWriter>(new EVTWriter));
 }
 
-//-----------------------------------------------------------------------------
 EVTWriter::EVTWriter(QString const& new_file_path) : new_file_path_(new_file_path) {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 EVTWriter::~EVTWriter() {
     // nothing to do here
 }
 
-//-------------------------------------------------------------------------
 QPair<FileSignalWriter*, QString> EVTWriter::createInstance(QString const& new_file_path) {
     return QPair<FileSignalWriter*, QString>(new EVTWriter(new_file_path), "");
 }
 
-//-----------------------------------------------------------------------------
 QString EVTWriter::save(QSharedPointer<FileContext const> file_context,
     std::set<EventType> const& types) {
     QSharedPointer<EventManager const> event_manager = file_context->getEventManager();

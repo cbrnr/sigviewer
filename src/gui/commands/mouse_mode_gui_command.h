@@ -23,14 +23,12 @@ class MouseModeGuiCommand : public GuiActionCommand {
     virtual void init();
 
    public slots:
-    //-------------------------------------------------------------------------
+
     virtual void trigger(QString const& action_name);
 
    protected:
-    //-------------------------------------------------------------------------
     virtual void applicationStateChanged();
 
-    //-------------------------------------------------------------------------
     virtual void evaluateEnabledness();
 
    private:

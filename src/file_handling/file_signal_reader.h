@@ -19,7 +19,6 @@ class QString;
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 /// FileSignalReader
 ///
 /// abstract base class for reading signals from a file

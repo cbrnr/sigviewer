@@ -14,7 +14,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 class LabelWidget : public QWidget {
     Q_OBJECT
    public:

@@ -14,8 +14,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
-
 namespace {
 
 class AdaptChannelViewGuiCommandFactory : public GuiActionCommandFactory {
@@ -76,17 +74,14 @@ QStringList const AdaptChannelViewGuiCommand::ACTIONS_() {
     return result;
 }
 
-//-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator registrator_("Adapt Channel View",
     QSharedPointer<AdaptChannelViewGuiCommandFactory>(new AdaptChannelViewGuiCommandFactory));
 
-//-----------------------------------------------------------------------------
 AdaptChannelViewGuiCommand::AdaptChannelViewGuiCommand()
     : GuiActionCommand(ACTIONS_()) {
     // nothing to do here
 }
 
-//-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::init() {
     setIcon(CHANNELS_(), QIcon::fromTheme("reorder"));
     setIcon(SCALE_(), QIcon::fromTheme("fit_page_height"));
@@ -106,7 +101,6 @@ void AdaptChannelViewGuiCommand::init() {
     resetActionTriggerSlot(SET_ANIMATION_DURATION_(), SLOT(setAnimationDuration()));
 }
 
-//-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::selectShownChannels() {
     QSharedPointer<SignalVisualisationModel> sv_model = currentVisModel();
     std::set<ChannelID> previous_shown_channels = sv_model->getShownChannels();
@@ -120,7 +114,6 @@ void AdaptChannelViewGuiCommand::selectShownChannels() {
     sv_model->update();
 }
 
-//-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::evaluateEnabledness() {
     QStringList disabled_actions_if_no_file = ACTIONS_();
     disabled_actions_if_no_file.removeAll(ANIMATIONS_());
@@ -129,7 +122,6 @@ void AdaptChannelViewGuiCommand::evaluateEnabledness() {
     disableIfNoSignalIsVisualised(disabled_actions_if_no_file);
 }
 
-//-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::changeColor() {
     if (currentVisModel().isNull()) return;
     ChannelID channel = currentVisModel()->getSelectedChannel();
@@ -146,7 +138,6 @@ void AdaptChannelViewGuiCommand::changeColor() {
     }
 }
 
-//-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::scale() {
     QSharedPointer<SignalVisualisationModel> sv_model = currentVisModel();
     if (sv_model.isNull()) return;
@@ -190,7 +181,6 @@ void AdaptChannelViewGuiCommand::scale() {
     }
 }
 
-//-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::hide() {
     ChannelID channel = currentVisModel()->getSelectedChannel();
     if (channel == UNDEFINED_CHANNEL) return;
@@ -201,7 +191,6 @@ void AdaptChannelViewGuiCommand::hide() {
     currentVisModel()->update();
 }
 
-//-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::toggleAnimations() {
     QSettings settings;
     settings.beginGroup("Animations");
@@ -209,7 +198,6 @@ void AdaptChannelViewGuiCommand::toggleAnimations() {
     settings.endGroup();
 }
 
-//-------------------------------------------------------------------------
 void AdaptChannelViewGuiCommand::setAnimationDuration() {
     QSettings settings;
     settings.beginGroup("Animations");

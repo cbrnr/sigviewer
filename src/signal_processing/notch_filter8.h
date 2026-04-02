@@ -5,8 +5,6 @@
 #ifndef NOTCH_FILTER8_H
 #define NOTCH_FILTER8_H
 
-//---------------------------------------------------------------------------------------
-
 #include <boost/circular_buffer.hpp>
 #include <vector>
 
@@ -14,7 +12,6 @@
 
 namespace SigViewer_ {
 
-//---------------------------------------------------------------------------------------
 class NotchFilter8 : public Filter {
    public:
     NotchFilter8(double fs, double freq);
@@ -59,7 +56,5 @@ class NotchFilter8 : public Filter {
 };
 
 }  // namespace SigViewer_
-
-//---------------------------------------------------------------------------------------
 
 #endif  // NOTCH_FILTER8_H

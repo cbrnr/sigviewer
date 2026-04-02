@@ -11,7 +11,6 @@ namespace sigviewer {
 
 namespace MathUtils_ {
 
-//-----------------------------------------------------------------------------
 float64 round125(float64 value) {
     float64 sign = value < 0 ? -1 : 1;
     value = value * sign;
@@ -24,7 +23,6 @@ float64 round125(float64 value) {
     return sign * tmp;
 }
 
-//-----------------------------------------------------------------------------
 int sampleRateToDecimalPrecision(float64 sample_rate) {
     int precision = 0;
     for (; sample_rate > 10; sample_rate /= 10) precision++;

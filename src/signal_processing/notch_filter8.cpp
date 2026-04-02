@@ -13,14 +13,10 @@
 
 namespace SigViewer_ {
 
-//---------------------------------------------------------------------------------------
-
 using std::vector;
 
 const unsigned int NotchFilter8::FILTER_ORDER = 8;
 const double NotchFilter8::POLE_DISTANCE = 0.995;
-
-//---------------------------------------------------------------------------------------
 
 NotchFilter8::NotchFilter8(double fs, double freq)
     : a_(FILTER_ORDER + 1, 0), b_(FILTER_ORDER + 1, 0), d_(POLE_DISTANCE), fs_(fs), freq_(freq) {
@@ -65,13 +61,10 @@ NotchFilter8::NotchFilter8(double fs, double freq)
     a_[8] = b_[8] * pow(d_, 8);
 }
 
-//---------------------------------------------------------------------------------------
 // template<typename T>
 // void NotchFilter8::filter (T& in, T& out, int in_out_size)
 //{
 
 //}
-
-//---------------------------------------------------------------------------------------
 
 }  // namespace SigViewer_

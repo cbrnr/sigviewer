@@ -8,7 +8,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 namespace {
 
 class MouseModeGuiCommandFactory : public GuiActionCommandFactory {
@@ -62,11 +61,9 @@ QStringList const MouseModeGuiCommand::MODE_TEXTS_() {
     return result;
 }
 
-//-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator MouseModeGuiCommand::registrator_("Mouse Modes",
     QSharedPointer<MouseModeGuiCommandFactory>(new MouseModeGuiCommandFactory));
 
-//-----------------------------------------------------------------------------
 MouseModeGuiCommand::MouseModeGuiCommand() : GuiActionCommand(MODE_TEXTS_()) {
     action_to_mode_map_[NEW_MODE_TEXT_()] = MODE_NEW;
     action_to_mode_map_[POINTER_MODE_TEXT_()] = MODE_POINTER;
@@ -75,12 +72,10 @@ MouseModeGuiCommand::MouseModeGuiCommand() : GuiActionCommand(MODE_TEXTS_()) {
     // action_to_mode_map_[INFO_MODE_TEXT_()] = MODE_INFO;
 }
 
-//-----------------------------------------------------------------------------
 MouseModeGuiCommand::~MouseModeGuiCommand() {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 void MouseModeGuiCommand::init() {
     QActionGroup* mouse_mode_action_group = new QActionGroup(this);
     mouse_mode_action_group->setExclusive(true);
@@ -111,12 +106,10 @@ void MouseModeGuiCommand::init() {
     getQAction(HAND_MODE_TEXT_())->setChecked(true);
 }
 
-//-----------------------------------------------------------------------------
 void MouseModeGuiCommand::trigger(QString const& action_name) {
     currentVisModel()->setMode(action_to_mode_map_[action_name]);
 }
 
-//-------------------------------------------------------------------------
 void MouseModeGuiCommand::evaluateEnabledness() {
     if (disableIfNoFileIsOpened(MODE_TEXTS_())) return;
     if (disableIfNoSignalIsVisualised(MODE_TEXTS_())) return;
@@ -128,7 +121,6 @@ void MouseModeGuiCommand::evaluateEnabledness() {
     }
 }
 
-//-----------------------------------------------------------------------------
 void MouseModeGuiCommand::applicationStateChanged() {
     if (getApplicationState() == APP_STATE_FILE_OPEN)
         getQAction(HAND_MODE_TEXT_())->setChecked(true);

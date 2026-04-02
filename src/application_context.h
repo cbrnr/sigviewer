@@ -21,7 +21,6 @@ enum ApplicationMode { APPLICATION_NON_GUI_MODE };
 
 class MainWindowModel;
 
-//-----------------------------------------------------------------------------
 /// ApplicationContext
 ///
 /// exists once in an application

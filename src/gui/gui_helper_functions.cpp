@@ -21,7 +21,6 @@ namespace sigviewer {
 
 namespace GuiHelper {
 
-//-----------------------------------------------------------------------------
 void animateProperty(QObject* target,
     QByteArray const& property_name,
     QVariant const& start_value,
@@ -54,7 +53,6 @@ void animateProperty(QObject* target,
     }
 }
 
-//-----------------------------------------------------------------------------
 QList<QSharedPointer<SignalEvent const> > getSelectedEvents(QSharedPointer<EventView> event_view) {
     qDebug() << "getSelectedEvents: " << event_view.isNull();
     QList<EventID> ids = getSelectedEventIDs(event_view);
@@ -67,7 +65,6 @@ QList<QSharedPointer<SignalEvent const> > getSelectedEvents(QSharedPointer<Event
     return events;
 }
 
-//-----------------------------------------------------------------------------
 QList<EventID> getSelectedEventIDs(QSharedPointer<EventView> event_view) {
     QList<EventID> event_ids;
     qDebug() << "getSelectedEventIDs: " << event_view.isNull();
@@ -75,7 +72,6 @@ QList<EventID> getSelectedEventIDs(QSharedPointer<EventView> event_view) {
     return event_view->getSelectedEvents();
 }
 
-//-----------------------------------------------------------------------------
 EventType selectEventType(EventType preselected_type,
     QSharedPointer<SignalVisualisationModel> signal_visualisation_model) {
     EventType new_type = UNDEFINED_EVENT_TYPE;
@@ -108,7 +104,6 @@ EventType selectEventType(EventType preselected_type,
     return new_type;
 }
 
-//-----------------------------------------------------------------------------
 std::set<EventType> selectEventTypes(std::set<EventType> const& preselected_type,
     QSharedPointer<EventManager const> event_manager,
     QSharedPointer<ColorManager> color_manager) {
@@ -132,7 +127,6 @@ std::set<EventType> selectEventTypes(std::set<EventType> const& preselected_type
     return selected_types;
 }
 
-//-----------------------------------------------------------------------------
 ChannelID selectChannel(ChannelID preselected_channel_id,
     QSharedPointer<SignalVisualisationModel> signal_visualisation_model) {
     int32 current_item = 0;
@@ -170,7 +164,6 @@ ChannelID selectChannel(ChannelID preselected_channel_id,
         return preselected_channel_id;
 }
 
-//-----------------------------------------------------------------------------
 std::set<ChannelID> selectShownChannels(ChannelID hide_channel,
     QSharedPointer<SignalVisualisationModel> vis_model) {
     std::set<ChannelID> channels = vis_model->getShownChannels();
@@ -182,7 +175,6 @@ std::set<ChannelID> selectShownChannels(ChannelID hide_channel,
     return dialog.getSelectedChannels();
 }
 
-//-----------------------------------------------------------------------------
 std::set<ChannelID> selectChannels(ChannelManager const& channel_manager,
     QSharedPointer<ColorManager> color_manager,
     QSharedPointer<BasicHeader> header,
@@ -210,7 +202,6 @@ std::set<ChannelID> selectChannels(ChannelManager const& channel_manager,
     return selected_channels;
 }
 
-//-----------------------------------------------------------------------------
 QString getFilePathFromSaveAsDialog(QString const& path,
     QString const& extensions,
     QString const& file_type_description) {

@@ -16,7 +16,6 @@
 
 namespace sigviewer {
 
-//-------------------------------------------------------------------------
 // file signal reader Factory as singleton
 class FileSignalReaderFactory : public FileHandlerFactory<FileSignalReader> {
    public:

@@ -6,16 +6,13 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 FileChannelManager::FileChannelManager(FileSignalReader* file_signal_reader)
     : reader_(file_signal_reader) {
     setXAxisUnitLabel("s");
 }
 
-//-----------------------------------------------------------------------------
 FileChannelManager::~FileChannelManager() { delete reader_; }
 
-//-------------------------------------------------------------------------
 std::set<ChannelID> FileChannelManager::getChannels() const {
     std::set<ChannelID> channels;
     for (ChannelID id = 0; id < static_cast<int>(reader_->getBasicHeader()->getNumberChannels()); ++id)
@@ -23,12 +20,10 @@ std::set<ChannelID> FileChannelManager::getChannels() const {
     return channels;
 }
 
-//-----------------------------------------------------------------------------
 uint32 FileChannelManager::getNumberChannels() const {
     return reader_->getBasicHeader()->getNumberChannels();
 }
 
-//-------------------------------------------------------------------------
 QString FileChannelManager::getChannelLabel(ChannelID id) const {
     if (id == UNDEFINED_CHANNEL)
         return QObject::tr("All Channels");
@@ -38,7 +33,6 @@ QString FileChannelManager::getChannelLabel(ChannelID id) const {
         return QObject::tr("Invalid Channel");
 }
 
-//-------------------------------------------------------------------------
 QString FileChannelManager::getChannelLabel(ChannelID id, int streamNumber) const {
     if (id == UNDEFINED_CHANNEL) {
         if (streamNumber == -1)
@@ -51,7 +45,6 @@ QString FileChannelManager::getChannelLabel(ChannelID id, int streamNumber) cons
         return QObject::tr("Invalid Channel");
 }
 
-//-------------------------------------------------------------------------
 QString FileChannelManager::getChannelYUnitString(ChannelID id) const {
     if (id != UNDEFINED_CHANNEL)
         return reader_->getBasicHeader()->getChannel(id)->getPhysicalDim();
@@ -60,7 +53,6 @@ QString FileChannelManager::getChannelYUnitString(ChannelID id) const {
     // reader_->getBasicHeader()->get
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<DataBlock const> FileChannelManager::getData(ChannelID id,
     unsigned start_pos,
     unsigned length) const {
@@ -70,18 +62,15 @@ QSharedPointer<DataBlock const> FileChannelManager::getData(ChannelID id,
         return reader_->getSignalData(id, start_pos, length);
 }
 
-//-----------------------------------------------------------------------------
 float64 FileChannelManager::getDurationInSec() const {
     return reader_->getBasicHeader()->getNumberOfSamples()
            / reader_->getBasicHeader()->getSampleRate();
 }
 
-//-----------------------------------------------------------------------------
 size_t FileChannelManager::getNumberSamples() const {
     return reader_->getBasicHeader()->getNumberOfSamples();
 }
 
-//-----------------------------------------------------------------------------
 float64 FileChannelManager::getSampleRate() const {
     return reader_->getBasicHeader()->getSampleRate();
 }

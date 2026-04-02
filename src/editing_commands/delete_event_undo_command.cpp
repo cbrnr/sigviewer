@@ -8,18 +8,15 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 DeleteEventUndoCommand::DeleteEventUndoCommand(QSharedPointer<EventManager> event_manager, EventID event_id)
     : event_manager_(event_manager), deleted_event_(event_manager->getEvent(event_id)) {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 DeleteEventUndoCommand::~DeleteEventUndoCommand() {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 void DeleteEventUndoCommand::undo() {
     event_manager_->createEvent(deleted_event_->getChannel(),
         deleted_event_->getPosition(),
@@ -29,7 +26,6 @@ void DeleteEventUndoCommand::undo() {
         deleted_event_->getId());
 }
 
-//-----------------------------------------------------------------------------
 void DeleteEventUndoCommand::redo() {
     event_manager_->removeEvent(deleted_event_->getId());
 }

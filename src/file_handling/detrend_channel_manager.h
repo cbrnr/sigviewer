@@ -12,7 +12,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 /// DetrendChannelManager
 ///
 /// A ChannelManager decorator that removes the global mean offset (DC
@@ -23,7 +22,6 @@ namespace sigviewer {
 /// then cached so that repeated rendering calls are cheap.
 class DetrendChannelManager : public ChannelManager {
    public:
-    //-------------------------------------------------------------------------
     /// @param source    Underlying channel manager.  This class does NOT take
     ///                  ownership – the caller must ensure that the source
     ///                  outlives this object.
@@ -71,23 +69,19 @@ class DetrendChannelManager : public ChannelManager {
     virtual float64 getMinValue(ChannelID id) const override;
     virtual float64 getMaxValue(ChannelID id) const override;
 
-    //-------------------------------------------------------------------------
     /// Pre-compute the processed channel from already-read raw data.
     /// Called from the parallel file-open phase to avoid a second disk read.
     /// Thread-safe: multiple channels can be processed concurrently.
     void precomputeFromRawData(ChannelID id, QSharedPointer<DataBlock const> raw) const;
 
    private:
-    //-------------------------------------------------------------------------
     /// Returns (or computes and caches) the fully processed data for a channel.
     QSharedPointer<QVector<float32>> processedChannel(ChannelID id) const;
 
-    //-------------------------------------------------------------------------
     /// Build the Blackman-windowed sinc high-pass FIR kernel.
     /// Returns an empty vector when hp_cutoff_ == 0.
     std::vector<double> buildFirKernel() const;
 
-    //-------------------------------------------------------------------------
     /// Apply zero-phase filtering via FFT: multiply the signal spectrum by
     /// |H(f)|^2 (the squared magnitude of the FIR kernel's frequency response).
     /// O(N log N) – much faster than the time-domain forward+backward pass.

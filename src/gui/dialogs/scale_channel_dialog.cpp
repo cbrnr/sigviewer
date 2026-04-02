@@ -11,11 +11,9 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 // In-process memory: persists across dialog openings, reset when app exits.
 static std::set<ChannelID> s_lastSelection;
 
-//-----------------------------------------------------------------------------
 ScaleChannelDialog::ScaleChannelDialog(std::set<ChannelID> const& shown_channels,
     ChannelManager const& channel_manager,
     std::set<ChannelID> const& preselected,
@@ -67,19 +65,16 @@ ScaleChannelDialog::ScaleChannelDialog(std::set<ChannelID> const& shown_channels
     connect(this, SIGNAL(accepted()), SLOT(storeAccepted()));
 }
 
-//-----------------------------------------------------------------------------
 ScaleChannelDialog::ScalingMode ScaleChannelDialog::scalingMode() const {
     if (ui_.autoSharedRangeButton->isChecked()) return AUTO_SHARED_RANGE;
     if (ui_.manualButton->isChecked()) return MANUAL;
     return AUTO_PER_CHANNEL;
 }
 
-//-----------------------------------------------------------------------------
 bool ScaleChannelDialog::symmetric() const {
     return ui_.symmetricCheckBox->isChecked();
 }
 
-//-----------------------------------------------------------------------------
 std::set<ChannelID> ScaleChannelDialog::selectedChannels() const {
     std::set<ChannelID> result;
     for (int i = 0; i < ui_.channelList->count(); ++i) {
@@ -90,56 +85,46 @@ std::set<ChannelID> ScaleChannelDialog::selectedChannels() const {
     return result;
 }
 
-//-----------------------------------------------------------------------------
 float64 ScaleChannelDialog::upperValue() const { return ui_.upperSpinBox->value(); }
 
-//-----------------------------------------------------------------------------
 float64 ScaleChannelDialog::lowerValue() const { return ui_.lowerSpinBox->value(); }
 
-//-----------------------------------------------------------------------------
 void ScaleChannelDialog::on_autoPerChannelButton_toggled(bool checked) {
     if (!checked) return;
     setManualControlsEnabled(false);
     setSymmetricEnabled(true);
 }
 
-//-----------------------------------------------------------------------------
 void ScaleChannelDialog::on_autoSharedRangeButton_toggled(bool checked) {
     if (!checked) return;
     setManualControlsEnabled(false);
     setSymmetricEnabled(true);
 }
 
-//-----------------------------------------------------------------------------
 void ScaleChannelDialog::on_manualButton_toggled(bool checked) {
     if (!checked) return;
     setManualControlsEnabled(true);
     setSymmetricEnabled(false);
 }
 
-//-----------------------------------------------------------------------------
 void ScaleChannelDialog::on_selectAllButton_clicked() {
     for (int i = 0; i < ui_.channelList->count(); ++i)
         ui_.channelList->item(i)->setCheckState(Qt::Checked);
 }
 
-//-----------------------------------------------------------------------------
 void ScaleChannelDialog::on_selectNoneButton_clicked() {
     for (int i = 0; i < ui_.channelList->count(); ++i)
         ui_.channelList->item(i)->setCheckState(Qt::Unchecked);
 }
 
-//-----------------------------------------------------------------------------
 void ScaleChannelDialog::on_upperSpinBox_valueChanged(double value) {
     ui_.lowerSpinBox->setMaximum(value);
 }
 
-//-----------------------------------------------------------------------------
 void ScaleChannelDialog::on_lowerSpinBox_valueChanged(double value) {
     ui_.upperSpinBox->setMinimum(value);
 }
 
-//-----------------------------------------------------------------------------
 void ScaleChannelDialog::storeAccepted() {
     // Persist channel selection in-process
     s_lastSelection = selectedChannels();
@@ -156,7 +141,6 @@ void ScaleChannelDialog::storeAccepted() {
     }
 }
 
-//-----------------------------------------------------------------------------
 void ScaleChannelDialog::setManualControlsEnabled(bool enabled) {
     ui_.upperLabel->setEnabled(enabled);
     ui_.lowerLabel->setEnabled(enabled);
@@ -164,7 +148,6 @@ void ScaleChannelDialog::setManualControlsEnabled(bool enabled) {
     ui_.lowerSpinBox->setEnabled(enabled);
 }
 
-//-----------------------------------------------------------------------------
 void ScaleChannelDialog::setSymmetricEnabled(bool enabled) {
     ui_.symmetricCheckBox->setEnabled(enabled);
 }

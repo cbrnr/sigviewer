@@ -12,12 +12,10 @@ namespace SigViewer_ {
 
 unsigned const GDFSignalCache::CACHE_SIZE_PER_CHANNEL_ = 5000;
 
-//-----------------------------------------------------------------------------
 GDFSignalCache::GDFSignalCache(gdf::Reader* reader) : reader_(reader) {
     qDebug() << "GDFSignalCache::GDFSignalCache";
 }
 
-//-----------------------------------------------------------------------------
 GDFSignalCache::~GDFSignalCache() {
     foreach (QVector<double*> channel_buffer, channel_buffers_) {
         foreach (double* double_buffer, channel_buffer) {
@@ -26,7 +24,6 @@ GDFSignalCache::~GDFSignalCache() {
     }
 }
 
-//-----------------------------------------------------------------------------
 float32 GDFSignalCache::getSample(ChannelID channel, unsigned sample_index) {
     QMutexLocker locker(&rebuild_mutex_);
 
@@ -40,13 +37,11 @@ float32 GDFSignalCache::getSample(ChannelID channel, unsigned sample_index) {
                            [((sample_index - start_[cache_index][channel]) + cyclic_start_[cache_index][channel]) % CACHE_SIZE_PER_CHANNEL_];
 }
 
-//-----------------------------------------------------------------------------
 bool GDFSignalCache::hasSampleIndex(unsigned cache_index, ChannelID channel, unsigned sample_index) const {
     return (sample_index >= start_[cache_index][channel])
            && (sample_index < (start_[cache_index][channel] + CACHE_SIZE_PER_CHANNEL_));
 }
 
-//-----------------------------------------------------------------------------
 void GDFSignalCache::rebuildCache(unsigned cache_index, ChannelID /*channel*/, unsigned sample_index) {
     //    QMutexLocker locker (&rebuild_mutex_);
 
@@ -83,7 +78,6 @@ void GDFSignalCache::rebuildCache(unsigned cache_index, ChannelID /*channel*/, u
     reader_->resetCache();
 }
 
-//-----------------------------------------------------------------------------
 unsigned GDFSignalCache::createNewThreadCacheIndex() {
     //    QMutexLocker locker (&rebuild_mutex_);
 

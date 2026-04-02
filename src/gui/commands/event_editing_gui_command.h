@@ -16,36 +16,27 @@ namespace sigviewer {
 class EventEditingGuiCommand : public GuiActionCommand {
     Q_OBJECT
    public:
-    //-------------------------------------------------------------------------
     EventEditingGuiCommand();
 
-    //-------------------------------------------------------------------------
     virtual ~EventEditingGuiCommand();
 
-    //-------------------------------------------------------------------------
     virtual void init();
 
    public slots:
-    //-------------------------------------------------------------------------
+
     void deleteSelectedEvent();
 
-    //-------------------------------------------------------------------------
     void changeTypeSelectedEvent();
 
-    //-------------------------------------------------------------------------
     void changeChannelSelectedEvent();
 
-    //-------------------------------------------------------------------------
     void toAllChannelsSelectedEvent();
 
-    //-------------------------------------------------------------------------
     void copyToChannelsSelectedEvent();
 
-    //-------------------------------------------------------------------------
     void insertEventOverSelectedEvent();
 
    protected:
-    //-------------------------------------------------------------------------
     virtual void evaluateEnabledness();
 
    private:

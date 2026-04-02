@@ -8,7 +8,6 @@ namespace sigviewer {
 
 GuiActionFactory* GuiActionFactory::instance_ = 0;
 
-//-----------------------------------------------------------------------------
 GuiActionFactory* GuiActionFactory::getInstance() {
     if (!instance_) {
         instance_ = new GuiActionFactory;
@@ -16,7 +15,6 @@ GuiActionFactory* GuiActionFactory::getInstance() {
     return instance_;
 }
 
-//-----------------------------------------------------------------------------
 void GuiActionFactory::registerCommand(QString const& name, QSharedPointer<GuiActionCommand> command) {
     command_map_[name] = command;
     QStringList action_ids = command->getActionIDs();
@@ -24,7 +22,6 @@ void GuiActionFactory::registerCommand(QString const& name, QSharedPointer<GuiAc
         action_to_command_map_[*id_iter] = command;
 }
 
-//-----------------------------------------------------------------------------
 QList<QAction*> GuiActionFactory::getQActions(QString const& command_name) const {
     if (command_name.size() == 0) {
         QList<QAction*> actions;
@@ -37,7 +34,6 @@ QList<QAction*> GuiActionFactory::getQActions(QString const& command_name) const
         return command_map_[command_name]->getQActions();
 }
 
-//-----------------------------------------------------------------------------
 QAction* GuiActionFactory::getQAction(QString const& action_id) const {
     if (!action_to_command_map_.contains(action_id))
         return 0;
@@ -45,7 +41,6 @@ QAction* GuiActionFactory::getQAction(QString const& action_id) const {
         return action_to_command_map_[action_id]->getQAction(action_id);
 }
 
-//-----------------------------------------------------------------------------
 void GuiActionFactory::initAllCommands() {
     for (CommandMap::iterator cmd_iter = command_map_.begin(); cmd_iter != command_map_.end();
         ++cmd_iter) {

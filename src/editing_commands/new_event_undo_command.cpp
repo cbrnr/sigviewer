@@ -8,7 +8,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 NewEventUndoCommand::NewEventUndoCommand(QSharedPointer<EventManager> event_manager,
     QSharedPointer<SignalEvent const> signal_event,
     float scene_to_signal_factor)
@@ -17,12 +16,10 @@ NewEventUndoCommand::NewEventUndoCommand(QSharedPointer<EventManager> event_mana
     raw_signal_event_->setDuration(scene_to_signal_factor * raw_signal_event_->getDuration());
 }
 
-//-----------------------------------------------------------------------------
 NewEventUndoCommand::~NewEventUndoCommand() {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 void NewEventUndoCommand::undo() {
     event_manager_->removeEvent(created_signal_event_->getId());
 
@@ -36,7 +33,6 @@ void NewEventUndoCommand::undo() {
     }
 }
 
-//-----------------------------------------------------------------------------
 void NewEventUndoCommand::redo() {
     EventID id = UNDEFINED_EVENT_ID;
     if (!created_signal_event_.isNull()) id = created_signal_event_->getId();

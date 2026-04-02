@@ -10,31 +10,26 @@ namespace sigviewer {
 
 FILE_SIGNAL_WRITER_REGISTRATION(gdf, BioSigWriter);
 
-//-----------------------------------------------------------------------------
 BioSigWriter::BioSigWriter() : target_type_(GDF) {
     file_formats_support_event_saving_.insert(GDF1);
     file_formats_support_event_saving_.insert(GDF);
 }
 
-//-----------------------------------------------------------------------------
 BioSigWriter::BioSigWriter(FileFormat target_type, QString new_file_path)
     : target_type_(target_type), new_file_path_(new_file_path) {
     // nothing to do here
 }
 
-//-------------------------------------------------------------------------
 QPair<FileSignalWriter*, QString> BioSigWriter::createInstance(QString const& file_path) {
     BioSigWriter* writer(new BioSigWriter);
     writer->new_file_path_ = file_path;
     return QPair<FileSignalWriter*, QString>(writer, "");
 }
 
-//-----------------------------------------------------------------------------
 bool BioSigWriter::supportsSavingEvents() const {
     return file_formats_support_event_saving_.count(target_type_) > 0;
 }
 
-//-----------------------------------------------------------------------------
 QString BioSigWriter::saveEventsToSignalFile(QSharedPointer<EventManager const> event_manager,
     std::set<EventType> const& types) {
     if (file_formats_support_event_saving_.count(target_type_) == 0)
@@ -80,7 +75,6 @@ QString BioSigWriter::saveEventsToSignalFile(QSharedPointer<EventManager const> 
     return "";
 }
 
-//-----------------------------------------------------------------------------
 QString BioSigWriter::save(QSharedPointer<FileContext const> file_context,
     std::set<EventType> const& types) {
     QString source_file_path = file_context->getFilePathAndName();

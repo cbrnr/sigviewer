@@ -17,7 +17,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 ///
 /// EventContextMenu
 ///
@@ -27,27 +26,20 @@ class EventContextMenu : public QMenu {
     Q_OBJECT
 
    public:
-    //-------------------------------------------------------------------------
     EventContextMenu(SignalVisualisationModel& browser_model, QSharedPointer<EventManager> event_manager);
 
-    //-------------------------------------------------------------------------
     virtual ~EventContextMenu();
 
-    //-------------------------------------------------------------------------
     void addEvent(EventID event);
 
-    //-------------------------------------------------------------------------
     unsigned getNumberOfEvents() const;
 
-    //-------------------------------------------------------------------------
     void finaliseAndShowContextMenu(QGraphicsSceneContextMenuEvent* context_event,
         QMenu* channel_menu = 0);
 
-    //-------------------------------------------------------------------------
     void finaliseAndShowSelectionMenu(QGraphicsSceneMouseEvent* context_event);
 
    private:
-    //-------------------------------------------------------------------------
     void addActionsToMenu(QMenu& menu, EventID event);
 
     QVector<EventID> event_ids_;
@@ -55,11 +47,9 @@ class EventContextMenu : public QMenu {
     SignalVisualisationModel& browser_model_;
     QSharedPointer<EventManager> event_manager_;
 
-    //-------------------------------------------------------------------------
     /// copy-constructor disabled
     EventContextMenu(EventContextMenu const&);
 
-    //-------------------------------------------------------------------------
     /// assignment-operator disabled
     EventContextMenu& operator=(EventContextMenu const&);
 

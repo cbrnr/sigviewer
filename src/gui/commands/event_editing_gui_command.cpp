@@ -15,7 +15,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 namespace {
 
 class EventEditingGuiCommandFactory : public GuiActionCommandFactory {
@@ -76,21 +75,17 @@ QStringList const EventEditingGuiCommand::ACTIONS_() {
     return result;
 }
 
-//-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator EventEditingGuiCommand::registrator_("Event Editing",
     QSharedPointer<EventEditingGuiCommandFactory>(new EventEditingGuiCommandFactory));
 
-//-----------------------------------------------------------------------------
 EventEditingGuiCommand::EventEditingGuiCommand() : GuiActionCommand(ACTIONS_()) {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 EventEditingGuiCommand::~EventEditingGuiCommand() {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 void EventEditingGuiCommand::init() {
     resetActionTriggerSlot(DELETE_(), SLOT(deleteSelectedEvent()));
     resetActionTriggerSlot(CHANGE_TYPE_(), SLOT(changeTypeSelectedEvent()));
@@ -107,7 +102,6 @@ void EventEditingGuiCommand::init() {
     //    getQAction (INSERT_OVER_())->setShortcut (QKeySequence("Ctrl+I"));
 }
 
-//-----------------------------------------------------------------------------
 void EventEditingGuiCommand::deleteSelectedEvent() {
     QList<QSharedPointer<QUndoCommand> > commands;
     foreach (EventID event, GuiHelper::getSelectedEventIDs(currentEventView())) {
@@ -117,7 +111,6 @@ void EventEditingGuiCommand::deleteSelectedEvent() {
     executeCommands(commands);
 }
 
-//-----------------------------------------------------------------------------
 void EventEditingGuiCommand::changeTypeSelectedEvent() {
     QList<QSharedPointer<QUndoCommand> > commands;
     foreach (EventID event, GuiHelper::getSelectedEventIDs(currentEventView())) {
@@ -134,7 +127,6 @@ void EventEditingGuiCommand::changeTypeSelectedEvent() {
     executeCommands(commands);
 }
 
-//-------------------------------------------------------------------------
 void EventEditingGuiCommand::changeChannelSelectedEvent() {
     QList<QSharedPointer<QUndoCommand> > commands;
     foreach (EventID event, GuiHelper::getSelectedEventIDs(currentEventView())) {
@@ -150,7 +142,6 @@ void EventEditingGuiCommand::changeChannelSelectedEvent() {
     executeCommands(commands);
 }
 
-//-------------------------------------------------------------------------
 void EventEditingGuiCommand::toAllChannelsSelectedEvent() {
     QList<QSharedPointer<QUndoCommand> > commands;
     foreach (EventID event, GuiHelper::getSelectedEventIDs(currentEventView())) {
@@ -164,7 +155,6 @@ void EventEditingGuiCommand::toAllChannelsSelectedEvent() {
     executeCommands(commands);
 }
 
-//-------------------------------------------------------------------------
 void EventEditingGuiCommand::copyToChannelsSelectedEvent() {
     QList<QSharedPointer<QUndoCommand> > commands;
     foreach (EventID event_id, GuiHelper::getSelectedEventIDs(currentEventView())) {
@@ -188,7 +178,6 @@ void EventEditingGuiCommand::copyToChannelsSelectedEvent() {
     executeCommands(commands);
 }
 
-//-------------------------------------------------------------------------
 void EventEditingGuiCommand::insertEventOverSelectedEvent() {
     QList<QSharedPointer<QUndoCommand> > commands;
     foreach (EventID event, GuiHelper::getSelectedEventIDs(currentEventView())) {
@@ -205,7 +194,6 @@ void EventEditingGuiCommand::insertEventOverSelectedEvent() {
     executeCommands(commands);
 }
 
-//-------------------------------------------------------------------------
 void EventEditingGuiCommand::evaluateEnabledness() {
     if (disableIfNoFileIsOpened(ACTIONS_())) return;
     if (disableIfNoEventsPossible(ACTIONS_())) return;
@@ -219,7 +207,6 @@ void EventEditingGuiCommand::evaluateEnabledness() {
                                            << CHANGE_TYPE_() << DELETE_());
 }
 
-//-------------------------------------------------------------------------
 void EventEditingGuiCommand::executeCommands(QList<QSharedPointer<QUndoCommand> > commands) {
     MacroUndoCommand* macro = new MacroUndoCommand(commands);
     applicationContext()->getCurrentCommandExecuter()->executeCommand(macro);

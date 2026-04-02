@@ -8,7 +8,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 ChangeChannelUndoCommand::ChangeChannelUndoCommand(QSharedPointer<EventManager> event_manager,
     EventID event_id,
     ChannelID new_channel)
@@ -16,12 +15,10 @@ ChangeChannelUndoCommand::ChangeChannelUndoCommand(QSharedPointer<EventManager> 
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 ChangeChannelUndoCommand::~ChangeChannelUndoCommand() {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 void ChangeChannelUndoCommand::undo() {
     QSharedPointer<SignalEvent> signal_event_ =
         event_manager_->getAndLockEventForEditing(event_id_);
@@ -29,7 +26,6 @@ void ChangeChannelUndoCommand::undo() {
     event_manager_->updateAndUnlockEvent(signal_event_->getId());
 }
 
-//-----------------------------------------------------------------------------
 void ChangeChannelUndoCommand::redo() {
     QSharedPointer<SignalEvent> signal_event_ =
         event_manager_->getAndLockEventForEditing(event_id_);

@@ -15,7 +15,6 @@
 
 namespace SigViewer_ {
 
-//-----------------------------------------------------------------------------
 class GDFSignalCache : public SignalCache {
    public:
     GDFSignalCache(gdf::Reader* reader);

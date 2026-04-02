@@ -13,17 +13,14 @@ namespace sigviewer {
 
 const char* ColorManager::DEFAULT_CHANNEL_COLOR_SETTING_ = "Default Channel Color";
 
-//-----------------------------------------------------------------------------
 ColorManager::ColorManager() {
     qDebug() << "constructing event color manager";
     loadDefaultEventColors();
     loadSettings();
 }
 
-//-----------------------------------------------------------------------------
 ColorManager::~ColorManager() { qDebug() << "destructing event color manager"; }
 
-//-----------------------------------------------------------------------------
 QColor ColorManager::getChannelColor(ChannelID channel_id) const {
     if (channel_color_map_.contains(channel_id))
         return channel_color_map_[channel_id];
@@ -31,10 +28,8 @@ QColor ColorManager::getChannelColor(ChannelID channel_id) const {
         return default_channel_color_;
 }
 
-//-----------------------------------------------------------------------------
 QColor ColorManager::getDefaultChannelColor() const { return default_channel_color_; }
 
-//-----------------------------------------------------------------------------
 void ColorManager::setDefaultChannelColor(QColor const& color) {
     default_channel_color_ = color;
     QSettings settings;
@@ -45,12 +40,10 @@ void ColorManager::setDefaultChannelColor(QColor const& color) {
     default_channel_color_ = color;
 }
 
-//-----------------------------------------------------------------------------
 void ColorManager::setChannelColor(ChannelID channel_id, QColor const& color) {
     channel_color_map_[channel_id] = color;
 }
 
-//-----------------------------------------------------------------------------
 QColor ColorManager::getEventColor(EventType type) const {
     if (type == 800) qDebug() << "ups";
     EventColorMap::const_iterator it = event_type2color_.find(type);
@@ -63,7 +56,6 @@ QColor ColorManager::getEventColor(EventType type) const {
         return *it;
 }
 
-//-----------------------------------------------------------------------------
 QColor ColorManager::getDefaultEventColor(EventType type) const {
     if (default_event_colors_.contains(type))
         return default_event_colors_[type];
@@ -71,12 +63,10 @@ QColor ColorManager::getDefaultEventColor(EventType type) const {
         return default_event_color_;
 }
 
-//-----------------------------------------------------------------------------
 void ColorManager::setEventColor(EventType type, const QColor& color) {
     event_type2color_[type] = color;
 }
 
-//-----------------------------------------------------------------------------
 bool ColorManager::isDark(QColor const& color) {
     double alpha_factor = color.alpha() / 255.0;
     double tmp = 255 * (1 - alpha_factor);
@@ -87,7 +77,6 @@ bool ColorManager::isDark(QColor const& color) {
     return y < 127;
 }
 
-//-----------------------------------------------------------------------------
 void ColorManager::loadSettings() {
     // get event types from event table reader
     QColor alpha_color(0, 0, 0, 50);
@@ -130,7 +119,6 @@ void ColorManager::loadSettings() {
     settings.endGroup();
 }
 
-//-----------------------------------------------------------------------------
 void ColorManager::saveSettings() {
     qDebug() << "color manager save settings";
     QSettings settings;
@@ -162,7 +150,6 @@ void ColorManager::saveSettings() {
     settings.endGroup();
 }
 
-//-----------------------------------------------------------------------------
 void ColorManager::loadDefaultEventColors() {
     QFile color_settings_file(":/color_settings.xml");
     if (!color_settings_file.open(QIODevice::ReadOnly)) return;

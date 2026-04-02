@@ -24,29 +24,22 @@ class XDFReader : public FileSignalReader {
 
     virtual ~XDFReader();
 
-    //-------------------------------------------------------------------------
     QPair<FileSignalReader*, QString> createInstance(QString const& file_path);
 
-    //-------------------------------------------------------------------------
     virtual QSharedPointer<DataBlock const> getSignalData(ChannelID channel_id,
         size_t start_sample,
         size_t length) const;
 
-    //-------------------------------------------------------------------------
     virtual QList<QSharedPointer<SignalEvent const> > getEvents() const;
 
-    //-------------------------------------------------------------------------
     virtual QSharedPointer<BasicHeader> getBasicHeader();
 
-    //-------------------------------------------------------------------------
     virtual QSharedPointer<BasicHeader const> getBasicHeader() const {
         return basic_header_;
     }
 
-    //-------------------------------------------------------------------------
     int setStreamColors(); /*!< Set a distinct color for each stream. */
 
-    //-------------------------------------------------------------------------
     enum sampleRateTypes {
         No_streams_found,
         Zero_Hz_Only,
@@ -57,13 +50,10 @@ class XDFReader : public FileSignalReader {
     sampleRateTypes selectSampleRateType();
 
    private:
-    //-------------------------------------------------------------------------
     QString open(QString const& file_path);
 
-    //-------------------------------------------------------------------------
     void bufferAllChannels() const;
 
-    //-------------------------------------------------------------------------
     void bufferAllEvents() const;
 
     Q_DISABLE_COPY(XDFReader)

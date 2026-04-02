@@ -15,7 +15,6 @@ using namespace std;
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 FILE_SIGNAL_READER_REGISTRATION(gdf, BioSigReader);
 FILE_SIGNAL_READER_REGISTRATION(edf, BioSigReader);
 FILE_SIGNAL_READER_REGISTRATION(bdf, BioSigReader);
@@ -28,17 +27,14 @@ FILE_SIGNAL_READER_REGISTRATION(evt, BioSigReader);
 
 FILE_SIGNAL_READER_DEFAULT_REGISTRATION(BioSigReader);
 
-//-----------------------------------------------------------------------------
 BioSigReader::BioSigReader()
     : basic_header_(0), biosig_header_(0), buffered_all_channels_(false), buffered_all_events_(false) {
     qDebug() << "Constructed BioSigReader";
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 BioSigReader::~BioSigReader() { doClose(); }
 
-//-----------------------------------------------------------------------------
 QPair<FileSignalReader*, QString> BioSigReader::createInstance(QString const& file_path) {
     BioSigReader* reader(new BioSigReader);
     if (file_path.section('.', -1) == "evt") reader->buffered_all_channels_ = true;
@@ -50,13 +46,11 @@ QPair<FileSignalReader*, QString> BioSigReader::createInstance(QString const& fi
         return QPair<FileSignalReader*, QString>(reader, "");
 }
 
-//-----------------------------------------------------------------------------
 void BioSigReader::doClose() const {
     if (biosig_header_) destructHDR(biosig_header_);
     biosig_header_ = NULL;
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<DataBlock const> BioSigReader::getSignalData(ChannelID channel_id,
     size_t start_sample,
     size_t length) const {
@@ -72,7 +66,6 @@ QSharedPointer<DataBlock const> BioSigReader::getSignalData(ChannelID channel_id
         return channel_map_[channel_id]->createSubBlock(start_sample, length);
 }
 
-//-----------------------------------------------------------------------------
 QList<QSharedPointer<SignalEvent const> > BioSigReader::getEvents() const {
     QMutexLocker lock(&mutex_);
     QList<QSharedPointer<SignalEvent const> > empty_list;
@@ -83,13 +76,11 @@ QList<QSharedPointer<SignalEvent const> > BioSigReader::getEvents() const {
     return events_;
 }
 
-//-----------------------------------------------------------------------------
 QString BioSigReader::open(QString const& file_name) {
     QMutexLocker lock(&mutex_);
     return loadFixedHeader(file_name);
 }
 
-//-----------------------------------------------------------------------------
 QString BioSigReader::loadFixedHeader(const QString& file_name) {
     QMutexLocker locker(&biosig_access_lock_);
     tzset();
@@ -141,13 +132,11 @@ QString BioSigReader::loadFixedHeader(const QString& file_name) {
     return "";
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<BasicHeader> BioSigReader::getBasicHeader() {
     // QMutexLocker lock (&mutex_);
     return basic_header_;
 }
 
-//-----------------------------------------------------------------------------
 int BioSigReader::setChannelColors() {
     QSharedPointer<ColorManager> colorPicker = ApplicationContext::getInstance()->color_manager_;
     for (size_t i = 0; i < basic_header_->getNumberChannels(); i++)
@@ -158,7 +147,6 @@ int BioSigReader::setChannelColors() {
     return 0;
 }
 
-//-----------------------------------------------------------------------------
 void BioSigReader::bufferAllChannels() const {
     size_t numberOfSamples = biosig_header_->NRec * biosig_header_->SPR;
     biosig_data_type* read_data =
@@ -187,7 +175,6 @@ void BioSigReader::bufferAllChannels() const {
     delete[] read_data;
 }
 
-//-------------------------------------------------------------------------
 void BioSigReader::bufferAllEvents() const {
     unsigned number_events = biosig_header_->EVENT.N;
     // Hack Hack: Transforming Events to have the same sample rate as the signals

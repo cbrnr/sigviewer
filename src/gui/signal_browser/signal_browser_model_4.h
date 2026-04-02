@@ -26,51 +26,38 @@ namespace sigviewer {
 class SignalBrowserView;
 class SignalGraphicsItem;
 
-//-----------------------------------------------------------------------------
 /// SignalBrowserModel
 class SignalBrowserModel : public SignalVisualisationModel {
     Q_OBJECT
    public:
-    //-------------------------------------------------------------------------
     SignalBrowserModel(QSharedPointer<EventManager> event_manager,
         ChannelManager const& channel_manager,
         QSharedPointer<TabContext> tab_context,
         QSharedPointer<ColorManager const> color_manager);
 
-    //-------------------------------------------------------------------------
     virtual ~SignalBrowserModel();
 
-    //-------------------------------------------------------------------------
     virtual void scaleChannel(ChannelID id, float32 lower_value, float32 upper_value);
 
-    //-------------------------------------------------------------------------
     virtual void scaleChannel(ChannelID id);
 
-    //-------------------------------------------------------------------------
     virtual ChannelManager const& getChannelManager() const;
 
-    //-------------------------------------------------------------------------
     virtual QSharedPointer<EventManager const> getEventManager() const;
 
-    //-------------------------------------------------------------------------
     virtual QSharedPointer<EventManager> getEventManager();
 
-    //-------------------------------------------------------------------------
     /// see base class
     virtual unsigned getShownPosition() const;
 
-    //-------------------------------------------------------------------------
     /// see base class
     virtual void goToSample(unsigned sample);
 
-    //-------------------------------------------------------------------------
     /// see base class
     virtual QList<EventID> getSelectedEvents() const;
 
-    //-------------------------------------------------------------------------
     virtual SignalVisualisationView const* view() const;
 
-    //-------------------------------------------------------------------------
     virtual QMap<ChannelID, SignalGraphicsItem*> getChannelToSignalItem();
 
     void setSignalBrowserView(SignalBrowserView* signal_browser_view);
@@ -88,14 +75,12 @@ class SignalBrowserModel : public SignalVisualisationModel {
     void updateEventItems();
 
    public slots:
-    //-------------------------------------------------------------------------
+
     virtual void update();
 
-    //-------------------------------------------------------------------------
     /// adds the given event
     virtual void addEventItem(QSharedPointer<SignalEvent const> event);
 
-    //-------------------------------------------------------------------------
     /// removes the given event
     virtual void removeEventItem(EventID id);
 
@@ -112,21 +97,17 @@ class SignalBrowserModel : public SignalVisualisationModel {
     virtual void modeChangedImpl(SignalVisualisationMode mode);
 
    private slots:
-    //-------------------------------------------------------------------------
+
     /// implementation of removeEventItem which really deletes the item
     void removeEventItemImpl();
 
    private:
-    //-------------------------------------------------------------------------
     void addChannel(ChannelID channel_nr);
 
-    //-------------------------------------------------------------------------
     void removeChannel(ChannelID channel_nr);
 
-    //-------------------------------------------------------------------------
     void updateEventItemsImpl();
 
-    //-------------------------------------------------------------------------
     static uint8 const SIGNAL_Z = 4;
 
     ChannelManager const& channel_manager_;

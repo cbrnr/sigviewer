@@ -17,7 +17,6 @@ class QTextStream;
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 ///
 /// EventTableFileReader
 ///
@@ -42,12 +41,10 @@ class EventTableFileReader {
     std::set<EventType> getEventsOfGroup(QString const& group_id) const;
     QString getEventGroupId(EventType event_type_id) const;
 
-    //---------------------------------------------------------------------------------------------
     /// @return true if an the eventtablefilereader has an entry of this type;
     ///         false if not
     bool entryExists(EventType type) const;
 
-    //---------------------------------------------------------------------------------------------
     void addEntry(EventType type, QString const& name = "", QString group_id = "");
 
     std::set<uint16> getAllEventTypes() const;

@@ -81,16 +81,13 @@ QStringList const SaveGuiCommand::ACTIONS_() {
     return result;
 }
 
-//-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator SaveGuiCommand::registrator_("Saving",
     QSharedPointer<SaveGuiCommandFactory>(new SaveGuiCommandFactory));
 
-//-----------------------------------------------------------------------------
 SaveGuiCommand::SaveGuiCommand() : GuiActionCommand(ACTIONS_()) {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 void SaveGuiCommand::init() {
     setIcon(SAVE_(), QIcon::fromTheme("file_save"));
     setIcon(EXPORT_EVENTS_CSV_(), QIcon::fromTheme("upload"));
@@ -107,7 +104,6 @@ void SaveGuiCommand::init() {
     resetActionTriggerSlot(EXPORT_EVENTS_EVT_(), SLOT(exportEventsToEVT()));
 }
 
-//-----------------------------------------------------------------------------
 void SaveGuiCommand::saveAs() {
     QSharedPointer<FileContext> file_context = applicationContext()->getCurrentFileContext();
     QString old_file_path = file_context->getFilePath();
@@ -171,7 +167,6 @@ void SaveGuiCommand::saveAs() {
             tr("Could not save %1 to %2").arg(file_name).arg(new_file_path));
 }
 
-//-----------------------------------------------------------------------------
 void SaveGuiCommand::save() {
     QString file_path = applicationContext()->getCurrentFileContext()->getFilePathAndName();
     QString file_name = applicationContext()->getCurrentFileContext()->getFileName();
@@ -210,7 +205,6 @@ void SaveGuiCommand::save() {
     }
 }
 
-//-----------------------------------------------------------------------------
 void SaveGuiCommand::exportToPNG() {
     QString extension = "*.png";
     QString file_path = GuiHelper::getFilePathFromSaveAsDialog(
@@ -223,7 +217,6 @@ void SaveGuiCommand::exportToPNG() {
     image->save(file_path, "PNG", 100);
 }
 
-//-----------------------------------------------------------------------------
 void SaveGuiCommand::exportToGDF() {
     QMessageBox::information(0, tr("Information"), tr("Attention: Converting to GDF is in testing phase. Meta-data will not be converted."));
     QString extensions = "*.gdf";
@@ -265,7 +258,6 @@ void SaveGuiCommand::exportToGDF() {
     delete writer;
 }
 
-//-------------------------------------------------------------------------
 void SaveGuiCommand::exportEventsToEVT() {
     QSharedPointer<EventManager> event_manager_pt =
         applicationContext()->getCurrentFileContext()->getEventManager();
@@ -293,7 +285,6 @@ void SaveGuiCommand::exportEventsToEVT() {
     delete file_signal_writer;
 }
 
-//-------------------------------------------------------------------------
 void SaveGuiCommand::exportEventsToCSV() {
     QString current_file_path =
         applicationContext()->getCurrentFileContext()->getFilePathAndName();
@@ -353,7 +344,6 @@ void SaveGuiCommand::exportEventsToCSV() {
     }
 }
 
-//-------------------------------------------------------------------------
 void SaveGuiCommand::evaluateEnabledness() {
     disableIfNoFileIsOpened(QStringList() << EXPORT_TO_PNG_());
     disableIfNoSignalIsVisualised(QStringList() << EXPORT_TO_PNG_());

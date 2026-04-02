@@ -15,12 +15,10 @@ class QTreeWidgetItem;
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 /// EventTypesSelectionDialog
 class EventTypesSelectionDialog : public QDialog {
     Q_OBJECT
    public:
-    //-------------------------------------------------------------------------
     EventTypesSelectionDialog(QString const& caption,
         QSharedPointer<EventManager const> event_manager,
         std::set<EventType> const& preselected_types,
@@ -42,22 +40,17 @@ class EventTypesSelectionDialog : public QDialog {
     void on_toggle_collapse_expand_button_clicked();
 
    private:
-    //-------------------------------------------------------------------------
     // not allowed
     EventTypesSelectionDialog();
     EventTypesSelectionDialog(const EventTypesSelectionDialog&);
     const EventTypesSelectionDialog& operator=(const EventTypesSelectionDialog&);
 
-    //-------------------------------------------------------------------------
     void buildTree(bool only_existing_events = false);
 
-    //-------------------------------------------------------------------------
     void handleSelected(QTreeWidgetItem* item);
 
-    //-------------------------------------------------------------------------
     void handleColor(QTreeWidgetItem* item);
 
-    //-------------------------------------------------------------------------
     void handleAlpha(QTreeWidgetItem* item);
 
     static int const CHECKBOX_COLUMN_INDEX_ = 0;

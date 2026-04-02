@@ -73,15 +73,12 @@ class EventGraphicsItem : public QGraphicsObject {
 
     enum State { STATE_NONE, STATE_MOVE_BEGIN, STATE_MOVE_END, STATE_SHIFT_TO_CHANNEL };
 
-    //-----------------------------------------------------------------------------
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
     virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent* event);
 
-    //-----------------------------------------------------------------------------
     Action getMousePressAction(QGraphicsSceneMouseEvent* e);
 
-    //-----------------------------------------------------------------------------
     void addContextMenuEntry();
 
     SignalBrowserModel& signal_browser_model_;

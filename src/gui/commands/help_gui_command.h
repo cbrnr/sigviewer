@@ -13,17 +13,14 @@ namespace sigviewer {
 class HelpGuiCommand : public GuiActionCommand {
     Q_OBJECT
    public:
-    //-------------------------------------------------------------------------
     HelpGuiCommand();
 
-    //-------------------------------------------------------------------------
     virtual ~HelpGuiCommand() {}
 
-    //-------------------------------------------------------------------------
     virtual void init();
 
    private slots:
-    //-------------------------------------------------------------------------
+
     void showAboutDialog();
 
    private:

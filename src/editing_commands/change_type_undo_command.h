@@ -16,26 +16,20 @@ namespace sigviewer {
 
 class ChangeTypeUndoCommand : public QUndoCommand {
    public:
-    //-------------------------------------------------------------------------
     ChangeTypeUndoCommand(QSharedPointer<EventManager> event_manager, EventID event_id, EventType new_type);
 
-    //-------------------------------------------------------------------------
     virtual ~ChangeTypeUndoCommand();
 
-    //-------------------------------------------------------------------------
     /// recreates the deleted event
     virtual void undo();
 
-    //-------------------------------------------------------------------------
     /// deletes the event
     virtual void redo();
 
    private:
-    //-------------------------------------------------------------------------
     /// copy-constructor disabled
     ChangeTypeUndoCommand(ChangeTypeUndoCommand const&);
 
-    //-------------------------------------------------------------------------
     /// assignment-operator disabled
     ChangeTypeUndoCommand& operator=(ChangeTypeUndoCommand const&);
 

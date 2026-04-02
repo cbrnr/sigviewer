@@ -12,52 +12,39 @@
 
 namespace sigviewer {
 
-//-------------------------------------------------------------------------
 class AdaptEventViewGuiCommand : public GuiActionCommand {
     Q_OBJECT
    public:
-    //-------------------------------------------------------------------------
     AdaptEventViewGuiCommand();
 
-    //-------------------------------------------------------------------------
     virtual ~AdaptEventViewGuiCommand() {}
 
-    //-------------------------------------------------------------------------
     virtual void init();
 
    public slots:
-    //-------------------------------------------------------------------------
+
     virtual void trigger(QString const& action_name);
 
-    //-------------------------------------------------------------------------
     void hideEventsOfOtherType();
 
-    //-------------------------------------------------------------------------
     void showAllEvents();
 
-    //-------------------------------------------------------------------------
     void setShownEvents();
 
    protected:
-    //-------------------------------------------------------------------------
     virtual void evaluateEnabledness();
 
    private:
-    //-------------------------------------------------------------------------
     void fitViewToEvent();
 
-    //-------------------------------------------------------------------------
     void gotoAndSelectEvent(bool forward);
 
-    //-------------------------------------------------------------------------
     void setNextAndPreviousEvent();
 
-    //-------------------------------------------------------------------------
     EventID current_event_;
     EventID next_event_;
     EventID previous_event_;
 
-    //-------------------------------------------------------------------------
     static QString const FIT_TO_EVENT_();
     static QString const HIDE_EVENTS_OF_OTHER_TYPE_();
     static QString const SHOW_ALL_EVENTS_();

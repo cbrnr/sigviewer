@@ -11,7 +11,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 namespace {
 
 class AdaptEventViewGuiCommandFactory : public GuiActionCommandFactory {
@@ -72,11 +71,9 @@ QStringList const AdaptEventViewGuiCommand::ACTIONS_() {
     return result;
 }
 
-//-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator AdaptEventViewGuiCommand::registrator_("Adapt Event View",
     QSharedPointer<AdaptEventViewGuiCommandFactory>(new AdaptEventViewGuiCommandFactory));
 
-//-----------------------------------------------------------------------------
 AdaptEventViewGuiCommand::AdaptEventViewGuiCommand()
     : GuiActionCommand(ACTIONS_()),
       current_event_(UNDEFINED_EVENT_ID),
@@ -85,7 +82,6 @@ AdaptEventViewGuiCommand::AdaptEventViewGuiCommand()
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::init() {
     setShortcut(GO_TO_NEXT_EVENT_(), QKeySequence("Ctrl+Right"));
     setShortcut(GO_TO_PREVIOUS_EVENT_(), QKeySequence("Ctrl+Left"));
@@ -101,7 +97,6 @@ void AdaptEventViewGuiCommand::init() {
     resetActionTriggerSlot(SET_SHOWN_EVENTS_(), SLOT(setShownEvents()));
 }
 
-//-----------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::trigger(QString const& action_name) {
     if (action_name == FIT_TO_EVENT_())
         fitViewToEvent();
@@ -111,7 +106,6 @@ void AdaptEventViewGuiCommand::trigger(QString const& action_name) {
         gotoAndSelectEvent(false);
 }
 
-//-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::hideEventsOfOtherType() {
     QList<QSharedPointer<SignalEvent const> > events =
         GuiHelper::getSelectedEvents(currentEventView());
@@ -123,13 +117,11 @@ void AdaptEventViewGuiCommand::hideEventsOfOtherType() {
     currentVisModel()->setShownEventTypes(shown_types);
 }
 
-//-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::showAllEvents() {
     std::set<EventType> shown_types = currentVisModel()->getEventManager()->getEventTypes();
     currentVisModel()->setShownEventTypes(shown_types);
 }
 
-//-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::setShownEvents() {
     std::set<EventType> shown_types = currentVisModel()->getShownEventTypes();
     std::set<EventType> new_shown_types = GuiHelper::selectEventTypes(shown_types,
@@ -140,7 +132,6 @@ void AdaptEventViewGuiCommand::setShownEvents() {
     currentVisModel()->update();
 }
 
-//-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::evaluateEnabledness() {
     if (disableIfNoFileIsOpened(ACTIONS_())) return;
     if (disableIfNoEventsPossible(ACTIONS_())) return;
@@ -156,7 +147,6 @@ void AdaptEventViewGuiCommand::evaluateEnabledness() {
     getQAction(GO_TO_PREVIOUS_EVENT_())->setEnabled(currentEventView()->eventsSlidable());
 }
 
-//-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::fitViewToEvent() {
     QList<QSharedPointer<SignalEvent const> > events =
         GuiHelper::getSelectedEvents(currentVisModel());
@@ -171,7 +161,6 @@ void AdaptEventViewGuiCommand::fitViewToEvent() {
     currentVisModel()->goToSample(event->getPosition());
 }
 
-//-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::gotoAndSelectEvent(bool forward) {
     QSharedPointer<EventManager const> event_manager = currentVisModel()->getEventManager();
     if (event_manager.isNull()) {
@@ -196,7 +185,6 @@ void AdaptEventViewGuiCommand::gotoAndSelectEvent(bool forward) {
     }
 }
 
-//-------------------------------------------------------------------------
 void AdaptEventViewGuiCommand::setNextAndPreviousEvent() {
     QList<QSharedPointer<SignalEvent const> > events =
         GuiHelper::getSelectedEvents(currentVisModel());

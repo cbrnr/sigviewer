@@ -16,22 +16,17 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 /// FileHandlerFactory
 /// generic file handler factory for storing readers or writers or whatever :)
 template <typename FileHandlerType>
 class FileHandlerFactory {
    public:
-    //-------------------------------------------------------------------------
     bool registerHandler(QString const& file_ending, QSharedPointer<FileHandlerType> file_handler);
 
-    //-------------------------------------------------------------------------
     void registerDefaultHandler(QSharedPointer<FileHandlerType> file_handler);
 
-    //-------------------------------------------------------------------------
     FileHandlerType* getHandler(QString const& file_path);
 
-    //-------------------------------------------------------------------------
     QStringList getAllFileEndingsWithWildcards() const;
 
    protected:
@@ -48,7 +43,6 @@ class FileHandlerFactory {
     QStringList wildcard_file_endings_;
 };
 
-//-------------------------------------------------------------------------
 template <typename FileHandlerType>
 bool FileHandlerFactory<FileHandlerType>::registerHandler(QString const& file_ending,
     QSharedPointer<FileHandlerType> file_handler) {
@@ -60,7 +54,6 @@ bool FileHandlerFactory<FileHandlerType>::registerHandler(QString const& file_en
     return true;
 }
 
-//-------------------------------------------------------------------------
 template <typename FileHandlerType>
 void FileHandlerFactory<FileHandlerType>::registerDefaultHandler(
     QSharedPointer<FileHandlerType> file_handler) {
@@ -68,7 +61,6 @@ void FileHandlerFactory<FileHandlerType>::registerDefaultHandler(
     default_handler_ = file_handler;
 }
 
-//-------------------------------------------------------------------------
 template <typename FileHandlerType>
 FileHandlerType* FileHandlerFactory<FileHandlerType>::getHandler(QString const& file_path) {
     QString file_ending = file_path.section('.', -1);
@@ -102,7 +94,6 @@ FileHandlerType* FileHandlerFactory<FileHandlerType>::getHandler(QString const& 
         return 0;
 }
 
-//-------------------------------------------------------------------------
 template <typename FileHandlerType>
 QStringList FileHandlerFactory<FileHandlerType>::getAllFileEndingsWithWildcards() const {
     return wildcard_file_endings_;

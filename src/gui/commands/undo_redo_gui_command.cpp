@@ -6,7 +6,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 namespace {
 
 class UndoRedoGuiCommandFactory : public GuiActionCommandFactory {
@@ -39,16 +38,13 @@ QStringList const UndoRedoGuiCommand::ACTIONS_() {
     return result;
 }
 
-//-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator UndoRedoGuiCommand::registrator_("UndoRedo",
     QSharedPointer<UndoRedoGuiCommandFactory>(new UndoRedoGuiCommandFactory));
 
-//-----------------------------------------------------------------------------
 UndoRedoGuiCommand::UndoRedoGuiCommand() : GuiActionCommand(ACTIONS_()) {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 void UndoRedoGuiCommand::init() {
     setShortcut(UNDO_(), QKeySequence::Undo);
     setShortcut(REDO_(), QKeySequence::Redo);
@@ -59,17 +55,14 @@ void UndoRedoGuiCommand::init() {
     resetActionTriggerSlot(REDO_(), SLOT(redo()));
 }
 
-//-----------------------------------------------------------------------------
 void UndoRedoGuiCommand::undo() {
     applicationContext()->getCurrentCommandExecuter()->undo();
 }
 
-//-----------------------------------------------------------------------------
 void UndoRedoGuiCommand::redo() {
     applicationContext()->getCurrentCommandExecuter()->redo();
 }
 
-//-------------------------------------------------------------------------
 void UndoRedoGuiCommand::evaluateEnabledness() {
     bool can_undo = getTabEditState() != TAB_STATE_NO_UNDO && getTabEditState() != TAB_STATE_NO_REDO_NO_UNDO
                     && getTabEditState() != NO_TAB_EDIT_STATE

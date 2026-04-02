@@ -15,7 +15,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 EventEditingWidget::EventEditingWidget(QSharedPointer<EventManager> event_manager,
     QSharedPointer<CommandExecuter> command_executer,
     QWidget* parent)
@@ -61,7 +60,6 @@ EventEditingWidget::EventEditingWidget(QSharedPointer<EventManager> event_manage
     }
 }
 
-//-----------------------------------------------------------------------------
 void EventEditingWidget::updateShownEventTypes(std::set<EventType> const& shown_event_types) {
     setSelfUpdating(true);
 
@@ -72,7 +70,6 @@ void EventEditingWidget::updateShownEventTypes(std::set<EventType> const& shown_
     setSelfUpdating(false);
 }
 
-//-----------------------------------------------------------------------------
 void EventEditingWidget::updateSelectedEventInfo(QSharedPointer<SignalEvent const> selected_signal_event) {
     setSelfUpdating(true);
     selected_signal_event_ = selected_signal_event;
@@ -102,7 +99,6 @@ void EventEditingWidget::updateSelectedEventInfo(QSharedPointer<SignalEvent cons
     setSelfUpdating(false);
 }
 
-//-------------------------------------------------------------------
 void EventEditingWidget::on_type_combobox__currentIndexChanged(int combo_box_index) {
     if (isSelfUpdating() || selected_signal_event_.isNull()) return;
 
@@ -124,7 +120,6 @@ void EventEditingWidget::on_type_combobox__currentIndexChanged(int combo_box_ind
     }
 }
 
-//-------------------------------------------------------------------
 void EventEditingWidget::on_begin_spinbox__editingFinished() {
     if (isSelfUpdating() || selected_signal_event_.isNull()) return;
 
@@ -147,7 +142,6 @@ void EventEditingWidget::on_begin_spinbox__editingFinished() {
     }
 }
 
-//-------------------------------------------------------------------
 void EventEditingWidget::on_duration_spinbox__editingFinished() {
     if (isSelfUpdating() || selected_signal_event_.isNull()) return;
 
@@ -160,13 +154,11 @@ void EventEditingWidget::on_duration_spinbox__editingFinished() {
     command_executer_->executeCommand(resize_command);
 }
 
-//-------------------------------------------------------------------
 void EventEditingWidget::setSelfUpdating(bool self_updating) {
     QMutexLocker locker(&self_updating_mutex_);
     self_updating_ = self_updating;
 }
 
-//-------------------------------------------------------------------
 bool EventEditingWidget::isSelfUpdating() {
     QMutexLocker locker(&self_updating_mutex_);
     return self_updating_;

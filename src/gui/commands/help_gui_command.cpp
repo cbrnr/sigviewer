@@ -10,7 +10,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 namespace {
 
 class HelpGuiCommandFactory : public GuiActionCommandFactory {
@@ -32,22 +31,18 @@ QStringList const HelpGuiCommand::ACTIONS_() {
     return result;
 }
 
-//-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator HelpGuiCommand::registrator_("Help",
     QSharedPointer<HelpGuiCommandFactory>(new HelpGuiCommandFactory));
 
-//-----------------------------------------------------------------------------
 HelpGuiCommand::HelpGuiCommand() : GuiActionCommand(ACTIONS_()) {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 void HelpGuiCommand::init() {
     resetActionTriggerSlot(ABOUT_(), SLOT(showAboutDialog()));
     setIcon(ABOUT_(), QIcon::fromTheme("help"));
 }
 
-//-----------------------------------------------------------------------------
 void HelpGuiCommand::showAboutDialog() {
     dialog_ = new QDialog(0);
     Ui::aboutDialog ui;

@@ -15,19 +15,15 @@ namespace sigviewer {
 
 class DeleteEventUndoCommand : public QUndoCommand {
    public:
-    //-------------------------------------------------------------------------
     /// constructor
     DeleteEventUndoCommand(QSharedPointer<EventManager> event_manager, EventID event_id);
 
-    //-------------------------------------------------------------------------
     /// destructor
     virtual ~DeleteEventUndoCommand();
 
-    //-------------------------------------------------------------------------
     /// recreates the deleted event
     virtual void undo();
 
-    //-------------------------------------------------------------------------
     /// deletes the event
     virtual void redo();
 
@@ -36,11 +32,9 @@ class DeleteEventUndoCommand : public QUndoCommand {
     EventID event_id_;
     QSharedPointer<SignalEvent const> deleted_event_;
 
-    //-------------------------------------------------------------------------
     /// copy-constructor disabled
     DeleteEventUndoCommand(DeleteEventUndoCommand const&);
 
-    //-------------------------------------------------------------------------
     /// assignment-operator disabled
     DeleteEventUndoCommand& operator=(DeleteEventUndoCommand const&);
 };

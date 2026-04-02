@@ -14,40 +14,29 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 /// @class BasicHeader (common for all file formats)
 /// @brief base class for any biosignal file header
 class BasicHeader {
    public:
-    //-------------------------------------------------------------------------
     virtual ~BasicHeader() {}
 
-    //-------------------------------------------------------------------------
     QString getFileTypeString() const;
 
-    //-------------------------------------------------------------------------
     QString getFilePath() const { return file_path_; }
 
-    //-------------------------------------------------------------------------
     virtual QMap<QString, QString> getPatientInfo() const { return patient_info_; }
 
-    //-------------------------------------------------------------------------
     /// may include recording time, triggered, etc.
     virtual QMap<QString, QString> getRecordingInfo() const { return recording_info_; }
 
-    //-------------------------------------------------------------------------
     float64 getSampleRate() const;
 
-    //-------------------------------------------------------------------------
     QSharedPointer<SignalChannel const> getChannel(ChannelID id) const;
 
-    //-------------------------------------------------------------------------
     unsigned getNumberChannels() const;
 
-    //-------------------------------------------------------------------------
     virtual size_t getNumberOfSamples() const = 0;
 
-    //-------------------------------------------------------------------------
     virtual QMap<unsigned, QString> getNamesOfUserSpecificEvents() const {
         return QMap<unsigned, QString>();
     }
@@ -58,32 +47,26 @@ class BasicHeader {
     void setEventSamplerate(double event_sample_rate);
 
    protected:
-    //-------------------------------------------------------------------------
     BasicHeader(QString const& file_path) : file_path_(file_path) {}
 
     // events
     uint32 number_events_;
     double event_sample_rate_;
 
-    //-------------------------------------------------------------------------
     /// optional
     void setFileTypeString(QString const& file_type_string);
 
-    //-------------------------------------------------------------------------
     /// required
     void setSampleRate(float64 sample_rate);
 
-    //-------------------------------------------------------------------------
     /// required
     void addChannel(ChannelID id, QSharedPointer<SignalChannel const> channel);
 
-    //-------------------------------------------------------------------------
     /// optional
     void addRecordingInfo(QString const& info_label, QString const& value) {
         recording_info_[info_label] = value;
     }
 
-    //-------------------------------------------------------------------------
     /// optional
     void addPatientInfo(QString const& info_label, QString const& value) {
         patient_info_[info_label] = value;

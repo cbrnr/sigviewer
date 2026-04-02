@@ -8,10 +8,8 @@
 
 namespace sigviewer {
 
-//-------------------------------------------------------------------------------------------------
 #define UNKNOWN_GROUP_ID QObject::tr("Unknown Group")
 
-//-------------------------------------------------------------------------------------------------
 EventTableFileReader::EventTableFileReader() {
     load();
     event_group_ids_.append(UNKNOWN_GROUP_ID);
@@ -72,15 +70,12 @@ QString EventTableFileReader::getEventName(uint16 event_type_id) const {
                                         : QObject::tr("NO SUCH EVENT TYPE");
 }
 
-//-----------------------------------------------------------------------------
 void EventTableFileReader::setEventName(EventType event_type_id, QString const& name) {
     event_type2name_[event_type_id].name = name;
 }
 
-//-----------------------------------------------------------------------------
 void EventTableFileReader::restoreEventNames() { load(); }
 
-//-----------------------------------------------------------------------------
 std::set<EventType> EventTableFileReader::getEventsOfGroup(QString const& group_id) const {
     std::set<EventType> group_types;
     foreach (EventType event_type, event_types_)
@@ -96,12 +91,10 @@ QString EventTableFileReader::getEventGroupId(uint16 event_type_id) const {
     return it != event_type2name_.end() ? it.value().group_id : "";
 }
 
-//-------------------------------------------------------------------------------------------------
 bool EventTableFileReader::entryExists(EventType type) const {
     return event_types_.contains(type);
 }
 
-//-------------------------------------------------------------------------------------------------
 void EventTableFileReader::addEntry(EventType type, QString const& name, QString group_id) {
     if (event_types_.contains(type)) return;
     event_types_.append(type);
@@ -122,7 +115,6 @@ void EventTableFileReader::addEntry(EventType type, QString const& name, QString
     event_type2name_[type] = item;
 }
 
-//-------------------------------------------------------------------
 std::set<EventType> EventTableFileReader::getAllEventTypes() const {
     std::set<EventType> type_set;
     for (IntIterator it = event_types_.begin(); it != event_types_.end(); ++it) {

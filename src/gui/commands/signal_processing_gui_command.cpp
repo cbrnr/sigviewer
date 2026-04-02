@@ -14,7 +14,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 namespace {
 
 class SignalProcessingGuiCommandFactory : public GuiActionCommandFactory {
@@ -47,29 +46,24 @@ QStringList const SignalProcessingGuiCommand::ACTIONS_() {
     return result;
 }
 
-//-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator SignalProcessingGuiCommand::registrator_(
     "Signal Processing",
     QSharedPointer<GuiActionCommandFactory>(new SignalProcessingGuiCommandFactory));
 
-//-----------------------------------------------------------------------------
 SignalProcessingGuiCommand::SignalProcessingGuiCommand()
     : GuiActionCommand(ACTIONS_()) {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 void SignalProcessingGuiCommand::init() {
     resetActionTriggerSlot(MEAN_(), SLOT(calculateMeanAndStandardDeviation()));
     resetActionTriggerSlot(POWER_SPECTRUM_(), SLOT(calculatePowerSpectrum()));
 }
 
-//-----------------------------------------------------------------------------
 void SignalProcessingGuiCommand::evaluateEnabledness() {
     disableIfNoFileIsOpened(ACTIONS_());
 }
 
-//-----------------------------------------------------------------------------
 void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation() {
     ChannelManager const& channel_manager = currentFileContext()->getChannelManager();
     QSharedPointer<EventManager> event_manager = currentFileContext()->getEventManager();
@@ -129,7 +123,6 @@ void SignalProcessingGuiCommand::calculateMeanAndStandardDeviation() {
     createVisualisation(tr("Mean"), *processed_channel_manager);
 }
 
-//-------------------------------------------------------------------------
 void SignalProcessingGuiCommand::calculatePowerSpectrum() {
     ChannelManager const& channel_manager = currentFileContext()->getChannelManager();
     QSharedPointer<EventManager> event_manager = currentFileContext()->getEventManager();
@@ -187,7 +180,6 @@ void SignalProcessingGuiCommand::calculatePowerSpectrum() {
     createVisualisation(tr("Power Spectrum"), *processed_channel_manager);
 }
 
-//-------------------------------------------------------------------------
 QSharedPointer<EventTimeSelectionDialog> SignalProcessingGuiCommand::getFinishedEventTimeSelectionDialog() {
     QSharedPointer<EventTimeSelectionDialog> event_dialog(new EventTimeSelectionDialog(
         currentFileContext()->getMainVisualisationModel()->getShownEventTypes(),
@@ -201,7 +193,6 @@ QSharedPointer<EventTimeSelectionDialog> SignalProcessingGuiCommand::getFinished
         return QSharedPointer<EventTimeSelectionDialog>(0);
 }
 
-//-------------------------------------------------------------------------
 void SignalProcessingGuiCommand::createVisualisation(QString const& title,
     ChannelManager const& channel_manager) {
     QSharedPointer<SignalVisualisationModel> signal_visualisation_model =

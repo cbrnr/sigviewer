@@ -22,7 +22,6 @@ class EventTableItem : public QTableWidgetItem {
     }
 };
 
-//-------------------------------------------------------------------------
 EventTableWidget::EventTableWidget(QSharedPointer<TabContext> tab_context,
     QSharedPointer<EventManager> event_manager,
     ChannelManager const& channel_manager,
@@ -53,12 +52,10 @@ EventTableWidget::EventTableWidget(QSharedPointer<TabContext> tab_context,
     ui_.horizontalLayout->addWidget(toolbar);
 }
 
-//-------------------------------------------------------------------------
 EventTableWidget::~EventTableWidget() {
     qDebug() << "EventTableWidget::~EventTableWidget";
 }
 
-//-------------------------------------------------------------------------
 QList<EventID> EventTableWidget::getSelectedEvents() const {
     QSet<EventID> selected_events;
     foreach (QTableWidgetItem* item, ui_.event_table_->selectedItems())
@@ -66,7 +63,6 @@ QList<EventID> EventTableWidget::getSelectedEvents() const {
     return selected_events.values();
 }
 
-//-------------------------------------------------------------------------
 QSharedPointer<EventView> EventTableWidget::getEventView() {
     if (event_table_view_model_.isNull())
         event_table_view_model_ =
@@ -75,7 +71,6 @@ QSharedPointer<EventView> EventTableWidget::getEventView() {
     return event_table_view_model_;
 }
 
-//-------------------------------------------------------------------------
 void EventTableWidget::addToTable(QSharedPointer<SignalEvent const> event) {
     int row = ui_.event_table_->rowCount();
     ui_.event_table_->insertRow(row);
@@ -105,7 +100,6 @@ void EventTableWidget::addToTable(QSharedPointer<SignalEvent const> event) {
     ui_.event_table_->setItem(row, ID_INDEX_, id_item);
 }
 
-//-------------------------------------------------------------------------
 void EventTableWidget::removeFromTable(EventID event) {
     qDebug() << "EventTableWidget::removeFromTable " << event;
     QList<int> rows_to_remove;
@@ -116,7 +110,6 @@ void EventTableWidget::removeFromTable(EventID event) {
     foreach (int row, rows_to_remove) ui_.event_table_->removeRow(row);
 }
 
-//-------------------------------------------------------------------------
 void EventTableWidget::updateEventEntry(EventID event_id) {
     QSharedPointer<SignalEvent const> event = event_manager_->getEvent(event_id);
     bool updated = false;
@@ -137,7 +130,6 @@ void EventTableWidget::updateEventEntry(EventID event_id) {
     }
 }
 
-//-------------------------------------------------------------------------
 void EventTableWidget::on_event_table__itemSelectionChanged() {
     if (ui_.event_table_->selectedItems().size()) {
         qDebug() << "EventTableWidget::on_event_table__itemSelectionChanged";
@@ -146,12 +138,10 @@ void EventTableWidget::on_event_table__itemSelectionChanged() {
         tab_context_->setSelectionState(TAB_STATE_NO_EVENT_SELECTED);
 }
 
-//-------------------------------------------------------------------------
 void EventTableWidget::showEvent(QShowEvent* /*event*/) {
     on_event_table__itemSelectionChanged();
 }
 
-//-------------------------------------------------------------------------
 void EventTableWidget::buildTable() {
     foreach (EventID event_id, event_manager_->getAllEvents())
         addToTable(event_manager_->getEvent(event_id));

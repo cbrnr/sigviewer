@@ -29,7 +29,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 // constructor
 SignalBrowserView::SignalBrowserView(QSharedPointer<SignalVisualisationModel> signal_browser_model,
     QSharedPointer<EventManager> event_manager,
@@ -60,7 +59,6 @@ SignalBrowserView::SignalBrowserView(QSharedPointer<SignalVisualisationModel> si
     horizontal_scrollbar_->setSingleStep(80);
 }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::resizeScene(int32 width, int32 height) {
     QPointF left_upper_corner = graphics_view_->mapToScene(0, 0);
 
@@ -77,7 +75,6 @@ void SignalBrowserView::resizeScene(int32 width, int32 height) {
     emit visibleYChanged(graphics_view_->mapToScene(0, 0).y());
 }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::addSignalGraphicsItem(ChannelID channel_nr,
     SignalGraphicsItem* graphics_item,
     QString const& label) {
@@ -91,7 +88,6 @@ void SignalBrowserView::addSignalGraphicsItem(ChannelID channel_nr,
     connect(graphics_item, SIGNAL(mouseMoving(bool)), x_axis_widget_, SLOT(enableHighlightTime(bool)));
 }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::removeSignalGraphicsItem(ChannelID channel_nr, SignalGraphicsItem* graphics_item) {
     disconnect(graphics_item, 0, x_axis_widget_, 0);
     disconnect(graphics_item, 0, y_axis_widget_, 0);
@@ -102,7 +98,6 @@ void SignalBrowserView::removeSignalGraphicsItem(ChannelID channel_nr, SignalGra
     graphics_view_->update();
 }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::addEventGraphicsItem(EventGraphicsItem* event_graphics_item) {
     graphics_scene_->addItem(event_graphics_item);
     graphics_view_->update();
@@ -113,7 +108,6 @@ void SignalBrowserView::addEventGraphicsItem(EventGraphicsItem* event_graphics_i
     connect(event_graphics_item, SIGNAL(mouseMoving(bool)), x_axis_widget_, SLOT(enableHighlightTime(bool)));
 }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::removeEventGraphicsItem(EventGraphicsItem* event_graphics_item) {
     qDebug() << "SignalBrowserView::removeEventGraphicsItem " << event_graphics_item->getId();
     graphics_view_->update();
@@ -121,12 +115,10 @@ void SignalBrowserView::removeEventGraphicsItem(EventGraphicsItem* event_graphic
              << event_graphics_item->getId() << " finished";
 }
 
-//-----------------------------------------------------------------------------
 int32 SignalBrowserView::getVisibleX() const {
     return graphics_view_->mapToScene(0, 0).x();
 }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::goTo(float32 x) {
     double y = graphics_view_->mapToScene(0, 0).y();
     x += graphics_view_->width() / 2;
@@ -135,7 +127,6 @@ void SignalBrowserView::goTo(float32 x) {
     graphics_scene_->update(0, 0, graphics_scene_->width(), graphics_scene_->height());
 }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::updateWidgets(bool update_view) {
     if (update_view) graphics_view_->viewport()->update();
     x_axis_widget_->update();
@@ -144,7 +135,6 @@ void SignalBrowserView::updateWidgets(bool update_view) {
     emit visibleYChanged(graphics_view_->mapToScene(0, 0).y());
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<QImage> SignalBrowserView::renderVisibleScene() const {
     QSharedPointer<QImage> image(new QImage(graphics_view_->viewport()->width(),
         graphics_view_->viewport()->height(),
@@ -157,32 +147,26 @@ QSharedPointer<QImage> SignalBrowserView::renderVisibleScene() const {
     return image;
 }
 
-//-----------------------------------------------------------------------------
 bool SignalBrowserView::getXAxisVisibility() const {
     return x_axis_widget_->isVisible();
 }
 
-//-----------------------------------------------------------------------------
 bool SignalBrowserView::getYAxisVisibility() const {
     return y_axis_widget_->isVisible();
 }
 
-//-----------------------------------------------------------------------------
 bool SignalBrowserView::getLabelsVisibility() const {
     return label_widget_->isVisible();
 }
 
-//-----------------------------------------------------------------------------
 int SignalBrowserView::getViewportHeight() const {
     return graphics_view_->viewport()->height();
 }
 
-//-----------------------------------------------------------------------------
 int SignalBrowserView::getViewportWidth() const {
     return graphics_view_->viewport()->width();
 }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::setMode(SignalVisualisationMode mode) {
     double channelHeight = model_->getSignalViewSettings()->getChannelHeight();
     double oldCentralWidgetHeight = graphics_view_->height();
@@ -224,7 +208,6 @@ void SignalBrowserView::setMode(SignalVisualisationMode mode) {
     model_->getSignalViewSettings()->setChannelHeight(round(channelHeight * factor));
 }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::graphicsViewResized(QResizeEvent* event) {
     unsigned channel_height = model_->getSignalViewSettings()->getChannelHeight();
     if (!channel_height) return;
@@ -277,7 +260,6 @@ void SignalBrowserView::toggleXWidget(bool enabled) {
         model_->getSignalViewSettings()->setChannelHeight(channelHeight);
 }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::verticalSrollbarMoved(int) {
     label_widget_->update();
     qreal y = graphics_view_->mapToScene(0, 0).y();
@@ -285,19 +267,16 @@ void SignalBrowserView::verticalSrollbarMoved(int) {
     emit visibleYChanged(y);
 }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::horizontalSrollbarMoved(int) {
     emit visibleXChanged(graphics_view_->mapToScene(0, 0).x());
 }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::horizontalScrollBarRangeChaned(int min, int max) {
     horizontal_scrollbar_->setRange(min, max);
     horizontal_scrollbar_->setPageStep(graphics_view_->horizontalScrollBar()->pageStep());
     emit visibleXChanged(graphics_view_->mapToScene(0, 0).x());
 }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::verticalScrollBarRangeChaned(int min, int max) {
     label_widget_->update();
     y_axis_widget_->update();
@@ -308,10 +287,8 @@ void SignalBrowserView::verticalScrollBarRangeChaned(int min, int max) {
     emit visibleYChanged(y);
 }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::dropEvent(QDropEvent* event) { event->ignore(); }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::changeEvent(QEvent* event) {
     if (event->type() == QEvent::PaletteChange)
         emit model_->getSignalViewSettings()
@@ -319,10 +296,8 @@ void SignalBrowserView::changeEvent(QEvent* event) {
     QFrame::changeEvent(event);
 }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::dragEnterEvent(QDragEnterEvent* event) { event->ignore(); }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::initWidgets(QSharedPointer<EventManager> event_manager,
     QSharedPointer<CommandExecuter> command_executer) {
     y_axis_widget_ = new YAxisWidget(this, model_->getSignalViewSettings());
@@ -420,7 +395,6 @@ void SignalBrowserView::initWidgets(QSharedPointer<EventManager> event_manager,
         SLOT(setMode(SignalVisualisationMode)));
 }
 
-//-----------------------------------------------------------------------------
 void SignalBrowserView::createLayout() {
     layout_ = new QGridLayout(this);
 

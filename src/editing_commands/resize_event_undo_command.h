@@ -15,22 +15,18 @@ namespace sigviewer {
 
 class ResizeEventUndoCommand : public QUndoCommand {
    public:
-    //-------------------------------------------------------------------------
     /// constructor
     ResizeEventUndoCommand(QSharedPointer<EventManager> event_manager,
         EventID id,
         uint32 new_start_position,
         uint32 new_duration);
 
-    //-------------------------------------------------------------------------
     /// destructor
     virtual ~ResizeEventUndoCommand() {}
 
-    //-------------------------------------------------------------------------
     /// undos the resizing
     virtual void undo();
 
-    //-------------------------------------------------------------------------
     /// resizes the event
     virtual void redo();
 

@@ -29,7 +29,6 @@ QMutex EventGraphicsItem::event_handling_mutex_;
 QMutex EventGraphicsItem::context_menu_mutex_;
 EventContextMenu* EventGraphicsItem::context_menu_ = 0;
 
-//-----------------------------------------------------------------------------
 EventGraphicsItem::EventGraphicsItem(SignalBrowserModel& model,
     QSharedPointer<SignalViewSettings const> signal_view_settings,
     QSharedPointer<SignalEvent const> signal_event,
@@ -47,15 +46,12 @@ EventGraphicsItem::EventGraphicsItem(SignalBrowserModel& model,
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 EventGraphicsItem::~EventGraphicsItem() {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 int32 EventGraphicsItem ::getId() const { return signal_event_->getId(); }
 
-//-----------------------------------------------------------------------------
 void EventGraphicsItem::setSelected(bool selected) {
     state_ = STATE_NONE;
     is_selected_ = selected;
@@ -63,12 +59,10 @@ void EventGraphicsItem::setSelected(bool selected) {
         scene()->update(pos().x() - 5, pos().y() - 5, width_ + 10, height_ + 10);
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<SignalEvent const> EventGraphicsItem::getSignalEvent() const {
     return signal_event_;
 }
 
-//-----------------------------------------------------------------------------
 bool EventGraphicsItem::displayContextMenu(QGraphicsSceneContextMenuEvent* event, QMenu* channel_menu) {
     context_menu_mutex_.lock();
     bool menu_shown = false;
@@ -82,7 +76,6 @@ bool EventGraphicsItem::displayContextMenu(QGraphicsSceneContextMenuEvent* event
     return menu_shown;
 }
 
-//-----------------------------------------------------------------------------
 bool EventGraphicsItem::displaySelectionMenu(QGraphicsSceneMouseEvent* event) {
     context_menu_mutex_.lock();
     bool menu_shown = false;
@@ -96,7 +89,6 @@ bool EventGraphicsItem::displaySelectionMenu(QGraphicsSceneMouseEvent* event) {
     return menu_shown;
 }
 
-//-----------------------------------------------------------------------------
 void EventGraphicsItem::updateToSignalEvent() {
     float64 pixel_per_sample = signal_view_settings_->getPixelsPerSample();
     QRectF old_rect;
@@ -133,10 +125,8 @@ void EventGraphicsItem::updateToSignalEvent() {
     update();
 }
 
-//-----------------------------------------------------------------------------
 QRectF EventGraphicsItem::boundingRect() const { return QRectF(0, 0, width_, height_); }
 
-//-----------------------------------------------------------------------------
 void EventGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget*) {
     QRect clip(option->exposedRect.toRect());
 
@@ -147,7 +137,6 @@ void EventGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*
     painter->fillRect(clip, color_);
 }
 
-//-----------------------------------------------------------------------------
 void EventGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     event_handling_mutex_.lock();
 
@@ -181,7 +170,6 @@ void EventGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     event_handling_mutex_.unlock();
 }
 
-//-----------------------------------------------------------------------------
 void EventGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* mouse_event) {
     float32 pixel_per_sample = signal_view_settings_->getPixelsPerSample();
     int32 mouse_pos_rounded = 0.5 + (mouse_event->scenePos().x() / pixel_per_sample);
@@ -217,7 +205,6 @@ void EventGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* mouse_event) {
     }
 }
 
-//-----------------------------------------------------------------------------
 void EventGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent*) {
     float32 pixel_per_sample = signal_view_settings_->getPixelsPerSample();
     switch (state_) {
@@ -244,13 +231,11 @@ void EventGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent*) {
     emit mouseMoving(false);
 }
 
-//-----------------------------------------------------------------------------
 void EventGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event) {
     if (signal_browser_model_.getMode() != MODE_VIEW_OPTIONS) addContextMenuEntry();
     event->ignore();
 }
 
-//-----------------------------------------------------------------------------
 EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneMouseEvent* e) {
     EventGraphicsItem* old_selected_item = signal_browser_model_.getSelectedEventItem();
     QPoint mouse_pos(e->scenePos().x(), e->scenePos().y());
@@ -306,7 +291,6 @@ EventGraphicsItem::Action EventGraphicsItem::getMousePressAction(QGraphicsSceneM
     return ACTION_NONE;
 }
 
-//-----------------------------------------------------------------------------
 void EventGraphicsItem::addContextMenuEntry() {
     context_menu_mutex_.lock();
     if (!context_menu_)

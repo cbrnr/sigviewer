@@ -18,17 +18,13 @@ class FileSignalWriter {
    public:
     virtual ~FileSignalWriter() {}
 
-    //-------------------------------------------------------------------------
     virtual QPair<FileSignalWriter*, QString> createInstance(QString const& file_path) = 0;
 
-    //-------------------------------------------------------------------------
     virtual bool supportsSavingEvents() const { return false; }
 
-    //-------------------------------------------------------------------------
     virtual QString saveEventsToSignalFile(QSharedPointer<EventManager const>,
         std::set<EventType> const& types) = 0;
 
-    //-------------------------------------------------------------------------
     virtual QString save(QSharedPointer<FileContext const> file_context) {
         QSharedPointer<EventManager const> event_manager = file_context->getEventManager();
         if (event_manager.isNull())
@@ -37,7 +33,6 @@ class FileSignalWriter {
             return save(file_context, event_manager->getEventTypes(""));
     }
 
-    //-------------------------------------------------------------------------
     virtual QString save(QSharedPointer<FileContext const> file_context,
         std::set<EventType> const& types) = 0;
 

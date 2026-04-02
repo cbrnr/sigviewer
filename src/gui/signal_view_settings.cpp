@@ -6,7 +6,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 SignalViewSettings::SignalViewSettings(ChannelManager const& channel_manager)
     : pixels_per_sample_(1),
       channel_overlapping_(0),
@@ -16,14 +15,12 @@ SignalViewSettings::SignalViewSettings(ChannelManager const& channel_manager)
     grid_fragmentation_[Qt::Vertical] = 4;
 }
 
-//-----------------------------------------------------------------------------
 void SignalViewSettings::setPixelsPerSample(float pixels_per_sample) {
     float old_pixel_per_sample = pixels_per_sample_;
     pixels_per_sample_ = pixels_per_sample;
     if (old_pixel_per_sample != pixels_per_sample_) emit pixelsPerSampleChanged();
 }
 
-//-----------------------------------------------------------------------------
 void SignalViewSettings::setChannelOverlapping(float channel_overlapping) {
     float old_channel_overlapping = channel_overlapping_;
     channel_overlapping_ = channel_overlapping;
@@ -31,7 +28,6 @@ void SignalViewSettings::setChannelOverlapping(float channel_overlapping) {
         emit channelOverlappingChanged();
 }
 
-//-------------------------------------------------------------------------
 void SignalViewSettings::setChannelHeight(int channel_heigth_in_pixels) {
     int old_channel_height = channel_heigth_in_pixels_;
     channel_heigth_in_pixels_ = channel_heigth_in_pixels;
@@ -41,7 +37,6 @@ void SignalViewSettings::setChannelHeight(int channel_heigth_in_pixels) {
     }
 }
 
-//-------------------------------------------------------------------------
 void SignalViewSettings::setGridFragmentation(Qt::Orientation orientation, int fragmentation) {
     int old_fragmentation = grid_fragmentation_[orientation];
     grid_fragmentation_[orientation] = fragmentation;

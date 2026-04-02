@@ -17,7 +17,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 YAxisWidget::YAxisWidget(QWidget* parent, QSharedPointer<const SignalViewSettings> signal_view_settings)
     : QWidget(parent),
       channel_height_(0),
@@ -27,12 +26,10 @@ YAxisWidget::YAxisWidget(QWidget* parent, QSharedPointer<const SignalViewSetting
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 void YAxisWidget::addChannel(ChannelID channel_nr, SignalGraphicsItem const* const signal_item) {
     if (signal_item) channel_nr2signal_graphics_item_[channel_nr] = signal_item;
 }
 
-//-----------------------------------------------------------------------------
 void YAxisWidget::removeChannel(ChannelID channel_nr) {
     QMap<ChannelID, SignalGraphicsItem const*>::iterator it =
         channel_nr2signal_graphics_item_.find(channel_nr);
@@ -43,28 +40,23 @@ void YAxisWidget::removeChannel(ChannelID channel_nr) {
     }
 }
 
-//-----------------------------------------------------------------------------
 void YAxisWidget::changeSignalHeight(unsigned signal_height) {
     channel_height_ = signal_height;
     update();
 }
 
-//-----------------------------------------------------------------------------
 void YAxisWidget::changeYStart(int32 y_start) {
     y_start_ = y_start;
     update();
 }
 
-//-----------------------------------------------------------------------------
 void YAxisWidget::updateChannel(ChannelID) { update(); }
 
-//-----------------------------------------------------------------------------
 void YAxisWidget::enableSeparator(bool enable) {
     enable_separator = enable;
     update();
 }
 
-//-----------------------------------------------------------------------------
 void YAxisWidget::changeLabelColor(QColor labelColor) {
     label_color_ = labelColor;
     update();
@@ -130,7 +122,6 @@ void YAxisWidget::paintEvent(QPaintEvent*) {
     //    }
 }
 
-//-----------------------------------------------------------------------------
 void YAxisWidget::contextMenuEvent(QContextMenuEvent* event) {
     QMenu menu;
     menu.addAction(GuiActionFactory::getInstance()
@@ -143,7 +134,6 @@ void YAxisWidget::contextMenuEvent(QContextMenuEvent* event) {
     menu.exec(event->globalPos());
 }
 
-//-------------------------------------------------------------------
 void YAxisWidget::paintYAxisLabels(QPainter* painter,
     float64 offset,
     float64 y_grid_pixel_intervall,
@@ -222,7 +212,6 @@ void YAxisWidget::paintYAxisLabels(QPainter* painter,
     }
 }
 
-//-------------------------------------------------------------------
 void YAxisWidget::paintYUnits(QPainter* painter, QString const& unit_string, float64 channelHeight) {
     if (unit_string.size() > 4) {
         painter->rotate(-90);

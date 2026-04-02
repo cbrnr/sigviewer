@@ -18,11 +18,9 @@
 
 namespace sigviewer {
 
-//-------------------------------------------------------------------------
 class AdaptBrowserViewWidget : public QWidget {
     Q_OBJECT
    public:
-    //-------------------------------------------------------------------------
     explicit AdaptBrowserViewWidget(SignalVisualisationView const* signal_visualisation_view,
         QSharedPointer<SignalViewSettings> settings_,
         YAxisWidget* yAxisWidget,
@@ -34,40 +32,30 @@ class AdaptBrowserViewWidget : public QWidget {
     double getSecsPerPage() { return ui_.secsPerPageSpinbox->value(); }
 
    signals:
-    //-------------------------------------------------------------------------
+
     void xAxisVisibilityChanged(bool visible);
 
-    //-------------------------------------------------------------------------
     void yAxisVisibilityChanged(bool visible);
 
-    //-------------------------------------------------------------------------
     void labelsVisibilityChanged(bool visible);
    private slots:
-    //-------------------------------------------------------------------------
+
     void on_channelOverlappingSlider_valueChanged(int value);
 
-    //-------------------------------------------------------------------------
     void on_yGridSlider_valueChanged(int value);
 
-    //-------------------------------------------------------------------------
     void on_channelsPerPageSpinbox_valueChanged(int value);
 
-    //-------------------------------------------------------------------------
     void on_secsPerPageSpinbox_valueChanged(double value);
 
-    //-------------------------------------------------------------------------
     void updateValues();
 
-    //-------------------------------------------------------------------------
     void selfUpdatingFinished();
 
-    //-------------------------------------------------------------------------
     void on_xGridCheckbox_stateChanged(int checkState);
 
-    //-------------------------------------------------------------------------
     void on_yGridCheckbox_stateChanged(int checkState);
 
-    //-------------------------------------------------------------------------
     void on_border_checkBox__stateChanged(int checkState);
 
     void on_grid_color_button_clicked();
@@ -77,7 +65,6 @@ class AdaptBrowserViewWidget : public QWidget {
     void on_color_checkBox_stateChanged(int checkState);
 
    private:
-    //-------------------------------------------------------------------------
     virtual void showEvent(QShowEvent* event);
 
     SignalVisualisationView const* signal_visualisation_view_;

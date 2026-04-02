@@ -30,7 +30,6 @@ using namespace sigviewer;
 
 QString DownSamplingThread::PROCESS_NAME_("Downsampling...");
 
-//-----------------------------------------------------------------------------
 DownSamplingThread::DownSamplingThread(QList<QSharedPointer<DataBlock>> data,
     unsigned downsampling_step,
     unsigned downsampling_max)
@@ -39,7 +38,6 @@ DownSamplingThread::DownSamplingThread(QList<QSharedPointer<DataBlock>> data,
       downsampling_step_(downsampling_step),
       downsampling_max_(downsampling_max) {}
 
-//-----------------------------------------------------------------------------
 DownSamplingThread::DownSamplingThread(QSharedPointer<ChannelManager> channel_manager,
     unsigned downsampling_step,
     unsigned downsampling_max)
@@ -47,12 +45,10 @@ DownSamplingThread::DownSamplingThread(QSharedPointer<ChannelManager> channel_ma
       downsampling_step_(downsampling_step),
       downsampling_max_(downsampling_max) {}
 
-//-----------------------------------------------------------------------------
 DownSamplingThread::~DownSamplingThread() {
     BackgroundProcesses::instance().removeProcess(PROCESS_NAME_);
 }
 
-//-----------------------------------------------------------------------------
 void DownSamplingThread::run() {
     running_ = true;
 
@@ -71,10 +67,8 @@ void DownSamplingThread::run() {
     running_ = false;
 }
 
-//-------------------------------------------------------------------------
 void DownSamplingThread::runSynchronously() { minMaxDownsampling(); }
 
-//-------------------------------------------------------------------------
 void DownSamplingThread::minMaxDownsampling() {
     std::set<ChannelID> channels = channel_manager_->getChannels();
     size_t num_samples = channel_manager_->getNumberSamples();
@@ -220,7 +214,6 @@ void DownSamplingThread::minMaxDownsampling() {
     channel_manager_->markMinMaxInitialized();
 }
 
-//-------------------------------------------------------------------------
 void DownSamplingThread::downsampleAllOnBasisData() {
     QMap<unsigned, QVector<QSharedPointer<QVector<float32>>>> raw_downsampled_data;
     QMap<unsigned, QVector<QSharedPointer<SPUC::butterworth<float32>>>> low_pass_filters;
@@ -265,7 +258,6 @@ void DownSamplingThread::downsampleAllOnBasisData() {
     BackgroundProcesses::instance().removeProcess(PROCESS_NAME_);
 }
 
-//-------------------------------------------------------------------------
 void DownSamplingThread::downsampleOnDownsampledData() {
     for (unsigned downsampling_factor = downsampling_step_; downsampling_factor < downsampling_max_;
         downsampling_factor *= downsampling_step_) {

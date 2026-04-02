@@ -17,38 +17,31 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 DetrendChannelManager::DetrendChannelManager(ChannelManager* source, double hp_cutoff)
     : source_(source), hp_cutoff_(hp_cutoff) {
     setXAxisUnitLabel(source_->getXAxisUnitLabel());
 }
 
-//-----------------------------------------------------------------------------
 std::set<ChannelID> DetrendChannelManager::getChannels() const {
     return source_->getChannels();
 }
 
-//-----------------------------------------------------------------------------
 uint32 DetrendChannelManager::getNumberChannels() const {
     return source_->getNumberChannels();
 }
 
-//-----------------------------------------------------------------------------
 QString DetrendChannelManager::getChannelLabel(ChannelID id) const {
     return source_->getChannelLabel(id);
 }
 
-//-----------------------------------------------------------------------------
 QString DetrendChannelManager::getChannelLabel(ChannelID id, int streamNumber) const {
     return source_->getChannelLabel(id, streamNumber);
 }
 
-//-----------------------------------------------------------------------------
 QString DetrendChannelManager::getChannelYUnitString(ChannelID id) const {
     return source_->getChannelYUnitString(id);
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<DataBlock const> DetrendChannelManager::getData(ChannelID id,
     unsigned start_pos,
     unsigned length) const {
@@ -67,22 +60,18 @@ QSharedPointer<DataBlock const> DetrendChannelManager::getData(ChannelID id,
     return full_block->createSubBlock(start_pos, length);
 }
 
-//-----------------------------------------------------------------------------
 float64 DetrendChannelManager::getDurationInSec() const {
     return source_->getDurationInSec();
 }
 
-//-----------------------------------------------------------------------------
 size_t DetrendChannelManager::getNumberSamples() const {
     return source_->getNumberSamples();
 }
 
-//-----------------------------------------------------------------------------
 float64 DetrendChannelManager::getSampleRate() const {
     return source_->getSampleRate();
 }
 
-//-----------------------------------------------------------------------------
 // Downsampled min/max data was built from the *raw* signal at file-open time.
 // Re-using it after filtering would show the wrong envelope and break the
 // auto-scale range.  Report that no pre-computed data is available so that
@@ -95,41 +84,34 @@ void DetrendChannelManager::addDownsampledMinMaxVersion(ChannelID /*id*/,
     // intentionally ignored – we do not store downsampled versions
 }
 
-//-----------------------------------------------------------------------------
 unsigned DetrendChannelManager::getNearestDownsamplingFactor(ChannelID /*id*/,
     unsigned /*factor*/) const {
     return 1;  // signal "no pre-computed data" to the renderer
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<DataBlock const> DetrendChannelManager::getDownsampledMin(ChannelID /*id*/,
     unsigned /*factor*/) const {
     return QSharedPointer<DataBlock const>();
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<DataBlock const> DetrendChannelManager::getDownsampledMax(ChannelID /*id*/,
     unsigned /*factor*/) const {
     return QSharedPointer<DataBlock const>();
 }
 
-//-----------------------------------------------------------------------------
 float64 DetrendChannelManager::getMinValue(ChannelID id) const {
     processedChannel(id);  // populates channel_min_cache_ if not done yet
     QMutexLocker lock(&cache_mutex_);
     return channel_min_cache_.value(id, 0.0);
 }
 
-//-----------------------------------------------------------------------------
 float64 DetrendChannelManager::getMaxValue(ChannelID id) const {
     processedChannel(id);
     QMutexLocker lock(&cache_mutex_);
     return channel_max_cache_.value(id, 0.0);
 }
 
-//-----------------------------------------------------------------------------
 // Private helpers
-//-----------------------------------------------------------------------------
 
 void DetrendChannelManager::precomputeFromRawData(ChannelID id,
     QSharedPointer<DataBlock const> raw) const {
@@ -191,7 +173,6 @@ QSharedPointer<QVector<float32>> DetrendChannelManager::processedChannel(Channel
     return cache_.value(id);
 }
 
-//-----------------------------------------------------------------------------
 std::vector<double> DetrendChannelManager::buildFirKernel() const {
     if (hp_cutoff_ <= 0.0) return {};
 
@@ -238,7 +219,6 @@ std::vector<double> DetrendChannelManager::buildFirKernel() const {
     return kernel;
 }
 
-//-----------------------------------------------------------------------------
 // Zero-phase FIR filtering via FFT overlap-save.
 //
 // The kernel is a linear-phase (Type-I, odd-length, symmetric) FIR built by

@@ -8,7 +8,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 ResizeEventUndoCommand::ResizeEventUndoCommand(QSharedPointer<EventManager> event_manager,
     EventID id,
     uint32 new_start_position,
@@ -20,7 +19,6 @@ ResizeEventUndoCommand::ResizeEventUndoCommand(QSharedPointer<EventManager> even
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 void ResizeEventUndoCommand::undo() {
     QSharedPointer<SignalEvent> event = event_manager_->getAndLockEventForEditing(event_id_);
     event->setDuration(old_duration_);
@@ -28,7 +26,6 @@ void ResizeEventUndoCommand::undo() {
     event_manager_->updateAndUnlockEvent(event->getId());
 }
 
-//-----------------------------------------------------------------------------
 void ResizeEventUndoCommand::redo() {
     QSharedPointer<SignalEvent> event = event_manager_->getAndLockEventForEditing(event_id_);
     old_duration_ = event->getDuration();

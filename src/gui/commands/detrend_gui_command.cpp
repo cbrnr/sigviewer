@@ -13,7 +13,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 namespace {
 
 class DetrendGuiCommandFactory : public GuiActionCommandFactory {
@@ -25,7 +24,6 @@ class DetrendGuiCommandFactory : public GuiActionCommandFactory {
 
 }  // unnamed namespace
 
-//-----------------------------------------------------------------------------
 QString const DetrendGuiCommand::TOGGLE_DETREND_() {
     static QString value = tr("Remove Offset");
     return value;
@@ -44,14 +42,11 @@ QStringList const DetrendGuiCommand::ACTIONS_() {
     return result;
 }
 
-//-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator DetrendGuiCommand::registrator_("Detrend",
     QSharedPointer<GuiActionCommandFactory>(new DetrendGuiCommandFactory));
 
-//-----------------------------------------------------------------------------
 DetrendGuiCommand::DetrendGuiCommand() : GuiActionCommand(ACTIONS_()) {}
 
-//-----------------------------------------------------------------------------
 void DetrendGuiCommand::init() {
     getQAction(TOGGLE_DETREND_())->setCheckable(true);
     getQAction(TOGGLE_DETREND_())->setIcon(QIcon::fromTheme("trending_down"));
@@ -59,7 +54,6 @@ void DetrendGuiCommand::init() {
     resetActionTriggerSlot(SET_CUTOFF_(), SLOT(setCutoff()));
 }
 
-//-----------------------------------------------------------------------------
 void DetrendGuiCommand::evaluateEnabledness() {
     disableIfNoFileIsOpened(ACTIONS_());
     disableIfNoSignalIsVisualised(ACTIONS_());
@@ -69,7 +63,6 @@ void DetrendGuiCommand::evaluateEnabledness() {
         getQAction(TOGGLE_DETREND_())->setChecked(ctx->isDetrendEnabled());
 }
 
-//-----------------------------------------------------------------------------
 // Pre-compute all channels in the DetrendChannelManager so that the first
 // render is instant.  Shows a progress dialog identical to the file-open one.
 static void prewarmDetrend(QSharedPointer<FileContext> ctx,
@@ -89,7 +82,6 @@ static void prewarmDetrend(QSharedPointer<FileContext> ctx,
     ProgressBar::instance().close();
 }
 
-//-----------------------------------------------------------------------------
 void DetrendGuiCommand::toggleDetrend() {
     QSharedPointer<FileContext> ctx = currentFileContext();
     if (ctx.isNull()) return;
@@ -114,7 +106,6 @@ void DetrendGuiCommand::toggleDetrend() {
     }
 }
 
-//-----------------------------------------------------------------------------
 void DetrendGuiCommand::setCutoff() {
     QSharedPointer<FileContext> ctx = currentFileContext();
     if (ctx.isNull()) return;

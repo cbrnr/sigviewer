@@ -19,18 +19,14 @@ class GuiActionFactory {
    public:
     static GuiActionFactory* getInstance();
 
-    //-------------------------------------------------------------------------
     void registerCommand(QString const& name, QSharedPointer<GuiActionCommand> command);
 
-    //-------------------------------------------------------------------------
     /// the caller must not delete
     QList<QAction*> getQActions(QString const& command_name = "") const;
 
-    //-------------------------------------------------------------------------
     /// the caller must not delete
     QAction* getQAction(QString const& action_id) const;
 
-    //-------------------------------------------------------------------------
     void initAllCommands();
 
    private:

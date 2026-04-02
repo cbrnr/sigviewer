@@ -10,31 +10,23 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 class BioSigWriter : public FileSignalWriter {
    public:
-    //-------------------------------------------------------------------------
     BioSigWriter();
 
-    //-------------------------------------------------------------------------
     virtual QPair<FileSignalWriter*, QString> createInstance(QString const& file_path);
 
-    //-------------------------------------------------------------------------
     virtual ~BioSigWriter() {}
 
-    //-------------------------------------------------------------------------
     virtual bool supportsSavingEvents() const;
 
-    //-------------------------------------------------------------------------
     virtual QString saveEventsToSignalFile(QSharedPointer<EventManager const>,
         std::set<EventType> const& types);
 
-    //-------------------------------------------------------------------------
     virtual QString save(QSharedPointer<FileContext const> file_context,
         std::set<EventType> const& types);
 
    private:
-    //-------------------------------------------------------------------------
     BioSigWriter(FileFormat target_type, QString new_file_path);
 
     FileFormat target_type_;

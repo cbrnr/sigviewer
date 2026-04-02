@@ -9,7 +9,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 /// ChannelManagerProxy
 ///
 /// A ChannelManager that delegates every call to a swappable target.
@@ -18,15 +17,12 @@ namespace sigviewer {
 /// is toggled at run time.
 class ChannelManagerProxy : public ChannelManager {
    public:
-    //-------------------------------------------------------------------------
     explicit ChannelManagerProxy(ChannelManager* target);
 
-    //-------------------------------------------------------------------------
     /// Switch the target and invalidate any cached min/max state so that the
     /// next access recomputes from the new source.
     void setTarget(ChannelManager* target);
 
-    //-------------------------------------------------------------------------
     ChannelManager* getTarget() const { return target_; }
 
     // ---- ChannelManager pure-virtual interface ------------------------------

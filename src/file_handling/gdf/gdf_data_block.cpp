@@ -10,7 +10,6 @@
 
 namespace SigViewer_ {
 
-//-------------------------------------------------------------------------------------------------
 GDFDataBlock::GDFDataBlock(QSharedPointer<GDFSignalCache> cache, ChannelID channel, unsigned length, float32 sample_rate)
     : DataBlock(length, sample_rate),
       channel_(channel),
@@ -19,7 +18,6 @@ GDFDataBlock::GDFDataBlock(QSharedPointer<GDFSignalCache> cache, ChannelID chann
       current_max_(200),
       cache_(cache) {}
 
-//-------------------------------------------------------------------------------------------------
 GDFDataBlock::GDFDataBlock(GDFDataBlock const& src, unsigned start_sample, unsigned length)
     : DataBlock(src, length),
       channel_(src.channel_),
@@ -29,32 +27,25 @@ GDFDataBlock::GDFDataBlock(GDFDataBlock const& src, unsigned start_sample, unsig
       downsampled_map_(src.downsampled_map_),
       cache_(src.cache_) {}
 
-//-------------------------------------------------------------------------------------------------
 GDFDataBlock::~GDFDataBlock() {}
 
-//-------------------------------------------------------------------------------------------------
 QSharedPointer<DataBlock> GDFDataBlock::createSubBlock(uint32 start, uint32 length) const {
     return QSharedPointer<DataBlock>(new GDFDataBlock(*this, start_sample_ + start, length));
 }
 
-//-------------------------------------------------------------------------------------------------
 float32 const& GDFDataBlock::operator[](uint32 index) const {
     current_value_ = cache_->getSample(channel_, start_sample_ + index);
     return current_value_;
 }
 
-//-------------------------------------------------------------------------
 float32 GDFDataBlock::getMin() const { return current_min_; }
 
-//-------------------------------------------------------------------------
 float32 GDFDataBlock::getMax() const { return current_max_; }
 
-//-------------------------------------------------------------------------
 void GDFDataBlock::addDownSampledVersion(QSharedPointer<DataBlock> data, unsigned downsampling_factor) {
     downsampled_map_[downsampling_factor] = data;
 }
 
-//-------------------------------------------------------------------------
 std::pair<QSharedPointer<DataBlock>, unsigned> GDFDataBlock::getNearbyDownsampledBlock(
     unsigned downsampling_factor) const {
     unsigned nearest_factor = 1;

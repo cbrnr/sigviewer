@@ -10,7 +10,7 @@
 
 namespace sigviewer {
 
-////-------------------------------------------------------------------------
+//
 // QString ChannelManager::getChannelLabel(ChannelID id, int streamNumber) const
 //{
 
@@ -24,7 +24,6 @@ void ChannelManager::addDownsampledMinMaxVersion(ChannelID id,
     downsampled_min_map_[id][factor] = min;
 }
 
-//-------------------------------------------------------------------------
 unsigned ChannelManager::getNearestDownsamplingFactor(ChannelID id, unsigned factor) const {
     if (!downsampled_min_map_.contains(id)) return 0;
 
@@ -36,22 +35,18 @@ unsigned ChannelManager::getNearestDownsamplingFactor(ChannelID id, unsigned fac
     return nearest_factor;
 }
 
-//-------------------------------------------------------------------------
 QSharedPointer<DataBlock const> ChannelManager::getDownsampledMin(ChannelID id, unsigned factor) const {
     return downsampled_min_map_[id][factor];
 }
 
-//-------------------------------------------------------------------------
 QSharedPointer<DataBlock const> ChannelManager::getDownsampledMax(ChannelID id, unsigned factor) const {
     return downsampled_max_map_[id][factor];
 }
 
-//-------------------------------------------------------------------------
 float64 ChannelManager::getValueRange(std::set<ChannelID> const& channels) const {
     return getMaxValue(channels) - getMinValue(channels);
 }
 
-//-------------------------------------------------------------------------
 float64 ChannelManager::getMinValue(std::set<ChannelID> const& channels) const {
     if (!min_max_initialized_) initMinMax();
     float64 min = std::numeric_limits<float64>::max();
@@ -59,7 +54,6 @@ float64 ChannelManager::getMinValue(std::set<ChannelID> const& channels) const {
     return min;
 }
 
-//-------------------------------------------------------------------------
 float64 ChannelManager::getMaxValue(std::set<ChannelID> const& channels) const {
     if (!min_max_initialized_) initMinMax();
 
@@ -68,7 +62,6 @@ float64 ChannelManager::getMaxValue(std::set<ChannelID> const& channels) const {
     return max;
 }
 
-//-------------------------------------------------------------------------
 float64 ChannelManager::getMinValue(ChannelID channel_id) const {
     if (!min_max_initialized_) initMinMax();
 
@@ -78,7 +71,6 @@ float64 ChannelManager::getMinValue(ChannelID channel_id) const {
         return std::numeric_limits<float64>::min();
 }
 
-//-------------------------------------------------------------------------
 float64 ChannelManager::getMaxValue(ChannelID channel_id) const {
     if (!min_max_initialized_) initMinMax();
 
@@ -88,7 +80,6 @@ float64 ChannelManager::getMaxValue(ChannelID channel_id) const {
         return std::numeric_limits<float64>::max();
 }
 
-//-------------------------------------------------------------------------
 void ChannelManager::invalidateMinMaxCache() {
     min_max_initialized_ = false;
     min_values_.clear();

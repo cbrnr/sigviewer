@@ -126,13 +126,11 @@ ChannelSelectionDialog::ChannelSelectionDialog(ChannelManager const& channel_man
     ui_.unselect_all_button_->setDisabled(false);
 }
 
-//-----------------------------------------------------------------------------
 void ChannelSelectionDialog::resizeEvent(QResizeEvent* event) {
     ui_.treeWidget->setColumnWidth(0, this->width() * 0.6);
     QDialog::resizeEvent(event);
 }
 
-//-----------------------------------------------------------------------------
 bool ChannelSelectionDialog::isSelected(ChannelID channel_id) {
     QTreeWidgetItemIterator it(ui_.treeWidget);
     int channelNumber = 0;
@@ -149,7 +147,6 @@ bool ChannelSelectionDialog::isSelected(ChannelID channel_id) {
     return false;
 }
 
-//-----------------------------------------------------------------------------
 void ChannelSelectionDialog::setSelected(ChannelID channel_id, bool selected) {
     Qt::CheckState state = selected ? Qt::Checked : Qt::Unchecked;
     QTreeWidgetItemIterator it(ui_.treeWidget);
@@ -166,7 +163,6 @@ void ChannelSelectionDialog::setSelected(ChannelID channel_id, bool selected) {
     }
 }
 
-//-----------------------------------------------------------------------------
 void ChannelSelectionDialog::on_unselect_all_button__clicked() {
     QTreeWidgetItemIterator it(ui_.treeWidget);
     while (*it) {
@@ -178,7 +174,6 @@ void ChannelSelectionDialog::on_unselect_all_button__clicked() {
     }
 }
 
-//-----------------------------------------------------------------------------
 void ChannelSelectionDialog::on_select_all_button__clicked() {
     QTreeWidgetItemIterator it(ui_.treeWidget);
     while (*it) {
@@ -190,7 +185,6 @@ void ChannelSelectionDialog::on_select_all_button__clicked() {
     }
 }
 
-//-----------------------------------------------------------------------------
 void ChannelSelectionDialog::on_reset_colors_button__clicked() {
     QTreeWidgetItemIterator it(ui_.treeWidget);
     while (*it) {
@@ -201,7 +195,6 @@ void ChannelSelectionDialog::on_reset_colors_button__clicked() {
     }
 }
 
-//-----------------------------------------------------------------------------
 void ChannelSelectionDialog::on_button_box__accepted() {
     QTreeWidgetItemIterator it(ui_.treeWidget);
 
@@ -219,7 +212,6 @@ void ChannelSelectionDialog::on_button_box__accepted() {
     color_manager_->saveSettings();
 }
 
-//-----------------------------------------------------------------------------
 void ChannelSelectionDialog::on_set_default_color_button__clicked() {
     QColor new_default_color = QColorDialog::getColor(color_manager_->getDefaultChannelColor(),
         this,
@@ -229,7 +221,6 @@ void ChannelSelectionDialog::on_set_default_color_button__clicked() {
         color_manager_->setDefaultChannelColor(new_default_color);
 }
 
-//-----------------------------------------------------------------------------
 void ChannelSelectionDialog::on_treeWidget_itemClicked(QTreeWidgetItem* item, int column) {
     if (column == COLOR_INDEX_) {
         if (item->text(0).contains(tr("Channel"), Qt::CaseInsensitive)) {
@@ -252,7 +243,6 @@ void ChannelSelectionDialog::on_treeWidget_itemClicked(QTreeWidgetItem* item, in
     }
 }
 
-//-----------------------------------------------------------------------------
 void ChannelSelectionDialog::on_treeWidget_itemChanged(QTreeWidgetItem* item, int column) {
     if (column == VISIBLE_INDEX_) {
         bool select_all_disabled = true;
@@ -276,7 +266,6 @@ void ChannelSelectionDialog::on_treeWidget_itemChanged(QTreeWidgetItem* item, in
     }
 }
 
-//-----------------------------------------------------------------------------
 void ChannelSelectionDialog::updateColor(QTreeWidgetItem* item, QColor const& color) {
     item->setBackground(1, QBrush(color));
     item->setText(1, color.name());

@@ -18,34 +18,27 @@ namespace sigviewer {
 
 class TestEventTableWidget;
 
-//-----------------------------------------------------------------------------
 class EventTableWidget : public QWidget {
     friend class TestEventTableWidget;
 
     Q_OBJECT
 
    public:
-    //-------------------------------------------------------------------------
     EventTableWidget(QSharedPointer<TabContext> tab_context,
         QSharedPointer<EventManager> event_manager,
         ChannelManager const& channel_manager,
         QWidget* parent = 0);
 
-    //-------------------------------------------------------------------------
     virtual ~EventTableWidget();
 
-    //-------------------------------------------------------------------------
     virtual QList<EventID> getSelectedEvents() const;
 
-    //-------------------------------------------------------------------------
     QSharedPointer<EventManager const> getEventManager() const {
         return event_manager_;
     }
 
-    //-------------------------------------------------------------------------
     QSharedPointer<EventManager> getEventManager() { return event_manager_; }
 
-    //-------------------------------------------------------------------------
     QSharedPointer<EventView> getEventView();
 
    private slots:

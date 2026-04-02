@@ -16,7 +16,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 class ChannelSelectionDialog : public QDialog {
     Q_OBJECT
     friend class FileOpenTest;
@@ -45,7 +44,6 @@ class ChannelSelectionDialog : public QDialog {
     void updateColor(QTreeWidgetItem* item, QColor const& color);
     void resizeEvent(QResizeEvent* event);
 
-    //-------------------------------------------------------------------------
     /// disabled
     ChannelSelectionDialog();
     ChannelSelectionDialog(const ChannelSelectionDialog&);

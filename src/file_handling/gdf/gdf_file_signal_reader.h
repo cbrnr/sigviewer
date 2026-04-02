@@ -16,35 +16,26 @@
 
 namespace SigViewer_ {
 
-//-----------------------------------------------------------------------------
 class GDFFileSignalReader : public QObject, public FileSignalReader {
     Q_OBJECT
    public:
-    //-------------------------------------------------------------------------
     GDFFileSignalReader();
 
-    //-------------------------------------------------------------------------
     virtual ~GDFFileSignalReader();
 
-    //-------------------------------------------------------------------------
     QPair<FileSignalReader*, QString> createInstance(QString const& file_path);
 
-    //-------------------------------------------------------------------------
     virtual QSharedPointer<DataBlock const> getSignalData(ChannelID channel_id,
         unsigned start_sample,
         unsigned length) const;
 
-    //-------------------------------------------------------------------------
     virtual QList<QSharedPointer<SignalEvent const> > getEvents() const;
 
-    //-------------------------------------------------------------------------
     virtual QSharedPointer<BasicHeader> getBasicHeader();
 
-    //-------------------------------------------------------------------------
     virtual QSharedPointer<BasicHeader const> getBasicHeader() const { return header_; }
 
    private:
-    //-------------------------------------------------------------------------
     QString open(QString const& file_path);
 
     Q_DISABLE_COPY(GDFFileSignalReader)

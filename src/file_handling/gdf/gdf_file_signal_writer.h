@@ -9,23 +9,17 @@
 
 namespace SigViewer_ {
 
-//-----------------------------------------------------------------------------
 class GDFFileSignalWriter : public FileSignalWriter {
    public:
-    //-------------------------------------------------------------------------
     GDFFileSignalWriter();
 
-    //-------------------------------------------------------------------------
     virtual QPair<FileSignalWriter*, QString> createInstance(QString const& file_path);
 
-    //-------------------------------------------------------------------------
     virtual bool supportsSavingEvents() const { return true; }
 
-    //-------------------------------------------------------------------------
     virtual QString saveEventsToSignalFile(QSharedPointer<EventManager const>,
         std::set<EventType> const& types);
 
-    //-------------------------------------------------------------------------
     virtual QString save(QSharedPointer<FileContext const> file_context,
         std::set<EventType> const& types);
 

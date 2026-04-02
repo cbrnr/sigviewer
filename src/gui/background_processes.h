@@ -10,20 +10,15 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 class BackgroundProcesses : public QObject {
     Q_OBJECT
    public:
-    //-------------------------------------------------------------------------
     static BackgroundProcesses& instance();
 
-    //-------------------------------------------------------------------------
     void addProcess(QString const& name, int max);
 
-    //-------------------------------------------------------------------------
     void setProcessState(QString const& name, int state);
 
-    //-------------------------------------------------------------------------
     void removeProcess(QString const& name);
 
    signals:

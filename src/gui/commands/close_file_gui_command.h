@@ -11,34 +11,27 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 /// CloseFileGuiCommand
 ///
 /// command for closing a file
 class CloseFileGuiCommand : public GuiActionCommand {
     Q_OBJECT
    public:
-    //-------------------------------------------------------------------------
     CloseFileGuiCommand();
 
-    //-------------------------------------------------------------------------
     virtual ~CloseFileGuiCommand() {}
 
-    //-------------------------------------------------------------------------
     virtual void init();
 
-    //-------------------------------------------------------------------------
     bool closeCurrentFile();
 
    public slots:
-    //-------------------------------------------------------------------------
+
     void closeFile();
 
-    //-------------------------------------------------------------------------
     void exitApplication();
 
    protected:
-    //-------------------------------------------------------------------------
     virtual void evaluateEnabledness();
 
    private:
@@ -48,10 +41,8 @@ class CloseFileGuiCommand : public GuiActionCommand {
 
     static GuiActionFactoryRegistrator registrator_;
 
-    //-------------------------------------------------------------------------
     QString showCloseDialog(QString const& path, QString const& extensions);
 
-    //-------------------------------------------------------------------------
     QSharedPointer<FileSignalReader> createAndCloseFileSignalReader(QString const& file_path) const;
 };
 

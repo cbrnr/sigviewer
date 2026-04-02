@@ -11,7 +11,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 EventTimeSelectionDialog::EventTimeSelectionDialog(std::set<EventType> const& shown_event_types,
     std::set<ChannelID> const& shown_channels,
     ChannelManager const& channel_manager,
@@ -38,7 +37,6 @@ EventTimeSelectionDialog::EventTimeSelectionDialog(std::set<EventType> const& sh
     updateOkEnabled();
 }
 
-//-----------------------------------------------------------------------------
 std::set<ChannelID> EventTimeSelectionDialog::getSelectedChannels() const {
     std::set<ChannelID> channels;
 
@@ -48,34 +46,28 @@ std::set<ChannelID> EventTimeSelectionDialog::getSelectedChannels() const {
     return channels;
 }
 
-//-----------------------------------------------------------------------------
 EventType EventTimeSelectionDialog::getSelectedEventType() const {
     return ui_.event_combo_box_->itemData(ui_.event_combo_box_->currentIndex()).toUInt();
 }
 
-//-----------------------------------------------------------------------------
 float EventTimeSelectionDialog::getSecondsBeforeEvent() const {
     return ui_.add_before_spinbox_->value();
 }
 
-//-----------------------------------------------------------------------------
 float EventTimeSelectionDialog::getLengthInSeconds() const {
     return ui_.length_spinbox_->value();
 }
 
-//-----------------------------------------------------------------------------
 void EventTimeSelectionDialog::on_unselect_all_button__clicked() {
     for (int row = 0; row < ui_.list_widget_->count(); ++row)
         ui_.list_widget_->item(row)->setSelected(false);
 }
 
-//-----------------------------------------------------------------------------
 void EventTimeSelectionDialog::on_select_all_button__clicked() {
     for (int row = 0; row < ui_.list_widget_->count(); ++row)
         ui_.list_widget_->item(row)->setSelected(true);
 }
 
-//-----------------------------------------------------------------------------
 void EventTimeSelectionDialog::on_event_combo_box__currentIndexChanged(int combo_box_index) {
     QList<EventID> event_ids =
         event_manager_->getEvents(ui_.event_combo_box_->itemData(combo_box_index).toUInt());
@@ -106,23 +98,19 @@ void EventTimeSelectionDialog::on_event_combo_box__currentIndexChanged(int combo
     ui_.length_spinbox_->setValue(average_duration + start_before_value_);
 }
 
-//-----------------------------------------------------------------------------
 void EventTimeSelectionDialog::on_add_before_spinbox__valueChanged(double value) {
     ui_.length_spinbox_->setValue(ui_.length_spinbox_->value() - start_before_value_ + value);
     start_before_value_ = value;
 }
 
-//-----------------------------------------------------------------------------
 void EventTimeSelectionDialog::on_list_widget__itemSelectionChanged() {
     updateOkEnabled();
 }
 
-//-------------------------------------------------------------------------
 void EventTimeSelectionDialog::on_length_spinbox__valueChanged(double) {
     updateOkEnabled();
 }
 
-//-------------------------------------------------------------------------
 void EventTimeSelectionDialog::updateOkEnabled() {
     int num_selected_items = ui_.list_widget_->selectedItems().count();
     bool nothing_selected = (num_selected_items == 0);

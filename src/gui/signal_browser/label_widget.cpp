@@ -8,7 +8,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 LabelWidget::LabelWidget(QSharedPointer<SignalViewSettings const> signal_view_settings)
     : signal_view_settings_(signal_view_settings),
       y_start_(0),
@@ -17,13 +16,11 @@ LabelWidget::LabelWidget(QSharedPointer<SignalViewSettings const> signal_view_se
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 void LabelWidget::changeYStart(int32 y_start) {
     y_start_ = y_start;
     update();
 }
 
-//-----------------------------------------------------------------------------
 void LabelWidget::enableSeparator(bool enable) {
     enable_separator_ = enable;
     update();
@@ -42,7 +39,6 @@ void LabelWidget::changeEvent(QEvent* event) {
     QWidget::changeEvent(event);
 }
 
-//-----------------------------------------------------------------------------
 void LabelWidget::paintEvent(QPaintEvent*) {
     bool channel_overlapping = signal_view_settings_->getChannelOverlapping();
     float64 signal_height = signal_view_settings_->getChannelHeight();
@@ -90,7 +86,6 @@ void LabelWidget::paintEvent(QPaintEvent*) {
     }
 }
 
-//-----------------------------------------------------------------------------
 void LabelWidget::contextMenuEvent(QContextMenuEvent* event) {
     QMenu menu;
     menu.addAction(GuiActionFactory::getInstance()
@@ -103,7 +98,6 @@ void LabelWidget::contextMenuEvent(QContextMenuEvent* event) {
     menu.exec(event->globalPos());
 }
 
-//-----------------------------------------------------------------------------
 void LabelWidget::addChannel(ChannelID channel_nr, const QString& label) {
     channel_nr2label_[channel_nr] = label;
     QPixmap dummy(1, 1);
@@ -115,7 +109,6 @@ void LabelWidget::addChannel(ChannelID channel_nr, const QString& label) {
     setMinimumWidth(10 + max_width);
 }
 
-//-----------------------------------------------------------------------------
 void LabelWidget::removeChannel(ChannelID channel_nr) {
     channel_nr2label_.erase(channel_nr2label_.find(channel_nr));
     int32 max_width = -1;

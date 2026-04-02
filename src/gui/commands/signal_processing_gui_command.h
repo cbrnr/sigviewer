@@ -14,28 +14,22 @@ namespace sigviewer {
 class SignalProcessingGuiCommand : public GuiActionCommand {
     Q_OBJECT
    public:
-    //-------------------------------------------------------------------------
     SignalProcessingGuiCommand();
 
-    //-------------------------------------------------------------------------
     virtual void init();
 
    protected:
-    //-------------------------------------------------------------------------
     virtual void evaluateEnabledness();
 
    private slots:
-    //-------------------------------------------------------------------------
+
     void calculateMeanAndStandardDeviation();
 
-    //-------------------------------------------------------------------------
     void calculatePowerSpectrum();
 
    private:
-    //-------------------------------------------------------------------------
     QSharedPointer<EventTimeSelectionDialog> getFinishedEventTimeSelectionDialog();
 
-    //-------------------------------------------------------------------------
     void createVisualisation(QString const& title, ChannelManager const& channel_manager);
 
     static QString const MEAN_();

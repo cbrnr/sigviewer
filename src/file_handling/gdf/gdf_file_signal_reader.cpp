@@ -12,15 +12,12 @@
 
 namespace SigViewer_ {
 
-//-------------------------------------------------------------------------------------------------
 // FILE_SIGNAL_READER_REGISTRATION(gdf, GDFFileSignalReader);
 
-//-------------------------------------------------------------------------------------------------
 GDFFileSignalReader::GDFFileSignalReader() : reader_(0), downsampling_thread_(0) {
     // nothing to do here
 }
 
-//-------------------------------------------------------------------------------------------------
 GDFFileSignalReader::~GDFFileSignalReader() {
     if (downsampling_thread_) {
         downsampling_thread_->terminate();
@@ -34,7 +31,6 @@ GDFFileSignalReader::~GDFFileSignalReader() {
     qDebug() << "deleting GDFFileSignalReader";
 }
 
-//-------------------------------------------------------------------------------------------------
 QPair<FileSignalReader*, QString> GDFFileSignalReader::createInstance(QString const& file_path) {
     GDFFileSignalReader* reader = new GDFFileSignalReader();
 
@@ -45,7 +41,6 @@ QPair<FileSignalReader*, QString> GDFFileSignalReader::createInstance(QString co
         return QPair<FileSignalReader*, QString>(reader, "");
 }
 
-//-------------------------------------------------------------------------------------------------
 QSharedPointer<DataBlock const> GDFFileSignalReader::getSignalData(ChannelID channel_id,
     unsigned start_sample,
     unsigned length) const {
@@ -73,7 +68,6 @@ QSharedPointer<DataBlock const> GDFFileSignalReader::getSignalData(ChannelID cha
     return channel_map_[channel_id]->createSubBlock(start_sample, length);
 }
 
-//-------------------------------------------------------------------------------------------------
 QList<QSharedPointer<SignalEvent const> > GDFFileSignalReader::getEvents() const {
     try {
         // qDebug () << "Number events " << reader_->getEventHeader()->getNumEvents() << "; Event Mode = " << reader_->getEventHeader()->getMode();
@@ -102,10 +96,8 @@ QList<QSharedPointer<SignalEvent const> > GDFFileSignalReader::getEvents() const
     return events_;
 }
 
-//-------------------------------------------------------------------------------------------------
 QSharedPointer<BasicHeader> GDFFileSignalReader::getBasicHeader() { return header_; }
 
-//-------------------------------------------------------------------------------------------------
 QString GDFFileSignalReader::open(QString const& file_path) {
     if (reader_) delete reader_;
     reader_ = new gdf::Reader();

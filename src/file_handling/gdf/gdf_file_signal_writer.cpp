@@ -19,23 +19,19 @@ namespace SigViewer_ {
 
 // FILE_SIGNAL_WRITER_REGISTRATION(gdf, GDFFileSignalWriter);
 
-//-------------------------------------------------------------------------
 GDFFileSignalWriter::GDFFileSignalWriter() {
     qDebug() << "GDFFileSignalWriter constructed!";
 }
 
-//-------------------------------------------------------------------------
 GDFFileSignalWriter::GDFFileSignalWriter(QString const& file_path)
     : new_file_path_(file_path) {
     // nothing to do here
 }
 
-//-------------------------------------------------------------------------
 QPair<FileSignalWriter*, QString> GDFFileSignalWriter::createInstance(QString const& file_path) {
     return QPair<FileSignalWriter*, QString>(new GDFFileSignalWriter(file_path), "");
 }
 
-//-------------------------------------------------------------------------
 QString GDFFileSignalWriter::saveEventsToSignalFile(QSharedPointer<EventManager const> event_manager,
     std::set<EventType> const& types) {
     gdf::Modifier modifier;
@@ -71,7 +67,6 @@ QString GDFFileSignalWriter::saveEventsToSignalFile(QSharedPointer<EventManager 
     return "";
 }
 
-//-------------------------------------------------------------------------
 QString GDFFileSignalWriter::save(QSharedPointer<FileContext const> file_context,
     std::set<EventType> const&) {
     qDebug() << "GDFFileSignalWriter::save";

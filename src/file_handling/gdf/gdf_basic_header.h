@@ -11,13 +11,10 @@
 
 namespace SigViewer_ {
 
-//-------------------------------------------------------------------------------------------------
 class GDFBasicHeader : public BasicHeader {
    public:
-    //---------------------------------------------------------------------------------------------
     GDFBasicHeader(QString const& file_path, gdf::GDFHeaderAccess const& header_access);
 
-    //---------------------------------------------------------------------------------------------
     virtual uint32 getNumberOfSamples() const;
 
    private:

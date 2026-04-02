@@ -6,13 +6,10 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 QString BasicHeader::getFileTypeString() const { return file_type_string_; }
 
-//-----------------------------------------------------------------------------
 float64 BasicHeader::getSampleRate() const { return sample_rate_; }
 
-//-----------------------------------------------------------------------------
 uint32 BasicHeader::getNumberEvents() const { return number_events_; }
 
 void BasicHeader::setNumberEvents(uint32 number_events) {
@@ -26,24 +23,19 @@ void BasicHeader::setEventSamplerate(double event_sample_rate) {
     event_sample_rate_ = event_sample_rate;
 }
 
-//-------------------------------------------------------------------------
 QSharedPointer<SignalChannel const> BasicHeader::getChannel(ChannelID id) const {
     if (channels_.contains(id)) return channels_[id];
     return QSharedPointer<SignalChannel const>(0);
 }
 
-//-------------------------------------------------------------------------
 unsigned BasicHeader::getNumberChannels() const { return channels_.size(); }
 
-//-------------------------------------------------------------------------
 void BasicHeader::setFileTypeString(QString const& file_type_string) {
     file_type_string_ = file_type_string;
 }
 
-//-------------------------------------------------------------------------
 void BasicHeader::setSampleRate(float64 sample_rate) { sample_rate_ = sample_rate; }
 
-//-------------------------------------------------------------------------
 void BasicHeader::addChannel(ChannelID id, QSharedPointer<SignalChannel const> channel) {
     channels_[id] = channel;
 }

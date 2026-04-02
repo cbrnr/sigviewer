@@ -20,7 +20,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 XAxisWidget::XAxisWidget(QSharedPointer<SignalViewSettings const> signal_view_settings, QWidget* parent)
     : QWidget(parent),
       signal_view_settings_(signal_view_settings),
@@ -32,21 +31,17 @@ XAxisWidget::XAxisWidget(QSharedPointer<SignalViewSettings const> signal_view_se
       time_to_highlight_(0),
       label_color_(palette().color(QPalette::WindowText)) {}
 
-//-----------------------------------------------------------------------------
 XAxisWidget::~XAxisWidget() {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 QSize XAxisWidget::sizeHint() const { return QSize(100, 30); }
 
-//-----------------------------------------------------------------------------
 void XAxisWidget::changeXStart(int32 x_start) {
     x_start_ = x_start;
     update();
 }
 
-//-----------------------------------------------------------------------------
 void XAxisWidget::changeHighlightTime(float64 time_to_highlight) {
     highlighting_enabled_ = true;
     time_to_highlight_ = time_to_highlight;
@@ -54,13 +49,11 @@ void XAxisWidget::changeHighlightTime(float64 time_to_highlight) {
     highlight_timer_ = startTimer(5000);
 }
 
-//-----------------------------------------------------------------------------
 void XAxisWidget::enableHighlightTime(bool highlighting_enabled) {
     highlighting_enabled_ = highlighting_enabled;
     update();
 }
 
-//-----------------------------------------------------------------------------
 void XAxisWidget::changeLabelColor(QColor labelColor) {
     label_color_ = labelColor;
     update();
@@ -74,7 +67,6 @@ void XAxisWidget::changeEvent(QEvent* event) {
     QWidget::changeEvent(event);
 }
 
-//-----------------------------------------------------------------------------
 void XAxisWidget::paintEvent(QPaintEvent*) {
     pixel_per_sec_ = signal_view_settings_->getPixelsPerSample()
                      * signal_view_settings_->getSampleRate();
@@ -129,7 +121,6 @@ void XAxisWidget::paintEvent(QPaintEvent*) {
     }
 }
 
-//-----------------------------------------------------------------------------
 void XAxisWidget::contextMenuEvent(QContextMenuEvent* event) {
     QMenu menu;
     menu.addAction(GuiActionFactory::getInstance()->getQAction(tr("Scale X Axis")));
@@ -141,7 +132,6 @@ void XAxisWidget::contextMenuEvent(QContextMenuEvent* event) {
     menu.exec(event->globalPos());
 }
 
-//-----------------------------------------------------------------------------
 void XAxisWidget::timerEvent(QTimerEvent* event) {
     if (event->timerId() == highlight_timer_) {
         highlighting_enabled_ = false;

@@ -12,7 +12,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 SelectShownChannelsDialog::SelectShownChannelsDialog(QString const& dialog_title,
     std::set<ChannelID> const& channels,
     ChannelManager const& channel_manager)
@@ -46,7 +45,6 @@ SelectShownChannelsDialog::SelectShownChannelsDialog(QString const& dialog_title
     connect(cancel_button_, SIGNAL(clicked()), this, SLOT(reject()));
 }
 
-//-----------------------------------------------------------------------------
 std::set<ChannelID> SelectShownChannelsDialog::getSelectedChannels() const {
     QList<QListWidgetItem*> find_list;
     std::set<ChannelID> selected_channels;

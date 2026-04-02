@@ -13,17 +13,14 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 EventContextMenu::EventContextMenu(SignalVisualisationModel& browser_model,
     QSharedPointer<EventManager> event_manager)
     : browser_model_(browser_model), event_manager_(event_manager) {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 EventContextMenu::~EventContextMenu() {}
 
-//-------------------------------------------------------------------------
 void EventContextMenu::addEvent(EventID event) {
     QVector<QMenu*>::iterator it = sub_menus_.begin();
     while (it != sub_menus_.end()) {
@@ -38,10 +35,8 @@ void EventContextMenu::addEvent(EventID event) {
     event_ids_.append(event);
 }
 
-//-------------------------------------------------------------------------
 unsigned EventContextMenu::getNumberOfEvents() const { return event_ids_.size(); }
 
-//-------------------------------------------------------------------------
 void EventContextMenu::finaliseAndShowContextMenu(QGraphicsSceneContextMenuEvent* context_event,
     QMenu* channel_menu) {
     QVector<EventID>::iterator it = event_ids_.begin();
@@ -77,7 +72,6 @@ void EventContextMenu::finaliseAndShowContextMenu(QGraphicsSceneContextMenuEvent
     exec(context_event->screenPos());
 }
 
-//-------------------------------------------------------------------------
 void EventContextMenu::finaliseAndShowSelectionMenu(QGraphicsSceneMouseEvent* event) {
     QVector<EventID>::iterator it = event_ids_.begin();
     if (event_ids_.size() > 1) {
@@ -98,14 +92,12 @@ void EventContextMenu::finaliseAndShowSelectionMenu(QGraphicsSceneMouseEvent* ev
     event_ids_.clear();
 }
 
-//-------------------------------------------------------------------------
 void EventContextMenu::selectEvent(QAction* q) {
     bool ok = false;
     int32 event_id = q->data().toInt(&ok);
     if (q->data().isValid()) browser_model_.selectEvent(event_id);
 }
 
-//-------------------------------------------------------------------------
 void EventContextMenu::addActionsToMenu(QMenu& menu, EventID event) {
     QList<QAction*> actions;
 

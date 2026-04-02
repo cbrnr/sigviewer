@@ -13,35 +13,25 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 class EventView {
    public:
-    //-------------------------------------------------------------------------
     EventView(bool events_hidable = true, bool events_slidable = true)
         : events_hidable_(events_hidable), events_slidable_(events_slidable) {}
 
-    //-------------------------------------------------------------------------
     virtual ~EventView() {}
 
-    //-------------------------------------------------------------------------
     virtual bool eventsHidable() const { return events_hidable_; }
 
-    //-------------------------------------------------------------------------
     virtual bool eventsSlidable() const { return events_slidable_; }
 
-    //-------------------------------------------------------------------------
     virtual void setShownEventTypes(std::set<EventType> const& event_types) = 0;
 
-    //-------------------------------------------------------------------------
     virtual std::set<EventType> getShownEventTypes() const = 0;
 
-    //-------------------------------------------------------------------------
     virtual QSharedPointer<EventManager const> getEventManager() const = 0;
 
-    //-------------------------------------------------------------------------
     virtual QSharedPointer<EventManager> getEventManager() = 0;
 
-    //-------------------------------------------------------------------------
     /// @return the id of the currently selected signal event
     virtual QList<EventID> getSelectedEvents() const = 0;
 

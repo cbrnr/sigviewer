@@ -11,7 +11,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 BiosigBasicHeader::BiosigBasicHeader(HDRTYPE* raw_header, QString const& file_path)
     : BasicHeader(file_path), number_samples_(raw_header->NRec * raw_header->SPR) {
     if (raw_header->EVENT.CodeDesc) {
@@ -54,17 +53,14 @@ BiosigBasicHeader::BiosigBasicHeader(QString file_format, QString const& file_pa
     readChannelsInfo(file_format);
 }
 
-//-----------------------------------------------------------------------------
 size_t BiosigBasicHeader::getNumberOfSamples() const {
     return ceil(static_cast<double>(number_samples_));
 }
 
-//-----------------------------------------------------------------------------
 QMap<unsigned, QString> BiosigBasicHeader::getNamesOfUserSpecificEvents() const {
     return user_defined_event_map_;
 }
 
-//-----------------------------------------------------------------------------
 void BiosigBasicHeader::readChannelsInfo(HDRTYPE const* raw_header) {
     unsigned ch = 0;
     for (unsigned channel_index = 0; channel_index < raw_header->NS; channel_index++)
@@ -74,7 +70,6 @@ void BiosigBasicHeader::readChannelsInfo(HDRTYPE const* raw_header) {
         }
 }
 
-//-------------------------------------------------------------------------
 void BiosigBasicHeader::readChannelsInfo(QString file_format) {
     unsigned ch = 0;
     for (unsigned channel_index = 0; channel_index < XDFdata->totalCh; channel_index++) {
@@ -83,7 +78,6 @@ void BiosigBasicHeader::readChannelsInfo(QString file_format) {
     }
 }
 
-//-------------------------------------------------------------------------
 void BiosigBasicHeader::readPatientInfo(HDRTYPE const* raw_header) {
     switch (raw_header->Patient.Handedness) {
         case 1:
@@ -141,7 +135,6 @@ void BiosigBasicHeader::readPatientInfo(HDRTYPE const* raw_header) {
             QString::number(raw_header->Patient.Height).append("cm"));
 }
 
-//-------------------------------------------------------------------------
 void BiosigBasicHeader::readRecordingInfo(HDRTYPE const* raw_header) {
     if (raw_header->T0) {
         time_t recording_t = mktime(gdf_time2tm_time(raw_header->T0));

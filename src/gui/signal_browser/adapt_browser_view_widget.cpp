@@ -16,7 +16,6 @@
 
 namespace sigviewer {
 
-//-------------------------------------------------------------------------
 AdaptBrowserViewWidget::AdaptBrowserViewWidget(SignalVisualisationView const* signal_visualisation_view,
     QSharedPointer<SignalViewSettings> setting,
     YAxisWidget* yAxisWidget,
@@ -75,10 +74,8 @@ AdaptBrowserViewWidget::~AdaptBrowserViewWidget() {
     settings.endGroup();
 }
 
-//-------------------------------------------------------------------------
 void AdaptBrowserViewWidget::showEvent(QShowEvent*) { updateValues(); }
 
-//-------------------------------------------------------------------------
 void AdaptBrowserViewWidget::on_channelOverlappingSlider_valueChanged(int value) {
     if (updating_values_) return;
 
@@ -90,14 +87,12 @@ void AdaptBrowserViewWidget::on_channelOverlappingSlider_valueChanged(int value)
         ui_.border_checkBox_->setEnabled(true);
 }
 
-//-------------------------------------------------------------------------
 void AdaptBrowserViewWidget::on_yGridSlider_valueChanged(int value) {
     if (updating_values_) return;
 
     settings_->setGridFragmentation(Qt::Vertical, value);
 }
 
-//-------------------------------------------------------------------------
 void AdaptBrowserViewWidget::on_channelsPerPageSpinbox_valueChanged(int value) {
     if (updating_values_) return;
 
@@ -113,7 +108,6 @@ void AdaptBrowserViewWidget::on_channelsPerPageSpinbox_valueChanged(int value) {
         SLOT(selfUpdatingFinished()));
 }
 
-//-------------------------------------------------------------------------
 void AdaptBrowserViewWidget::on_secsPerPageSpinbox_valueChanged(double value) {
     if (updating_values_) return;
 
@@ -129,7 +123,6 @@ void AdaptBrowserViewWidget::on_secsPerPageSpinbox_valueChanged(double value) {
         SLOT(selfUpdatingFinished()));
 }
 
-//-------------------------------------------------------------------------
 void AdaptBrowserViewWidget::updateValues() {
     if ((!isVisible()) || self_updating_) return;
     updating_values_ = true;
@@ -147,7 +140,6 @@ void AdaptBrowserViewWidget::updateValues() {
     updating_values_ = false;
 }
 
-//-------------------------------------------------------------------------
 void AdaptBrowserViewWidget::selfUpdatingFinished() { self_updating_ = false; }
 
 }  // namespace sigviewer

@@ -12,7 +12,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 namespace {
 
 class CloseFileGuiCommandFactory : public GuiActionCommandFactory {
@@ -45,16 +44,13 @@ QStringList const CloseFileGuiCommand::ACTIONS_() {
     return result;
 }
 
-//-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator CloseFileGuiCommand::registrator_("Closing",
     QSharedPointer<CloseFileGuiCommandFactory>(new CloseFileGuiCommandFactory));
 
-//-----------------------------------------------------------------------------
 CloseFileGuiCommand::CloseFileGuiCommand() : GuiActionCommand(ACTIONS_()) {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 void CloseFileGuiCommand::init() {
     getQAction(CLOSE_FILE_())->setShortcut(QKeySequence::Close);
     getQAction(CLOSE_FILE_())->setIcon(QIcon::fromTheme("close"));
@@ -64,7 +60,6 @@ void CloseFileGuiCommand::init() {
     resetActionTriggerSlot(EXIT_APPLICATION_(), SLOT(exitApplication()));
 }
 
-//-------------------------------------------------------------------------
 bool CloseFileGuiCommand::closeCurrentFile() {
     QSharedPointer<FileContext> current_file_context = applicationContext()
                                                            ->getCurrentFileContext();
@@ -92,15 +87,12 @@ bool CloseFileGuiCommand::closeCurrentFile() {
     return true;
 }
 
-//-------------------------------------------------------------------------
 void CloseFileGuiCommand::closeFile() { closeCurrentFile(); }
 
-//-------------------------------------------------------------------------
 void CloseFileGuiCommand::exitApplication() {
     if (closeCurrentFile()) QApplication::exit();
 }
 
-//-------------------------------------------------------------------------
 void CloseFileGuiCommand::evaluateEnabledness() {
     disableIfNoFileIsOpened(QStringList() << CLOSE_FILE_());
 }

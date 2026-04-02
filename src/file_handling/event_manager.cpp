@@ -8,7 +8,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 EventManager::EventManager(FileSignalReader const& reader)
     : max_event_position_(reader.getBasicHeader()->getNumberOfSamples()),
       caller_mutex_(new QMutex) {
@@ -35,13 +34,11 @@ EventManager::EventManager(FileSignalReader const& reader)
         event_table_reader_.setEventName(name_iter.key(), name_iter.value());
 }
 
-//-----------------------------------------------------------------------------
 EventManager::~EventManager() {
     event_table_reader_.restoreEventNames();
     delete caller_mutex_;
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<SignalEvent const> EventManager::getEvent(EventID id) const {
     QMutexLocker locker(caller_mutex_);
     EventMap::ConstIterator event_it = event_map_.find(id);
@@ -51,7 +48,6 @@ QSharedPointer<SignalEvent const> EventManager::getEvent(EventID id) const {
         return event_it.value();
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<SignalEvent> EventManager::getAndLockEventForEditing(EventID id) {
     QMutexLocker locker(caller_mutex_);
     EventMap::Iterator event_it = event_map_.find(id);
@@ -64,7 +60,6 @@ QSharedPointer<SignalEvent> EventManager::getAndLockEventForEditing(EventID id) 
     }
 }
 
-//-----------------------------------------------------------------------------
 void EventManager::updateAndUnlockEvent(EventID id) {
     if (!mutex_map_.contains(id)) return;
     position_event_map_.remove(temp_event_position_map_[id], id);
@@ -75,7 +70,6 @@ void EventManager::updateAndUnlockEvent(EventID id) {
     emit changed();
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<SignalEvent const> EventManager::createEvent(ChannelID channel_id,
     unsigned pos,
     unsigned duration,
@@ -99,7 +93,6 @@ QSharedPointer<SignalEvent const> EventManager::createEvent(ChannelID channel_id
     return new_event;
 }
 
-//-----------------------------------------------------------------------------
 void EventManager::removeEvent(EventID id) {
     qDebug() << "EventManager::removeEvent " << id;
     EventMap::iterator event_iter = event_map_.find(id);
@@ -114,7 +107,6 @@ void EventManager::removeEvent(EventID id) {
     qDebug() << "EventManager::removeEvent " << id << " finished";
 }
 
-//-----------------------------------------------------------------------------
 std::set<EventID> EventManager::getEventsAt(unsigned pos, ChannelID channel_id) const {
     QMutexLocker locker(caller_mutex_);
     std::set<EventID> events;
@@ -131,22 +123,18 @@ std::set<EventID> EventManager::getEventsAt(unsigned pos, ChannelID channel_id) 
     return events;
 }
 
-//-----------------------------------------------------------------------------
 double EventManager::getSampleRate() const {
     QMutexLocker locker(caller_mutex_);
     return sample_rate_;
 }
 
-//-------------------------------------------------------------------------
 unsigned EventManager::getMaxEventPosition() const { return max_event_position_; }
 
-//-----------------------------------------------------------------------------
 QString EventManager::getNameOfEventType(EventType type) const {
     QMutexLocker locker(caller_mutex_);
     return event_table_reader_.getEventName(type);
 }
 
-//-------------------------------------------------------------------------
 QString EventManager::getNameOfEvent(EventID event) const {
     if (event_map_.contains(event))
         return event_table_reader_.getEventName(event_map_[event]->getType());
@@ -154,19 +142,16 @@ QString EventManager::getNameOfEvent(EventID event) const {
         return "";
 }
 
-//-----------------------------------------------------------------------------
 QList<EventID> EventManager::getAllEvents() const {
     QMutexLocker locker(caller_mutex_);
     return event_map_.keys();
 }
 
-//-----------------------------------------------------------------------------
 unsigned EventManager::getNumberOfEvents() const {
     QMutexLocker locker(caller_mutex_);
     return event_map_.size();
 }
 
-//-----------------------------------------------------------------------------
 std::set<EventType> EventManager::getEventTypes(QString group_id) const {
     QMutexLocker locker(caller_mutex_);
     if (group_id.size())
@@ -175,7 +160,6 @@ std::set<EventType> EventManager::getEventTypes(QString group_id) const {
         return event_table_reader_.getAllEventTypes();
 }
 
-//-------------------------------------------------------------------------
 std::set<QString> EventManager::getEventTypeGroupIDs() const {
     std::set<QString> groups;
     for (EventTableFileReader::StringIterator group = event_table_reader_.getGroupIdBegin();
@@ -185,7 +169,6 @@ std::set<QString> EventManager::getEventTypeGroupIDs() const {
     return groups;
 }
 
-//-----------------------------------------------------------------------------
 QList<EventID> EventManager::getEvents(EventType type) const {
     QMutexLocker locker(caller_mutex_);
     QList<EventID> events;
@@ -198,7 +181,6 @@ QList<EventID> EventManager::getEvents(EventType type) const {
     return events;
 }
 
-//-------------------------------------------------------------------------
 EventID EventManager::getNextEventOfSameType(EventID id) const {
     QMutexLocker locker(caller_mutex_);
     if (!event_map_.contains(id)) return UNDEFINED_EVENT_ID;
@@ -215,7 +197,6 @@ EventID EventManager::getNextEventOfSameType(EventID id) const {
     return UNDEFINED_EVENT_ID;
 }
 
-//-------------------------------------------------------------------------
 EventID EventManager::getPreviousEventOfSameType(EventID id) const {
     QMutexLocker locker(caller_mutex_);
     if (!event_map_.contains(id)) return UNDEFINED_EVENT_ID;

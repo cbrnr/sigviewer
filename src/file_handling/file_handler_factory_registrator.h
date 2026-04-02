@@ -30,7 +30,6 @@ namespace sigviewer {
 
 namespace Registrators_ {
 
-//-----------------------------------------------------------------------------
 class FileSignalWriterFactoryRegistrator {
    public:
     FileSignalWriterFactoryRegistrator(QString const& file_ending,
@@ -39,7 +38,6 @@ class FileSignalWriterFactoryRegistrator {
     }
 };
 
-//-----------------------------------------------------------------------------
 class FileSignalReaderFactoryRegistrator {
    public:
     FileSignalReaderFactoryRegistrator(QString const& file_ending,

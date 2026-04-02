@@ -36,7 +36,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 namespace {
 
 class OpenFileGuiCommandFactory : public GuiActionCommandFactory {
@@ -76,29 +75,24 @@ QStringList const OpenFileGuiCommand::ACTIONS_() {
     return result;
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<OpenFileGuiCommand> OpenFileGuiCommand::instance_() {
     static QSharedPointer<OpenFileGuiCommand> value{new OpenFileGuiCommand};
 
     return value;
 }
 
-//-----------------------------------------------------------------------------
 GuiActionFactoryRegistrator OpenFileGuiCommand::registrator_("Opening",
     QSharedPointer<OpenFileGuiCommandFactory>(new OpenFileGuiCommandFactory));
 
-//-----------------------------------------------------------------------------
 OpenFileGuiCommand::OpenFileGuiCommand() : GuiActionCommand(ACTIONS_()) {
     QSettings settings;
     do_not_show_warning_message = settings.value("DoNotShowWarningMessage", false).toBool();
 }
 
-//-------------------------------------------------------------------------
 OpenFileGuiCommand::~OpenFileGuiCommand() {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
 void OpenFileGuiCommand::init() {
     setShortcut(OPEN_(), QKeySequence::Open);
     setShortcut(SHOW_FILE_INFO_(), tr("Ctrl+I"));
@@ -111,7 +105,6 @@ void OpenFileGuiCommand::init() {
     resetActionTriggerSlot(SHOW_FILE_INFO_(), SLOT(showFileInfo()));
 }
 
-//-----------------------------------------------------------------------------
 void OpenFileGuiCommand::openFile(QString file_path) {
     if (!instance_()->confirmClosingOldFile()) /*!< In case the user decides not to close the old file, return. */
         return;
@@ -127,7 +120,6 @@ void OpenFileGuiCommand::openFile(QString file_path) {
     }
 }
 
-//-------------------------------------------------------------------------
 bool OpenFileGuiCommand::confirmClosingOldFile() {
     QSharedPointer<FileContext> current_file_context = applicationContext()
                                                            ->getCurrentFileContext();
@@ -149,7 +141,6 @@ bool OpenFileGuiCommand::confirmClosingOldFile() {
     return true;
 }
 
-//-------------------------------------------------------------------------
 void OpenFileGuiCommand::evaluateEnabledness() {
     bool file_opened = (getApplicationState() == APP_STATE_FILE_OPEN);
     bool enable_import_events = file_opened;
@@ -165,7 +156,6 @@ void OpenFileGuiCommand::evaluateEnabledness() {
     getQAction(SHOW_FILE_INFO_())->setEnabled(file_opened);
 }
 
-//-------------------------------------------------------------------------
 void OpenFileGuiCommand::open() {
     if (!instance_()->confirmClosingOldFile()) /*!< In case the user decides not to close the old file, return. */
         return;
@@ -192,7 +182,6 @@ void OpenFileGuiCommand::open() {
     }
 }
 
-//-------------------------------------------------------------------------
 void OpenFileGuiCommand::importEvents() {
     QString extensions = "*.csv *.evt";
     QSettings settings;
@@ -266,7 +255,6 @@ void OpenFileGuiCommand::importEvents() {
     applicationContext()->getCurrentCommandExecuter()->executeCommand(macro_command);
 }
 
-//-------------------------------------------------------------------------
 void OpenFileGuiCommand::showFileInfo() {
     basic_header_info_dialog = QSharedPointer<BasicHeaderInfoDialog>(
         new BasicHeaderInfoDialog(applicationContext()->getCurrentFileContext()->getHeader()));
@@ -274,7 +262,6 @@ void OpenFileGuiCommand::showFileInfo() {
     basic_header_info_dialog->show();
 }
 
-//-------------------------------------------------------------------------
 void OpenFileGuiCommand::openFileImpl(QString file_path, bool instantly) {
     file_path = QDir::toNativeSeparators(file_path);
     FileSignalReader* file_signal_reader = FileSignalReaderFactory::getInstance()
@@ -387,7 +374,6 @@ void OpenFileGuiCommand::openFileImpl(QString file_path, bool instantly) {
     ProgressBar::instance().close();
 }
 
-//-----------------------------------------------------------------------------
 QString OpenFileGuiCommand::showOpenDialog(QString const& path, QString const& extensions) {
     QString extension_selection = tr("Signal files (%1)").arg(extensions);
     QStringList ext_list = extensions.split(" ");

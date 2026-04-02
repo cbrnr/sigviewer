@@ -18,7 +18,6 @@ namespace sigviewer {
 
 int const MainWindowModel::NUMBER_RECENT_FILES_ = 8;
 
-//-----------------------------------------------------------------------------
 MainWindowModel::MainWindowModel(QSharedPointer<ApplicationContext> application_context)
     : application_context_(application_context),
       main_window_(new MainWindow(application_context)),
@@ -29,10 +28,8 @@ MainWindowModel::MainWindowModel(QSharedPointer<ApplicationContext> application_
     loadSettings();
 }
 
-//-----------------------------------------------------------------------------
 MainWindowModel::~MainWindowModel() { qDebug() << "deleting MainWindowModel"; }
 
-//-----------------------------------------------------------------------------
 void MainWindowModel::loadSettings() {
     QSettings settings;
     settings.beginGroup("MainWindowModel");
@@ -48,7 +45,6 @@ void MainWindowModel::loadSettings() {
     settings.endGroup();
 }
 
-//-----------------------------------------------------------------------------
 void MainWindowModel::saveSettings() {
     QSettings settings;
     settings.beginGroup("MainWindowModel");
@@ -63,7 +59,6 @@ void MainWindowModel::saveSettings() {
     settings.endGroup();
 }
 
-//-----------------------------------------------------------------------------
 void MainWindowModel::tabChanged(int tab_index) {
     if (tab_contexts_.find(tab_index) != tab_contexts_.end()) {
         application_context_->setCurrentTabContext(tab_contexts_[tab_index]);
@@ -71,7 +66,6 @@ void MainWindowModel::tabChanged(int tab_index) {
     }
 }
 
-//-----------------------------------------------------------------------------
 void MainWindowModel::closeTab(int tab_index) {
     if ((tab_index == 0) | (tab_index == 1))  // first two tabs are not closeable
         return;
@@ -92,17 +86,14 @@ void MainWindowModel::closeTab(int tab_index) {
     }
 }
 
-//-----------------------------------------------------------------------------
 void MainWindowModel::recentFileMenuAboutToShow() {
     main_window_->setRecentFiles(recent_file_list_);
 }
 
-//-----------------------------------------------------------------------------
 void MainWindowModel::recentFileActivated(QAction* recent_file_action) {
     OpenFileGuiCommand::openFile(recent_file_action->text());
 }
 
-//-----------------------------------------------------------------------------
 void MainWindowModel::storeAndInitTabContext(QSharedPointer<TabContext> context, int tab_index) {
     tab_contexts_[tab_index] = context;
 
@@ -112,7 +103,6 @@ void MainWindowModel::storeAndInitTabContext(QSharedPointer<TabContext> context,
     context->setEditState(TAB_STATE_NO_REDO_NO_UNDO);
 }
 
-//-------------------------------------------------------------------------
 QSharedPointer<SignalVisualisationModel> MainWindowModel::createSignalVisualisation(QString const& title,
     ChannelManager const& channel_manager) {
     int tab_index =
@@ -122,7 +112,6 @@ QSharedPointer<SignalVisualisationModel> MainWindowModel::createSignalVisualisat
     return browser_models_[tab_index];
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<SignalVisualisationModel> MainWindowModel::createSignalVisualisationOfFile(
     QSharedPointer<FileContext> file_ctx) {
     // waldesel:
@@ -176,7 +165,6 @@ QSharedPointer<SignalVisualisationModel> MainWindowModel::createSignalVisualisat
     return browser_models_[tab_index];
 }
 
-//-----------------------------------------------------------------------------
 void MainWindowModel::closeCurrentFileTabs() {
     // waldesel:
     // --begin
@@ -191,14 +179,12 @@ void MainWindowModel::closeCurrentFileTabs() {
     resetCurrentFileName("");
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<SignalVisualisationModel> MainWindowModel::getCurrentSignalVisualisationModel() {
     if (!tab_widget_) return QSharedPointer<SignalVisualisationModel>(0);
 
     return browser_models_[tab_widget_->currentIndex()];
 }
 
-//-------------------------------------------------------------------------
 QSharedPointer<EventView> MainWindowModel::getCurrentEventView() {
     if (!tab_widget_) return QSharedPointer<EventView>(0);
 
@@ -208,7 +194,6 @@ QSharedPointer<EventView> MainWindowModel::getCurrentEventView() {
     return event_views_[tab_widget_->currentIndex()];
 }
 
-//-------------------------------------------------------------------------
 void MainWindowModel::resetCurrentFileName(QString const& file_name) {
     if (file_name.size() == 0)
         main_window_->setWindowTitle(QString("SigViewer"));
@@ -216,7 +201,6 @@ void MainWindowModel::resetCurrentFileName(QString const& file_name) {
         main_window_->setWindowTitle(QString("%1 - SigViewer").arg(file_name));
 }
 
-//-------------------------------------------------------------------------
 int MainWindowModel::createSignalVisualisationImpl(ChannelManager const& channel_manager,
     QSharedPointer<EventManager> event_manager) {
     QSharedPointer<TabContext> tab_context(new TabContext);

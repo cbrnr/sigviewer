@@ -12,7 +12,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 QString OpenFileCommand::execute() {
     QString file_path = QDir::toNativeSeparators(filename_and_path_);
     FileSignalReader* file_signal_reader(FileSignalReaderFactory::getInstance()

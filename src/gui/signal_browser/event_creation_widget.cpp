@@ -11,7 +11,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 EventCreationWidget::EventCreationWidget(QSharedPointer<SignalVisualisationModel> signal_visualisation_model,
     QSharedPointer<EventManager> event_manager,
     QWidget* parent)
@@ -36,7 +35,6 @@ EventCreationWidget::EventCreationWidget(QSharedPointer<SignalVisualisationModel
     }
 }
 
-//-----------------------------------------------------------------------------
 int EventCreationWidget::insertNewEventType() {
     if (ui_.lineEdit->text().compare("")) {
         // avoid same types being repeated
@@ -66,7 +64,6 @@ int EventCreationWidget::insertNewEventType() {
     return 0;
 }
 
-//-----------------------------------------------------------------------------
 void EventCreationWidget::updateShownEventTypes(std::set<EventType> const& shown_event_types) {
     setSelfUpdating(true);
     ui_.type_combobox_->clear();
@@ -81,7 +78,6 @@ void EventCreationWidget::updateShownEventTypes(std::set<EventType> const& shown
     setSelfUpdating(false);
 }
 
-//-----------------------------------------------------------------------------
 void EventCreationWidget::on_type_combobox__currentIndexChanged(int combo_box_index) {
     if (isSelfUpdating()) return;
 
@@ -89,22 +85,18 @@ void EventCreationWidget::on_type_combobox__currentIndexChanged(int combo_box_in
     signal_visualisation_model_->setActualEventCreationType(event_type);
 }
 
-//-------------------------------------------------------------------
 void EventCreationWidget::setSelfUpdating(bool self_updating) {
     QMutexLocker locker(&self_updating_mutex_);
     self_updating_ = self_updating;
 }
 
-//-------------------------------------------------------------------
 bool EventCreationWidget::isSelfUpdating() {
     QMutexLocker locker(&self_updating_mutex_);
     return self_updating_;
 }
 
-//-------------------------------------------------------------------
 void EventCreationWidget::on_pushButton_clicked() { insertNewEventType(); }
 
-//-------------------------------------------------------------------
 void EventCreationWidget::on_lineEdit_returnPressed()  // same as push button clicked
 {
     insertNewEventType();

@@ -22,7 +22,6 @@ class GuiActionCommandException : public Exception {
                   .toStdString()) {}
 };
 
-//-----------------------------------------------------------------------------
 GuiActionCommand::GuiActionCommand(QStringList const& action_ids)
     : tab_edit_state_(TAB_STATE_NO_REDO_NO_UNDO) {
     for (QStringList::const_iterator iter = action_ids.begin(); iter != action_ids.end(); ++iter) {
@@ -31,7 +30,6 @@ GuiActionCommand::GuiActionCommand(QStringList const& action_ids)
     }
 }
 
-//-----------------------------------------------------------------------------
 void GuiActionCommand::initConnections() {
     for (ActionConnector* con : connectors_) {
         QAction* act = action_map_[con->getName()];
@@ -66,13 +64,10 @@ void GuiActionCommand::initConnections() {
             tr("connect to signal currentFileStateChanged(FileState)")));
 }
 
-//-----------------------------------------------------------------------------
 QList<QAction*> GuiActionCommand::getQActions() { return action_map_.values(); }
 
-//-----------------------------------------------------------------------------
 QList<QString> GuiActionCommand::getActionIDs() const { return action_map_.keys(); }
 
-//-----------------------------------------------------------------------------
 QAction* GuiActionCommand::getQAction(QString const& id) {
     if (action_map_.contains(id))
         return action_map_[id];
@@ -81,32 +76,27 @@ QAction* GuiActionCommand::getQAction(QString const& id) {
     return 0;
 }
 
-//-----------------------------------------------------------------------------
 void GuiActionCommand::updateEnablednessToApplicationState(ApplicationState state) {
     app_state_ = state;
     applicationStateChanged();
     evaluateEnabledness();
 }
 
-//-----------------------------------------------------------------------------
 void GuiActionCommand::updateEnablednessToFileState(FileState state) {
     file_state_ = state;
     evaluateEnabledness();
 }
 
-//-----------------------------------------------------------------------------
 void GuiActionCommand::updateEnablednessToTabSelectionState(TabSelectionState state) {
     tab_selection_state_ = state;
     evaluateEnabledness();
 }
 
-//-----------------------------------------------------------------------------
 void GuiActionCommand::updateEnablednessToTabEditState(TabEditState state) {
     tab_edit_state_ = state;
     evaluateEnabledness();
 }
 
-//-----------------------------------------------------------------------------
 void GuiActionCommand::resetActionTriggerSlot(QString const& action_id, const char* slot) {
     if (!action_map_.contains(action_id))
         throw(GuiActionCommandException(action_id, tr("resetActionTriggerSlot, action not exists")));
@@ -116,24 +106,20 @@ void GuiActionCommand::resetActionTriggerSlot(QString const& action_id, const ch
         throw(GuiActionCommandException(action_id, tr("connect triggered to %1").arg(slot)));
 }
 
-//-----------------------------------------------------------------------------
 void GuiActionCommand::setShortcut(QString const& action_id, QKeySequence const& key_sequence) {
     if (!action_map_.contains(action_id))
         throw(GuiActionCommandException(action_id, tr("setting shortcut, action not exists")));
     action_map_[action_id]->setShortcut(key_sequence);
 }
 
-//-----------------------------------------------------------------------------
 void GuiActionCommand::setIcon(QString const& action_id, QIcon const& icon) {
     if (!action_map_.contains(action_id))
         throw(GuiActionCommandException(action_id, tr("setting icon, action not exists")));
     action_map_[action_id]->setIcon(icon);
 }
 
-//-------------------------------------------------------------------------
 void GuiActionCommand::evaluateEnabledness() {}
 
-//-------------------------------------------------------------------------
 QSharedPointer<EventView> GuiActionCommand::currentEventView() {
     QSharedPointer<EventView> event_view;
 
@@ -146,7 +132,6 @@ QSharedPointer<EventView> GuiActionCommand::currentEventView() {
     return event_view;
 }
 
-//-------------------------------------------------------------------------
 QSharedPointer<SignalVisualisationModel> GuiActionCommand::currentVisModel() {
     QSharedPointer<SignalVisualisationModel> model;
 
@@ -159,7 +144,6 @@ QSharedPointer<SignalVisualisationModel> GuiActionCommand::currentVisModel() {
     return model;
 }
 
-//-------------------------------------------------------------------------
 QSharedPointer<SignalViewSettings> GuiActionCommand::currentSignalViewSettings() {
     QSharedPointer<SignalViewSettings> settings;
 
@@ -169,17 +153,14 @@ QSharedPointer<SignalViewSettings> GuiActionCommand::currentSignalViewSettings()
     return settings;
 }
 
-//-------------------------------------------------------------------------
 QSharedPointer<FileContext> GuiActionCommand::currentFileContext() {
     return ApplicationContext::getInstance()->getCurrentFileContext();
 }
 
-//-------------------------------------------------------------------------
 QSharedPointer<ApplicationContext> GuiActionCommand::applicationContext() {
     return ApplicationContext::getInstance();
 }
 
-//-------------------------------------------------------------------------
 bool GuiActionCommand::disableIfNoSignalIsVisualised(QStringList const& actions) {
     bool no_signal_is_visualised = currentVisModel().isNull();
 
@@ -191,7 +172,6 @@ bool GuiActionCommand::disableIfNoSignalIsVisualised(QStringList const& actions)
     return no_signal_is_visualised;
 }
 
-//-------------------------------------------------------------------------
 bool GuiActionCommand::disableIfNoEventsPossible(QStringList const& actions) {
     bool no_events_possible = false;
     if (!currentEventView().isNull()) {
@@ -205,7 +185,6 @@ bool GuiActionCommand::disableIfNoEventsPossible(QStringList const& actions) {
     return no_events_possible;
 }
 
-//-------------------------------------------------------------------------
 void GuiActionCommand::disableIfNoEventSelected(QStringList const& actions) {
     bool no_event_selected = app_state_ == APP_STATE_NO_FILE_OPEN
                              || tab_selection_state_ == TAB_STATE_NO_EVENT_SELECTED
@@ -214,7 +193,6 @@ void GuiActionCommand::disableIfNoEventSelected(QStringList const& actions) {
         action_map_[action]->setDisabled(no_event_selected);
 }
 
-//-------------------------------------------------------------------------
 bool GuiActionCommand::disableIfNoFileIsOpened(QStringList const& actions) {
     bool no_file_open = (app_state_ == APP_STATE_NO_FILE_OPEN);
     foreach (QString action, actions) action_map_[action]->setDisabled(no_file_open);

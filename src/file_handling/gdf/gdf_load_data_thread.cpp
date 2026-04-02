@@ -8,13 +8,10 @@
 
 namespace SigViewer_ {
 
-//-----------------------------------------------------------------------------
 GDFLoadDataThread::GDFLoadDataThread(QObject* parent) : QThread(parent) {}
 
-//-----------------------------------------------------------------------------
 void GDFLoadDataThread::setNextIndex(unsigned sample_index) {}
 
-//-----------------------------------------------------------------------------
 void GDFLoadDataThread::run() {}
 
 }  // namespace SigViewer_

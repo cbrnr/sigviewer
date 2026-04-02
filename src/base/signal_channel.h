@@ -13,18 +13,15 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 /// @class SignalChannel
 /// @brief data about a signal channel
 class SignalChannel {
    public:
-    //-------------------------------------------------------------------------
     SignalChannel(unsigned ch, const HDRTYPE* hdr);
     SignalChannel(unsigned ch, QString file_format);
     SignalChannel(QString label, float64 sample_rate, QString physical_dim = "µV");
     //    SignalChannel(unsigned number, CHANNEL_TYPE C);  /* obsolete, deprecated */
 
-    //-------------------------------------------------------------------------
     QString typeString() const;
     const QString& getLabel() const;
     float64 getLowpass() const;

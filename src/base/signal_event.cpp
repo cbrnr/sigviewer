@@ -77,7 +77,6 @@ int32 SignalEvent::getId() const { return id_; }
 // get position
 size_t SignalEvent::getPosition() const { return position_; }
 
-//-----------------------------------------------------------------------------
 float64 SignalEvent::getPositionInSec() const {
     return static_cast<float64>(position_) / sample_rate_;
 }
@@ -91,22 +90,18 @@ ChannelID SignalEvent::getChannel() const { return channel_; }
 // get duration
 size_t SignalEvent::getDuration() const { return duration_; }
 
-//-----------------------------------------------------------------------------
 float64 SignalEvent::getDurationInSec() const {
     return static_cast<float64>(duration_) / sample_rate_;
 }
 
-//-----------------------------------------------------------------------------
 float64 SignalEvent::getEndInSec() const {
     return (static_cast<float64>(duration_ + position_)) / sample_rate_;
 }
 
-//-----------------------------------------------------------------------------
 float64 SignalEvent::getSampleRate() const { return sample_rate_; }
 
 int SignalEvent::getStream() const { return stream_; }
 
-//-----------------------------------------------------------------------------
 void SignalEvent::setId(EventID id) { id_ = id; }
 
 // set position
@@ -121,7 +116,6 @@ void SignalEvent::setChannel(ChannelID channel) { channel_ = channel; }
 // set duration
 void SignalEvent::setDuration(size_t duration) { duration_ = duration; }
 
-//-----------------------------------------------------------------------------
 bool SignalEvent::equals(SignalEvent const& event) const {
     if (duration_ != event.duration_) return false;
     if (type_ != event.type_) return false;

@@ -25,20 +25,15 @@ namespace sigviewer {
 // the object to store XDF data
 QSharedPointer<Xdf> XDFdata = QSharedPointer<Xdf>(new Xdf);
 
-//-----------------------------------------------------------------------------
-
 FILE_SIGNAL_READER_REGISTRATION(xdf, XDFReader);
 
-//-----------------------------------------------------------------------------
 XDFReader::XDFReader()
     : basic_header_(0), buffered_all_channels_(false), buffered_all_events_(false) {
     qDebug() << "Constructed XDFReader";
 }
 
-//-----------------------------------------------------------------------------
 XDFReader::~XDFReader() { qDebug() << "Destructed XDFReader."; }
 
-//-----------------------------------------------------------------------------
 QPair<FileSignalReader*, QString> XDFReader::createInstance(QString const& file_path) {
     XDFReader* reader(new XDFReader);
 
@@ -51,7 +46,6 @@ QPair<FileSignalReader*, QString> XDFReader::createInstance(QString const& file_
         return QPair<FileSignalReader*, QString>(reader, "");
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<DataBlock const> XDFReader::getSignalData(ChannelID channel_id,
     size_t start_sample,
     size_t length) const {
@@ -67,7 +61,6 @@ QSharedPointer<DataBlock const> XDFReader::getSignalData(ChannelID channel_id,
         return channel_map_[channel_id]->createSubBlock(start_sample, length);
 }
 
-//-----------------------------------------------------------------------------
 QList<QSharedPointer<SignalEvent const> > XDFReader::getEvents() const {
     QMutexLocker lock(&mutex_);
 
@@ -76,13 +69,11 @@ QList<QSharedPointer<SignalEvent const> > XDFReader::getEvents() const {
     return events_;
 }
 
-//-----------------------------------------------------------------------------
 QString XDFReader::open(QString const& file_path) {
     QMutexLocker lock(&mutex_);
     return loadFixedHeader(file_path);
 }
 
-//-----------------------------------------------------------------------------
 QString XDFReader::loadFixedHeader(const QString& file_path) {
     QMutexLocker locker(&xdf_access_lock_);
 
@@ -207,13 +198,11 @@ QString XDFReader::loadFixedHeader(const QString& file_path) {
     }
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<BasicHeader> XDFReader::getBasicHeader() {
     // QMutexLocker lock (&mutex_);
     return basic_header_;
 }
 
-//-----------------------------------------------------------------------------
 int XDFReader::setStreamColors() {
     // Display each stream in a distinct color
     QSharedPointer<ColorManager> colorPicker = ApplicationContext::getInstance()->color_manager_;
@@ -245,7 +234,6 @@ int XDFReader::setStreamColors() {
     return 0;
 }
 
-//-----------------------------------------------------------------------------
 XDFReader::sampleRateTypes XDFReader::selectSampleRateType() {
     switch (XDFdata->sampleRateMap.size()) {
         case 0:
@@ -265,7 +253,6 @@ XDFReader::sampleRateTypes XDFReader::selectSampleRateType() {
     }
 }
 
-//-----------------------------------------------------------------------------
 void XDFReader::bufferAllChannels() const {
     size_t numberOfSamples = XDFdata->totalLen;
 
@@ -343,7 +330,6 @@ void XDFReader::bufferAllChannels() const {
     buffered_all_channels_ = true;
 }
 
-//-------------------------------------------------------------------------
 void XDFReader::bufferAllEvents() const {
     unsigned number_events = XDFdata->eventMap.size();
 

@@ -10,7 +10,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 /// DetrendGuiCommand
 ///
 /// Provides two menu actions under Tools:

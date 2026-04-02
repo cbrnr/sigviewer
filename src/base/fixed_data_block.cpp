@@ -11,29 +11,24 @@
 
 namespace sigviewer {
 
-//-------------------------------------------------------------------------------------------------
 FixedDataBlock::FixedDataBlock(QSharedPointer<QVector<float32> > data, float64 sample_rate_per_unit)
     : DataBlock(data->size(), sample_rate_per_unit), data_(data), start_index_(0) {
     // nothing to do here
 }
 
-//---------------------------------------------------------------------------------------------
 FixedDataBlock::FixedDataBlock(FixedDataBlock const& base, size_t new_start, size_t new_length)
     : DataBlock(base, new_length), data_(base.data_), start_index_(new_start) {
     // nothing to do here
 }
 
-//-------------------------------------------------------------------------
 QSharedPointer<DataBlock> FixedDataBlock::createSubBlock(size_t start, size_t length) const {
     return QSharedPointer<DataBlock>(new FixedDataBlock(*this, start, length));
 }
 
-//-------------------------------------------------------------------------------------------------
 float32 const& FixedDataBlock::operator[](size_t index) const {
     return data_->at(start_index_ + index);
 }
 
-//-------------------------------------------------------------------------------------------------
 //! Get the minimal value in a data block, excluding any NANs
 float32 FixedDataBlock::getMin() const {
     size_t len = size();
@@ -52,7 +47,6 @@ float32 FixedDataBlock::getMin() const {
     return min;
 }
 
-//-------------------------------------------------------------------------------------------------
 //! Get the maximal value in a data block, excluding any NANs
 float32 FixedDataBlock::getMax() const {
     size_t len = size();
@@ -71,7 +65,6 @@ float32 FixedDataBlock::getMax() const {
     return max;
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<DataBlock const> FixedDataBlock::createPowerSpectrum(
     QSharedPointer<DataBlock const> data_block) {
     size_t num_samples = data_block->size();
@@ -128,7 +121,6 @@ QSharedPointer<DataBlock const> FixedDataBlock::createPowerSpectrum(
         return QSharedPointer<DataBlock const> (new DataBlock (spectrum_data, static_cast<float64>(num_samples) / sample_rate_per_unit_));*/
 }
 
-//-----------------------------------------------------------------------------
 QSharedPointer<DataBlock> FixedDataBlock::calculateMean(
     std::list<QSharedPointer<DataBlock const> > const& data_blocks) {
     if (data_blocks.size() == 0) return QSharedPointer<DataBlock>(0);
@@ -149,20 +141,17 @@ QSharedPointer<DataBlock> FixedDataBlock::calculateMean(
     return QSharedPointer<DataBlock>(new FixedDataBlock(mean, sample_rate));
 }
 
-//-------------------------------------------------------------------------
 QSharedPointer<DataBlock> FixedDataBlock::calculateStandardDeviation(
     std::list<QSharedPointer<DataBlock const> > const& data_blocks) {
     return calculateStandardDeviationImpl(data_blocks, calculateMean(data_blocks));
 }
 
-//-------------------------------------------------------------------------
 QSharedPointer<DataBlock> FixedDataBlock::calculateStandardDeviation(
     std::list<QSharedPointer<DataBlock const> > const& data_blocks,
     QSharedPointer<DataBlock> means) {
     return calculateStandardDeviationImpl(data_blocks, means);
 }
 
-//-------------------------------------------------------------------------
 QSharedPointer<DataBlock> FixedDataBlock::calculateStandardDeviationImpl(
     std::list<QSharedPointer<DataBlock const> > const& data_blocks,
     QSharedPointer<DataBlock> means) {

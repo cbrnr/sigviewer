@@ -22,7 +22,6 @@
 
 namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 SignalGraphicsItem::SignalGraphicsItem(QSharedPointer<SignalViewSettings const> signal_view_settings,
     QSharedPointer<EventManager> event_manager,
     QSharedPointer<CommandExecuter> command_executor,
@@ -71,10 +70,8 @@ SignalGraphicsItem::SignalGraphicsItem(QSharedPointer<SignalViewSettings const> 
     settings.endGroup();
 }
 
-//-----------------------------------------------------------------------------
 SignalGraphicsItem::~SignalGraphicsItem() {}
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::setHeight(unsigned height) {
     this->prepareGeometryChange();
     y_zoom_ = y_zoom_ * height / height_;
@@ -84,30 +81,25 @@ void SignalGraphicsItem::setHeight(unsigned height) {
     updateYGridIntervall();
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::setXGridInterval(unsigned interval) {
     x_grid_interval_ = interval;
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::toggleXGrid(bool enable) {
     draw_x_grid_ = enable;
     update();
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::toggleYGrid(bool enable) {
     draw_y_grid_ = enable;
     update();
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::enableSeparator(bool enable) {
     draw_separator = enable;
     update();
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::updateGridColor(QColor gridColor) {
     grid_color_ = gridColor;
     update();
@@ -118,50 +110,40 @@ void SignalGraphicsItem::updateLabelColor(QColor labelColor) {
     update();
 }
 
-//-----------------------------------------------------------------------------
 QRectF SignalGraphicsItem::boundingRect() const {
     return QRectF(0, 0, width_, height_);
 }
 
-//-----------------------------------------------------------------------------
 float64 SignalGraphicsItem::getYZoom() const { return y_zoom_; }
 
-//-----------------------------------------------------------------------------
 float64 SignalGraphicsItem::getYOffset() const { return y_offset_; }
 
-//-----------------------------------------------------------------------------
 float64 SignalGraphicsItem::getYGridPixelIntervall() const {
     return y_grid_pixel_intervall_;
 }
 
-//-----------------------------------------------------------------------------
 double SignalGraphicsItem::getValueRangeFragment() const {
     return value_range_fragment_;
 }
 
-//-----------------------------------------------------------------------------
 QString SignalGraphicsItem::getPhysicalDimensionString() const {
     return channel_manager_.getChannelYUnitString(id_);
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::zoomIn() {
     double mid_line_value = (maximum_ + minimum_) / 2;
     scaleImpl((mid_line_value + minimum_) / 2.0, (maximum_ + mid_line_value) / 2.0);
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::zoomOut() {
     double mid_line_value = (maximum_ + minimum_) / 2;
     scaleImpl((2 * minimum_) - mid_line_value, (2 * maximum_) - mid_line_value);
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::scale(double lower_value, double upper_value) {
     scaleImpl(lower_value, upper_value);
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::autoScale(ScaleMode auto_zoom_type) {
     minimum_ = channel_manager_.getMinValue(id_);
     maximum_ = channel_manager_.getMaxValue(id_);
@@ -180,7 +162,6 @@ void SignalGraphicsItem::autoScale(ScaleMode auto_zoom_type) {
     scaleImpl(min, max);
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::scaleImpl(double min, double max) {
     minimum_ = min;
     maximum_ = max;
@@ -197,7 +178,6 @@ void SignalGraphicsItem::scaleImpl(double min, double max) {
     update();
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget*) {
     if (option->exposedRect.width() < 1) return;
 
@@ -473,7 +453,6 @@ void SignalGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem
     return;
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::updateYGridIntervall() {
     double value_range = (maximum_ - minimum_);  /// y_zoom_;
     value_range_fragment_ = MathUtils_::round125(
@@ -484,13 +463,10 @@ void SignalGraphicsItem::updateYGridIntervall() {
     update();
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::enableYGrid(bool enabled) { draw_y_grid_ = enabled; }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::enableXGrid(bool enabled) { draw_x_grid_ = enabled; }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
     QPoint p = event->screenPos();
     if (shifting_) {
@@ -530,7 +506,6 @@ void SignalGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
         event->ignore();
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::hoverMoveEvent(QGraphicsSceneHoverEvent* event) {
     unsigned sample_pos = event->scenePos().x() / signal_view_settings_->getPixelsPerSample();
 
@@ -562,7 +537,6 @@ void SignalGraphicsItem::hoverMoveEvent(QGraphicsSceneHoverEvent* event) {
     }
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     SignalVisualisationMode mode = signal_browser_model_.getMode();
 
@@ -642,7 +616,6 @@ void SignalGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     }
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
     if (hand_tool_on_) event->ignore();
 
@@ -661,7 +634,6 @@ void SignalGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
     setCursor(QCursor());
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event) {
     signal_browser_model_.selectChannel(id_);
     QMenu* context_menu = new QMenu(channel_manager_.getChannelLabel(id_));
@@ -681,7 +653,6 @@ void SignalGraphicsItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
         event->accept();
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent* event) {
     if (event->modifiers().testFlag(Qt::ControlModifier)) {
         if (event->delta() > 0)
@@ -697,7 +668,6 @@ void SignalGraphicsItem::wheelEvent(QGraphicsSceneWheelEvent* event) {
         event->ignore();
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::drawYGrid(QPainter* painter, QStyleOptionGraphicsItem const* option) {
     if (y_grid_pixel_intervall_ < 1) return;
 
@@ -719,7 +689,6 @@ void SignalGraphicsItem::drawYGrid(QPainter* painter, QStyleOptionGraphicsItem c
     }
 }
 
-//-----------------------------------------------------------------------------
 void SignalGraphicsItem::drawXGrid(QPainter* painter, QStyleOptionGraphicsItem const* option) {
     double pixel_per_sample = signal_view_settings_->getPixelsPerSample();
     double pixel_per_sec_ = pixel_per_sample * signal_view_settings_->getSampleRate();
