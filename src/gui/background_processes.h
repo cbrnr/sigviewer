@@ -2,39 +2,36 @@
 //
 // License: GPL-3.0
 
-
 #ifndef BACK_GROUND_PROCESSES_H
 #define BACK_GROUND_PROCESSES_H
 
-#include <QString>
 #include <QObject>
+#include <QString>
 
-namespace sigviewer
-{
+namespace sigviewer {
 
 //-----------------------------------------------------------------------------
-class BackgroundProcesses : public QObject
-{
+class BackgroundProcesses : public QObject {
     Q_OBJECT
-public:
+   public:
     //-------------------------------------------------------------------------
-    static BackgroundProcesses& instance ();
+    static BackgroundProcesses& instance();
 
     //-------------------------------------------------------------------------
-    void addProcess (QString const& name, int max);
+    void addProcess(QString const& name, int max);
 
     //-------------------------------------------------------------------------
-    void setProcessState (QString const& name, int state);
+    void setProcessState(QString const& name, int state);
 
     //-------------------------------------------------------------------------
-    void removeProcess (QString const& name);
+    void removeProcess(QString const& name);
 
-signals:
-    void newProcess (QString name, int max);
-    void processChangedState (QString name, int state);
-    void processRemoved (QString name);
+   signals:
+    void newProcess(QString name, int max);
+    void processChangedState(QString name, int state);
+    void processRemoved(QString name);
 };
 
-}
+}  // namespace sigviewer
 
-#endif // BACK_GROUND_PROCESSES_H
+#endif  // BACK_GROUND_PROCESSES_H

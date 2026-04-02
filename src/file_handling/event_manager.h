@@ -2,84 +2,80 @@
 //
 // License: GPL-3.0
 
-
 #ifndef EVENT_MANAGER_H
 #define EVENT_MANAGER_H
 
-#include "base/sigviewer_user_types.h"
-#include "base/signal_event.h"
-#include "file_signal_reader.h"
-#include "event_table_file_reader.h"
-
-#include <QObject>
-#include <QSharedPointer>
 #include <QList>
 #include <QMap>
 #include <QMutex>
-
+#include <QObject>
+#include <QSharedPointer>
 #include <set>
 
-namespace sigviewer
-{
+#include "base/signal_event.h"
+#include "base/sigviewer_user_types.h"
+#include "event_table_file_reader.h"
+#include "file_signal_reader.h"
 
-class EventManager : public QObject
-{
+namespace sigviewer {
+
+class EventManager : public QObject {
     Q_OBJECT
-public:
-    EventManager (FileSignalReader const& reader);
+   public:
+    EventManager(FileSignalReader const& reader);
 
-    ~EventManager ();
+    ~EventManager();
 
-    QSharedPointer<SignalEvent const> getEvent (EventID id) const;
+    QSharedPointer<SignalEvent const> getEvent(EventID id) const;
 
-    QSharedPointer<SignalEvent> getAndLockEventForEditing (EventID id);
+    QSharedPointer<SignalEvent> getAndLockEventForEditing(EventID id);
 
-    void updateAndUnlockEvent (EventID id);
+    void updateAndUnlockEvent(EventID id);
 
-    QSharedPointer<SignalEvent const> createEvent (ChannelID channel_id,
-                                                   unsigned pos,
-                                                   unsigned length,
-                                                   EventType type,
-                                                   int stream_id,
-                                                   EventID id = UNDEFINED_EVENT_ID);
+    QSharedPointer<SignalEvent const> createEvent(ChannelID channel_id,
+        unsigned pos,
+        unsigned length,
+        EventType type,
+        int stream_id,
+        EventID id = UNDEFINED_EVENT_ID);
 
-    void removeEvent (EventID id);
+    void removeEvent(EventID id);
 
-    std::set<EventID> getEventsAt (unsigned pos, ChannelID channel_id) const;
+    std::set<EventID> getEventsAt(unsigned pos, ChannelID channel_id) const;
 
-    double getSampleRate () const;
+    double getSampleRate() const;
 
-    unsigned getMaxEventPosition () const;
+    unsigned getMaxEventPosition() const;
 
-    QString getNameOfEventType (EventType type) const;
+    QString getNameOfEventType(EventType type) const;
 
-    QString getNameOfEvent (EventID event) const;
+    QString getNameOfEvent(EventID event) const;
 
-    QList<EventID> getAllEvents () const;
+    QList<EventID> getAllEvents() const;
 
-    unsigned getNumberOfEvents () const;
+    unsigned getNumberOfEvents() const;
 
-    std::set<EventType> getEventTypes (QString group_id = "") const;
+    std::set<EventType> getEventTypes(QString group_id = "") const;
 
-    std::set<QString> getEventTypeGroupIDs () const;
+    std::set<QString> getEventTypeGroupIDs() const;
 
-    QList<EventID> getEvents (EventType type) const;
+    QList<EventID> getEvents(EventType type) const;
 
-    EventID getNextEventOfSameType (EventID id) const;
+    EventID getNextEventOfSameType(EventID id) const;
 
-    EventID getPreviousEventOfSameType (EventID id) const;
+    EventID getPreviousEventOfSameType(EventID id) const;
 
-    QString getFileType () const;
+    QString getFileType() const;
 
-    void setEventName (EventType event_type_id, QString const& name);
+    void setEventName(EventType event_type_id, QString const& name);
 
-signals:
-    void eventChanged (EventID id);
-    void eventCreated (QSharedPointer<SignalEvent const> event);
-    void eventRemoved (EventID id);
-    void changed ();
+   signals:
+    void eventChanged(EventID id);
+    void eventCreated(QSharedPointer<SignalEvent const> event);
+    void eventRemoved(EventID id);
+    void changed();
 
-private:
+   private:
     EventTableFileReader event_table_reader_;
 
     unsigned const max_event_position_;
@@ -98,6 +94,6 @@ private:
     QString file_type_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // EVENT_MANAGER_H
+#endif  // EVENT_MANAGER_H

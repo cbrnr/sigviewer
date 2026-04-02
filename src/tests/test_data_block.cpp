@@ -2,24 +2,21 @@
 //
 // License: GPL-3.0
 
-#include "base/fixed_data_block.h"
-#include "base/sigviewer_user_types.h"
-
 #include <QtTest>
 #include <cmath>
 
+#include "base/fixed_data_block.h"
+#include "base/sigviewer_user_types.h"
+
 using namespace sigviewer;
 
-class TestDataBlock : public QObject
-{
+class TestDataBlock : public QObject {
     Q_OBJECT
 
-private slots:
-    void basicProperties()
-    {
+   private slots:
+    void basicProperties() {
         QSharedPointer<QVector<float32>> data(new QVector<float32>);
-        for (unsigned i = 1; i <= 10; i++)
-            data->push_back(i);
+        for (unsigned i = 1; i <= 10; i++) data->push_back(i);
 
         FixedDataBlock block(data, 10);
         QCOMPARE(block.size(), static_cast<unsigned>(data->size()));
@@ -29,8 +26,7 @@ private slots:
             QCOMPARE(block[i], static_cast<float32>(i + 1));
     }
 
-    void mean()
-    {
+    void mean() {
         QSharedPointer<QVector<float32>> data(new QVector<float32>);
         QSharedPointer<QVector<float32>> reverseData(new QVector<float32>);
         for (unsigned i = 1; i <= 10; i++) {
@@ -53,12 +49,10 @@ private slots:
         std::list<QSharedPointer<DataBlock const>> mixedBlocks = {block1, blockRev};
         auto meanMixed = FixedDataBlock::calculateMean(mixedBlocks);
         QCOMPARE(meanMixed->size(), 10u);
-        for (unsigned x = 0; x < 10; x++)
-            QCOMPARE((*meanMixed)[x], 5.5f);
+        for (unsigned x = 0; x < 10; x++) QCOMPARE((*meanMixed)[x], 5.5f);
     }
 
-    void standardDeviation()
-    {
+    void standardDeviation() {
         QSharedPointer<QVector<float32>> data(new QVector<float32>);
         QSharedPointer<QVector<float32>> reverseData(new QVector<float32>);
         for (unsigned i = 1; i <= 10; i++) {
@@ -74,8 +68,7 @@ private slots:
         std::list<QSharedPointer<DataBlock const>> sameBlocks = {block1, block2};
         auto stdDev = FixedDataBlock::calculateStandardDeviation(sameBlocks);
         QCOMPARE(stdDev->size(), 10u);
-        for (unsigned x = 0; x < 10; x++)
-            QCOMPARE((*stdDev)[x], 0.0f);
+        for (unsigned x = 0; x < 10; x++) QCOMPARE((*stdDev)[x], 0.0f);
 
         // Mixed blocks → standard deviation of {x+1, 10-x} around mean 5.5
         std::list<QSharedPointer<DataBlock const>> mixedBlocks = {block1, blockRev};

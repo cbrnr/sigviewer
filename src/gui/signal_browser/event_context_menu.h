@@ -2,22 +2,20 @@
 //
 // License: GPL-3.0
 
-
 #ifndef EVENT_CONTEXT_MENU_H
 #define EVENT_CONTEXT_MENU_H
+
+#include <QIcon>
+#include <QMenu>
+#include <QObject>
+#include <QSharedPointer>
+#include <QVector>
 
 #include "event_graphics_item.h"
 #include "file_handling/event_manager.h"
 #include "gui/signal_visualisation_model.h"
 
-#include <QVector>
-#include <QSharedPointer>
-#include <QMenu>
-#include <QObject>
-#include <QIcon>
-
-namespace sigviewer
-{
+namespace sigviewer {
 
 //-----------------------------------------------------------------------------
 ///
@@ -25,36 +23,32 @@ namespace sigviewer
 ///
 /// enables editing of events... allows selection of events
 
-
-class EventContextMenu : public QMenu
-{
+class EventContextMenu : public QMenu {
     Q_OBJECT
 
-public:
+   public:
     //-------------------------------------------------------------------------
-    EventContextMenu (SignalVisualisationModel& browser_model,
-                      QSharedPointer<EventManager> event_manager);
+    EventContextMenu(SignalVisualisationModel& browser_model, QSharedPointer<EventManager> event_manager);
 
     //-------------------------------------------------------------------------
-    virtual ~EventContextMenu ();
+    virtual ~EventContextMenu();
 
     //-------------------------------------------------------------------------
-    void addEvent (EventID event);
+    void addEvent(EventID event);
 
     //-------------------------------------------------------------------------
-    unsigned getNumberOfEvents () const;
+    unsigned getNumberOfEvents() const;
 
     //-------------------------------------------------------------------------
-    void finaliseAndShowContextMenu (QGraphicsSceneContextMenuEvent* context_event,
-                                     QMenu* channel_menu = 0);
+    void finaliseAndShowContextMenu(QGraphicsSceneContextMenuEvent* context_event,
+        QMenu* channel_menu = 0);
 
     //-------------------------------------------------------------------------
-    void finaliseAndShowSelectionMenu (QGraphicsSceneMouseEvent* context_event);
+    void finaliseAndShowSelectionMenu(QGraphicsSceneMouseEvent* context_event);
 
-
-private:
+   private:
     //-------------------------------------------------------------------------
-    void addActionsToMenu (QMenu& menu, EventID event);
+    void addActionsToMenu(QMenu& menu, EventID event);
 
     QVector<EventID> event_ids_;
     QVector<QMenu*> sub_menus_;
@@ -63,19 +57,18 @@ private:
 
     //-------------------------------------------------------------------------
     /// copy-constructor disabled
-    EventContextMenu (EventContextMenu const &);
+    EventContextMenu(EventContextMenu const&);
 
     //-------------------------------------------------------------------------
     /// assignment-operator disabled
-    EventContextMenu& operator= (EventContextMenu const &);
+    EventContextMenu& operator=(EventContextMenu const&);
 
-//signals:
-//    void hovered (QAction* q);
-public slots:
-    void selectEvent (QAction* q);
-
+    // signals:
+    //     void hovered (QAction* q);
+   public slots:
+    void selectEvent(QAction* q);
 };
 
-}
+}  // namespace sigviewer
 
-#endif // EVENT_CONTEXT_MENU_H
+#endif  // EVENT_CONTEXT_MENU_H

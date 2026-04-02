@@ -2,54 +2,51 @@
 //
 // License: GPL-3.0
 
-
 #ifndef VIEW_OPTIONS_GUI_COMMAND_H
 #define VIEW_OPTIONS_GUI_COMMAND_H
 
 #include "gui/gui_action_command.h"
 #include "gui/gui_action_factory_registrator.h"
 
-namespace sigviewer
-{
+namespace sigviewer {
 
 //-----------------------------------------------------------------------------
-class AdaptChannelViewGuiCommand : public GuiActionCommand
-{
+class AdaptChannelViewGuiCommand : public GuiActionCommand {
     Q_OBJECT
-public:
+   public:
     //-------------------------------------------------------------------------
-    AdaptChannelViewGuiCommand ();
+    AdaptChannelViewGuiCommand();
 
     //-------------------------------------------------------------------------
-    virtual ~AdaptChannelViewGuiCommand () {}
+    virtual ~AdaptChannelViewGuiCommand() {}
 
     //-------------------------------------------------------------------------
-    virtual void init ();
+    virtual void init();
 
-protected:
+   protected:
     //-------------------------------------------------------------------------
-    virtual void evaluateEnabledness ();
+    virtual void evaluateEnabledness();
 
-private slots:
+   private slots:
     //-------------------------------------------------------------------------
-    void selectShownChannels ();
-
-    //-------------------------------------------------------------------------
-    void changeColor ();
+    void selectShownChannels();
 
     //-------------------------------------------------------------------------
-    void scale ();
+    void changeColor();
 
     //-------------------------------------------------------------------------
-    void hide ();
+    void scale();
 
     //-------------------------------------------------------------------------
-    void toggleAnimations ();
+    void hide();
 
     //-------------------------------------------------------------------------
-    void setAnimationDuration ();
+    void toggleAnimations();
 
-private:
+    //-------------------------------------------------------------------------
+    void setAnimationDuration();
+
+   private:
     static QString const CHANNELS_();
     static QString const CHANGE_COLOR_();
     static QString const SCALE_();
@@ -61,6 +58,6 @@ private:
     static GuiActionFactoryRegistrator registrator_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // VIEW_OPTIONS_GUI_COMMAND_H
+#endif  // VIEW_OPTIONS_GUI_COMMAND_H

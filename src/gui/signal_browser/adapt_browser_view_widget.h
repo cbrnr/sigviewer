@@ -2,67 +2,64 @@
 //
 // License: GPL-3.0
 
-
 #ifndef ADAPT_BROWSER_VIEW_WIDGET_H
 #define ADAPT_BROWSER_VIEW_WIDGET_H
 
-#include "gui/signal_visualisation_view.h"
-#include "gui/signal_view_settings.h"
-#include "ui_adapt_browser_view_widget.h"
-#include "y_axis_widget_4.h"
-#include "x_axis_widget_4.h"
-#include "label_widget.h"
-#include "gui/signal_visualisation_model.h"
-
-#include <QWidget>
 #include <QSharedPointer>
+#include <QWidget>
 
-namespace sigviewer
-{
+#include "gui/signal_view_settings.h"
+#include "gui/signal_visualisation_model.h"
+#include "gui/signal_visualisation_view.h"
+#include "label_widget.h"
+#include "ui_adapt_browser_view_widget.h"
+#include "x_axis_widget_4.h"
+#include "y_axis_widget_4.h"
+
+namespace sigviewer {
 
 //-------------------------------------------------------------------------
-class AdaptBrowserViewWidget : public QWidget
-{
-Q_OBJECT
-public:
+class AdaptBrowserViewWidget : public QWidget {
+    Q_OBJECT
+   public:
     //-------------------------------------------------------------------------
-    explicit AdaptBrowserViewWidget (SignalVisualisationView const* signal_visualisation_view,
-                                     QSharedPointer<SignalViewSettings> settings_,
-                                     YAxisWidget* yAxisWidget,
-                                     XAxisWidget* xAxisWidget,
-                                     LabelWidget* labelWidget,
-                                     QWidget *parent = 0);
+    explicit AdaptBrowserViewWidget(SignalVisualisationView const* signal_visualisation_view,
+        QSharedPointer<SignalViewSettings> settings_,
+        YAxisWidget* yAxisWidget,
+        XAxisWidget* xAxisWidget,
+        LabelWidget* labelWidget,
+        QWidget* parent = 0);
     ~AdaptBrowserViewWidget();
 
-    double getSecsPerPage() {return ui_.secsPerPageSpinbox->value();}
+    double getSecsPerPage() { return ui_.secsPerPageSpinbox->value(); }
 
-signals:
+   signals:
     //-------------------------------------------------------------------------
-    void xAxisVisibilityChanged (bool visible);
-
-    //-------------------------------------------------------------------------
-    void yAxisVisibilityChanged (bool visible);
+    void xAxisVisibilityChanged(bool visible);
 
     //-------------------------------------------------------------------------
-    void labelsVisibilityChanged (bool visible);
-private slots:
-    //-------------------------------------------------------------------------
-    void on_channelOverlappingSlider_valueChanged (int value);
+    void yAxisVisibilityChanged(bool visible);
 
     //-------------------------------------------------------------------------
-    void on_yGridSlider_valueChanged (int value);
+    void labelsVisibilityChanged(bool visible);
+   private slots:
+    //-------------------------------------------------------------------------
+    void on_channelOverlappingSlider_valueChanged(int value);
 
     //-------------------------------------------------------------------------
-    void on_channelsPerPageSpinbox_valueChanged (int value);
+    void on_yGridSlider_valueChanged(int value);
 
     //-------------------------------------------------------------------------
-    void on_secsPerPageSpinbox_valueChanged (double value);
+    void on_channelsPerPageSpinbox_valueChanged(int value);
 
     //-------------------------------------------------------------------------
-    void updateValues ();
+    void on_secsPerPageSpinbox_valueChanged(double value);
 
     //-------------------------------------------------------------------------
-    void selfUpdatingFinished ();
+    void updateValues();
+
+    //-------------------------------------------------------------------------
+    void selfUpdatingFinished();
 
     //-------------------------------------------------------------------------
     void on_xGridCheckbox_stateChanged(int checkState);
@@ -79,9 +76,9 @@ private slots:
 
     void on_color_checkBox_stateChanged(int checkState);
 
-private:
+   private:
     //-------------------------------------------------------------------------
-    virtual void showEvent (QShowEvent* event);
+    virtual void showEvent(QShowEvent* event);
 
     SignalVisualisationView const* signal_visualisation_view_;
     QSharedPointer<SignalViewSettings> settings_;
@@ -91,9 +88,8 @@ private:
     XAxisWidget* x_axis_widget_;
     YAxisWidget* y_axis_widget_;
     LabelWidget* label_widget_;
-
 };
 
-}
+}  // namespace sigviewer
 
-#endif // ADAPT_BROWSER_VIEW_WIDGET_H
+#endif  // ADAPT_BROWSER_VIEW_WIDGET_H

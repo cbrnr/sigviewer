@@ -2,31 +2,19 @@
 //
 // License: GPL-3.0
 
-
 #include "gdf_load_data_thread.h"
 
 #include <QMutexLocker>
 
-namespace SigViewer_
-{
+namespace SigViewer_ {
 
 //-----------------------------------------------------------------------------
-GDFLoadDataThread::GDFLoadDataThread(QObject *parent) :
-    QThread(parent)
-{
-}
+GDFLoadDataThread::GDFLoadDataThread(QObject* parent) : QThread(parent) {}
 
 //-----------------------------------------------------------------------------
-void GDFLoadDataThread::setNextIndex (unsigned sample_index)
-{
-
-}
+void GDFLoadDataThread::setNextIndex(unsigned sample_index) {}
 
 //-----------------------------------------------------------------------------
-void GDFLoadDataThread::run ()
-{
+void GDFLoadDataThread::run() {}
 
-}
-
-
-}
+}  // namespace SigViewer_

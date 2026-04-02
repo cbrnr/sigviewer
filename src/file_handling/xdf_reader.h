@@ -2,54 +2,52 @@
 //
 // License: GPL-3.0
 
-
 #ifndef XDF_READER_H_
 #define XDF_READER_H_
+
+#include <QFile>
+#include <QMap>
+#include <QMutex>
 
 #include "file_signal_reader.h"
 #include "xdf.h"
 
-#include <QFile>
-#include <QMutex>
-#include <QMap>
+namespace sigviewer {
 
-namespace sigviewer
-{
-
-//the object to store XDF data
+// the object to store XDF data
 extern QSharedPointer<Xdf> XDFdata;
 
-//XDFReader, modeled  on BiosigReader
-class XDFReader : public FileSignalReader
-{
-public:
-    XDFReader ();
+// XDFReader, modeled  on BiosigReader
+class XDFReader : public FileSignalReader {
+   public:
+    XDFReader();
 
     virtual ~XDFReader();
 
     //-------------------------------------------------------------------------
-    QPair<FileSignalReader*, QString> createInstance (QString const& file_path);
+    QPair<FileSignalReader*, QString> createInstance(QString const& file_path);
 
     //-------------------------------------------------------------------------
-    virtual QSharedPointer<DataBlock const> getSignalData (ChannelID channel_id,
-                                                           size_t start_sample,
-                                                           size_t length) const;
+    virtual QSharedPointer<DataBlock const> getSignalData(ChannelID channel_id,
+        size_t start_sample,
+        size_t length) const;
 
     //-------------------------------------------------------------------------
-    virtual QList<QSharedPointer<SignalEvent const> > getEvents () const;
+    virtual QList<QSharedPointer<SignalEvent const> > getEvents() const;
 
     //-------------------------------------------------------------------------
-    virtual QSharedPointer<BasicHeader> getBasicHeader ();
+    virtual QSharedPointer<BasicHeader> getBasicHeader();
 
     //-------------------------------------------------------------------------
-    virtual QSharedPointer<BasicHeader const> getBasicHeader () const {return basic_header_;}
+    virtual QSharedPointer<BasicHeader const> getBasicHeader() const {
+        return basic_header_;
+    }
 
     //-------------------------------------------------------------------------
-    int setStreamColors();  /*!< Set a distinct color for each stream. */
+    int setStreamColors(); /*!< Set a distinct color for each stream. */
 
     //-------------------------------------------------------------------------
-    enum sampleRateTypes
-    {
+    enum sampleRateTypes {
         No_streams_found,
         Zero_Hz_Only,
         Mono_Sample_Rate,
@@ -58,15 +56,15 @@ public:
 
     sampleRateTypes selectSampleRateType();
 
-private:
+   private:
     //-------------------------------------------------------------------------
-    QString open (QString const& file_path);
+    QString open(QString const& file_path);
 
     //-------------------------------------------------------------------------
-    void bufferAllChannels () const;
+    void bufferAllChannels() const;
 
     //-------------------------------------------------------------------------
-    void bufferAllEvents () const;
+    void bufferAllEvents() const;
 
     Q_DISABLE_COPY(XDFReader)
 
@@ -81,6 +79,6 @@ private:
     mutable QList<QSharedPointer<SignalEvent const> > events_;
 };
 
-} // namespace sigviewer
+}  // namespace sigviewer
 
 #endif /*XDF_READER_H_*/

@@ -2,31 +2,28 @@
 //
 // License: GPL-3.0
 
-
 #ifndef GDF_BASICH_EADER_H
 #define GDF_BASICH_EADER_H
 
-#include "file_handling/basic_header.h"
-
 #include <GDF/GDFHeaderAccess.h>
 
-namespace SigViewer_
-{
+#include "file_handling/basic_header.h"
+
+namespace SigViewer_ {
 
 //-------------------------------------------------------------------------------------------------
-class GDFBasicHeader : public BasicHeader
-{
-public:
+class GDFBasicHeader : public BasicHeader {
+   public:
     //---------------------------------------------------------------------------------------------
-    GDFBasicHeader (QString const& file_path, gdf::GDFHeaderAccess const& header_access);
+    GDFBasicHeader(QString const& file_path, gdf::GDFHeaderAccess const& header_access);
 
     //---------------------------------------------------------------------------------------------
-    virtual uint32 getNumberOfSamples () const;
+    virtual uint32 getNumberOfSamples() const;
 
-private:
+   private:
     gdf::GDFHeaderAccess const& header_access_;
 };
 
-}
+}  // namespace SigViewer_
 
-#endif // GDF_BASICH_EADER_H
+#endif  // GDF_BASICH_EADER_H

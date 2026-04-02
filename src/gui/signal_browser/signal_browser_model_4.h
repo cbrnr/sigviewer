@@ -2,135 +2,129 @@
 //
 // License: GPL-3.0
 
-
 #ifndef SIGNAL_BROWSER_MODEL_H_q4
 #define SIGNAL_BROWSER_MODEL_H_q4
 
-#include "tab_context.h"
-#include "file_handling/channel_manager.h"
-#include "file_handling/event_manager.h"
-#include "gui/signal_visualisation_modes.h"
-#include "gui/signal_visualisation_model.h"
-#include "gui/color_manager.h"
-#include "event_graphics_item.h"
-
-#include <QObject>
-#include <QMap>
-#include <QSharedPointer>
-#include <QPointF>
 #include <QList>
-
+#include <QMap>
+#include <QObject>
+#include <QPointF>
+#include <QSharedPointer>
 #include <map>
 #include <set>
 
-namespace sigviewer
-{
+#include "event_graphics_item.h"
+#include "file_handling/channel_manager.h"
+#include "file_handling/event_manager.h"
+#include "gui/color_manager.h"
+#include "gui/signal_visualisation_model.h"
+#include "gui/signal_visualisation_modes.h"
+#include "tab_context.h"
+
+namespace sigviewer {
 
 class SignalBrowserView;
 class SignalGraphicsItem;
 
 //-----------------------------------------------------------------------------
 /// SignalBrowserModel
-class SignalBrowserModel : public SignalVisualisationModel
-{
+class SignalBrowserModel : public SignalVisualisationModel {
     Q_OBJECT
-public:
+   public:
     //-------------------------------------------------------------------------
     SignalBrowserModel(QSharedPointer<EventManager> event_manager,
-                       ChannelManager const& channel_manager,
-                       QSharedPointer<TabContext> tab_context,
-                       QSharedPointer<ColorManager const> color_manager);
+        ChannelManager const& channel_manager,
+        QSharedPointer<TabContext> tab_context,
+        QSharedPointer<ColorManager const> color_manager);
 
     //-------------------------------------------------------------------------
     virtual ~SignalBrowserModel();
 
     //-------------------------------------------------------------------------
-    virtual void scaleChannel (ChannelID id, float32 lower_value, float32 upper_value);
+    virtual void scaleChannel(ChannelID id, float32 lower_value, float32 upper_value);
 
     //-------------------------------------------------------------------------
-    virtual void scaleChannel (ChannelID id);
+    virtual void scaleChannel(ChannelID id);
 
     //-------------------------------------------------------------------------
-    virtual ChannelManager const& getChannelManager () const;
+    virtual ChannelManager const& getChannelManager() const;
 
     //-------------------------------------------------------------------------
-    virtual QSharedPointer<EventManager const> getEventManager () const;
+    virtual QSharedPointer<EventManager const> getEventManager() const;
 
     //-------------------------------------------------------------------------
-    virtual QSharedPointer<EventManager> getEventManager ();
-
-    //-------------------------------------------------------------------------
-    /// see base class
-    virtual unsigned getShownPosition () const;
+    virtual QSharedPointer<EventManager> getEventManager();
 
     //-------------------------------------------------------------------------
     /// see base class
-    virtual void goToSample (unsigned sample);
+    virtual unsigned getShownPosition() const;
 
     //-------------------------------------------------------------------------
     /// see base class
-    virtual QList<EventID> getSelectedEvents () const;
+    virtual void goToSample(unsigned sample);
 
     //-------------------------------------------------------------------------
-    virtual SignalVisualisationView const* view () const;
+    /// see base class
+    virtual QList<EventID> getSelectedEvents() const;
 
     //-------------------------------------------------------------------------
-    virtual QMap<ChannelID, SignalGraphicsItem *> getChannelToSignalItem();
+    virtual SignalVisualisationView const* view() const;
 
+    //-------------------------------------------------------------------------
+    virtual QMap<ChannelID, SignalGraphicsItem*> getChannelToSignalItem();
 
     void setSignalBrowserView(SignalBrowserView* signal_browser_view);
     void loadSettings();
     void saveSettings();
 
-    virtual void setShownChannels (std::set<ChannelID> const& shown_channels);
-    virtual std::set<ChannelID> getShownChannels () const;
-    int32 getYPosOfChannel (uint32 channel_nr) const;
+    virtual void setShownChannels(std::set<ChannelID> const& shown_channels);
+    virtual std::set<ChannelID> getShownChannels() const;
+    int32 getYPosOfChannel(uint32 channel_nr) const;
 
     void zoomInAll();
     void zoomOutAll();
 
     EventGraphicsItem* getSelectedEventItem();
-    void updateEventItems ();
+    void updateEventItems();
 
-public slots:
+   public slots:
     //-------------------------------------------------------------------------
-    virtual void update ();
+    virtual void update();
 
     //-------------------------------------------------------------------------
     /// adds the given event
-    virtual void addEventItem (QSharedPointer<SignalEvent const> event);
+    virtual void addEventItem(QSharedPointer<SignalEvent const> event);
 
     //-------------------------------------------------------------------------
     /// removes the given event
-    virtual void removeEventItem (EventID id);
+    virtual void removeEventItem(EventID id);
 
-    void updateEvent (EventID id);
+    void updateEvent(EventID id);
 
-    virtual void selectEvent (EventID id);
-    void unselectEvent ();
+    virtual void selectEvent(EventID id);
+    void unselectEvent();
 
-signals:
-    void eventSelected (QSharedPointer<SignalEvent const> selected_event);
+   signals:
+    void eventSelected(QSharedPointer<SignalEvent const> selected_event);
 
-protected:
-    virtual void shownEventTypesChangedImpl ();
-    virtual void modeChangedImpl (SignalVisualisationMode mode);
+   protected:
+    virtual void shownEventTypesChangedImpl();
+    virtual void modeChangedImpl(SignalVisualisationMode mode);
 
-private slots:
+   private slots:
     //-------------------------------------------------------------------------
     /// implementation of removeEventItem which really deletes the item
-    void removeEventItemImpl ();
+    void removeEventItemImpl();
 
-private:
+   private:
+    //-------------------------------------------------------------------------
+    void addChannel(ChannelID channel_nr);
 
     //-------------------------------------------------------------------------
-    void addChannel (ChannelID channel_nr);
+    void removeChannel(ChannelID channel_nr);
 
     //-------------------------------------------------------------------------
-    void removeChannel (ChannelID channel_nr);
-
-    //-------------------------------------------------------------------------
-    void updateEventItemsImpl ();
+    void updateEventItemsImpl();
 
     //-------------------------------------------------------------------------
     static uint8 const SIGNAL_Z = 4;
@@ -146,7 +140,6 @@ private:
 
     typedef std::map<int32, int32> Int2IntMap;
 
-
     SignalGraphicsItemMap channel2signal_item_;
     Int2EventGraphicsItemPtrMap id2event_item_;
 
@@ -159,7 +152,6 @@ private:
     QList<EventGraphicsItem*> items_to_delete_;
 };
 
-}
+}  // namespace sigviewer
 
 #endif
-

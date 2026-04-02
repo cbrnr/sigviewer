@@ -2,10 +2,8 @@
 //
 // License: GPL-3.0
 
-
 #ifndef SIGNAL_BROWSER_MOUSE_HANDLING_H
 #define SIGNAL_BROWSER_MOUSE_HANDLING_H
-
 
 class QMouseEvent;
 class QWheelEvent;
@@ -13,16 +11,12 @@ class QWheelEvent;
 #include "gui/signal_visualisation_modes.h"
 class QGraphicsSceneMouseEvent;
 
-
-namespace sigviewer
-{
+namespace sigviewer {
 
 // signal browser mouse action
-class SignalBrowserMouseHandling
-{
-public:
-    enum Action
-    {
+class SignalBrowserMouseHandling {
+   public:
+    enum Action {
         NO_ACTION,
         HAND_SCROLL_ACTION,
         ZOOM_WINDOW_ACTION,
@@ -37,9 +31,8 @@ public:
     };
 
     static Action getAction(QGraphicsSceneMouseEvent* e, SignalVisualisationMode mode);
-
 };
 
-}
+}  // namespace sigviewer
 
 #endif

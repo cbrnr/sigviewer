@@ -2,49 +2,44 @@
 //
 // License: GPL-3.0
 
-
 #ifndef MACRO_UNDO_COMMAND_H
 #define MACRO_UNDO_COMMAND_H
 
-#include <QUndoCommand>
 #include <QSharedPointer>
+#include <QUndoCommand>
 
-namespace sigviewer
-{
+namespace sigviewer {
 
-class MacroUndoCommand : public QUndoCommand
-{
-public:
+class MacroUndoCommand : public QUndoCommand {
+   public:
     //-------------------------------------------------------------------------
     /// constructor
-    MacroUndoCommand (QList<QSharedPointer<QUndoCommand> > const& commands);
+    MacroUndoCommand(QList<QSharedPointer<QUndoCommand> > const& commands);
 
     //-------------------------------------------------------------------------
     /// destructor
-    virtual ~MacroUndoCommand () {}
+    virtual ~MacroUndoCommand() {}
 
     //-------------------------------------------------------------------------
     /// undos the all commands
-    virtual void undo ();
+    virtual void undo();
 
     //-------------------------------------------------------------------------
     /// executes the macro
-    virtual void redo ();
+    virtual void redo();
 
-
-private:
+   private:
     QList<QSharedPointer<QUndoCommand> > commands_;
 
     //-------------------------------------------------------------------------
     /// copy-constructor disabled
-    MacroUndoCommand (MacroUndoCommand const &);
+    MacroUndoCommand(MacroUndoCommand const&);
 
     //-------------------------------------------------------------------------
     /// assignment-operator disabled
-    MacroUndoCommand& operator= (MacroUndoCommand const &);
-
+    MacroUndoCommand& operator=(MacroUndoCommand const&);
 };
 
-}
+}  // namespace sigviewer
 
-#endif // MACRO_UNDO_COMMAND_H
+#endif  // MACRO_UNDO_COMMAND_H

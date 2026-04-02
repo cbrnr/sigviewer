@@ -2,52 +2,49 @@
 //
 // License: GPL-3.0
 
-
 #ifndef Y_AXIS_GRAPHICS_ITEM_H
 #define Y_AXIS_GRAPHICS_ITEM_H
+
+#include <QMap>
+#include <QWidget>
 
 #include "base/sigviewer_user_types.h"
 #include "gui/signal_view_settings.h"
 
-
-#include <QWidget>
-#include <QMap>
-
-namespace sigviewer
-{
+namespace sigviewer {
 
 class SignalGraphicsItem;
 
-class YAxisWidget : public QWidget
-{
+class YAxisWidget : public QWidget {
     Q_OBJECT
-public:
+   public:
     YAxisWidget(QWidget* parent, QSharedPointer<SignalViewSettings const> signal_view_settings);
 
-    virtual ~YAxisWidget () {}
+    virtual ~YAxisWidget() {}
 
     void addChannel(ChannelID channel_nr, SignalGraphicsItem const* const signal_item);
     void removeChannel(ChannelID channel_nr);
 
-public slots:
-    void changeSignalHeight (unsigned signal_height);
-    void changeYStart (int32 y_start);
-    void updateChannel (ChannelID channel_id);
+   public slots:
+    void changeSignalHeight(unsigned signal_height);
+    void changeYStart(int32 y_start);
+    void updateChannel(ChannelID channel_id);
     void enableSeparator(bool enable);
     void changeLabelColor(QColor labelColor);
 
-private:
-    virtual void paintEvent (QPaintEvent* event = 0);
-    virtual void contextMenuEvent (QContextMenuEvent* event);
+   private:
+    virtual void paintEvent(QPaintEvent* event = 0);
+    virtual void contextMenuEvent(QContextMenuEvent* event);
     virtual void changeEvent(QEvent* event);
 
-    void paintYAxisLabels (QPainter* painter, float64 offset,
-                           float64 y_grid_pixel_intervall,
-                           double value_range_fragment,
-                           QString const& unit_string, float64 channelHeight);
+    void paintYAxisLabels(QPainter* painter,
+        float64 offset,
+        float64 y_grid_pixel_intervall,
+        double value_range_fragment,
+        QString const& unit_string,
+        float64 channelHeight);
 
-    void paintYUnits (QPainter* painter, QString const& unit_string,
-                      float64 channelHeight);
+    void paintYUnits(QPainter* painter, QString const& unit_string, float64 channelHeight);
 
     unsigned channel_height_;
     int32 y_start_;
@@ -55,9 +52,8 @@ private:
     QSharedPointer<SignalViewSettings const> signal_view_settings_;
     bool enable_separator;
     QColor label_color_;
-
 };
 
-}
+}  // namespace sigviewer
 
-#endif // Y_AXIS_GRAPHICS_ITEM_H
+#endif  // Y_AXIS_GRAPHICS_ITEM_H

@@ -2,127 +2,122 @@
 //
 // License: GPL-3.0
 
-
 #ifndef GUI_ACTION_COMMAND_H
 #define GUI_ACTION_COMMAND_H
 
-#include "application_context.h"
-
-#include "base/application_states.h"
-#include "base/tab_states.h"
-#include "base/file_states.h"
-#include "base/exception.h"
-
-#include "signal_visualisation_model.h"
-#include "event_view.h"
-#include "signal_view_settings.h"
-
-#include <QObject>
 #include <QAction>
+#include <QObject>
 #include <QStringList>
 
-namespace sigviewer
-{
+#include "application_context.h"
+#include "base/application_states.h"
+#include "base/exception.h"
+#include "base/file_states.h"
+#include "base/tab_states.h"
+#include "event_view.h"
+#include "signal_view_settings.h"
+#include "signal_visualisation_model.h"
+
+namespace sigviewer {
 
 class ActionConnector;
 
-class GuiActionCommand : public QObject
-{
+class GuiActionCommand : public QObject {
     Q_OBJECT
-public:
+   public:
     //-------------------------------------------------------------------------
-    virtual ~GuiActionCommand () {}
-
-    //-------------------------------------------------------------------------
-    QList<QAction*> getQActions ();
+    virtual ~GuiActionCommand() {}
 
     //-------------------------------------------------------------------------
-    QList<QString> getActionIDs () const;
-
-	//-------------------------------------------------------------------------
-	void initConnections();
+    QList<QAction*> getQActions();
 
     //-------------------------------------------------------------------------
-    virtual void init () = 0;
-
-public slots:
-    //-------------------------------------------------------------------------
-    virtual void trigger (QString const&) {}
+    QList<QString> getActionIDs() const;
 
     //-------------------------------------------------------------------------
-    void updateEnablednessToApplicationState (ApplicationState state);
+    void initConnections();
 
     //-------------------------------------------------------------------------
-    void updateEnablednessToFileState (FileState state);
+    virtual void init() = 0;
+
+   public slots:
+    //-------------------------------------------------------------------------
+    virtual void trigger(QString const&) {}
 
     //-------------------------------------------------------------------------
-    void updateEnablednessToTabSelectionState (TabSelectionState state);
+    void updateEnablednessToApplicationState(ApplicationState state);
 
     //-------------------------------------------------------------------------
-    void updateEnablednessToTabEditState (TabEditState state);
+    void updateEnablednessToFileState(FileState state);
 
     //-------------------------------------------------------------------------
-    QAction* getQAction (QString const& id);
-
-protected:
-    //-------------------------------------------------------------------------
-    GuiActionCommand (QStringList const& action_ids);
+    void updateEnablednessToTabSelectionState(TabSelectionState state);
 
     //-------------------------------------------------------------------------
-    void resetActionTriggerSlot (QString const& action_id, const char* slot);
+    void updateEnablednessToTabEditState(TabEditState state);
 
     //-------------------------------------------------------------------------
-    void setShortcut (QString const& action_id, QKeySequence const& key_sequence);
+    QAction* getQAction(QString const& id);
+
+   protected:
+    //-------------------------------------------------------------------------
+    GuiActionCommand(QStringList const& action_ids);
 
     //-------------------------------------------------------------------------
-    void setIcon (QString const& action_id, QIcon const& icon);
+    void resetActionTriggerSlot(QString const& action_id, const char* slot);
 
     //-------------------------------------------------------------------------
-    virtual void applicationStateChanged () {}
+    void setShortcut(QString const& action_id, QKeySequence const& key_sequence);
 
     //-------------------------------------------------------------------------
-    virtual void evaluateEnabledness ();
+    void setIcon(QString const& action_id, QIcon const& icon);
 
     //-------------------------------------------------------------------------
-    QSharedPointer<EventView> currentEventView ();
+    virtual void applicationStateChanged() {}
 
     //-------------------------------------------------------------------------
-    QSharedPointer<SignalVisualisationModel> currentVisModel ();
+    virtual void evaluateEnabledness();
 
     //-------------------------------------------------------------------------
-    QSharedPointer<SignalViewSettings> currentSignalViewSettings ();
+    QSharedPointer<EventView> currentEventView();
 
     //-------------------------------------------------------------------------
-    QSharedPointer<FileContext> currentFileContext ();
+    QSharedPointer<SignalVisualisationModel> currentVisModel();
 
     //-------------------------------------------------------------------------
-    QSharedPointer<ApplicationContext> applicationContext ();
+    QSharedPointer<SignalViewSettings> currentSignalViewSettings();
 
     //-------------------------------------------------------------------------
-    ApplicationState getApplicationState () const {return app_state_;}
+    QSharedPointer<FileContext> currentFileContext();
 
     //-------------------------------------------------------------------------
-    FileState getFileState () const {return file_state_;}
+    QSharedPointer<ApplicationContext> applicationContext();
 
     //-------------------------------------------------------------------------
-    TabSelectionState getTabSelectionState () const {return tab_selection_state_;}
+    ApplicationState getApplicationState() const { return app_state_; }
 
     //-------------------------------------------------------------------------
-    TabEditState getTabEditState () const {return tab_edit_state_;}
+    FileState getFileState() const { return file_state_; }
 
     //-------------------------------------------------------------------------
-    bool disableIfNoSignalIsVisualised (QStringList const &actions);
+    TabSelectionState getTabSelectionState() const { return tab_selection_state_; }
 
     //-------------------------------------------------------------------------
-    bool disableIfNoEventsPossible (QStringList const &actions);
+    TabEditState getTabEditState() const { return tab_edit_state_; }
 
     //-------------------------------------------------------------------------
-    void disableIfNoEventSelected (QStringList const &actions);
+    bool disableIfNoSignalIsVisualised(QStringList const& actions);
 
     //-------------------------------------------------------------------------
-    bool disableIfNoFileIsOpened (QStringList const &actions);
+    bool disableIfNoEventsPossible(QStringList const& actions);
 
-private:
+    //-------------------------------------------------------------------------
+    void disableIfNoEventSelected(QStringList const& actions);
+
+    //-------------------------------------------------------------------------
+    bool disableIfNoFileIsOpened(QStringList const& actions);
+
+   private:
     QMap<QString, QAction*> action_map_;
     QList<ActionConnector*> connectors_;
 
@@ -132,22 +127,23 @@ private:
     TabEditState tab_edit_state_;
 };
 
-class ActionConnector : public QObject
-{
+class ActionConnector : public QObject {
     Q_OBJECT
-public:
-    ActionConnector (QObject* parent, QString const& name) : QObject (parent), name_ (name) {}
+   public:
+    ActionConnector(QObject* parent, QString const& name)
+        : QObject(parent), name_(name) {}
 
-	QString const& getName() const {return name_; }
+    QString const& getName() const { return name_; }
 
-public slots:
-    void trigger () {emit triggered (name_);}
-signals:
-    void triggered (QString const& name);
-private:
+   public slots:
+    void trigger() { emit triggered(name_); }
+   signals:
+    void triggered(QString const& name);
+
+   private:
     QString name_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // GUI_ACTION_COMMAND_H
+#endif  // GUI_ACTION_COMMAND_H

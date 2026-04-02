@@ -2,49 +2,47 @@
 //
 // License: GPL-3.0
 
-
 #include "adapt_browser_view_widget.h"
+
+#include <QColorDialog>
+#include <QDebug>
+#include <QMutexLocker>
+#include <QSettings>
+#include <cmath>
+
 #include "base/exception.h"
 #include "base/math_utils.h"
 #include "gui/gui_helper_functions.h"
 
-#include <QSettings>
-#include <QDebug>
-#include <QMutexLocker>
-#include <QColorDialog>
-#include <cmath>
-
-namespace sigviewer
-{
+namespace sigviewer {
 
 //-------------------------------------------------------------------------
-AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* signal_visualisation_view,
-                                                QSharedPointer<SignalViewSettings> setting,
-                                                YAxisWidget *yAxisWidget,
-                                                XAxisWidget *xAxisWidget,
-                                                LabelWidget *labelWidget,
-                                                QWidget *parent) :
-    QWidget (parent),
-    signal_visualisation_view_ (signal_visualisation_view),
-    settings_ (setting),
-    self_updating_ (false),
-    updating_values_ (false),
-    x_axis_widget_ (xAxisWidget),
-    y_axis_widget_ (yAxisWidget),
-    label_widget_ (labelWidget)
-{
-    ui_.setupUi (this);
-    if (!connect (ui_.x_axis_checkbox_, SIGNAL(toggled(bool)), SIGNAL(xAxisVisibilityChanged(bool))))
-        throw (Exception (tr("connect failed: x_axis_checkbox_").toStdString()));
-    if (!connect (ui_.y_axis_checkbox_, SIGNAL(toggled(bool)), SIGNAL(yAxisVisibilityChanged(bool))))
-        throw (Exception (tr("connect failed: y_axis_checkbox_").toStdString()));
-    if (!connect (ui_.labels_checkbox_, SIGNAL(toggled(bool)), SIGNAL(labelsVisibilityChanged(bool))))
-        throw (Exception (tr("connect failed: labels_checkbox_").toStdString()));
-    ui_.channelsPerPageSpinbox->setMaximum (setting->getChannelManager().getNumberChannels());
-    ui_.secsPerPageSpinbox->setMaximum (settings_->getChannelManager().getDurationInSec());
-    connect (settings_.data(), SIGNAL(channelHeightChanged()), SLOT(updateValues()));
-    connect (settings_.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateValues()));
-    connect (settings_.data(), SIGNAL(pixelsPerSampleChanged()), SLOT(updateValues()));
+AdaptBrowserViewWidget::AdaptBrowserViewWidget(SignalVisualisationView const* signal_visualisation_view,
+    QSharedPointer<SignalViewSettings> setting,
+    YAxisWidget* yAxisWidget,
+    XAxisWidget* xAxisWidget,
+    LabelWidget* labelWidget,
+    QWidget* parent)
+    : QWidget(parent),
+      signal_visualisation_view_(signal_visualisation_view),
+      settings_(setting),
+      self_updating_(false),
+      updating_values_(false),
+      x_axis_widget_(xAxisWidget),
+      y_axis_widget_(yAxisWidget),
+      label_widget_(labelWidget) {
+    ui_.setupUi(this);
+    if (!connect(ui_.x_axis_checkbox_, SIGNAL(toggled(bool)), SIGNAL(xAxisVisibilityChanged(bool))))
+        throw(Exception(tr("connect failed: x_axis_checkbox_").toStdString()));
+    if (!connect(ui_.y_axis_checkbox_, SIGNAL(toggled(bool)), SIGNAL(yAxisVisibilityChanged(bool))))
+        throw(Exception(tr("connect failed: y_axis_checkbox_").toStdString()));
+    if (!connect(ui_.labels_checkbox_, SIGNAL(toggled(bool)), SIGNAL(labelsVisibilityChanged(bool))))
+        throw(Exception(tr("connect failed: labels_checkbox_").toStdString()));
+    ui_.channelsPerPageSpinbox->setMaximum(setting->getChannelManager().getNumberChannels());
+    ui_.secsPerPageSpinbox->setMaximum(settings_->getChannelManager().getDurationInSec());
+    connect(settings_.data(), SIGNAL(channelHeightChanged()), SLOT(updateValues()));
+    connect(settings_.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateValues()));
+    connect(settings_.data(), SIGNAL(pixelsPerSampleChanged()), SLOT(updateValues()));
 
     QSettings settings;
 
@@ -61,12 +59,11 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
 
     ui_.yGridSlider->setToolTip(tr("Slide to change the density of Y grids"));
 
-    ui_.colors_groupbox->hide();    //currently the color button is immature, hide it temporarily
+    ui_.colors_groupbox->hide();  // currently the color button is immature, hide it temporarily
     ui_.color_checkBox->hide();
 }
 
-AdaptBrowserViewWidget::~AdaptBrowserViewWidget()
-{
+AdaptBrowserViewWidget::~AdaptBrowserViewWidget() {
     QSettings settings;
 
     settings.beginGroup("SignalBrowserModel");
@@ -79,18 +76,13 @@ AdaptBrowserViewWidget::~AdaptBrowserViewWidget()
 }
 
 //-------------------------------------------------------------------------
-void AdaptBrowserViewWidget::showEvent (QShowEvent*)
-{
-    updateValues ();
-}
+void AdaptBrowserViewWidget::showEvent(QShowEvent*) { updateValues(); }
 
 //-------------------------------------------------------------------------
-void AdaptBrowserViewWidget::on_channelOverlappingSlider_valueChanged (int value)
-{
-    if (updating_values_)
-        return;
+void AdaptBrowserViewWidget::on_channelOverlappingSlider_valueChanged(int value) {
+    if (updating_values_) return;
 
-    settings_->setChannelOverlapping (static_cast<float>(value) / 100.0);
+    settings_->setChannelOverlapping(static_cast<float>(value) / 100.0);
 
     if (value > 0)
         ui_.border_checkBox_->setEnabled(false);
@@ -99,73 +91,69 @@ void AdaptBrowserViewWidget::on_channelOverlappingSlider_valueChanged (int value
 }
 
 //-------------------------------------------------------------------------
-void AdaptBrowserViewWidget::on_yGridSlider_valueChanged (int value)
-{
-    if (updating_values_)
-        return;
+void AdaptBrowserViewWidget::on_yGridSlider_valueChanged(int value) {
+    if (updating_values_) return;
 
-    settings_->setGridFragmentation (Qt::Vertical, value);
+    settings_->setGridFragmentation(Qt::Vertical, value);
 }
 
-
 //-------------------------------------------------------------------------
-void AdaptBrowserViewWidget::on_channelsPerPageSpinbox_valueChanged (int value)
-{
-    if (updating_values_)
-        return;
+void AdaptBrowserViewWidget::on_channelsPerPageSpinbox_valueChanged(int value) {
+    if (updating_values_) return;
 
     self_updating_ = true;
-    int new_channel_height = round(signal_visualisation_view_->getViewportHeight() / (double)value);
+    int new_channel_height =
+        round(signal_visualisation_view_->getViewportHeight() / (double)value);
 
-    GuiHelper::animateProperty (settings_.data(), "channelHeight", settings_->getChannelHeight(),
-                                new_channel_height, this, SLOT(selfUpdatingFinished()));
+    GuiHelper::animateProperty(settings_.data(),
+        "channelHeight",
+        settings_->getChannelHeight(),
+        new_channel_height,
+        this,
+        SLOT(selfUpdatingFinished()));
 }
 
 //-------------------------------------------------------------------------
-void AdaptBrowserViewWidget::on_secsPerPageSpinbox_valueChanged (double value)
-{
-    if (updating_values_)
-        return;
+void AdaptBrowserViewWidget::on_secsPerPageSpinbox_valueChanged(double value) {
+    if (updating_values_) return;
 
     self_updating_ = true;
-    float new_pixels_per_sample = signal_visualisation_view_->getViewportWidth() /
-                                (value * settings_->getChannelManager().getSampleRate());
+    float new_pixels_per_sample = signal_visualisation_view_->getViewportWidth()
+                                  / (value * settings_->getChannelManager().getSampleRate());
 
-    GuiHelper::animateProperty (settings_.data(), "pixelsPerSample", settings_->getPixelsPerSample(),
-                                new_pixels_per_sample, this, SLOT(selfUpdatingFinished()));
+    GuiHelper::animateProperty(settings_.data(),
+        "pixelsPerSample",
+        settings_->getPixelsPerSample(),
+        new_pixels_per_sample,
+        this,
+        SLOT(selfUpdatingFinished()));
 }
 
 //-------------------------------------------------------------------------
-void AdaptBrowserViewWidget::updateValues ()
-{
-    if ((!isVisible()) || self_updating_)
-        return;
+void AdaptBrowserViewWidget::updateValues() {
+    if ((!isVisible()) || self_updating_) return;
     updating_values_ = true;
-    ui_.x_axis_checkbox_->setChecked (signal_visualisation_view_->getXAxisVisibility ());
-    ui_.y_axis_checkbox_->setChecked (signal_visualisation_view_->getYAxisVisibility ());
-    ui_.labels_checkbox_->setChecked (signal_visualisation_view_->getLabelsVisibility ());
-    ui_.yGridSlider->setValue (settings_->getGridFragmentation(Qt::Vertical));
-    //ui_.xGridSlider->setValue (settings_->getGridFragmentation(Qt::Horizontal));
-    ui_.channelsPerPageSpinbox->setValue (round(signal_visualisation_view_->getViewportHeight() /
-                                          (double)settings_->getChannelHeight()));
+    ui_.x_axis_checkbox_->setChecked(signal_visualisation_view_->getXAxisVisibility());
+    ui_.y_axis_checkbox_->setChecked(signal_visualisation_view_->getYAxisVisibility());
+    ui_.labels_checkbox_->setChecked(signal_visualisation_view_->getLabelsVisibility());
+    ui_.yGridSlider->setValue(settings_->getGridFragmentation(Qt::Vertical));
+    // ui_.xGridSlider->setValue (settings_->getGridFragmentation(Qt::Horizontal));
+    ui_.channelsPerPageSpinbox->setValue(round(signal_visualisation_view_->getViewportHeight()
+                                               / (double)settings_->getChannelHeight()));
 
-    ui_.secsPerPageSpinbox->setValue ((signal_visualisation_view_->getViewportWidth() /
-                                       settings_->getPixelsPerSample()) /
-                                      settings_->getChannelManager().getSampleRate());
+    ui_.secsPerPageSpinbox->setValue(
+        (signal_visualisation_view_->getViewportWidth() / settings_->getPixelsPerSample())
+        / settings_->getChannelManager().getSampleRate());
     updating_values_ = false;
 }
 
 //-------------------------------------------------------------------------
-void AdaptBrowserViewWidget::selfUpdatingFinished ()
-{
-    self_updating_ = false;
-}
+void AdaptBrowserViewWidget::selfUpdatingFinished() { self_updating_ = false; }
 
-}
+}  // namespace sigviewer
 
-void sigviewer::AdaptBrowserViewWidget::on_xGridCheckbox_stateChanged(int checkState)
-{
-    if (checkState == Qt::Unchecked)    //cancel X Grid
+void sigviewer::AdaptBrowserViewWidget::on_xGridCheckbox_stateChanged(int checkState) {
+    if (checkState == Qt::Unchecked)  // cancel X Grid
     {
         emit settings_->enableXGrid(false);
 
@@ -173,9 +161,7 @@ void sigviewer::AdaptBrowserViewWidget::on_xGridCheckbox_stateChanged(int checkS
         settings.beginGroup("SignalBrowserModel");
         settings.setValue("show_x_grid", ui_.xGridCheckbox->checkState());
         settings.endGroup();
-    }
-    else if (checkState == Qt::Checked)
-    {
+    } else if (checkState == Qt::Checked) {
         emit settings_->enableXGrid(true);
         QSettings settings;
         settings.beginGroup("SignalBrowserModel");
@@ -184,9 +170,8 @@ void sigviewer::AdaptBrowserViewWidget::on_xGridCheckbox_stateChanged(int checkS
     }
 }
 
-void sigviewer::AdaptBrowserViewWidget::on_yGridCheckbox_stateChanged(int checkState)
-{
-    if (checkState == Qt::Unchecked)        //cancel Y Grid
+void sigviewer::AdaptBrowserViewWidget::on_yGridCheckbox_stateChanged(int checkState) {
+    if (checkState == Qt::Unchecked)  // cancel Y Grid
     {
         ui_.yGridSlider->setDisabled(true);
         emit settings_->enableYGrid(false);
@@ -196,9 +181,7 @@ void sigviewer::AdaptBrowserViewWidget::on_yGridCheckbox_stateChanged(int checkS
         settings.setValue("show_y_grid", ui_.yGridCheckbox->checkState());
         settings.endGroup();
 
-    }
-    else if (checkState == Qt::Checked)
-    {
+    } else if (checkState == Qt::Checked) {
         ui_.yGridSlider->setEnabled(true);
         emit settings_->enableYGrid(true);
 
@@ -209,9 +192,8 @@ void sigviewer::AdaptBrowserViewWidget::on_yGridCheckbox_stateChanged(int checkS
     }
 }
 
-void sigviewer::AdaptBrowserViewWidget::on_border_checkBox__stateChanged(int checkState)
-{
-    if (checkState == Qt::Unchecked)        //cancel borders
+void sigviewer::AdaptBrowserViewWidget::on_border_checkBox__stateChanged(int checkState) {
+    if (checkState == Qt::Unchecked)  // cancel borders
     {
         y_axis_widget_->enableSeparator(false);
         label_widget_->enableSeparator(false);
@@ -222,9 +204,7 @@ void sigviewer::AdaptBrowserViewWidget::on_border_checkBox__stateChanged(int che
         settings.setValue("show_separator", ui_.border_checkBox_->checkState());
         settings.endGroup();
 
-    }
-    else if (checkState == Qt::Checked)
-    {
+    } else if (checkState == Qt::Checked) {
         y_axis_widget_->enableSeparator(true);
         label_widget_->enableSeparator(true);
         emit settings_->separatorEnabled(true);
@@ -236,23 +216,19 @@ void sigviewer::AdaptBrowserViewWidget::on_border_checkBox__stateChanged(int che
     }
 }
 
-void sigviewer::AdaptBrowserViewWidget::on_grid_color_button_clicked()
-{
+void sigviewer::AdaptBrowserViewWidget::on_grid_color_button_clicked() {
     QColorDialog colorPicker;
     colorPicker.setOption(QColorDialog::ShowAlphaChannel);
-    if (colorPicker.exec() == QDialog::Accepted)
-    {
+    if (colorPicker.exec() == QDialog::Accepted) {
         QColor gridColor = colorPicker.selectedColor();
         emit settings_->gridColorChanged(gridColor);
     }
 }
 
-void sigviewer::AdaptBrowserViewWidget::on_label_color_button_clicked()
-{
+void sigviewer::AdaptBrowserViewWidget::on_label_color_button_clicked() {
     QColorDialog colorPicker;
     colorPicker.setOption(QColorDialog::ShowAlphaChannel);
-    if (colorPicker.exec() == QDialog::Accepted)
-    {
+    if (colorPicker.exec() == QDialog::Accepted) {
         QColor labelColor = colorPicker.selectedColor();
         y_axis_widget_->changeLabelColor(labelColor);
         label_widget_->changeLabelColor(labelColor);
@@ -261,14 +237,10 @@ void sigviewer::AdaptBrowserViewWidget::on_label_color_button_clicked()
     }
 }
 
-void sigviewer::AdaptBrowserViewWidget::on_color_checkBox_stateChanged(int checkState)
-{
-    if (checkState == Qt::Checked)
-    {
+void sigviewer::AdaptBrowserViewWidget::on_color_checkBox_stateChanged(int checkState) {
+    if (checkState == Qt::Checked) {
         ui_.colors_groupbox->show();
-    }
-    else
-    {
+    } else {
         ui_.colors_groupbox->hide();
     }
 }

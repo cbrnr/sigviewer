@@ -2,30 +2,24 @@
 //
 // License: GPL-3.0
 
-
 #ifndef OPEN_FILE_COMMAND_H
 #define OPEN_FILE_COMMAND_H
 
 #include "application_context.h"
 
+namespace sigviewer {
 
-namespace sigviewer
-{
+class OpenFileCommand {
+   public:
+    OpenFileCommand(QSharedPointer<ApplicationContext> application_context, QString const& filename_and_path)
+        : application_context_(application_context),
+          filename_and_path_(filename_and_path),
+          non_gui_mode_(true) {}
 
-class OpenFileCommand
-{
-public:
-    OpenFileCommand (QSharedPointer<ApplicationContext> application_context,
-                     QString const& filename_and_path)
-        : application_context_ (application_context),
-          filename_and_path_ (filename_and_path),
-          non_gui_mode_ (true)
-    {}
+    QString execute();
 
-    QString execute ();
-
-private:
-    void openFileInNonGuiMode ();
+   private:
+    void openFileInNonGuiMode();
 
     QSharedPointer<ApplicationContext> application_context_;
     QString filename_and_path_;
@@ -33,6 +27,6 @@ private:
     bool non_gui_mode_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // OPEN_FILE_COMMAND_H
+#endif  // OPEN_FILE_COMMAND_H

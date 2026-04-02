@@ -2,51 +2,50 @@
 //
 // License: GPL-3.0
 
-
 #ifndef PROCESSED_SIGNAL_CHANNEL_MANAGER_H
 #define PROCESSED_SIGNAL_CHANNEL_MANAGER_H
-
-#include "file_handling/channel_manager.h"
 
 #include <QMap>
 #include <QObject>
 
-namespace sigviewer
-{
+#include "file_handling/channel_manager.h"
 
-class ProcessedSignalChannelManager : public ChannelManager, public QObject
-{
-public:
+namespace sigviewer {
+
+class ProcessedSignalChannelManager : public ChannelManager, public QObject {
+   public:
     //-------------------------------------------------------------------------
     ProcessedSignalChannelManager(float64 sample_rate, unsigned length, QObject* parent);
 
     //-------------------------------------------------------------------------
-    void addChannel (ChannelID id, QSharedPointer<DataBlock const> data_block,
-                     QString const& label, QString const& y_unit_string);
+    void addChannel(ChannelID id,
+        QSharedPointer<DataBlock const> data_block,
+        QString const& label,
+        QString const& y_unit_string);
 
     //-------------------------------------------------------------------------
-    ChannelID addExtraChannel (ChannelID id, QSharedPointer<DataBlock const> data_block,
-                          QString const& label, QString const& y_unit_string);
+    ChannelID addExtraChannel(ChannelID id,
+        QSharedPointer<DataBlock const> data_block,
+        QString const& label,
+        QString const& y_unit_string);
 
     //-------------------------------------------------------------------------
-    virtual ~ProcessedSignalChannelManager () {}
+    virtual ~ProcessedSignalChannelManager() {}
 
     //-------------------------------------------------------------------------
-    virtual std::set<ChannelID> getChannels () const;
+    virtual std::set<ChannelID> getChannels() const;
 
     //-------------------------------------------------------------------------
-    virtual uint32 getNumberChannels () const;
+    virtual uint32 getNumberChannels() const;
 
     //-------------------------------------------------------------------------
-    virtual QString getChannelLabel (ChannelID id) const;
+    virtual QString getChannelLabel(ChannelID id) const;
 
     //-------------------------------------------------------------------------
-    virtual QString getChannelYUnitString (ChannelID id) const;
+    virtual QString getChannelYUnitString(ChannelID id) const;
 
     //-------------------------------------------------------------------------
-    virtual QSharedPointer<DataBlock const> getData (ChannelID id,
-                                                     unsigned start_pos,
-                                                     unsigned length) const;
+    virtual QSharedPointer<DataBlock const> getData(ChannelID id, unsigned start_pos, unsigned length) const;
 
     //-------------------------------------------------------------------------
     virtual float64 getDurationInSec() const;
@@ -57,8 +56,8 @@ public:
     //-------------------------------------------------------------------------
     virtual float64 getSampleRate() const;
 
-private:
-    virtual QString getChannelLabel (ChannelID id, int streamNumber) const; /*!< Inherited, should not be called. */
+   private:
+    virtual QString getChannelLabel(ChannelID id, int streamNumber) const; /*!< Inherited, should not be called. */
 
     float32 sample_rate_;
     unsigned length_;
@@ -67,6 +66,6 @@ private:
     QMap<ChannelID, QString> y_unit_strings_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // PROCESSED_SIGNAL_CHANNEL_MANAGER_H
+#endif  // PROCESSED_SIGNAL_CHANNEL_MANAGER_H

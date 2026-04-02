@@ -2,30 +2,27 @@
 //
 // License: GPL-3.0
 
-
 #ifndef SIGNAL_CHANNEL_H
 #define SIGNAL_CHANNEL_H
 
-#include "sigviewer_user_types.h"
 #include "biosig.h"
+#include "sigviewer_user_types.h"
 #undef isfinite
-#include <QString>
 #include <QMutex>
+#include <QString>
 
-namespace sigviewer
-{
+namespace sigviewer {
 
 //-----------------------------------------------------------------------------
 /// @class SignalChannel
 /// @brief data about a signal channel
-class SignalChannel
-{
-public:
+class SignalChannel {
+   public:
     //-------------------------------------------------------------------------
     SignalChannel(unsigned ch, const HDRTYPE* hdr);
     SignalChannel(unsigned ch, QString file_format);
     SignalChannel(QString label, float64 sample_rate, QString physical_dim = "µV");
-//    SignalChannel(unsigned number, CHANNEL_TYPE C);  /* obsolete, deprecated */
+    //    SignalChannel(unsigned number, CHANNEL_TYPE C);  /* obsolete, deprecated */
 
     //-------------------------------------------------------------------------
     QString typeString() const;
@@ -40,31 +37,30 @@ public:
     float64 getDigitalMinimum() const;
     float64 getSampleRate() const;
 
-private:
+   private:
     // from GDF format
-    enum Type
-    {
-        CHAR    = 0,
-        INT8    = 1,
-        UINT8   = 2,
-        INT16   = 3,
-        UINT16  = 4,
-        INT32   = 5,
-        UINT32  = 6,
-        INT64   = 7,
-        UINT64   = 8,
+    enum Type {
+        CHAR = 0,
+        INT8 = 1,
+        UINT8 = 2,
+        INT16 = 3,
+        UINT16 = 4,
+        INT32 = 5,
+        UINT32 = 6,
+        INT64 = 7,
+        UINT64 = 8,
         FLOAT32 = 16,
         FLOAT64 = 17,
         FLOAT128 = 18,
 
         // add N to code
-        BITN    = 255,
-        UBITN   = 511
+        BITN = 255,
+        UBITN = 511
     };
 
     mutable QMutex mutex_;
-    
-    //uint32 number_;
+
+    // uint32 number_;
     QString label_;
     QString phys_y_dimension_label_;
     float64 physical_maximum_;
@@ -78,6 +74,6 @@ private:
     bool notch_;
 };
 
-}
+}  // namespace sigviewer
 
 #endif

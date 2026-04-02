@@ -2,7 +2,6 @@
 //
 // License: GPL-3.0
 
-
 #ifndef EVENT_TYPES_SELECTION_DIALOG_H
 #define EVENT_TYPES_SELECTION_DIALOG_H
 
@@ -10,43 +9,39 @@
 #include "gui/color_manager.h"
 #include "ui_event_type_selection_dialog.h"
 
-
 class QTreeWidget;
 class QPushButton;
 class QTreeWidgetItem;
 
-namespace sigviewer
-{
+namespace sigviewer {
 
 //-----------------------------------------------------------------------------
 /// EventTypesSelectionDialog
-class EventTypesSelectionDialog : public QDialog
-{
+class EventTypesSelectionDialog : public QDialog {
     Q_OBJECT
-public:
+   public:
     //-------------------------------------------------------------------------
-    EventTypesSelectionDialog (QString const& caption,
-                               QSharedPointer<EventManager const> event_manager,
-                               std::set<EventType> const& preselected_types,
-                               QSharedPointer<ColorManager> color_manager,
-                               QWidget* parent = 0);
+    EventTypesSelectionDialog(QString const& caption,
+        QSharedPointer<EventManager const> event_manager,
+        std::set<EventType> const& preselected_types,
+        QSharedPointer<ColorManager> color_manager,
+        QWidget* parent = 0);
 
     void storeColors();
-    std::set<EventType> getSelectedTypes () const;
+    std::set<EventType> getSelectedTypes() const;
 
-private slots:
-    void on_tree_widget__itemClicked (QTreeWidgetItem* item, int column);
-    void on_tree_widget__itemChanged (QTreeWidgetItem* item ,int column);
-    void on_all_events_button__toggled (bool checked);
-    void on_existing_events_button__toggled (bool checked);
-    void on_select_all_button__clicked ();
-    void on_unselect_all_button__clicked ();
-    void on_reset_colors_button__clicked ();
-
+   private slots:
+    void on_tree_widget__itemClicked(QTreeWidgetItem* item, int column);
+    void on_tree_widget__itemChanged(QTreeWidgetItem* item, int column);
+    void on_all_events_button__toggled(bool checked);
+    void on_existing_events_button__toggled(bool checked);
+    void on_select_all_button__clicked();
+    void on_unselect_all_button__clicked();
+    void on_reset_colors_button__clicked();
 
     void on_toggle_collapse_expand_button_clicked();
 
-private:
+   private:
     //-------------------------------------------------------------------------
     // not allowed
     EventTypesSelectionDialog();
@@ -54,17 +49,16 @@ private:
     const EventTypesSelectionDialog& operator=(const EventTypesSelectionDialog&);
 
     //-------------------------------------------------------------------------
-    void buildTree (bool only_existing_events = false);
+    void buildTree(bool only_existing_events = false);
 
     //-------------------------------------------------------------------------
-    void handleSelected (QTreeWidgetItem* item);
+    void handleSelected(QTreeWidgetItem* item);
 
     //-------------------------------------------------------------------------
-    void handleColor (QTreeWidgetItem* item);
+    void handleColor(QTreeWidgetItem* item);
 
     //-------------------------------------------------------------------------
-    void handleAlpha (QTreeWidgetItem* item);
-
+    void handleAlpha(QTreeWidgetItem* item);
 
     static int const CHECKBOX_COLUMN_INDEX_ = 0;
     static int const NAME_COLUMN_INDEX_ = 0;
@@ -78,7 +72,6 @@ private:
     Ui::EventTypeSelectionDialog ui_;
 };
 
-}
+}  // namespace sigviewer
 
 #endif
-

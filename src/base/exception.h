@@ -2,28 +2,25 @@
 //
 // License: GPL-3.0
 
-
 #ifndef EXCEPTION_H
 #define EXCEPTION_H
 
 #include <exception>
 #include <string>
 
+namespace sigviewer {
 
-namespace sigviewer
-{
-
-class Exception : public std::exception
-{
-public:
-    Exception (std::string const& what) throw ();
-    virtual ~Exception () throw () {}
+class Exception : public std::exception {
+   public:
+    Exception(std::string const& what) throw();
+    virtual ~Exception() throw() {}
 
     virtual const char* what() const throw();
-private:
+
+   private:
     std::string what_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // EXCEPTION_H
+#endif  // EXCEPTION_H

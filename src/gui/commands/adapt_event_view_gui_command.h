@@ -2,65 +2,60 @@
 //
 // License: GPL-3.0
 
-
 #ifndef FIT_VIEW_GUI_COMMAND_H
 #define FIT_VIEW_GUI_COMMAND_H
+
+#include <QStringList>
 
 #include "gui/gui_action_command.h"
 #include "gui/gui_action_factory_registrator.h"
 
-#include <QStringList>
-
-namespace sigviewer
-{
+namespace sigviewer {
 
 //-------------------------------------------------------------------------
-class AdaptEventViewGuiCommand : public GuiActionCommand
-{
+class AdaptEventViewGuiCommand : public GuiActionCommand {
     Q_OBJECT
-public:
+   public:
     //-------------------------------------------------------------------------
-    AdaptEventViewGuiCommand ();
+    AdaptEventViewGuiCommand();
 
     //-------------------------------------------------------------------------
-    virtual ~AdaptEventViewGuiCommand () {}
+    virtual ~AdaptEventViewGuiCommand() {}
 
     //-------------------------------------------------------------------------
-    virtual void init ();
+    virtual void init();
 
-public slots:
+   public slots:
     //-------------------------------------------------------------------------
-    virtual void trigger (QString const& action_name);
-
-    //-------------------------------------------------------------------------
-    void hideEventsOfOtherType ();
+    virtual void trigger(QString const& action_name);
 
     //-------------------------------------------------------------------------
-    void showAllEvents ();
+    void hideEventsOfOtherType();
 
     //-------------------------------------------------------------------------
-    void setShownEvents ();
-
-protected:
-    //-------------------------------------------------------------------------
-    virtual void evaluateEnabledness ();
-
-private:
-    //-------------------------------------------------------------------------
-    void fitViewToEvent ();
+    void showAllEvents();
 
     //-------------------------------------------------------------------------
-    void gotoAndSelectEvent (bool forward);
+    void setShownEvents();
+
+   protected:
+    //-------------------------------------------------------------------------
+    virtual void evaluateEnabledness();
+
+   private:
+    //-------------------------------------------------------------------------
+    void fitViewToEvent();
 
     //-------------------------------------------------------------------------
-    void setNextAndPreviousEvent ();
+    void gotoAndSelectEvent(bool forward);
+
+    //-------------------------------------------------------------------------
+    void setNextAndPreviousEvent();
 
     //-------------------------------------------------------------------------
     EventID current_event_;
     EventID next_event_;
     EventID previous_event_;
-
-
 
     //-------------------------------------------------------------------------
     static QString const FIT_TO_EVENT_();
@@ -74,6 +69,6 @@ private:
     static GuiActionFactoryRegistrator registrator_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // FIT_VIEW_GUI_COMMAND_H
+#endif  // FIT_VIEW_GUI_COMMAND_H

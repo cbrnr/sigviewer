@@ -2,23 +2,18 @@
 //
 // License: GPL-3.0
 
-
 #include "biosig_reader.h"
-#include "biosig_basic_header.h"
-#include "file_handler_factory_registrator.h"
-#include "gui/progress_bar.h"
-#include "base/fixed_data_block.h"
-
 
 #include <QSettings>
 
-
-
+#include "base/fixed_data_block.h"
+#include "biosig_basic_header.h"
+#include "file_handler_factory_registrator.h"
+#include "gui/progress_bar.h"
 
 using namespace std;
 
-namespace sigviewer
-{
+namespace sigviewer {
 
 //-----------------------------------------------------------------------------
 FILE_SIGNAL_READER_REGISTRATION(gdf, BioSigReader);
@@ -34,106 +29,80 @@ FILE_SIGNAL_READER_REGISTRATION(evt, BioSigReader);
 FILE_SIGNAL_READER_DEFAULT_REGISTRATION(BioSigReader);
 
 //-----------------------------------------------------------------------------
-BioSigReader::BioSigReader() :
-    basic_header_ (0),
-    biosig_header_ (0),
-    buffered_all_channels_ (false),
-    buffered_all_events_ (false)
-{
-    qDebug () << "Constructed BioSigReader";
+BioSigReader::BioSigReader()
+    : basic_header_(0), biosig_header_(0), buffered_all_channels_(false), buffered_all_events_(false) {
+    qDebug() << "Constructed BioSigReader";
     // nothing to do here
 }
 
 //-----------------------------------------------------------------------------
-BioSigReader::~BioSigReader()
-{
-    doClose();
+BioSigReader::~BioSigReader() { doClose(); }
+
+//-----------------------------------------------------------------------------
+QPair<FileSignalReader*, QString> BioSigReader::createInstance(QString const& file_path) {
+    BioSigReader* reader(new BioSigReader);
+    if (file_path.section('.', -1) == "evt") reader->buffered_all_channels_ = true;
+    QString error = reader->open(file_path);
+    if (error.size() > 0) {
+        qDebug() << error;
+        return QPair<FileSignalReader*, QString>(0, error);
+    } else
+        return QPair<FileSignalReader*, QString>(reader, "");
 }
 
 //-----------------------------------------------------------------------------
-QPair<FileSignalReader*, QString> BioSigReader::createInstance (QString const& file_path)
-{
-    BioSigReader* reader (new BioSigReader);
-    if (file_path.section('.', -1) == "evt")
-        reader->buffered_all_channels_ = true;
-    QString error = reader->open (file_path);
-    if (error.size() > 0)
-    {
-        qDebug () << error;
-        return QPair<FileSignalReader*, QString> (0, error);
-    }
-    else
-        return QPair<FileSignalReader*, QString> (reader, "");
-}
-
-
-//-----------------------------------------------------------------------------
-void BioSigReader::doClose () const
-{
-    if (biosig_header_)
-        destructHDR (biosig_header_);
+void BioSigReader::doClose() const {
+    if (biosig_header_) destructHDR(biosig_header_);
     biosig_header_ = NULL;
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<DataBlock const> BioSigReader::getSignalData (ChannelID channel_id,
-                                       size_t start_sample,
-                                       size_t length) const
-{
-    QMutexLocker lock (&mutex_);
+QSharedPointer<DataBlock const> BioSigReader::getSignalData(ChannelID channel_id,
+    size_t start_sample,
+    size_t length) const {
+    QMutexLocker lock(&mutex_);
 
-    if (!buffered_all_channels_)
-        bufferAllChannels();
+    if (!buffered_all_channels_) bufferAllChannels();
 
-    if (!channel_map_.contains(channel_id))
-        return QSharedPointer<DataBlock const> (0);
+    if (!channel_map_.contains(channel_id)) return QSharedPointer<DataBlock const>(0);
 
-    if (length == basic_header_->getNumberOfSamples() &&
-        start_sample == 0)
+    if (length == basic_header_->getNumberOfSamples() && start_sample == 0)
         return channel_map_[channel_id];
     else
-        return channel_map_[channel_id]->createSubBlock (start_sample, length);
+        return channel_map_[channel_id]->createSubBlock(start_sample, length);
 }
 
 //-----------------------------------------------------------------------------
-QList<QSharedPointer<SignalEvent const> > BioSigReader::getEvents () const
-{
-    QMutexLocker lock (&mutex_);
+QList<QSharedPointer<SignalEvent const> > BioSigReader::getEvents() const {
+    QMutexLocker lock(&mutex_);
     QList<QSharedPointer<SignalEvent const> > empty_list;
-    if (!biosig_header_)
-        return empty_list;
+    if (!biosig_header_) return empty_list;
 
-    if (!buffered_all_events_)
-        bufferAllEvents();
+    if (!buffered_all_events_) bufferAllEvents();
 
     return events_;
 }
 
 //-----------------------------------------------------------------------------
-QString BioSigReader::open (QString const& file_name)
-{
-
-    QMutexLocker lock (&mutex_);
-    return loadFixedHeader (file_name);
+QString BioSigReader::open(QString const& file_name) {
+    QMutexLocker lock(&mutex_);
+    return loadFixedHeader(file_name);
 }
 
 //-----------------------------------------------------------------------------
-QString BioSigReader::loadFixedHeader(const QString& file_name)
-{
-    QMutexLocker locker (&biosig_access_lock_);
+QString BioSigReader::loadFixedHeader(const QString& file_name) {
+    QMutexLocker locker(&biosig_access_lock_);
     tzset();
 
-    if(biosig_header_==NULL)
-    {
-        biosig_header_ = constructHDR (0,0);
+    if (biosig_header_ == NULL) {
+        biosig_header_ = constructHDR(0, 0);
         biosig_header_->FLAG.UCAL = 0;
         biosig_header_->FLAG.OVERFLOWDETECTION = 1;
     }
 
-    biosig_header_ = sopen(file_name.toStdString().c_str(), "r", biosig_header_ );
+    biosig_header_ = sopen(file_name.toStdString().c_str(), "r", biosig_header_);
 
-    basic_header_ = QSharedPointer<BasicHeader>
-                    (new BiosigBasicHeader (biosig_header_, file_name));
+    basic_header_ = QSharedPointer<BasicHeader>(new BiosigBasicHeader(biosig_header_, file_name));
 
 #if (BIOSIG_VERSION < 10400)
     if (biosig_header_ == NULL || serror(biosig_header_))
@@ -141,12 +110,11 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
     if (biosig_header_ == NULL || serror2(biosig_header_))
 #endif
     {
-        sclose (biosig_header_);
+        sclose(biosig_header_);
         destructHDR(biosig_header_);
         biosig_header_ = NULL;
 
-        if (!QFile::exists(file_name))
-        {
+        if (!QFile::exists(file_name)) {
             qDebug() << "File doesn't exist.";
             QMessageBox msgBox;
             msgBox.setIcon(QMessageBox::Warning);
@@ -174,15 +142,13 @@ QString BioSigReader::loadFixedHeader(const QString& file_name)
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<BasicHeader> BioSigReader::getBasicHeader ()
-{
-    //QMutexLocker lock (&mutex_);
+QSharedPointer<BasicHeader> BioSigReader::getBasicHeader() {
+    // QMutexLocker lock (&mutex_);
     return basic_header_;
 }
 
 //-----------------------------------------------------------------------------
-int BioSigReader::setChannelColors()
-{
+int BioSigReader::setChannelColors() {
     QSharedPointer<ColorManager> colorPicker = ApplicationContext::getInstance()->color_manager_;
     for (size_t i = 0; i < basic_header_->getNumberChannels(); i++)
         colorPicker->setChannelColor(i, colorPicker->getDefaultChannelColor());
@@ -193,10 +159,10 @@ int BioSigReader::setChannelColors()
 }
 
 //-----------------------------------------------------------------------------
-void BioSigReader::bufferAllChannels () const
-{
+void BioSigReader::bufferAllChannels() const {
     size_t numberOfSamples = biosig_header_->NRec * biosig_header_->SPR;
-    biosig_data_type* read_data = new biosig_data_type[numberOfSamples * basic_header_->getNumberChannels()];
+    biosig_data_type* read_data =
+        new biosig_data_type[numberOfSamples * basic_header_->getNumberChannels()];
 
     biosig_header_->FLAG.ROW_BASED_CHANNELS = 0;
 
@@ -204,65 +170,58 @@ void BioSigReader::bufferAllChannels () const
 
     sread(read_data, 0, biosig_header_->NRec, biosig_header_);
 
-    for (unsigned channel_id = 0; channel_id < basic_header_->getNumberChannels();
-         ++channel_id)
-    {
-        ProgressBar::instance().increaseValue (1, progress_name);
+    for (unsigned channel_id = 0; channel_id < basic_header_->getNumberChannels(); ++channel_id) {
+        ProgressBar::instance().increaseValue(1, progress_name);
 
-        QSharedPointer<QVector<float32> > raw_data(new QVector<float32> (numberOfSamples, NAN));
+        QSharedPointer<QVector<float32> > raw_data(new QVector<float32>(numberOfSamples, NAN));
         for (size_t data_index = 0; data_index < numberOfSamples; data_index++)
-            raw_data->operator [](data_index) = read_data[data_index + channel_id * numberOfSamples];
+            raw_data->operator[](data_index) = read_data[data_index + channel_id * numberOfSamples];
 
-        QSharedPointer<DataBlock const> data_block(new FixedDataBlock(raw_data, basic_header_->getSampleRate()));
+        QSharedPointer<DataBlock const> data_block(
+            new FixedDataBlock(raw_data, basic_header_->getSampleRate()));
         channel_map_[channel_id] = data_block;
     }
 
     buffered_all_channels_ = true;
-    if (buffered_all_events_)
-        doClose();
+    if (buffered_all_events_) doClose();
     delete[] read_data;
 }
 
 //-------------------------------------------------------------------------
-void BioSigReader::bufferAllEvents () const
-{
+void BioSigReader::bufferAllEvents() const {
     unsigned number_events = biosig_header_->EVENT.N;
     // Hack Hack: Transforming Events to have the same sample rate as the signals
     double rate_transition;
-    if ( ( biosig_header_->EVENT.SampleRate <= 0.0) ||
-         ( biosig_header_->EVENT.SampleRate != biosig_header_->EVENT.SampleRate))
-	rate_transition = 1;
+    if ((biosig_header_->EVENT.SampleRate <= 0.0)
+        || (biosig_header_->EVENT.SampleRate != biosig_header_->EVENT.SampleRate))
+        rate_transition = 1;
     else
-	rate_transition = basic_header_->getEventSamplerate() / biosig_header_->EVENT.SampleRate;
+        rate_transition = basic_header_->getEventSamplerate() / biosig_header_->EVENT.SampleRate;
 
-    for (unsigned index = 0; index < number_events; index++)
-    {
-        QSharedPointer<SignalEvent> event (new SignalEvent (biosig_header_->EVENT.POS[index] * rate_transition,
-                                                            biosig_header_->EVENT.TYP[index],
-                                                            biosig_header_->EVENT.SampleRate * rate_transition, -1));
-        if (biosig_header_->EVENT.CHN)
-        {
+    for (unsigned index = 0; index < number_events; index++) {
+        QSharedPointer<SignalEvent> event(new SignalEvent(biosig_header_->EVENT.POS[index] * rate_transition,
+            biosig_header_->EVENT.TYP[index],
+            biosig_header_->EVENT.SampleRate * rate_transition,
+            -1));
+        if (biosig_header_->EVENT.CHN) {
             if (biosig_header_->EVENT.CHN[index] == 0)
-                event->setChannel (UNDEFINED_CHANNEL);
+                event->setChannel(UNDEFINED_CHANNEL);
             else
-                event->setChannel (biosig_header_->EVENT.CHN[index] - 1);
+                event->setChannel(biosig_header_->EVENT.CHN[index] - 1);
 
             if (biosig_header_->EVENT.TYP[index] != 0x7fff)
-                event->setDuration (biosig_header_->EVENT.DUR[index] * rate_transition);
-            else 	// sparse samples (Typ=0x7fff) do not have a duration, but the duration field is used to store the sample value
+                event->setDuration(biosig_header_->EVENT.DUR[index] * rate_transition);
+            else  // sparse samples (Typ=0x7fff) do not have a duration, but the duration field is used to store the sample value
                 event->setDuration(0);
-        }
-        else
-        {
+        } else {
             event->setChannel(UNDEFINED_CHANNEL);
-            event->setDuration (1);
+            event->setDuration(1);
         }
-        events_.append (event);
+        events_.append(event);
     }
 
     buffered_all_events_ = true;
-    if (buffered_all_channels_)
-        doClose();
+    if (buffered_all_channels_) doClose();
 }
 
-}
+}  // namespace sigviewer

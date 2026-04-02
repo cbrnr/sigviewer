@@ -2,47 +2,44 @@
 //
 // License: GPL-3.0
 
-
 #ifndef GUI_ACTION_FACTORY_H
 #define GUI_ACTION_FACTORY_H
 
-#include "gui_action_command.h"
-
-#include <QSharedPointer>
-#include <QString>
+#include <QContextMenuEvent>
 #include <QMap>
 #include <QMenu>
-#include <QContextMenuEvent>
+#include <QSharedPointer>
+#include <QString>
 
-namespace sigviewer
-{
+#include "gui_action_command.h"
 
-class GuiActionFactory
-{
-public:
-    static GuiActionFactory* getInstance ();
+namespace sigviewer {
 
-    //-------------------------------------------------------------------------
-    void registerCommand (QString const& name,
-                          QSharedPointer<GuiActionCommand> command);
+class GuiActionFactory {
+   public:
+    static GuiActionFactory* getInstance();
 
     //-------------------------------------------------------------------------
-    /// the caller must not delete
-    QList<QAction*> getQActions (QString const& command_name = "") const;
+    void registerCommand(QString const& name, QSharedPointer<GuiActionCommand> command);
 
     //-------------------------------------------------------------------------
     /// the caller must not delete
-    QAction* getQAction (QString const& action_id) const;
+    QList<QAction*> getQActions(QString const& command_name = "") const;
 
     //-------------------------------------------------------------------------
-    void initAllCommands ();
-private:
+    /// the caller must not delete
+    QAction* getQAction(QString const& action_id) const;
+
+    //-------------------------------------------------------------------------
+    void initAllCommands();
+
+   private:
     static GuiActionFactory* instance_;
     typedef QMap<QString, QSharedPointer<GuiActionCommand> > CommandMap;
     CommandMap command_map_;
     CommandMap action_to_command_map_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // GUI_ACTION_FACTORY_H
+#endif  // GUI_ACTION_FACTORY_H

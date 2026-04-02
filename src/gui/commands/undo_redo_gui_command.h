@@ -2,42 +2,39 @@
 //
 // License: GPL-3.0
 
-
 #ifndef UNDO_REDO_GUI_COMMAND_H
 #define UNDO_REDO_GUI_COMMAND_H
 
 #include "gui/gui_action_command.h"
 #include "gui/gui_action_factory_registrator.h"
 
-namespace sigviewer
-{
+namespace sigviewer {
 
 //-----------------------------------------------------------------------------
-class UndoRedoGuiCommand : public GuiActionCommand
-{
+class UndoRedoGuiCommand : public GuiActionCommand {
     Q_OBJECT
-public:
+   public:
     //-------------------------------------------------------------------------
-    UndoRedoGuiCommand ();
+    UndoRedoGuiCommand();
 
     //-------------------------------------------------------------------------
-    virtual ~UndoRedoGuiCommand () {}
+    virtual ~UndoRedoGuiCommand() {}
 
     //-------------------------------------------------------------------------
-    virtual void init ();
+    virtual void init();
 
-public slots:
+   public slots:
     //-------------------------------------------------------------------------
-    void undo ();
+    void undo();
 
     //-------------------------------------------------------------------------
-    void redo ();
+    void redo();
 
-protected:
+   protected:
     //-------------------------------------------------------------------------
-    virtual void evaluateEnabledness ();
+    virtual void evaluateEnabledness();
 
-private:
+   private:
     //-------------------------------------------------------------------------
     static QString const UNDO_();
     static QString const REDO_();
@@ -46,6 +43,6 @@ private:
     static GuiActionFactoryRegistrator registrator_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // UNDO_REDO_GUI_COMMAND_H
+#endif  // UNDO_REDO_GUI_COMMAND_H

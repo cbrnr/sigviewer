@@ -8,8 +8,7 @@
 #include "gui/gui_action_command.h"
 #include "gui/gui_action_factory_registrator.h"
 
-namespace sigviewer
-{
+namespace sigviewer {
 
 //-----------------------------------------------------------------------------
 /// DetrendGuiCommand
@@ -18,23 +17,22 @@ namespace sigviewer
 ///  - "Remove Offset"            – toggle (checkable)
 ///  - "Set High-Pass Cutoff..."  – opens an input dialog to configure the
 ///                                  cutoff frequency in Hz (0 = mean-only)
-class DetrendGuiCommand : public GuiActionCommand
-{
+class DetrendGuiCommand : public GuiActionCommand {
     Q_OBJECT
-public:
-    DetrendGuiCommand ();
-    virtual ~DetrendGuiCommand () {}
+   public:
+    DetrendGuiCommand();
+    virtual ~DetrendGuiCommand() {}
 
-    virtual void init () override;
+    virtual void init() override;
 
-protected:
-    virtual void evaluateEnabledness () override;
+   protected:
+    virtual void evaluateEnabledness() override;
 
-private slots:
-    void toggleDetrend ();
-    void setCutoff ();
+   private slots:
+    void toggleDetrend();
+    void setCutoff();
 
-private:
+   private:
     static QString const TOGGLE_DETREND_();
     static QString const SET_CUTOFF_();
     static QStringList const ACTIONS_();
@@ -42,6 +40,6 @@ private:
     static GuiActionFactoryRegistrator registrator_;
 };
 
-} // namespace sigviewer
+}  // namespace sigviewer
 
-#endif // DETREND_GUI_COMMAND_H
+#endif  // DETREND_GUI_COMMAND_H

@@ -2,48 +2,40 @@
 //
 // License: GPL-3.0
 
-#include "file_handling/event_manager.h"
-#include "file_handling/file_signal_reader_factory.h"
-#include "base/sigviewer_user_types.h"
-#include "mock_file_signal_reader.h"
-
 #include <QApplication>
 #include <QtTest>
 
+#include "base/sigviewer_user_types.h"
+#include "file_handling/event_manager.h"
+#include "file_handling/file_signal_reader_factory.h"
+#include "mock_file_signal_reader.h"
+
 using namespace sigviewer;
 
-static QSharedPointer<EventManager> makeEventManager()
-{
-    FileSignalReader* reader =
-        FileSignalReaderFactory::getInstance()->getHandler("blub.sinusdummy");
+static QSharedPointer<EventManager> makeEventManager() {
+    FileSignalReader* reader = FileSignalReaderFactory::getInstance()
+                                   ->getHandler("blub.sinusdummy");
     QSharedPointer<EventManager> mgr(new EventManager(*reader));
     delete reader;
     return mgr;
 }
 
-class TestEventManager : public QObject
-{
+class TestEventManager : public QObject {
     Q_OBJECT
 
     QSharedPointer<EventManager> mgr_;
 
-private slots:
-    void init()  { mgr_ = makeEventManager(); }
+   private slots:
+    void init() { mgr_ = makeEventManager(); }
     void cleanup() { mgr_.reset(); }
 
-    void eventCount()
-    {
-        QCOMPARE(mgr_->getAllEvents().size(), 44);
+    void eventCount() { QCOMPARE(mgr_->getAllEvents().size(), 44); }
+
+    void allEventsExist() {
+        for (EventID id : mgr_->getAllEvents()) QVERIFY(!mgr_->getEvent(id).isNull());
     }
 
-    void allEventsExist()
-    {
-        for (EventID id : mgr_->getAllEvents())
-            QVERIFY(!mgr_->getEvent(id).isNull());
-    }
-
-    void createEvent()
-    {
+    void createEvent() {
         auto event = mgr_->createEvent(1, 10, 100, 1, UNDEFINED_STREAM_ID);
         QVERIFY(!event.isNull());
         QCOMPARE(event->getChannel(), ChannelID(1));
@@ -54,8 +46,7 @@ private slots:
     }
 };
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
     sigviewer::registerMockFileSignalReader();
     TestEventManager test;

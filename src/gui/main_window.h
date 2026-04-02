@@ -2,14 +2,13 @@
 //
 // License: GPL-3.0
 
-
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include "application_context.h"
-
 #include <QMainWindow>
 #include <QProgressBar>
+
+#include "application_context.h"
 
 class QAction;
 class QComboBox;
@@ -17,50 +16,47 @@ class QMenu;
 class QLabel;
 class QToolButton;
 
-namespace sigviewer
-{
+namespace sigviewer {
 
 // main window
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
-public:
-    MainWindow (QSharedPointer<ApplicationContext> application_context);
-    virtual ~MainWindow () {}
+   public:
+    MainWindow(QSharedPointer<ApplicationContext> application_context);
+    virtual ~MainWindow() {}
 
     void setStatusBarSignalLength(float64 length);
     void setStatusBarNrChannels(int32 nr_channels);
 
     void setRecentFiles(const QStringList& recent_file_list);
 
-signals:
+   signals:
     void recentFileActivated(QAction* recent_file_action);
     void recentFileMenuAboutToShow();
 
-
-protected:
+   protected:
     virtual void closeEvent(QCloseEvent* close_event);
-    virtual void dropEvent (QDropEvent* event);
-    virtual void dragEnterEvent(QDragEnterEvent *event);
-    virtual void resizeEvent (QResizeEvent* event);
+    virtual void dropEvent(QDropEvent* event);
+    virtual void dragEnterEvent(QDragEnterEvent* event);
+    virtual void resizeEvent(QResizeEvent* event);
     virtual void changeEvent(QEvent* event);
-private slots:
-    void toggleStatusBar (bool visible);
-    void toggleMenuBar ();
-    void addBackgroundProcessToStatusBar (QString name, int max);
-    void updateBackgroundProcessonStatusBar (QString name, int value);
-    void removeBackgroundProcessFromStatusBar (QString name);
+   private slots:
+    void toggleStatusBar(bool visible);
+    void toggleMenuBar();
+    void addBackgroundProcessToStatusBar(QString name, int max);
+    void updateBackgroundProcessonStatusBar(QString name, int value);
+    void removeBackgroundProcessFromStatusBar(QString name);
 
-private:
-    QAction* action (QString const& action_id);
+   private:
+    QAction* action(QString const& action_id);
 
     MainWindow(const MainWindow&);
     const MainWindow& operator=(const MainWindow&);
 
     void initActions();
     void initToolBars();
-    void initMenus (QSharedPointer<ApplicationContext> application_context);
+    void initMenus(QSharedPointer<ApplicationContext> application_context);
     void initHamburgerMenu();
     void initStatusBar();
 
@@ -85,7 +81,6 @@ private:
     QMap<QString, QLabel*> background_processes_labels_;
 };
 
-}
+}  // namespace sigviewer
 
 #endif
-

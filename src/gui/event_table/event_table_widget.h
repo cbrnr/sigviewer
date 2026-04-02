@@ -2,64 +2,62 @@
 //
 // License: GPL-3.0
 
-
 #ifndef EVENT_TABLE_WIDGET_H
 #define EVENT_TABLE_WIDGET_H
 
-
-#include "ui_event_table_widget.h"
-#include "file_handling/event_manager.h"
-#include "gui/event_view.h"
-#include "file_handling/channel_manager.h"
-#include "event_table_view_model.h"
-#include "tab_context.h"
-
 #include <QWidget>
 
-namespace sigviewer
-{
+#include "event_table_view_model.h"
+#include "file_handling/channel_manager.h"
+#include "file_handling/event_manager.h"
+#include "gui/event_view.h"
+#include "tab_context.h"
+#include "ui_event_table_widget.h"
+
+namespace sigviewer {
 
 class TestEventTableWidget;
 
 //-----------------------------------------------------------------------------
-class EventTableWidget : public QWidget
-{
+class EventTableWidget : public QWidget {
     friend class TestEventTableWidget;
 
     Q_OBJECT
 
-public:
+   public:
     //-------------------------------------------------------------------------
-    EventTableWidget (QSharedPointer<TabContext> tab_context,
-                      QSharedPointer<EventManager> event_manager,
-                      ChannelManager const& channel_manager,
-                      QWidget *parent = 0);
-
-    //-------------------------------------------------------------------------
-    virtual ~EventTableWidget ();
+    EventTableWidget(QSharedPointer<TabContext> tab_context,
+        QSharedPointer<EventManager> event_manager,
+        ChannelManager const& channel_manager,
+        QWidget* parent = 0);
 
     //-------------------------------------------------------------------------
-    virtual QList<EventID> getSelectedEvents () const;
+    virtual ~EventTableWidget();
 
     //-------------------------------------------------------------------------
-    QSharedPointer<EventManager const> getEventManager () const {return event_manager_;}
+    virtual QList<EventID> getSelectedEvents() const;
 
     //-------------------------------------------------------------------------
-    QSharedPointer<EventManager> getEventManager () {return event_manager_;}
+    QSharedPointer<EventManager const> getEventManager() const {
+        return event_manager_;
+    }
 
     //-------------------------------------------------------------------------
-    QSharedPointer<EventView> getEventView ();
+    QSharedPointer<EventManager> getEventManager() { return event_manager_; }
 
-private slots:
-    void addToTable (QSharedPointer<SignalEvent const> event);
-    void removeFromTable (EventID event);
-    void updateEventEntry (EventID event_id);
+    //-------------------------------------------------------------------------
+    QSharedPointer<EventView> getEventView();
 
-    void on_event_table__itemSelectionChanged ();
+   private slots:
+    void addToTable(QSharedPointer<SignalEvent const> event);
+    void removeFromTable(EventID event);
+    void updateEventEntry(EventID event_id);
 
-private:
-    void showEvent (QShowEvent* event);
-    void buildTable ();
+    void on_event_table__itemSelectionChanged();
+
+   private:
+    void showEvent(QShowEvent* event);
+    void buildTable();
 
     static int const ID_INDEX_ = 0;
     static int const POSITION_INDEX_ = 1;
@@ -76,6 +74,6 @@ private:
     ChannelManager const& channel_manager_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // EVENT_TABLE_WIDGET_H
+#endif  // EVENT_TABLE_WIDGET_H

@@ -2,32 +2,28 @@
 //
 // License: GPL-3.0
 
-
 #ifndef SIGNAL_BROWSER_VIEW_H
 #define SIGNAL_BROWSER_VIEW_H
-
-#include "base/sigviewer_user_types.h"
-#include "command_executer.h"
-#include "gui/signal_visualisation_model.h"
-#include "gui/signal_visualisation_view.h"
-#include "file_handling/event_manager.h"
-
-#include "signal_browser_graphics_view.h"
 
 #include <QFrame>
 #include <QGraphicsScene>
 #include <QSharedPointer>
-
-#include <set>
 #include <map>
+#include <set>
 #include <string>
+
+#include "base/sigviewer_user_types.h"
+#include "command_executer.h"
+#include "file_handling/event_manager.h"
+#include "gui/signal_visualisation_model.h"
+#include "gui/signal_visualisation_view.h"
+#include "signal_browser_graphics_view.h"
 
 class QGridLayout;
 class QScrollBar;
 class QCursor;
 
-namespace sigviewer
-{
+namespace sigviewer {
 
 class LabelWidget;
 class YAxisWidget;
@@ -39,57 +35,57 @@ class EventCreationWidget;
 class AdaptBrowserViewWidget;
 
 // signal browser view
-class SignalBrowserView : public QFrame, public SignalVisualisationView
-{
+class SignalBrowserView : public QFrame, public SignalVisualisationView {
     Q_OBJECT
 
-public:
-    SignalBrowserView (QSharedPointer<SignalVisualisationModel> signal_browser_model,
-                       QSharedPointer<EventManager> event_manager,
-                       QSharedPointer<CommandExecuter> command_executer,
-                       QRect const& initial_size,
-                       QWidget* parent = 0);
-    virtual ~SignalBrowserView () {}
+   public:
+    SignalBrowserView(QSharedPointer<SignalVisualisationModel> signal_browser_model,
+        QSharedPointer<EventManager> event_manager,
+        QSharedPointer<CommandExecuter> command_executer,
+        QRect const& initial_size,
+        QWidget* parent = 0);
+    virtual ~SignalBrowserView() {}
 
-    void addSignalGraphicsItem (ChannelID channel_nr, SignalGraphicsItem* graphics_item, QString const& label);
-    void removeSignalGraphicsItem (ChannelID channel_nr, SignalGraphicsItem* graphics_item);
-    void addEventGraphicsItem (EventGraphicsItem* event_graphics_item);
-    void removeEventGraphicsItem (EventGraphicsItem* event_graphics_item);
+    void addSignalGraphicsItem(ChannelID channel_nr, SignalGraphicsItem* graphics_item, QString const& label);
+    void removeSignalGraphicsItem(ChannelID channel_nr, SignalGraphicsItem* graphics_item);
+    void addEventGraphicsItem(EventGraphicsItem* event_graphics_item);
+    void removeEventGraphicsItem(EventGraphicsItem* event_graphics_item);
 
-    void resizeScene (int32 width, int32 height);
-    int32 getVisibleX () const;
+    void resizeScene(int32 width, int32 height);
+    int32 getVisibleX() const;
 
-    void goTo (float32 x);
-    void updateWidgets (bool update_view = true);
+    void goTo(float32 x);
+    void updateWidgets(bool update_view = true);
 
-    virtual QSharedPointer<QImage> renderVisibleScene () const;
-    virtual bool getXAxisVisibility () const;
-    virtual bool getYAxisVisibility () const;
-    virtual bool getLabelsVisibility () const;
-    virtual int getViewportHeight () const;
-    virtual int getViewportWidth () const;
+    virtual QSharedPointer<QImage> renderVisibleScene() const;
+    virtual bool getXAxisVisibility() const;
+    virtual bool getYAxisVisibility() const;
+    virtual bool getLabelsVisibility() const;
+    virtual int getViewportHeight() const;
+    virtual int getViewportWidth() const;
 
-public slots:
-    void setMode (SignalVisualisationMode mode);
+   public slots:
+    void setMode(SignalVisualisationMode mode);
 
-signals:
-    void visibleXChanged (int32 new_x);
-    void visibleYChanged (int32 new_y);
+   signals:
+    void visibleXChanged(int32 new_x);
+    void visibleYChanged(int32 new_y);
 
-private slots:
+   private slots:
     void verticalSrollbarMoved(int);
     void horizontalSrollbarMoved(int);
-    void horizontalScrollBarRangeChaned (int min, int max);
-    void verticalScrollBarRangeChaned (int min, int max);
-    virtual void dropEvent (QDropEvent* event);
-    virtual void dragEnterEvent(QDragEnterEvent *event);
+    void horizontalScrollBarRangeChaned(int min, int max);
+    void verticalScrollBarRangeChaned(int min, int max);
+    virtual void dropEvent(QDropEvent* event);
+    virtual void dragEnterEvent(QDragEnterEvent* event);
     virtual void changeEvent(QEvent* event);
-    void graphicsViewResized (QResizeEvent* event);
+    void graphicsViewResized(QResizeEvent* event);
     void toggleXWidget(bool enabled);
 
-private:
-    void initWidgets (QSharedPointer<EventManager> event_manager, QSharedPointer<CommandExecuter> command_executer);
-    void createLayout ();
+   private:
+    void initWidgets(QSharedPointer<EventManager> event_manager,
+        QSharedPointer<CommandExecuter> command_executer);
+    void createLayout();
 
     QSharedPointer<SignalVisualisationModel> model_;
 
@@ -110,7 +106,6 @@ private:
     QGridLayout* layout_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // SIGNAL_BROWSER_VIEW_H
-
+#endif  // SIGNAL_BROWSER_VIEW_H

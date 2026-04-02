@@ -2,78 +2,63 @@
 //
 // License: GPL-3.0
 
-
 #ifndef PROGRESS_BAR_H
 #define PROGRESS_BAR_H
 
+#include <QDebug>
+#include <QElapsedTimer>
+#include <QPointer>
+#include <QProgressDialog>
+
 #include "application_context.h"
 
-#include <QProgressDialog>
-#include <QPointer>
-#include <QElapsedTimer>
-#include <QDebug>
+namespace sigviewer {
 
-namespace sigviewer
-{
-
-class ProgressBar
-{
-public:
-    static ProgressBar& instance ()
-    {
+class ProgressBar {
+   public:
+    static ProgressBar& instance() {
         static ProgressBar instance_;
         return instance_;
     }
 
-    void initAndShow (int max_value, QString const& title,
-                      QSharedPointer<ApplicationContext const> app_context)
-    {
-        non_gui_mode_ = app_context->modeActivated (APPLICATION_NON_GUI_MODE);
+    void initAndShow(int max_value, QString const& title, QSharedPointer<ApplicationContext const> app_context) {
+        non_gui_mode_ = app_context->modeActivated(APPLICATION_NON_GUI_MODE);
         value_ = 0;
         max_value_ = max_value;
-        if (non_gui_mode_)
-            return;
+        if (non_gui_mode_) return;
         progress_dialog_ = new QProgressDialog;
-        progress_dialog_->setModal (true);
-        progress_dialog_->setMinimumDuration (0);
-        progress_dialog_->setAutoReset (false);
-        progress_dialog_->setAutoClose (false);
-        progress_dialog_->setWindowTitle (title);
-        progress_dialog_->setMinimum (value_);
-        progress_dialog_->setMaximum (max_value);
-        progress_dialog_->setValue (value_);
-        last_update_.start ();
-        qDebug () << title << ": max_value = " << max_value;
+        progress_dialog_->setModal(true);
+        progress_dialog_->setMinimumDuration(0);
+        progress_dialog_->setAutoReset(false);
+        progress_dialog_->setAutoClose(false);
+        progress_dialog_->setWindowTitle(title);
+        progress_dialog_->setMinimum(value_);
+        progress_dialog_->setMaximum(max_value);
+        progress_dialog_->setValue(value_);
+        last_update_.start();
+        qDebug() << title << ": max_value = " << max_value;
     }
 
-    void close ()
-    {
-        delete progress_dialog_;
-    }
+    void close() { delete progress_dialog_; }
 
-    bool increaseValue (int step, QString const& description)
-    {
+    bool increaseValue(int step, QString const& description) {
         value_ += step;
-        if (non_gui_mode_)
-            return true;
-        if (progress_dialog_.isNull())
-            return true;
+        if (non_gui_mode_) return true;
+        if (progress_dialog_.isNull()) return true;
 
-        if (progress_dialog_->wasCanceled())
-            return false;
+        if (progress_dialog_->wasCanceled()) return false;
         // Rate-limit UI updates to ≤25/s — QProgressDialog::setValue() calls
         // processEvents() internally, so calling it on every channel would
         // pump the event loop N times and cause N full-scene repaints.
-        if (last_update_.elapsed() >= 40 || value_ >= max_value_)
-        {
-            progress_dialog_->setLabelText (description);
-            progress_dialog_->setValue (value_);
-            last_update_.restart ();
+        if (last_update_.elapsed() >= 40 || value_ >= max_value_) {
+            progress_dialog_->setLabelText(description);
+            progress_dialog_->setValue(value_);
+            last_update_.restart();
         }
         return true;
     }
 
-private:
+   private:
     QPointer<QProgressDialog> progress_dialog_;
     QElapsedTimer last_update_;
     bool non_gui_mode_;
@@ -81,6 +66,6 @@ private:
     int value_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // PROGRESS_BAR_H
+#endif  // PROGRESS_BAR_H
