@@ -2,54 +2,42 @@
 //
 // License: GPL-3.0
 
-
 #ifndef CHANGE_CHANNEL_UNDO_COMMAND_H
 #define CHANGE_CHANNEL_UNDO_COMMAND_H
+
+#include <QSharedPointer>
+#include <QUndoCommand>
 
 #include "base/signal_event.h"
 #include "file_handling/event_manager.h"
 
-#include <QUndoCommand>
-#include <QSharedPointer>
+namespace sigviewer {
 
-namespace sigviewer
-{
+class ChangeChannelUndoCommand : public QUndoCommand {
+   public:
+    ChangeChannelUndoCommand(QSharedPointer<EventManager> event_manager, EventID event_id, ChannelID new_channel);
 
-class ChangeChannelUndoCommand : public QUndoCommand
-{
-public:
-    //-------------------------------------------------------------------------
-    ChangeChannelUndoCommand (QSharedPointer<EventManager> event_manager,
-                              EventID event_id,
-                              ChannelID new_channel);
-
-    //-------------------------------------------------------------------------
     virtual ~ChangeChannelUndoCommand();
 
-    //-------------------------------------------------------------------------
     /// recreates the deleted event
-    virtual void undo ();
+    virtual void undo();
 
-    //-------------------------------------------------------------------------
     /// deletes the event
-    virtual void redo ();
+    virtual void redo();
 
-private:
-    //-------------------------------------------------------------------------
+   private:
     /// copy-constructor disabled
-    ChangeChannelUndoCommand (ChangeChannelUndoCommand const &);
+    ChangeChannelUndoCommand(ChangeChannelUndoCommand const&);
 
-    //-------------------------------------------------------------------------
     /// assignment-operator disabled
-    ChangeChannelUndoCommand& operator= (ChangeChannelUndoCommand const &);
+    ChangeChannelUndoCommand& operator=(ChangeChannelUndoCommand const&);
 
     QSharedPointer<EventManager> event_manager_;
     EventID event_id_;
     ChannelID new_channel_;
     ChannelID old_channel_;
-
 };
 
-}
+}  // namespace sigviewer
 
-#endif // CHANGE_CHANNEL_UNDO_COMMAND_H
+#endif  // CHANGE_CHANNEL_UNDO_COMMAND_H

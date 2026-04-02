@@ -2,23 +2,19 @@
 //
 // License: GPL-3.0
 
-
 #ifndef TAB_STATES_H
 #define TAB_STATES_H
 
-namespace sigviewer
-{
+namespace sigviewer {
 
-enum TabSelectionState
-{
+enum TabSelectionState {
     NO_TAB_SELECTION_STATE,
     TAB_STATE_NO_EVENT_SELECTED,
     TAB_STATE_EVENT_SELECTED_ONE_CHANNEL,
     TAB_STATE_EVENT_SELECTED_ALL_CHANNELS
 };
 
-enum TabEditState
-{
+enum TabEditState {
     NO_TAB_EDIT_STATE,
     TAB_STATE_NO_REDO,
     TAB_STATE_NO_UNDO,
@@ -26,6 +22,6 @@ enum TabEditState
     TAB_STATE_CAN_REDO_UNDO
 };
 
-}
+}  // namespace sigviewer
 
-#endif // TAB_STATES_H
+#endif  // TAB_STATES_H

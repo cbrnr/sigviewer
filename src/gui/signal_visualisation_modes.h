@@ -2,15 +2,12 @@
 //
 // License: GPL-3.0
 
-
 #ifndef SIGNAL_BROWSER_MODES_H
 #define SIGNAL_BROWSER_MODES_H
 
-namespace sigviewer
-{
+namespace sigviewer {
 
-enum SignalVisualisationMode
-{
+enum SignalVisualisationMode {
     MODE_NEW,
     MODE_POINTER,
     MODE_HAND,

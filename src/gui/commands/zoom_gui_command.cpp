@@ -2,88 +2,75 @@
 //
 // License: GPL-3.0
 
-
 #include "zoom_gui_command.h"
+
+#include <QDebug>
+#include <QInputDialog>
+
 #include "gui/gui_helper_functions.h"
 
-#include <QInputDialog>
-#include <QDebug>
+namespace sigviewer {
 
-namespace sigviewer
-{
-
-//-----------------------------------------------------------------------------
 namespace {
 
-class ZoomGuiCommandFactory: public GuiActionCommandFactory
-{
-public:
-    QSharedPointer<GuiActionCommand> createCommand() override
-    {
-        return QSharedPointer<ZoomGuiCommand> (new ZoomGuiCommand);
+class ZoomGuiCommandFactory : public GuiActionCommandFactory {
+   public:
+    QSharedPointer<GuiActionCommand> createCommand() override {
+        return QSharedPointer<ZoomGuiCommand>(new ZoomGuiCommand);
     }
 };
 
-} // unnamed namespace
+}  // unnamed namespace
 
-QString const ZoomGuiCommand::GOTO_()
-{
+QString const ZoomGuiCommand::GOTO_() {
     static QString value = tr("Go to...");
 
     return value;
 }
 
-QString const ZoomGuiCommand::ZOOM_IN_VERTICAL_()
-{
+QString const ZoomGuiCommand::ZOOM_IN_VERTICAL_() {
     static QString value = tr("Zoom In Channels");
 
     return value;
 }
 
-QString const ZoomGuiCommand::ZOOM_OUT_VERTICAL_()
-{
+QString const ZoomGuiCommand::ZOOM_OUT_VERTICAL_() {
     static QString value = tr("Zoom Out Channels");
 
     return value;
 }
 
-QString const ZoomGuiCommand::ZOOM_IN_HORIZONTAL_()
-{
+QString const ZoomGuiCommand::ZOOM_IN_HORIZONTAL_() {
     static QString value = tr("Zoom In Time");
 
     return value;
 }
 
-QString const ZoomGuiCommand::ZOOM_OUT_HORIZONTAL_()
-{
+QString const ZoomGuiCommand::ZOOM_OUT_HORIZONTAL_() {
     static QString value = tr("Zoom Out Time");
 
     return value;
 }
 
-QString const ZoomGuiCommand::SCALE_X_AXIS_()
-{
+QString const ZoomGuiCommand::SCALE_X_AXIS_() {
     static QString value = tr("Scale X Axis");
 
     return value;
 }
 
-QString const ZoomGuiCommand::CHANNEL_PER_PAGE_()
-{
+QString const ZoomGuiCommand::CHANNEL_PER_PAGE_() {
     static QString value = tr("Channels per Page...");
 
     return value;
 }
 
-QString const ZoomGuiCommand::AUTO_ZOOM_VERTICAL_()
-{
+QString const ZoomGuiCommand::AUTO_ZOOM_VERTICAL_() {
     static QString value = tr("Auto Zoom Vertical");
 
     return value;
 }
 
-QStringList const ZoomGuiCommand::ACTIONS_()
-{
+QStringList const ZoomGuiCommand::ACTIONS_() {
     static QStringList result = {
         ZoomGuiCommand::ZOOM_IN_VERTICAL_(),
         ZoomGuiCommand::ZOOM_OUT_VERTICAL_(),
@@ -97,29 +84,20 @@ QStringList const ZoomGuiCommand::ACTIONS_()
     return result;
 }
 
+GuiActionFactoryRegistrator ZoomGuiCommand::registrator_("Zooming",
+    QSharedPointer<ZoomGuiCommandFactory>(new ZoomGuiCommandFactory));
 
-//-----------------------------------------------------------------------------
-GuiActionFactoryRegistrator ZoomGuiCommand::registrator_ ("Zooming",
-                                                          QSharedPointer<ZoomGuiCommandFactory> (new ZoomGuiCommandFactory));
-
-
-
-//-----------------------------------------------------------------------------
-ZoomGuiCommand::ZoomGuiCommand ()
-    : GuiActionCommand (ACTIONS_())
-{
+ZoomGuiCommand::ZoomGuiCommand() : GuiActionCommand(ACTIONS_()) {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
-void ZoomGuiCommand::init ()
-{
-    getQAction (GOTO_())->setIcon (QIcon::fromTheme("directions_walk"));
-    getQAction (ZOOM_IN_VERTICAL_())->setIcon (QIcon::fromTheme("zoom_in_vertical"));
-    getQAction (ZOOM_OUT_VERTICAL_())->setIcon (QIcon::fromTheme("zoom_out_vertical"));
-    getQAction (ZOOM_IN_HORIZONTAL_())->setIcon (QIcon::fromTheme("zoom_in_horizontal"));
-    getQAction (ZOOM_OUT_HORIZONTAL_())->setIcon (QIcon::fromTheme("zoom_out_horizontal"));
-
+void ZoomGuiCommand::init() {
+    getQAction(GOTO_())->setIcon(QIcon::fromTheme("directions_walk"));
+    getQAction(ZOOM_IN_VERTICAL_())->setIcon(QIcon::fromTheme("zoom_in_vertical"));
+    getQAction(ZOOM_OUT_VERTICAL_())->setIcon(QIcon::fromTheme("zoom_out_vertical"));
+    getQAction(ZOOM_IN_HORIZONTAL_())->setIcon(QIcon::fromTheme("zoom_in_horizontal"));
+    getQAction(ZOOM_OUT_HORIZONTAL_())
+        ->setIcon(QIcon::fromTheme("zoom_out_horizontal"));
 
     QList<QKeySequence> zoomInVertical;
     zoomInVertical << QKeySequence::ZoomIn << (Qt::CTRL | Qt::Key_Equal);
@@ -129,190 +107,188 @@ void ZoomGuiCommand::init ()
     zoomInHorizontal << (Qt::ALT | Qt::Key_Plus) << (Qt::ALT | Qt::Key_Equal);
     getQAction(ZOOM_IN_HORIZONTAL_())->setShortcuts(zoomInHorizontal);
 
-    setShortcut (ZOOM_OUT_VERTICAL_(), QKeySequence::ZoomOut);
-    setShortcut (ZOOM_OUT_HORIZONTAL_(), Qt::ALT | Qt::Key_Minus);
+    setShortcut(ZOOM_OUT_VERTICAL_(), QKeySequence::ZoomOut);
+    setShortcut(ZOOM_OUT_HORIZONTAL_(), Qt::ALT | Qt::Key_Minus);
 
-    resetActionTriggerSlot (GOTO_(), SLOT(goTo()));
-    resetActionTriggerSlot (ZOOM_IN_VERTICAL_(), SLOT(zoomInVertical()));
-    resetActionTriggerSlot (ZOOM_OUT_VERTICAL_(), SLOT(zoomOutVertical()));
-    resetActionTriggerSlot (ZOOM_IN_HORIZONTAL_(), SLOT(zoomInHorizontal()));
-    resetActionTriggerSlot (ZOOM_OUT_HORIZONTAL_(), SLOT(zoomOutHorizontal()));
-    resetActionTriggerSlot (SCALE_X_AXIS_(), SLOT(scaleXAxis()));
-    resetActionTriggerSlot (CHANNEL_PER_PAGE_(), SLOT(setChannelsPerPage()));
+    resetActionTriggerSlot(GOTO_(), SLOT(goTo()));
+    resetActionTriggerSlot(ZOOM_IN_VERTICAL_(), SLOT(zoomInVertical()));
+    resetActionTriggerSlot(ZOOM_OUT_VERTICAL_(), SLOT(zoomOutVertical()));
+    resetActionTriggerSlot(ZOOM_IN_HORIZONTAL_(), SLOT(zoomInHorizontal()));
+    resetActionTriggerSlot(ZOOM_OUT_HORIZONTAL_(), SLOT(zoomOutHorizontal()));
+    resetActionTriggerSlot(SCALE_X_AXIS_(), SLOT(scaleXAxis()));
+    resetActionTriggerSlot(CHANNEL_PER_PAGE_(), SLOT(setChannelsPerPage()));
 }
 
-//-------------------------------------------------------------------------
-void ZoomGuiCommand::evaluateEnabledness ()
-{
-    if (disableIfNoSignalIsVisualised (ACTIONS_()))
-        return;
+void ZoomGuiCommand::evaluateEnabledness() {
+    if (disableIfNoSignalIsVisualised(ACTIONS_())) return;
 
-    QSharedPointer<SignalViewSettings> vis = currentSignalViewSettings ();
+    QSharedPointer<SignalViewSettings> vis = currentSignalViewSettings();
     QSharedPointer<SignalVisualisationModel> vis_model = currentVisModel();
-    bool file_open = getApplicationState () == APP_STATE_FILE_OPEN;
+    bool file_open = getApplicationState() == APP_STATE_FILE_OPEN;
     bool zoom_out_vertical_possible = false;
     bool zoom_in_vertical_possible = false;
     bool zoom_out_horizontal_possible = false;
     bool zoom_in_horizontal_possible = false;
 
-    if (file_open && !vis.isNull())
-    {
-        zoom_out_vertical_possible = (vis_model->getSignalViewSettings()->getChannelHeight() * vis_model->getShownChannels().size() > static_cast<unsigned>(vis_model->view()->getViewportHeight()));
-        zoom_in_vertical_possible = (vis_model->getSignalViewSettings()->getChannelHeight() < vis_model->view()->getViewportHeight());
+    if (file_open && !vis.isNull()) {
+        zoom_out_vertical_possible =
+            (vis_model->getSignalViewSettings()->getChannelHeight()
+                    * vis_model->getShownChannels().size()
+                > static_cast<unsigned>(vis_model->view()->getViewportHeight()));
+        zoom_in_vertical_possible = (vis_model->getSignalViewSettings()->getChannelHeight()
+                                     < vis_model->view()->getViewportHeight());
         zoom_out_horizontal_possible = vis->getPixelsPerSample() > minPixelPerSample();
         zoom_in_horizontal_possible = vis->getPixelsPerSample() < maxPixelPerSample();
     }
 
-    getQAction (ZOOM_OUT_VERTICAL_())->setEnabled (zoom_out_vertical_possible);
-    getQAction (ZOOM_IN_VERTICAL_())->setEnabled (zoom_in_vertical_possible);
-    getQAction (ZOOM_OUT_HORIZONTAL_())->setEnabled (zoom_out_horizontal_possible);
-    getQAction (ZOOM_IN_HORIZONTAL_())->setEnabled (zoom_in_horizontal_possible);
-    disableIfNoFileIsOpened (QStringList() << GOTO_() << SCALE_X_AXIS_() << CHANNEL_PER_PAGE_());
+    getQAction(ZOOM_OUT_VERTICAL_())->setEnabled(zoom_out_vertical_possible);
+    getQAction(ZOOM_IN_VERTICAL_())->setEnabled(zoom_in_vertical_possible);
+    getQAction(ZOOM_OUT_HORIZONTAL_())->setEnabled(zoom_out_horizontal_possible);
+    getQAction(ZOOM_IN_HORIZONTAL_())->setEnabled(zoom_in_horizontal_possible);
+    disableIfNoFileIsOpened(QStringList() << GOTO_() << SCALE_X_AXIS_() << CHANNEL_PER_PAGE_());
 }
 
-//-------------------------------------------------------------------------
-void ZoomGuiCommand::goTo ()
-{
-    QSharedPointer<SignalVisualisationModel> vis_model =
-                currentVisModel();
+void ZoomGuiCommand::goTo() {
+    QSharedPointer<SignalVisualisationModel> vis_model = currentVisModel();
     bool ok;
-    double sec = QInputDialog::getDouble (0, tr("Go to..."), tr("Second: "), 0, 0,
-                             vis_model->getChannelManager().getDurationInSec(), 1, &ok);
-    if (!ok)
-        return;
+    double sec = QInputDialog::getDouble(0,
+        tr("Go to..."),
+        tr("Second: "),
+        0,
+        0,
+        vis_model->getChannelManager().getDurationInSec(),
+        1,
+        &ok);
+    if (!ok) return;
 
-
-    vis_model->goToSample (sec * vis_model->getChannelManager().getSampleRate ());
+    vis_model->goToSample(sec * vis_model->getChannelManager().getSampleRate());
 }
 
-//-----------------------------------------------------------------------------
-void ZoomGuiCommand::zoomInHorizontal ()
-{
+void ZoomGuiCommand::zoomInHorizontal() {
     float32 pixel_per_sample = currentSignalViewSettings()->getPixelsPerSample();
-    float32 new_pixel_per_sample = std::min (pixel_per_sample * ZOOM_FACTOR_,
-                                 maxPixelPerSample() );
+    float32 new_pixel_per_sample =
+        std::min(pixel_per_sample * ZOOM_FACTOR_, maxPixelPerSample());
 
-    GuiHelper::animateProperty (currentSignalViewSettings().data(), "pixelsPerSample",
-                                pixel_per_sample, new_pixel_per_sample,
-                                this, SLOT(evaluateEnabledness()));
+    GuiHelper::animateProperty(currentSignalViewSettings().data(),
+        "pixelsPerSample",
+        pixel_per_sample,
+        new_pixel_per_sample,
+        this,
+        SLOT(evaluateEnabledness()));
 }
 
-//-----------------------------------------------------------------------------
-void ZoomGuiCommand::zoomOutHorizontal ()
-{
+void ZoomGuiCommand::zoomOutHorizontal() {
     float32 pixel_per_sample = currentSignalViewSettings()->getPixelsPerSample();
-    float32 new_pixel_per_sample = std::max (pixel_per_sample / ZOOM_FACTOR_,
-                                 minPixelPerSample ());
+    float32 new_pixel_per_sample =
+        std::max(pixel_per_sample / ZOOM_FACTOR_, minPixelPerSample());
 
-    GuiHelper::animateProperty (currentSignalViewSettings().data(), "pixelsPerSample",
-                                pixel_per_sample, new_pixel_per_sample,
-                                this, SLOT(evaluateEnabledness()));
+    GuiHelper::animateProperty(currentSignalViewSettings().data(),
+        "pixelsPerSample",
+        pixel_per_sample,
+        new_pixel_per_sample,
+        this,
+        SLOT(evaluateEnabledness()));
 }
 
-
-//-----------------------------------------------------------------------------
-void ZoomGuiCommand::zoomInVertical ()
-{
+void ZoomGuiCommand::zoomInVertical() {
     unsigned channel_height = currentVisModel()->getSignalViewSettings()->getChannelHeight();
     unsigned channels_per_page = currentVisModel()->view()->getViewportHeight() / channel_height;
-    if (channels_per_page <= 1)
-        return;
-    unsigned new_channel_height = currentVisModel()->view()->getViewportHeight() / (channels_per_page - 1);
-    if (new_channel_height < channel_height  + 10)
-        new_channel_height += 10;
-    new_channel_height = std::min<unsigned> (new_channel_height,
-                                    maxChannelHeight());
-    GuiHelper::animateProperty (currentVisModel()->getSignalViewSettings().data(), "channelHeight",
-                                channel_height, new_channel_height,
-                                this, SLOT(evaluateEnabledness()));
+    if (channels_per_page <= 1) return;
+    unsigned new_channel_height =
+        currentVisModel()->view()->getViewportHeight() / (channels_per_page - 1);
+    if (new_channel_height < channel_height + 10) new_channel_height += 10;
+    new_channel_height = std::min<unsigned>(new_channel_height, maxChannelHeight());
+    GuiHelper::animateProperty(currentVisModel()->getSignalViewSettings().data(),
+        "channelHeight",
+        channel_height,
+        new_channel_height,
+        this,
+        SLOT(evaluateEnabledness()));
 }
 
-//-----------------------------------------------------------------------------
-void ZoomGuiCommand::zoomOutVertical ()
-{
+void ZoomGuiCommand::zoomOutVertical() {
     unsigned channel_height = currentSignalViewSettings()->getChannelHeight();
     unsigned channels_per_page = currentVisModel()->view()->getViewportHeight() / channel_height;
-    unsigned new_channel_height = currentVisModel()->view()->getViewportHeight() / (channels_per_page + 1);
-    if (new_channel_height == channel_height)
-        new_channel_height -= 25;
-    new_channel_height = std::max<unsigned> (new_channel_height,
-                              minChannelHeight());
-    GuiHelper::animateProperty (currentVisModel()->getSignalViewSettings().data(), "channelHeight",
-                                channel_height, new_channel_height,
-                                this, SLOT(evaluateEnabledness()));
+    unsigned new_channel_height =
+        currentVisModel()->view()->getViewportHeight() / (channels_per_page + 1);
+    if (new_channel_height == channel_height) new_channel_height -= 25;
+    new_channel_height = std::max<unsigned>(new_channel_height, minChannelHeight());
+    GuiHelper::animateProperty(currentVisModel()->getSignalViewSettings().data(),
+        "channelHeight",
+        channel_height,
+        new_channel_height,
+        this,
+        SLOT(evaluateEnabledness()));
 }
 
-//-----------------------------------------------------------------------------
-void ZoomGuiCommand::autoZoomVertical ()
-{
-}
+void ZoomGuiCommand::autoZoomVertical() {}
 
-
-//-------------------------------------------------------------------------
-void ZoomGuiCommand::scaleXAxis ()
-{
+void ZoomGuiCommand::scaleXAxis() {
     float32 sample_rate = currentVisModel()->getChannelManager().getSampleRate();
     float32 pixel_per_second = currentSignalViewSettings()->getPixelsPerSample() * sample_rate;
     float32 width = currentVisModel()->view()->getViewportWidth();
-    float32 new_secs_per_page = QInputDialog::getDouble (0, tr("Scale X Axis"), tr("Seconds"), width / pixel_per_second, minPixelPerSample() / sample_rate, currentVisModel()->getChannelManager().getDurationInSec());
+    float32 new_secs_per_page = QInputDialog::getDouble(0,
+        tr("Scale X Axis"),
+        tr("Seconds"),
+        width / pixel_per_second,
+        minPixelPerSample() / sample_rate,
+        currentVisModel()->getChannelManager().getDurationInSec());
 
     float32 pixel_per_sample = width / (new_secs_per_page * sample_rate);
 
-    GuiHelper::animateProperty (currentSignalViewSettings().data(), "pixelsPerSample",
-                                currentSignalViewSettings()->getPixelsPerSample(),
-                                pixel_per_sample,
-                                this, SLOT(evaluateEnabledness()));
+    GuiHelper::animateProperty(currentSignalViewSettings().data(),
+        "pixelsPerSample",
+        currentSignalViewSettings()->getPixelsPerSample(),
+        pixel_per_sample,
+        this,
+        SLOT(evaluateEnabledness()));
 }
 
-//-------------------------------------------------------------------------
-void ZoomGuiCommand::setChannelsPerPage ()
-{
+void ZoomGuiCommand::setChannelsPerPage() {
     unsigned channel_height = currentVisModel()->getSignalViewSettings()->getChannelHeight();
     float viewport_height = currentVisModel()->view()->getViewportHeight();
     float channels_per_page = viewport_height / channel_height;
 
     bool ok = false;
-    float new_channels_per_page = QInputDialog::getInt (0, tr("Vertical Zooming"),
-                                                        tr("Channels per Page"),
-                                                        channels_per_page, 1, currentVisModel()->getShownChannels().size(), 1, &ok);
+    float new_channels_per_page = QInputDialog::getInt(0,
+        tr("Vertical Zooming"),
+        tr("Channels per Page"),
+        channels_per_page,
+        1,
+        currentVisModel()->getShownChannels().size(),
+        1,
+        &ok);
 
-    if (!ok)
-        return;
+    if (!ok) return;
 
     unsigned new_channel_height = viewport_height / new_channels_per_page;
-    if (new_channel_height == channel_height)
-        return;
+    if (new_channel_height == channel_height) return;
 
-    GuiHelper::animateProperty (currentVisModel()->getSignalViewSettings().data(), "channelHeight",
-                                channel_height, new_channel_height,
-                                this, SLOT(evaluateEnabledness()));
+    GuiHelper::animateProperty(currentVisModel()->getSignalViewSettings().data(),
+        "channelHeight",
+        channel_height,
+        new_channel_height,
+        this,
+        SLOT(evaluateEnabledness()));
 }
 
-//-------------------------------------------------------------------------
-unsigned ZoomGuiCommand::maxChannelHeight ()
-{
+unsigned ZoomGuiCommand::maxChannelHeight() {
     return currentVisModel()->view()->getViewportHeight();
 }
 
-//-------------------------------------------------------------------------
-unsigned ZoomGuiCommand::minChannelHeight ()
-{
-    return std::max<unsigned> (20, currentVisModel()->view()->getViewportHeight() / currentVisModel()->getShownChannels().size());
+unsigned ZoomGuiCommand::minChannelHeight() {
+    return std::max<unsigned>(20,
+        currentVisModel()->view()->getViewportHeight()
+            / currentVisModel()->getShownChannels().size());
 }
 
-
-//-------------------------------------------------------------------------
-float32 ZoomGuiCommand::maxPixelPerSample ()
-{
-    return static_cast<float32>(currentVisModel()->view()->getViewportWidth ()) / 4.0;
+float32 ZoomGuiCommand::maxPixelPerSample() {
+    return static_cast<float32>(currentVisModel()->view()->getViewportWidth()) / 4.0;
 }
 
-
-//-------------------------------------------------------------------------
-float32 ZoomGuiCommand::minPixelPerSample ()
-{
-    return static_cast<float32>(currentVisModel()->view()->getViewportWidth()) /
-           static_cast<float32>(currentVisModel()->getChannelManager().getNumberSamples ());
+float32 ZoomGuiCommand::minPixelPerSample() {
+    return static_cast<float32>(currentVisModel()->view()->getViewportWidth())
+           / static_cast<float32>(currentVisModel()->getChannelManager().getNumberSamples());
 }
 
-}
+}  // namespace sigviewer

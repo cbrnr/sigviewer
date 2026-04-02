@@ -2,57 +2,42 @@
 //
 // License: GPL-3.0
 
-
 #ifndef GDF_DATA_BLOCK_H
 #define GDF_DATA_BLOCK_H
 
+#include <QSharedPointer>
+#include <QVector>
+
+#include "GDF/Reader.h"
 #include "base/data_block.h"
 #include "gdf_signal_cache.h"
 
-#include "GDF/Reader.h"
+namespace SigViewer_ {
 
-#include <QVector>
-#include <QSharedPointer>
+class GDFDataBlock : public DataBlock {
+   public:
+    GDFDataBlock(QSharedPointer<GDFSignalCache> cache, ChannelID channel, unsigned length, float32 sample_rate);
 
-namespace SigViewer_
-{
+    virtual ~GDFDataBlock();
 
-//-------------------------------------------------------------------------------------------------
-class GDFDataBlock : public DataBlock
-{
-public:
-    //---------------------------------------------------------------------------------------------
-    GDFDataBlock (QSharedPointer<GDFSignalCache> cache, ChannelID channel, unsigned length, float32 sample_rate);
+    virtual QSharedPointer<DataBlock> createSubBlock(uint32 start, uint32 length) const;
 
-    //---------------------------------------------------------------------------------------------
-    virtual ~GDFDataBlock ();
+    virtual float32 const& operator[](uint32 index) const;
 
-    //---------------------------------------------------------------------------------------------
-    virtual QSharedPointer<DataBlock> createSubBlock (uint32 start, uint32 length) const;
+    virtual float32 getMin() const;
 
-    //---------------------------------------------------------------------------------------------
-    virtual float32 const& operator[] (uint32 index) const;
+    virtual float32 getMax() const;
 
-    //-------------------------------------------------------------------------
-    virtual float32 getMin () const;
+    void addDownSampledVersion(QSharedPointer<DataBlock> data, unsigned downsampling_factor);
 
-    //-------------------------------------------------------------------------
-    virtual float32 getMax () const;
+    std::pair<QSharedPointer<DataBlock>, unsigned> getNearbyDownsampledBlock(
+        unsigned downsampling_factor) const;
 
-    //-------------------------------------------------------------------------
-    void addDownSampledVersion (QSharedPointer<DataBlock> data, unsigned downsampling_factor);
+   private:
+    GDFDataBlock(GDFDataBlock const& src, unsigned start_sample, unsigned length);
 
-    //-------------------------------------------------------------------------
-    std::pair<QSharedPointer<DataBlock>, unsigned> getNearbyDownsampledBlock (unsigned downsampling_factor) const;
+    Q_DISABLE_COPY(GDFDataBlock);
 
-private:
-    //---------------------------------------------------------------------------------------------
-    GDFDataBlock (GDFDataBlock const& src, unsigned start_sample, unsigned length);
-
-    //---------------------------------------------------------------------------------------------
-    Q_DISABLE_COPY (GDFDataBlock);
-
-    //---------------------------------------------------------------------------------------------
     ChannelID channel_;
     unsigned start_sample_;
     mutable float32 current_min_;
@@ -64,6 +49,6 @@ private:
     mutable QSharedPointer<GDFSignalCache> cache_;
 };
 
-} // namespace SigViewer_
+}  // namespace SigViewer_
 
-#endif // GDF_DATA_BLOCK_H
+#endif  // GDF_DATA_BLOCK_H

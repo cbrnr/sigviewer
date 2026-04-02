@@ -2,85 +2,61 @@
 //
 // License: GPL-3.0
 
-
 #include "tab_context.h"
 
 #include <QDebug>
 
+namespace sigviewer {
 
-namespace sigviewer
-{
-
-//-----------------------------------------------------------------------------
-TabContext::TabContext ()
-    : selection_state_ (TAB_STATE_NO_EVENT_SELECTED),
-      edit_state_ (TAB_STATE_NO_REDO_NO_UNDO)
-{
+TabContext::TabContext()
+    : selection_state_(TAB_STATE_NO_EVENT_SELECTED), edit_state_(TAB_STATE_NO_REDO_NO_UNDO) {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
-TabContext::~TabContext ()
-{
-    emit selectionStateChanged (NO_TAB_SELECTION_STATE);
-    emit editStateChanged (NO_TAB_EDIT_STATE);
+TabContext::~TabContext() {
+    emit selectionStateChanged(NO_TAB_SELECTION_STATE);
+    emit editStateChanged(NO_TAB_EDIT_STATE);
 }
 
-//-----------------------------------------------------------------------------
-void TabContext::gotActive ()
-{
-    emit selectionStateChanged (selection_state_);
-    emit editStateChanged (edit_state_);
+void TabContext::gotActive() {
+    emit selectionStateChanged(selection_state_);
+    emit editStateChanged(edit_state_);
 }
 
-//-----------------------------------------------------------------------------
-void TabContext::executeCommand (QUndoCommand* command)
-{
-    edit_undo_stack_.push (command);
-    updateUndoRedoEditState ();
+void TabContext::executeCommand(QUndoCommand* command) {
+    edit_undo_stack_.push(command);
+    updateUndoRedoEditState();
 }
 
-//-------------------------------------------------------------------------
-void TabContext::undo ()
-{
-    edit_undo_stack_.undo ();
-    updateUndoRedoEditState ();
+void TabContext::undo() {
+    edit_undo_stack_.undo();
+    updateUndoRedoEditState();
 }
 
-//-------------------------------------------------------------------------
-void TabContext::redo ()
-{
-    edit_undo_stack_.redo ();
-    updateUndoRedoEditState ();
+void TabContext::redo() {
+    edit_undo_stack_.redo();
+    updateUndoRedoEditState();
 }
 
-//-----------------------------------------------------------------------------
-void TabContext::updateUndoRedoEditState ()
-{
-    if (!edit_undo_stack_.canUndo () && !edit_undo_stack_.canRedo())
-        setEditState (TAB_STATE_NO_REDO_NO_UNDO);
-    else if (!edit_undo_stack_.canUndo ())
-        setEditState (TAB_STATE_NO_UNDO);
+void TabContext::updateUndoRedoEditState() {
+    if (!edit_undo_stack_.canUndo() && !edit_undo_stack_.canRedo())
+        setEditState(TAB_STATE_NO_REDO_NO_UNDO);
+    else if (!edit_undo_stack_.canUndo())
+        setEditState(TAB_STATE_NO_UNDO);
     else if (!edit_undo_stack_.canRedo())
-        setEditState (TAB_STATE_NO_REDO);
+        setEditState(TAB_STATE_NO_REDO);
     else
-        setEditState (TAB_STATE_CAN_REDO_UNDO);
+        setEditState(TAB_STATE_CAN_REDO_UNDO);
 }
 
-
-
-//-----------------------------------------------------------------------------
-void TabContext::setSelectionState (TabSelectionState state)
-{
+void TabContext::setSelectionState(TabSelectionState state) {
     selection_state_ = state;
-    emit selectionStateChanged (selection_state_);
+    emit selectionStateChanged(selection_state_);
 }
 
-//-----------------------------------------------------------------------------
-void TabContext::setEditState (TabEditState state)
-{
+void TabContext::setEditState(TabEditState state) {
     edit_state_ = state;
-    emit editStateChanged (edit_state_);
+    emit editStateChanged(edit_state_);
 }
 
-}
+}  // namespace sigviewer

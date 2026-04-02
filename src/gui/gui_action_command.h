@@ -2,127 +2,93 @@
 //
 // License: GPL-3.0
 
-
 #ifndef GUI_ACTION_COMMAND_H
 #define GUI_ACTION_COMMAND_H
 
-#include "application_context.h"
-
-#include "base/application_states.h"
-#include "base/tab_states.h"
-#include "base/file_states.h"
-#include "base/exception.h"
-
-#include "signal_visualisation_model.h"
-#include "event_view.h"
-#include "signal_view_settings.h"
-
-#include <QObject>
 #include <QAction>
+#include <QObject>
 #include <QStringList>
 
-namespace sigviewer
-{
+#include "application_context.h"
+#include "base/application_states.h"
+#include "base/exception.h"
+#include "base/file_states.h"
+#include "base/tab_states.h"
+#include "event_view.h"
+#include "signal_view_settings.h"
+#include "signal_visualisation_model.h"
+
+namespace sigviewer {
 
 class ActionConnector;
 
-class GuiActionCommand : public QObject
-{
+class GuiActionCommand : public QObject {
     Q_OBJECT
-public:
-    //-------------------------------------------------------------------------
-    virtual ~GuiActionCommand () {}
+   public:
+    virtual ~GuiActionCommand() {}
 
-    //-------------------------------------------------------------------------
-    QList<QAction*> getQActions ();
+    QList<QAction*> getQActions();
 
-    //-------------------------------------------------------------------------
-    QList<QString> getActionIDs () const;
+    QList<QString> getActionIDs() const;
 
-	//-------------------------------------------------------------------------
-	void initConnections();
+    void initConnections();
 
-    //-------------------------------------------------------------------------
-    virtual void init () = 0;
+    virtual void init() = 0;
 
-public slots:
-    //-------------------------------------------------------------------------
-    virtual void trigger (QString const&) {}
+   public slots:
 
-    //-------------------------------------------------------------------------
-    void updateEnablednessToApplicationState (ApplicationState state);
+    virtual void trigger(QString const&) {}
 
-    //-------------------------------------------------------------------------
-    void updateEnablednessToFileState (FileState state);
+    void updateEnablednessToApplicationState(ApplicationState state);
 
-    //-------------------------------------------------------------------------
-    void updateEnablednessToTabSelectionState (TabSelectionState state);
+    void updateEnablednessToFileState(FileState state);
 
-    //-------------------------------------------------------------------------
-    void updateEnablednessToTabEditState (TabEditState state);
+    void updateEnablednessToTabSelectionState(TabSelectionState state);
 
-    //-------------------------------------------------------------------------
-    QAction* getQAction (QString const& id);
+    void updateEnablednessToTabEditState(TabEditState state);
 
-protected:
-    //-------------------------------------------------------------------------
-    GuiActionCommand (QStringList const& action_ids);
+    QAction* getQAction(QString const& id);
 
-    //-------------------------------------------------------------------------
-    void resetActionTriggerSlot (QString const& action_id, const char* slot);
+   protected:
+    GuiActionCommand(QStringList const& action_ids);
 
-    //-------------------------------------------------------------------------
-    void setShortcut (QString const& action_id, QKeySequence const& key_sequence);
+    void resetActionTriggerSlot(QString const& action_id, const char* slot);
 
-    //-------------------------------------------------------------------------
-    void setIcon (QString const& action_id, QIcon const& icon);
+    void setShortcut(QString const& action_id, QKeySequence const& key_sequence);
 
-    //-------------------------------------------------------------------------
-    virtual void applicationStateChanged () {}
+    void setIcon(QString const& action_id, QIcon const& icon);
 
-    //-------------------------------------------------------------------------
-    virtual void evaluateEnabledness ();
+    virtual void applicationStateChanged() {}
 
-    //-------------------------------------------------------------------------
-    QSharedPointer<EventView> currentEventView ();
+    virtual void evaluateEnabledness();
 
-    //-------------------------------------------------------------------------
-    QSharedPointer<SignalVisualisationModel> currentVisModel ();
+    QSharedPointer<EventView> currentEventView();
 
-    //-------------------------------------------------------------------------
-    QSharedPointer<SignalViewSettings> currentSignalViewSettings ();
+    QSharedPointer<SignalVisualisationModel> currentVisModel();
 
-    //-------------------------------------------------------------------------
-    QSharedPointer<FileContext> currentFileContext ();
+    QSharedPointer<SignalViewSettings> currentSignalViewSettings();
 
-    //-------------------------------------------------------------------------
-    QSharedPointer<ApplicationContext> applicationContext ();
+    QSharedPointer<FileContext> currentFileContext();
 
-    //-------------------------------------------------------------------------
-    ApplicationState getApplicationState () const {return app_state_;}
+    QSharedPointer<ApplicationContext> applicationContext();
 
-    //-------------------------------------------------------------------------
-    FileState getFileState () const {return file_state_;}
+    ApplicationState getApplicationState() const { return app_state_; }
 
-    //-------------------------------------------------------------------------
-    TabSelectionState getTabSelectionState () const {return tab_selection_state_;}
+    FileState getFileState() const { return file_state_; }
 
-    //-------------------------------------------------------------------------
-    TabEditState getTabEditState () const {return tab_edit_state_;}
+    TabSelectionState getTabSelectionState() const { return tab_selection_state_; }
 
-    //-------------------------------------------------------------------------
-    bool disableIfNoSignalIsVisualised (QStringList const &actions);
+    TabEditState getTabEditState() const { return tab_edit_state_; }
 
-    //-------------------------------------------------------------------------
-    bool disableIfNoEventsPossible (QStringList const &actions);
+    bool disableIfNoSignalIsVisualised(QStringList const& actions);
 
-    //-------------------------------------------------------------------------
-    void disableIfNoEventSelected (QStringList const &actions);
+    bool disableIfNoEventsPossible(QStringList const& actions);
 
-    //-------------------------------------------------------------------------
-    bool disableIfNoFileIsOpened (QStringList const &actions);
+    void disableIfNoEventSelected(QStringList const& actions);
 
-private:
+    bool disableIfNoFileIsOpened(QStringList const& actions);
+
+   private:
     QMap<QString, QAction*> action_map_;
     QList<ActionConnector*> connectors_;
 
@@ -132,22 +98,23 @@ private:
     TabEditState tab_edit_state_;
 };
 
-class ActionConnector : public QObject
-{
+class ActionConnector : public QObject {
     Q_OBJECT
-public:
-    ActionConnector (QObject* parent, QString const& name) : QObject (parent), name_ (name) {}
+   public:
+    ActionConnector(QObject* parent, QString const& name)
+        : QObject(parent), name_(name) {}
 
-	QString const& getName() const {return name_; }
+    QString const& getName() const { return name_; }
 
-public slots:
-    void trigger () {emit triggered (name_);}
-signals:
-    void triggered (QString const& name);
-private:
+   public slots:
+    void trigger() { emit triggered(name_); }
+   signals:
+    void triggered(QString const& name);
+
+   private:
     QString name_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // GUI_ACTION_COMMAND_H
+#endif  // GUI_ACTION_COMMAND_H

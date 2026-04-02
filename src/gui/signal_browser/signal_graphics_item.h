@@ -2,42 +2,39 @@
 //
 // License: GPL-3.0
 
-
 #ifndef SIGNALGRAPHICSITEM_H
 #define SIGNALGRAPHICSITEM_H
+
+#include <QGraphicsObject>
 
 #include "command_executer.h"
 #include "file_handling/event_manager.h"
 #include "gui/color_manager.h"
 #include "gui/signal_view_settings.h"
 
-#include <QGraphicsObject>
-
 class QPoint;
 
-namespace sigviewer
-{
+namespace sigviewer {
 
 class SignalEvent;
 class SignalBrowserModel;
 class EventGraphicsItem;
 
-class SignalGraphicsItem : public QGraphicsObject
-{
+class SignalGraphicsItem : public QGraphicsObject {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
-public:
+   public:
     SignalGraphicsItem(QSharedPointer<SignalViewSettings const> signal_view_settings,
-                       QSharedPointer<EventManager> event_manager,
-                       QSharedPointer<CommandExecuter> command_executor,
-                       ChannelManager const& channel_manager,
-                       QSharedPointer<ColorManager const> color_manager,
-                       ChannelID id,
-                       SignalBrowserModel& model);
+        QSharedPointer<EventManager> event_manager,
+        QSharedPointer<CommandExecuter> command_executor,
+        ChannelManager const& channel_manager,
+        QSharedPointer<ColorManager const> color_manager,
+        ChannelID id,
+        SignalBrowserModel& model);
 
-    virtual ~SignalGraphicsItem ();
+    virtual ~SignalGraphicsItem();
 
-    virtual QRectF boundingRect () const;
+    virtual QRectF boundingRect() const;
 
     void enableYGrid(bool enabled);
     void enableXGrid(bool enabled);
@@ -45,43 +42,43 @@ public:
     float64 getYZoom() const;
     float64 getYOffset() const;
     float64 getYGridPixelIntervall() const;
-    double getValueRangeFragment () const;
-    QString getPhysicalDimensionString () const;
+    double getValueRangeFragment() const;
+    QString getPhysicalDimensionString() const;
 
     void zoomIn();
     void zoomOut();
-    void scale (double lower_value, double upper_value);
-    void autoScale (ScaleMode auto_zoom_type);
+    void scale(double lower_value, double upper_value);
+    void autoScale(ScaleMode auto_zoom_type);
 
-public slots:
+   public slots:
     void updateYGridIntervall();
-    void setHeight (unsigned height);
-    void setXGridInterval (unsigned interval);
+    void setHeight(unsigned height);
+    void setXGridInterval(unsigned interval);
     void toggleXGrid(bool enable);
     void toggleYGrid(bool enable);
     void enableSeparator(bool enable);
     void updateGridColor(QColor gridColor);
     void updateLabelColor(QColor labelColor);
 
-signals:
-    void mouseAtSecond (float64 sec);
-    void mouseMoving (bool mouse_is_moving);
-    void shifting (ChannelID channel_id);
-    void updatedYGrid (ChannelID channel_id);
+   signals:
+    void mouseAtSecond(float64 sec);
+    void mouseMoving(bool mouse_is_moving);
+    void shifting(ChannelID channel_id);
+    void updatedYGrid(ChannelID channel_id);
 
-private:
-    void scaleImpl (double min, double max);
+   private:
+    void scaleImpl(double min, double max);
 
-    virtual void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
-    virtual void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );
-    virtual void hoverMoveEvent ( QGraphicsSceneHoverEvent * event );
-    virtual void mousePressEvent ( QGraphicsSceneMouseEvent * event );
-    virtual void mouseReleaseEvent (QGraphicsSceneMouseEvent * event);
-    virtual void contextMenuEvent (QGraphicsSceneContextMenuEvent * event);
-    virtual void wheelEvent (QGraphicsSceneWheelEvent * event);
+    virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+    virtual void hoverMoveEvent(QGraphicsSceneHoverEvent* event);
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+    virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent* event);
+    virtual void wheelEvent(QGraphicsSceneWheelEvent* event);
 
-    void drawYGrid (QPainter* painter, QStyleOptionGraphicsItem const* option);
-    void drawXGrid (QPainter* painter, QStyleOptionGraphicsItem const* option);
+    void drawYGrid(QPainter* painter, QStyleOptionGraphicsItem const* option);
+    void drawXGrid(QPainter* painter, QStyleOptionGraphicsItem const* option);
 
     QSharedPointer<SignalViewSettings const> signal_view_settings_;
     QSharedPointer<EventManager> event_manager_;
@@ -118,6 +115,6 @@ private:
     QColor label_color_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // SIGNALGRAPHICSITEM_H
+#endif  // SIGNALGRAPHICSITEM_H

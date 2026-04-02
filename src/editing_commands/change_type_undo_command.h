@@ -2,47 +2,36 @@
 //
 // License: GPL-3.0
 
-
 #ifndef CHANGE_TYPE_UNDO_COMMAND_H
 #define CHANGE_TYPE_UNDO_COMMAND_H
+
+#include <QObject>
+#include <QSharedPointer>
+#include <QUndoCommand>
 
 #include "base/signal_event.h"
 #include "file_handling/event_manager.h"
 
-#include <QUndoCommand>
-#include <QSharedPointer>
-#include <QObject>
+namespace sigviewer {
 
-namespace sigviewer
-{
+class ChangeTypeUndoCommand : public QUndoCommand {
+   public:
+    ChangeTypeUndoCommand(QSharedPointer<EventManager> event_manager, EventID event_id, EventType new_type);
 
-class ChangeTypeUndoCommand : public QUndoCommand
-{
-public:
-    //-------------------------------------------------------------------------
-    ChangeTypeUndoCommand (QSharedPointer<EventManager> event_manager,
-                           EventID event_id,
-                           EventType new_type);
-
-    //-------------------------------------------------------------------------
     virtual ~ChangeTypeUndoCommand();
 
-    //-------------------------------------------------------------------------
     /// recreates the deleted event
-    virtual void undo ();
+    virtual void undo();
 
-    //-------------------------------------------------------------------------
     /// deletes the event
-    virtual void redo ();
+    virtual void redo();
 
-private:
-    //-------------------------------------------------------------------------
+   private:
     /// copy-constructor disabled
-    ChangeTypeUndoCommand (ChangeTypeUndoCommand const &);
+    ChangeTypeUndoCommand(ChangeTypeUndoCommand const&);
 
-    //-------------------------------------------------------------------------
     /// assignment-operator disabled
-    ChangeTypeUndoCommand& operator= (ChangeTypeUndoCommand const &);
+    ChangeTypeUndoCommand& operator=(ChangeTypeUndoCommand const&);
 
     EventID event_id_;
     QSharedPointer<EventManager> event_manager_;
@@ -51,6 +40,6 @@ private:
     QSharedPointer<SignalEvent> signal_event_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // CHANGE_TYPE_UNDO_COMMAND_H
+#endif  // CHANGE_TYPE_UNDO_COMMAND_H

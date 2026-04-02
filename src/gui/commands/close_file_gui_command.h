@@ -2,70 +2,50 @@
 //
 // License: GPL-3.0
 
-
 #ifndef CLOSE_FILE_GUI_COMMAND_H
 #define CLOSE_FILE_GUI_COMMAND_H
 
+#include "file_handling/file_signal_reader.h"
 #include "gui/gui_action_command.h"
 #include "gui/gui_action_factory_registrator.h"
-#include "file_handling/file_signal_reader.h"
 
-namespace sigviewer
-{
+namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 /// CloseFileGuiCommand
 ///
 /// command for closing a file
-class CloseFileGuiCommand : public GuiActionCommand
-{
+class CloseFileGuiCommand : public GuiActionCommand {
     Q_OBJECT
-public:
-    //-------------------------------------------------------------------------
-    CloseFileGuiCommand ();
+   public:
+    CloseFileGuiCommand();
 
-    //-------------------------------------------------------------------------
-    virtual ~CloseFileGuiCommand () {}
+    virtual ~CloseFileGuiCommand() {}
 
-    //-------------------------------------------------------------------------
-    virtual void init ();
+    virtual void init();
 
-    //-------------------------------------------------------------------------
-    bool closeCurrentFile ();
+    bool closeCurrentFile();
 
-public slots:
-    //-------------------------------------------------------------------------
-    void closeFile ();
+   public slots:
 
-    //-------------------------------------------------------------------------
-    void exitApplication ();
+    void closeFile();
 
+    void exitApplication();
 
-protected:
-    //-------------------------------------------------------------------------
-    virtual void evaluateEnabledness ();
+   protected:
+    virtual void evaluateEnabledness();
 
-
-private:
+   private:
     static QString const CLOSE_FILE_();
     static QString const EXIT_APPLICATION_();
     static QStringList const ACTIONS_();
 
     static GuiActionFactoryRegistrator registrator_;
 
+    QString showCloseDialog(QString const& path, QString const& extensions);
 
-
-    //-------------------------------------------------------------------------
-    QString showCloseDialog (QString const& path, QString const& extensions);
-
-    //-------------------------------------------------------------------------
-    QSharedPointer<FileSignalReader> createAndCloseFileSignalReader
-            (QString const& file_path) const;
-
-
+    QSharedPointer<FileSignalReader> createAndCloseFileSignalReader(QString const& file_path) const;
 };
 
-}
+}  // namespace sigviewer
 
-
-#endif // CLOSE_FILE_GUI_COMMAND_H
+#endif  // CLOSE_FILE_GUI_COMMAND_H

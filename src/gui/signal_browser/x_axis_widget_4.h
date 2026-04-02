@@ -2,38 +2,34 @@
 //
 // License: GPL-3.0
 
-
 #ifndef X_AXIS_WIDGET_H
 #define X_AXIS_WIDGET_H
+
+#include <QSharedPointer>
+#include <QWidget>
 
 #include "base/sigviewer_user_types.h"
 #include "gui/signal_view_settings.h"
 
-#include <QWidget>
-#include <QSharedPointer>
+namespace sigviewer {
 
-namespace sigviewer
-{
-
-class XAxisWidget : public QWidget
-{
+class XAxisWidget : public QWidget {
     Q_OBJECT
-public:
-    XAxisWidget (QSharedPointer<SignalViewSettings const> signal_view_settings,
-                 QWidget* parent);
+   public:
+    XAxisWidget(QSharedPointer<SignalViewSettings const> signal_view_settings, QWidget* parent);
     virtual ~XAxisWidget();
-    virtual QSize sizeHint () const;
+    virtual QSize sizeHint() const;
 
-public slots:
-    void changeXStart (int32 x_start);
-    void changeHighlightTime (float64 time_to_highlight);
-    void enableHighlightTime (bool highlighting_enabled);
+   public slots:
+    void changeXStart(int32 x_start);
+    void changeHighlightTime(float64 time_to_highlight);
+    void enableHighlightTime(bool highlighting_enabled);
     void changeLabelColor(QColor labelColor);
 
-private:
+   private:
     virtual void paintEvent(QPaintEvent*);
-    virtual void contextMenuEvent (QContextMenuEvent* event);
-    virtual void timerEvent (QTimerEvent* event);
+    virtual void contextMenuEvent(QContextMenuEvent* event);
+    virtual void timerEvent(QTimerEvent* event);
     virtual void changeEvent(QEvent* event);
 
     QSharedPointer<SignalViewSettings const> signal_view_settings_;
@@ -49,6 +45,6 @@ private:
     QColor label_color_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // X_AXIS_WIDGET_H
+#endif  // X_AXIS_WIDGET_H

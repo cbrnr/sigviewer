@@ -2,31 +2,22 @@
 //
 // License: GPL-3.0
 
-
 #include "macro_undo_command.h"
 
-namespace sigviewer
-{
+namespace sigviewer {
 
-//-----------------------------------------------------------------------------
-MacroUndoCommand::MacroUndoCommand (QList<QSharedPointer<QUndoCommand> > const& commands)
-    : commands_ (commands)
-{
+MacroUndoCommand::MacroUndoCommand(QList<QSharedPointer<QUndoCommand> > const& commands)
+    : commands_(commands) {
     // nothing to do here
 }
 
-//-----------------------------------------------------------------------------
-void MacroUndoCommand::undo ()
-{
-    for (int index = commands_.length () - 1; index > -1; index--)
-        commands_[index]->undo ();
+void MacroUndoCommand::undo() {
+    for (int index = commands_.length() - 1; index > -1; index--)
+        commands_[index]->undo();
 }
 
-//-----------------------------------------------------------------------------
-void MacroUndoCommand::redo ()
-{
-    for (int index = 0; index < commands_.length (); index++)
-        commands_[index]->redo ();
+void MacroUndoCommand::redo() {
+    for (int index = 0; index < commands_.length(); index++) commands_[index]->redo();
 }
 
-}
+}  // namespace sigviewer

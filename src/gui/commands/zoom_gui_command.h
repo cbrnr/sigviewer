@@ -2,65 +2,51 @@
 //
 // License: GPL-3.0
 
-
 #ifndef ZOOM_GUI_COMMAND_H
 #define ZOOM_GUI_COMMAND_H
 
 #include "gui/gui_action_command.h"
 #include "gui/gui_action_factory_registrator.h"
 
-namespace sigviewer
-{
+namespace sigviewer {
 
-class ZoomGuiCommand : public GuiActionCommand
-{
+class ZoomGuiCommand : public GuiActionCommand {
     Q_OBJECT
-public:
-    ZoomGuiCommand ();
+   public:
+    ZoomGuiCommand();
 
-    virtual void init ();
+    virtual void init();
 
-protected slots:
-    //-------------------------------------------------------------------------
-    virtual void evaluateEnabledness ();
+   protected slots:
 
-private slots:
-    //-------------------------------------------------------------------------
-    void goTo ();
+    virtual void evaluateEnabledness();
 
-    //-------------------------------------------------------------------------
-    void zoomInHorizontal ();
+   private slots:
 
-    //-------------------------------------------------------------------------
-    void zoomOutHorizontal ();
+    void goTo();
 
-    //-------------------------------------------------------------------------
-    void zoomInVertical ();
+    void zoomInHorizontal();
 
-    //-------------------------------------------------------------------------
-    void zoomOutVertical ();
+    void zoomOutHorizontal();
 
-    //-------------------------------------------------------------------------
-    void autoZoomVertical ();
+    void zoomInVertical();
 
-    //-------------------------------------------------------------------------
-    void scaleXAxis ();
+    void zoomOutVertical();
 
-    //-------------------------------------------------------------------------
-    void setChannelsPerPage ();
+    void autoZoomVertical();
 
-private:
-    //-------------------------------------------------------------------------
-    unsigned maxChannelHeight ();
+    void scaleXAxis();
 
-    //-------------------------------------------------------------------------
-    unsigned minChannelHeight ();
+    void setChannelsPerPage();
 
-    //-------------------------------------------------------------------------
-    float32 maxPixelPerSample ();
+   private:
+    unsigned maxChannelHeight();
 
-    //-------------------------------------------------------------------------
-    float32 minPixelPerSample ();
+    unsigned minChannelHeight();
+
+    float32 maxPixelPerSample();
+
+    float32 minPixelPerSample();
 
     static int const ZOOM_FACTOR_ = 2;
     static int const MAX_HORIZONTAL_ZOOM_IN_ = 32;
@@ -78,6 +64,6 @@ private:
     static GuiActionFactoryRegistrator registrator_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // ZOOM_GUI_COMMAND_H
+#endif  // ZOOM_GUI_COMMAND_H

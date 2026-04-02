@@ -2,61 +2,49 @@
 //
 // License: GPL-3.0
 
-
 #ifndef BIOSIG_READER_H_
 #define BIOSIG_READER_H_
 
 #include "file_signal_reader.h"
 
+namespace sigviewer {
 
-namespace sigviewer
-{
-
-class BioSigReader : public FileSignalReader
-{
-public:
-    BioSigReader ();
+class BioSigReader : public FileSignalReader {
+   public:
+    BioSigReader();
 
     virtual ~BioSigReader();
 
-    //-------------------------------------------------------------------------
-    QPair<FileSignalReader*, QString> createInstance (QString const& file_path);
+    QPair<FileSignalReader*, QString> createInstance(QString const& file_path);
 
-    //-------------------------------------------------------------------------
-    virtual QSharedPointer<DataBlock const> getSignalData (ChannelID channel_id,
-                                                           size_t start_sample,
-                                                           size_t length) const;
+    virtual QSharedPointer<DataBlock const> getSignalData(ChannelID channel_id,
+        size_t start_sample,
+        size_t length) const;
 
-    //-------------------------------------------------------------------------
-    virtual QList<QSharedPointer<SignalEvent const> > getEvents () const;
+    virtual QList<QSharedPointer<SignalEvent const> > getEvents() const;
 
-    //-------------------------------------------------------------------------
-    virtual QSharedPointer<BasicHeader> getBasicHeader ();
+    virtual QSharedPointer<BasicHeader> getBasicHeader();
 
-    //-------------------------------------------------------------------------
-    virtual QSharedPointer<BasicHeader const> getBasicHeader () const {return basic_header_;}
+    virtual QSharedPointer<BasicHeader const> getBasicHeader() const {
+        return basic_header_;
+    }
 
-    //-------------------------------------------------------------------------
     int setChannelColors(); /*!< Set colors for all channels. */
 
-private:
-    //-------------------------------------------------------------------------
-    QString open (QString const& file_name);
+   private:
+    QString open(QString const& file_name);
 
-    //-------------------------------------------------------------------------
-    void bufferAllChannels () const;
+    void bufferAllChannels() const;
 
-    //-------------------------------------------------------------------------
-    void applyFilters (double* &in, double* &out, int length) const;
+    void applyFilters(double*& in, double*& out, int length) const;
 
-    //-------------------------------------------------------------------------
-    void bufferAllEvents () const;
+    void bufferAllEvents() const;
 
     Q_DISABLE_COPY(BioSigReader)
 
     QString loadFixedHeader(const QString& file_name);
 
-    void doClose () const;
+    void doClose() const;
 
     QSharedPointer<BasicHeader> basic_header_;
     mutable QMutex mutex_;
@@ -68,6 +56,6 @@ private:
     mutable QList<QSharedPointer<SignalEvent const> > events_;
 };
 
-}
+}  // namespace sigviewer
 
 #endif

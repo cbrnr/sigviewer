@@ -2,57 +2,45 @@
 //
 // License: GPL-3.0
 
-
 #ifndef EVENT_EDITING_GUI_COMMAND_H
 #define EVENT_EDITING_GUI_COMMAND_H
+
+#include <QUndoCommand>
 
 #include "base/sigviewer_user_types.h"
 #include "gui/gui_action_command.h"
 #include "gui/gui_action_factory_registrator.h"
 
-#include <QUndoCommand>
+namespace sigviewer {
 
-namespace sigviewer
-{
-
-class EventEditingGuiCommand : public GuiActionCommand
-{
+class EventEditingGuiCommand : public GuiActionCommand {
     Q_OBJECT
-public:
-    //-------------------------------------------------------------------------
-    EventEditingGuiCommand ();
+   public:
+    EventEditingGuiCommand();
 
-    //-------------------------------------------------------------------------
-    virtual ~EventEditingGuiCommand ();
+    virtual ~EventEditingGuiCommand();
 
-    //-------------------------------------------------------------------------
-    virtual void init ();
+    virtual void init();
 
-public slots:
-    //-------------------------------------------------------------------------
-    void deleteSelectedEvent ();
+   public slots:
 
-    //-------------------------------------------------------------------------
-    void changeTypeSelectedEvent ();
+    void deleteSelectedEvent();
 
-    //-------------------------------------------------------------------------
-    void changeChannelSelectedEvent ();
+    void changeTypeSelectedEvent();
 
-    //-------------------------------------------------------------------------
-    void toAllChannelsSelectedEvent ();
+    void changeChannelSelectedEvent();
 
-    //-------------------------------------------------------------------------
-    void copyToChannelsSelectedEvent ();
+    void toAllChannelsSelectedEvent();
 
-    //-------------------------------------------------------------------------
-    void insertEventOverSelectedEvent ();
+    void copyToChannelsSelectedEvent();
 
-protected:
-    //-------------------------------------------------------------------------
-    virtual void evaluateEnabledness ();
+    void insertEventOverSelectedEvent();
 
-private:
-    void executeCommands (QList<QSharedPointer<QUndoCommand> > commands);
+   protected:
+    virtual void evaluateEnabledness();
+
+   private:
+    void executeCommands(QList<QSharedPointer<QUndoCommand> > commands);
 
     static QString const DELETE_();
     static QString const CHANGE_TYPE_();
@@ -65,6 +53,6 @@ private:
     static GuiActionFactoryRegistrator registrator_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // EVENT_EDITING_GUI_COMMAND_H
+#endif  // EVENT_EDITING_GUI_COMMAND_H

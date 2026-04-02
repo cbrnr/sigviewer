@@ -2,50 +2,45 @@
 //
 // License: GPL-3.0
 
-
 #include "main_window.h"
+
+#include <QIcon>
+#include <QLabel>
+#include <QMenuBar>
+#include <QMimeData>
+#include <QPalette>
+#include <QProxyStyle>
+#include <QSettings>
+#include <QSizePolicy>
+#include <QStatusBar>
+#include <QStyle>
+#include <QStyleOption>
+#include <QToolBar>
+#include <QToolButton>
+
 #include "gui/background_processes.h"
 #include "gui/commands/open_file_gui_command.h"
 
-#include <QToolBar>
-#include <QMenuBar>
-#include <QStatusBar>
-#include <QLabel>
-#include <QSettings>
-#include <QMimeData>
-#include <QIcon>
-#include <QPalette>
-#include <QSizePolicy>
-#include <QStyle>
-#include <QStyleOption>
-#include <QToolButton>
-#include <QProxyStyle>
+namespace {
 
-namespace
-{
-
-class MenuPaddingStyle : public QProxyStyle
-{
-public:
-    QSize sizeFromContents(ContentsType type, const QStyleOption* option,
-                           const QSize& size, const QWidget* widget) const override
-    {
+class MenuPaddingStyle : public QProxyStyle {
+   public:
+    QSize sizeFromContents(ContentsType type,
+        const QStyleOption* option,
+        const QSize& size,
+        const QWidget* widget) const override {
         QSize base = QProxyStyle::sizeFromContents(type, option, size, widget);
-        if (type == CT_MenuItem)
-            base.setWidth(base.width() + 30);
+        if (type == CT_MenuItem) base.setWidth(base.width() + 30);
         return base;
     }
 };
 
-} // anonymous namespace
+}  // anonymous namespace
 
-namespace sigviewer
-{
+namespace sigviewer {
 
-//----------------------------------------------------------------------------
 MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
- : QMainWindow(0)
-{
+    : QMainWindow(0) {
     setWindowTitle(tr("SigViewer"));
     setAcceptDrops(true);
     setWindowIcon(QIcon(":images/sigviewer128.png"));
@@ -53,7 +48,7 @@ MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
     initToolBars();
     initMenus(application_context);
     initHamburgerMenu();
-    setUnifiedTitleAndToolBarOnMac (true);
+    setUnifiedTitleAndToolBarOnMac(true);
 #ifdef Q_OS_MACOS
     const QString toolbar_style = R"(
         QToolButton {
@@ -82,37 +77,40 @@ MainWindow::MainWindow(QSharedPointer<ApplicationContext> application_context)
     )";
     file_toolbar_->setStyleSheet(toolbar_style);
 #endif
-    
+
     QSettings settings;
     resize(settings.value("MainWindow/size", QSize(1200, 800)).toSize());
     setMinimumSize(900, 800);
-    restoreGeometry(settings.value("geometry").toByteArray());  //restore geometry and window state (full screen etc.)
+    restoreGeometry(settings.value("geometry")
+            .toByteArray());  // restore geometry and window state (full screen etc.)
     restoreState(settings.value("windowState").toByteArray());
 }
 
-//-----------------------------------------------------------------------------
-void MainWindow::initStatusBar()
-{
-    connect (&BackgroundProcesses::instance(), SIGNAL(newProcess(QString,int)), SLOT(addBackgroundProcessToStatusBar(QString,int)));
-    connect (&BackgroundProcesses::instance(), SIGNAL(processChangedState(QString,int)), SLOT(updateBackgroundProcessonStatusBar(QString,int)));
-    connect (&BackgroundProcesses::instance(), SIGNAL(processRemoved(QString)), SLOT(removeBackgroundProcessFromStatusBar(QString)));
+void MainWindow::initStatusBar() {
+    connect(&BackgroundProcesses::instance(),
+        SIGNAL(newProcess(QString, int)),
+        SLOT(addBackgroundProcessToStatusBar(QString, int)));
+    connect(&BackgroundProcesses::instance(),
+        SIGNAL(processChangedState(QString, int)),
+        SLOT(updateBackgroundProcessonStatusBar(QString, int)));
+    connect(&BackgroundProcesses::instance(),
+        SIGNAL(processRemoved(QString)),
+        SLOT(removeBackgroundProcessFromStatusBar(QString)));
 
     QStatusBar* status_bar = statusBar();
-    //status_bar->showMessage(tr("Ready"));
+    // status_bar->showMessage(tr("Ready"));
 
-    status_bar_signal_length_label_ = new QLabel (this);
-    status_bar_nr_channels_label_ = new QLabel (this);
+    status_bar_signal_length_label_ = new QLabel(this);
+    status_bar_nr_channels_label_ = new QLabel(this);
     status_bar_signal_length_label_->setAlignment(Qt::AlignHCenter);
     status_bar_nr_channels_label_->setAlignment(Qt::AlignHCenter);
     status_bar->addPermanentWidget(status_bar_signal_length_label_);
     status_bar->addPermanentWidget(status_bar_nr_channels_label_);
     QSettings settings;
-    status_bar->setVisible (settings.value ("MainWindow/statusbar", true).toBool());
+    status_bar->setVisible(settings.value("MainWindow/statusbar", true).toBool());
 }
 
-//-----------------------------------------------------------------------------
-void MainWindow::initToolBars()
-{
+void MainWindow::initToolBars() {
     file_toolbar_ = addToolBar(tr("Toolbar"));
     file_toolbar_->setObjectName("Toolbar");
     file_toolbar_->setMovable(false);
@@ -140,102 +138,86 @@ void MainWindow::initToolBars()
     file_toolbar_->addAction(action(tr("Remove Offset")));
 }
 
-//-------------------------------------------------------------------
-void MainWindow::toggleStatusBar (bool visible)
-{
-    statusBar()->setVisible (visible);
+void MainWindow::toggleStatusBar(bool visible) {
+    statusBar()->setVisible(visible);
     QSettings settings;
     settings.setValue("MainWindow/statusbar", statusBar()->isVisible());
 }
 
-
-//-----------------------------------------------------------------------------
-void MainWindow::addBackgroundProcessToStatusBar (QString name, int max)
-{
-    QProgressBar* progress_bar = new QProgressBar (this);
-    progress_bar->setMinimum (0);
-    progress_bar->setMaximum (max);
-    progress_bar->setValue (0);
+void MainWindow::addBackgroundProcessToStatusBar(QString name, int max) {
+    QProgressBar* progress_bar = new QProgressBar(this);
+    progress_bar->setMinimum(0);
+    progress_bar->setMaximum(max);
+    progress_bar->setValue(0);
 
     background_processes_progressbars_[name] = progress_bar;
-    background_processes_labels_[name] = new QLabel (name, this);
-    statusBar()->insertPermanentWidget (0, progress_bar);
-    statusBar()->insertPermanentWidget (0, background_processes_labels_[name]);
+    background_processes_labels_[name] = new QLabel(name, this);
+    statusBar()->insertPermanentWidget(0, progress_bar);
+    statusBar()->insertPermanentWidget(0, background_processes_labels_[name]);
 }
 
-//-----------------------------------------------------------------------------
-void MainWindow::updateBackgroundProcessonStatusBar (QString name, int value)
-{
-    if (!background_processes_progressbars_.contains (name))
-        return;
+void MainWindow::updateBackgroundProcessonStatusBar(QString name, int value) {
+    if (!background_processes_progressbars_.contains(name)) return;
 
-    background_processes_progressbars_[name]->setValue (value);
+    background_processes_progressbars_[name]->setValue(value);
 }
 
-//-----------------------------------------------------------------------------
-void MainWindow::removeBackgroundProcessFromStatusBar (QString name)
-{
-    if (!background_processes_progressbars_.contains (name))
-        return;
+void MainWindow::removeBackgroundProcessFromStatusBar(QString name) {
+    if (!background_processes_progressbars_.contains(name)) return;
 
-    statusBar()->removeWidget (background_processes_progressbars_[name]);
+    statusBar()->removeWidget(background_processes_progressbars_[name]);
     delete background_processes_progressbars_[name];
-    background_processes_progressbars_.remove (name);
+    background_processes_progressbars_.remove(name);
 
-    statusBar()->removeWidget (background_processes_labels_[name]);
+    statusBar()->removeWidget(background_processes_labels_[name]);
     delete background_processes_labels_[name];
-    background_processes_labels_.remove (name);
+    background_processes_labels_.remove(name);
 }
 
-//-----------------------------------------------------------------------------
-void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_context)
-{
+void MainWindow::initMenus(QSharedPointer<ApplicationContext> application_context) {
     file_recent_files_menu_ = new QMenu(tr("Open &Recent"), this);
-    connect(file_recent_files_menu_, SIGNAL(aboutToShow()),
-            SIGNAL(recentFileMenuAboutToShow()));
-    connect(file_recent_files_menu_, SIGNAL(triggered(QAction*)),
-            SIGNAL(recentFileActivated(QAction*)));
+    connect(file_recent_files_menu_, SIGNAL(aboutToShow()), SIGNAL(recentFileMenuAboutToShow()));
+    connect(file_recent_files_menu_, SIGNAL(triggered(QAction*)), SIGNAL(recentFileActivated(QAction*)));
 
     file_menu_ = menuBar()->addMenu(tr("&File"));
     file_menu_->addAction(action(tr("Open...")));
-    file_menu_->addMenu (file_recent_files_menu_);
-    file_menu_->addAction (action(tr("Save")));
-    file_menu_->addAction (action(tr("Save as...")));
-    file_menu_->addAction (action(tr("Info...")));
-    file_menu_->addAction (action(tr("Close")));
-    file_menu_->addSeparator ();
-    file_menu_->addAction (action(tr("Import Events...")));
-    file_menu_->addAction (action(tr("Export Events to CSV...")));
-    file_menu_->addAction (action(tr("Export Events to EVT...")));
+    file_menu_->addMenu(file_recent_files_menu_);
+    file_menu_->addAction(action(tr("Save")));
+    file_menu_->addAction(action(tr("Save as...")));
+    file_menu_->addAction(action(tr("Info...")));
+    file_menu_->addAction(action(tr("Close")));
+    file_menu_->addSeparator();
+    file_menu_->addAction(action(tr("Import Events...")));
+    file_menu_->addAction(action(tr("Export Events to CSV...")));
+    file_menu_->addAction(action(tr("Export Events to EVT...")));
     // file_menu_->addAction (action(tr("Export to GDF...")));
-    file_menu_->addSeparator ();
-    file_menu_->addAction (action(tr("Exit")));
+    file_menu_->addSeparator();
+    file_menu_->addAction(action(tr("Exit")));
 
     edit_menu_ = menuBar()->addMenu(tr("&Edit"));
-    edit_menu_->addAction (action(tr("Undo")));
-    edit_menu_->addAction (action(tr("Redo")));
-    edit_menu_->addSeparator ();
-    edit_menu_->addAction (action(tr("To all Channels")));
-    edit_menu_->addAction (action(tr("Copy to Channels...")));
-    edit_menu_->addAction (action(tr("Delete")));
-    edit_menu_->addAction (action(tr("Change Channel...")));
-    edit_menu_->addAction (action(tr("Change Type...")));
-    edit_menu_->addSeparator ();
-    edit_menu_->addAction (action(tr("Insert Over")));
+    edit_menu_->addAction(action(tr("Undo")));
+    edit_menu_->addAction(action(tr("Redo")));
+    edit_menu_->addSeparator();
+    edit_menu_->addAction(action(tr("To all Channels")));
+    edit_menu_->addAction(action(tr("Copy to Channels...")));
+    edit_menu_->addAction(action(tr("Delete")));
+    edit_menu_->addAction(action(tr("Change Channel...")));
+    edit_menu_->addAction(action(tr("Change Type...")));
+    edit_menu_->addSeparator();
+    edit_menu_->addAction(action(tr("Insert Over")));
 
     mouse_mode_menu_ = menuBar()->addMenu(tr("&Mode"));
-    mouse_mode_menu_->addAction (action(tr("New Event")));
-    mouse_mode_menu_->addAction (action(tr("Edit Event")));
-    mouse_mode_menu_->addAction (action(tr("Scroll")));
-    mouse_mode_menu_->addAction (action(tr("View Options")));
-
+    mouse_mode_menu_->addAction(action(tr("New Event")));
+    mouse_mode_menu_->addAction(action(tr("Edit Event")));
+    mouse_mode_menu_->addAction(action(tr("Scroll")));
+    mouse_mode_menu_->addAction(action(tr("View Options")));
 
     QSettings settings;
 
-    QAction* toggle_status_bar = new QAction (tr("Statusbar"), this);
-    toggle_status_bar->setCheckable (true);
-    toggle_status_bar->setChecked (settings.value ("MainWindow/statusbar", true).toBool());
-    connect (toggle_status_bar, SIGNAL(toggled(bool)), this, SLOT(toggleStatusBar(bool)));
+    QAction* toggle_status_bar = new QAction(tr("Statusbar"), this);
+    toggle_status_bar->setCheckable(true);
+    toggle_status_bar->setChecked(settings.value("MainWindow/statusbar", true).toBool());
+    connect(toggle_status_bar, SIGNAL(toggled(bool)), this, SLOT(toggleStatusBar(bool)));
 
     view_menu_ = menuBar()->addMenu(tr("&View"));
     view_menu_->addAction(file_toolbar_->toggleViewAction());
@@ -267,17 +249,16 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     view_menu_->addAction(action(tr("Show all Events")));
 
     tools_menu_ = menuBar()->addMenu(tr("&Tools"));
-    tools_menu_->addActions(GuiActionFactory::getInstance()->getQActions("Signal Processing"));
+    tools_menu_
+        ->addActions(GuiActionFactory::getInstance()->getQActions("Signal Processing"));
     tools_menu_->addSeparator();
     tools_menu_->addActions(GuiActionFactory::getInstance()->getQActions("Detrend"));
 
     help_menu_ = menuBar()->addMenu(tr("&Help"));
-    help_menu_->addAction (action(tr("About")));
+    help_menu_->addAction(action(tr("About")));
 }
 
-//-----------------------------------------------------------------------------
-void MainWindow::initHamburgerMenu()
-{
+void MainWindow::initHamburgerMenu() {
 #ifndef Q_OS_MACOS
     QSettings settings;
     bool show_menubar = settings.value("MainWindow/menubar", true).toBool();
@@ -292,10 +273,8 @@ void MainWindow::initHamburgerMenu()
     hamburger_button_->setIcon(QIcon::fromTheme("menu"));
     hamburger_button_->setToolTip(tr("Menu"));
     QMenu* hamburger_popup = new QMenu(this);
-    for (QAction* menu_action : menuBar()->actions())
-    {
-        if (QMenu* submenu = menu_action->menu())
-            hamburger_popup->addMenu(submenu);
+    for (QAction* menu_action : menuBar()->actions()) {
+        if (QMenu* submenu = menu_action->menu()) hamburger_popup->addMenu(submenu);
     }
     hamburger_popup->setStyle(new MenuPaddingStyle);
     hamburger_button_->setMenu(hamburger_popup);
@@ -310,9 +289,7 @@ void MainWindow::initHamburgerMenu()
 #endif
 }
 
-//-------------------------------------------------------------------
-void MainWindow::toggleMenuBar()
-{
+void MainWindow::toggleMenuBar() {
 #ifndef Q_OS_MACOS
     bool menubar_visible = menuBar()->isVisible();
     menuBar()->setVisible(!menubar_visible);
@@ -325,52 +302,39 @@ void MainWindow::toggleMenuBar()
 #endif
 }
 
-//-----------------------------------------------------------------------------
-void MainWindow::closeEvent (QCloseEvent* event)
-{
+void MainWindow::closeEvent(QCloseEvent* event) {
     QSettings settings;
     settings.setValue("geometry", saveGeometry());
     settings.setValue("windowState", saveState());
 
     GuiActionFactory::getInstance()->getQAction(tr("Exit"))->trigger();
-    event->ignore ();
+    event->ignore();
 }
 
-//-----------------------------------------------------------------------------
-void MainWindow::dropEvent (QDropEvent* event)
-{
-    if (event->mimeData()->hasUrls())
-    {
+void MainWindow::dropEvent(QDropEvent* event) {
+    if (event->mimeData()->hasUrls()) {
         QString localPath(event->mimeData()->urls().first().toLocalFile());
         event->acceptProposedAction();
-        OpenFileGuiCommand::openFile (localPath);
-    } else if (event->mimeData()->hasText())
-    {
+        OpenFileGuiCommand::openFile(localPath);
+    } else if (event->mimeData()->hasText()) {
         QString localPath(event->mimeData()->text());
         event->acceptProposedAction();
-        OpenFileGuiCommand::openFile (localPath);
+        OpenFileGuiCommand::openFile(localPath);
     }
 }
 
-//-----------------------------------------------------------------------------
-void MainWindow::dragEnterEvent(QDragEnterEvent *event)
-{
-    if (event->mimeData()->hasText() || event->mimeData()->hasUrls())
-    {
+void MainWindow::dragEnterEvent(QDragEnterEvent* event) {
+    if (event->mimeData()->hasText() || event->mimeData()->hasUrls()) {
         event->acceptProposedAction();
     }
 }
 
-//-----------------------------------------------------------------------------
-void MainWindow::resizeEvent (QResizeEvent* event)
-{
+void MainWindow::resizeEvent(QResizeEvent* event) {
     QSettings settings;
     settings.setValue("MainWindow/size", event->size());
 }
 
-//-----------------------------------------------------------------------------
-void MainWindow::changeEvent(QEvent* event)
-{
+void MainWindow::changeEvent(QEvent* event) {
     if (event->type() == QEvent::PaletteChange) {
         const bool dark = palette().color(QPalette::Window).lightness() < 128;
         QIcon::setThemeName(dark ? "dark" : "light");
@@ -378,38 +342,30 @@ void MainWindow::changeEvent(QEvent* event)
     QMainWindow::changeEvent(event);
 }
 
-//-----------------------------------------------------------------------------
-void MainWindow::setRecentFiles(const QStringList& recent_file_list)
-{
+void MainWindow::setRecentFiles(const QStringList& recent_file_list) {
     file_recent_files_menu_->clear();
     for (QStringList::const_iterator it = recent_file_list.begin();
-         it != recent_file_list.end();
-         it++)
-    {
+        it != recent_file_list.end();
+        it++) {
         file_recent_files_menu_->addAction(*it);
     }
 }
 
-//-----------------------------------------------------------------------------
-void MainWindow::setStatusBarSignalLength(float64 length)
-{
+void MainWindow::setStatusBarSignalLength(float64 length) {
     if (length > 0)
-        status_bar_signal_length_label_->setText (tr("Length: %1s").arg(QString::number(length, 'f', 1)));
-    status_bar_signal_length_label_->setVisible (length > 0);
+        status_bar_signal_length_label_
+            ->setText(tr("Length: %1s").arg(QString::number(length, 'f', 1)));
+    status_bar_signal_length_label_->setVisible(length > 0);
 }
 
-//-----------------------------------------------------------------------------
-void MainWindow::setStatusBarNrChannels(int32 nr_channels)
-{
+void MainWindow::setStatusBarNrChannels(int32 nr_channels) {
     if (nr_channels > 0)
-        status_bar_nr_channels_label_->setText (tr("Channels: %1").arg(nr_channels));
-    status_bar_nr_channels_label_->setVisible (nr_channels > 0);
+        status_bar_nr_channels_label_->setText(tr("Channels: %1").arg(nr_channels));
+    status_bar_nr_channels_label_->setVisible(nr_channels > 0);
 }
 
-//-----------------------------------------------------------------------------
-QAction* MainWindow::action (QString const& action_id)
-{
-    return GuiActionFactory::getInstance()->getQAction (action_id);
+QAction* MainWindow::action(QString const& action_id) {
+    return GuiActionFactory::getInstance()->getQAction(action_id);
 }
 
-}
+}  // namespace sigviewer

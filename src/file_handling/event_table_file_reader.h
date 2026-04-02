@@ -2,33 +2,27 @@
 //
 // License: GPL-3.0
 
-
 #ifndef EVENT_TABLE_FILE_READER
 #define EVENT_TABLE_FILE_READER
 
 #include "base/sigviewer_user_types.h"
 #include "biosig.h"
 #undef isfinite
-#include <QStringList>
-#include <QMap>
 #include <QList>
-
+#include <QMap>
+#include <QStringList>
 #include <set>
 
 class QTextStream;
 
-namespace sigviewer
-{
+namespace sigviewer {
 
-
-//-----------------------------------------------------------------------------
 ///
 /// EventTableFileReader
 ///
 /// responsible for mapping of EventType to String (name of event)
-class EventTableFileReader
-{
-public:
+class EventTableFileReader {
+   public:
     typedef QList<uint16>::const_iterator IntIterator;
     typedef QStringList::const_iterator StringIterator;
 
@@ -41,26 +35,24 @@ public:
 
     IntIterator eventTypesBegin();
     IntIterator eventTypesEnd();
-    QString getEventName (EventType event_type_id) const;
-    void setEventName (EventType event_type_id, QString const& name);
-    void restoreEventNames ();
-    std::set<EventType> getEventsOfGroup (QString const& group_id) const;
-    QString getEventGroupId (EventType event_type_id) const;
+    QString getEventName(EventType event_type_id) const;
+    void setEventName(EventType event_type_id, QString const& name);
+    void restoreEventNames();
+    std::set<EventType> getEventsOfGroup(QString const& group_id) const;
+    QString getEventGroupId(EventType event_type_id) const;
 
-    //---------------------------------------------------------------------------------------------
     /// @return true if an the eventtablefilereader has an entry of this type;
     ///         false if not
-    bool entryExists (EventType type) const;
+    bool entryExists(EventType type) const;
 
-    //---------------------------------------------------------------------------------------------
-    void addEntry (EventType type, QString const& name = "", QString group_id = "");
+    void addEntry(EventType type, QString const& name = "", QString group_id = "");
 
-    std::set<uint16> getAllEventTypes () const;
-private:
+    std::set<uint16> getAllEventTypes() const;
+
+   private:
     bool load();
 
-    struct EventItem
-    {
+    struct EventItem {
         QString name;
         QString group_id;
     };
@@ -76,6 +68,6 @@ private:
     String2StringMap group_id2name_;
 };
 
-}
+}  // namespace sigviewer
 
 #endif

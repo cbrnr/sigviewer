@@ -2,73 +2,56 @@
 //
 // License: GPL-3.0
 
-
 #ifndef DATA_BLOCK_H
 #define DATA_BLOCK_H
 
-#include "sigviewer_user_types.h"
-
-#include <QSharedPointer>
 #include <QMap>
+#include <QSharedPointer>
 
+#include "sigviewer_user_types.h"
 
 namespace sigviewer {
 
-//-------------------------------------------------------------------------
 /// DataBlock
 ///
 /// basic class to store channel data and sections of it
-class DataBlock
-{
-public:
-    //-------------------------------------------------------------------------
-    virtual ~DataBlock ();
+class DataBlock {
+   public:
+    virtual ~DataBlock();
 
-    //-------------------------------------------------------------------------
     virtual QSharedPointer<DataBlock> createSubBlock(size_t start, size_t length) const = 0;
 
-    //-------------------------------------------------------------------------
-    virtual float32 const& operator[] (size_t index) const = 0;
+    virtual float32 const& operator[](size_t index) const = 0;
 
-    //-------------------------------------------------------------------------
-    virtual float32 getMin () const = 0;
+    virtual float32 getMin() const = 0;
 
-    //-------------------------------------------------------------------------
-    virtual float32 getMax () const = 0;
+    virtual float32 getMax() const = 0;
 
-    //-------------------------------------------------------------------------
     /// length of the block
-    size_t size () const;
+    size_t size() const;
 
-    //-------------------------------------------------------------------------
-    std::string getLabel () const;
+    std::string getLabel() const;
 
-    //-------------------------------------------------------------------------
-    void setLabel (std::string const &label);
+    void setLabel(std::string const& label);
 
-    //-------------------------------------------------------------------------
     /// sets the x-unit label (e.g. "hz" or "s")
-    void setXUnitLabel (std::string const &unit_label);
+    void setXUnitLabel(std::string const& unit_label);
 
-    //-------------------------------------------------------------------------
-    std::string getXUnitLabel () const;
+    std::string getXUnitLabel() const;
 
-    //-------------------------------------------------------------------------
     /// sets the y-unit label (e.g. "hz" or "s")
-    void setYUnitLabel (std::string const &unit_label);
+    void setYUnitLabel(std::string const& unit_label);
 
-    //-------------------------------------------------------------------------
-    std::string getYUnitLabel () const;
+    std::string getYUnitLabel() const;
 
-    //-------------------------------------------------------------------------
-    float64 getSampleRatePerUnit () const;
+    float64 getSampleRatePerUnit() const;
 
-protected:
+   protected:
     // protected constructors here:
-    DataBlock (size_t length, float64 sample_rate_per_unit);
-    DataBlock (DataBlock const& src, size_t new_length);
+    DataBlock(size_t length, float64 sample_rate_per_unit);
+    DataBlock(DataBlock const& src, size_t new_length);
 
-private:
+   private:
     size_t length_;
     float64 sample_rate_per_unit_;
 
@@ -79,6 +62,6 @@ private:
     static size_t instance_count_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // DATA_BLOCK_H
+#endif  // DATA_BLOCK_H

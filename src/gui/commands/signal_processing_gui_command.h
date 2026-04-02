@@ -2,45 +2,35 @@
 //
 // License: GPL-3.0
 
-
 #ifndef SIGNAL_PROCESSING_GUI_COMMAND_H
 #define SIGNAL_PROCESSING_GUI_COMMAND_H
 
+#include "gui/dialogs/event_time_selection_dialog.h"
 #include "gui/gui_action_command.h"
 #include "gui/gui_action_factory_registrator.h"
-#include "gui/dialogs/event_time_selection_dialog.h"
 
-namespace sigviewer
-{
+namespace sigviewer {
 
-class SignalProcessingGuiCommand : public GuiActionCommand
-{
+class SignalProcessingGuiCommand : public GuiActionCommand {
     Q_OBJECT
-public:
-    //-------------------------------------------------------------------------
-    SignalProcessingGuiCommand ();
+   public:
+    SignalProcessingGuiCommand();
 
-    //-------------------------------------------------------------------------
-    virtual void init ();
+    virtual void init();
 
-protected:
-    //-------------------------------------------------------------------------
-    virtual void evaluateEnabledness ();
+   protected:
+    virtual void evaluateEnabledness();
 
+   private slots:
 
-private slots:
-    //-------------------------------------------------------------------------
-    void calculateMeanAndStandardDeviation ();
+    void calculateMeanAndStandardDeviation();
 
-    //-------------------------------------------------------------------------
-    void calculatePowerSpectrum ();
+    void calculatePowerSpectrum();
 
-private:
-    //-------------------------------------------------------------------------
-    QSharedPointer<EventTimeSelectionDialog> getFinishedEventTimeSelectionDialog ();
+   private:
+    QSharedPointer<EventTimeSelectionDialog> getFinishedEventTimeSelectionDialog();
 
-    //-------------------------------------------------------------------------
-    void createVisualisation (QString const& title, ChannelManager const& channel_manager);
+    void createVisualisation(QString const& title, ChannelManager const& channel_manager);
 
     static QString const MEAN_();
     static QString const POWER_SPECTRUM_();
@@ -49,6 +39,6 @@ private:
     static GuiActionFactoryRegistrator registrator_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // SIGNAL_PROCESSING_GUI_COMMAND_H
+#endif  // SIGNAL_PROCESSING_GUI_COMMAND_H

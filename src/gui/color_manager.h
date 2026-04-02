@@ -2,43 +2,41 @@
 //
 // License: GPL-3.0
 
-
 #ifndef EVENT_COLOR_MANAGER
 #define EVENT_COLOR_MANAGER
 
-#include "file_handling/event_table_file_reader.h"
-
-#include <QMap>
 #include <QColor>
+#include <QMap>
 #include <QPixmap>
 
-namespace sigviewer
-{
+#include "file_handling/event_table_file_reader.h"
+
+namespace sigviewer {
 
 // color manager
-class ColorManager
-{
-public:
-    ColorManager ();
-    ~ColorManager ();
+class ColorManager {
+   public:
+    ColorManager();
+    ~ColorManager();
 
     void saveSettings();
     void loadSettings();
 
-    QColor getChannelColor (ChannelID channel_id) const;
-    QColor getDefaultChannelColor () const;
-    void setDefaultChannelColor (QColor const& color);
-    void setChannelColor (ChannelID channel_id, QColor const& color);
+    QColor getChannelColor(ChannelID channel_id) const;
+    QColor getDefaultChannelColor() const;
+    void setDefaultChannelColor(QColor const& color);
+    void setChannelColor(ChannelID channel_id, QColor const& color);
 
-    QColor getEventColor (EventType type) const;
-    QColor getDefaultEventColor (EventType type = UNDEFINED_EVENT_TYPE) const;
-    void setEventColor (EventType type, const QColor& color);
+    QColor getEventColor(EventType type) const;
+    QColor getDefaultEventColor(EventType type = UNDEFINED_EVENT_TYPE) const;
+    void setEventColor(EventType type, const QColor& color);
 
-    static bool isDark (QColor const& color);
-private:
+    static bool isDark(QColor const& color);
+
+   private:
     Q_DISABLE_COPY(ColorManager)
 
-    void loadDefaultEventColors ();
+    void loadDefaultEventColors();
 
     static const char* DEFAULT_CHANNEL_COLOR_SETTING_;
     QColor default_channel_color_;
@@ -53,6 +51,6 @@ private:
     EventTableFileReader event_table_file_reader_;
 };
 
-}
+}  // namespace sigviewer
 
 #endif

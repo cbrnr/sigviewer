@@ -2,56 +2,51 @@
 //
 // License: GPL-3.0
 
-
 #include "resampling_dialog.h"
-#include "ui_resampling_dialog.h"
+
 #include "file_handling/xdf_reader.h"
+#include "ui_resampling_dialog.h"
 
 namespace sigviewer {
 
-ResamplingDialog::ResamplingDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::ResamplingDialog)
-{
+ResamplingDialog::ResamplingDialog(QWidget* parent)
+    : QDialog(parent), ui(new Ui::ResamplingDialog) {
     ui->setupUi(this);
 }
 
-ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::ResamplingDialog)
-{
+ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidget* parent)
+    : QDialog(parent), ui(new Ui::ResamplingDialog) {
     ui->setupUi(this);
     this->setWindowTitle(tr("Resampling"));
 
-    if (XDFdata->sampleRateMap.size() > 1)
-    {
-        QString text = tr("This file contains signals of multiple sample rates.<br> "
-                                   "Sigviewer needs to resample all channels to a unified sample rate in order to display them.<br> "
-                                   "Please choose a sample rate below (This won't change the actual file content):");
+    if (XDFdata->sampleRateMap.size() > 1) {
+        QString text =
+            tr("This file contains signals of multiple sample rates.<br> "
+               "Sigviewer needs to resample all channels to a unified sample rate in "
+               "order to display them.<br> "
+               "Please choose a sample rate below (This won't change the actual file "
+               "content):");
         ui->label->setText(text);
-    }
-    else if (XDFdata->sampleRateMap.size() == 1 &&
-             XDFdata->sampleRateMap.count(0))
-    {
-        ui->label->setText(tr("The nominal sample rate of this file is 0.\n"
-                                       "Please choose a preferred sample rate:"));
-    }
-    else
-    {
-        QString text = tr("Would you like to resample this file? (This won't change the actual file content) ");
+    } else if (XDFdata->sampleRateMap.size() == 1 && XDFdata->sampleRateMap.count(0)) {
+        ui->label
+            ->setText(tr("The nominal sample rate of this file is 0.\n"
+                         "Please choose a preferred sample rate:"));
+    } else {
+        QString text =
+            tr("Would you like to resample this file? (This won't change the actual "
+               "file content) ");
         ui->label->setText(text);
     }
     ui->treeWidget->setColumnCount(2);
-    ui->treeWidget->setColumnWidth(0, this->width()/2.15);
+    ui->treeWidget->setColumnWidth(0, this->width() / 2.15);
     ui->treeWidget->setAnimated(true);
     QStringList headers;
     headers << "Stream" << "Info";
     ui->treeWidget->setHeaderLabels(headers);
-    for (size_t i = 0; i < XDFdata->streams.size(); i++)
-    {
+    for (size_t i = 0; i < XDFdata->streams.size(); i++) {
         QTreeWidgetItem* streamItem = new QTreeWidgetItem(ui->treeWidget);
-        streamItem->setText(0, tr("Stream %1").arg(i+1));//+1 for user's convenience (1 based instead 0 based)
-//        streamItem->setIcon(0, QIcon(":/images/ic_flag_black_24dp.png"));
+        streamItem->setText(0, tr("Stream %1").arg(i + 1));  //+1 for user's convenience (1 based instead 0 based)
+        //        streamItem->setIcon(0, QIcon(":/images/ic_flag_black_24dp.png"));
 
         QTreeWidgetItem* infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Name"));
@@ -63,7 +58,8 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
 
         infoItem = new QTreeWidgetItem(streamItem);
         infoItem->setText(0, tr("Sample Rate"));
-        infoItem->setText(1, QString::number(XDFdata->streams[i].info.nominal_srate).append(tr(" Hz")));
+        infoItem->setText(1,
+            QString::number(XDFdata->streams[i].info.nominal_srate).append(tr(" Hz")));
         if (XDFdata->streams[i].info.nominal_srate == 0)
             infoItem->setText(1, tr("Irregular"));
 
@@ -85,20 +81,13 @@ ResamplingDialog::ResamplingDialog(int nativeSrate, int highestSampleRate, QWidg
     ui->treeWidget->expandAll();
 }
 
-ResamplingDialog::~ResamplingDialog()
-{
-    delete ui;
-}
+ResamplingDialog::~ResamplingDialog() { delete ui; }
 
-void ResamplingDialog::on_resample_button_clicked()
-{
+void ResamplingDialog::on_resample_button_clicked() {
     userSrate = ui->spinBox->value();
     done(QDialog::Accepted);
 }
 
-void ResamplingDialog::on_cancel_button_clicked()
-{
-    done(QDialog::Rejected);
-}
+void ResamplingDialog::on_cancel_button_clicked() { done(QDialog::Rejected); }
 
-}
+}  // namespace sigviewer

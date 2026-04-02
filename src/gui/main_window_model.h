@@ -2,71 +2,68 @@
 //
 // License: GPL-3.0
 
-
 #ifndef MAIN_WINDOW_MODEL_H
 #define MAIN_WINDOW_MODEL_H
 
-#include "signal_visualisation_model.h"
+#include <QMap>
+#include <QObject>
+#include <QStringList>
+#include <QTabWidget>
+
 #include "event_view.h"
 #include "file_context.h"
 #include "file_handling/channel_manager.h"
 #include "file_handling/event_manager.h"
+#include "signal_visualisation_model.h"
 #include "tab_context.h"
-
-#include <QObject>
-#include <QStringList>
-#include <QTabWidget>
-#include <QMap>
-
 
 class QAction;
 
-namespace sigviewer
-{
+namespace sigviewer {
 
 class ApplicationContext;
 class MainWindow;
 
-class MainWindowModel : public QObject
-{
+class MainWindowModel : public QObject {
     Q_OBJECT
-public:
-    MainWindowModel (QSharedPointer<ApplicationContext> application_context);
+   public:
+    MainWindowModel(QSharedPointer<ApplicationContext> application_context);
 
-    ~MainWindowModel ();
+    ~MainWindowModel();
 
-    QSharedPointer<SignalVisualisationModel> createSignalVisualisation (QString const& title,
-                                                                        ChannelManager const& channel_manager);
+    QSharedPointer<SignalVisualisationModel> createSignalVisualisation(QString const& title,
+        ChannelManager const& channel_manager);
 
-    QSharedPointer<SignalVisualisationModel> createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx);
+    QSharedPointer<SignalVisualisationModel> createSignalVisualisationOfFile(
+        QSharedPointer<FileContext> file_ctx);
 
-    void closeCurrentFileTabs ();
+    void closeCurrentFileTabs();
 
-    QSharedPointer<SignalVisualisationModel> getCurrentSignalVisualisationModel ();
+    QSharedPointer<SignalVisualisationModel> getCurrentSignalVisualisationModel();
 
-    QSharedPointer<EventView> getCurrentEventView ();
+    QSharedPointer<EventView> getCurrentEventView();
 
-public slots:
-    void tabChanged (int tab_index);
+   public slots:
+    void tabChanged(int tab_index);
 
-    void closeTab (int tab_index);
+    void closeTab(int tab_index);
 
-private slots:
+   private slots:
     void recentFileActivated(QAction* recent_file_action);
 
     void recentFileMenuAboutToShow();
 
-    void resetCurrentFileName (QString const& file_name);
+    void resetCurrentFileName(QString const& file_name);
 
-private:
+   private:
     void loadSettings();
 
     void saveSettings();
 
-    int createSignalVisualisationImpl (ChannelManager const& channel_manager,
-                                       QSharedPointer<EventManager> event_manager);
+    int createSignalVisualisationImpl(ChannelManager const& channel_manager,
+        QSharedPointer<EventManager> event_manager);
 
-    void storeAndInitTabContext (QSharedPointer<TabContext> context, int tab_index);
+    void storeAndInitTabContext(QSharedPointer<TabContext> context, int tab_index);
 
     static int const NUMBER_RECENT_FILES_;
 
@@ -83,7 +80,6 @@ private:
     const MainWindowModel& operator=(const MainWindowModel&);
 };
 
-}
+}  // namespace sigviewer
 
-#endif // MAIN_WINDOW_MODEL_H
-
+#endif  // MAIN_WINDOW_MODEL_H

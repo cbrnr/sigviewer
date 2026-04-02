@@ -2,56 +2,41 @@
 //
 // License: GPL-3.0
 
-
 #ifndef SAVE_GUI_COMMAND_H
 #define SAVE_GUI_COMMAND_H
 
 #include "gui/gui_action_command.h"
 #include "gui/gui_action_factory_registrator.h"
 
-namespace sigviewer
-{
+namespace sigviewer {
 
-//-----------------------------------------------------------------------------
 /// SaveGuiCommand
 ///
 /// command for saving a file and converting to other file format
-class SaveGuiCommand : public GuiActionCommand
-{
+class SaveGuiCommand : public GuiActionCommand {
     Q_OBJECT
-public:
-    //-------------------------------------------------------------------------
-    SaveGuiCommand ();
+   public:
+    SaveGuiCommand();
 
-    //-------------------------------------------------------------------------
-    virtual void init ();
+    virtual void init();
 
-public slots:
-    //-------------------------------------------------------------------------
-    void saveAs ();
+   public slots:
 
-    //-------------------------------------------------------------------------
-    void save ();
+    void saveAs();
 
-    //-------------------------------------------------------------------------
-    void exportToPNG ();
+    void save();
 
-    //-------------------------------------------------------------------------
-    void exportToGDF ();
+    void exportToPNG();
 
-    //-------------------------------------------------------------------------
-    void exportEventsToCSV ();
-    void exportEventsToEVT ();
+    void exportToGDF();
 
-protected:
-    //-------------------------------------------------------------------------
-    virtual void evaluateEnabledness ();
+    void exportEventsToCSV();
+    void exportEventsToEVT();
 
+   protected:
+    virtual void evaluateEnabledness();
 
-private:
-    //-------------------------------------------------------------------------
-
-
+   private:
     static QString const SAVE_AS_();
     static QString const SAVE_();
     static QString const EXPORT_TO_PNG_();
@@ -63,6 +48,6 @@ private:
     static GuiActionFactoryRegistrator registrator_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // SAVE_GUI_COMMAND_H
+#endif  // SAVE_GUI_COMMAND_H

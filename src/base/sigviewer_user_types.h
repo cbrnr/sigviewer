@@ -2,20 +2,14 @@
 //
 // License: GPL-3.0
 
-
 #ifndef SIGVIEWER_USER_TYPES_H
 #define SIGVIEWER_USER_TYPES_H
 
 #include <stddef.h>
 
-namespace sigviewer
-{
+namespace sigviewer {
 
-enum ScaleMode
-{
-        MAX_TO_MAX,
-        MIN_TO_MAX
-};
+enum ScaleMode { MAX_TO_MAX, MIN_TO_MAX };
 
 // standard types
 // compiler specific types
@@ -30,24 +24,23 @@ typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 #endif
 
-}
+}  // namespace sigviewer
 
 #ifdef __GNUG__
 #include <inttypes.h>
 #endif
 
-namespace sigviewer
-{
+namespace sigviewer {
 
-typedef int8_t   int8;
-typedef uint8_t  uint8;
-typedef int16_t  int16;
+typedef int8_t int8;
+typedef uint8_t uint8;
+typedef int16_t int16;
 typedef uint16_t uint16;
-typedef int32_t  int32;
+typedef int32_t int32;
 typedef uint32_t uint32;
-typedef float 	 float32;
-typedef double   float64;
-typedef int64_t  int64;
+typedef float float32;
+typedef double float64;
+typedef int64_t int64;
 typedef uint64_t uint64;
 
 typedef int32 EventID;
@@ -57,7 +50,7 @@ typedef int ChannelID;
 const ChannelID UNDEFINED_CHANNEL = -1;
 const EventID UNDEFINED_EVENT_ID = -1;
 const EventType UNDEFINED_EVENT_TYPE = -1;
-const int UNDEFINED_STREAM_ID= -1;
-}
+const int UNDEFINED_STREAM_ID = -1;
+}  // namespace sigviewer
 
-#endif // SIGVIEWER_USER_TYPES_H
+#endif  // SIGVIEWER_USER_TYPES_H

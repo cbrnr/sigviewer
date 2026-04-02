@@ -2,28 +2,28 @@
 //
 // License: GPL-3.0
 
-
 #ifndef SIGNAL_EVENT_H
 #define SIGNAL_EVENT_H
 
 #include "sigviewer_user_types.h"
 
-namespace sigviewer
-{
+namespace sigviewer {
 
 // SignalEvent
-class SignalEvent
-{
-public:
+class SignalEvent {
+   public:
     SignalEvent();
-    SignalEvent(size_t position, EventType type,
-                float64 sample_rate, int streamNumber,
-                ChannelID channel = UNDEFINED_CHANNEL,
-                size_t duration = 0, EventID id = UNDEFINED_EVENT_ID);
+    SignalEvent(size_t position,
+        EventType type,
+        float64 sample_rate,
+        int streamNumber,
+        ChannelID channel = UNDEFINED_CHANNEL,
+        size_t duration = 0,
+        EventID id = UNDEFINED_EVENT_ID);
 
     SignalEvent(const SignalEvent& src, int32 id);
     SignalEvent(const SignalEvent& src);
-    SignalEvent& operator= (const SignalEvent& src);
+    SignalEvent& operator=(const SignalEvent& src);
 
     int32 getId() const;
     size_t getPosition() const;
@@ -32,19 +32,19 @@ public:
     ChannelID getChannel() const;
     size_t getDuration() const;
     float64 getDurationInSec() const;
-    float64 getEndInSec () const;
-    float64 getSampleRate () const;
+    float64 getEndInSec() const;
+    float64 getSampleRate() const;
     int getStream() const;
 
-    void setId (EventID id);
+    void setId(EventID id);
     void setPosition(size_t position);
     void setType(EventType type);
     void setChannel(ChannelID channel);
     void setDuration(size_t duration);
 
-    bool equals (SignalEvent const& event) const;
+    bool equals(SignalEvent const& event) const;
 
-private:
+   private:
     static const int32 UNDEFINED_DURATION = 0;
 
     EventID id_;
@@ -56,6 +56,6 @@ private:
     int stream_;
 };
 
-}
+}  // namespace sigviewer
 
 #endif

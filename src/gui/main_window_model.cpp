@@ -2,52 +2,40 @@
 //
 // License: GPL-3.0
 
-
 #include "main_window_model.h"
+
+#include <QDebug>
+#include <QSettings>
+
 #include "application_context.h"
-#include "main_window.h"
-
 #include "gui/commands/open_file_gui_command.h"
-
+#include "gui/event_table/event_table_widget.h"
 #include "gui/signal_browser/signal_browser_model_4.h"
 #include "gui/signal_browser/signal_browser_view.h"
-#include "gui/event_table/event_table_widget.h"
+#include "main_window.h"
 
-#include <QSettings>
-#include <QDebug>
-
-namespace sigviewer
-{
+namespace sigviewer {
 
 int const MainWindowModel::NUMBER_RECENT_FILES_ = 8;
 
-//-----------------------------------------------------------------------------
-MainWindowModel::MainWindowModel (QSharedPointer<ApplicationContext> application_context)
-: application_context_ (application_context),
-  main_window_ (new MainWindow (application_context)),
-  tab_widget_ (0)
-{
-    connect (main_window_, SIGNAL(recentFileActivated(QAction*)), SLOT(recentFileActivated(QAction*)));
-    connect (main_window_, SIGNAL(recentFileMenuAboutToShow()), SLOT(recentFileMenuAboutToShow()));
+MainWindowModel::MainWindowModel(QSharedPointer<ApplicationContext> application_context)
+    : application_context_(application_context),
+      main_window_(new MainWindow(application_context)),
+      tab_widget_(0) {
+    connect(main_window_, SIGNAL(recentFileActivated(QAction*)), SLOT(recentFileActivated(QAction*)));
+    connect(main_window_, SIGNAL(recentFileMenuAboutToShow()), SLOT(recentFileMenuAboutToShow()));
     main_window_->show();
     loadSettings();
 }
 
-//-----------------------------------------------------------------------------
-MainWindowModel::~MainWindowModel ()
-{
-    qDebug () << "deleting MainWindowModel";
-}
+MainWindowModel::~MainWindowModel() { qDebug() << "deleting MainWindowModel"; }
 
-//-----------------------------------------------------------------------------
-void MainWindowModel::loadSettings()
-{
+void MainWindowModel::loadSettings() {
     QSettings settings;
     settings.beginGroup("MainWindowModel");
 
     int size = settings.beginReadArray("recent_file");
-    for (int i = 0; i < size; i++)
-    {
+    for (int i = 0; i < size; i++) {
         settings.setArrayIndex(i);
         recent_file_list_.append(settings.value("name").toString());
     }
@@ -57,15 +45,12 @@ void MainWindowModel::loadSettings()
     settings.endGroup();
 }
 
-//-----------------------------------------------------------------------------
-void MainWindowModel::saveSettings()
-{
+void MainWindowModel::saveSettings() {
     QSettings settings;
     settings.beginGroup("MainWindowModel");
     settings.beginWriteArray("recent_file");
 
-    for (int i = 0; i < recent_file_list_.size(); i++)
-    {
+    for (int i = 0; i < recent_file_list_.size(); i++) {
         settings.setArrayIndex(i);
         settings.setValue("name", recent_file_list_.at(i));
     }
@@ -74,75 +59,61 @@ void MainWindowModel::saveSettings()
     settings.endGroup();
 }
 
-//-----------------------------------------------------------------------------
-void MainWindowModel::tabChanged (int tab_index)
-{
-    if (tab_contexts_.find(tab_index) != tab_contexts_.end ())
-    {
-        application_context_->setCurrentTabContext (tab_contexts_[tab_index]);
-        tab_contexts_[tab_index]->gotActive ();
+void MainWindowModel::tabChanged(int tab_index) {
+    if (tab_contexts_.find(tab_index) != tab_contexts_.end()) {
+        application_context_->setCurrentTabContext(tab_contexts_[tab_index]);
+        tab_contexts_[tab_index]->gotActive();
     }
 }
 
-//-----------------------------------------------------------------------------
-void MainWindowModel::closeTab (int tab_index)
-{
+void MainWindowModel::closeTab(int tab_index) {
     if ((tab_index == 0) | (tab_index == 1))  // first two tabs are not closeable
         return;
-    QWidget* widget = tab_widget_->widget (tab_index);
-    browser_models_.erase (tab_index);
-    tab_widget_->removeTab (tab_index);
+    QWidget* widget = tab_widget_->widget(tab_index);
+    browser_models_.erase(tab_index);
+    tab_widget_->removeTab(tab_index);
     delete widget;
     int models_count = browser_models_.size();
-    if (models_count >= tab_index)
-    {
+    if (models_count >= tab_index) {
         for (int index = tab_index + 1; index < models_count; index++)
             browser_models_[index - 1] = browser_models_[index];
     }
     int event_views_count = event_views_.size();
-    if (event_views_count >= tab_index)
-    {
+    if (event_views_count >= tab_index) {
         for (int index = tab_index + 1; index < event_views_count; index++)
-            if (event_views_.contains (index))
+            if (event_views_.contains(index))
                 event_views_[index - 1] = event_views_[index];
     }
 }
 
-//-----------------------------------------------------------------------------
-void MainWindowModel::recentFileMenuAboutToShow()
-{
+void MainWindowModel::recentFileMenuAboutToShow() {
     main_window_->setRecentFiles(recent_file_list_);
 }
 
-//-----------------------------------------------------------------------------
-void MainWindowModel::recentFileActivated(QAction* recent_file_action)
-{
-    OpenFileGuiCommand::openFile (recent_file_action->text());
+void MainWindowModel::recentFileActivated(QAction* recent_file_action) {
+    OpenFileGuiCommand::openFile(recent_file_action->text());
 }
 
-//-----------------------------------------------------------------------------
-void MainWindowModel::storeAndInitTabContext (QSharedPointer<TabContext> context, int tab_index)
-{
+void MainWindowModel::storeAndInitTabContext(QSharedPointer<TabContext> context, int tab_index) {
     tab_contexts_[tab_index] = context;
 
-    application_context_->setCurrentTabContext (context);
+    application_context_->setCurrentTabContext(context);
 
-    context->setSelectionState (TAB_STATE_NO_EVENT_SELECTED);
-    context->setEditState (TAB_STATE_NO_REDO_NO_UNDO);
+    context->setSelectionState(TAB_STATE_NO_EVENT_SELECTED);
+    context->setEditState(TAB_STATE_NO_REDO_NO_UNDO);
 }
 
-//-------------------------------------------------------------------------
-QSharedPointer<SignalVisualisationModel> MainWindowModel::createSignalVisualisation (QString const& title, ChannelManager const& channel_manager)
-{
-    int tab_index = createSignalVisualisationImpl (channel_manager, QSharedPointer<EventManager>(0));
+QSharedPointer<SignalVisualisationModel> MainWindowModel::createSignalVisualisation(QString const& title,
+    ChannelManager const& channel_manager) {
+    int tab_index =
+        createSignalVisualisationImpl(channel_manager, QSharedPointer<EventManager>(0));
     tab_widget_->setTabText(tab_index, title);
     tab_widget_->setCurrentIndex(tab_index);
     return browser_models_[tab_index];
 }
 
-//-----------------------------------------------------------------------------
-QSharedPointer<SignalVisualisationModel> MainWindowModel::createSignalVisualisationOfFile (QSharedPointer<FileContext> file_ctx)
-{
+QSharedPointer<SignalVisualisationModel> MainWindowModel::createSignalVisualisationOfFile(
+    QSharedPointer<FileContext> file_ctx) {
     // waldesel:
     // --begin
     //   to be replaced as soon as multi file support is implemented
@@ -150,34 +121,39 @@ QSharedPointer<SignalVisualisationModel> MainWindowModel::createSignalVisualisat
         GuiActionFactory::getInstance()->getQAction("Close")->trigger();
     // --end
 
-    if (!tab_widget_)
-    {
-        tab_widget_ = new QTabWidget (main_window_);
-        if (!connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int))))
-            throw (Exception (tr("MainWindowModel::createSignalVisualisationOfFile failed: connect (tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)))").toStdString()));
-        connect (tab_widget_, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
-        tab_widget_->setTabsClosable (true);
+    if (!tab_widget_) {
+        tab_widget_ = new QTabWidget(main_window_);
+        if (!connect(tab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int))))
+            throw(
+                Exception(tr("MainWindowModel::createSignalVisualisationOfFile failed: "
+                             "connect (tab_widget_, SIGNAL(currentChanged(int)), this, "
+                             "SLOT(tabChanged(int)))")
+                        .toStdString()));
+        connect(tab_widget_, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
+        tab_widget_->setTabsClosable(true);
     }
 
-    recent_file_list_.removeAll (file_ctx->getFilePathAndName());
-    if (recent_file_list_.size() == NUMBER_RECENT_FILES_)
-        recent_file_list_.pop_back();
-    recent_file_list_.push_front (file_ctx->getFilePathAndName());
+    recent_file_list_.removeAll(file_ctx->getFilePathAndName());
+    if (recent_file_list_.size() == NUMBER_RECENT_FILES_) recent_file_list_.pop_back();
+    recent_file_list_.push_front(file_ctx->getFilePathAndName());
 
     saveSettings();
 
     // waldesel:
     // --begin
     //   to be replaced as soon as new zooming is implemented
-    main_window_->setStatusBarSignalLength (file_ctx->getChannelManager().getDurationInSec());
+    main_window_->setStatusBarSignalLength(file_ctx->getChannelManager().getDurationInSec());
     // --end
 
-    main_window_->setStatusBarNrChannels (file_ctx->getChannelManager().getNumberChannels());
-    resetCurrentFileName (file_ctx->getFileName());
-    connect (file_ctx.data(), SIGNAL(fileNameChanged(QString const&)), SLOT(resetCurrentFileName(QString const&)));
+    main_window_->setStatusBarNrChannels(file_ctx->getChannelManager().getNumberChannels());
+    resetCurrentFileName(file_ctx->getFileName());
+    connect(file_ctx.data(),
+        SIGNAL(fileNameChanged(QString const&)),
+        SLOT(resetCurrentFileName(QString const&)));
 
-    int tab_index = createSignalVisualisationImpl (file_ctx->getChannelManager(), file_ctx->getEventManager());
-    QString tab_title (tr("Signal Data"));
+    int tab_index = createSignalVisualisationImpl(file_ctx->getChannelManager(),
+        file_ctx->getEventManager());
+    QString tab_title(tr("Signal Data"));
 
     main_window_->setCentralWidget(tab_widget_);
     tab_widget_->show();
@@ -185,95 +161,84 @@ QSharedPointer<SignalVisualisationModel> MainWindowModel::createSignalVisualisat
     tab_widget_->tabBar()->setTabButton(0, QTabBar::RightSide, 0);
     tab_widget_->tabBar()->setTabButton(0, QTabBar::LeftSide, 0);
 
-    file_ctx->setMainVisualisationModel (browser_models_[tab_index]);
+    file_ctx->setMainVisualisationModel(browser_models_[tab_index]);
     return browser_models_[tab_index];
 }
 
-//-----------------------------------------------------------------------------
-void MainWindowModel::closeCurrentFileTabs ()
-{
+void MainWindowModel::closeCurrentFileTabs() {
     // waldesel:
     // --begin
     //   to be refactored as soon as multi file support is implemented
-    main_window_->setCentralWidget (0);
+    main_window_->setCentralWidget(0);
     tab_widget_ = 0;
-    tab_contexts_.clear ();
+    tab_contexts_.clear();
     // --end
 
     main_window_->setStatusBarSignalLength(-1);
     main_window_->setStatusBarNrChannels(-1);
-    resetCurrentFileName ("");
+    resetCurrentFileName("");
 }
 
-//-----------------------------------------------------------------------------
-QSharedPointer<SignalVisualisationModel> MainWindowModel::getCurrentSignalVisualisationModel ()
-{
-    if (!tab_widget_)
-        return QSharedPointer<SignalVisualisationModel>(0);
+QSharedPointer<SignalVisualisationModel> MainWindowModel::getCurrentSignalVisualisationModel() {
+    if (!tab_widget_) return QSharedPointer<SignalVisualisationModel>(0);
 
     return browser_models_[tab_widget_->currentIndex()];
 }
 
-//-------------------------------------------------------------------------
-QSharedPointer<EventView> MainWindowModel::getCurrentEventView ()
-{
-    if (!tab_widget_)
-        return QSharedPointer<EventView>(0);
+QSharedPointer<EventView> MainWindowModel::getCurrentEventView() {
+    if (!tab_widget_) return QSharedPointer<EventView>(0);
 
-    if (!event_views_.contains (tab_widget_->currentIndex()))
+    if (!event_views_.contains(tab_widget_->currentIndex()))
         return QSharedPointer<EventView>(0);
 
     return event_views_[tab_widget_->currentIndex()];
 }
 
-//-------------------------------------------------------------------------
-void MainWindowModel::resetCurrentFileName (QString const& file_name)
-{
+void MainWindowModel::resetCurrentFileName(QString const& file_name) {
     if (file_name.size() == 0)
-        main_window_->setWindowTitle (QString("SigViewer"));
+        main_window_->setWindowTitle(QString("SigViewer"));
     else
-        main_window_->setWindowTitle (QString("%1 - SigViewer").arg(file_name));
+        main_window_->setWindowTitle(QString("%1 - SigViewer").arg(file_name));
 }
 
-//-------------------------------------------------------------------------
-int MainWindowModel::createSignalVisualisationImpl (ChannelManager const& channel_manager,
-                                                        QSharedPointer<EventManager> event_manager)
-{
-    QSharedPointer<TabContext> tab_context (new TabContext);
+int MainWindowModel::createSignalVisualisationImpl(ChannelManager const& channel_manager,
+    QSharedPointer<EventManager> event_manager) {
+    QSharedPointer<TabContext> tab_context(new TabContext);
 
-    QSharedPointer<SignalBrowserModel> model (new SignalBrowserModel (event_manager,
-                                                                      channel_manager,
-                                                                      tab_context,
-                                                                      application_context_->getEventColorManager()));
+    QSharedPointer<SignalBrowserModel> model(new SignalBrowserModel(event_manager,
+        channel_manager,
+        tab_context,
+        application_context_->getEventColorManager()));
 
-    SignalBrowserView* view = new SignalBrowserView (model, event_manager, tab_context, main_window_->rect(), tab_widget_);
+    SignalBrowserView* view =
+        new SignalBrowserView(model, event_manager, tab_context, main_window_->rect(), tab_widget_);
 
-    int tab_index = tab_widget_->addTab (view, tr("Signal"));
+    int tab_index = tab_widget_->addTab(view, tr("Signal"));
 
-    model->setSignalBrowserView (view);
+    model->setSignalBrowserView(view);
     browser_models_[tab_index] = model;
     event_views_[tab_index] = model;
 
-    if (!event_manager.isNull())
-    {
-        EventTableWidget* event_table_widget = new EventTableWidget (tab_context, event_manager, channel_manager);
-        int event_tab_index = tab_widget_->addTab (event_table_widget, tr("Events"));
+    if (!event_manager.isNull()) {
+        EventTableWidget* event_table_widget =
+            new EventTableWidget(tab_context, event_manager, channel_manager);
+        int event_tab_index = tab_widget_->addTab(event_table_widget, tr("Events"));
         browser_models_[event_tab_index] = QSharedPointer<SignalBrowserModel>(0);
         event_views_[event_tab_index] = event_table_widget->getEventView();
         tab_contexts_[event_tab_index] = tab_context;
 
-        model->connect (event_manager.data(), SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)),
-                                   SLOT(addEventItem(QSharedPointer<SignalEvent const>)));
-        model->connect (event_manager.data(), SIGNAL(eventRemoved(EventID)),
-                                   SLOT(removeEventItem(EventID)));
-        model->connect (event_manager.data(), SIGNAL(eventChanged(EventID)),
-                                   SLOT(updateEvent(EventID)));
+        model->connect(event_manager.data(),
+            SIGNAL(eventCreated(QSharedPointer<SignalEvent const>)),
+            SLOT(addEventItem(QSharedPointer<SignalEvent const>)));
+        model->connect(event_manager.data(),
+            SIGNAL(eventRemoved(EventID)),
+            SLOT(removeEventItem(EventID)));
+        model->connect(event_manager.data(), SIGNAL(eventChanged(EventID)), SLOT(updateEvent(EventID)));
         tab_widget_->tabBar()->setTabButton(1, QTabBar::RightSide, 0);
         tab_widget_->tabBar()->setTabButton(1, QTabBar::LeftSide, 0);
     }
-    storeAndInitTabContext (tab_context, tab_index);
+    storeAndInitTabContext(tab_context, tab_index);
     return tab_index;
 }
 
-
-}
+}  // namespace sigviewer

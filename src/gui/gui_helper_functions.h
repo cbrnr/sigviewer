@@ -2,69 +2,56 @@
 //
 // License: GPL-3.0
 
-
 #ifndef GUI_HELPER_FUNCTIONS_H
 #define GUI_HELPER_FUNCTIONS_H
 
-#include "base/sigviewer_user_types.h"
-#include "file_handling/channel_manager.h"
-#include "file_handling/basic_header.h"
-#include "gui/signal_visualisation_model.h"
-#include "gui/color_manager.h"
-
 #include <set>
 
-namespace sigviewer
-{
+#include "base/sigviewer_user_types.h"
+#include "file_handling/basic_header.h"
+#include "file_handling/channel_manager.h"
+#include "gui/color_manager.h"
+#include "gui/signal_visualisation_model.h"
 
-namespace GuiHelper
-{
+namespace sigviewer {
 
-//-----------------------------------------------------------------------------
-void animateProperty (QObject* target, QByteArray const& property_name,
-                      QVariant const& start_value, QVariant const& end_value,
-                      QObject* call_back_object = 0, char const* call_back_slot = 0);
+namespace GuiHelper {
 
-//-----------------------------------------------------------------------------
-QList<QSharedPointer<SignalEvent const> > getSelectedEvents (QSharedPointer<EventView>
-                                                             event_view);
+void animateProperty(QObject* target,
+    QByteArray const& property_name,
+    QVariant const& start_value,
+    QVariant const& end_value,
+    QObject* call_back_object = 0,
+    char const* call_back_slot = 0);
 
-//-----------------------------------------------------------------------------
-QList<EventID> getSelectedEventIDs (QSharedPointer<EventView>
-                                    event_view);
+QList<QSharedPointer<SignalEvent const> > getSelectedEvents(QSharedPointer<EventView> event_view);
 
-//-----------------------------------------------------------------------------
-EventType selectEventType (EventType preselected_type, QSharedPointer<SignalVisualisationModel>
-                           signal_visualisation_model);
+QList<EventID> getSelectedEventIDs(QSharedPointer<EventView> event_view);
 
-//-----------------------------------------------------------------------------
-std::set<EventType> selectEventTypes (std::set<EventType> const& preselected_type,
-                                      QSharedPointer<EventManager const> event_manager,
-                                      QSharedPointer<ColorManager> color_manager);
+EventType selectEventType(EventType preselected_type,
+    QSharedPointer<SignalVisualisationModel> signal_visualisation_model);
 
-//-----------------------------------------------------------------------------
-ChannelID selectChannel (ChannelID preselected_channel,
-                         QSharedPointer<SignalVisualisationModel> signal_visualisation_model);
+std::set<EventType> selectEventTypes(std::set<EventType> const& preselected_type,
+    QSharedPointer<EventManager const> event_manager,
+    QSharedPointer<ColorManager> color_manager);
 
-//-----------------------------------------------------------------------------
-std::set<ChannelID> selectShownChannels (ChannelID hide_channel,
-                                         QSharedPointer<SignalVisualisationModel> vis_model);
+ChannelID selectChannel(ChannelID preselected_channel,
+    QSharedPointer<SignalVisualisationModel> signal_visualisation_model);
 
-//-----------------------------------------------------------------------------
-std::set<ChannelID> selectChannels (ChannelManager const& channel_manager,
-                                    QSharedPointer<ColorManager> color_manager,
-                                    QSharedPointer<BasicHeader> header,
-                                    QSharedPointer<SignalVisualisationModel> vis_model
-                                    = QSharedPointer<SignalVisualisationModel>(0));
+std::set<ChannelID> selectShownChannels(ChannelID hide_channel,
+    QSharedPointer<SignalVisualisationModel> vis_model);
 
-//-----------------------------------------------------------------------------
-QString getFilePathFromSaveAsDialog (QString const& path,
-                                     QString const& extensions,
-                                     QString const& file_type_description);
+std::set<ChannelID> selectChannels(ChannelManager const& channel_manager,
+    QSharedPointer<ColorManager> color_manager,
+    QSharedPointer<BasicHeader> header,
+    QSharedPointer<SignalVisualisationModel> vis_model = QSharedPointer<SignalVisualisationModel>(0));
 
+QString getFilePathFromSaveAsDialog(QString const& path,
+    QString const& extensions,
+    QString const& file_type_description);
 
-}
+}  // namespace GuiHelper
 
-}
+}  // namespace sigviewer
 
-#endif // GUI_HELPER_FUNCTIONS_H
+#endif  // GUI_HELPER_FUNCTIONS_H

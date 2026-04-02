@@ -2,42 +2,36 @@
 //
 // License: GPL-3.0
 
-
 #ifndef MOUSE_MODE_GUI_COMMAND_H
 #define MOUSE_MODE_GUI_COMMAND_H
+
+#include <QActionGroup>
+#include <QStringList>
 
 #include "gui/gui_action_command.h"
 #include "gui/gui_action_factory_registrator.h"
 #include "gui/signal_visualisation_modes.h"
 
-#include <QStringList>
-#include <QActionGroup>
+namespace sigviewer {
 
-namespace sigviewer
-{
-
-class MouseModeGuiCommand : public GuiActionCommand
-{
+class MouseModeGuiCommand : public GuiActionCommand {
     Q_OBJECT
-public:
-    MouseModeGuiCommand ();
-    virtual ~MouseModeGuiCommand ();
+   public:
+    MouseModeGuiCommand();
+    virtual ~MouseModeGuiCommand();
 
-    virtual void init ();
+    virtual void init();
 
-public slots:
-    //-------------------------------------------------------------------------
-    virtual void trigger (QString const& action_name);
+   public slots:
 
-protected:
-    //-------------------------------------------------------------------------
-    virtual void applicationStateChanged ();
+    virtual void trigger(QString const& action_name);
 
-    //-------------------------------------------------------------------------
-    virtual void evaluateEnabledness ();
+   protected:
+    virtual void applicationStateChanged();
 
+    virtual void evaluateEnabledness();
 
-private:
+   private:
     static QString const NEW_MODE_TEXT_();
     static QString const POINTER_MODE_TEXT_();
     static QString const HAND_MODE_TEXT_();
@@ -50,6 +44,6 @@ private:
     QMap<QString, SignalVisualisationMode> action_to_mode_map_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // MOUSE_MODE_GUI_COMMAND_H
+#endif  // MOUSE_MODE_GUI_COMMAND_H

@@ -2,93 +2,76 @@
 //
 // License: GPL-3.0
 
-
 #ifndef SIGNAL_VIEW_SETTINGS_H
 #define SIGNAL_VIEW_SETTINGS_H
+
+#include <QColor>
+#include <QMap>
+#include <QObject>
+#include <set>
 
 #include "base/sigviewer_user_types.h"
 #include "file_handling/channel_manager.h"
 
-#include <QObject>
-#include <QMap>
-#include <QColor>
+namespace sigviewer {
 
-#include <set>
-
-namespace sigviewer
-{
-
-//-----------------------------------------------------------------------------
 /// SignalViewSettings
 ///
 /// provides methods for changing the visualisation of a signal
-class SignalViewSettings : public QObject
-{
+class SignalViewSettings : public QObject {
     Q_OBJECT
     Q_PROPERTY(float pixelsPerSample READ getPixelsPerSample WRITE setPixelsPerSample)
     Q_PROPERTY(float channelOverlapping READ getChannelOverlapping WRITE setChannelOverlapping)
     Q_PROPERTY(int channelHeight READ getChannelHeight WRITE setChannelHeight)
-public:
-    //-------------------------------------------------------------------------
-    SignalViewSettings (ChannelManager const& channel_manager);
+   public:
+    SignalViewSettings(ChannelManager const& channel_manager);
 
-    //-------------------------------------------------------------------------
-    ChannelManager const& getChannelManager () const {return channel_manager_;}
+    ChannelManager const& getChannelManager() const { return channel_manager_; }
 
-    //-------------------------------------------------------------------------
-    float getPixelsPerSample () const {return pixels_per_sample_;}
+    float getPixelsPerSample() const { return pixels_per_sample_; }
 
-    //-------------------------------------------------------------------------
-    float getChannelOverlapping () const {return channel_overlapping_;}
+    float getChannelOverlapping() const { return channel_overlapping_; }
 
-    //-------------------------------------------------------------------------
-    int getChannelHeight () const {return channel_heigth_in_pixels_;}
+    int getChannelHeight() const { return channel_heigth_in_pixels_; }
 
-    //-------------------------------------------------------------------------
-    float getSampleRate () const {return channel_manager_.getSampleRate();}
+    float getSampleRate() const { return channel_manager_.getSampleRate(); }
 
-    //-------------------------------------------------------------------------
-    int getGridFragmentation (Qt::Orientation orientation) const {return grid_fragmentation_[orientation];}
+    int getGridFragmentation(Qt::Orientation orientation) const {
+        return grid_fragmentation_[orientation];
+    }
 
-    //-------------------------------------------------------------------------
     /// @return a set of ids of the shown channels
-    //std::set<ChannelID> getShownChannels () const {return shown_channels_;}
-public slots:
-    //-------------------------------------------------------------------------
-    void setPixelsPerSample (float pixel_per_sample);
+    // std::set<ChannelID> getShownChannels () const {return shown_channels_;}
+   public slots:
 
-    //-------------------------------------------------------------------------
-    void setChannelOverlapping (float channel_overlapping);
+    void setPixelsPerSample(float pixel_per_sample);
 
-    //-------------------------------------------------------------------------
-    void setChannelHeight (int channel_heigth_in_pixels);
+    void setChannelOverlapping(float channel_overlapping);
 
-    //-------------------------------------------------------------------------
-    void setGridFragmentation (Qt::Orientation orientation, int fragmentation);
+    void setChannelHeight(int channel_heigth_in_pixels);
 
-    //-------------------------------------------------------------------------
+    void setGridFragmentation(Qt::Orientation orientation, int fragmentation);
+
     /// @param channels a set of ids of channels that should be visible
-    //void setShownChannels (std::set<ChannelID> const& channels) {shown_channels_ = channels;
-    //    shownChannelsChanged (shown_channels_);}
+    // void setShownChannels (std::set<ChannelID> const& channels) {shown_channels_ = channels;
+    //     shownChannelsChanged (shown_channels_);}
 
-    //-------------------------------------------------------------------------
-    //virtual QSharedPointer<ChannelManager const> getChannelManager () const = 0;
+    // virtual QSharedPointer<ChannelManager const> getChannelManager () const = 0;
 
-
-signals:
-    void pixelsPerSampleChanged ();
-    void channelOverlappingChanged ();
-    void channelHeightChanged ();
-    void channelHeightChanged (unsigned channel_height_in_pixel);
-    void gridFragmentationChanged ();
+   signals:
+    void pixelsPerSampleChanged();
+    void channelOverlappingChanged();
+    void channelHeightChanged();
+    void channelHeightChanged(unsigned channel_height_in_pixel);
+    void gridFragmentationChanged();
     void enableXGrid(bool enabled);
     void enableYGrid(bool enabled);
     void separatorEnabled(bool enabled);
     void gridColorChanged(QColor gridColor);
     void labelColorChanged(QColor labelColor);
 
-private:
-    //std::set<ChannelID> shown_channels_;
+   private:
+    // std::set<ChannelID> shown_channels_;
     float pixels_per_sample_;
     float channel_overlapping_;
     int channel_heigth_in_pixels_;
@@ -96,6 +79,6 @@ private:
     ChannelManager const& channel_manager_;
 };
 
-}
+}  // namespace sigviewer
 
-#endif // SIGNAL_VIEW_SETTINGS_H
+#endif  // SIGNAL_VIEW_SETTINGS_H
