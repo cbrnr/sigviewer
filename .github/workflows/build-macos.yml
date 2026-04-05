@@ -115,7 +115,7 @@ jobs:
             --icon "SigViewer.app" 135 190 \
             --hide-extension "SigViewer.app" \
             --app-drop-link 405 190 \
-            --background "deploy/macos/dmg_background.png" \
+            --background "deploy/macos/background.png" \
             "build/SigViewer-${{ env.APP_VERSION }}.dmg" \
             "dmg_staging/"
 
