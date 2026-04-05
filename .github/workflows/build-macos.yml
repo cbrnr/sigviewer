@@ -64,7 +64,7 @@ jobs:
 
       - name: Extract version
         run: |
-          VERSION=$(sed -n 's/.*VERSION \([0-9][0-9.]*\).*/\1/p' CMakeLists.txt | head -1)
+          VERSION=$(sed -nE 's/^[[:space:]]*VERSION[[:space:]]+([0-9][0-9.]*)[[:space:]]*$/\1/p' CMakeLists.txt | head -1)
           echo "APP_VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Deploy Qt frameworks
@@ -101,7 +101,23 @@ jobs:
         run: xcrun stapler staple build/SigViewer.app
 
       - name: Create DMG
-        run: hdiutil create -volname "SigViewer" -srcfolder build/SigViewer.app -ov -format UDZO build/SigViewer-${{ env.APP_VERSION }}.dmg
+        run: |
+          brew install create-dmg
+
+          mkdir dmg_staging
+          cp -r build/SigViewer.app dmg_staging/
+
+          create-dmg \
+            --volname "SigViewer" \
+            --window-pos 200 120 \
+            --window-size 540 380 \
+            --icon-size 128 \
+            --icon "SigViewer.app" 135 190 \
+            --hide-extension "SigViewer.app" \
+            --app-drop-link 405 190 \
+            --background "deploy/macos/dmg_background.png" \
+            "build/SigViewer-${{ env.APP_VERSION }}.dmg" \
+            "dmg_staging/"
 
       - name: Upload SigViewer artifact
         uses: actions/upload-artifact@v7
