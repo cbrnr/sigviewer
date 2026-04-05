@@ -64,7 +64,7 @@ jobs:
 
       - name: Extract version
         run: |
-          VERSION=$(sed -n 's/.*VERSION \([0-9][0-9.]*\).*/\1/p' CMakeLists.txt | head -1)
+          VERSION=$(sed -nE 's/^[[:space:]]*VERSION[[:space:]]+([0-9][0-9.]*)[[:space:]]*$/\1/p' CMakeLists.txt | head -1)
           echo "APP_VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Deploy Qt frameworks
