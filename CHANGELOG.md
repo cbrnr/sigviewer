@@ -1,3 +1,7 @@
+## [UNRELEASED] · YYYY-MM-DD
+### 🔧 Fixed
+- Show error message when loading EDF files containing only annotations instead of hanging in the loading dialog
+
 ## [0.7.0] · 2026-04-01
 ### ✨ Added
 - Use SVG icons with support for light and dark themes

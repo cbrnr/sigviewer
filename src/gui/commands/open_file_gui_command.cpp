@@ -35,6 +35,7 @@
 
 #include <atomic>
 #include <algorithm>
+#include <cmath>
 #include <fstream>
 
 namespace sigviewer
@@ -313,6 +314,28 @@ void OpenFileGuiCommand::openFileImpl (QString file_path, bool instantly)
     QString file_name = file_path.section (QDir::separator(), -1);
 
     ChannelManager* channel_manager (new FileChannelManager (file_signal_reader));
+
+    // Guard against files that contain no usable signal data (e.g. EDF files
+    // that only contain annotations).  Such files may still pass BioSig's
+    // error check but have zero signal channels, zero samples, or an invalid
+    // (infinite / NaN) sample rate.  Without this check SigViewer would hang
+    // later in the detrend-filter phase.
+    {
+        bool no_channels  = (channel_manager->getNumberChannels () == 0);
+        bool no_samples   = (channel_manager->getNumberSamples ()  == 0);
+        double sr         = channel_manager->getSampleRate ();
+        bool bad_rate     = (!std::isfinite (sr) || sr <= 0.0);
+        if (no_channels || no_samples || bad_rate)
+        {
+            delete channel_manager;
+            QMessageBox::critical (nullptr,
+                tr ("Cannot Open File"),
+                tr ("The file \u201c%1\u201d contains only annotations and no signal data "
+                    "and therefore cannot be displayed.")
+                    .arg (file_name));
+            return;
+        }
+    }
 
     std::set<ChannelID> shown_channels;
     if (instantly)
