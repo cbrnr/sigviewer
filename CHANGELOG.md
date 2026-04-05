@@ -1,4 +1,7 @@
 ## [UNRELEASED] · YYYY-MM-DD
+### ✨ Added
+- Add DMG background and Applications shortcut for macOS installer
+
 ### 🔧 Fixed
 - Show error message when loading EDF files containing only annotations instead of hanging in the loading dialog
 
