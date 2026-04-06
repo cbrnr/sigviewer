@@ -205,6 +205,7 @@ void MainWindowModel::closeCurrentFileTabs ()
 
     main_window_->setStatusBarSignalLength(-1);
     main_window_->setStatusBarNrChannels(-1);
+    main_window_->setOverviewActionEnabled (false);
     resetCurrentFileName ("");
 }
 
@@ -266,6 +267,7 @@ int MainWindowModel::createSignalVisualisationImpl (ChannelManager const& channe
         QSettings settings;
         view->setOverviewVisible (settings.value ("MainWindow/overview", true).toBool());
     }
+    main_window_->setOverviewActionEnabled (true);
 
     model->setSignalBrowserView (view);
     browser_models_[tab_index] = model;

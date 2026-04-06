@@ -31,6 +31,7 @@ public:
 
     void setStatusBarSignalLength(float64 length);
     void setStatusBarNrChannels(int32 nr_channels);
+    void setOverviewActionEnabled(bool enabled);
 
     void setRecentFiles(const QStringList& recent_file_list);
 
@@ -79,6 +80,7 @@ private:
     QLabel* status_bar_signal_length_label_;
     QLabel* status_bar_nr_channels_label_;
 
+    QAction* overview_action_;
     QAction* toggle_menubar_;
     QAction* hamburger_spacer_action_;
     QAction* hamburger_action_;
