@@ -80,7 +80,8 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple: -s -k "" build.keychain
 
       - name: Deploy Qt frameworks
-        run: $(brew --prefix qt)/bin/macdeployqt build/SigViewer.app -sign-for-notarization="Developer ID Application: CLEMENS BRUNNER (9UC2D22DW3)"
+        run: |
+          $(brew --prefix qt)/bin/macdeployqt build/SigViewer.app -sign-for-notarization="Developer ID Application: CLEMENS BRUNNER (9UC2D22DW3)"
 
       - name: Create DMG
         run: |
