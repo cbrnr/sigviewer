@@ -31,12 +31,14 @@ public:
 
     void setStatusBarSignalLength(float64 length);
     void setStatusBarNrChannels(int32 nr_channels);
+    void setOverviewActionEnabled(bool enabled);
 
     void setRecentFiles(const QStringList& recent_file_list);
 
 signals:
     void recentFileActivated(QAction* recent_file_action);
     void recentFileMenuAboutToShow();
+    void overviewVisibilityChanged(bool visible);
 
 
 protected:
@@ -48,6 +50,7 @@ protected:
 private slots:
     void toggleStatusBar (bool visible);
     void toggleMenuBar ();
+    void toggleOverview (bool visible);
     void addBackgroundProcessToStatusBar (QString name, int max);
     void updateBackgroundProcessonStatusBar (QString name, int value);
     void removeBackgroundProcessFromStatusBar (QString name);
@@ -77,6 +80,7 @@ private:
     QLabel* status_bar_signal_length_label_;
     QLabel* status_bar_nr_channels_label_;
 
+    QAction* overview_action_;
     QAction* toggle_menubar_;
     QAction* hamburger_spacer_action_;
     QAction* hamburger_action_;

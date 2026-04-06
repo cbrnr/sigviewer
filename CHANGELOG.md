@@ -2,6 +2,7 @@
 ### ✨ Added
 - Add DMG background and Applications shortcut for macOS installer
 - Add new toolbar icons for zooming in/out all channels' amplitudes ([#158](https://github.com/cbrnr/sigviewer/pull/158) by [Clemens Brunner](https://github.com/cbrnr))
+- Add overview widget at the bottom of the window ([#159](https://github.com/cbrnr/sigviewer/pull/159) by [Clemens Brunner](https://github.com/cbrnr))
 
 ### 🔧 Fixed
 - Show error message when loading EDF files containing only annotations instead of hanging in the loading dialog

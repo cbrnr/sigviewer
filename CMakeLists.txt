@@ -263,6 +263,8 @@ qt_add_library(sigviewer_objects OBJECT
     src/gui/signal_browser/event_graphics_item.h
     src/gui/signal_browser/label_widget.cpp
     src/gui/signal_browser/label_widget.h
+    src/gui/signal_browser/overview_widget.cpp
+    src/gui/signal_browser/overview_widget.h
     src/gui/signal_browser/signal_browser_graphics_view.h
     src/gui/signal_browser/signal_browser_model_4.cpp
     src/gui/signal_browser/signal_browser_model_4.h
