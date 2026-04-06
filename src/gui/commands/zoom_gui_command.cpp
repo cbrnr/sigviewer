@@ -35,14 +35,14 @@ QString const ZoomGuiCommand::GOTO_()
 
 QString const ZoomGuiCommand::ZOOM_IN_VERTICAL_()
 {
-    static QString value = tr("Zoom In Channels");
+    static QString value = tr("Show Fewer Channels");
 
     return value;
 }
 
 QString const ZoomGuiCommand::ZOOM_OUT_VERTICAL_()
 {
-    static QString value = tr("Zoom Out Channels");
+    static QString value = tr("Show More Channels");
 
     return value;
 }
@@ -82,6 +82,20 @@ QString const ZoomGuiCommand::AUTO_ZOOM_VERTICAL_()
     return value;
 }
 
+QString const ZoomGuiCommand::ZOOM_IN_ALL_CHANNELS_()
+{
+    static QString value = tr("Zoom In Amplitude");
+
+    return value;
+}
+
+QString const ZoomGuiCommand::ZOOM_OUT_ALL_CHANNELS_()
+{
+    static QString value = tr("Zoom Out Amplitude");
+
+    return value;
+}
+
 QStringList const ZoomGuiCommand::ACTIONS_()
 {
     static QStringList result = {
@@ -92,6 +106,8 @@ QStringList const ZoomGuiCommand::ACTIONS_()
         ZoomGuiCommand::GOTO_(),
         ZoomGuiCommand::SCALE_X_AXIS_(),
         ZoomGuiCommand::CHANNEL_PER_PAGE_(),
+        ZoomGuiCommand::ZOOM_IN_ALL_CHANNELS_(),
+        ZoomGuiCommand::ZOOM_OUT_ALL_CHANNELS_(),
     };
 
     return result;
@@ -115,10 +131,12 @@ ZoomGuiCommand::ZoomGuiCommand ()
 void ZoomGuiCommand::init ()
 {
     getQAction (GOTO_())->setIcon (QIcon::fromTheme("directions_walk"));
-    getQAction (ZOOM_IN_VERTICAL_())->setIcon (QIcon::fromTheme("zoom_in_vertical"));
-    getQAction (ZOOM_OUT_VERTICAL_())->setIcon (QIcon::fromTheme("zoom_out_vertical"));
+    getQAction (ZOOM_IN_VERTICAL_())->setIcon (QIcon::fromTheme("playlist_remove"));
+    getQAction (ZOOM_OUT_VERTICAL_())->setIcon (QIcon::fromTheme("playlist_add"));
     getQAction (ZOOM_IN_HORIZONTAL_())->setIcon (QIcon::fromTheme("zoom_in_horizontal"));
     getQAction (ZOOM_OUT_HORIZONTAL_())->setIcon (QIcon::fromTheme("zoom_out_horizontal"));
+    getQAction (ZOOM_IN_ALL_CHANNELS_())->setIcon (QIcon::fromTheme("zoom_in_vertical"));
+    getQAction (ZOOM_OUT_ALL_CHANNELS_())->setIcon (QIcon::fromTheme("zoom_out_vertical"));
 
 
     QList<QKeySequence> zoomInVertical;
@@ -139,6 +157,8 @@ void ZoomGuiCommand::init ()
     resetActionTriggerSlot (ZOOM_OUT_HORIZONTAL_(), SLOT(zoomOutHorizontal()));
     resetActionTriggerSlot (SCALE_X_AXIS_(), SLOT(scaleXAxis()));
     resetActionTriggerSlot (CHANNEL_PER_PAGE_(), SLOT(setChannelsPerPage()));
+    resetActionTriggerSlot (ZOOM_IN_ALL_CHANNELS_(), SLOT(zoomInAllChannels()));
+    resetActionTriggerSlot (ZOOM_OUT_ALL_CHANNELS_(), SLOT(zoomOutAllChannels()));
 }
 
 //-------------------------------------------------------------------------
@@ -167,6 +187,8 @@ void ZoomGuiCommand::evaluateEnabledness ()
     getQAction (ZOOM_IN_VERTICAL_())->setEnabled (zoom_in_vertical_possible);
     getQAction (ZOOM_OUT_HORIZONTAL_())->setEnabled (zoom_out_horizontal_possible);
     getQAction (ZOOM_IN_HORIZONTAL_())->setEnabled (zoom_in_horizontal_possible);
+    getQAction (ZOOM_IN_ALL_CHANNELS_())->setEnabled (true);
+    getQAction (ZOOM_OUT_ALL_CHANNELS_())->setEnabled (true);
     disableIfNoFileIsOpened (QStringList() << GOTO_() << SCALE_X_AXIS_() << CHANNEL_PER_PAGE_());
 }
 
@@ -245,6 +267,18 @@ void ZoomGuiCommand::zoomOutVertical ()
 //-----------------------------------------------------------------------------
 void ZoomGuiCommand::autoZoomVertical ()
 {
+}
+
+//-----------------------------------------------------------------------------
+void ZoomGuiCommand::zoomInAllChannels ()
+{
+    currentVisModel()->zoomInAll();
+}
+
+//-----------------------------------------------------------------------------
+void ZoomGuiCommand::zoomOutAllChannels ()
+{
+    currentVisModel()->zoomOutAll();
 }
 
 
