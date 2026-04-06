@@ -1,4 +1,4 @@
-## [UNRELEASED] · YYYY-MM-DD
+## [0.7.1] · 2026-04-06
 ### ✨ Added
 - Add DMG background and Applications shortcut for macOS installer
 - Add new toolbar icons for zooming in/out all channels' amplitudes ([#158](https://github.com/cbrnr/sigviewer/pull/158) by [Clemens Brunner](https://github.com/cbrnr))

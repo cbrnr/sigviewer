@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(sigviewer
-    VERSION 0.7.0
+    VERSION 0.7.1
     LANGUAGES CXX C
 )
 
