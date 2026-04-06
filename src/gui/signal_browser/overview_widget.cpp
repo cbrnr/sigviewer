@@ -4,13 +4,14 @@
 
 #include "overview_widget.h"
 #include "base/data_block.h"
+#include "base/signal_event.h"
 
 #include <QPainter>
 #include <QPen>
 #include <QMouseEvent>
 #include <QResizeEvent>
+#include <QSettings>
 
-#include <algorithm>
 #include <cmath>
 #include <limits>
 
@@ -19,237 +20,209 @@ namespace sigviewer
 
 namespace
 {
-    constexpr int WIDGET_HEIGHT  = 80;
-    constexpr int MIN_HEIGHT     = 30;
-    /// Debounce delay for cache rebuilds (ms).
-    constexpr int REBUILD_DELAY  = 80;
-} // anonymous namespace
+    constexpr int WIDGET_HEIGHT        = 120;
+    constexpr int MIN_HEIGHT            = 40;
+    constexpr int MAX_HEIGHT            = 600;
+    constexpr int RESIZE_HANDLE_HEIGHT  = 5;
+}
 
 //-----------------------------------------------------------------------------
 OverviewWidget::OverviewWidget(QSharedPointer<SignalVisualisationModel> model,
                                QSharedPointer<ColorManager const> color_manager,
+                               QSharedPointer<EventManager const> event_manager,
                                QWidget* parent)
     : QWidget(parent),
       model_(model),
       color_manager_(color_manager),
-      cache_dirty_(true),
-      dragging_(false),
-      drag_offset_px_(0),
-      drag_offset_py_(0),
-      current_visible_y_(0)
+      event_manager_(event_manager)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setMouseTracking(true);
-
-    rebuild_timer_ = new QTimer(this);
-    rebuild_timer_->setSingleShot(true);
-    rebuild_timer_->setInterval(REBUILD_DELAY);
-    connect(rebuild_timer_, &QTimer::timeout, this, &OverviewWidget::buildCache);
+    const int saved_h = QSettings().value("MainWindow/overviewHeight", WIDGET_HEIGHT).toInt();
+    setFixedHeight(qBound(MIN_HEIGHT, saved_h, MAX_HEIGHT));
 }
 
 //-----------------------------------------------------------------------------
-QSize OverviewWidget::sizeHint() const
-{
-    return QSize(-1, WIDGET_HEIGHT);
-}
+QSize OverviewWidget::sizeHint() const        { return QSize(-1, WIDGET_HEIGHT); }
+QSize OverviewWidget::minimumSizeHint() const { return QSize(0, MIN_HEIGHT); }
 
 //-----------------------------------------------------------------------------
-QSize OverviewWidget::minimumSizeHint() const
-{
-    return QSize(0, MIN_HEIGHT);
-}
-
-//-----------------------------------------------------------------------------
-void OverviewWidget::updateOverview()
-{
-    // Light update: only the viewport-rect position changed, use existing cache.
-    update();
-}
-
-//-----------------------------------------------------------------------------
-void OverviewWidget::setVisibleY(int32 y)
-{
-    current_visible_y_ = y;
-    // Also schedule a cache rebuild: setVisibleY fires after model->update(),
-    // which is called after detrend is toggled, so the cached data may be stale.
-    scheduleCacheRebuild();
-}
-
-//-----------------------------------------------------------------------------
-void OverviewWidget::scheduleCacheRebuild()
-{
-    cache_dirty_ = true;
-    rebuild_timer_->start();   // restarts if already running
-}
+void OverviewWidget::updateOverview()      { update(); }
+void OverviewWidget::setVisibleY(int32 y)  { current_visible_y_ = y; update(); }
+void OverviewWidget::rebuildSignalImage()  { pixmap_dirty_ = true; update(); }
 
 //-----------------------------------------------------------------------------
 void OverviewWidget::resizeEvent(QResizeEvent* event)
 {
     QWidget::resizeEvent(event);
-    // If the width changed the per-pixel bucket count is wrong — rebuild.
-    if (event->size().width() != event->oldSize().width())
-        scheduleCacheRebuild();
+    pixmap_dirty_ = true;
 }
 
 //-----------------------------------------------------------------------------
-// Build the per-channel downsampled overview cache.
-// Called once from the debounce timer; O(N) per channel but runs only when
-// the channel set or data source changes, never inside paintEvent.
+// Render all channels over the full time range into signal_pixmap_.
+// Called once per data-source change; paintEvent only blits the result.
 //-----------------------------------------------------------------------------
-void OverviewWidget::buildCache()
+void OverviewWidget::renderSignals()
 {
-    if (!model_)
-        return;
-
     const int w = width();
-    if (w <= 0)
+    const int h = height();
+    signal_pixmap_ = QPixmap(w, h);
+    signal_pixmap_.fill(palette().base().color());
+    pixmap_dirty_ = false;
+
+    if (!model_ || w <= 0 || h <= 0)
         return;
 
-    auto shown = model_->getShownChannels();
-
-    // Always rebuild (cache_dirty_ was true when this slot was scheduled).
     const ChannelManager& cm         = model_->getChannelManager();
     const unsigned        total_samp = static_cast<unsigned>(cm.getNumberSamples());
+    if (total_samp == 0)
+        return;
 
-    QMap<ChannelID, ChannelOverview> new_cache;
+    const auto shown = model_->getShownChannels();
+    if (shown.empty())
+        return;
 
-    if (total_samp > 0 && !shown.empty())
+    QPainter p(&signal_pixmap_);
+    p.setRenderHint(QPainter::Antialiasing, false);
+
+    const int n_ch  = static_cast<int>(shown.size());
+    int       ch_idx = 0;
+
+    for (ChannelID id : shown)
     {
-        // Ideal downsampling factor: roughly 1 ds-sample per pixel.
-        const unsigned ideal_ds = qMax(1u, total_samp / static_cast<unsigned>(w));
+        const int y_top = (ch_idx       * h) / n_ch;
+        const int y_bot = ((ch_idx + 1) * h) / n_ch;
+        const int ch_h  = y_bot - y_top;
+        ++ch_idx;
+        if (ch_h <= 0)
+            continue;
 
-        for (ChannelID id : shown)
+        float norm_min = static_cast<float>(cm.getMinValue(id));
+        float norm_max = static_cast<float>(cm.getMaxValue(id));
+        if (norm_min >= norm_max) { norm_min -= 1.0f; norm_max += 1.0f; }
+        const float range = norm_max - norm_min;
+
+        QSharedPointer<DataBlock const> data = cm.getData(id, 0, total_samp);
+        if (!data || data->size() == 0)
+            continue;
+        const size_t n = data->size();
+
+        QColor ch_color = color_manager_ ? color_manager_->getChannelColor(id)
+                                         : palette().text().color();
+        p.setPen(ch_color);
+
+        for (int x = 0; x < w; ++x)
         {
-            ChannelOverview entry;
-            entry.min_vals.fill( std::numeric_limits<float>::max(), w);
-            entry.max_vals.fill(-std::numeric_limits<float>::max(), w);
+            const size_t s0  = static_cast<size_t>(static_cast<double>(x)     / w * n);
+            const size_t s1r = static_cast<size_t>(static_cast<double>(x + 1) / w * n);
+            const size_t s1  = std::min(s1r == s0 ? s0 + 1 : s1r, n);
 
-            // Per-channel amplitude range for normalisation.
-            entry.norm_min = static_cast<float>(cm.getMinValue(id));
-            entry.norm_max = static_cast<float>(cm.getMaxValue(id));
-            if (entry.norm_min >= entry.norm_max)
+            float mn =  std::numeric_limits<float>::max();
+            float mx = -std::numeric_limits<float>::max();
+            for (size_t s = s0; s < s1; ++s)
             {
-                entry.norm_min -= 1.0f;
-                entry.norm_max += 1.0f;
+                const float v = (*data)[s];
+                if (!std::isnan(v)) { mn = std::min(mn, v); mx = std::max(mx, v); }
             }
+            if (mn > mx) continue;
 
-            // --- Fast path: use the pre-built min/max pyramid ---
-            unsigned actual_ds = cm.getNearestDownsamplingFactor(id, ideal_ds);
-            QSharedPointer<DataBlock const> ds_min;
-            QSharedPointer<DataBlock const> ds_max;
-            if (actual_ds > 1)
-            {
-                ds_min = cm.getDownsampledMin(id, actual_ds);
-                ds_max = cm.getDownsampledMax(id, actual_ds);
-            }
-
-            if (ds_min && ds_max && ds_min->size() > 0)
-            {
-                const size_t ds_size = ds_min->size();
-                for (int x = 0; x < w; ++x)
-                {
-                    unsigned s0 = static_cast<unsigned>(
-                        static_cast<double>(x)     / w * total_samp);
-                    unsigned s1 = static_cast<unsigned>(
-                        static_cast<double>(x + 1) / w * total_samp);
-                    if (s1 > total_samp) s1 = total_samp;
-                    if (s0 >= s1) continue;
-
-                    unsigned d0 = s0 / actual_ds;
-                    unsigned d1 = (s1 - 1) / actual_ds;
-                    if (d0 >= ds_size) continue;
-                    if (d1 >= ds_size) d1 = static_cast<unsigned>(ds_size - 1);
-
-                    float mn = (*ds_min)[d0], mx = (*ds_max)[d0];
-                    for (unsigned i = d0 + 1; i <= d1; ++i)
-                    {
-                        const float lo = (*ds_min)[i];
-                        const float hi = (*ds_max)[i];
-                        if (lo < mn) mn = lo;
-                        if (hi > mx) mx = hi;
-                    }
-                    entry.min_vals[x] = mn;
-                    entry.max_vals[x] = mx;
-                }
-            }
-            else
-            {
-                // --- Slow path: channel manager has no pyramid (e.g. detrend) ---
-                // Read the full cached signal once and stride through it to fill
-                // per-pixel min/max buckets.  Use a stride to bound the work:
-                //   stride = max(1, N / (w*8))  → at least 8 samples per pixel
-                // on average, which is enough for a visually accurate minimap.
-                QSharedPointer<DataBlock const> full = cm.getData(id, 0, total_samp);
-                if (!full || full->size() == 0)
-                    continue;
-
-                const size_t n    = full->size();
-                const size_t step = std::max<size_t>(
-                    1, n / (static_cast<size_t>(w) * 8));
-
-                for (size_t s = 0; s < n; s += step)
-                {
-                    const float v = (*full)[s];
-                    if (std::isnan(v)) continue;
-                    int px = static_cast<int>(
-                        static_cast<double>(s) / n * w);
-                    if (px >= w) px = w - 1;
-                    if (v < entry.min_vals[px]) entry.min_vals[px] = v;
-                    if (v > entry.max_vals[px]) entry.max_vals[px] = v;
-                }
-            }
-
-            // Robust normalization: use 5th/95th percentile of pixel bucket
-            // extremes to suppress artifact spikes that would otherwise compress
-            // the real signal into a horizontal line.
-            QVector<float> p_mins, p_maxs;
-            p_mins.reserve(w);
-            p_maxs.reserve(w);
-            for (int x = 0; x < w; ++x)
-            {
-                if (entry.min_vals[x] <= entry.max_vals[x])
-                {
-                    p_mins.append(entry.min_vals[x]);
-                    p_maxs.append(entry.max_vals[x]);
-                }
-            }
-            if (!p_mins.isEmpty())
-            {
-                std::sort(p_mins.begin(), p_mins.end());
-                std::sort(p_maxs.begin(), p_maxs.end());
-                const int n_p  = p_mins.size();
-                const int lo   = qMax(0,     n_p * 5  / 100);
-                const int hi   = qMin(n_p - 1, n_p * 95 / 100);
-                const float norm_lo = p_mins[lo];
-                const float norm_hi = p_maxs[hi];
-                if (norm_lo < norm_hi)
-                {
-                    const float pad = (norm_hi - norm_lo) * 0.05f;
-                    entry.norm_min = norm_lo - pad;
-                    entry.norm_max = norm_hi + pad;
-                }
-                else
-                {
-                    // Flat signal (constant value) — show a unit range centred on it.
-                    entry.norm_min = norm_lo - 1.0f;
-                    entry.norm_max = norm_hi + 1.0f;
-                }
-            }
-            else
-            {
-                entry.norm_min = -1.0f;
-                entry.norm_max =  1.0f;
-            }
-
-            new_cache[id] = std::move(entry);
+            const int y1 = qBound(y_top,
+                y_bot - 1 - static_cast<int>((mx - norm_min) / range * (ch_h - 1)),
+                y_bot - 1);
+            const int y2 = qBound(y_top,
+                y_bot - 1 - static_cast<int>((mn - norm_min) / range * (ch_h - 1)),
+                y_bot - 1);
+            p.drawLine(x, y1, x, y2);
         }
     }
 
-    cache_              = std::move(new_cache);
-    cache_channel_set_  = shown;
-    cache_width_        = w;
-    cache_dirty_        = false;
-    update();
+    // Channel separator lines.
+    p.setPen(QPen(palette().dark().color(), 1));
+    for (int i = 1; i < n_ch; ++i)
+        p.drawLine(0, (i * h) / n_ch, w - 1, (i * h) / n_ch);
+
+    // Draw events on top of the signal traces.
+    if (!event_manager_.isNull())
+    {
+        const auto shown      = model_->getShownChannels();
+        const auto n_ch_drawn = static_cast<int>(shown.size());
+        const auto shown_types = model_->getShownEventTypes();
+
+        for (EventID id : event_manager_->getAllEvents())
+        {
+            QSharedPointer<SignalEvent const> ev = event_manager_->getEvent(id);
+            if (!ev)
+                continue;
+            if (!shown_types.empty() && shown_types.count(ev->getType()) == 0)
+                continue;
+
+            // Horizontal extent.
+            const unsigned pos = static_cast<unsigned>(ev->getPosition());
+            const unsigned dur = static_cast<unsigned>(ev->getDuration());
+            const int x1 = static_cast<int>(static_cast<double>(pos)           / total_samp * w);
+            const int x2 = static_cast<int>(static_cast<double>(pos + (dur > 0 ? dur : 1)) / total_samp * w);
+            const int ex  = qBound(0, x1, w - 1);
+            const int ew  = qMax(1, qMin(x2, w) - ex);
+
+            // Vertical extent: which channel row(s) to fill.
+            const ChannelID ev_ch = ev->getChannel();
+            int yt = 0, yb = h;  // default: all channels
+            if (ev_ch != UNDEFINED_CHANNEL && n_ch_drawn > 0)
+            {
+                int row = 0;
+                for (ChannelID c : shown)
+                {
+                    if (c == ev_ch) break;
+                    ++row;
+                }
+                if (row < n_ch_drawn)
+                {
+                    yt = (row       * h) / n_ch_drawn;
+                    yb = ((row + 1) * h) / n_ch_drawn;
+                }
+            }
+
+            QColor color = color_manager_ ? color_manager_->getEventColor(ev->getType())
+                                          : QColor(Qt::blue);
+            color.setAlpha(80);
+            p.fillRect(ex, yt, ew, yb - yt, color);
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void OverviewWidget::paintEvent(QPaintEvent*)
+{
+    if (pixmap_dirty_ || signal_pixmap_.size() != size())
+        renderSignals();
+
+    QPainter painter(this);
+    painter.drawPixmap(0, 0, signal_pixmap_);
+
+    // Top border separator.
+    painter.setPen(QPen(palette().dark().color(), 1));
+    painter.drawLine(0, 0, width() - 1, 0);
+
+    // Viewport highlight rectangle.
+    const QRect vr = computeViewportRect();
+    if (vr.isValid())
+    {
+        // Dim everything outside the viewport.
+        QColor shade(0, 0, 0, 90);
+        if (vr.left() > 0)
+            painter.fillRect(0, 0, vr.left(), height(), shade);
+        if (vr.right() < width() - 1)
+            painter.fillRect(vr.right() + 1, 0, width() - vr.right() - 1, height(), shade);
+        if (vr.top() > 0)
+            painter.fillRect(vr.left(), 0, vr.width(), vr.top(), shade);
+        if (vr.bottom() < height() - 1)
+            painter.fillRect(vr.left(), vr.bottom() + 1, vr.width(), height() - vr.bottom() - 1, shade);
+
+        // Bright border around the viewport rect.
+        QColor border = palette().highlight().color();
+        painter.setPen(QPen(border, 2));
+        painter.drawRect(vr.adjusted(1, 1, -1, -1));
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -345,108 +318,20 @@ unsigned OverviewWidget::pixelToSample(int x) const
 }
 
 //-----------------------------------------------------------------------------
-void OverviewWidget::paintEvent(QPaintEvent*)
-{
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, false);
-
-    painter.fillRect(rect(), palette().base());
-
-    // Top border separator.
-    painter.setPen(QPen(palette().dark().color(), 1));
-    painter.drawLine(0, 0, width() - 1, 0);
-
-    if (!model_)
-        return;
-
-    // If the cache is invalid, just show the background and let the rebuild
-    // timer paint fresh data shortly.
-    if (cache_dirty_ || cache_.isEmpty())
-    {
-        if (cache_dirty_)
-            scheduleCacheRebuild();
-        // Draw the viewport rect even when the cache is being rebuilt.
-        QRect vr = computeViewportRect();
-        if (vr.isValid())
-        {
-            QColor fill = palette().highlight().color();
-            fill.setAlpha(50);
-            painter.fillRect(vr, fill);
-            painter.setPen(QPen(palette().highlight().color(), 1));
-            painter.drawRect(vr.adjusted(0, 1, -1, -1));
-        }
-        return;
-    }
-
-    const int w    = width();
-    const int h    = height();
-    if (w <= 0 || h <= 0)
-        return;
-
-    const int n_ch = static_cast<int>(cache_.size());
-
-    int ch_idx = 0;
-    for (auto it = cache_.begin(); it != cache_.end(); ++it, ++ch_idx)
-    {
-        const ChannelID        id    = it.key();
-        const ChannelOverview& entry = it.value();
-
-        // Use proper integer division so the last row always reaches h.
-        const int y_top = (ch_idx       * h) / n_ch;
-        const int y_bot = ((ch_idx + 1) * h) / n_ch;
-        const int ch_h  = y_bot - y_top;
-        if (ch_h <= 0)
-            continue;
-
-        const float range = entry.norm_max - entry.norm_min;
-        if (range <= 0.0f)
-            continue;
-
-        QColor ch_color = color_manager_ ? color_manager_->getChannelColor(id)
-                                         : palette().text().color();
-        painter.setPen(ch_color);
-
-        const int cols = qMin(w, entry.min_vals.size());
-        for (int x = 0; x < cols; ++x)
-        {
-            const float mn = entry.min_vals[x];
-            const float mx = entry.max_vals[x];
-            if (mn > mx)   // no valid sample fell in this bucket
-                continue;
-
-            int y1 = y_bot - 1
-                     - static_cast<int>((mx - entry.norm_min) / range * (ch_h - 1));
-            int y2 = y_bot - 1
-                     - static_cast<int>((mn - entry.norm_min) / range * (ch_h - 1));
-            y1 = qBound(y_top, y1, y_bot - 1);
-            y2 = qBound(y_top, y2, y_bot - 1);
-            painter.drawLine(x, y1, x, y2);
-        }
-    }
-
-    // Channel separator lines.
-    painter.setPen(QPen(palette().dark().color(), 1));
-    for (int i = 1; i < n_ch; ++i)
-        painter.drawLine(0, (i * h) / n_ch, w - 1, (i * h) / n_ch);
-
-    // Viewport highlight rectangle.
-    QRect vr = computeViewportRect();
-    if (vr.isValid())
-    {
-        QColor fill = palette().highlight().color();
-        fill.setAlpha(50);
-        painter.fillRect(vr, fill);
-        painter.setPen(QPen(palette().highlight().color(), 1));
-        painter.drawRect(vr.adjusted(0, 1, -1, -1));
-    }
-}
-
-//-----------------------------------------------------------------------------
 void OverviewWidget::mousePressEvent(QMouseEvent* event)
 {
     if (!model_ || event->button() != Qt::LeftButton)
     {
         QWidget::mousePressEvent(event);
+        return;
+    }
+
+    if (event->pos().y() < RESIZE_HANDLE_HEIGHT)
+    {
+        resize_dragging_       = true;
+        resize_start_global_y_ = event->globalPosition().toPoint().y();
+        resize_start_height_   = height();
+        setCursor(Qt::SizeVerCursor);
         return;
     }
 
@@ -482,11 +367,23 @@ void OverviewWidget::mousePressEvent(QMouseEvent* event)
 //-----------------------------------------------------------------------------
 void OverviewWidget::mouseMoveEvent(QMouseEvent* event)
 {
+    if (resize_dragging_)
+    {
+        const int delta = resize_start_global_y_ - event->globalPosition().toPoint().y();
+        const int new_h = qBound(MIN_HEIGHT, resize_start_height_ + delta, MAX_HEIGHT);
+        if (new_h != height())
+            setFixedHeight(new_h);
+        return;
+    }
+
     if (!dragging_ || !model_)
     {
         QRect vr = computeViewportRect();
-        setCursor((vr.isValid() && vr.contains(event->pos()))
-                  ? Qt::SizeAllCursor : Qt::ArrowCursor);
+        if (event->pos().y() < RESIZE_HANDLE_HEIGHT)
+            setCursor(Qt::SizeVerCursor);
+        else
+            setCursor((vr.isValid() && vr.contains(event->pos()))
+                      ? Qt::SizeAllCursor : Qt::ArrowCursor);
         QWidget::mouseMoveEvent(event);
         return;
     }
@@ -501,12 +398,27 @@ void OverviewWidget::mouseMoveEvent(QMouseEvent* event)
 //-----------------------------------------------------------------------------
 void OverviewWidget::mouseReleaseEvent(QMouseEvent* event)
 {
+    if (event->button() == Qt::LeftButton && resize_dragging_)
+    {
+        resize_dragging_ = false;
+        QSettings().setValue("MainWindow/overviewHeight", height());
+        unsetCursor();
+        return;
+    }
     if (event->button() == Qt::LeftButton && dragging_)
     {
         dragging_ = false;
         setCursor(Qt::ArrowCursor);
     }
     QWidget::mouseReleaseEvent(event);
+}
+
+//-----------------------------------------------------------------------------
+void OverviewWidget::leaveEvent(QEvent* event)
+{
+    if (!dragging_ && !resize_dragging_)
+        unsetCursor();
+    QWidget::leaveEvent(event);
 }
 
 } // namespace sigviewer

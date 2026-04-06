@@ -152,6 +152,8 @@ void SignalBrowserView::updateWidgets (bool update_view)
     y_axis_widget_->update();
     label_widget_->update();
     emit visibleYChanged (graphics_view_->mapToScene(0,0).y());
+    // Signal data or channel set may have changed; rebuild the overview pixmap.
+    overview_widget_->rebuildSignalImage();
 }
 
 //-----------------------------------------------------------------------------
@@ -441,11 +443,14 @@ void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager,
     auto browser_model = qSharedPointerDynamicCast<SignalBrowserModel>(model_);
     if (browser_model)
         color_manager = browser_model->getColorManager();
-    overview_widget_ = new OverviewWidget(model_, color_manager, this);
+    overview_widget_ = new OverviewWidget(model_, color_manager,
+                                          browser_model ? browser_model->getEventManager()
+                                                        : QSharedPointer<EventManager const>(),
+                                          this);
     connect(this, &SignalBrowserView::visibleXChanged, overview_widget_, &OverviewWidget::updateOverview);
     connect(this, &SignalBrowserView::visibleYChanged, overview_widget_, &OverviewWidget::setVisibleY);
     connect(model_->getSignalViewSettings().data(), &SignalViewSettings::pixelsPerSampleChanged, overview_widget_, &OverviewWidget::updateOverview);
-    connect(model_->getSignalViewSettings().data(), qOverload<>(&SignalViewSettings::channelHeightChanged), overview_widget_, &OverviewWidget::scheduleCacheRebuild);
+    connect(model_->getSignalViewSettings().data(), qOverload<>(&SignalViewSettings::channelHeightChanged), overview_widget_, &OverviewWidget::updateOverview);
     connect(model_->getSignalViewSettings().data(), &SignalViewSettings::channelOverlappingChanged, overview_widget_, &OverviewWidget::updateOverview);
     connect(overview_widget_, &OverviewWidget::requestScrollY, vertical_scrollbar_, &QScrollBar::setValue);
 }
