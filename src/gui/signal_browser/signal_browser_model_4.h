@@ -76,7 +76,8 @@ public:
 
     //-------------------------------------------------------------------------
     virtual QMap<ChannelID, SignalGraphicsItem *> getChannelToSignalItem();
-
+    /// @return the colour manager used for channel and event colours
+    QSharedPointer<ColorManager const> getColorManager() const { return color_manager_; }
 
     void setSignalBrowserView(SignalBrowserView* signal_browser_view);
     void loadSettings();

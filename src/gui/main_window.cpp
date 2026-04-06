@@ -151,6 +151,14 @@ void MainWindow::toggleStatusBar (bool visible)
 }
 
 
+//-------------------------------------------------------------------
+void MainWindow::toggleOverview (bool visible)
+{
+    QSettings settings;
+    settings.setValue ("MainWindow/overview", visible);
+    emit overviewVisibilityChanged (visible);
+}
+
 //-----------------------------------------------------------------------------
 void MainWindow::addBackgroundProcessToStatusBar (QString name, int max)
 {
@@ -239,9 +247,15 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     toggle_status_bar->setChecked (settings.value ("MainWindow/statusbar", true).toBool());
     connect (toggle_status_bar, SIGNAL(toggled(bool)), this, SLOT(toggleStatusBar(bool)));
 
+    QAction* toggle_overview = new QAction (tr("Signal Overview"), this);
+    toggle_overview->setCheckable (true);
+    toggle_overview->setChecked (settings.value ("MainWindow/overview", true).toBool());
+    connect (toggle_overview, SIGNAL(toggled(bool)), this, SLOT(toggleOverview(bool)));
+
     view_menu_ = menuBar()->addMenu(tr("&View"));
     view_menu_->addAction(file_toolbar_->toggleViewAction());
     view_menu_->addAction(toggle_status_bar);
+    view_menu_->addAction(toggle_overview);
 #ifndef Q_OS_MACOS
     toggle_menubar_ = new QAction(tr("Menubar"), this);
     toggle_menubar_->setCheckable(true);

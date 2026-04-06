@@ -25,10 +25,12 @@ int const MainWindowModel::NUMBER_RECENT_FILES_ = 8;
 MainWindowModel::MainWindowModel (QSharedPointer<ApplicationContext> application_context)
 : application_context_ (application_context),
   main_window_ (new MainWindow (application_context)),
-  tab_widget_ (0)
+  tab_widget_ (0),
+  current_signal_browser_view_ (nullptr)
 {
     connect (main_window_, SIGNAL(recentFileActivated(QAction*)), SLOT(recentFileActivated(QAction*)));
     connect (main_window_, SIGNAL(recentFileMenuAboutToShow()), SLOT(recentFileMenuAboutToShow()));
+    connect (main_window_, SIGNAL(overviewVisibilityChanged(bool)), SLOT(setOverviewVisible(bool)));
     main_window_->show();
     loadSettings();
 }
@@ -197,12 +199,20 @@ void MainWindowModel::closeCurrentFileTabs ()
     //   to be refactored as soon as multi file support is implemented
     main_window_->setCentralWidget (0);
     tab_widget_ = 0;
+    current_signal_browser_view_ = nullptr;
     tab_contexts_.clear ();
     // --end
 
     main_window_->setStatusBarSignalLength(-1);
     main_window_->setStatusBarNrChannels(-1);
     resetCurrentFileName ("");
+}
+
+//-----------------------------------------------------------------------------
+void MainWindowModel::setOverviewVisible (bool visible)
+{
+    if (current_signal_browser_view_)
+        current_signal_browser_view_->setOverviewVisible (visible);
 }
 
 //-----------------------------------------------------------------------------
@@ -249,6 +259,13 @@ int MainWindowModel::createSignalVisualisationImpl (ChannelManager const& channe
     SignalBrowserView* view = new SignalBrowserView (model, event_manager, tab_context, main_window_->rect(), tab_widget_);
 
     int tab_index = tab_widget_->addTab (view, tr("Signal"));
+
+    // Store the view and apply the persisted overview visibility.
+    current_signal_browser_view_ = view;
+    {
+        QSettings settings;
+        view->setOverviewVisible (settings.value ("MainWindow/overview", true).toBool());
+    }
 
     model->setSignalBrowserView (view);
     browser_models_[tab_index] = model;

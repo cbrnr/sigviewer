@@ -37,6 +37,7 @@ public:
 signals:
     void recentFileActivated(QAction* recent_file_action);
     void recentFileMenuAboutToShow();
+    void overviewVisibilityChanged(bool visible);
 
 
 protected:
@@ -48,6 +49,7 @@ protected:
 private slots:
     void toggleStatusBar (bool visible);
     void toggleMenuBar ();
+    void toggleOverview (bool visible);
     void addBackgroundProcessToStatusBar (QString name, int max);
     void updateBackgroundProcessonStatusBar (QString name, int value);
     void removeBackgroundProcessFromStatusBar (QString name);

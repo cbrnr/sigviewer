@@ -26,6 +26,7 @@ namespace sigviewer
 
 class ApplicationContext;
 class MainWindow;
+class SignalBrowserView;
 
 class MainWindowModel : public QObject
 {
@@ -51,6 +52,9 @@ public slots:
 
     void closeTab (int tab_index);
 
+    /// Propagate overview visibility to the currently open signal browser view.
+    void setOverviewVisible (bool visible);
+
 private slots:
     void recentFileActivated(QAction* recent_file_action);
 
@@ -73,6 +77,7 @@ private:
     QSharedPointer<ApplicationContext> application_context_;
     MainWindow* main_window_;
     QTabWidget* tab_widget_;
+    SignalBrowserView* current_signal_browser_view_;
     QStringList recent_file_list_;
     std::map<int, QSharedPointer<SignalVisualisationModel> > browser_models_;
     QMap<int, QSharedPointer<EventView> > event_views_;

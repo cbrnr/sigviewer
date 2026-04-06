@@ -12,6 +12,8 @@
 #include "event_creation_widget.h"
 #include "event_editing_widget.h"
 #include "adapt_browser_view_widget.h"
+#include "overview_widget.h"
+#include "signal_browser_model_4.h"
 
 #include <QGraphicsLineItem>
 #include <QGridLayout>
@@ -301,6 +303,12 @@ void SignalBrowserView::toggleXWidget(bool enabled)
         model_->getSignalViewSettings()->setChannelHeight(channelHeight);
 }
 
+void SignalBrowserView::setOverviewVisible (bool visible)
+{
+    if (overview_widget_)
+        overview_widget_->setVisible(visible);
+}
+
 //-----------------------------------------------------------------------------
 void SignalBrowserView::verticalSrollbarMoved(int)
 {
@@ -427,6 +435,19 @@ void SignalBrowserView::initWidgets (QSharedPointer<EventManager> event_manager,
 //    connect(this, SIGNAL(visibleYChanged(int32)), y_axis_widget_, SLOT(changeYStart(int32)));
     connect(model_->getSignalViewSettings().data(), SIGNAL(channelHeightChanged(uint)), y_axis_widget_, SLOT(changeSignalHeight(uint)));
     connect(model_.data(), SIGNAL(modeChanged(SignalVisualisationMode)), SLOT(setMode(SignalVisualisationMode)));
+
+    // Create the overview widget and wire it to position/settings changes.
+    QSharedPointer<ColorManager const> color_manager;
+    auto browser_model = qSharedPointerDynamicCast<SignalBrowserModel>(model_);
+    if (browser_model)
+        color_manager = browser_model->getColorManager();
+    overview_widget_ = new OverviewWidget(model_, color_manager, this);
+    connect(this, &SignalBrowserView::visibleXChanged, overview_widget_, &OverviewWidget::updateOverview);
+    connect(this, &SignalBrowserView::visibleYChanged, overview_widget_, &OverviewWidget::setVisibleY);
+    connect(model_->getSignalViewSettings().data(), &SignalViewSettings::pixelsPerSampleChanged, overview_widget_, &OverviewWidget::updateOverview);
+    connect(model_->getSignalViewSettings().data(), qOverload<>(&SignalViewSettings::channelHeightChanged), overview_widget_, &OverviewWidget::scheduleCacheRebuild);
+    connect(model_->getSignalViewSettings().data(), &SignalViewSettings::channelOverlappingChanged, overview_widget_, &OverviewWidget::updateOverview);
+    connect(overview_widget_, &OverviewWidget::requestScrollY, vertical_scrollbar_, &QScrollBar::setValue);
 }
 
 //-----------------------------------------------------------------------------
@@ -452,6 +473,7 @@ void SignalBrowserView::createLayout()
     layout_->addWidget(horizontal_scrollbar_, 4, 2);
     layout_->addWidget(label_widget_, 2, 3);
     layout_->addWidget(vertical_scrollbar_, 2, 4);
+    layout_->addWidget(overview_widget_, 5, 2);
 
     graphics_view_->setAlignment(Qt::AlignVCenter);
 }

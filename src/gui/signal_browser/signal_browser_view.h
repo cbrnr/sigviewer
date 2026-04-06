@@ -13,6 +13,7 @@
 #include "file_handling/event_manager.h"
 
 #include "signal_browser_graphics_view.h"
+#include "overview_widget.h"
 
 #include <QFrame>
 #include <QGraphicsScene>
@@ -72,6 +73,9 @@ public:
 public slots:
     void setMode (SignalVisualisationMode mode);
 
+    /// Show or hide the signal overview widget at the bottom of the view.
+    void setOverviewVisible (bool visible);
+
 signals:
     void visibleXChanged (int32 new_x);
     void visibleYChanged (int32 new_y);
@@ -106,6 +110,7 @@ private:
     AdaptBrowserViewWidget* adapt_browser_view_widget_;
     QWidget* current_info_widget_;
     QWidget* empty_widget_;
+    OverviewWidget* overview_widget_;
 
     QGridLayout* layout_;
 };
