@@ -67,9 +67,6 @@ jobs:
           VERSION=$(sed -nE 's/^[[:space:]]*VERSION[[:space:]]+([0-9][0-9.]*)[[:space:]]*$/\1/p' CMakeLists.txt | head -1)
           echo "APP_VERSION=$VERSION" >> "$GITHUB_ENV"
 
-      - name: Deploy Qt frameworks
-        run: $(brew --prefix qt)/bin/macdeployqt build/SigViewer.app
-
       - name: Import Developer ID certificate
         env:
           MACOS_CERT_P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }}
@@ -82,30 +79,15 @@ jobs:
           security import certificate.p12 -k build.keychain -P "$MACOS_CERT_PASSWORD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple: -s -k "" build.keychain
 
-      - name: Sign .app bundle
-        run: 'codesign --deep --force --options runtime --sign "Developer ID Application: CLEMENS BRUNNER (9UC2D22DW3)" build/SigViewer.app'
-
-      - name: Notarize .app bundle
-        env:
-          AC_USERNAME: ${{ secrets.AC_USERNAME }}
-          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
-        run: |
-          ditto -c -k --sequesterRsrc --keepParent build/SigViewer.app build/SigViewer.zip
-          xcrun notarytool submit build/SigViewer.zip \
-            --apple-id "$AC_USERNAME" \
-            --password "$AC_PASSWORD" \
-            --team-id 9UC2D22DW3 \
-            --wait
-
-      - name: Staple .app bundle
-        run: xcrun stapler staple build/SigViewer.app
+      - name: Deploy Qt frameworks
+        run: $(brew --prefix qt)/bin/macdeployqt build/SigViewer.app -sign-for-notarization="Developer ID Application: CLEMENS BRUNNER (9UC2D22DW3)"
 
       - name: Create DMG
         run: |
           brew install create-dmg
 
           mkdir dmg_staging
-          cp -r build/SigViewer.app dmg_staging/
+          ditto build/SigViewer.app dmg_staging/SigViewer.app
 
           create-dmg \
             --volname "SigViewer" \
@@ -118,6 +100,18 @@ jobs:
             --background "deploy/macos/background.png" \
             "build/SigViewer-${{ env.APP_VERSION }}.dmg" \
             "dmg_staging/"
+
+      - name: Notarize and staple DMG
+        env:
+          AC_USERNAME: ${{ secrets.AC_USERNAME }}
+          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+        run: |
+          xcrun notarytool submit "build/SigViewer-${{ env.APP_VERSION }}.dmg" \
+            --apple-id "$AC_USERNAME" \
+            --password "$AC_PASSWORD" \
+            --team-id 9UC2D22DW3 \
+            --wait
+          xcrun stapler staple "build/SigViewer-${{ env.APP_VERSION }}.dmg"
 
       - name: Upload SigViewer artifact
         uses: actions/upload-artifact@v7
