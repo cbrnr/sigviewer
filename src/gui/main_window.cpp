@@ -247,7 +247,7 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     toggle_status_bar->setChecked (settings.value ("MainWindow/statusbar", true).toBool());
     connect (toggle_status_bar, SIGNAL(toggled(bool)), this, SLOT(toggleStatusBar(bool)));
 
-    QAction* toggle_overview = new QAction (tr("Signal Overview"), this);
+    QAction* toggle_overview = new QAction (tr("Overview"), this);
     toggle_overview->setCheckable (true);
     toggle_overview->setChecked (settings.value ("MainWindow/overview", true).toBool());
     connect (toggle_overview, SIGNAL(toggled(bool)), this, SLOT(toggleOverview(bool)));
