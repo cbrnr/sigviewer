@@ -132,8 +132,10 @@ void MainWindow::initToolBars()
     file_toolbar_->addSeparator();
     file_toolbar_->addAction(action(tr("Channels...")));
     file_toolbar_->addAction(action(tr("Scale...")));
-    file_toolbar_->addAction(action(tr("Zoom In Channels")));
-    file_toolbar_->addAction(action(tr("Zoom Out Channels")));
+    file_toolbar_->addAction(action(tr("Show More Channels")));
+    file_toolbar_->addAction(action(tr("Show Fewer Channels")));
+    file_toolbar_->addAction(action(tr("Zoom In Amplitude")));
+    file_toolbar_->addAction(action(tr("Zoom Out Amplitude")));
     file_toolbar_->addAction(action(tr("Zoom In Time")));
     file_toolbar_->addAction(action(tr("Zoom Out Time")));
     file_toolbar_->addSeparator();
@@ -252,8 +254,10 @@ void MainWindow::initMenus (QSharedPointer<ApplicationContext> application_conte
     view_menu_->addAction(action(tr("Channels...")));
     view_menu_->addAction(action(tr("Scale...")));
     view_menu_->addSeparator();
-    view_menu_->addAction(action(tr("Zoom In Channels")));
-    view_menu_->addAction(action(tr("Zoom Out Channels")));
+    view_menu_->addAction(action(tr("Show More Channels")));
+    view_menu_->addAction(action(tr("Show Fewer Channels")));
+    view_menu_->addAction(action(tr("Zoom In Amplitude")));
+    view_menu_->addAction(action(tr("Zoom Out Amplitude")));
     view_menu_->addAction(action(tr("Zoom In Time")));
     view_menu_->addAction(action(tr("Zoom Out Time")));
     view_menu_->addSeparator();

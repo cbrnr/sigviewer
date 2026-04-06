@@ -44,6 +44,12 @@ private slots:
     void autoZoomVertical ();
 
     //-------------------------------------------------------------------------
+    void zoomInAllChannels ();
+
+    //-------------------------------------------------------------------------
+    void zoomOutAllChannels ();
+
+    //-------------------------------------------------------------------------
     void scaleXAxis ();
 
     //-------------------------------------------------------------------------
@@ -73,6 +79,8 @@ private:
     static QString const SCALE_X_AXIS_();
     static QString const CHANNEL_PER_PAGE_();
     static QString const AUTO_ZOOM_VERTICAL_();
+    static QString const ZOOM_IN_ALL_CHANNELS_();
+    static QString const ZOOM_OUT_ALL_CHANNELS_();
     static QStringList const ACTIONS_();
 
     static GuiActionFactoryRegistrator registrator_;
