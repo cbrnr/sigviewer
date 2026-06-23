@@ -69,7 +69,7 @@ jobs:
           echo "APP_VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Import Developer ID certificate
-        if: github.actor != 'dependabot[bot]'
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         env:
           MACOS_CERT_P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }}
           MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
@@ -85,11 +85,11 @@ jobs:
         run: $(brew --prefix qt)/bin/macdeployqt build/SigViewer.app
 
       - name: Sign .app bundle
-        if: github.actor != 'dependabot[bot]'
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         run: 'codesign --deep --force --options runtime --sign "Developer ID Application: CLEMENS BRUNNER (9UC2D22DW3)" build/SigViewer.app'
 
       - name: Notarize .app bundle
-        if: github.actor != 'dependabot[bot]'
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         env:
           AC_USERNAME: ${{ secrets.AC_USERNAME }}
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
@@ -102,7 +102,7 @@ jobs:
             --wait
 
       - name: Staple .app bundle
-        if: github.actor != 'dependabot[bot]'
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         run: xcrun stapler staple build/SigViewer.app
 
       - name: Create DMG
