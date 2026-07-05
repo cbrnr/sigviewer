@@ -40,8 +40,16 @@ AdaptBrowserViewWidget::AdaptBrowserViewWidget (SignalVisualisationView const* s
         throw (Exception (tr("connect failed: y_axis_checkbox_").toStdString()));
     if (!connect (ui_.labels_checkbox_, SIGNAL(toggled(bool)), SIGNAL(labelsVisibilityChanged(bool))))
         throw (Exception (tr("connect failed: labels_checkbox_").toStdString()));
+    // Qt's setMaximum() clamps and re-emits valueChanged() when the spinbox's
+    // current value exceeds the new maximum (e.g. for a very short recording).
+    // At this point in construction, the containing SignalBrowserView hasn't
+    // registered itself with its SignalBrowserModel yet, so a resulting
+    // on_..._valueChanged -> SignalBrowserModel::update() call would crash on
+    // a null view pointer. Suppress it with the same guard updateValues() uses.
+    updating_values_ = true;
     ui_.channelsPerPageSpinbox->setMaximum (setting->getChannelManager().getNumberChannels());
     ui_.secsPerPageSpinbox->setMaximum (settings_->getChannelManager().getDurationInSec());
+    updating_values_ = false;
     connect (settings_.data(), SIGNAL(channelHeightChanged()), SLOT(updateValues()));
     connect (settings_.data(), SIGNAL(gridFragmentationChanged()), SLOT(updateValues()));
     connect (settings_.data(), SIGNAL(pixelsPerSampleChanged()), SLOT(updateValues()));
