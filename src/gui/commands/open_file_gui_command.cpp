@@ -180,7 +180,7 @@ void OpenFileGuiCommand::evaluateEnabledness ()
 
     if (file_opened)
     {
-        if (applicationContext()->getCurrentFileContext()->getFileName().endsWith("xdf"))
+        if (isXdfFileName (applicationContext()->getCurrentFileContext()->getFileName()))
             enable_import_events = false;//Disabled because currently XDF files doesn't support importing events
     }
 

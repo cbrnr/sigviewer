@@ -15,6 +15,9 @@
 #include <QMutexLocker>
 #include <QTime>
 #include <QMessageBox>
+#include <QTemporaryFile>
+
+#include <zlib.h>
 
 #include <cmath>
 #include <algorithm>
@@ -31,6 +34,24 @@ QSharedPointer<Xdf> XDFdata = QSharedPointer<Xdf>(new Xdf);
 //-----------------------------------------------------------------------------
 
 FILE_SIGNAL_READER_REGISTRATION(xdf, XDFReader);
+FILE_SIGNAL_READER_REGISTRATION(xdfz, XDFReader);
+
+// "xdf.gz" is a compound (two-segment) extension, which the
+// FILE_SIGNAL_READER_REGISTRATION macro cannot handle (it stringizes and
+// token-pastes its argument into an identifier, and a dot breaks both), so
+// register it by hand instead.
+namespace Registrators_ {
+FileSignalReaderFactoryRegistrator file_reader_registrator_XDFReader_xdf_gz (
+    "xdf.gz", QSharedPointer<FileSignalReader> (new XDFReader));
+}
+
+//-----------------------------------------------------------------------------
+bool isXdfFileName (QString const& file_name)
+{
+    return file_name.endsWith ("xdf", Qt::CaseInsensitive) ||
+           file_name.endsWith ("xdfz", Qt::CaseInsensitive) ||
+           file_name.endsWith ("xdf.gz", Qt::CaseInsensitive);
+}
 
 //-----------------------------------------------------------------------------
 XDFReader::XDFReader() :
@@ -94,6 +115,64 @@ QList<QSharedPointer<SignalEvent const> > XDFReader::getEvents () const
     return events_;
 }
 
+namespace
+{
+
+//-----------------------------------------------------------------------------
+// True if the file starts with the gzip magic bytes (0x1f 0x8b), regardless
+// of its extension.
+bool isGzipCompressed (QString const& file_path)
+{
+    QFile file (file_path);
+    if (!file.open (QIODevice::ReadOnly))
+        return false;
+
+    unsigned char magic[2] = {0, 0};
+    file.read (reinterpret_cast<char*> (magic), sizeof (magic));
+    return magic[0] == 0x1f && magic[1] == 0x8b;
+}
+
+//-----------------------------------------------------------------------------
+// Decompresses a gzip-compressed file into temp_file and returns temp_file's
+// path, or an empty string on failure. temp_file must stay in scope for as
+// long as the decompressed path is used; it removes the file on destruction.
+QString decompressGzip (QString const& gz_file_path, QTemporaryFile& temp_file)
+{
+    gzFile gz = gzopen (gz_file_path.toLocal8Bit().constData(), "rb");
+    if (!gz)
+        return QString();
+
+    if (!temp_file.open())
+    {
+        gzclose (gz);
+        return QString();
+    }
+
+    char buffer[65536];
+    int bytes_read;
+    bool ok = true;
+    while ((bytes_read = gzread (gz, buffer, sizeof (buffer))) > 0)
+    {
+        if (temp_file.write (buffer, bytes_read) != bytes_read)
+        {
+            ok = false;
+            break;
+        }
+    }
+
+    int gz_error = Z_OK;
+    gzerror (gz, &gz_error);
+    if (bytes_read < 0 || gz_error != Z_OK)
+        ok = false;
+
+    gzclose (gz);
+    temp_file.close();
+
+    return ok ? temp_file.fileName() : QString();
+}
+
+} // unnamed namespace
+
 //-----------------------------------------------------------------------------
 QString XDFReader::open (QString const& file_path)
 {
@@ -111,7 +190,25 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
 
     if (QFile::exists(file_path)) //Double check whether file exists
     {
-        if (XDFdata->load_xdf(file_path.toStdString()) == 0)
+        QTemporaryFile decompressed_temp_file;
+        QString load_path = file_path;
+
+        if (isGzipCompressed (file_path))
+        {
+            load_path = decompressGzip (file_path, decompressed_temp_file);
+            if (load_path.isEmpty())
+            {
+                QMessageBox msgBox;
+                msgBox.setIcon(QMessageBox::Warning);
+                msgBox.setText(QObject::tr("Unable to decompress file."));
+                msgBox.setStandardButtons(QMessageBox::Ok);
+                msgBox.exec();
+
+                return "non-exist";
+            }
+        }
+
+        if (XDFdata->load_xdf(load_path.toStdString()) == 0)
         {
             XDFdata->createLabels();
 

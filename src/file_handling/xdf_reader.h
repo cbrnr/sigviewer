@@ -19,6 +19,12 @@ namespace sigviewer
 //the object to store XDF data
 extern QSharedPointer<Xdf> XDFdata;
 
+//-----------------------------------------------------------------------------
+/// Returns true if file_name refers to any member of the XDF file family
+/// (plain, gzip-compressed .xdfz, or gzip-compressed .xdf.gz), regardless of
+/// compression.
+bool isXdfFileName (QString const& file_name);
+
 //XDFReader, modeled  on BiosigReader
 class XDFReader : public FileSignalReader
 {

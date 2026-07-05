@@ -21,6 +21,9 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Xml Svg LinguistTools Test)
 qt_standard_project_setup()
 
+# -- zlib (gzip decompression for .xdf.gz / .xdfz) ----------------------------
+find_package(ZLIB REQUIRED)
+
 # -- External pre-built dependencies -----------------------------------------
 # Override with -DDEPS_DIR=<path> if the libraries were built elsewhere.
 set(DEPS_DIR "${CMAKE_SOURCE_DIR}/external"
@@ -317,6 +320,7 @@ target_link_libraries(sigviewer_objects PUBLIC
     Qt6::Svg
     dep_libxdf
     dep_libbiosig
+    ZLIB::ZLIB
     # libbiosig is a static library and cannot carry its own transitive
     # dependencies.  On macOS and Windows it uses libiconv; on Windows it also
     # uses Winsock (ntohl/htonl/getaddrinfo).
