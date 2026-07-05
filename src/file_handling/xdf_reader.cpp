@@ -6,6 +6,7 @@
 #include "xdf_reader.h"
 #include "biosig_basic_header.h"
 #include "file_handler_factory_registrator.h"
+#include "gzip_decompressor.h"
 #include "gui/progress_bar.h"
 #include "base/fixed_data_block.h"
 #include "gui/dialogs/resampling_dialog.h"
@@ -16,8 +17,6 @@
 #include <QTime>
 #include <QMessageBox>
 #include <QTemporaryFile>
-
-#include <zlib.h>
 
 #include <cmath>
 #include <algorithm>
@@ -114,64 +113,6 @@ QList<QSharedPointer<SignalEvent const> > XDFReader::getEvents () const
 
     return events_;
 }
-
-namespace
-{
-
-//-----------------------------------------------------------------------------
-// True if the file starts with the gzip magic bytes (0x1f 0x8b), regardless
-// of its extension.
-bool isGzipCompressed (QString const& file_path)
-{
-    QFile file (file_path);
-    if (!file.open (QIODevice::ReadOnly))
-        return false;
-
-    unsigned char magic[2] = {0, 0};
-    file.read (reinterpret_cast<char*> (magic), sizeof (magic));
-    return magic[0] == 0x1f && magic[1] == 0x8b;
-}
-
-//-----------------------------------------------------------------------------
-// Decompresses a gzip-compressed file into temp_file and returns temp_file's
-// path, or an empty string on failure. temp_file must stay in scope for as
-// long as the decompressed path is used; it removes the file on destruction.
-QString decompressGzip (QString const& gz_file_path, QTemporaryFile& temp_file)
-{
-    gzFile gz = gzopen (gz_file_path.toLocal8Bit().constData(), "rb");
-    if (!gz)
-        return QString();
-
-    if (!temp_file.open())
-    {
-        gzclose (gz);
-        return QString();
-    }
-
-    char buffer[65536];
-    int bytes_read;
-    bool ok = true;
-    while ((bytes_read = gzread (gz, buffer, sizeof (buffer))) > 0)
-    {
-        if (temp_file.write (buffer, bytes_read) != bytes_read)
-        {
-            ok = false;
-            break;
-        }
-    }
-
-    int gz_error = Z_OK;
-    gzerror (gz, &gz_error);
-    if (bytes_read < 0 || gz_error != Z_OK)
-        ok = false;
-
-    gzclose (gz);
-    temp_file.close();
-
-    return ok ? temp_file.fileName() : QString();
-}
-
-} // unnamed namespace
 
 //-----------------------------------------------------------------------------
 QString XDFReader::open (QString const& file_path)

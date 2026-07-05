@@ -132,6 +132,8 @@ qt_add_library(sigviewer_objects OBJECT
     src/file_handling/channel_manager.h
     src/file_handling/event_manager.h
     src/file_handling/file_handler_factory.h
+    src/file_handling/gzip_decompressor.cpp
+    src/file_handling/gzip_decompressor.h
     src/file_handling/file_signal_reader.cpp
     src/file_handling/file_signal_reader.h
     src/file_handling/file_signal_reader_factory.cpp
