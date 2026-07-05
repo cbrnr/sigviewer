@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(sigviewer
-    VERSION 0.7.1
+    VERSION 0.7.2
     LANGUAGES CXX C
 )
 
 # -- Pinned versions of external dependencies --------------------------------
 # These are the ONLY accepted versions. Change them here (and rebuild the
 # pre-built artifacts) when upgrading a dependency.
-set(LIBXDF_VERSION    "0.99.10")
-set(LIBBIOSIG_VERSION "3.9.4")
+set(LIBXDF_VERSION    "1.0.0")
+set(LIBBIOSIG_VERSION "3.9.5")
 
 # -- Language standards ------------------------------------------------------
 set(CMAKE_CXX_STANDARD 17)
