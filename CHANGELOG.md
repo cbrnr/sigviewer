@@ -1,3 +1,8 @@
+## [UNRELEASED] · YYYY-MM-DD
+### 🔧 Fixed
+- Fix multi-channel string/marker stream parsing ([#164](https://github.com/cbrnr/sigviewer/pull/164) by [Clemens Brunner](https://github.com/cbrnr))
+- Fix crash when loading XDF files containing a stream with only one sample ([#164](https://github.com/cbrnr/sigviewer/pull/164) by [Clemens Brunner](https://github.com/cbrnr))
+
 ## [0.7.1] · 2026-04-06
 ### ✨ Added
 - Add DMG background and Applications shortcut for macOS installer
