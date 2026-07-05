@@ -403,7 +403,7 @@ void SaveGuiCommand::evaluateEnabledness ()
         file_changed = (getFileState () == FILE_STATE_CHANGED);
         has_events = applicationContext()->getCurrentFileContext()->getEventManager()->getNumberOfEvents() > 0;
 
-        if (applicationContext()->getCurrentFileContext()->getFileName().endsWith("xdf"))
+        if (isXdfFileName (applicationContext()->getCurrentFileContext()->getFileName()))
             no_gdf_file_open = false;//Disabled because currently XDF to GDF conversion doesn't work
     }
 

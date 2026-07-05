@@ -6,6 +6,7 @@
 #include "xdf_reader.h"
 #include "biosig_basic_header.h"
 #include "file_handler_factory_registrator.h"
+#include "gzip_decompressor.h"
 #include "gui/progress_bar.h"
 #include "base/fixed_data_block.h"
 #include "gui/dialogs/resampling_dialog.h"
@@ -15,6 +16,7 @@
 #include <QMutexLocker>
 #include <QTime>
 #include <QMessageBox>
+#include <QTemporaryFile>
 
 #include <cmath>
 #include <algorithm>
@@ -31,6 +33,24 @@ QSharedPointer<Xdf> XDFdata = QSharedPointer<Xdf>(new Xdf);
 //-----------------------------------------------------------------------------
 
 FILE_SIGNAL_READER_REGISTRATION(xdf, XDFReader);
+FILE_SIGNAL_READER_REGISTRATION(xdfz, XDFReader);
+
+// "xdf.gz" is a compound (two-segment) extension, which the
+// FILE_SIGNAL_READER_REGISTRATION macro cannot handle (it stringizes and
+// token-pastes its argument into an identifier, and a dot breaks both), so
+// register it by hand instead.
+namespace Registrators_ {
+FileSignalReaderFactoryRegistrator file_reader_registrator_XDFReader_xdf_gz (
+    "xdf.gz", QSharedPointer<FileSignalReader> (new XDFReader));
+}
+
+//-----------------------------------------------------------------------------
+bool isXdfFileName (QString const& file_name)
+{
+    return file_name.endsWith ("xdf", Qt::CaseInsensitive) ||
+           file_name.endsWith ("xdfz", Qt::CaseInsensitive) ||
+           file_name.endsWith ("xdf.gz", Qt::CaseInsensitive);
+}
 
 //-----------------------------------------------------------------------------
 XDFReader::XDFReader() :
@@ -111,7 +131,25 @@ QString XDFReader::loadFixedHeader(const QString& file_path)
 
     if (QFile::exists(file_path)) //Double check whether file exists
     {
-        if (XDFdata->load_xdf(file_path.toStdString()) == 0)
+        QTemporaryFile decompressed_temp_file;
+        QString load_path = file_path;
+
+        if (isGzipCompressed (file_path))
+        {
+            load_path = decompressGzip (file_path, decompressed_temp_file);
+            if (load_path.isEmpty())
+            {
+                QMessageBox msgBox;
+                msgBox.setIcon(QMessageBox::Warning);
+                msgBox.setText(QObject::tr("Unable to decompress file."));
+                msgBox.setStandardButtons(QMessageBox::Ok);
+                msgBox.exec();
+
+                return "non-exist";
+            }
+        }
+
+        if (XDFdata->load_xdf(load_path.toStdString()) == 0)
         {
             XDFdata->createLabels();
 

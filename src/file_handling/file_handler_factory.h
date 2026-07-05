@@ -80,6 +80,14 @@ template<typename FileHandlerType>
 FileHandlerType* FileHandlerFactory<FileHandlerType>::getHandler (QString const& file_path)
 {
     QString file_ending = file_path.section('.', -1);
+
+    // Prefer a compound ending (e.g. "xdf.gz") over the plain last segment
+    // ("gz") when one was registered, so double extensions like .xdf.gz can
+    // be routed to a dedicated handler instead of the single-segment one.
+    QString compound_ending = file_path.section('.', -2);
+    if (compound_ending != file_ending && handler_map_.count(compound_ending))
+        file_ending = compound_ending;
+
     qDebug () << "FACTORY " << file_ending;
 
     if (handler_map_.count(file_ending))

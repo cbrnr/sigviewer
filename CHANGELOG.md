@@ -1,4 +1,7 @@
 ## [UNRELEASED] · YYYY-MM-DD
+### ✨ Added
+- Add support for opening gzip-compressed XDF files (.xdf.gz and .xdfz) ([#165](https://github.com/cbrnr/sigviewer/pull/165) by [Clemens Brunner](https://github.com/cbrnr))
+
 ### 🔧 Fixed
 - Fix multi-channel string/marker stream parsing ([#164](https://github.com/cbrnr/sigviewer/pull/164) by [Clemens Brunner](https://github.com/cbrnr))
 - Fix crash when loading XDF files containing a stream with only one sample ([#164](https://github.com/cbrnr/sigviewer/pull/164) by [Clemens Brunner](https://github.com/cbrnr))

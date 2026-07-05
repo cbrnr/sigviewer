@@ -16,6 +16,57 @@
 
 using namespace sigviewer;
 
+namespace {
+
+// Minimal FileSignalReader that just tags its header with a fixed string, so
+// a test can tell which of several registered handlers actually resolved.
+class TaggedMockHeader : public BasicHeader
+{
+public:
+    explicit TaggedMockHeader(QString const& tag) : BasicHeader(tag)
+    {
+        setFileTypeString(tag);
+    }
+
+    size_t getNumberOfSamples() const override { return 0; }
+};
+
+class TaggedMockReader : public FileSignalReader
+{
+public:
+    explicit TaggedMockReader(QString tag) : tag_(std::move(tag)) {}
+
+    QPair<FileSignalReader*, QString> createInstance(QString const&) override
+    {
+        return {new TaggedMockReader(tag_), ""};
+    }
+
+    QSharedPointer<DataBlock const> getSignalData(ChannelID, size_t, size_t) const override
+    {
+        return QSharedPointer<DataBlock const>();
+    }
+
+    QList<QSharedPointer<SignalEvent const>> getEvents() const override { return {}; }
+
+    QSharedPointer<BasicHeader> getBasicHeader() override
+    {
+        if (!header_)
+            header_ = QSharedPointer<BasicHeader>(new TaggedMockHeader(tag_));
+        return header_;
+    }
+
+    QSharedPointer<BasicHeader const> getBasicHeader() const override
+    {
+        return const_cast<TaggedMockReader*>(this)->getBasicHeader();
+    }
+
+private:
+    QString tag_;
+    QSharedPointer<BasicHeader> header_;
+};
+
+} // namespace
+
 class TestFileHandling : public QObject
 {
     Q_OBJECT
@@ -86,6 +137,29 @@ private slots:
                     found = true;
             QVERIFY(found);
         }
+    }
+
+    void compoundExtensionDispatch()
+    {
+        // A double extension like "xdf.gz" must resolve to a handler
+        // registered under that compound key in preference to one
+        // registered under the plain last segment ("gz").
+        QVERIFY(FileSignalReaderFactory::getInstance()->registerHandler(
+            "gz", QSharedPointer<FileSignalReader>(new TaggedMockReader("gz"))));
+        QVERIFY(FileSignalReaderFactory::getInstance()->registerHandler(
+            "mock.gz", QSharedPointer<FileSignalReader>(new TaggedMockReader("mock.gz"))));
+
+        QSharedPointer<FileSignalReader> resolved(
+            FileSignalReaderFactory::getInstance()->getHandler("sample.mock.gz"));
+        QVERIFY(!resolved.isNull());
+        QCOMPARE(resolved->getBasicHeader()->getFileTypeString(), QString("mock.gz"));
+
+        // A file whose ending doesn't match any compound key still falls
+        // back to the plain single-segment handler.
+        QSharedPointer<FileSignalReader> fallback(
+            FileSignalReaderFactory::getInstance()->getHandler("sample.other.gz"));
+        QVERIFY(!fallback.isNull());
+        QCOMPARE(fallback->getBasicHeader()->getFileTypeString(), QString("gz"));
     }
 };
 
