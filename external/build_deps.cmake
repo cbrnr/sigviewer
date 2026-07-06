@@ -39,7 +39,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 # -- Pinned versions (must match CMakeLists.txt) -----------------------------
-set(LIBXDF_VERSION    "1.0.0")
+set(LIBXDF_VERSION    "1.0.1")
 set(LIBBIOSIG_VERSION "3.9.5")
 
 # -- Resolve the destination directory ---------------------------------------

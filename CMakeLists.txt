@@ -8,7 +8,7 @@ project(sigviewer
 # -- Pinned versions of external dependencies --------------------------------
 # These are the ONLY accepted versions. Change them here (and rebuild the
 # pre-built artifacts) when upgrading a dependency.
-set(LIBXDF_VERSION    "1.0.0")
+set(LIBXDF_VERSION    "1.0.1")
 set(LIBBIOSIG_VERSION "3.9.5")
 
 # -- Language standards ------------------------------------------------------
