@@ -5,6 +5,8 @@
 ### 🔧 Fixed
 - Fix multi-channel string/marker stream parsing ([#164](https://github.com/cbrnr/sigviewer/pull/164) by [Clemens Brunner](https://github.com/cbrnr))
 - Fix crash when loading XDF files containing a stream with only one sample ([#164](https://github.com/cbrnr/sigviewer/pull/164) by [Clemens Brunner](https://github.com/cbrnr))
+- Update libxdf to 1.0.1, which skips empty marker samples in regular-rate string streams instead of turning each one into an event ([#166](https://github.com/cbrnr/sigviewer/pull/166) by [Clemens Brunner](https://github.com/cbrnr))
+
 
 ## [0.7.1] · 2026-04-06
 ### ✨ Added
