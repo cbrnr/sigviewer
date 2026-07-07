@@ -11,7 +11,7 @@ project(sigviewer
 # upgrading a dependency). They also document the minimum version required
 # when linking against system-provided libraries via SIGVIEWER_SYSTEM_DEPS
 # (see below); that path cannot enforce the minimum automatically.
-set(LIBXDF_VERSION    "1.0.1")
+set(LIBXDF_VERSION    "1.0.2")
 set(LIBBIOSIG_VERSION "3.9.5")
 
 # -- Language standards ------------------------------------------------------
@@ -38,15 +38,12 @@ find_package(ZLIB REQUIRED)
 #   OFF            - always download/build/statically link the pinned
 #                     versions, ignoring any system packages.
 #
-# Version enforcement only applies to the static, built-from-source path:
-#   - libxdf ships a CMake package config (as of 1.0.1) but no
-#     ConfigVersion.cmake, so find_package cannot check its version. A
-#     system libxdf is accepted as-is; ensure it is >= ${LIBXDF_VERSION}.
-#   - libbiosig ships neither a CMake config nor a pkg-config file. Its
-#     BIOSIG_VERSION_* macros/get_biosig_version() are an internal API
-#     counter (bumped on interface changes), not the package/release
-#     version, so they cannot be used to check for ${LIBBIOSIG_VERSION}
-#     either. Ensure a system libbiosig is >= ${LIBBIOSIG_VERSION}.
+# find_package(libxdf ${LIBXDF_VERSION} CONFIG) enforces a real minimum
+# version (libxdf ships a libxdfConfigVersion.cmake as of 1.0.2). libbiosig
+# has no such check: it ships neither a CMake config nor a pkg-config file,
+# and its BIOSIG_VERSION_*/get_biosig_version() are an internal API counter
+# (bumped on interface changes), not the package/release version, so a
+# system libbiosig is accepted as-is — ensure it is >= ${LIBBIOSIG_VERSION}.
 set(SIGVIEWER_SYSTEM_DEPS "AUTO" CACHE STRING
     "Link libxdf/libbiosig dynamically against system packages: AUTO, ON, or OFF")
 set_property(CACHE SIGVIEWER_SYSTEM_DEPS PROPERTY STRINGS AUTO ON OFF)
@@ -56,11 +53,11 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set(_sigviewer_system_deps FALSE)
 if(NOT SIGVIEWER_SYSTEM_DEPS STREQUAL "OFF")
     if(SIGVIEWER_SYSTEM_DEPS STREQUAL "ON")
-        find_package(libxdf CONFIG REQUIRED)
+        find_package(libxdf ${LIBXDF_VERSION} CONFIG REQUIRED)
         find_package(LibBiosig REQUIRED)
         set(_sigviewer_system_deps TRUE)
     else()
-        find_package(libxdf CONFIG QUIET)
+        find_package(libxdf ${LIBXDF_VERSION} CONFIG QUIET)
         find_package(LibBiosig QUIET)
         if(libxdf_FOUND AND LibBiosig_FOUND)
             set(_sigviewer_system_deps TRUE)
