@@ -4,7 +4,7 @@ This file provides guidance to AI coding agents when working with code in this r
 
 ## Overview
 
-SigViewer is a Qt 6 / C++17 desktop application for viewing and annotating biosignals (EEG, MEG, and similar time series). It reads signal files, displays channels in a scrolling browser, and lets users create, edit, and save events (annotations, artifact selections). File I/O relies on two statically-linked third-party libraries built from source: **libbiosig** (most biosignal formats, e.g. GDF/EDF/BDF) and **libxdf** (XDF streams).
+SigViewer is a Qt 6 / C++17 desktop application for viewing and annotating biosignals (EEG, MEG, and similar time series). It reads signal files, displays channels in a scrolling browser, and lets users create, edit, and save events (annotations, artifact selections). File I/O relies on two third-party libraries: **libbiosig** (most biosignal formats, e.g. GDF/EDF/BDF) and **libxdf** (XDF streams). By default these are built from source and statically linked; see `SIGVIEWER_SYSTEM_DEPS` below to link dynamically against system packages instead.
 
 ## Build & test
 
@@ -17,6 +17,10 @@ cmake --build build -j$(sysctl -n hw.logicalcpu)   # use $(nproc) on Linux
 ```
 
 The build fails fast if `external/versions.cmake` is missing or its recorded versions don't match `LIBXDF_VERSION` / `LIBBIOSIG_VERSION` in `CMakeLists.txt`. Rebuild deps with `cmake -P external/build_deps.cmake` (add `-DFORCE_REBUILD=ON`, or `-DFORCE_REBUILD_LIBXDF=ON` / `-DFORCE_REBUILD_LIBBIOSIG=ON` to force one).
+
+### Linking against system libxdf/libbiosig
+
+`SIGVIEWER_SYSTEM_DEPS` (cache var: `AUTO` default / `ON` / `OFF`) controls whether libxdf/libbiosig are linked dynamically against system packages instead of the pinned static build above. `AUTO` tries `find_package(libxdf CONFIG)` plus the bundled `cmake/FindLibBiosig.cmake` module and falls back to the static path above if either is missing; `ON` requires both and fails configure otherwise; `OFF` (what release builds use) always uses the static path, skipping `find_package` entirely. Neither library's version can be verified automatically at configure time — libxdf has no `ConfigVersion.cmake` upstream, and libbiosig's header version macros are stale (the 3.9.5 release still reports 3.0.2) — so system packages are accepted as-is against the documented minimum in `CMakeLists.txt`.
 
 Output: `build/SigViewer.app` (macOS), `build/sigviewer` (Linux), `build/sigviewer.exe` (Windows).
 

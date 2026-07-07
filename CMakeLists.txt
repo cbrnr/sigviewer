@@ -5,9 +5,12 @@ project(sigviewer
     LANGUAGES CXX C
 )
 
-# -- Pinned versions of external dependencies --------------------------------
-# These are the ONLY accepted versions. Change them here (and rebuild the
-# pre-built artifacts) when upgrading a dependency.
+# -- Pinned/minimum versions of external dependencies ------------------------
+# These are the ONLY accepted versions for the statically-built fallback
+# below (change them here, and rebuild the pre-built artifacts, when
+# upgrading a dependency). They also document the minimum version required
+# when linking against system-provided libraries via SIGVIEWER_SYSTEM_DEPS
+# (see below); that path cannot enforce the minimum automatically.
 set(LIBXDF_VERSION    "1.0.1")
 set(LIBBIOSIG_VERSION "3.9.5")
 
@@ -24,58 +27,111 @@ qt_standard_project_setup()
 # -- zlib (gzip decompression for .xdf.gz / .xdfz) ----------------------------
 find_package(ZLIB REQUIRED)
 
-# -- External pre-built dependencies -----------------------------------------
-# Override with -DDEPS_DIR=<path> if the libraries were built elsewhere.
-set(DEPS_DIR "${CMAKE_SOURCE_DIR}/external"
-    CACHE PATH "Directory containing built libxdf and libbiosig")
+# -- libxdf / libbiosig: system packages, or pre-built from source -----------
+# SIGVIEWER_SYSTEM_DEPS selects how libxdf and libbiosig are obtained:
+#   AUTO (default) - link against system-installed packages if both libxdf
+#                     and libbiosig can be found; otherwise download, build,
+#                     and statically link the pinned versions from source
+#                     (the historical/default behavior).
+#   ON             - require system packages; fail configure if either is
+#                     missing.
+#   OFF            - always download/build/statically link the pinned
+#                     versions, ignoring any system packages.
+#
+# Version enforcement only applies to the static, built-from-source path:
+#   - libxdf ships a CMake package config (as of 1.0.1) but no
+#     ConfigVersion.cmake, so find_package cannot check its version. A
+#     system libxdf is accepted as-is; ensure it is >= ${LIBXDF_VERSION}.
+#   - libbiosig ships neither a CMake config nor a pkg-config file, and its
+#     header version macros are known to be stale (e.g. the 3.9.5 release
+#     still reports 3.0.2), so no version check is possible for it either.
+#     Ensure a system libbiosig is >= ${LIBBIOSIG_VERSION}.
+set(SIGVIEWER_SYSTEM_DEPS "AUTO" CACHE STRING
+    "Link libxdf/libbiosig dynamically against system packages: AUTO, ON, or OFF")
+set_property(CACHE SIGVIEWER_SYSTEM_DEPS PROPERTY STRINGS AUTO ON OFF)
 
-# The versions.cmake file is written by external/build_deps.cmake and records
-# the versions of the libraries that are actually present in DEPS_DIR.
-set(_DEPS_VERSIONS_FILE "${DEPS_DIR}/versions.cmake")
-if(NOT EXISTS "${_DEPS_VERSIONS_FILE}")
-    message(FATAL_ERROR
-        "Dependency version file not found:\n"
-        "  ${_DEPS_VERSIONS_FILE}\n\n"
-        "Run the following command to build the required libraries:\n"
-        "  cmake -P external/build_deps.cmake\n"
-        "Or manually place the libraries in\n"
-        "${DEPS_DIR}\n"
-        "and create external/versions.cmake with:\n"
-        "  set(LIBXDF_VERSION_INSTALLED    \"${LIBXDF_VERSION}\")\n"
-        "  set(LIBBIOSIG_VERSION_INSTALLED \"${LIBBIOSIG_VERSION}\")"
-    )
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+set(_sigviewer_system_deps FALSE)
+if(NOT SIGVIEWER_SYSTEM_DEPS STREQUAL "OFF")
+    if(SIGVIEWER_SYSTEM_DEPS STREQUAL "ON")
+        find_package(libxdf CONFIG REQUIRED)
+        find_package(LibBiosig REQUIRED)
+        set(_sigviewer_system_deps TRUE)
+    else()
+        find_package(libxdf CONFIG QUIET)
+        find_package(LibBiosig QUIET)
+        if(libxdf_FOUND AND LibBiosig_FOUND)
+            set(_sigviewer_system_deps TRUE)
+        else()
+            message(STATUS
+                "System libxdf/libbiosig not found (or incomplete) — "
+                "falling back to building the pinned static libraries from source.")
+        endif()
+    endif()
 endif()
-include("${_DEPS_VERSIONS_FILE}")
 
-foreach(_lib IN ITEMS LIBXDF LIBBIOSIG)
-    set(_required "${${_lib}_VERSION}")
-    set(_found    "${${_lib}_VERSION_INSTALLED}")
-    if(NOT _found STREQUAL _required)
+if(_sigviewer_system_deps)
+    message(STATUS "Using system libxdf and libbiosig (dynamically linked)")
+    add_library(dep_libxdf ALIAS XDF::xdf)
+    add_library(dep_libbiosig ALIAS LibBiosig::LibBiosig)
+else()
+    # -- External pre-built dependencies -----------------------------------
+    # Override with -DDEPS_DIR=<path> if the libraries were built elsewhere.
+    set(DEPS_DIR "${CMAKE_SOURCE_DIR}/external"
+        CACHE PATH "Directory containing built libxdf and libbiosig")
+
+    # The versions.cmake file is written by external/build_deps.cmake and
+    # records the versions of the libraries that are actually present in
+    # DEPS_DIR.
+    set(_DEPS_VERSIONS_FILE "${DEPS_DIR}/versions.cmake")
+    if(NOT EXISTS "${_DEPS_VERSIONS_FILE}")
         message(FATAL_ERROR
-            "${_lib} version mismatch.\n"
-            "  Required : ${_required}\n"
-            "  Installed: ${_found}\n\n"
-            "Run cmake -P external/build_deps.cmake to install the correct version."
+            "Dependency version file not found:\n"
+            "  ${_DEPS_VERSIONS_FILE}\n\n"
+            "Run the following command to build the required libraries:\n"
+            "  cmake -P external/build_deps.cmake\n"
+            "Or manually place the libraries in\n"
+            "${DEPS_DIR}\n"
+            "and create external/versions.cmake with:\n"
+            "  set(LIBXDF_VERSION_INSTALLED    \"${LIBXDF_VERSION}\")\n"
+            "  set(LIBBIOSIG_VERSION_INSTALLED \"${LIBBIOSIG_VERSION}\")\n\n"
+            "Or install libxdf/libbiosig as system packages so that "
+            "find_package can locate them (see SIGVIEWER_SYSTEM_DEPS above)."
         )
     endif()
-endforeach()
-unset(_lib)
-unset(_required)
-unset(_found)
+    include("${_DEPS_VERSIONS_FILE}")
 
-# Create IMPORTED targets so consumers get include dirs for free via
-# target_link_libraries.
-add_library(dep_libxdf STATIC IMPORTED)
-set_target_properties(dep_libxdf PROPERTIES
-    IMPORTED_LOCATION             "${DEPS_DIR}/lib/libxdf.a"
-    INTERFACE_INCLUDE_DIRECTORIES "${DEPS_DIR}/include"
-)
+    foreach(_lib IN ITEMS LIBXDF LIBBIOSIG)
+        set(_required "${${_lib}_VERSION}")
+        set(_found    "${${_lib}_VERSION_INSTALLED}")
+        if(NOT _found STREQUAL _required)
+            message(FATAL_ERROR
+                "${_lib} version mismatch.\n"
+                "  Required : ${_required}\n"
+                "  Installed: ${_found}\n\n"
+                "Run cmake -P external/build_deps.cmake to install the correct version."
+            )
+        endif()
+    endforeach()
+    unset(_lib)
+    unset(_required)
+    unset(_found)
 
-add_library(dep_libbiosig STATIC IMPORTED)
-set_target_properties(dep_libbiosig PROPERTIES
-    IMPORTED_LOCATION             "${DEPS_DIR}/lib/libbiosig.a"
-    INTERFACE_INCLUDE_DIRECTORIES "${DEPS_DIR}/include"
-)
+    # Create IMPORTED targets so consumers get include dirs for free via
+    # target_link_libraries.
+    add_library(dep_libxdf STATIC IMPORTED)
+    set_target_properties(dep_libxdf PROPERTIES
+        IMPORTED_LOCATION             "${DEPS_DIR}/lib/libxdf.a"
+        INTERFACE_INCLUDE_DIRECTORIES "${DEPS_DIR}/include"
+    )
+
+    add_library(dep_libbiosig STATIC IMPORTED)
+    set_target_properties(dep_libbiosig PROPERTIES
+        IMPORTED_LOCATION             "${DEPS_DIR}/lib/libbiosig.a"
+        INTERFACE_INCLUDE_DIRECTORIES "${DEPS_DIR}/include"
+    )
+endif()
 
 # -- Sources -----------------------------------------------------------------
 qt_add_library(sigviewer_objects OBJECT
@@ -314,6 +370,19 @@ target_include_directories(sigviewer_objects PUBLIC
     "${CMAKE_CURRENT_BINARY_DIR}/sigviewer_objects_autogen/include"
 )
 
+# A dynamically-linked system libbiosig carries its own transitive
+# dependencies via its shared-library dependency chain. The statically-built
+# libbiosig cannot, so link its dependencies explicitly here: on macOS and
+# Windows it uses libiconv, and on Windows it also uses Winsock
+# (ntohl/htonl/getaddrinfo).
+set(_sigviewer_static_biosig_libs "")
+if(NOT _sigviewer_system_deps)
+    list(APPEND _sigviewer_static_biosig_libs
+        $<$<OR:$<PLATFORM_ID:Darwin>,$<PLATFORM_ID:Windows>>:iconv>
+        $<$<PLATFORM_ID:Windows>:ws2_32>
+    )
+endif()
+
 target_link_libraries(sigviewer_objects PUBLIC
     Qt6::Core
     Qt6::Gui
@@ -323,11 +392,7 @@ target_link_libraries(sigviewer_objects PUBLIC
     dep_libxdf
     dep_libbiosig
     ZLIB::ZLIB
-    # libbiosig is a static library and cannot carry its own transitive
-    # dependencies.  On macOS and Windows it uses libiconv; on Windows it also
-    # uses Winsock (ntohl/htonl/getaddrinfo).
-    $<$<OR:$<PLATFORM_ID:Darwin>,$<PLATFORM_ID:Windows>>:iconv>
-    $<$<PLATFORM_ID:Windows>:ws2_32>
+    ${_sigviewer_static_biosig_libs}
 )
 
 # -- Main application --------------------------------------------------------
