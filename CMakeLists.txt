@@ -42,10 +42,11 @@ find_package(ZLIB REQUIRED)
 #   - libxdf ships a CMake package config (as of 1.0.1) but no
 #     ConfigVersion.cmake, so find_package cannot check its version. A
 #     system libxdf is accepted as-is; ensure it is >= ${LIBXDF_VERSION}.
-#   - libbiosig ships neither a CMake config nor a pkg-config file, and its
-#     header version macros are known to be stale (e.g. the 3.9.5 release
-#     still reports 3.0.2), so no version check is possible for it either.
-#     Ensure a system libbiosig is >= ${LIBBIOSIG_VERSION}.
+#   - libbiosig ships neither a CMake config nor a pkg-config file. Its
+#     BIOSIG_VERSION_* macros/get_biosig_version() are an internal API
+#     counter (bumped on interface changes), not the package/release
+#     version, so they cannot be used to check for ${LIBBIOSIG_VERSION}
+#     either. Ensure a system libbiosig is >= ${LIBBIOSIG_VERSION}.
 set(SIGVIEWER_SYSTEM_DEPS "AUTO" CACHE STRING
     "Link libxdf/libbiosig dynamically against system packages: AUTO, ON, or OFF")
 set_property(CACHE SIGVIEWER_SYSTEM_DEPS PROPERTY STRINGS AUTO ON OFF)

@@ -139,7 +139,7 @@ The CMake cache option `SIGVIEWER_SYSTEM_DEPS` controls how libbiosig and libxdf
 System packages are located via `find_package(libxdf CONFIG)` and a bundled `cmake/FindLibBiosig.cmake` module. Neither library can have its version verified automatically at configure time:
 
 - libxdf ships a CMake package config, but as of 1.0.1 it has no `libxdfConfigVersion.cmake`, so `find_package` cannot enforce a minimum version.
-- libbiosig ships neither a CMake config nor a pkg-config file, and its header version macros are stale (e.g. the 3.9.5 release still reports 3.0.2 via `BIOSIG_VERSION_MAJOR`/`_MINOR` and `get_biosig_version()`).
+- libbiosig ships neither a CMake config nor a pkg-config file, and its `BIOSIG_VERSION_MAJOR`/`_MINOR` macros and `get_biosig_version()` are an internal API/ABI counter (bumped on interface changes), not the package/release version, so they can't be used to check for a minimum release version either.
 
 If you package SigViewer against system libraries, make sure they satisfy the pinned minimums in `CMakeLists.txt` (`LIBXDF_VERSION`, `LIBBIOSIG_VERSION`) yourself.
 

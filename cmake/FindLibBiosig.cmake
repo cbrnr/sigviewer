@@ -4,13 +4,15 @@
 #
 # libbiosig ships neither a CMake package config nor a pkg-config file, so it
 # cannot be located via find_package(... CONFIG) or PkgConfig. It also has no
-# reliable way to report its version at build time: the BIOSIG_VERSION_*
-# macros in its headers (and the get_biosig_version() runtime function, which
-# is computed from those same macros) are stale — e.g. the
-# biosig-3.9.5 release still reports version 3.0.2. Because of that, this
-# module performs no version check; it only verifies that the header and
-# library are present. Callers are responsible for ensuring the installed
-# version satisfies SigViewer's documented minimum (see CMakeLists.txt).
+# reliable way to report its release version at build time: the
+# BIOSIG_VERSION_* macros in its headers (and the get_biosig_version()
+# runtime function, which is computed from those same macros) are an
+# internal API/ABI counter that libbiosig bumps on interface changes, not
+# the package/release version — so they can't be used to check for a
+# minimum release version. Because of that, this module performs no version
+# check; it only verifies that the header and library are present. Callers
+# are responsible for ensuring the installed version satisfies SigViewer's
+# documented minimum (see CMakeLists.txt).
 #
 # Defines the imported target LibBiosig::LibBiosig on success.
 
