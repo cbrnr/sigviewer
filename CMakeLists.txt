@@ -30,9 +30,8 @@ find_package(ZLIB REQUIRED)
 # ON requires system packages instead, which fails configure if either is missing.
 #
 # find_package(libxdf ${LIBXDF_VERSION} CONFIG) enforces a real minimum
-# version (as of libxdf 1.0.2). libbiosig has no reliable version check (see
-# cmake/FindLibBiosig.cmake) — a system libbiosig is accepted as-is; ensure
-# it is >= ${LIBBIOSIG_VERSION}.
+# version. libbiosig has no reliable version check (see cmake/FindLibBiosig.cmake);
+# a system libbiosig is accepted as-is; ensure it is >= ${LIBBIOSIG_VERSION}.
 option(SIGVIEWER_SYSTEM_DEPS
     "Link libxdf/libbiosig dynamically against system packages instead of building pinned static libraries from source"
     OFF)
