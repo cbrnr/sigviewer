@@ -1,11 +1,13 @@
 ## [UNRELEASED] · YYYY-MM-DD
 ### ✨ Added
 - Add support for opening gzip-compressed XDF files (.xdf.gz and .xdfz) ([#165](https://github.com/cbrnr/sigviewer/pull/165) by [Clemens Brunner](https://github.com/cbrnr))
+- Add `SIGVIEWER_SYSTEM_DEPS` build option to link dynamically against system-installed libbiosig and libxdf instead of building them from source ([#168](https://github.com/cbrnr/sigviewer/issues/168) by [Clemens Brunner](https://github.com/cbrnr))
 
 ### 🔧 Fixed
 - Fix multi-channel string/marker stream parsing ([#164](https://github.com/cbrnr/sigviewer/pull/164) by [Clemens Brunner](https://github.com/cbrnr))
 - Fix crash when loading XDF files containing a stream with only one sample ([#164](https://github.com/cbrnr/sigviewer/pull/164) by [Clemens Brunner](https://github.com/cbrnr))
-- Update libxdf to 1.0.2, which skips empty marker samples in regular-rate string streams instead of turning each one into an event ([#166](https://github.com/cbrnr/sigviewer/pull/166) by [Clemens Brunner](https://github.com/cbrnr))
+- Update libxdf to 1.0.1, which skips empty marker samples in regular-rate string streams instead of turning each one into an event ([#166](https://github.com/cbrnr/sigviewer/pull/166) by [Clemens Brunner](https://github.com/cbrnr))
+- Update libxdf to 1.0.2, which adds a CMake package version file so that a system-installed libxdf can be found with a minimum-version requirement ([#168](https://github.com/cbrnr/sigviewer/issues/168) by [Clemens Brunner](https://github.com/cbrnr))
 
 ## [0.7.1] · 2026-04-06
 ### ✨ Added
