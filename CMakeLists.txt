@@ -48,6 +48,14 @@ set(SIGVIEWER_SYSTEM_DEPS "AUTO" CACHE STRING
     "Link libxdf/libbiosig dynamically against system packages: AUTO, ON, or OFF")
 set_property(CACHE SIGVIEWER_SYSTEM_DEPS PROPERTY STRINGS AUTO ON OFF)
 
+# Reject typos/unexpected values (e.g. -DSIGVIEWER_SYSTEM_DEPS=On) instead of
+# silently treating them as AUTO, which would mask a missing dependency.
+if(NOT SIGVIEWER_SYSTEM_DEPS MATCHES "^(AUTO|ON|OFF)$")
+    message(FATAL_ERROR
+        "Invalid SIGVIEWER_SYSTEM_DEPS value '${SIGVIEWER_SYSTEM_DEPS}'. "
+        "Must be one of: AUTO, ON, OFF.")
+endif()
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 set(_sigviewer_system_deps FALSE)
