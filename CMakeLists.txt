@@ -6,11 +6,9 @@ project(sigviewer
 )
 
 # -- Pinned/minimum versions of external dependencies ------------------------
-# These are the ONLY accepted versions for the statically-built fallback
-# below (change them here, and rebuild the pre-built artifacts, when
-# upgrading a dependency). They also document the minimum version required
-# when linking against system-provided libraries via SIGVIEWER_SYSTEM_DEPS
-# (see below); that path cannot enforce the minimum automatically.
+# The ONLY accepted versions for the static build below (change here, then
+# rebuild). Also the documented minimum for system packages via
+# SIGVIEWER_SYSTEM_DEPS, which cannot enforce it automatically (see below).
 set(LIBXDF_VERSION    "1.0.2")
 set(LIBBIOSIG_VERSION "3.9.5")
 
@@ -28,56 +26,22 @@ qt_standard_project_setup()
 find_package(ZLIB REQUIRED)
 
 # -- libxdf / libbiosig: system packages, or pre-built from source -----------
-# SIGVIEWER_SYSTEM_DEPS selects how libxdf and libbiosig are obtained:
-#   AUTO (default) - link against system-installed packages if both libxdf
-#                     and libbiosig can be found; otherwise download, build,
-#                     and statically link the pinned versions from source
-#                     (the historical/default behavior).
-#   ON             - require system packages; fail configure if either is
-#                     missing.
-#   OFF            - always download/build/statically link the pinned
-#                     versions, ignoring any system packages.
+# SIGVIEWER_SYSTEM_DEPS (default OFF) statically links the pinned versions.
+# ON requires system packages instead, which fails configure if either is missing.
 #
 # find_package(libxdf ${LIBXDF_VERSION} CONFIG) enforces a real minimum
-# version (libxdf ships a libxdfConfigVersion.cmake as of 1.0.2). libbiosig
-# has no such check: it ships neither a CMake config nor a pkg-config file,
-# and its BIOSIG_VERSION_*/get_biosig_version() are an internal API counter
-# (bumped on interface changes), not the package/release version, so a
-# system libbiosig is accepted as-is — ensure it is >= ${LIBBIOSIG_VERSION}.
-set(SIGVIEWER_SYSTEM_DEPS "AUTO" CACHE STRING
-    "Link libxdf/libbiosig dynamically against system packages: AUTO, ON, or OFF")
-set_property(CACHE SIGVIEWER_SYSTEM_DEPS PROPERTY STRINGS AUTO ON OFF)
-
-# Reject typos/unexpected values (e.g. -DSIGVIEWER_SYSTEM_DEPS=On) instead of
-# silently treating them as AUTO, which would mask a missing dependency.
-if(NOT SIGVIEWER_SYSTEM_DEPS MATCHES "^(AUTO|ON|OFF)$")
-    message(FATAL_ERROR
-        "Invalid SIGVIEWER_SYSTEM_DEPS value '${SIGVIEWER_SYSTEM_DEPS}'. "
-        "Must be one of: AUTO, ON, OFF.")
-endif()
+# version (as of libxdf 1.0.2). libbiosig has no reliable version check (see
+# cmake/FindLibBiosig.cmake) — a system libbiosig is accepted as-is; ensure
+# it is >= ${LIBBIOSIG_VERSION}.
+option(SIGVIEWER_SYSTEM_DEPS
+    "Link libxdf/libbiosig dynamically against system packages instead of building pinned static libraries from source"
+    OFF)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-set(_sigviewer_system_deps FALSE)
-if(NOT SIGVIEWER_SYSTEM_DEPS STREQUAL "OFF")
-    if(SIGVIEWER_SYSTEM_DEPS STREQUAL "ON")
-        find_package(libxdf ${LIBXDF_VERSION} CONFIG REQUIRED)
-        find_package(LibBiosig REQUIRED)
-        set(_sigviewer_system_deps TRUE)
-    else()
-        find_package(libxdf ${LIBXDF_VERSION} CONFIG QUIET)
-        find_package(LibBiosig QUIET)
-        if(libxdf_FOUND AND LibBiosig_FOUND)
-            set(_sigviewer_system_deps TRUE)
-        else()
-            message(STATUS
-                "System libxdf/libbiosig not found (or incomplete) — "
-                "falling back to building the pinned static libraries from source.")
-        endif()
-    endif()
-endif()
-
-if(_sigviewer_system_deps)
+if(SIGVIEWER_SYSTEM_DEPS)
+    find_package(libxdf ${LIBXDF_VERSION} CONFIG REQUIRED)
+    find_package(LibBiosig REQUIRED)
     message(STATUS "Using system libxdf and libbiosig (dynamically linked)")
     add_library(dep_libxdf ALIAS XDF::xdf)
     add_library(dep_libbiosig ALIAS LibBiosig::LibBiosig)
@@ -376,19 +340,11 @@ target_include_directories(sigviewer_objects PUBLIC
     "${CMAKE_CURRENT_BINARY_DIR}/sigviewer_objects_autogen/include"
 )
 
-# A dynamically-linked system libbiosig carries its own transitive
-# dependencies via its shared-library dependency chain. The statically-built
-# libbiosig cannot, so link its dependencies explicitly here: on macOS and
-# Windows it uses libiconv, and on Windows it also uses Winsock
-# (ntohl/htonl/getaddrinfo).
-set(_sigviewer_static_biosig_libs "")
-if(NOT _sigviewer_system_deps)
-    list(APPEND _sigviewer_static_biosig_libs
-        $<$<OR:$<PLATFORM_ID:Darwin>,$<PLATFORM_ID:Windows>>:iconv>
-        $<$<PLATFORM_ID:Windows>:ws2_32>
-    )
-endif()
-
+# libbiosig uses libiconv on macOS/Windows and Winsock on Windows
+# (ntohl/htonl/getaddrinfo); on Linux these are part of glibc, so no separate
+# library is needed there. Linked unconditionally, not just for the static
+# build above, since a "system" libbiosig can be static too (see
+# cmake/FindLibBiosig.cmake) — linking these when unneeded is harmless.
 target_link_libraries(sigviewer_objects PUBLIC
     Qt6::Core
     Qt6::Gui
@@ -398,7 +354,8 @@ target_link_libraries(sigviewer_objects PUBLIC
     dep_libxdf
     dep_libbiosig
     ZLIB::ZLIB
-    ${_sigviewer_static_biosig_libs}
+    $<$<OR:$<PLATFORM_ID:Darwin>,$<PLATFORM_ID:Windows>>:iconv>
+    $<$<PLATFORM_ID:Windows>:ws2_32>
 )
 
 # -- Main application --------------------------------------------------------

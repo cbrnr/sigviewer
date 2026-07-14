@@ -14,7 +14,7 @@ SigViewer is an application for viewing biosignals such as EEG or MEG time serie
 
 SigViewer requires a standard-compliant C++17 build toolchain, for example recent versions of [GCC](https://gcc.gnu.org/) or [Clang](https://clang.llvm.org/). Furthermore, SigViewer depends on [Qt 6](https://www.qt.io/) and [CMake](https://cmake.org/) 3.21 or later.
 
-In addition, SigViewer depends on [libbiosig](http://biosig.sourceforge.net/) and [libxdf](https://github.com/xdf-modules/libxdf). By default, CMake links against these two libraries dynamically if suitable versions are already installed on the system, and otherwise falls back to downloading, building, and statically linking pinned versions automatically (see [Linking against libbiosig and libxdf](#linking-against-libbiosig-and-libxdf) below).
+In addition, SigViewer depends on [libbiosig](http://biosig.sourceforge.net/) and [libxdf](https://github.com/xdf-modules/libxdf), which are built from source and statically linked by default (see [Linking against libbiosig and libxdf](#linking-against-libbiosig-and-libxdf) below for dynamic linking against system packages).
 
 
 ### macOS
@@ -130,13 +130,12 @@ The installer is written to `build/SigViewer-<version>.exe`.
 
 ## Linking against libbiosig and libxdf
 
-The CMake cache option `SIGVIEWER_SYSTEM_DEPS` controls how libbiosig and libxdf are obtained:
+The CMake option `SIGVIEWER_SYSTEM_DEPS` controls how libbiosig and libxdf are obtained:
 
-- `AUTO` (default) — link dynamically against system-installed packages if both can be found; otherwise download, build, and statically link the pinned versions from source.
-- `ON` — require system packages; configure fails if either is missing. Useful for distro packaging (e.g. `-DSIGVIEWER_SYSTEM_DEPS=ON`), where bundling static copies of dependencies is undesirable.
-- `OFF` — always download, build, and statically link the pinned versions, ignoring any system packages. This is what the official release builds use to guarantee the exact tested versions.
+- `OFF` (default) — statically link the pinned versions, built from source. This is what release builds use, since it is the only combination that is actually tested.
+- `ON` — require system packages instead; configure fails if either is missing. You are responsible for ensuring the installed versions satisfy SigViewer's documented minimums.
 
-System packages are located via `find_package(libxdf CONFIG)` and a bundled `cmake/FindLibBiosig.cmake` module. `find_package(libxdf ${LIBXDF_VERSION} CONFIG)` enforces a real minimum version (libxdf ships a `libxdfConfigVersion.cmake` as of 1.0.2). libbiosig has no such check: it ships neither a CMake config nor a pkg-config file, and its `BIOSIG_VERSION_MAJOR`/`_MINOR` macros and `get_biosig_version()` are an internal API/ABI counter (bumped on interface changes), not the package/release version, so a system libbiosig is accepted as-is — make sure it satisfies the pinned minimum in `CMakeLists.txt` (`LIBBIOSIG_VERSION`) yourself.
+System packages are located via `find_package(libxdf CONFIG)` and a bundled `cmake/FindLibBiosig.cmake` module. libxdf's version is enforced automatically, but libbiosig has no reliable version check (see `cmake/FindLibBiosig.cmake` for why), so it is accepted as-is; make sure it satisfies `LIBBIOSIG_VERSION` in `CMakeLists.txt` yourself.
 
 
 ## Testing
