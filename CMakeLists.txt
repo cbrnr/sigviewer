@@ -9,7 +9,7 @@ project(sigviewer
 # The ONLY accepted versions for the static build below (change here, then
 # rebuild). Also the documented minimum for system packages via
 # SIGVIEWER_SYSTEM_DEPS, which cannot enforce it automatically (see below).
-set(LIBXDF_VERSION    "1.0.2")
+set(LIBXDF_VERSION    "1.0.3")
 set(LIBBIOSIG_VERSION "3.9.5")
 
 # -- Language standards ------------------------------------------------------
