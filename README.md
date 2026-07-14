@@ -14,7 +14,7 @@ SigViewer is an application for viewing biosignals such as EEG or MEG time serie
 
 SigViewer requires a standard-compliant C++17 build toolchain, for example recent versions of [GCC](https://gcc.gnu.org/) or [Clang](https://clang.llvm.org/). Furthermore, SigViewer depends on [Qt 6](https://www.qt.io/) and [CMake](https://cmake.org/) 3.21 or later.
 
-In addition, SigViewer depends on [libbiosig](http://biosig.sourceforge.net/) and [libxdf](https://github.com/xdf-modules/libxdf), which are built from source automatically.
+In addition, SigViewer depends on [libbiosig](http://biosig.sourceforge.net/) and [libxdf](https://github.com/xdf-modules/libxdf), which are built from source and statically linked by default (see [Linking against libbiosig and libxdf](#linking-against-libbiosig-and-libxdf) below for dynamic linking against system packages).
 
 
 ### macOS
@@ -126,6 +126,16 @@ Then build the installer using [Inno Setup](https://jrsoftware.org/isinfo.php) (
 ```
 
 The installer is written to `build/SigViewer-<version>.exe`.
+
+
+## Linking against libbiosig and libxdf
+
+The CMake option `SIGVIEWER_SYSTEM_DEPS` controls how libbiosig and libxdf are obtained:
+
+- `OFF` (default) — statically link the pinned versions, built from source. This is what release builds use, since it is the only combination that is actually tested.
+- `ON` — require system packages instead; configure fails if either is missing. You are responsible for ensuring the installed versions satisfy SigViewer's documented minimums.
+
+System packages are located via `find_package(libxdf CONFIG)` and a bundled `cmake/FindLibBiosig.cmake` module. libxdf's version is enforced automatically, but libbiosig has no reliable version check (see `cmake/FindLibBiosig.cmake` for why), so it is accepted as-is; make sure it satisfies `LIBBIOSIG_VERSION` in `CMakeLists.txt` yourself.
 
 
 ## Testing
