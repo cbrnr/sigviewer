@@ -3,6 +3,8 @@
 // License: GPL-3.0
 
 #include "application_context.h"
+#include "base/file_states.h"
+#include "file_handling/event_csv_exporter.h"
 #include "file_handling/file_signal_writer_factory.h"
 #include "file_handling/file_signal_reader_factory.h"
 #include "gui/commands/open_file_gui_command.h"
@@ -11,8 +13,11 @@
 #include "mock_file_signal_reader.h"
 
 #include <QApplication>
+#include <QFile>
 #include <QTemporaryFile>
 #include <QtTest>
+
+#include <algorithm>
 
 using namespace sigviewer;
 
@@ -137,6 +142,52 @@ private slots:
                     found = true;
             QVERIFY(found);
         }
+    }
+
+    void exportEventsToCSVAfterDeletion()
+    {
+        auto event_manager = ApplicationContext::getInstance()
+                                 ->getCurrentFileContext()
+                                 ->getEventManager();
+        event_manager->removeEvent(1);
+        ApplicationContext::getInstance()->getCurrentFileContext()
+            ->setState(FILE_STATE_UNCHANGED);
+
+        QTemporaryFile file("XXXXXX.csv");
+        QVERIFY(file.open());
+        QString const file_name = file.fileName();
+        file.close();
+
+        QVERIFY(writeEventsToCSV(*event_manager, file_name));
+
+        QFile exported_file(file_name);
+        QVERIFY(exported_file.open(QIODevice::ReadOnly | QIODevice::Text));
+        QStringList const exported_rows =
+            QString::fromUtf8(exported_file.readAll()).split('\n', Qt::SkipEmptyParts);
+
+        QList<EventID> event_ids = event_manager->getAllEvents();
+        std::sort(event_ids.begin(), event_ids.end(),
+                  [&event_manager](EventID left, EventID right) {
+                      return event_manager->getEvent(left)->getPosition()
+                             < event_manager->getEvent(right)->getPosition();
+                  });
+
+        QStringList expected_rows = {"position,duration,channel,type,name"};
+        for (EventID event_id : event_ids)
+        {
+            QSharedPointer<SignalEvent const> event = event_manager->getEvent(event_id);
+            QString name = event_manager->getNameOfEvent(event_id);
+            name.remove(',');
+            expected_rows.append(
+                QString("%1,%2,%3,%4,%5")
+                    .arg(static_cast<qulonglong>(event->getPosition()))
+                    .arg(static_cast<qulonglong>(event->getDuration()))
+                    .arg(event->getChannel())
+                    .arg(event->getType())
+                    .arg(name));
+        }
+
+        QCOMPARE(exported_rows, expected_rows);
     }
 
     void compoundExtensionDispatch()

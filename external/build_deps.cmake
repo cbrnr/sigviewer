@@ -181,17 +181,22 @@ function(_build_libbiosig_from_source version dest_dir)
 
     find_program(_make_exe NAMES make gmake REQUIRED)
 
-    # GCC 14 made implicit function declarations a hard error.  biosig4c++
-    # was written for older compilers and has two related problems:
+    # Recent GCC and MinGW updates expose several libbiosig build problems:
     #
     # 1. win32/getline.c defines getline() before getdelim(), with no forward
     #    declaration between them, so GCC sees an implicit declaration of
-    #    getdelim inside getline.  Fix: prepend a forward declaration.
+    #    getdelim inside getline. Fix: prepend a forward declaration.
     #
     # 2. Several other source files (e.g. t210/sopen_abf_read.c) call getline()
-    #    without including any header that declares it.  Fix: patch the
+    #    without including any header that declares it. Fix: patch the
     #    hand-written biosig4c++/Makefile to add the flag that downgrades the
     #    error back to a warning, which is all older GCC ever emitted for this.
+    #
+    # 3. Two libbiosig parsers include iconv.h before biosig.h. On MinGW,
+    #    iconv.h exposes the legacy CRT sopen() alias, which conflicts with
+    #    libbiosig's public sopen() API. Defining NO_OLDNAMES in just those
+    #    translation units suppresses the alias without hiding compatibility
+    #    typedefs needed by other libbiosig sources.
     if(CMAKE_HOST_WIN32)
         set(_getline_c "${_src_dir}/biosig4c++/win32/getline.c")
         file(READ "${_getline_c}" _getline_content)
@@ -201,6 +206,16 @@ function(_build_libbiosig_from_source version dest_dir)
             "ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream);\n"
             "${_getline_content}"
         )
+
+        foreach(_sopen_source IN ITEMS
+                "${_src_dir}/biosig4c++/t210/sopen_acqbiopac.c"
+                "${_src_dir}/biosig4c++/t210/sopen_nicolet.c")
+            file(READ "${_sopen_source}" _sopen_content)
+            file(WRITE "${_sopen_source}"
+                "#include <sys/types.h>\n"
+                "#define NO_OLDNAMES\n"
+                "${_sopen_content}")
+        endforeach()
 
         set(_biosig_mf "${_src_dir}/biosig4c++/Makefile")
         file(READ "${_biosig_mf}" _mf_content)

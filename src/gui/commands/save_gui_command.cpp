@@ -5,20 +5,16 @@
 
 #include "save_gui_command.h"
 #include "gui/gui_helper_functions.h"
+#include "file_handling/event_csv_exporter.h"
 #include "file_handling/file_signal_writer_factory.h"
 #include "open_file_gui_command.h"
 #include "file_handling/xdf_reader.h"
-#include "fstream"
 
 #include <QMessageBox>
-#include <QFileDialog>
 #include <QPaintEngine>
 #include <QFile>
 #include <QPainter>
 #include <QPointer>
-
-#include <algorithm>
-#include <fstream>
 
 namespace sigviewer
 {
@@ -329,59 +325,9 @@ void SaveGuiCommand::exportEventsToCSV ()
     if (new_file_path.size() == 0)
         return;
 
-    std::ofstream file;
-    file.open(new_file_path.toStdString());
-
-    if (file.is_open())
-    {
-        file << "position,duration,channel,type,name\n";
-
-        QSharedPointer<EventManager> event_manager_pt = applicationContext()
-                ->getCurrentFileContext()->getEventManager();
-
-        struct row {
-            size_t pos;
-            size_t dur;
-            int chan;
-            int id;
-            QString name;
-        };
-
-        QVector<row> events;
-
-        for (unsigned int i = 0; i < event_manager_pt->getNumberOfEvents(); i++)
-        {
-            auto evt = event_manager_pt->getEvent(i);
-            if (evt != NULL) {
-                row tmp = {
-                    evt->getPosition(),
-                    evt->getDuration(),
-                    evt->getChannel(),
-                    evt->getType(),
-                    event_manager_pt->getNameOfEvent(i)
-                };
-                events.append(tmp);
-            }
-        }
-
-        std::sort(events.begin(),
-                  events.end(),
-                  [](const row& a, const row& b) {
-                      return a.pos < b.pos;
-                  }
-        );
-
-        for (int i = 0; i < events.size(); ++i)
-        {
-            file << events[i].pos << "," <<
-                    events[i].dur << "," <<
-                    events[i].chan << "," <<
-                    events[i].id << "," <<
-                    events[i].name.remove(",").toStdString() << "\n";
-        }
-        file.close();
-    }
-    else
+    QSharedPointer<EventManager> event_manager = applicationContext()
+            ->getCurrentFileContext()->getEventManager();
+    if (!writeEventsToCSV(*event_manager, new_file_path))
     {
         QMessageBox::critical (0, current_file_path, tr("Exporting events to CSV failed!\nIs the target file open in another application?"));
     }
