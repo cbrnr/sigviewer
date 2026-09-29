@@ -4,9 +4,11 @@ This file provides guidance to AI coding agents when working with code in this r
 
 ## Overview
 
-SigViewer is a Qt 6 / C++17 desktop application for viewing and annotating biosignals (EEG, MEG, and similar time series). It reads signal files, displays channels in a scrolling browser, and lets users create, edit, and save events (annotations, artifact selections). File I/O relies on two third-party libraries: **libbiosig** (most biosignal formats, e.g. GDF/EDF/BDF) and **libxdf** (XDF streams). By default these are built from source and statically linked; see `SIGVIEWER_SYSTEM_DEPS` below to link dynamically against system packages instead.
+SigViewer is a Qt 6 / C++17 desktop application for viewing and annotating biosignals (EEG, MEG, and similar time series). It reads signal files, displays channels in a scrolling browser, and lets users create, edit, and save events (annotations, artifact selections). File I/O relies primarily on two third-party libraries: **libbiosig** (most biosignal formats, e.g. GDF/EDF/BDF) and **libxdf** (XDF streams). **Zlib** provides gzip decompression for compressed XDF files. By default libbiosig and libxdf are built from source and statically linked; see `SIGVIEWER_SYSTEM_DEPS` below to link dynamically against system packages instead.
 
 ## Build & test
+
+SigViewer itself requires a C++17-capable compiler. Building its libxdf dependency also requires C++20 compiler support, and configuring the project requires a system Zlib development package.
 
 Dependencies (`libxdf`, `libbiosig`) must be built once before the first CMake configure — they are installed into `external/` as static libraries:
 
@@ -14,6 +16,13 @@ Dependencies (`libxdf`, `libbiosig`) must be built once before the first CMake c
 cmake -P external/build_deps.cmake          # build/install pinned deps into external/
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j$(sysctl -n hw.logicalcpu)   # use $(nproc) on Linux
+```
+
+On Windows, run the build from the MINGW64 shell and configure with Ninja:
+
+```
+cmake -B build -DCMAKE_BUILD_TYPE=Release -G Ninja
+cmake --build build
 ```
 
 The build fails fast if `external/versions.cmake` is missing or its recorded versions don't match `LIBXDF_VERSION` / `LIBBIOSIG_VERSION` in `CMakeLists.txt`. Rebuild deps with `cmake -P external/build_deps.cmake` (add `-DFORCE_REBUILD=ON`, or `-DFORCE_REBUILD_LIBXDF=ON` / `-DFORCE_REBUILD_LIBBIOSIG=ON` to force one).
@@ -43,7 +52,7 @@ UI strings live in `src/translations/*.ts`. After changing translatable strings,
 
 ## Build structure
 
-Nearly all source compiles into a single CMake `OBJECT` library, `sigviewer_objects` (defined by the big `qt_add_library` in `CMakeLists.txt`). Both the `sigviewer` executable and every test target link against it. **New `.cpp`/`.h` files must be added to that `qt_add_library` source list** or they won't compile. Qt AUTOMOC/AUTOUIC/AUTORCC are enabled; `.ui` and `.qrc` files are picked up automatically.
+Nearly all source compiles into a single CMake `OBJECT` library, `sigviewer_objects` (defined by the big `qt_add_library` in `CMakeLists.txt`). Both the `sigviewer` executable and every test target link against it. **New `.cpp`/`.h` files must be added to that `qt_add_library` source list** or they won't compile. Qt AUTOMOC/AUTOUIC/AUTORCC are enabled. Existing `.ui` directories are listed in the target's `AUTOUIC_SEARCH_PATHS`; add a new directory there when needed. `src/src.qrc` is registered explicitly with `qt_add_resources`, so a new `.qrc` file must be added there too.
 
 ## Architecture
 
@@ -52,7 +61,7 @@ Nearly all source compiles into a single CMake `OBJECT` library, `sigviewer_obje
 State is held in a tree of `QSharedPointer`-managed context objects:
 
 - `ApplicationContext` (`src/application_context.h`) — process-wide singleton (`getInstance()`). Owns the `MainWindowModel`, the event `ColorManager`, and the current `FileContext`/`TabContext`. **Note: only one file open at a time** — `addFileContext` replaces the current one (multi-file is not implemented).
-- `FileContext` (`src/file_context.h`) — per-open-file state: the reader, channel/event managers, dirty state.
+- `FileContext` (`src/file_context.h`) — per-open-file state: channel/event managers and dirty state. Its `FileChannelManager` owns the underlying reader.
 - `TabContext` (`src/tab_context.h`) — per-tab state including its `CommandExecuter` (undo/redo stack).
 
 Objects communicate via Qt signals carrying state enums (`ApplicationState`, `FileState`, `TabSelectionState`, `TabEditState`, defined under `src/base/*_states.h`). GUI actions enable/disable themselves in response to these state-change signals.
@@ -67,7 +76,7 @@ Three subsystems use the same idiom: a singleton factory keyed by string, popula
 
 ### Editing = undo/redo commands
 
-All mutations to events/channels go through `QUndoCommand` subclasses in `src/editing_commands/` (e.g. `change_channel_undo_command`, `delete_event_undo_command`), pushed onto the tab's `CommandExecuter`. Prefer this path over mutating managers directly so undo/redo stays consistent.
+Event and channel edits that should support undo/redo go through `QUndoCommand` subclasses in `src/editing_commands/` (e.g. `change_channel_undo_command`, `delete_event_undo_command`), pushed onto the tab's `CommandExecuter`. Prefer this path over mutating managers directly for undoable changes. Some supporting metadata, such as event type names, is changed directly.
 
 ### Signal display path
 
