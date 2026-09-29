@@ -4,12 +4,12 @@
 
 SigViewer is an application for viewing biosignals such as EEG or MEG time series. In addition to viewing raw data, SigViewer can also create, edit, and display events (such as annotations or artifact selections).
 
-- [SigViewer 0.7.2 (Windows)](https://github.com/cbrnr/sigviewer/releases/download/v0.7.2/sigviewer-0.7.2-windows-x86_64.exe)
-- [SigViewer 0.7.2 (macOS)](https://github.com/cbrnr/sigviewer/releases/download/v0.7.2/sigviewer-0.7.2-macos-arm64.dmg)
-- [SigViewer 0.7.2 (Linux x86-64)](https://github.com/cbrnr/sigviewer/releases/download/v0.7.2/sigviewer-0.7.2-linux-x86_64.tar.gz)
-- [SigViewer 0.7.2 (Linux AARCH64)](https://github.com/cbrnr/sigviewer/releases/download/v0.7.2/sigviewer-0.7.2-linux-aarch64.tar.gz)
-- [SigViewer 0.7.2 (AUR)](https://aur.archlinux.org/packages/sigviewer/)
-- [SigViewer 0.7.2 (Source)](https://github.com/cbrnr/sigviewer/archive/v0.7.2.zip)
+- [SigViewer 0.7.3 (Windows)](https://github.com/cbrnr/sigviewer/releases/download/v0.7.3/sigviewer-0.7.3-windows-x86_64.exe)
+- [SigViewer 0.7.3 (macOS)](https://github.com/cbrnr/sigviewer/releases/download/v0.7.3/sigviewer-0.7.3-macos-arm64.dmg)
+- [SigViewer 0.7.3 (Linux x86-64)](https://github.com/cbrnr/sigviewer/releases/download/v0.7.3/sigviewer-0.7.3-linux-x86_64.tar.gz)
+- [SigViewer 0.7.3 (Linux AARCH64)](https://github.com/cbrnr/sigviewer/releases/download/v0.7.3/sigviewer-0.7.3-linux-aarch64.tar.gz)
+- [SigViewer 0.7.3 (AUR)](https://aur.archlinux.org/packages/sigviewer/)
+- [SigViewer 0.7.3 (Source)](https://github.com/cbrnr/sigviewer/archive/v0.7.3.zip)
 
 
 ## Building SigViewer

@@ -1,4 +1,4 @@
-## [UNRELEASED] · YYYY-MM-DD
+## [0.7.3] · 2026-09-29
 ### ✨ Added
 - Add `SIGVIEWER_SYSTEM_DEPS` build option to link dynamically against system-installed libbiosig and libxdf instead of building them from source ([#168](https://github.com/cbrnr/sigviewer/issues/168) by [Clemens Brunner](https://github.com/cbrnr))
 
