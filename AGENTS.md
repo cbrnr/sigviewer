@@ -82,6 +82,12 @@ Event and channel edits that should support undo/redo go through `QUndoCommand` 
 
 `FileSignalReader` → channel managers (`src/file_handling/`: `ChannelManager`, `FileChannelManager`, and decorators like `DetrendChannelManager`, plus a `DownsamplingThread` and `SignalCache` for performance) → `SignalVisualisationModel` / signal-browser view widgets (`src/gui/signal_browser/`). Events are held by `EventManager` and rendered/edited through the event view and `src/gui/event_table/`.
 
+## Commit messages
+
+- Use the imperative mood and start with a capital letter (e.g., `Fix crash when loading XDF files`).
+- Keep the subject line concise (72 characters or fewer).
+- Do not credit yourself as an AI agent anywhere. This means no `Co-Authored-By` trailers or other attribution lines in commits, and no "Generated with" notes or similar in pull requests, issues, comments, or changelog entries.
+
 ## Releasing
 
 Bump `VERSION` in `CMakeLists.txt`, commit, then tag `v<version>` and push with `--tags`. Pushing the tag triggers `.github/workflows/release.yml`, which builds all platforms, packages artifacts, and publishes a GitHub release. Remember to update the download links in `README.md`. macOS release builds must be code-signed, notarized, and stapled (see `release.yml` for exact commands).
