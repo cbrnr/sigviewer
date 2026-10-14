@@ -20,7 +20,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/Library/Caches/Homebrew
-          key: brew-qt-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.github/workflows/macos.yml') }}
+          key: brew-qt-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.github/workflows/build-macos.yml') }}
           restore-keys: brew-qt-${{ runner.os }}-${{ runner.arch }}-
 
       - name: Install dependencies
